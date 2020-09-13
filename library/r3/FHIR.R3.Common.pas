@@ -167,7 +167,6 @@ type
     procedure setLink(rel: String; const Value: String); override;
   end;
 
-
   TFhirBinary3 = class (TFhirBinaryW)
   public
     function ContentType : String; override;
@@ -519,7 +518,6 @@ type
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
   end;
 
-
   TFhirCodeSystemProperty3 = class (TFhirCodeSystemPropertyW)
   public
     function code : String; override;
@@ -579,7 +577,6 @@ type
     function propList : TArray<String>; override;
     function displayLanguage : String; override;
   end;
-
 
   TFHIRLookupOpRespProperty3 = class (TFHIRLookupOpRespPropertyW)
   public
@@ -927,7 +924,6 @@ type
     function listProvisions : TFslList<TFhirConsentProvisionW>; override;
   end;
 
-
   TFHIRTestScript3 = class (TFHIRTestScriptW)
   private
     function ts : TFHIRTestScript;
@@ -957,7 +953,6 @@ type
     procedure clearSignatures; override;
     procedure addTarget(url : String); override;
   end;
-
 
 implementation
 
@@ -1223,7 +1218,6 @@ procedure TFHIROperationOutcomeIssue3.SetDiagnostics(Value: String);
 begin
   issue.diagnostics := value;
 end;
-
 
 { TFHIRCapabilityStatement3 }
 
@@ -1595,7 +1589,6 @@ begin
   end;
 end;
 
-
 { TFhirParametersParameter3 }
 
 function TFhirParametersParameter3.addParam(name: String): TFhirParametersParameterW;
@@ -1870,7 +1863,6 @@ begin
     result := '';
 end;
 
-
 function TFHIRExpansionProfile3.GetParameter(name: String): TFhirParametersParameterW;
 begin
   raise EFHIRException.create('Not supported for Expansion Profile');
@@ -1942,7 +1934,6 @@ begin
     if t.mode <> SystemVersionProcessingModeOverride then
       FList.Add(TFhirExpansionProfileFixedVersion3.Create(t.Link));
 end;
-
 
 { TFhirExpansionProfileFixedVersion3 }
 
@@ -2034,7 +2025,6 @@ function TFhirExpansionProfileFixedVersion3.valueString: String;
 begin
   result := entry.system+'|'+entry.version;
 end;
-
 
 { TFHIRStructureDefinition3 }
 
@@ -2371,7 +2361,6 @@ begin
   entry.search.score := value;
 end;
 
-
 procedure TFHIRBundleEntry3.SetUrl(Value: String);
 begin
   entry.fullUrl := value;
@@ -2439,7 +2428,6 @@ begin
   else
     result := entry.request.ifModifiedSince;
 end;
-
 
 procedure TFHIRBundleEntry3.SetrequestIfModifiedSince(Value: TFslDateTime);
 begin
@@ -3654,7 +3642,6 @@ end;
 
 { TFHIRMeta3 }
 
-
 procedure TFHIRMeta3.addLabel(system, code, display: String);
 var
   c : TFHIRCoding;
@@ -3843,7 +3830,6 @@ begin
       result.Add(TFHIRCoding3.create(i.Link));
 end;
 
-
 { TFhirBinary3 }
 
 function TFhirBinary3.content: TBytes;
@@ -3975,7 +3961,6 @@ begin
   (Element as TFhirCapabilityStatementRestResource).type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', value);
 end;
 
-
 function TFhirCapabilityStatementRestResource3.GetProfile: String;
 begin
   if (Element as TFhirCapabilityStatementRestResource).profile <> nil then
@@ -4009,8 +3994,6 @@ procedure TFhirCapabilityStatementRestResource3.SetReadHistory(Value: boolean);
 begin
   (Element as TFhirCapabilityStatementRestResource).readHistory := Value;
 end;
-
-
 
 { TFHIRSubscription3 }
 
@@ -4640,7 +4623,6 @@ begin
   (op as TFHIRLookupOpRequest).load(params as TFHIRParameters);
 end;
 
-
 { TFHIRSubsumesOpRequest3 }
 
 function TFHIRSubsumesOpRequest3.asParams: TFHIRResourceV;
@@ -4724,7 +4706,6 @@ procedure TFHIRSubsumesOpResponse3.SetOutcome(Value: String);
 begin
   (op as TFHIRSubsumesOpResponse).outcome := value;
 end;
-
 
 { TFhirCodeableConcept3 }
 
@@ -4854,7 +4835,6 @@ begin
   result := (resource as TFHIRNamingSystem).hasOid(oid);
 end;
 
-
 { TFHIRStructureMap3 }
 
 function TFHIRStructureMap3.url: String;
@@ -4887,16 +4867,13 @@ function TFhirTerminologyCapabilities3.getDescription: String;
 begin
 end;
 
-
 function TFhirTerminologyCapabilities3.getName: String;
 begin
 end;
 
-
 function TFhirTerminologyCapabilities3.getPublisher: String;
 begin
 end;
-
 
 function TFhirTerminologyCapabilities3.getStatus: TPublicationStatus;
 begin
@@ -4907,23 +4884,19 @@ function TFhirTerminologyCapabilities3.getURL: String;
 begin
 end;
 
-
 function TFhirTerminologyCapabilities3.getVersion: String;
 begin
 end;
-
 
 procedure TFhirTerminologyCapabilities3.setContext(Value: String);
 begin
   raise Exception.Create('Not done yet');
 end;
 
-
 procedure TFhirTerminologyCapabilities3.setDate(Value: TFslDateTime);
 begin
   (FRes as TFhirParameters).AddParameter('date', TFhirDateTime.create(Value));
 end;
-
 
 procedure TFhirTerminologyCapabilities3.setDescription(Value: String);
 begin
@@ -4933,28 +4906,23 @@ procedure TFhirTerminologyCapabilities3.setName(Value: String);
 begin
 end;
 
-
 procedure TFhirTerminologyCapabilities3.setPublisher(Value: String);
 begin
 end;
 
-
 procedure TFhirTerminologyCapabilities3.setStatus(Value: TPublicationStatus);
 begin
 end;
-
 
 procedure TFhirTerminologyCapabilities3.setUrl(Value: String);
 begin
   (FRes as TFhirParameters).AddParameter('url', TFhirUri.create(Value));
 end;
 
-
 procedure TFhirTerminologyCapabilities3.setVersion(Value: String);
 begin
   (FRes as TFhirParameters).AddParameter('version', TFhirCode.create(Value));
 end;
-
 
 procedure TFhirTerminologyCapabilities3.systemUri(url: String);
 begin
@@ -5089,30 +5057,25 @@ begin
   ts.date := value;
 end;
 
-
 procedure TFhirTestScript3.setDescription(Value: String);
 begin
   ts.description := value;
 end;
-
 
 procedure TFhirTestScript3.setName(Value: String);
 begin
   ts.name := value;
 end;
 
-
 procedure TFhirTestScript3.setPublisher(Value: String);
 begin
   ts.publisher := value;
 end;
 
-
 procedure TFhirTestScript3.setStatus(Value: TPublicationStatus);
 begin
   ts.Status := MAP_TPublicationStatus[Value];
 end;
-
 
 procedure TFhirTestScript3.setUrl(Value: String);
 begin
@@ -5128,7 +5091,6 @@ function TFhirTestScript3.ts : TFhirTestScript;
 begin
   result := (Fres as TFhirTestScript);
 end;
-
 
 { TFhirProvenance3 }
 
@@ -5153,5 +5115,4 @@ begin
 end;
 
 end.
-
 

@@ -475,7 +475,6 @@ begin
   end;
 end;
 
-
 { TV2Field }
 
 constructor TV2Field.Create;
@@ -734,7 +733,6 @@ Begin
   End;
 End;
 
-
 const
   DEFAULT_DELIMITER_FIELD = '|';
   DEFAULT_DELIMITER_COMPONENT = '^';
@@ -787,7 +785,6 @@ begin
   if FEscapeCharacter = FRepetitionDelimiter then
     raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Repetition');
 end;
-
 
 procedure TV2Parser.DecodeMessage(msg : TV2Message; options: TV2ParserOptions);
 var
@@ -859,7 +856,6 @@ begin
   while (iCursor < Length(FSource)) and (FSource[iCursor] = 13) do
     inc(iCursor);
 end;
-
 
 Function BytesSlice(Const sValue : TBytes; iBegin, iEnd : Integer) : TBytes;
 Begin
@@ -956,7 +952,6 @@ begin
     inc(iCursor);
 end;
 
-
 procedure TV2Parser.parseCell(cell : TV2Cell; const cnt : String; bNoEscape : Boolean; cBreak, cSubBreak : char);
 var
   child : TV2Cell;
@@ -987,7 +982,6 @@ begin
       parseContent(cell, cnt, bNoEscape);
   end;
 end;
-
 
 Procedure TV2Parser.parseContent(cell : TV2Cell; Const cnt : String; bNoEscape : Boolean);
 var
@@ -1388,7 +1382,6 @@ begin
   b.Append(FEscapeCharacter);
 end;
 
-
 procedure TV2Composer.composeBinary(b: TStringBuilder; cnt: TV2Content);
 begin
   b.Append(FEscapeCharacter);
@@ -1396,7 +1389,6 @@ begin
   b.Append(HexEncode(cnt.value));
   b.Append(FEscapeCharacter);
 end;
-
 
 class function TV2Composer.composeBytes(obj: TV2Object; options: TV2ComposerOptions): TBytes;
 begin

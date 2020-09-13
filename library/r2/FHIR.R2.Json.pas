@@ -39,8 +39,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Parser, FHIR.Base.Objects,
-  FHIR.R2.ParserBase, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types, FHIR.Support.Collections, FHIR.Support.JSON;
+  FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Support.JSON,
+  FHIR.R2.ParserBase, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types, FHIR.R2.Resources.Base;
 
 Type
 

@@ -137,7 +137,7 @@ uses
   FHIR.Client.HTTP,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Context, FHIR.R4.Validator, FHIR.R4.Profiles, FHIR.R4.Operations,
   FHIR.R4.Narrative, FHIR.R4.PathEngine, FHIR.R4.Constants, FHIR.R4.Client, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.AuthMap,
-  FHIR.R4.ElementModel;
+  FHIR.R4.ElementModel, FHIR.R4.Resources.Base;
 
 { TFHIRFactoryR4 }
 

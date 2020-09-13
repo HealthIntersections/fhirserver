@@ -4060,7 +4060,6 @@ begin
   end;
 end;
 
-
 class function TVersionConvertor_30_40.convertProvenanceEntityRole3(src : FHIR.R3.Types.TFhirProvenanceEntityRoleEnum) : FHIR.R4.Types.TFhirProvenanceEntityRoleEnum;
 begin
   case (src) of
@@ -4072,7 +4071,6 @@ begin
     else exit(FHIR.R4.Types.ProvenanceEntityRoleNull);
   end;
 end;
-
 
 class function TVersionConvertor_30_40.convertResponseType4(src : FHIR.R4.Types.TFhirResponseCodeEnum) : FHIR.R3.Types.TFhirResponseCodeEnum;
 begin
@@ -6025,7 +6023,6 @@ begin
   end;
 end;
 
-
 class function TVersionConvertor_30_40.convertCoding3(src : FHIR.R3.Types.TFhirCode) : FHIR.R4.Types.TFhirCoding;
 var
   tgt : FHIR.R4.Types.TFhirCoding;
@@ -6878,7 +6875,6 @@ begin
         dr.rate := convertType3(src.rate);
   end;
 
-
   if (src.maxDosePerPeriod <> nil) then
     tgt.maxDosePerPeriod := convertRatio3(src.maxDosePerPeriod);
 
@@ -7572,7 +7568,6 @@ begin
     tgt.free;
   end;
 end;
-
 
 class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent4(src : FHIR.R4.Types.TFhirElementDefinitionBinding) : FHIR.R3.Types.TFhirElementDefinitionBinding;
 var
@@ -10082,7 +10077,6 @@ begin
   else if (src.value is TFHIRBase64Binary) then
     tgt.value := (src.value as FHIR.R4.Types.TFhirBase64Binary).value;
 
-
   exit(tgt.link);
   finally
     tgt.free;
@@ -12491,7 +12485,6 @@ begin
   else
     tgt.status := convertCommunicationStatus3(src.status);
 
-
   if (src.notDoneReason <> nil) then
     tgt.statusReason := convertCodeableConcept3(src.notDoneReason);
 
@@ -12581,7 +12574,6 @@ begin
       tgt.notDone := true
   else
       tgt.status := convertCommunicationStatus4(src.status);
-
 
   if (src.statusReason <> nil) then
     tgt.notDoneReason := convertCodeableConcept4(src.statusReason);
@@ -14303,7 +14295,6 @@ begin
   tgt.manufactureDate := src.manufactureDate.link;
 
   tgt.expirationDate := src.expirationDate.link;
-
 
   if (src.patient <> nil) then
     tgt.patient := convertReference4(src.patient);
@@ -17621,7 +17612,6 @@ begin
   end;
 end;
 
-
 class function TVersionConvertor_30_40.convertHealthcareServiceAvailableTimeComponent4(src : FHIR.R4.Resources.TFhirHealthcareServiceAvailableTime) : FHIR.R3.Resources.TFhirHealthcareServiceAvailableTime;
 var
   tgt : FHIR.R3.Resources.TFhirHealthcareServiceAvailableTime;
@@ -18192,7 +18182,6 @@ begin
   end
   else if (src.example is FHIR.R4.Types.TFHIRBoolean) then
     tgt.example := (src.Example as FHIR.R4.Types.TFHIRBoolean).value;
-
 
   if (src.name <> '') then
     tgt.name := src.name;
@@ -23060,7 +23049,6 @@ begin
     tgt.hasAnswer := (src.Answer as FHIR.R4.Types.TFHIRBoolean).value
   else if (src.answer <> nil) then
     tgt.answer := convertType4(src.answer);
-
 
   exit(tgt.link);
   finally

@@ -37,8 +37,6 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   Classes, SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
@@ -218,7 +216,6 @@ type
   TFhirTiming = class;
   TFhirTimingList = class;
 
-
   // Base StructureDefinition for Element Type: Base definition for all elements in a resource.
   TFhirElement = class abstract (TFhirBase)
   private
@@ -365,8 +362,6 @@ type
 
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
 
-
-
   // a complex Enum - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Enum, and extensions
   TFhirEnum = class (TFhirPrimitiveType)
@@ -396,7 +391,6 @@ type
     property system : String read FSystem write FSystem;
   End;    
 
-
   TFhirEnumListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -408,7 +402,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirEnum read GetCurrent;
   end;
-
 
   TFhirEnumList = class (TFHIRObjectList)
   private
@@ -471,7 +464,6 @@ type
     property FhirEnums[index : Integer] : TFhirEnum read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Date - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Date, and extensions
   TFhirDate = class (TFhirPrimitiveType)
@@ -499,7 +491,6 @@ type
     property value : TFslDateTime read FValue write SetValue;
   End;    
 
-
   TFhirDateListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -511,7 +502,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirDate read GetCurrent;
   end;
-
 
   TFhirDateList = class (TFHIRObjectList)
   private
@@ -568,7 +558,6 @@ type
     property FhirDates[index : Integer] : TFhirDate read GetItemN write SetItemN; default;
   End;
 
-
   // a complex DateTime - has an Id attribute, and extensions.
   //  Used where a FHIR element is a DateTime, and extensions
   TFhirDateTime = class (TFhirPrimitiveType)
@@ -596,7 +585,6 @@ type
     property value : TFslDateTime read FValue write SetValue;
   End;    
 
-
   TFhirDateTimeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -608,7 +596,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirDateTime read GetCurrent;
   end;
-
 
   TFhirDateTimeList = class (TFHIRObjectList)
   private
@@ -665,7 +652,6 @@ type
     property FhirDateTimes[index : Integer] : TFhirDateTime read GetItemN write SetItemN; default;
   End;
 
-
   // a complex String - has an Id attribute, and extensions.
   //  Used where a FHIR element is a String, and extensions
   TFhirString = class (TFhirPrimitiveType)
@@ -692,7 +678,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirStringListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -704,7 +689,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirString read GetCurrent;
   end;
-
 
   TFhirStringList = class (TFHIRObjectList)
   private
@@ -761,7 +745,6 @@ type
     property FhirStrings[index : Integer] : TFhirString read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Integer - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Integer, and extensions
   TFhirInteger = class (TFhirPrimitiveType)
@@ -788,7 +771,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirIntegerListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -800,7 +782,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirInteger read GetCurrent;
   end;
-
 
   TFhirIntegerList = class (TFHIRObjectList)
   private
@@ -857,7 +838,6 @@ type
     property FhirIntegers[index : Integer] : TFhirInteger read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Uri - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Uri, and extensions
   TFhirUri = class (TFhirPrimitiveType)
@@ -884,7 +864,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirUriListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -896,7 +875,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirUri read GetCurrent;
   end;
-
 
   TFhirUriList = class (TFHIRObjectList)
   private
@@ -953,7 +931,6 @@ type
     property FhirUris[index : Integer] : TFhirUri read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Instant - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Instant, and extensions
   TFhirInstant = class (TFhirPrimitiveType)
@@ -981,7 +958,6 @@ type
     property value : TFslDateTime read FValue write SetValue;
   End;    
 
-
   TFhirInstantListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -993,7 +969,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirInstant read GetCurrent;
   end;
-
 
   TFhirInstantList = class (TFHIRObjectList)
   private
@@ -1050,7 +1025,6 @@ type
     property FhirInstants[index : Integer] : TFhirInstant read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Xhtml - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Xhtml, and extensions
   TFhirXhtml = class (TFhirPrimitiveType)
@@ -1077,7 +1051,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirXhtmlListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1089,7 +1062,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirXhtml read GetCurrent;
   end;
-
 
   TFhirXhtmlList = class (TFHIRObjectList)
   private
@@ -1146,7 +1118,6 @@ type
     property FhirXhtmls[index : Integer] : TFhirXhtml read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Boolean - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Boolean, and extensions
   TFhirBoolean = class (TFhirPrimitiveType)
@@ -1173,7 +1144,6 @@ type
     property value : Boolean read FValue write SetValue;
   End;    
 
-
   TFhirBooleanListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1185,7 +1155,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirBoolean read GetCurrent;
   end;
-
 
   TFhirBooleanList = class (TFHIRObjectList)
   private
@@ -1242,7 +1211,6 @@ type
     property FhirBooleans[index : Integer] : TFhirBoolean read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Base64Binary - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Base64Binary, and extensions
   TFhirBase64Binary = class (TFhirPrimitiveType)
@@ -1269,7 +1237,6 @@ type
     property value : TBytes read FValue write SetValue;
   End;    
 
-
   TFhirBase64BinaryListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1281,7 +1248,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirBase64Binary read GetCurrent;
   end;
-
 
   TFhirBase64BinaryList = class (TFHIRObjectList)
   private
@@ -1338,7 +1304,6 @@ type
     property FhirBase64Binaries[index : Integer] : TFhirBase64Binary read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Time - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Time, and extensions
   TFhirTime = class (TFhirPrimitiveType)
@@ -1365,7 +1330,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirTimeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1377,7 +1341,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirTime read GetCurrent;
   end;
-
 
   TFhirTimeList = class (TFHIRObjectList)
   private
@@ -1434,7 +1397,6 @@ type
     property FhirTimes[index : Integer] : TFhirTime read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Decimal - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Decimal, and extensions
   TFhirDecimal = class (TFhirPrimitiveType)
@@ -1461,7 +1423,6 @@ type
     property value : String read FValue write SetValue;
   End;    
 
-
   TFhirDecimalListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1473,7 +1434,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirDecimal read GetCurrent;
   end;
-
 
   TFhirDecimalList = class (TFHIRObjectList)
   private
@@ -1530,7 +1490,6 @@ type
     property FhirDecimals[index : Integer] : TFhirDecimal read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Code - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Code, and extensions
   TFhirCode = class (TFhirString)
@@ -1544,7 +1503,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirCodeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1556,7 +1514,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirCode read GetCurrent;
   end;
-
 
   TFhirCodeList = class (TFHIRObjectList)
   private
@@ -1613,7 +1570,6 @@ type
     property FhirCodes[index : Integer] : TFhirCode read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Canonical - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Canonical, and extensions
   TFhirCanonical = class (TFhirUri)
@@ -1627,7 +1583,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirCanonicalListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1639,7 +1594,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirCanonical read GetCurrent;
   end;
-
 
   TFhirCanonicalList = class (TFHIRObjectList)
   private
@@ -1696,7 +1650,6 @@ type
     property FhirCanonicals[index : Integer] : TFhirCanonical read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Oid - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Oid, and extensions
   TFhirOid = class (TFhirUri)
@@ -1710,7 +1663,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirOidListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1722,7 +1674,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirOid read GetCurrent;
   end;
-
 
   TFhirOidList = class (TFHIRObjectList)
   private
@@ -1779,7 +1730,6 @@ type
     property FhirOids[index : Integer] : TFhirOid read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Uuid - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Uuid, and extensions
   TFhirUuid = class (TFhirUri)
@@ -1793,7 +1743,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirUuidListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1805,7 +1754,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirUuid read GetCurrent;
   end;
-
 
   TFhirUuidList = class (TFHIRObjectList)
   private
@@ -1862,7 +1810,6 @@ type
     property FhirUuids[index : Integer] : TFhirUuid read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Url - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Url, and extensions
   TFhirUrl = class (TFhirUri)
@@ -1876,7 +1823,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirUrlListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1888,7 +1834,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirUrl read GetCurrent;
   end;
-
 
   TFhirUrlList = class (TFHIRObjectList)
   private
@@ -1945,7 +1890,6 @@ type
     property FhirUrls[index : Integer] : TFhirUrl read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Markdown - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Markdown, and extensions
   TFhirMarkdown = class (TFhirString)
@@ -1959,7 +1903,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirMarkdownListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -1971,7 +1914,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirMarkdown read GetCurrent;
   end;
-
 
   TFhirMarkdownList = class (TFHIRObjectList)
   private
@@ -2028,7 +1970,6 @@ type
     property FhirMarkdowns[index : Integer] : TFhirMarkdown read GetItemN write SetItemN; default;
   End;
 
-
   // a complex UnsignedInt - has an Id attribute, and extensions.
   //  Used where a FHIR element is a UnsignedInt, and extensions
   TFhirUnsignedInt = class (TFhirInteger)
@@ -2042,7 +1983,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirUnsignedIntListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -2054,7 +1994,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirUnsignedInt read GetCurrent;
   end;
-
 
   TFhirUnsignedIntList = class (TFHIRObjectList)
   private
@@ -2111,7 +2050,6 @@ type
     property FhirUnsignedInts[index : Integer] : TFhirUnsignedInt read GetItemN write SetItemN; default;
   End;
 
-
   // a complex Id - has an Id attribute, and extensions.
   //  Used where a FHIR element is a Id, and extensions
   TFhirId = class (TFhirString)
@@ -2125,7 +2063,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirIdListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -2137,7 +2074,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirId read GetCurrent;
   end;
-
 
   TFhirIdList = class (TFHIRObjectList)
   private
@@ -2194,7 +2130,6 @@ type
     property FhirIds[index : Integer] : TFhirId read GetItemN write SetItemN; default;
   End;
 
-
   // a complex PositiveInt - has an Id attribute, and extensions.
   //  Used where a FHIR element is a PositiveInt, and extensions
   TFhirPositiveInt = class (TFhirInteger)
@@ -2208,7 +2143,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirPositiveIntListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -2220,7 +2154,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirPositiveInt read GetCurrent;
   end;
-
 
   TFhirPositiveIntList = class (TFHIRObjectList)
   private
@@ -2290,7 +2223,6 @@ type
     function fhirType : string; override;
   End;    
 
-
   TFhirInteger64ListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -2302,7 +2234,6 @@ type
     function MoveNext : boolean;
     property Current : TFhirInteger64 read GetCurrent;
   end;
-
 
   TFhirInteger64List = class (TFHIRObjectList)
   private
@@ -9625,8 +9556,6 @@ type
     property FhirTimings[index : Integer] : TFhirTiming read GetItemN write SetItemN; default;
   End;
 
-
-
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFhirEnum;
 function asDate(obj : TFHIRObject) : TFhirDate;
 function asDateTime(obj : TFHIRObject) : TFhirDateTime;
@@ -9844,7 +9773,6 @@ begin
   DisallowExtensions := true;
   result := self;
 end;
-
 
 procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
 var
@@ -10255,8 +10183,6 @@ begin
   result := StringValue;
 end;
 
-
-
 { TFhirEnum }
 
 Constructor TFhirEnum.Create(system : String; value : String);
@@ -10346,7 +10272,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirEnumListEnumerator }
 
 Constructor TFhirEnumListEnumerator.Create(list : TFhirEnumList);
@@ -10373,14 +10298,12 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirEnumList }
 procedure TFhirEnumList.AddItem(value: TFhirEnum);
 begin
   assert(value.ClassName = 'TFhirEnum', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirEnum');
   add(value);
 end;
-
 
 constructor TFhirEnumList.Create(Systems, Codes : Array Of String);
 var
@@ -10401,7 +10324,6 @@ begin
   add(TFhirEnum.create(FSystems[StringArrayIndexOf(FCodes, value)], value));
 end;
 
-
 function TFhirEnumList.Append: TFhirEnum;
 begin
   result := TFhirEnum.create;
@@ -10411,7 +10333,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirEnumList.ClearItems;
 begin
@@ -10447,7 +10368,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirEnumList.Insert(index: Integer): TFhirEnum;
 begin
   result := TFhirEnum.create;
@@ -10457,7 +10377,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirEnumList.InsertItem(index: Integer; value: TFhirEnum);
 begin
@@ -10587,7 +10506,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirDateListEnumerator }
 
 Constructor TFhirDateListEnumerator.Create(list : TFhirDateList);
@@ -10614,7 +10532,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirDateList }
 procedure TFhirDateList.AddItem(value: TFhirDate);
 begin
@@ -10622,12 +10539,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirDateList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDate.create(value));
 end;
-
 
 function TFhirDateList.Append: TFhirDate;
 begin
@@ -10638,7 +10553,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDateList.ClearItems;
 begin
@@ -10674,7 +10588,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirDateList.Insert(index: Integer): TFhirDate;
 begin
   result := TFhirDate.create;
@@ -10684,7 +10597,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDateList.InsertItem(index: Integer; value: TFhirDate);
 begin
@@ -10814,7 +10726,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirDateTimeListEnumerator }
 
 Constructor TFhirDateTimeListEnumerator.Create(list : TFhirDateTimeList);
@@ -10841,7 +10752,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirDateTimeList }
 procedure TFhirDateTimeList.AddItem(value: TFhirDateTime);
 begin
@@ -10849,12 +10759,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirDateTimeList.AddItem(value: TFslDateTime);
 begin
   add(TFhirDateTime.create(value));
 end;
-
 
 function TFhirDateTimeList.Append: TFhirDateTime;
 begin
@@ -10865,7 +10773,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDateTimeList.ClearItems;
 begin
@@ -10901,7 +10808,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirDateTimeList.Insert(index: Integer): TFhirDateTime;
 begin
   result := TFhirDateTime.create;
@@ -10911,7 +10817,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDateTimeList.InsertItem(index: Integer; value: TFhirDateTime);
 begin
@@ -11029,7 +10934,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirStringListEnumerator }
 
 Constructor TFhirStringListEnumerator.Create(list : TFhirStringList);
@@ -11056,7 +10960,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirStringList }
 procedure TFhirStringList.AddItem(value: TFhirString);
 begin
@@ -11064,12 +10967,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirStringList.AddItem(value: String);
 begin
   add(TFhirString.create(value));
 end;
-
 
 function TFhirStringList.Append: TFhirString;
 begin
@@ -11080,7 +10981,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirStringList.ClearItems;
 begin
@@ -11116,7 +11016,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirStringList.Insert(index: Integer): TFhirString;
 begin
   result := TFhirString.create;
@@ -11126,7 +11025,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirStringList.InsertItem(index: Integer; value: TFhirString);
 begin
@@ -11244,7 +11142,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirIntegerListEnumerator }
 
 Constructor TFhirIntegerListEnumerator.Create(list : TFhirIntegerList);
@@ -11271,7 +11168,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirIntegerList }
 procedure TFhirIntegerList.AddItem(value: TFhirInteger);
 begin
@@ -11279,12 +11175,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirIntegerList.AddItem(value: String);
 begin
   add(TFhirInteger.create(value));
 end;
-
 
 function TFhirIntegerList.Append: TFhirInteger;
 begin
@@ -11295,7 +11189,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirIntegerList.ClearItems;
 begin
@@ -11331,7 +11224,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirIntegerList.Insert(index: Integer): TFhirInteger;
 begin
   result := TFhirInteger.create;
@@ -11341,7 +11233,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirIntegerList.InsertItem(index: Integer; value: TFhirInteger);
 begin
@@ -11459,7 +11350,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirUriListEnumerator }
 
 Constructor TFhirUriListEnumerator.Create(list : TFhirUriList);
@@ -11486,7 +11376,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirUriList }
 procedure TFhirUriList.AddItem(value: TFhirUri);
 begin
@@ -11494,12 +11383,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirUriList.AddItem(value: String);
 begin
   add(TFhirUri.create(value));
 end;
-
 
 function TFhirUriList.Append: TFhirUri;
 begin
@@ -11510,7 +11397,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUriList.ClearItems;
 begin
@@ -11546,7 +11432,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirUriList.Insert(index: Integer): TFhirUri;
 begin
   result := TFhirUri.create;
@@ -11556,7 +11441,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUriList.InsertItem(index: Integer; value: TFhirUri);
 begin
@@ -11686,7 +11570,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirInstantListEnumerator }
 
 Constructor TFhirInstantListEnumerator.Create(list : TFhirInstantList);
@@ -11713,7 +11596,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirInstantList }
 procedure TFhirInstantList.AddItem(value: TFhirInstant);
 begin
@@ -11721,12 +11603,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirInstantList.AddItem(value: TFslDateTime);
 begin
   add(TFhirInstant.create(value));
 end;
-
 
 function TFhirInstantList.Append: TFhirInstant;
 begin
@@ -11737,7 +11617,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirInstantList.ClearItems;
 begin
@@ -11773,7 +11652,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirInstantList.Insert(index: Integer): TFhirInstant;
 begin
   result := TFhirInstant.create;
@@ -11783,7 +11661,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirInstantList.InsertItem(index: Integer; value: TFhirInstant);
 begin
@@ -11901,7 +11778,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirXhtmlListEnumerator }
 
 Constructor TFhirXhtmlListEnumerator.Create(list : TFhirXhtmlList);
@@ -11928,7 +11804,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirXhtmlList }
 procedure TFhirXhtmlList.AddItem(value: TFhirXhtml);
 begin
@@ -11936,12 +11811,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirXhtmlList.AddItem(value: String);
 begin
   add(TFhirXhtml.create(value));
 end;
-
 
 function TFhirXhtmlList.Append: TFhirXhtml;
 begin
@@ -11952,7 +11825,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirXhtmlList.ClearItems;
 begin
@@ -11988,7 +11860,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirXhtmlList.Insert(index: Integer): TFhirXhtml;
 begin
   result := TFhirXhtml.create;
@@ -11998,7 +11869,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirXhtmlList.InsertItem(index: Integer; value: TFhirXhtml);
 begin
@@ -12116,7 +11986,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirBooleanListEnumerator }
 
 Constructor TFhirBooleanListEnumerator.Create(list : TFhirBooleanList);
@@ -12143,7 +12012,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirBooleanList }
 procedure TFhirBooleanList.AddItem(value: TFhirBoolean);
 begin
@@ -12151,12 +12019,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirBooleanList.AddItem(value: Boolean);
 begin
   add(TFhirBoolean.create(value));
 end;
-
 
 function TFhirBooleanList.Append: TFhirBoolean;
 begin
@@ -12167,7 +12033,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirBooleanList.ClearItems;
 begin
@@ -12203,7 +12068,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirBooleanList.Insert(index: Integer): TFhirBoolean;
 begin
   result := TFhirBoolean.create;
@@ -12213,7 +12077,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirBooleanList.InsertItem(index: Integer; value: TFhirBoolean);
 begin
@@ -12331,7 +12194,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirBase64BinaryListEnumerator }
 
 Constructor TFhirBase64BinaryListEnumerator.Create(list : TFhirBase64BinaryList);
@@ -12358,7 +12220,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirBase64BinaryList }
 procedure TFhirBase64BinaryList.AddItem(value: TFhirBase64Binary);
 begin
@@ -12366,12 +12227,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirBase64BinaryList.AddItem(value: TBytes);
 begin
   add(TFhirBase64Binary.create(value));
 end;
-
 
 function TFhirBase64BinaryList.Append: TFhirBase64Binary;
 begin
@@ -12382,7 +12241,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirBase64BinaryList.ClearItems;
 begin
@@ -12418,7 +12276,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirBase64BinaryList.Insert(index: Integer): TFhirBase64Binary;
 begin
   result := TFhirBase64Binary.create;
@@ -12428,7 +12285,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirBase64BinaryList.InsertItem(index: Integer; value: TFhirBase64Binary);
 begin
@@ -12546,7 +12402,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirTimeListEnumerator }
 
 Constructor TFhirTimeListEnumerator.Create(list : TFhirTimeList);
@@ -12573,7 +12428,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirTimeList }
 procedure TFhirTimeList.AddItem(value: TFhirTime);
 begin
@@ -12581,12 +12435,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirTimeList.AddItem(value: String);
 begin
   add(TFhirTime.create(value));
 end;
-
 
 function TFhirTimeList.Append: TFhirTime;
 begin
@@ -12597,7 +12449,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirTimeList.ClearItems;
 begin
@@ -12633,7 +12484,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirTimeList.Insert(index: Integer): TFhirTime;
 begin
   result := TFhirTime.create;
@@ -12643,7 +12493,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirTimeList.InsertItem(index: Integer; value: TFhirTime);
 begin
@@ -12761,7 +12610,6 @@ begin
   FValue := value;
 end;
 
-
 { TFhirDecimalListEnumerator }
 
 Constructor TFhirDecimalListEnumerator.Create(list : TFhirDecimalList);
@@ -12788,7 +12636,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirDecimalList }
 procedure TFhirDecimalList.AddItem(value: TFhirDecimal);
 begin
@@ -12796,12 +12643,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirDecimalList.AddItem(value: String);
 begin
   add(TFhirDecimal.create(value));
 end;
-
 
 function TFhirDecimalList.Append: TFhirDecimal;
 begin
@@ -12812,7 +12657,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDecimalList.ClearItems;
 begin
@@ -12848,7 +12692,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirDecimalList.Insert(index: Integer): TFhirDecimal;
 begin
   result := TFhirDecimal.create;
@@ -12858,7 +12701,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirDecimalList.InsertItem(index: Integer; value: TFhirDecimal);
 begin
@@ -12921,7 +12763,6 @@ begin
   result := TFhirCode(inherited Clone);
 end;
 
-
 { TFhirCodeListEnumerator }
 
 Constructor TFhirCodeListEnumerator.Create(list : TFhirCodeList);
@@ -12948,7 +12789,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirCodeList }
 procedure TFhirCodeList.AddItem(value: TFhirCode);
 begin
@@ -12956,12 +12796,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirCodeList.AddItem(value: String);
 begin
   add(TFhirCode.create(value));
 end;
-
 
 function TFhirCodeList.Append: TFhirCode;
 begin
@@ -12972,7 +12810,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirCodeList.ClearItems;
 begin
@@ -13008,7 +12845,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirCodeList.Insert(index: Integer): TFhirCode;
 begin
   result := TFhirCode.create;
@@ -13018,7 +12854,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirCodeList.InsertItem(index: Integer; value: TFhirCode);
 begin
@@ -13081,7 +12916,6 @@ begin
   result := TFhirCanonical(inherited Clone);
 end;
 
-
 { TFhirCanonicalListEnumerator }
 
 Constructor TFhirCanonicalListEnumerator.Create(list : TFhirCanonicalList);
@@ -13108,7 +12942,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirCanonicalList }
 procedure TFhirCanonicalList.AddItem(value: TFhirCanonical);
 begin
@@ -13116,12 +12949,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirCanonicalList.AddItem(value: String);
 begin
   add(TFhirCanonical.create(value));
 end;
-
 
 function TFhirCanonicalList.Append: TFhirCanonical;
 begin
@@ -13132,7 +12963,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirCanonicalList.ClearItems;
 begin
@@ -13168,7 +12998,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirCanonicalList.Insert(index: Integer): TFhirCanonical;
 begin
   result := TFhirCanonical.create;
@@ -13178,7 +13007,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirCanonicalList.InsertItem(index: Integer; value: TFhirCanonical);
 begin
@@ -13241,7 +13069,6 @@ begin
   result := TFhirOid(inherited Clone);
 end;
 
-
 { TFhirOidListEnumerator }
 
 Constructor TFhirOidListEnumerator.Create(list : TFhirOidList);
@@ -13268,7 +13095,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirOidList }
 procedure TFhirOidList.AddItem(value: TFhirOid);
 begin
@@ -13276,12 +13102,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirOidList.AddItem(value: String);
 begin
   add(TFhirOid.create(value));
 end;
-
 
 function TFhirOidList.Append: TFhirOid;
 begin
@@ -13292,7 +13116,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirOidList.ClearItems;
 begin
@@ -13328,7 +13151,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirOidList.Insert(index: Integer): TFhirOid;
 begin
   result := TFhirOid.create;
@@ -13338,7 +13160,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirOidList.InsertItem(index: Integer; value: TFhirOid);
 begin
@@ -13401,7 +13222,6 @@ begin
   result := TFhirUuid(inherited Clone);
 end;
 
-
 { TFhirUuidListEnumerator }
 
 Constructor TFhirUuidListEnumerator.Create(list : TFhirUuidList);
@@ -13428,7 +13248,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirUuidList }
 procedure TFhirUuidList.AddItem(value: TFhirUuid);
 begin
@@ -13436,12 +13255,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirUuidList.AddItem(value: String);
 begin
   add(TFhirUuid.create(value));
 end;
-
 
 function TFhirUuidList.Append: TFhirUuid;
 begin
@@ -13452,7 +13269,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUuidList.ClearItems;
 begin
@@ -13488,7 +13304,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirUuidList.Insert(index: Integer): TFhirUuid;
 begin
   result := TFhirUuid.create;
@@ -13498,7 +13313,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUuidList.InsertItem(index: Integer; value: TFhirUuid);
 begin
@@ -13561,7 +13375,6 @@ begin
   result := TFhirUrl(inherited Clone);
 end;
 
-
 { TFhirUrlListEnumerator }
 
 Constructor TFhirUrlListEnumerator.Create(list : TFhirUrlList);
@@ -13588,7 +13401,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirUrlList }
 procedure TFhirUrlList.AddItem(value: TFhirUrl);
 begin
@@ -13596,12 +13408,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirUrlList.AddItem(value: String);
 begin
   add(TFhirUrl.create(value));
 end;
-
 
 function TFhirUrlList.Append: TFhirUrl;
 begin
@@ -13612,7 +13422,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUrlList.ClearItems;
 begin
@@ -13648,7 +13457,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirUrlList.Insert(index: Integer): TFhirUrl;
 begin
   result := TFhirUrl.create;
@@ -13658,7 +13466,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUrlList.InsertItem(index: Integer; value: TFhirUrl);
 begin
@@ -13721,7 +13528,6 @@ begin
   result := TFhirMarkdown(inherited Clone);
 end;
 
-
 { TFhirMarkdownListEnumerator }
 
 Constructor TFhirMarkdownListEnumerator.Create(list : TFhirMarkdownList);
@@ -13748,7 +13554,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirMarkdownList }
 procedure TFhirMarkdownList.AddItem(value: TFhirMarkdown);
 begin
@@ -13756,12 +13561,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirMarkdownList.AddItem(value: String);
 begin
   add(TFhirMarkdown.create(value));
 end;
-
 
 function TFhirMarkdownList.Append: TFhirMarkdown;
 begin
@@ -13772,7 +13575,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirMarkdownList.ClearItems;
 begin
@@ -13808,7 +13610,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirMarkdownList.Insert(index: Integer): TFhirMarkdown;
 begin
   result := TFhirMarkdown.create;
@@ -13818,7 +13619,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirMarkdownList.InsertItem(index: Integer; value: TFhirMarkdown);
 begin
@@ -13881,7 +13681,6 @@ begin
   result := TFhirUnsignedInt(inherited Clone);
 end;
 
-
 { TFhirUnsignedIntListEnumerator }
 
 Constructor TFhirUnsignedIntListEnumerator.Create(list : TFhirUnsignedIntList);
@@ -13908,7 +13707,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirUnsignedIntList }
 procedure TFhirUnsignedIntList.AddItem(value: TFhirUnsignedInt);
 begin
@@ -13916,12 +13714,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirUnsignedIntList.AddItem(value: String);
 begin
   add(TFhirUnsignedInt.create(value));
 end;
-
 
 function TFhirUnsignedIntList.Append: TFhirUnsignedInt;
 begin
@@ -13932,7 +13728,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUnsignedIntList.ClearItems;
 begin
@@ -13968,7 +13763,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirUnsignedIntList.Insert(index: Integer): TFhirUnsignedInt;
 begin
   result := TFhirUnsignedInt.create;
@@ -13978,7 +13772,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirUnsignedIntList.InsertItem(index: Integer; value: TFhirUnsignedInt);
 begin
@@ -14041,7 +13834,6 @@ begin
   result := TFhirId(inherited Clone);
 end;
 
-
 { TFhirIdListEnumerator }
 
 Constructor TFhirIdListEnumerator.Create(list : TFhirIdList);
@@ -14068,7 +13860,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirIdList }
 procedure TFhirIdList.AddItem(value: TFhirId);
 begin
@@ -14076,12 +13867,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirIdList.AddItem(value: String);
 begin
   add(TFhirId.create(value));
 end;
-
 
 function TFhirIdList.Append: TFhirId;
 begin
@@ -14092,7 +13881,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirIdList.ClearItems;
 begin
@@ -14128,7 +13916,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirIdList.Insert(index: Integer): TFhirId;
 begin
   result := TFhirId.create;
@@ -14138,7 +13925,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirIdList.InsertItem(index: Integer; value: TFhirId);
 begin
@@ -14201,7 +13987,6 @@ begin
   result := TFhirPositiveInt(inherited Clone);
 end;
 
-
 { TFhirPositiveIntListEnumerator }
 
 Constructor TFhirPositiveIntListEnumerator.Create(list : TFhirPositiveIntList);
@@ -14228,7 +14013,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirPositiveIntList }
 procedure TFhirPositiveIntList.AddItem(value: TFhirPositiveInt);
 begin
@@ -14236,12 +14020,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirPositiveIntList.AddItem(value: String);
 begin
   add(TFhirPositiveInt.create(value));
 end;
-
 
 function TFhirPositiveIntList.Append: TFhirPositiveInt;
 begin
@@ -14252,7 +14034,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirPositiveIntList.ClearItems;
 begin
@@ -14288,7 +14069,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirPositiveIntList.Insert(index: Integer): TFhirPositiveInt;
 begin
   result := TFhirPositiveInt.create;
@@ -14298,7 +14078,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirPositiveIntList.InsertItem(index: Integer; value: TFhirPositiveInt);
 begin
@@ -14361,7 +14140,6 @@ begin
   result := TFhirInteger64(inherited Clone);
 end;
 
-
 { TFhirInteger64ListEnumerator }
 
 Constructor TFhirInteger64ListEnumerator.Create(list : TFhirInteger64List);
@@ -14388,7 +14166,6 @@ begin
   Result := FList[FIndex];
 end;
 
-
 { TFhirInteger64List }
 procedure TFhirInteger64List.AddItem(value: TFhirInteger64);
 begin
@@ -14396,12 +14173,10 @@ begin
   add(value);
 end;
 
-
 procedure TFhirInteger64List.AddItem(value: String);
 begin
   add(TFhirInteger64.create(value));
 end;
-
 
 function TFhirInteger64List.Append: TFhirInteger64;
 begin
@@ -14412,7 +14187,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirInteger64List.ClearItems;
 begin
@@ -14448,7 +14222,6 @@ begin
   result := IndexByReference(value);
 end;
 
-
 function TFhirInteger64List.Insert(index: Integer): TFhirInteger64;
 begin
   result := TFhirInteger64.create;
@@ -14458,7 +14231,6 @@ begin
     result.free;
   end;
 end;
-
 
 procedure TFhirInteger64List.InsertItem(index: Integer; value: TFhirInteger64);
 begin
@@ -37919,8 +37691,6 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-
-
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
   if obj is TFHIREnum then
@@ -38361,7 +38131,6 @@ begin
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRPositiveInt"')
   end;
 end;
-
 
 function asInteger64(obj : TFHIRObject) : TFHIRInteger64;
 begin

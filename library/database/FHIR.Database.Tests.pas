@@ -506,7 +506,6 @@ begin
   end;
 end;
 
-
 // procedure TFslDBTests.TestMySQLMaria;
 // var
 // db : TFslDBManager;

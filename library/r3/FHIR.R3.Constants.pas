@@ -38,8 +38,8 @@ interface
 
 uses
   SysUtils, Classes, 
-  FHIR.Support.Utilities, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.R3.Types, FHIR.R3.Resources;
+  FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Base.Objects, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Resources.Base;
 
 const
   currentFHIRVersionRelease = fhirVersionRelease3;
@@ -3868,8 +3868,6 @@ Const
   FHIR_GENERATED_PUBLICATION = '3';
 
   FHIR_GENERATED_DATE = '2018-06-12T19:15:59+10:00';
-
-
 
 implementation
 

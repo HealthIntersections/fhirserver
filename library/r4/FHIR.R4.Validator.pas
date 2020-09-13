@@ -39,8 +39,7 @@ Uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Fpc,
 
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.PathEngine,
-  FHIR.R4.PathNode, FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.PathEngine, FHIR.R4.ElementModel;
-
+  FHIR.R4.PathNode, FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.PathEngine, FHIR.R4.ElementModel, FHIR.R4.Resources.Base;
 
 Type
   TFhirValidationMessage = class (TFslObject)

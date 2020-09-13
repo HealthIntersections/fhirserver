@@ -28,7 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
 interface
 
 uses
@@ -372,7 +371,6 @@ begin
   FCompiled.Free;
   inherited;
 end;
-
 
 procedure TFHIRLiquidIf.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
@@ -1006,7 +1004,4 @@ begin
 end;
 
 end.
-
-
-
 

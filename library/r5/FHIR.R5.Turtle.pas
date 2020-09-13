@@ -35,13 +35,11 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   SysUtils, Classes, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Turtle, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
+  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
 
 Type
 
@@ -55,7 +53,6 @@ Type
     procedure ParseDataTypeProperties(obj : TTurtleComplex; value : TFhirDataType);
     procedure ParseBackboneTypeProperties(obj : TTurtleComplex; value : TFhirBackboneType);
     procedure ParsePrimitiveTypeProperties(obj : TTurtleComplex; value : TFhirPrimitiveType);
-
 
     function ParseEnum(obj : TTurtleComplex; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
     function ParseDate(obj : TTurtleComplex) : TFHIRDate; overload;
@@ -201,12 +198,10 @@ Type
     function ParseTiming(obj : TTurtleComplex) : TFhirTiming; overload; {b\}
     procedure ParseTimingProperties(obj : TTurtleComplex; value : TFhirTiming); overload; {b\}
 
-
     procedure ParseResourceProperties(obj : TTurtleComplex; value : TFhirResource);
     procedure ParseDomainResourceProperties(obj : TTurtleComplex; value : TFhirDomainResource);
     procedure ParseCanonicalResourceProperties(obj : TTurtleComplex; value : TFhirCanonicalResource);
     procedure ParseMetadataResourceProperties(obj : TTurtleComplex; value : TFhirMetadataResource);
-
 
 {$IFDEF FHIR_ACCOUNT}
     function ParseAccountCoverage(obj : TTurtleComplex) : TFhirAccountCoverage; overload; {b\}
@@ -1947,12 +1942,10 @@ Type
     procedure ComposeTimingRepeat(parent :  TTurtleComplex; parentType, name : String; value : TFhirTimingRepeat; useType : boolean; index : integer);
     procedure ComposeTiming(parent :  TTurtleComplex; parentType, name : String; value : TFhirTiming; useType : boolean; index : integer);
 
-
     Procedure ComposeResource(this : TTurtleComplex; parentType, name : String; value : TFhirResource; useType : boolean; index : integer); overload;
     Procedure ComposeDomainResource(this : TTurtleComplex; parentType, name : String; value : TFhirDomainResource; useType : boolean; index : integer); overload;
     Procedure ComposeCanonicalResource(this : TTurtleComplex; parentType, name : String; value : TFhirCanonicalResource; useType : boolean; index : integer); overload;
     Procedure ComposeMetadataResource(this : TTurtleComplex; parentType, name : String; value : TFhirMetadataResource; useType : boolean; index : integer); overload;
-
 
 {$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(parent :  TTurtleComplex; parentType, name : String; value : TFhirAccountCoverage; useType : boolean; index : integer);
@@ -2920,10 +2913,8 @@ Type
     procedure ComposeVisionPrescription(parent :  TTurtleComplex; parentType, name : String; value : TFhirVisionPrescription; useType : boolean; index : integer);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; override;
   end;
-
 
 implementation
 
@@ -2950,7 +2941,6 @@ procedure TFHIRTurtleComposer.ComposeBase(parent :  TTurtleComplex; parentType, 
 begin
   // nothing
 end;
-
 
 procedure TFHIRTurtleParser.ParseElementProperties(obj : TTurtleComplex; value : TFhirElement);
 var
@@ -3031,8 +3021,6 @@ Procedure TFHIRTurtleComposer.ComposePrimitiveType(this : TTurtleComplex; parent
 begin
   ComposeDataType(this, '', name, value, false, index);
 end;
-
-
 
 function TFHIRTurtleParser.ParseEnum(obj : TTurtleComplex; Const aNames, aSystems : Array Of String) : TFHIREnum;
 var
@@ -8018,8 +8006,6 @@ begin
     ComposeCodeableConcept(this, 'Timing', 'code', value.codeElement, false, -1); {L763}
 end;
 
-
-
 procedure TFHIRTurtleParser.ParseResourceProperties(obj : TTurtleComplex; value : TFhirResource);
 begin
   ParseBaseProperties(obj, value);
@@ -8093,8 +8079,6 @@ Procedure TFHIRTurtleComposer.ComposeMetadataResource(this : TTurtleComplex; par
 begin
   ComposeCanonicalResource(this, '', name, value, false, index);
 end;
-
-
 
 {$IFDEF FHIR_ACCOUNT}
 function TFHIRTurtleParser.ParseAccountCoverage(obj : TTurtleComplex) : TFhirAccountCoverage;
@@ -52167,7 +52151,6 @@ begin
 end;
 
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-
 
 function TFHIRTurtleParser.ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;
 begin

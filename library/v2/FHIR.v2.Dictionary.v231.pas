@@ -52,7 +52,6 @@ Begin
   oTables.Add(0, 'no table');
 End;
 
-
 procedure LoadTable1(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -63,7 +62,6 @@ Begin
     oTable.Items.Add(3, 'O', 'Other');
     oTable.Items.Add(4, 'U', 'Unknown');
 End;
-
 
 procedure LoadTable2(oTables : THL7V2ModelTables);
 Var
@@ -76,7 +74,6 @@ Begin
     oTable.Items.Add(4, 'S', 'Single');
     oTable.Items.Add(5, 'W', 'Widowed');
 End;
-
 
 procedure LoadTable3(oTables : THL7V2ModelTables);
 Var
@@ -274,7 +271,6 @@ Begin
     oTable.Items.Add(189, 'W02', 'QRF - Waveform result, response to query');
 End;
 
-
 procedure LoadTable4(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -288,18 +284,15 @@ Begin
     oTable.Items.Add(5, 'R', 'Recurring patient');
 End;
 
-
 procedure LoadTable5(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(5, 'Race');
 End;
 
-
 procedure LoadTable6(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(6, 'Religion');
 End;
-
 
 procedure LoadTable7(oTables : THL7V2ModelTables);
 Var
@@ -311,7 +304,6 @@ Begin
     oTable.Items.Add(3, 'L', 'Labor and Delivery');
     oTable.Items.Add(4, 'R', 'Routine');
 End;
-
 
 procedure LoadTable8(oTables : THL7V2ModelTables);
 Var
@@ -325,7 +317,6 @@ Begin
     oTable.Items.Add(5, 'CE', 'Enhanced mode: Accept acknowledgment: Commit Error');
     oTable.Items.Add(6, 'CR', 'Enhanced mode: Accept acknowledgment: Commit Reject');
 End;
-
 
 procedure LoadTable9(oTables : THL7V2ModelTables);
 Var
@@ -350,12 +341,10 @@ Begin
     oTable.Items.Add(16, 'B6', 'Pregnant');
 End;
 
-
 procedure LoadTable10(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(10, 'Physician ID');
 End;
-
 
 procedure LoadTable17(oTables : THL7V2ModelTables);
 Var
@@ -368,30 +357,25 @@ Begin
     oTable.Items.Add(3, 'PY', 'Payment');
 End;
 
-
 procedure LoadTable18(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(18, 'Patient Type');
 End;
-
 
 procedure LoadTable19(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(19, 'Anesthesia Code');
 End;
 
-
 procedure LoadTable21(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(21, 'Bad Debt Agency Code');
 End;
 
-
 procedure LoadTable22(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(22, 'Billing Status');
 End;
-
 
 procedure LoadTable23(oTables : THL7V2ModelTables);
 Var
@@ -409,12 +393,10 @@ Begin
     oTable.Items.Add(9, '9', 'Information not available');
 End;
 
-
 procedure LoadTable24(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(24, 'Fee Schedule');
 End;
-
 
 procedure LoadTable27(oTables : THL7V2ModelTables);
 Var
@@ -428,12 +410,10 @@ Begin
     oTable.Items.Add(5, 'T', 'Timing critical (do as near as possible to requested time)');
 End;
 
-
 procedure LoadTable32(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(32, 'Charge/Price Indicator');
 End;
-
 
 procedure LoadTable38(oTables : THL7V2ModelTables);
 Var
@@ -451,12 +431,10 @@ Begin
     oTable.Items.Add(9, 'SC', 'In process, scheduled');
 End;
 
-
 procedure LoadTable42(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(42, 'Company Plan Code');
 End;
-
 
 procedure LoadTable43(oTables : THL7V2ModelTables);
 Var
@@ -517,24 +495,20 @@ Begin
     oTable.Items.Add(52, '80', 'Pregnant');
 End;
 
-
 procedure LoadTable44(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(44, 'Contract Code');
 End;
-
 
 procedure LoadTable45(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(45, 'Courtesy Code');
 End;
 
-
 procedure LoadTable46(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(46, 'Credit Rating');
 End;
-
 
 procedure LoadTable48(oTables : THL7V2ModelTables);
 Var
@@ -577,24 +551,20 @@ Begin
     oTable.Items.Add(34, 'VXI', 'Vaccine Information');
 End;
 
-
 procedure LoadTable49(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(49, 'Department Code');
 End;
-
 
 procedure LoadTable50(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(50, 'Accident Code');
 End;
 
-
 procedure LoadTable51(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(51, 'Diagnosis Code');
 End;
-
 
 procedure LoadTable52(oTables : THL7V2ModelTables);
 Var
@@ -606,30 +576,25 @@ Begin
     oTable.Items.Add(2, 'W', 'Working');
 End;
 
-
 procedure LoadTable53(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(53, 'Diagnosis Coding Methed');
 End;
-
 
 procedure LoadTable55(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(55, 'Diagnostic Related Group');
 End;
 
-
 procedure LoadTable56(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(56, 'DRG Grouper Review Code');
 End;
 
-
 procedure LoadTable59(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(59, 'Consent Code');
 End;
-
 
 procedure LoadTable61(oTables : THL7V2ModelTables);
 Var
@@ -642,7 +607,6 @@ Begin
     oTable.Items.Add(4, 'NPI', 'Check digit algorithm in the US National Provider Identifier');
 End;
 
-
 procedure LoadTable62(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -653,18 +617,15 @@ Begin
     oTable.Items.Add(3, '03', 'Census management');
 End;
 
-
 procedure LoadTable63(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(63, 'Relationship');
 End;
 
-
 procedure LoadTable64(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(64, 'Financial Class');
 End;
-
 
 procedure LoadTable65(oTables : THL7V2ModelTables);
 Var
@@ -680,24 +641,20 @@ Begin
     oTable.Items.Add(7, 'S', 'Schedule the tests specified below');
 End;
 
-
 procedure LoadTable66(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(66, 'Employment Status');
 End;
-
 
 procedure LoadTable68(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(68, 'Guarantor Type');
 End;
 
-
 procedure LoadTable69(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(69, 'Hospital Service');
 End;
-
 
 procedure LoadTable70(oTables : THL7V2ModelTables);
 Var
@@ -830,18 +787,15 @@ Begin
     oTable.Items.Add(124, 'XXX', 'To be specified in another part of the 422.3.10070message');
 End;
 
-
 procedure LoadTable72(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(72, 'Insurance Plan ID');
 End;
 
-
 procedure LoadTable73(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(73, 'Interest Rate Code');
 End;
-
 
 procedure LoadTable74(oTables : THL7V2ModelTables);
 Var
@@ -888,7 +842,6 @@ Begin
     oTable.Items.Add(37, 'VUS', 'Vascular Ultrasound');
     oTable.Items.Add(39, 'XRC', 'Cineradiograph');
 End;
-
 
 procedure LoadTable76(oTables : THL7V2ModelTables);
 Var
@@ -978,7 +931,6 @@ Begin
     oTable.Items.Add(79, 'VXX', 'Vaccination query response with multiple PID matches');
 End;
 
-
 procedure LoadTable78(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1005,7 +957,6 @@ Begin
     oTable.Items.Add(14, 'W', 'Worse--use when direction not relevant');
 End;
 
-
 procedure LoadTable80(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1017,7 +968,6 @@ Begin
     oTable.Items.Add(4, 'S', 'A sex-based population');
 End;
 
-
 procedure LoadTable83(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1027,12 +977,10 @@ Begin
     oTable.Items.Add(1, 'D', 'Outlier days');
 End;
 
-
 procedure LoadTable84(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(84, 'Performed By Code');
 End;
-
 
 procedure LoadTable85(oTables : THL7V2ModelTables);
 Var
@@ -1053,30 +1001,25 @@ Begin
     oTable.Items.Add(10, 'X', 'Results cannot be obtained for this observation');
 End;
 
-
 procedure LoadTable86(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(86, 'Plan Type');
 End;
-
 
 procedure LoadTable87(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(87, 'Preadmit Test Indicator');
 End;
 
-
 procedure LoadTable88(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(88, 'Procedure Code');
 End;
 
-
 procedure LoadTable89(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(89, 'Procedure Coding Method');
 End;
-
 
 procedure LoadTable91(oTables : THL7V2ModelTables);
 Var
@@ -1087,12 +1030,10 @@ Begin
     oTable.Items.Add(2, 'I', 'Immediate');
 End;
 
-
 procedure LoadTable92(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(92, 'Re-admission Indicator');
 End;
-
 
 procedure LoadTable93(oTables : THL7V2ModelTables);
 Var
@@ -1102,7 +1043,6 @@ Begin
     oTable.Items.Add(2, 'N', 'No');
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
-
 
 procedure LoadTable98(oTables : THL7V2ModelTables);
 Var
@@ -1114,12 +1054,10 @@ Begin
     oTable.Items.Add(2, 'U', 'Unified');
 End;
 
-
 procedure LoadTable99(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(99, 'VIP Indicator');
 End;
-
 
 procedure LoadTable100(oTables : THL7V2ModelTables);
 Var
@@ -1133,7 +1071,6 @@ Begin
     oTable.Items.Add(5, 'T', 'At a designated date/time');
 End;
 
-
 procedure LoadTable102(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1142,7 +1079,6 @@ Begin
     oTable.Items.Add(1, 'D', 'Message received, stored for later processing');
     oTable.Items.Add(2, 'F', 'Acknowledgment after processing');
 End;
-
 
 procedure LoadTable103(oTables : THL7V2ModelTables);
 Var
@@ -1153,7 +1089,6 @@ Begin
     oTable.Items.Add(2, 'P', 'Production');
     oTable.Items.Add(3, 'T', 'Training');
 End;
-
 
 procedure LoadTable104(oTables : THL7V2ModelTables);
 Var
@@ -1169,7 +1104,6 @@ Begin
     oTable.Items.Add(7, '2.3.2', 'Release 2.3.2');
 End;
 
-
 procedure LoadTable105(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1179,7 +1113,6 @@ Begin
     oTable.Items.Add(3, 'O', 'Other system is source of comment');
     oTable.Items.Add(2, 'P', 'Orderer (placer) is source of comment');
 End;
-
 
 procedure LoadTable106(oTables : THL7V2ModelTables);
 Var
@@ -1191,7 +1124,6 @@ Begin
     oTable.Items.Add(3, 'T', 'Response is in tabular format');
 End;
 
-
 procedure LoadTable107(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1200,7 +1132,6 @@ Begin
     oTable.Items.Add(1, 'B', 'Before the Date/Time specified');
     oTable.Items.Add(2, 'L', 'Later than the Date/Time specified');
 End;
-
 
 procedure LoadTable108(oTables : THL7V2ModelTables);
 Var
@@ -1213,7 +1144,6 @@ Begin
     oTable.Items.Add(4, 'T', 'Full results');
 End;
 
-
 procedure LoadTable109(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1223,18 +1153,15 @@ Begin
     oTable.Items.Add(2, 'S', 'Stat');
 End;
 
-
 procedure LoadTable110(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(110, 'Transfer to Bad Debt Code');
 End;
 
-
 procedure LoadTable111(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(111, 'Delete Account Code');
 End;
-
 
 procedure LoadTable112(oTables : THL7V2ModelTables);
 Var
@@ -1285,24 +1212,20 @@ Begin
     oTable.Items.Add(42, '42', 'Expired - place unknown');
 End;
 
-
 procedure LoadTable113(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(113, 'Discharged to Location');
 End;
-
 
 procedure LoadTable114(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(114, 'Diet Type');
 End;
 
-
 procedure LoadTable115(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(115, 'Servicing Facility');
 End;
-
 
 procedure LoadTable116(oTables : THL7V2ModelTables);
 Var
@@ -1317,18 +1240,15 @@ Begin
     oTable.Items.Add(4, 'U', 'Unoccupied');
 End;
 
-
 procedure LoadTable117(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(117, 'Account Status');
 End;
 
-
 procedure LoadTable118(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(118, 'Major Diagnostic Category');
 End;
-
 
 procedure LoadTable119(oTables : THL7V2ModelTables);
 Var
@@ -1384,7 +1304,6 @@ Begin
     oTable.Items.Add(35, 'XX', 'Order changed, unsol. (O01)');
 End;
 
-
 procedure LoadTable121(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1396,7 +1315,6 @@ Begin
     oTable.Items.Add(5, 'N', 'Only the MSA segment is returned');
     oTable.Items.Add(2, 'R', 'Same as E, also Replacement and Parent-Child');
 End;
-
 
 procedure LoadTable122(oTables : THL7V2ModelTables);
 Var
@@ -1412,7 +1330,6 @@ Begin
     oTable.Items.Add(7, 'PC', 'Professional');
     oTable.Items.Add(8, 'RS', 'Research');
 End;
-
 
 procedure LoadTable123(oTables : THL7V2ModelTables);
 Var
@@ -1432,7 +1349,6 @@ Begin
     oTable.Items.Add(11, 'Z', 'No record of this patient. (Used only on queries)');
 End;
 
-
 procedure LoadTable124(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1443,7 +1359,6 @@ Begin
     oTable.Items.Add(3, 'WALK', 'Patient walks to diagnostic service');
     oTable.Items.Add(4, 'WHLC', 'Wheelchair');
 End;
-
 
 procedure LoadTable125(oTables : THL7V2ModelTables);
 Var
@@ -1477,7 +1392,6 @@ Begin
     oTable.Items.Add(25, 'XTN', 'Extended Telecommunications Number');
 End;
 
-
 procedure LoadTable126(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1490,7 +1404,6 @@ Begin
     oTable.Items.Add(5, 'ZO', 'Locally defined');
 End;
 
-
 procedure LoadTable127(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1502,7 +1415,6 @@ Begin
     oTable.Items.Add(4, 'MC', 'Miscellaneous contraindication');
 End;
 
-
 procedure LoadTable128(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1513,30 +1425,25 @@ Begin
     oTable.Items.Add(1, 'SV', 'Severe');
 End;
 
-
 procedure LoadTable129(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(129, 'Accommodation Code');
 End;
-
 
 procedure LoadTable130(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(130, 'Visit User Code');
 End;
 
-
 procedure LoadTable131(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(131, 'Contact Role');
 End;
 
-
 procedure LoadTable132(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(132, 'Transaction Code');
 End;
-
 
 procedure LoadTable133(oTables : THL7V2ModelTables);
 Var
@@ -1554,7 +1461,6 @@ Begin
     oTable.Items.Add(7, 'SN', 'Scrub Nurse');
 End;
 
-
 procedure LoadTable135(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1565,7 +1471,6 @@ Begin
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
 
-
 procedure LoadTable136(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1574,7 +1479,6 @@ Begin
     oTable.Items.Add(2, 'N', 'No');
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
-
 
 procedure LoadTable137(oTables : THL7V2ModelTables);
 Var
@@ -1588,12 +1492,10 @@ Begin
     oTable.Items.Add(5, 'P', 'Patient');
 End;
 
-
 procedure LoadTable139(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(139, 'Employer Information Data');
 End;
-
 
 procedure LoadTable140(oTables : THL7V2ModelTables);
 Var
@@ -1610,7 +1512,6 @@ Begin
     oTable.Items.Add(6, 'USPHS', 'U.S. Public Health Service');
 End;
 
-
 procedure LoadTable141(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1620,7 +1521,6 @@ Begin
     oTable.Items.Add(2, 'O1 ... O10', 'Officers');
     oTable.Items.Add(3, 'W1 ... W4', 'Warrant Officers');
 End;
-
 
 procedure LoadTable142(oTables : THL7V2ModelTables);
 Var
@@ -1632,12 +1532,10 @@ Begin
     oTable.Items.Add(2, 'RET', 'Retired');
 End;
 
-
 procedure LoadTable143(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(143, 'Non-covered Insurance Code');
 End;
-
 
 procedure LoadTable144(oTables : THL7V2ModelTables);
 Var
@@ -1653,7 +1551,6 @@ Begin
     oTable.Items.Add(7, '7', 'None');
 End;
 
-
 procedure LoadTable145(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1667,7 +1564,6 @@ Begin
     oTable.Items.Add(3, 'SPR', 'Semi-private room');
 End;
 
-
 procedure LoadTable146(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1679,7 +1575,6 @@ Begin
     oTable.Items.Add(4, 'RT', 'Rate');
     oTable.Items.Add(5, 'UL', 'Unlimited');
 End;
-
 
 procedure LoadTable147(oTables : THL7V2ModelTables);
 Var
@@ -1693,7 +1588,6 @@ Begin
     oTable.Items.Add(3, 'MMD', 'Major medical');
 End;
 
-
 procedure LoadTable148(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1702,7 +1596,6 @@ Begin
     oTable.Items.Add(1, 'AT', 'Currency amount');
     oTable.Items.Add(2, 'PC', 'Percentage');
 End;
-
 
 procedure LoadTable149(oTables : THL7V2ModelTables);
 Var
@@ -1713,7 +1606,6 @@ Begin
     oTable.Items.Add(2, 'DE', 'Denied');
     oTable.Items.Add(3, 'PE', 'Pending');
 End;
-
 
 procedure LoadTable150(oTables : THL7V2ModelTables);
 Var
@@ -1726,18 +1618,15 @@ Begin
     oTable.Items.Add(4, 'UR', 'Urgent');
 End;
 
-
 procedure LoadTable151(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(151, 'Second Opinion Status');
 End;
 
-
 procedure LoadTable152(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(152, 'Second Opinion Documentation Received');
 End;
-
 
 procedure LoadTable153(oTables : THL7V2ModelTables);
 Var
@@ -1800,7 +1689,6 @@ Begin
     oTable.Items.Add(54, 'X4', 'Supplemental coverage');
 End;
 
-
 procedure LoadTable155(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1811,7 +1699,6 @@ Begin
     oTable.Items.Add(2, 'NE', 'Never');
     oTable.Items.Add(4, 'SU', 'Successful completion only');
 End;
-
 
 procedure LoadTable156(oTables : THL7V2ModelTables);
 Var
@@ -1826,7 +1713,6 @@ Begin
     oTable.Items.Add(6, 'SCHED', 'Schedule date/time');
 End;
 
-
 procedure LoadTable157(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1840,7 +1726,6 @@ Begin
     oTable.Items.Add(6, 'REP', 'Report completion date/time');
 End;
 
-
 procedure LoadTable158(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1852,7 +1737,6 @@ Begin
     oTable.Items.Add(4, 'REV', 'All values within the range returned in reverse chronological order (This is the default if not otherwise specified.)');
 End;
 
-
 procedure LoadTable159(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1862,7 +1746,6 @@ Begin
     oTable.Items.Add(3, 'P', 'Preference');
     oTable.Items.Add(2, 'S', 'Supplement');
 End;
-
 
 procedure LoadTable160(oTables : THL7V2ModelTables);
 Var
@@ -1876,7 +1759,6 @@ Begin
     oTable.Items.Add(4, 'NO', 'No tray');
 End;
 
-
 procedure LoadTable161(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -1886,7 +1768,6 @@ Begin
     oTable.Items.Add(1, 'N', 'Substitutions are NOT authorized.  (This is the default - null.)');
     oTable.Items.Add(3, 'T', 'Allow therapeutic substitutions');
 End;
-
 
 procedure LoadTable162(oTables : THL7V2ModelTables);
 Var
@@ -1941,7 +1822,6 @@ Begin
     oTable.Items.Add(46, 'VM', 'Ventimask');
     oTable.Items.Add(47, 'WND', 'Wound');
 End;
-
 
 procedure LoadTable163(oTables : THL7V2ModelTables);
 Var
@@ -2004,7 +1884,6 @@ Begin
     oTable.Items.Add(53, 'RVL', 'Right Vastus Lateralis');
 End;
 
-
 procedure LoadTable164(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2020,7 +1899,6 @@ Begin
     oTable.Items.Add(8, 'NEB', 'Nebulizer');
     oTable.Items.Add(9, 'PCA', 'PCA Pump');
 End;
-
 
 procedure LoadTable165(oTables : THL7V2ModelTables);
 Var
@@ -2044,7 +1922,6 @@ Begin
     oTable.Items.Add(15, 'WI', 'Wipe');
 End;
 
-
 procedure LoadTable166(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2053,7 +1930,6 @@ Begin
     oTable.Items.Add(2, 'A', 'Additive');
     oTable.Items.Add(1, 'B', 'Base');
 End;
-
 
 procedure LoadTable167(oTables : THL7V2ModelTables);
 Var
@@ -2073,7 +1949,6 @@ Begin
     oTable.Items.Add(3, 'T', 'A therapeutic substitution was dispensed.');
 End;
 
-
 procedure LoadTable168(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2088,7 +1963,6 @@ Begin
     oTable.Items.Add(5, 'T', 'Timing critical (do as near as possible to requested time)');
 End;
 
-
 procedure LoadTable169(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2097,7 +1971,6 @@ Begin
     oTable.Items.Add(1, 'C', 'Call back results');
     oTable.Items.Add(2, 'R', 'Rush reporting');
 End;
-
 
 procedure LoadTable170(oTables : THL7V2ModelTables);
 Var
@@ -2109,18 +1982,15 @@ Begin
     oTable.Items.Add(1, 'P', 'Parent Observation');
 End;
 
-
 procedure LoadTable171(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(171, 'Citizenship');
 End;
 
-
 procedure LoadTable172(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(172, 'Veterans Military Status');
 End;
-
 
 procedure LoadTable173(oTables : THL7V2ModelTables);
 Var
@@ -2130,7 +2000,6 @@ Begin
     oTable.Items.Add(1, 'CO', 'Coordination');
     oTable.Items.Add(2, 'IN', 'Independent');
 End;
-
 
 procedure LoadTable174(oTables : THL7V2ModelTables);
 Var
@@ -2143,7 +2012,6 @@ Begin
     oTable.Items.Add(1, 'P', 'Profile or battery consisting of many independent atomic observations (e.g., SMA12, electrolytes), usually done at one instrument on one specimen');
     oTable.Items.Add(4, 'S', 'Superset--a set of batteries or procedures ordered under a single code unit but processed as separate batteries (e.g., routines = CBC, UA, electrolytes)');
 End;
-
 
 procedure LoadTable175(oTables : THL7V2ModelTables);
 Var
@@ -2162,7 +2030,6 @@ Begin
     oTable.Items.Add(10, 'STF', 'Staff master file');
 End;
 
-
 procedure LoadTable177(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2180,7 +2047,6 @@ Begin
     oTable.Items.Add(6, 'VIP', 'Very important person or celebrity');
 End;
 
-
 procedure LoadTable178(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2189,7 +2055,6 @@ Begin
     oTable.Items.Add(1, 'REP', 'Replace current version of this master file with the version contained in this message');
     oTable.Items.Add(2, 'UPD', 'Change file records as defined in the record-level event codes for each record that follows');
 End;
-
 
 procedure LoadTable179(oTables : THL7V2ModelTables);
 Var
@@ -2201,7 +2066,6 @@ Begin
     oTable.Items.Add(1, 'NE', 'Never.  No application-level response needed');
     oTable.Items.Add(4, 'SU', 'Success.  Only MFA segments denoting success must be returned via the application-level acknowledgment for this message');
 End;
-
 
 procedure LoadTable180(oTables : THL7V2ModelTables);
 Var
@@ -2215,7 +2079,6 @@ Begin
     oTable.Items.Add(3, 'MUP', 'Update record for master file');
 End;
 
-
 procedure LoadTable181(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2225,12 +2088,10 @@ Begin
     oTable.Items.Add(2, 'U', 'Unsuccessful posting of the record defined by the MFE segment');
 End;
 
-
 procedure LoadTable182(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(182, 'Staff Type');
 End;
-
 
 procedure LoadTable183(oTables : THL7V2ModelTables);
 Var
@@ -2241,12 +2102,10 @@ Begin
     oTable.Items.Add(2, 'I', 'Inactive Staff');
 End;
 
-
 procedure LoadTable184(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(184, 'Department');
 End;
-
 
 procedure LoadTable185(oTables : THL7V2ModelTables);
 Var
@@ -2261,12 +2120,10 @@ Begin
     oTable.Items.Add(2, 'O', 'Office Phone Number');
 End;
 
-
 procedure LoadTable186(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(186, 'Practioner Category');
 End;
-
 
 procedure LoadTable187(oTables : THL7V2ModelTables);
 Var
@@ -2277,18 +2134,15 @@ Begin
     oTable.Items.Add(1, 'P', 'Provider does own billing');
 End;
 
-
 procedure LoadTable188(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(188, 'Operator ID');
 End;
 
-
 procedure LoadTable189(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(189, 'Ethnic Group');
 End;
-
 
 procedure LoadTable190(oTables : THL7V2ModelTables);
 Var
@@ -2310,7 +2164,6 @@ Begin
     oTable.Items.Add(12, 'RH', 'Registry home.  Refers to the information system, typically managed by a public health agency, that  stores patient information such as immunization histories or cancer data, regardless of where the patient obtains services.');
 End;
 
-
 procedure LoadTable191(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2331,7 +2184,6 @@ Begin
     oTable.Items.Add(4, 'TX', 'Machine readable text document (HL7 V2.2 only)');
 End;
 
-
 procedure LoadTable193(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2342,7 +2194,6 @@ Begin
     oTable.Items.Add(3, 'PC', 'Percentage');
     oTable.Items.Add(4, 'UL', 'Unlimited');
 End;
-
 
 procedure LoadTable200(oTables : THL7V2ModelTables);
 Var
@@ -2361,7 +2212,6 @@ Begin
     oTable.Items.Add(10, 'U', 'Unspecified');
 End;
 
-
 procedure LoadTable201(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2377,7 +2227,6 @@ Begin
     oTable.Items.Add(3, 'WPN', 'Work Number');
 End;
 
-
 procedure LoadTable202(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2391,7 +2240,6 @@ Begin
     oTable.Items.Add(1, 'PH', 'Telephone');
     oTable.Items.Add(7, 'X.400', 'X.400 email address: Use Only If Telecommunication Use Code Is NET');
 End;
-
 
 procedure LoadTable203(oTables : THL7V2ModelTables);
 Var
@@ -2438,7 +2286,6 @@ Begin
     oTable.Items.Add(38, 'XX', 'Organization identifier');
 End;
 
-
 procedure LoadTable204(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2449,7 +2296,6 @@ Begin
     oTable.Items.Add(2, 'L', 'Legal name');
     oTable.Items.Add(4, 'SL', 'Stock exchange listing name');
 End;
-
 
 procedure LoadTable205(oTables : THL7V2ModelTables);
 Var
@@ -2465,7 +2311,6 @@ Begin
     oTable.Items.Add(3, 'UP', 'unit price, may be based on length of procedure or service');
 End;
 
-
 procedure LoadTable206(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2475,7 +2320,6 @@ Begin
     oTable.Items.Add(2, 'D', 'Delete');
     oTable.Items.Add(3, 'U', 'Update');
 End;
-
 
 procedure LoadTable207(oTables : THL7V2ModelTables);
 Var
@@ -2489,7 +2333,6 @@ Begin
     oTable.Items.Add(4, 'T', 'Current processing, transmitted at intervals (scheduled or on demand)');
 End;
 
-
 procedure LoadTable208(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2500,7 +2343,6 @@ Begin
     oTable.Items.Add(2, 'NF', 'No data found, no errors');
     oTable.Items.Add(1, 'OK', 'Data found, no errors (this is the default)');
 End;
-
 
 procedure LoadTable209(oTables : THL7V2ModelTables);
 Var
@@ -2517,7 +2359,6 @@ Begin
     oTable.Items.Add(2, 'NE', 'Not Equal');
 End;
 
-
 procedure LoadTable210(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2526,7 +2367,6 @@ Begin
     oTable.Items.Add(1, 'AND', 'Default');
     oTable.Items.Add(2, 'OR', '');
 End;
-
 
 procedure LoadTable211(oTables : THL7V2ModelTables);
 Var
@@ -2549,12 +2389,10 @@ Begin
     oTable.Items.Add(14, 'UNICODE', 'The world wide character standard from ISO/IEC 10646-1-1993');
 End;
 
-
 procedure LoadTable212(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(212, 'Nationality');
 End;
-
 
 procedure LoadTable213(oTables : THL7V2ModelTables);
 Var
@@ -2566,42 +2404,35 @@ Begin
     oTable.Items.Add(1, 'P', 'Marked for purge.  User is no longer able to update the visit.');
 End;
 
-
 procedure LoadTable214(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(214, 'Special Program Codes');
 End;
-
 
 procedure LoadTable215(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(215, 'Publicity Code');
 End;
 
-
 procedure LoadTable216(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(216, 'Patient Status Code');
 End;
-
 
 procedure LoadTable217(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(217, 'Visit Priority Code');
 End;
 
-
 procedure LoadTable218(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(218, 'Patient Charge Adjustment Code');
 End;
 
-
 procedure LoadTable219(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(219, 'Recurring Service Code');
 End;
-
 
 procedure LoadTable220(oTables : THL7V2ModelTables);
 Var
@@ -2616,12 +2447,10 @@ Begin
     oTable.Items.Add(5, 'U', 'Unknown');
 End;
 
-
 procedure LoadTable222(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(222, 'Contact Reason');
 End;
-
 
 procedure LoadTable223(oTables : THL7V2ModelTables);
 Var
@@ -2635,7 +2464,6 @@ Begin
     oTable.Items.Add(4, 'WU', 'Walk up');
 End;
 
-
 procedure LoadTable224(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2646,7 +2474,6 @@ Begin
     oTable.Items.Add(3, 'U', 'Unknown');
 End;
 
-
 procedure LoadTable225(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2656,7 +2483,6 @@ Begin
     oTable.Items.Add(1, 'R', 'Required');
     oTable.Items.Add(3, 'U', 'Unknown');
 End;
-
 
 procedure LoadTable227(oTables : THL7V2ModelTables);
 Var
@@ -2707,7 +2533,6 @@ Begin
     oTable.Items.Add(40, 'WAL', 'Wyeth-Ayerst (includes Wyeth-Lederle Vaccines and Pediatrics, Wyeth Laboratories, Lederle Laboratories, and Praxis Biologics)');
 End;
 
-
 procedure LoadTable228(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2723,7 +2548,6 @@ Begin
     oTable.Items.Add(7, 'T', 'Tissue diagnosis');
 End;
 
-
 procedure LoadTable229(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2733,7 +2557,6 @@ Begin
     oTable.Items.Add(3, 'G', 'Managed Care Organization');
     oTable.Items.Add(1, 'M', 'Medicare');
 End;
-
 
 procedure LoadTable230(oTables : THL7V2ModelTables);
 Var
@@ -2746,7 +2569,6 @@ Begin
     oTable.Items.Add(2, 'P', 'Procedure for treatment (therapeutic, including operations)');
 End;
 
-
 procedure LoadTable231(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2756,7 +2578,6 @@ Begin
     oTable.Items.Add(3, 'N', 'Not a student');
     oTable.Items.Add(2, 'P', 'Part-time student');
 End;
-
 
 procedure LoadTable232(oTables : THL7V2ModelTables);
 Var
@@ -2768,12 +2589,10 @@ Begin
     oTable.Items.Add(3, '03', 'Name/address change');
 End;
 
-
 procedure LoadTable233(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(233, 'Non-concur Code/Description');
 End;
-
 
 procedure LoadTable234(oTables : THL7V2ModelTables);
 Var
@@ -2792,7 +2611,6 @@ Begin
     oTable.Items.Add(3, 'RQ', 'Requested information');
 End;
 
-
 procedure LoadTable235(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2810,7 +2628,6 @@ Begin
     oTable.Items.Add(4, 'R', 'Regulatory agency');
 End;
 
-
 procedure LoadTable236(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2821,7 +2638,6 @@ Begin
     oTable.Items.Add(1, 'M', 'Manufacturer');
     oTable.Items.Add(3, 'R', 'Regulatory agency');
 End;
-
 
 procedure LoadTable237(oTables : THL7V2ModelTables);
 Var
@@ -2838,7 +2654,6 @@ Begin
     oTable.Items.Add(7, 'W', 'Drug withdrawal');
 End;
 
-
 procedure LoadTable238(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2849,7 +2664,6 @@ Begin
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
 
-
 procedure LoadTable239(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2859,7 +2673,6 @@ Begin
     oTable.Items.Add(3, 'U', 'Unknown');
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
-
 
 procedure LoadTable240(oTables : THL7V2ModelTables);
 Var
@@ -2877,7 +2690,6 @@ Begin
     oTable.Items.Add(8, 'R', 'Required intervention to prevent permanent impairment/damage');
 End;
 
-
 procedure LoadTable241(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2891,7 +2703,6 @@ Begin
     oTable.Items.Add(7, 'U', 'Unknown');
     oTable.Items.Add(4, 'W', 'Worsening');
 End;
-
 
 procedure LoadTable242(oTables : THL7V2ModelTables);
 Var
@@ -2907,7 +2718,6 @@ Begin
     oTable.Items.Add(2, 'R', 'Pharmacist');
 End;
 
-
 procedure LoadTable243(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2918,24 +2728,20 @@ Begin
     oTable.Items.Add(1, 'Y', 'Yes');
 End;
 
-
 procedure LoadTable244(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(244, 'Single Use Device');
 End;
-
 
 procedure LoadTable245(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(245, 'Product Problem');
 End;
 
-
 procedure LoadTable246(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(246, 'Product Available For Inspection');
 End;
-
 
 procedure LoadTable247(oTables : THL7V2ModelTables);
 Var
@@ -2956,7 +2762,6 @@ Begin
     oTable.Items.Add(1, 'Y', 'Evaluation completed');
 End;
 
-
 procedure LoadTable248(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -2968,12 +2773,10 @@ Begin
     oTable.Items.Add(3, 'R', 'A product from a reserve sample was evaluated');
 End;
 
-
 procedure LoadTable249(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(249, 'Generic Product');
 End;
-
 
 procedure LoadTable250(oTables : THL7V2ModelTables);
 Var
@@ -2987,7 +2790,6 @@ Begin
     oTable.Items.Add(3, 'S', 'Somewhat probable');
 End;
 
-
 procedure LoadTable251(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3000,7 +2802,6 @@ Begin
     oTable.Items.Add(1, 'WP', 'Product withdrawn permanently');
     oTable.Items.Add(2, 'WT', 'Product withdrawn temporarily');
 End;
-
 
 procedure LoadTable252(oTables : THL7V2ModelTables);
 Var
@@ -3020,7 +2821,6 @@ Begin
     oTable.Items.Add(7, 'TC', 'Toxic levels of product documented in blood or body fluids');
 End;
 
-
 procedure LoadTable253(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3032,7 +2832,6 @@ Begin
     oTable.Items.Add(2, 'P', 'Transplacental');
     oTable.Items.Add(4, 'X', 'Blood product');
 End;
-
 
 procedure LoadTable254(oTables : THL7V2ModelTables);
 Var
@@ -3143,7 +2942,6 @@ Begin
     oTable.Items.Add(39, 'VRTO', '*Volume Ratio');
 End;
 
-
 procedure LoadTable255(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3176,7 +2974,6 @@ Begin
     oTable.Items.Add(12, '8H', '8 hours');
     oTable.Items.Add(1, 'PT', 'To identify measures at a point in time.  This is a synonym for "spot" or "random" as applied to urine measurements.');
 End;
-
 
 procedure LoadTable256(oTables : THL7V2ModelTables);
 Var
@@ -3229,7 +3026,6 @@ Begin
     oTable.Items.Add(3, 'TROUGH', 'The time post drug dose at which the lowest drug level is reached (varies with drug)');
 End;
 
-
 procedure LoadTable257(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3239,7 +3035,6 @@ Begin
     oTable.Items.Add(2, 'EXCZ', 'Exercise undertaken as challenge (can be quantified)');
     oTable.Items.Add(3, 'FFST', 'No fluid intake for the period specified in the time component of the term');
 End;
-
 
 procedure LoadTable258(oTables : THL7V2ModelTables);
 Var
@@ -3251,7 +3046,6 @@ Begin
     oTable.Items.Add(3, 'DONOR', 'Donor');
     oTable.Items.Add(2, 'PATIENT', 'Patient');
 End;
-
 
 procedure LoadTable259(oTables : THL7V2ModelTables);
 Var
@@ -3286,7 +3080,6 @@ Begin
     oTable.Items.Add(26, 'XA', 'X-ray Angiography');
 End;
 
-
 procedure LoadTable260(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3301,7 +3094,6 @@ Begin
     oTable.Items.Add(5, 'O', 'Operating Room');
     oTable.Items.Add(2, 'R', 'Room');
 End;
-
 
 procedure LoadTable261(oTables : THL7V2ModelTables);
 Var
@@ -3318,7 +3110,6 @@ Begin
     oTable.Items.Add(3, 'VIT', 'Vital signs monitor');
 End;
 
-
 procedure LoadTable262(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3331,7 +3122,6 @@ Begin
     oTable.Items.Add(5, 'S', 'Semi-private room');
     oTable.Items.Add(6, 'W', 'Ward');
 End;
-
 
 procedure LoadTable263(oTables : THL7V2ModelTables);
 Var
@@ -3347,12 +3137,10 @@ Begin
     oTable.Items.Add(7, 'S', 'Surgery');
 End;
 
-
 procedure LoadTable264(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(264, 'Location Department');
 End;
-
 
 procedure LoadTable265(oTables : THL7V2ModelTables);
 Var
@@ -3387,7 +3175,6 @@ Begin
     oTable.Items.Add(19, 'WIC', 'Walk-in clinic');
 End;
 
-
 procedure LoadTable267(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3402,7 +3189,6 @@ Begin
     oTable.Items.Add(5, 'WED', 'Wednesday');
 End;
 
-
 procedure LoadTable268(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3413,7 +3199,6 @@ Begin
     oTable.Items.Add(1, 'X', 'Override not allowed');
 End;
 
-
 procedure LoadTable269(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3422,7 +3207,6 @@ Begin
     oTable.Items.Add(1, 'O', 'Charge on Order');
     oTable.Items.Add(2, 'R', 'Charge on Result');
 End;
-
 
 procedure LoadTable270(oTables : THL7V2ModelTables);
 Var
@@ -3445,7 +3229,6 @@ Begin
     oTable.Items.Add(14, 'TS', 'Transfer summary');
 End;
 
-
 procedure LoadTable271(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3460,7 +3243,6 @@ Begin
     oTable.Items.Add(5, 'PA', 'Pre-authenticated');
 End;
 
-
 procedure LoadTable272(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3470,7 +3252,6 @@ Begin
     oTable.Items.Add(3, 'U', 'Usual control');
     oTable.Items.Add(1, 'V', 'Very restricted');
 End;
-
 
 procedure LoadTable273(oTables : THL7V2ModelTables);
 Var
@@ -3483,7 +3264,6 @@ Begin
     oTable.Items.Add(4, 'UN', 'Unavailable for patient care');
 End;
 
-
 procedure LoadTable275(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3494,7 +3274,6 @@ Begin
     oTable.Items.Add(3, 'AR', 'Archived (not active)');
     oTable.Items.Add(4, 'PU', 'Purged');
 End;
-
 
 procedure LoadTable276(oTables : THL7V2ModelTables);
 Var
@@ -3508,7 +3287,6 @@ Begin
     oTable.Items.Add(2, 'WALKIN', 'A previously unscheduled walk-in visit');
 End;
 
-
 procedure LoadTable277(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3518,7 +3296,6 @@ Begin
     oTable.Items.Add(1, 'Normal', 'Routine schedule request type - default if not valued');
     oTable.Items.Add(2, 'Tentative', 'A request for a tentative (e.g., '#147'penciled in'#148') appointment');
 End;
-
 
 procedure LoadTable278(oTables : THL7V2ModelTables);
 Var
@@ -3537,7 +3314,6 @@ Begin
     oTable.Items.Add(2, 'Waitlist', 'Appointment has been placed on a waiting list for a particular slot, or set of slots');
 End;
 
-
 procedure LoadTable279(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3549,7 +3325,6 @@ Begin
     oTable.Items.Add(4, 'Yes', 'Substitution of this resource is allowed');
 End;
 
-
 procedure LoadTable280(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3559,7 +3334,6 @@ Begin
     oTable.Items.Add(3, 'R', 'Routine');
     oTable.Items.Add(1, 'S', 'STAT');
 End;
-
 
 procedure LoadTable281(oTables : THL7V2ModelTables);
 Var
@@ -3574,7 +3348,6 @@ Begin
     oTable.Items.Add(4, 'Skn', 'Skilled Nursing');
 End;
 
-
 procedure LoadTable282(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3585,7 +3358,6 @@ Begin
     oTable.Items.Add(4, 'SO', 'Second Opinion');
     oTable.Items.Add(1, 'WR', 'Send Written Report');
 End;
-
 
 procedure LoadTable283(oTables : THL7V2ModelTables);
 Var
@@ -3598,7 +3370,6 @@ Begin
     oTable.Items.Add(3, 'R', 'Rejected');
 End;
 
-
 procedure LoadTable284(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3610,12 +3381,10 @@ Begin
     oTable.Items.Add(2, 'O', 'Outpatient');
 End;
 
-
 procedure LoadTable285(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(285, 'Insurance company ID codes');
 End;
-
 
 procedure LoadTable286(oTables : THL7V2ModelTables);
 Var
@@ -3627,7 +3396,6 @@ Begin
     oTable.Items.Add(1, 'RP', 'Referring Provider');
     oTable.Items.Add(4, 'RT', 'Referred to Provider');
 End;
-
 
 procedure LoadTable287(oTables : THL7V2ModelTables);
 Var
@@ -3643,24 +3411,20 @@ Begin
     oTable.Items.Add(7, 'UP', 'UPDATE');
 End;
 
-
 procedure LoadTable288(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(288, 'Census Tract');
 End;
-
 
 procedure LoadTable289(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(289, 'County Code');
 End;
 
-
 procedure LoadTable290(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(290, 'MIME base64 encoding characters');
 End;
-
 
 procedure LoadTable291(oTables : THL7V2ModelTables);
 Var
@@ -3682,7 +3446,6 @@ Begin
     oTable.Items.Add(1, 'TIFF', 'TIFF image data');
     oTable.Items.Add(13, 'XML', 'Extensible Markup Language (HL7 V2.3.1 and later)');
 End;
-
 
 procedure LoadTable292(oTables : THL7V2ModelTables);
 Var
@@ -3783,12 +3546,10 @@ Begin
     oTable.Items.Add(90, '92', 'VEE, NOS');
 End;
 
-
 procedure LoadTable293(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(293, 'Billing Category');
 End;
-
 
 procedure LoadTable294(oTables : THL7V2ModelTables);
 Var
@@ -3806,24 +3567,20 @@ Begin
     oTable.Items.Add(5, 'WED', 'An indicator that Wednesday is or is not preferred for the day on which the appointment will occur. OK = Preferred appointment day NO = Day is not preferred');
 End;
 
-
 procedure LoadTable295(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(295, 'Handicap');
 End;
-
 
 procedure LoadTable296(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(296, 'Primary Language');
 End;
 
-
 procedure LoadTable297(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(297, 'CN ID source');
 End;
-
 
 procedure LoadTable298(oTables : THL7V2ModelTables);
 Var
@@ -3833,7 +3590,6 @@ Begin
     oTable.Items.Add(2, 'F', 'Flat-rate.  Apply the entire price to this interval, do not pro-rate the price if the full interval has not occurred/been consumed');
     oTable.Items.Add(1, 'P', 'Pro-rate.  Apply this price to this interval, pro-rated by whatever portion of the interval has occurred/been consumed');
 End;
-
 
 procedure LoadTable299(oTables : THL7V2ModelTables);
 Var
@@ -3845,12 +3601,10 @@ Begin
     oTable.Items.Add(2, 'Hex', 'hexadecimal encoding - consecutive pairs of hexadecimal digits represent consecutive single octets.');
 End;
 
-
 procedure LoadTable300(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(300, 'Namespace ID');
 End;
-
 
 procedure LoadTable301(oTables : THL7V2ModelTables);
 Var
@@ -3869,48 +3623,40 @@ Begin
     oTable.Items.Add(10, 'x500', 'An X.500 directory name');
 End;
 
-
 procedure LoadTable302(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(302, 'Point Of Care');
 End;
-
 
 procedure LoadTable303(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(303, 'Room');
 End;
 
-
 procedure LoadTable304(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(304, 'Bed');
 End;
-
 
 procedure LoadTable305(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(305, 'Person Location Type');
 End;
 
-
 procedure LoadTable306(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(306, 'Location Status');
 End;
-
 
 procedure LoadTable307(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(307, 'Building');
 End;
 
-
 procedure LoadTable308(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(308, 'Floor');
 End;
-
 
 procedure LoadTable309(oTables : THL7V2ModelTables);
 Var
@@ -3922,24 +3668,20 @@ Begin
     oTable.Items.Add(2, 'P', 'Physician/professional');
 End;
 
-
 procedure LoadTable311(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(311, 'Job Status');
 End;
-
 
 procedure LoadTable312(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(312, 'Policy Scope');
 End;
 
-
 procedure LoadTable313(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(313, 'Policy Source');
 End;
-
 
 procedure LoadTable315(oTables : THL7V2ModelTables);
 Var
@@ -3953,7 +3695,6 @@ Begin
     oTable.Items.Add(1, 'Y', 'Yes, patient has a living will');
 End;
 
-
 procedure LoadTable316(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -3964,7 +3705,6 @@ Begin
     oTable.Items.Add(4, 'U', 'Unknown');
     oTable.Items.Add(1, 'Y', 'Yes, patient is a donor and card is on file');
 End;
-
 
 procedure LoadTable317(oTables : THL7V2ModelTables);
 Var
@@ -3978,18 +3718,15 @@ Begin
     oTable.Items.Add(5, '9904', 'etc.');
 End;
 
-
 procedure LoadTable319(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(319, 'Department Cost Center');
 End;
 
-
 procedure LoadTable320(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(320, 'Item Natural Account Code');
 End;
-
 
 procedure LoadTable321(oTables : THL7V2ModelTables);
 Var
@@ -4002,7 +3739,6 @@ Begin
     oTable.Items.Add(2, 'UD', 'Unit Dose');
 End;
 
-
 procedure LoadTable322(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4014,7 +3750,6 @@ Begin
     oTable.Items.Add(2, 'RE', 'Refused');
 End;
 
-
 procedure LoadTable323(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4024,7 +3759,6 @@ Begin
     oTable.Items.Add(2, 'D', 'Delete');
     oTable.Items.Add(3, 'U', 'Update');
 End;
-
 
 procedure LoadTable324(oTables : THL7V2ModelTables);
 Var
@@ -4045,7 +3779,6 @@ Begin
     oTable.Items.Add(12, 'TEA', 'Teaching location');
 End;
 
-
 procedure LoadTable325(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4060,7 +3793,6 @@ Begin
     oTable.Items.Add(2, 'RX2', 'Second pharmacy');
 End;
 
-
 procedure LoadTable326(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4070,18 +3802,15 @@ Begin
     oTable.Items.Add(2, 'V', 'Visit level');
 End;
 
-
 procedure LoadTable327(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(327, 'Job Code/Class');
 End;
 
-
 procedure LoadTable328(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(328, 'Employee Classification');
 End;
-
 
 procedure LoadTable329(oTables : THL7V2ModelTables);
 Var
@@ -4091,7 +3820,6 @@ Begin
     oTable.Items.Add(1, 'A', 'Actual count');
     oTable.Items.Add(2, 'E', 'Estimated (see comment)');
 End;
-
 
 procedure LoadTable330(oTables : THL7V2ModelTables);
 Var
@@ -4106,7 +3834,6 @@ Begin
     oTable.Items.Add(5, 'TXN', 'Transitional');
 End;
 
-
 procedure LoadTable331(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4118,7 +3845,6 @@ Begin
     oTable.Items.Add(1, 'U', 'User');
 End;
 
-
 procedure LoadTable332(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4127,7 +3853,6 @@ Begin
     oTable.Items.Add(2, 'A', 'Accept');
     oTable.Items.Add(1, 'I', 'Initiate');
 End;
-
 
 procedure LoadTable333(oTables : THL7V2ModelTables);
 Var
@@ -4138,7 +3863,6 @@ Begin
     oTable.Items.Add(2, 'SD', 'Shut down');
     oTable.Items.Add(1, 'SU', 'Start up');
 End;
-
 
 procedure LoadTable334(oTables : THL7V2ModelTables);
 Var
@@ -4151,12 +3875,10 @@ Begin
     oTable.Items.Add(1, 'PT', 'Patient');
 End;
 
-
 procedure LoadTable335(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(335, 'Repeat Pattern');
 End;
-
 
 procedure LoadTable336(oTables : THL7V2ModelTables);
 Var
@@ -4169,7 +3891,6 @@ Begin
     oTable.Items.Add(4, 'W', 'Work Load');
 End;
 
-
 procedure LoadTable337(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4178,7 +3899,6 @@ Begin
     oTable.Items.Add(2, 'C', 'Certified');
     oTable.Items.Add(1, 'E', 'Eligible');
 End;
-
 
 procedure LoadTable338(oTables : THL7V2ModelTables);
 Var
@@ -4198,7 +3918,6 @@ Begin
     oTable.Items.Add(1, 'UPIN', 'Unique physician ID no.');
 End;
 
-
 procedure LoadTable339(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4210,30 +3929,25 @@ Begin
     oTable.Items.Add(4, '4', 'Advanced Beneficiary Notice has not been signed');
 End;
 
-
 procedure LoadTable340(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(340, 'Procedure Code Modifier');
 End;
-
 
 procedure LoadTable341(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(341, 'Guarantor Credit Rating Code');
 End;
 
-
 procedure LoadTable342(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(342, 'Dependent Of Military Recipient');
 End;
 
-
 procedure LoadTable343(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(343, 'Military Handicapped Program');
 End;
-
 
 procedure LoadTable344(oTables : THL7V2ModelTables);
 Var
@@ -4261,24 +3975,20 @@ Begin
     oTable.Items.Add(19, '19', 'Grandparent');
 End;
 
-
 procedure LoadTable345(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(345, 'Appeal Reason');
 End;
-
 
 procedure LoadTable346(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(346, 'Certification Agency');
 End;
 
-
 procedure LoadTable347(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(347, 'Auto Accident State');
 End;
-
 
 procedure LoadTable348(oTables : THL7V2ModelTables);
 Var
@@ -4295,7 +4005,6 @@ Begin
     oTable.Items.Add(8, '08', 'Induced abortion victim rape/incest');
 End;
 
-
 procedure LoadTable349(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4307,7 +4016,6 @@ Begin
     oTable.Items.Add(4, '4', 'Admission denied');
     oTable.Items.Add(5, '5', 'Postpayment review applicable');
 End;
-
 
 procedure LoadTable350(oTables : THL7V2ModelTables);
 Var
@@ -4360,7 +4068,6 @@ Begin
     oTable.Items.Add(44, 'A3', 'Benefits exhausted payer A');
 End;
 
-
 procedure LoadTable351(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4379,7 +4086,6 @@ Begin
     oTable.Items.Add(11, 'M0', 'PRO/UR approved stay dates');
 End;
 
-
 procedure LoadTable353(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4391,7 +4097,6 @@ Begin
     oTable.Items.Add(1, 'U', 'Unknown');
     oTable.Items.Add(2, 'UASK', 'Asked but Unknown');
 End;
-
 
 procedure LoadTable354(oTables : THL7V2ModelTables);
 Var
@@ -4526,7 +4231,6 @@ Begin
     oTable.Items.Add(117, 'VXX_V02', 'V02');
 End;
 
-
 procedure LoadTable355(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4536,7 +4240,6 @@ Begin
     oTable.Items.Add(1, 'PL', 'Person location');
 End;
 
-
 procedure LoadTable356(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4545,7 +4248,6 @@ Begin
     oTable.Items.Add(5, '<null>', 'This is the default, indicating that there is no character set switching occurring in this message.');
     oTable.Items.Add(1, 'ISO 2022-199', 'This standard is titled "Information Technology - Character Code Structure  and Extension Technique". This standard specifies an escape sequence from basic one byte character set to specified other character set, and  vice versa.  The escape sequence expl');
 End;
-
 
 procedure LoadTable357(oTables : THL7V2ModelTables);
 Var
@@ -4567,12 +4269,10 @@ Begin
     oTable.Items.Add(16, '207', 'Application internal error');
 End;
 
-
 procedure LoadTable358(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(358, 'Practitioner Group');
 End;
-
 
 procedure LoadTable359(oTables : THL7V2ModelTables);
 Var
@@ -4583,7 +4283,6 @@ Begin
     oTable.Items.Add(2, '1', 'the primary diagnosis');
     oTable.Items.Add(3, '2 and higher', 'for ranked secondary diagnoses');
 End;
-
 
 procedure LoadTable360(oTables : THL7V2ModelTables);
 Var
@@ -4631,24 +4330,20 @@ Begin
     oTable.Items.Add(39, 'TS', 'Trade School Graduate');
 End;
 
-
 procedure LoadTable361(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(361, 'Sending/receiving application');
 End;
-
 
 procedure LoadTable362(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(362, 'Sending/receiving facility');
 End;
 
-
 procedure LoadTable363(oTables : THL7V2ModelTables);
 Begin
   oTables.Add(363, 'Assigning Authority');
 End;
-
 
 procedure LoadTable364(oTables : THL7V2ModelTables);
 Var
@@ -4665,7 +4360,6 @@ Begin
     oTable.Items.Add(7, 'RE', 'Remark');
 End;
 
-
 procedure LoadTable4000(oTables : THL7V2ModelTables);
 Var
   oTable : THL7V2ModelTable;
@@ -4675,7 +4369,6 @@ Begin
     oTable.Items.Add(1, 'I', 'Ideographic (i.e., Kanji)');
     oTable.Items.Add(3, 'P', 'Phonetic (i.e., ASCII, Katakana, Hiragana, etc.)');
 End;
-
 
 procedure Definitions231LoadTables(oTables : THL7V2ModelTables);
 Begin
@@ -4988,7 +4681,6 @@ Begin
   LoadTable4000(oTables);
 End;
 
-
 procedure Definitions231LoadDataTypes(oDataTypes : THL7V2ModelDataTypes);
 Begin
   oDataTypes.Add('*', 'varies', 0);
@@ -5081,7 +4773,6 @@ Begin
   oDataTypes.Add('XPN', 'Extended person name', 0);
   oDataTypes.Add('XTN', 'Extended telecommunications number', 0);
 End;
-
 
 procedure Definitions231LoadComponents(oComponents : THL7V2ModelComponents);
 Begin
@@ -5384,7 +5075,6 @@ Begin
   oComponents.Add('assigning authority universal ID type', 'ID', 301, 447);
   oComponents.Add('varies', 'ST', 0, 9999);
 End;
-
 
 procedure Definitions231LoadStructures(oStructures : THL7V2ModelStructures; oComponents : THL7V2ModelComponents);
 Var
@@ -6395,7 +6085,6 @@ Begin
   oStructures.Add('DT', 'date', 'DT', 1);
 End;
 
-
 procedure LoadDataElements1(oDataElements : THL7V2ModelDataElements);
 Begin
   oDataElements.Add('Field Separator', 1, 'ST', 1, 0);
@@ -6899,7 +6588,6 @@ Begin
   oDataElements.Add('Certification Required', 505, 'ID', 1, 136);
   oDataElements.Add('Penalty', 506, 'MOP', 10, 148);
 End;
-
 
 procedure LoadDataElements2(oDataElements : THL7V2ModelDataElements);
 Begin
@@ -7405,7 +7093,6 @@ Begin
   oDataElements.Add('Date/Time Of Patient Study Registration', 1040, 'TS', 26, 0);
 End;
 
-
 procedure LoadDataElements3(oDataElements : THL7V2ModelDataElements);
 Begin
   oDataElements.Add('Person Performing Study Registration', 1041, 'XCN', 60, 0);
@@ -7678,14 +7365,12 @@ Begin
   oDataElements.Add('Primary Key Value Type - MFA', 1320, 'ID', 3, 355);
 End;
 
-
 procedure Definitions231LoadDataElements(oDataElements : THL7V2ModelDataElements);
 Begin
   LoadDataElements1(oDataElements);
   LoadDataElements2(oDataElements);
   LoadDataElements3(oDataElements);
 End;
-
 
 procedure Definitions231LoadSegments(oSegments : THL7V2ModelSegments);
 Var
@@ -9299,7 +8984,6 @@ Begin
   oSegments.Add('}', 'end repetition');
   oSegments.Add('}]', 'end optional + repeating');
 End;
-
 
 procedure Definitions231LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
 Var
@@ -12794,7 +12478,6 @@ Begin
       oGrp1.Children.Add('NK1', True, True, gtSingle);
 End;
 
-
 procedure Definitions231LoadEvents(oEvents : THL7V2ModelEvents);
 Var
   oEvent : THL7V2ModelEvent;
@@ -13197,8 +12880,5 @@ Begin
   oEvents.Add('W02', 'QRF - Waveform result, response to query');
 End;
 
-
-
 End.
-
 

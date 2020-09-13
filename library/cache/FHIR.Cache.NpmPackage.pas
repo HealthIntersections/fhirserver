@@ -973,7 +973,6 @@ begin
     result := fromPackage(TFileStream.create(source, fmOpenRead + fmShareDenyWrite));
 end;
 
-
 class function TNpmPackage.fromPackage(tgz: TBytes; desc: String; progress: TWorkProgressEvent): TNpmPackage;
 var
   s : TBytesStream;

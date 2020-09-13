@@ -135,7 +135,7 @@ implementation
 uses
   FHIR.Client.HTTP,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles, FHIR.R3.Operations, FHIR.R3.ElementModel,
-  FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.AuthMap;
+  FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.AuthMap, FHIR.R3.Resources.Base;
 
 { TFHIRFactoryR3 }
 

@@ -94,7 +94,6 @@ type
     procedure Test(filename : String);
   End;
 
-
 implementation
 
 function normalise(text : String) : String;

@@ -38,7 +38,6 @@ implementation
 
 { TWorkerObject }
 
-
 function TWorkerObject.canCancel: boolean;
 begin
   result := false;

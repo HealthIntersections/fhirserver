@@ -41,7 +41,7 @@ uses
   SysUtils, Classes, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Turtle, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types;
+  FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources.Base;
 
 Type
 
@@ -1700,10 +1700,8 @@ Type
   protected
     procedure ComposeElement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirElement; useType : boolean; index : integer);
 
-
     procedure ComposeBackboneElement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBackboneElement; useType : boolean; index : integer);
     procedure ComposeBackboneType(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBackboneType; useType : boolean; index : integer);
-
 
     Procedure ComposeEnum(parent :  TTurtleComplex; parentType, name : String; value : TFhirEnum; Const aNames, aSystems : Array Of String; useType : boolean; index : integer);
     Procedure ComposeDate(parent :  TTurtleComplex; parentType, name : String; value : TFhirDate; useType : boolean; index : integer);
@@ -1727,14 +1725,12 @@ Type
     Procedure ComposeId(parent :  TTurtleComplex; parentType, name : String; value : TFhirId; useType : boolean; index : integer);
     Procedure ComposePositiveInt(parent :  TTurtleComplex; parentType, name : String; value : TFhirPositiveInt; useType : boolean; index : integer);
 
-
     Procedure ComposeResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResource; useType : boolean; index : integer); overload;
     Procedure ComposeDomainResource(this : TTurtleComplex; parentType, name : String; elem : TFhirDomainResource; useType : boolean; index : integer); overload;
 {$IFDEF FHIR_PARAMETERS}
     procedure ComposeParametersParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirParametersParameter; useType : boolean; index : integer);
     procedure ComposeParameters(parent :  TTurtleComplex; parentType, name : String; elem : TFhirParameters; useType : boolean; index : integer);
 {$ENDIF FHIR_PARAMETERS}
-
 
     procedure ComposeExtension(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExtension; useType : boolean; index : integer);
     procedure ComposeNarrative(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNarrative; useType : boolean; index : integer);
@@ -1789,7 +1785,6 @@ Type
     procedure ComposeAge(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAge; useType : boolean; index : integer);
     procedure ComposeDistance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDistance; useType : boolean; index : integer);
     procedure ComposeDuration(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDuration; useType : boolean; index : integer);
-
 
 {$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAccountCoverage; useType : boolean; index : integer);
@@ -2687,7 +2682,6 @@ Type
   
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; override;
   end;
-
 
 implementation
 
@@ -50247,7 +50241,6 @@ begin
   else
     raise ERdfException.create('error: the element '+s+' is not a valid resource name');
 end;
-
 
 end.
 

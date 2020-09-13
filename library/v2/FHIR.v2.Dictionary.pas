@@ -111,7 +111,6 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelDataType Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELDATATYPE_NAME_FIELD = 'Name';
   THL7V2MODELDATATYPE_DESCRIPTION_FIELD = 'Description';
@@ -189,12 +188,10 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelTableItem Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELTABLEITEM_ID_FIELD = 'ID';
   THL7V2MODELTABLEITEM_CODE_FIELD = 'Code';
   THL7V2MODELTABLEITEM_DESCRIPTION_FIELD = 'Description';
-
 
 Type
   THL7V2ModelTableID = Integer;
@@ -264,12 +261,10 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelTable Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELTABLE_ID_FIELD = 'ID';
   THL7V2MODELTABLE_DESCRIPTION_FIELD = 'Description';
   THL7V2MODELTABLE_DESCRIPTION_ITEMS = 'Items';
-
 
 Type
   THL7V2ModelComponentName = String;
@@ -364,13 +359,11 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelComponent Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELCOMPONENT_NAME_FIELD = 'Name';
   THL7V2MODELCOMPONENT_DataType_FIELD = 'DataType';
   THL7V2MODELCOMPONENT_TABLE_FIELD = 'Table';
   THL7V2MODELCOMPONENT_NUMBER_FIELD = 'Number';
-
 
 Type
   THL7V2ModelStructureName = String;
@@ -460,15 +453,12 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelStructure Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELSTRUCTURE_NAME_FIELD = 'Name';
   THL7V2MODELSTRUCTURE_DESCRIPTION_FIELD = 'Description';
   THL7V2MODELSTRUCTURE_DATATYPE_FIELD = 'DataType';
   THL7V2MODELSTRUCTURE_ID_FIELD = 'ID';
   THL7V2MODELSTRUCTURE_ID_COMPONENTS = 'Components';
-
-
 
 Type
   THL7V2ModelDataElementDescription = String;
@@ -574,7 +564,6 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelDataElement Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELDATAELEMENT_DESCRIPTION_FIELD = 'Description';
   THL7V2MODELDATAELEMENT_ID_FIELD = 'Id';
@@ -585,8 +574,6 @@ Const
   THL7V2MODELDATAELEMENT_LENGTH_FIELD_MAX = 'Length_Max';
   THL7V2MODELDATAELEMENT_LENGTH_FIELD_CONF = 'Length_Conf';
   THL7V2MODELDATAELEMENT_TABLE_FIELD = 'Table';
-
-
 
 Type
   THL7V2ModelFieldDataElement = Integer;
@@ -668,14 +655,12 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelField Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELField_DataElement_Field = 'DataElement';
   THL7V2MODELField_REPEATABLE_Field = 'Repeatable';
   THL7V2MODELField_REPEATCOUNT_Field = 'RepeatCount';
   THL7V2MODELField_REQUIRED_Field = 'Required';
   THL7V2MODELField_FieldNUMBER_Field = 'FieldNumber';
-
 
 Type
   THL7V2ModelSegmentCode = String;
@@ -741,7 +726,6 @@ Type
 
       Property Elements[Const iIndex : Integer] : THL7V2ModelSegment Read GetElement Write SetElement; Default;
   End;
-
 
 Const
   THL7V2MODELSEGMENT_CODE_FIELD = 'Code';
@@ -820,7 +804,6 @@ Type
 
       Property Elements[Const iIndex : Integer] : THL7V2ModelSegmentGroup Read GetElement Write SetElement; Default;
   End;
-
 
 Type
   THL7V2ModelMessageStructureName = String;
@@ -919,7 +902,6 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelMessageStructure Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELMESSAGESTRUCTURE_NAME_FIELD = 'Name';
   THL7V2MODELMESSAGESTRUCTURE_DESCRIPTION_FIELD = 'Description';
@@ -928,8 +910,6 @@ Const
   THL7V2MODELMESSAGESTRUCTURE_ACTION_FIELD = 'Action';
   THL7V2MODELMESSAGESTRUCTURE_SEGMENTMAP_FIELD = 'SegmentMap';
   THL7V2MODELMESSAGESTRUCTURE_XMLMAP_FIELD = 'XMLMap';
-
-
 
 Type
   THL7V2ModelEventMessageMessage = String;
@@ -1017,13 +997,11 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ModelEventMessage Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2MODELEVENTMESSAGE_MESSAGE_FIELD = 'Message';
   THL7V2MODELEVENTMESSAGE_STRUCTURE_FIELD = 'Structure';
   THL7V2MODELEVENTMESSAGE_REPLY_FIELD = 'Reply';
   THL7V2MODELEVENTMESSAGE_REPLYSTRUCTURE_FIELD = 'ReplyStructure';
-
 
 Type
   THL7V2ModelEventName = String;
@@ -1090,7 +1068,6 @@ Type
 
       Property Elements[Const iIndex : Integer] : THL7V2ModelEvent Read GetElement Write SetElement; Default;
   End;
-
 
 Const
   THL7V2MODELEVENT_NAME_FIELD = 'Name';
@@ -1412,30 +1389,25 @@ var
 
 implementation
 
-
 Constructor THL7V2ModelDataType.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelDataType.Destroy;
 Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelDataType.Link : THL7V2ModelDataType;
 Begin
   Result := THL7V2ModelDataType(Inherited Link);
 End;
 
-
 Function THL7V2ModelDataType.Clone : THL7V2ModelDataType;
 Begin
   Result := THL7V2ModelDataType(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelDataType.Assign(oObject : TFslObject);
 Begin
@@ -1446,60 +1418,50 @@ Begin
   Length := THL7V2ModelDataType(oObject).Length;
 End;
 
-
 Function THL7V2ModelDataTypes.Link : THL7V2ModelDataTypes;
 Begin
   Result := THL7V2ModelDataTypes(Inherited Link);
 End;
-
 
 Function THL7V2ModelDataTypes.Clone : THL7V2ModelDataTypes;
 Begin
   Result := THL7V2ModelDataTypes(Inherited Clone);
 End;
 
-
 Function THL7V2ModelDataTypes.New : THL7V2ModelDataType;
 Begin
   Result := THL7V2ModelDataType(Inherited New);
 End;
-
 
 Function THL7V2ModelDataTypes.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelDataType;
 End;
 
-
 Function THL7V2ModelDataTypes.GetElement(Const iIndex : Integer) : THL7V2ModelDataType;
 Begin
   Result := THL7V2ModelDataType(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelDataTypes.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelDataType);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelDataTypes.CompareByName(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelDataType(pA).Name, THL7V2ModelDataType(pB).Name);
 End;
-
 
 Function THL7V2ModelDataTypes.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelDataType(pA).Description, THL7V2ModelDataType(pB).Description);
 End;
 
-
 Function THL7V2ModelDataTypes.CompareByLength(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelDataType(pA).Length, THL7V2ModelDataType(pB).Length);
 End;
-
 
 Function THL7V2ModelDataTypes.IndexByName(Const aValue : THL7V2ModelDataTypeName) : Integer;
 Var
@@ -1518,7 +1480,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelDataTypes.IndexByDescription(Const aValue : THL7V2ModelDataTypeDescription) : Integer;
 Var
   oElement : THL7V2ModelDataType;
@@ -1536,60 +1497,50 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelDataTypes.Get(Const aValue : Integer) : THL7V2ModelDataType;
 Begin
   Result := THL7V2ModelDataType(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelDataTypes.GetByName(Const aValue : THL7V2ModelDataTypeName) : THL7V2ModelDataType;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelDataTypes.GetByDescription(Const aValue : THL7V2ModelDataTypeDescription) : THL7V2ModelDataType;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelDataTypes.ExistsByName(Const aValue : THL7V2ModelDataTypeName) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelDataTypes.ExistsByDescription(Const aValue : THL7V2ModelDataTypeDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Procedure THL7V2ModelDataTypes.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
-
 Procedure THL7V2ModelDataTypes.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelDataTypes.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
-
 Function THL7V2ModelDataTypes.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelDataType.Escapable: Boolean;
 Begin
@@ -1609,30 +1560,25 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelTableItem.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelTableItem.Destroy;
 Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelTableItem.Link : THL7V2ModelTableItem;
 Begin
   Result := THL7V2ModelTableItem(Inherited Link);
 End;
 
-
 Function THL7V2ModelTableItem.Clone : THL7V2ModelTableItem;
 Begin
   Result := THL7V2ModelTableItem(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelTableItem.Assign(oObject : TFslObject);
 Begin
@@ -1643,60 +1589,50 @@ Begin
   Description := THL7V2ModelTableItem(oObject).Description;
 End;
 
-
 Function THL7V2ModelTableItems.Link : THL7V2ModelTableItems;
 Begin
   Result := THL7V2ModelTableItems(Inherited Link);
 End;
-
 
 Function THL7V2ModelTableItems.Clone : THL7V2ModelTableItems;
 Begin
   Result := THL7V2ModelTableItems(Inherited Clone);
 End;
 
-
 Function THL7V2ModelTableItems.New : THL7V2ModelTableItem;
 Begin
   Result := THL7V2ModelTableItem(Inherited New);
 End;
-
 
 Function THL7V2ModelTableItems.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelTableItem;
 End;
 
-
 Function THL7V2ModelTableItems.GetElement(Const iIndex : Integer) : THL7V2ModelTableItem;
 Begin
   Result := THL7V2ModelTableItem(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelTableItems.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelTableItem);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelTableItems.CompareByID(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelTableItem(pA).ID, THL7V2ModelTableItem(pB).ID);
 End;
-
 
 Function THL7V2ModelTableItems.CompareByCode(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelTableItem(pA).Code, THL7V2ModelTableItem(pB).Code);
 End;
 
-
 Function THL7V2ModelTableItems.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelTableItem(pA).Description, THL7V2ModelTableItem(pB).Description);
 End;
-
 
 Function THL7V2ModelTableItems.IndexByID(Const aValue : THL7V2ModelTableItemID) : Integer;
 Var
@@ -1715,7 +1651,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelTableItems.IndexByCode(Const aValue : THL7V2ModelTableItemCode) : Integer;
 Var
   oElement : THL7V2ModelTableItem;
@@ -1732,7 +1667,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelTableItems.IndexByDescription(Const aValue : THL7V2ModelTableItemDescription) : Integer;
 Var
@@ -1751,84 +1685,70 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelTableItems.Get(Const aValue : Integer) : THL7V2ModelTableItem;
 Begin
   Result := THL7V2ModelTableItem(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelTableItems.GetByID(Const aValue : THL7V2ModelTableItemID) : THL7V2ModelTableItem;
 Begin
   Result := Get(IndexByID(aValue));
 End;
 
-
 Function THL7V2ModelTableItems.GetByCode(Const aValue : THL7V2ModelTableItemCode) : THL7V2ModelTableItem;
 Begin
   Result := Get(IndexByCode(aValue));
 End;
-
 
 Function THL7V2ModelTableItems.GetByDescription(Const aValue : THL7V2ModelTableItemDescription) : THL7V2ModelTableItem;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
 
-
 Function THL7V2ModelTableItems.ExistsByID(Const aValue : THL7V2ModelTableItemID) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByID(aValue));
 End;
-
 
 Function THL7V2ModelTableItems.ExistsByCode(Const aValue : THL7V2ModelTableItemCode) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByCode(aValue));
 End;
 
-
 Function THL7V2ModelTableItems.ExistsByDescription(Const aValue : THL7V2ModelTableItemDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Procedure THL7V2ModelTableItems.SortedByID;
 Begin
   SortedBy(CompareByID);
 End;
 
-
 Procedure THL7V2ModelTableItems.SortedByCode;
 Begin
   SortedBy(CompareByCode);
 End;
-
 
 Procedure THL7V2ModelTableItems.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
 
-
 Function THL7V2ModelTableItems.IsSortedByID : Boolean;
 Begin
   Result := IsSortedBy(CompareByID);
 End;
-
 
 Function THL7V2ModelTableItems.IsSortedByCode : Boolean;
 Begin
   Result := IsSortedBy(CompareByCode);
 End;
 
-
 Function THL7V2ModelTableItems.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 function THL7V2ModelTableItems.Add(iId: Integer; const sCode, sDesc: String): THL7V2ModelTableItem;
 begin
@@ -1843,13 +1763,11 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelTable.Create;
 Begin
   Inherited;
   FItems := THL7V2ModelTableItems.Create;
 End;
-
 
 Destructor THL7V2ModelTable.Destroy;
 Begin
@@ -1857,18 +1775,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelTable.Link : THL7V2ModelTable;
 Begin
   Result := THL7V2ModelTable(Inherited Link);
 End;
 
-
 Function THL7V2ModelTable.Clone : THL7V2ModelTable;
 Begin
   Result := THL7V2ModelTable(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelTable.Assign(oObject : TFslObject);
 Begin
@@ -1879,54 +1794,45 @@ Begin
   Items.Assign(THL7V2ModelTable(oObject).Items);
 End;
 
-
 Function THL7V2ModelTables.Link : THL7V2ModelTables;
 Begin
   Result := THL7V2ModelTables(Inherited Link);
 End;
-
 
 Function THL7V2ModelTables.Clone : THL7V2ModelTables;
 Begin
   Result := THL7V2ModelTables(Inherited Clone);
 End;
 
-
 Function THL7V2ModelTables.New : THL7V2ModelTable;
 Begin
   Result := THL7V2ModelTable(Inherited New);
 End;
-
 
 Function THL7V2ModelTables.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelTable;
 End;
 
-
 Function THL7V2ModelTables.GetElement(Const iIndex : Integer) : THL7V2ModelTable;
 Begin
   Result := THL7V2ModelTable(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelTables.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelTable);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelTables.CompareByID(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelTable(pA).ID, THL7V2ModelTable(pB).ID);
 End;
 
-
 Function THL7V2ModelTables.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelTable(pA).Description, THL7V2ModelTable(pB).Description);
 End;
-
 
 Function THL7V2ModelTables.IndexByID(Const aValue : THL7V2ModelTableID) : Integer;
 Var
@@ -1945,7 +1851,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelTables.IndexByDescription(Const aValue : THL7V2ModelTableDescription) : Integer;
 Var
   oElement : THL7V2ModelTable;
@@ -1963,60 +1868,50 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelTables.Get(Const aValue : Integer) : THL7V2ModelTable;
 Begin
   Result := THL7V2ModelTable(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelTables.GetByID(Const aValue : THL7V2ModelTableID) : THL7V2ModelTable;
 Begin
   Result := Get(IndexByID(aValue));
 End;
 
-
 Function THL7V2ModelTables.GetByDescription(Const aValue : THL7V2ModelTableDescription) : THL7V2ModelTable;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelTables.ExistsByID(Const aValue : THL7V2ModelTableID) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByID(aValue));
 End;
 
-
 Function THL7V2ModelTables.ExistsByDescription(Const aValue : THL7V2ModelTableDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Procedure THL7V2ModelTables.SortedByID;
 Begin
   SortedBy(CompareByID);
 End;
 
-
 Procedure THL7V2ModelTables.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelTables.IsSortedByID : Boolean;
 Begin
   Result := IsSortedBy(CompareByID);
 End;
 
-
 Function THL7V2ModelTables.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Procedure THL7V2ModelTable.SetItems(Const Value: THL7V2ModelTableItems);
 Begin
@@ -2057,12 +1952,10 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelComponent.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelComponent.Destroy;
 Begin
@@ -2071,18 +1964,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelComponent.Link : THL7V2ModelComponent;
 Begin
   Result := THL7V2ModelComponent(Inherited Link);
 End;
 
-
 Function THL7V2ModelComponent.Clone : THL7V2ModelComponent;
 Begin
   Result := THL7V2ModelComponent(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelComponent.Assign(oObject : TFslObject);
 Begin
@@ -2094,66 +1984,55 @@ Begin
   Number := THL7V2ModelComponent(oObject).Number;
 End;
 
-
 Function THL7V2ModelComponents.Link : THL7V2ModelComponents;
 Begin
   Result := THL7V2ModelComponents(Inherited Link);
 End;
-
 
 Function THL7V2ModelComponents.Clone : THL7V2ModelComponents;
 Begin
   Result := THL7V2ModelComponents(Inherited Clone);
 End;
 
-
 Function THL7V2ModelComponents.New : THL7V2ModelComponent;
 Begin
   Result := THL7V2ModelComponent(Inherited New);
 End;
-
 
 Function THL7V2ModelComponents.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelComponent;
 End;
 
-
 Function THL7V2ModelComponents.GetElement(Const iIndex : Integer) : THL7V2ModelComponent;
 Begin
   Result := THL7V2ModelComponent(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelComponents.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelComponent);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelComponents.CompareByName(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelComponent(pA).Name, THL7V2ModelComponent(pB).Name);
 End;
-
 
 Function THL7V2ModelComponents.CompareByNumber(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelComponent(pA).Number, THL7V2ModelComponent(pB).Number);
 End;
 
-
 Function THL7V2ModelComponents.CompareByDataType(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelComponent(pA).DataType, THL7V2ModelComponent(pB).DataType);
 End;
 
-
 Function THL7V2ModelComponents.CompareByTable(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelComponent(pA).Table, THL7V2ModelComponent(pB).Table);
 End;
-
 
 Function THL7V2ModelComponents.IndexByName(Const aValue : THL7V2ModelComponentName) : Integer;
 Var
@@ -2172,7 +2051,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelComponents.IndexByNumber(Const aValue : THL7V2ModelComponentNumber) : Integer;
 Var
   oElement : THL7V2ModelComponent;
@@ -2189,7 +2067,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelComponents.IndexByDataType(Const aValue : THL7V2ModelComponentDataType) : Integer;
 Var
@@ -2208,7 +2085,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelComponents.IndexByTable(Const aValue : THL7V2ModelComponentTable) : Integer;
 Var
   oElement : THL7V2ModelComponent;
@@ -2226,108 +2102,90 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelComponents.Get(Const aValue : Integer) : THL7V2ModelComponent;
 Begin
   Result := THL7V2ModelComponent(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelComponents.GetByName(Const aValue : THL7V2ModelComponentName) : THL7V2ModelComponent;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelComponents.GetByNumber(Const aValue : THL7V2ModelComponentNumber) : THL7V2ModelComponent;
 Begin
   Result := Get(IndexByNumber(aValue));
 End;
-
 
 Function THL7V2ModelComponents.GetByDataType(Const aValue : THL7V2ModelComponentDataType) : THL7V2ModelComponent;
 Begin
   Result := Get(IndexByDataType(aValue));
 End;
 
-
 Function THL7V2ModelComponents.GetByTable(Const aValue : THL7V2ModelComponentTable) : THL7V2ModelComponent;
 Begin
   Result := Get(IndexByTable(aValue));
 End;
-
 
 Function THL7V2ModelComponents.ExistsByName(Const aValue : THL7V2ModelComponentName) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelComponents.ExistsByNumber(Const aValue : THL7V2ModelComponentNumber) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByNumber(aValue));
 End;
-
 
 Function THL7V2ModelComponents.ExistsByDataType(Const aValue : THL7V2ModelComponentDataType) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDataType(aValue));
 End;
 
-
 Function THL7V2ModelComponents.ExistsByTable(Const aValue : THL7V2ModelComponentTable) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByTable(aValue));
 End;
-
 
 Procedure THL7V2ModelComponents.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
-
 Procedure THL7V2ModelComponents.SortedByNumber;
 Begin
   SortedBy(CompareByNumber);
 End;
-
 
 Procedure THL7V2ModelComponents.SortedByDataType;
 Begin
   SortedBy(CompareByDataType);
 End;
 
-
 Procedure THL7V2ModelComponents.SortedByTable;
 Begin
   SortedBy(CompareByTable);
 End;
-
 
 Function THL7V2ModelComponents.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
-
 Function THL7V2ModelComponents.IsSortedByNumber : Boolean;
 Begin
   Result := IsSortedBy(CompareByNumber);
 End;
-
 
 Function THL7V2ModelComponents.IsSortedByDataType : Boolean;
 Begin
   Result := IsSortedBy(CompareByDataType);
 End;
 
-
 Function THL7V2ModelComponents.IsSortedByTable : Boolean;
 Begin
   Result := IsSortedBy(CompareByTable);
 End;
-
 
 Procedure THL7V2ModelComponent.SetRefTable(Const Value: THL7V2ModelTable);
 Begin
@@ -2355,13 +2213,11 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelStructure.Create;
 Begin
   Inherited;
   FComponents := THL7V2ModelComponents.Create;
 End;
-
 
 Destructor THL7V2ModelStructure.Destroy;
 Begin
@@ -2370,18 +2226,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelStructure.Link : THL7V2ModelStructure;
 Begin
   Result := THL7V2ModelStructure(Inherited Link);
 End;
 
-
 Function THL7V2ModelStructure.Clone : THL7V2ModelStructure;
 Begin
   Result := THL7V2ModelStructure(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelStructure.Assign(oObject : TFslObject);
 Begin
@@ -2394,66 +2247,55 @@ Begin
   Components.Assign(THL7V2ModelStructure(oObject).Components);
 End;
 
-
 Function THL7V2ModelStructures.Link : THL7V2ModelStructures;
 Begin
   Result := THL7V2ModelStructures(Inherited Link);
 End;
-
 
 Function THL7V2ModelStructures.Clone : THL7V2ModelStructures;
 Begin
   Result := THL7V2ModelStructures(Inherited Clone);
 End;
 
-
 Function THL7V2ModelStructures.New : THL7V2ModelStructure;
 Begin
   Result := THL7V2ModelStructure(Inherited New);
 End;
-
 
 Function THL7V2ModelStructures.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelStructure;
 End;
 
-
 Function THL7V2ModelStructures.GetElement(Const iIndex : Integer) : THL7V2ModelStructure;
 Begin
   Result := THL7V2ModelStructure(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelStructures.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelStructure);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelStructures.CompareByName(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelStructure(pA).Name, THL7V2ModelStructure(pB).Name);
 End;
-
 
 Function THL7V2ModelStructures.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelStructure(pA).Description, THL7V2ModelStructure(pB).Description);
 End;
 
-
 Function THL7V2ModelStructures.CompareByDataType(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelStructure(pA).DataType, THL7V2ModelStructure(pB).DataType);
 End;
 
-
 Function THL7V2ModelStructures.CompareByID(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelStructure(pA).ID, THL7V2ModelStructure(pB).ID);
 End;
-
 
 Function THL7V2ModelStructures.IndexByName(Const aValue : THL7V2ModelStructureName) : Integer;
 Var
@@ -2472,7 +2314,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelStructures.IndexByDescription(Const aValue : THL7V2ModelStructureDescription) : Integer;
 Var
   oElement : THL7V2ModelStructure;
@@ -2489,7 +2330,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelStructures.IndexByDataType(Const aValue : THL7V2ModelStructureDataType) : Integer;
 Var
@@ -2508,7 +2348,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelStructures.IndexByID(Const aValue : THL7V2ModelStructureID) : Integer;
 Var
   oElement : THL7V2ModelStructure;
@@ -2526,108 +2365,90 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelStructures.Get(Const aValue : Integer) : THL7V2ModelStructure;
 Begin
   Result := THL7V2ModelStructure(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelStructures.GetByName(Const aValue : THL7V2ModelStructureName) : THL7V2ModelStructure;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelStructures.GetByDescription(Const aValue : THL7V2ModelStructureDescription) : THL7V2ModelStructure;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelStructures.GetByDataType(Const aValue : THL7V2ModelStructureDataType) : THL7V2ModelStructure;
 Begin
   Result := Get(IndexByDataType(aValue));
 End;
 
-
 Function THL7V2ModelStructures.GetByID(Const aValue : THL7V2ModelStructureID) : THL7V2ModelStructure;
 Begin
   Result := Get(IndexByID(aValue));
 End;
-
 
 Function THL7V2ModelStructures.ExistsByName(Const aValue : THL7V2ModelStructureName) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelStructures.ExistsByDescription(Const aValue : THL7V2ModelStructureDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelStructures.ExistsByDataType(Const aValue : THL7V2ModelStructureDataType) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDataType(aValue));
 End;
 
-
 Function THL7V2ModelStructures.ExistsByID(Const aValue : THL7V2ModelStructureID) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByID(aValue));
 End;
-
 
 Procedure THL7V2ModelStructures.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
-
 Procedure THL7V2ModelStructures.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Procedure THL7V2ModelStructures.SortedByDataType;
 Begin
   SortedBy(CompareByDataType);
 End;
 
-
 Procedure THL7V2ModelStructures.SortedByID;
 Begin
   SortedBy(CompareByID);
 End;
-
 
 Function THL7V2ModelStructures.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
-
 Function THL7V2ModelStructures.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelStructures.IsSortedByDataType : Boolean;
 Begin
   Result := IsSortedBy(CompareByDataType);
 End;
 
-
 Function THL7V2ModelStructures.IsSortedByID : Boolean;
 Begin
   Result := IsSortedBy(CompareByID);
 End;
-
 
 Procedure THL7V2ModelStructure.SetRefDataType(Const Value: THL7V2ModelDataType);
 Begin
@@ -2657,12 +2478,10 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelDataElement.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelDataElement.Destroy;
 Begin
@@ -2671,18 +2490,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelDataElement.Link : THL7V2ModelDataElement;
 Begin
   Result := THL7V2ModelDataElement(Inherited Link);
 End;
 
-
 Function THL7V2ModelDataElement.Clone : THL7V2ModelDataElement;
 Begin
   Result := THL7V2ModelDataElement(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelDataElement.Assign(oObject : TFslObject);
 Begin
@@ -2698,72 +2514,60 @@ Begin
   Table := THL7V2ModelDataElement(oObject).Table;
 End;
 
-
 Function THL7V2ModelDataElements.Link : THL7V2ModelDataElements;
 Begin
   Result := THL7V2ModelDataElements(Inherited Link);
 End;
-
 
 Function THL7V2ModelDataElements.Clone : THL7V2ModelDataElements;
 Begin
   Result := THL7V2ModelDataElements(Inherited Clone);
 End;
 
-
 Function THL7V2ModelDataElements.New : THL7V2ModelDataElement;
 Begin
   Result := THL7V2ModelDataElement(Inherited New);
 End;
-
 
 Function THL7V2ModelDataElements.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelDataElement;
 End;
 
-
 Function THL7V2ModelDataElements.GetElement(Const iIndex : Integer) : THL7V2ModelDataElement;
 Begin
   Result := THL7V2ModelDataElement(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelDataElements.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelDataElement);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelDataElements.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelDataElement(pA).Description, THL7V2ModelDataElement(pB).Description);
 End;
-
 
 Function THL7V2ModelDataElements.CompareById(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelDataElement(pA).Id, THL7V2ModelDataElement(pB).Id);
 End;
 
-
 Function THL7V2ModelDataElements.CompareByStructure(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelDataElement(pA).Structure, THL7V2ModelDataElement(pB).Structure);
 End;
-
 
 Function THL7V2ModelDataElements.CompareByLength(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelDataElement(pA).Length_Old, THL7V2ModelDataElement(pB).Length_Old);
 End;
 
-
 Function THL7V2ModelDataElements.CompareByTable(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelDataElement(pA).Table, THL7V2ModelDataElement(pB).Table);
 End;
-
 
 Function THL7V2ModelDataElements.IndexByDescription(Const aValue : THL7V2ModelDataElementDescription) : Integer;
 Var
@@ -2782,7 +2586,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelDataElements.IndexById(Const aValue : THL7V2ModelDataElementId) : Integer;
 Var
   oElement : THL7V2ModelDataElement;
@@ -2799,7 +2602,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelDataElements.IndexByStructure(Const aValue : THL7V2ModelDataElementStructure) : Integer;
 Var
@@ -2818,7 +2620,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelDataElements.IndexByLength(Const aValue : Integer) : Integer;
 Var
   oElement : THL7V2ModelDataElement;
@@ -2835,7 +2636,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelDataElements.IndexByTable(Const aValue : THL7V2ModelDataElementTable) : Integer;
 Var
@@ -2854,132 +2654,110 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelDataElements.Get(Const aValue : Integer) : THL7V2ModelDataElement;
 Begin
   Result := THL7V2ModelDataElement(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelDataElements.GetByDescription(Const aValue : THL7V2ModelDataElementDescription) : THL7V2ModelDataElement;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
 
-
 Function THL7V2ModelDataElements.GetById(Const aValue : THL7V2ModelDataElementId) : THL7V2ModelDataElement;
 Begin
   Result := Get(IndexById(aValue));
 End;
-
 
 Function THL7V2ModelDataElements.GetByStructure(Const aValue : THL7V2ModelDataElementStructure) : THL7V2ModelDataElement;
 Begin
   Result := Get(IndexByStructure(aValue));
 End;
 
-
 Function THL7V2ModelDataElements.GetByLength(Const aValue : Integer) : THL7V2ModelDataElement;
 Begin
   Result := Get(IndexByLength(aValue));
 End;
-
 
 Function THL7V2ModelDataElements.GetByTable(Const aValue : THL7V2ModelDataElementTable) : THL7V2ModelDataElement;
 Begin
   Result := Get(IndexByTable(aValue));
 End;
 
-
 Function THL7V2ModelDataElements.ExistsByDescription(Const aValue : THL7V2ModelDataElementDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelDataElements.ExistsById(Const aValue : THL7V2ModelDataElementId) : Boolean;
 Begin
   Result := ExistsByIndex(IndexById(aValue));
 End;
 
-
 Function THL7V2ModelDataElements.ExistsByStructure(Const aValue : THL7V2ModelDataElementStructure) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByStructure(aValue));
 End;
-
 
 Function THL7V2ModelDataElements.ExistsByLength(Const aValue : Integer) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByLength(aValue));
 End;
 
-
 Function THL7V2ModelDataElements.ExistsByTable(Const aValue : THL7V2ModelDataElementTable) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByTable(aValue));
 End;
-
 
 Procedure THL7V2ModelDataElements.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
 
-
 Procedure THL7V2ModelDataElements.SortedById;
 Begin
   SortedBy(CompareById);
 End;
-
 
 Procedure THL7V2ModelDataElements.SortedByStructure;
 Begin
   SortedBy(CompareByStructure);
 End;
 
-
 Procedure THL7V2ModelDataElements.SortedByLength;
 Begin
   SortedBy(CompareByLength);
 End;
-
 
 Procedure THL7V2ModelDataElements.SortedByTable;
 Begin
   SortedBy(CompareByTable);
 End;
 
-
 Function THL7V2ModelDataElements.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelDataElements.IsSortedById : Boolean;
 Begin
   Result := IsSortedBy(CompareById);
 End;
 
-
 Function THL7V2ModelDataElements.IsSortedByStructure : Boolean;
 Begin
   Result := IsSortedBy(CompareByStructure);
 End;
-
 
 Function THL7V2ModelDataElements.IsSortedByLength : Boolean;
 Begin
   Result := IsSortedBy(CompareByLength);
 End;
 
-
 Function THL7V2ModelDataElements.IsSortedByTable : Boolean;
 Begin
   Result := IsSortedBy(CompareByTable);
 End;
-
 
 Procedure THL7V2ModelDataElement.SetRefTable(Const Value: THL7V2ModelTable);
 Begin
@@ -3042,12 +2820,10 @@ begin
   result := (FLength_Old > 0) or (FLength_Max > 0) or (FLength_Conf > '');
 end;
 
-
 Constructor THL7V2ModelField.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelField.Destroy;
 Begin
@@ -3055,18 +2831,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelField.Link : THL7V2ModelField;
 Begin
   Result := THL7V2ModelField(Inherited Link);
 End;
 
-
 Function THL7V2ModelField.Clone : THL7V2ModelField;
 Begin
   Result := THL7V2ModelField(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelField.Assign(oObject : TFslObject);
 Begin
@@ -3079,72 +2852,60 @@ Begin
   FieldNumber := THL7V2ModelField(oObject).FieldNumber;
 End;
 
-
 Function THL7V2ModelFields.Link : THL7V2ModelFields;
 Begin
   Result := THL7V2ModelFields(Inherited Link);
 End;
-
 
 Function THL7V2ModelFields.Clone : THL7V2ModelFields;
 Begin
   Result := THL7V2ModelFields(Inherited Clone);
 End;
 
-
 Function THL7V2ModelFields.New : THL7V2ModelField;
 Begin
   Result := THL7V2ModelField(Inherited New);
 End;
-
 
 Function THL7V2ModelFields.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelField;
 End;
 
-
 Function THL7V2ModelFields.GetElement(Const iIndex : Integer) : THL7V2ModelField;
 Begin
   Result := THL7V2ModelField(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelFields.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelField);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelFields.CompareByDataElement(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelField(pA).DataElement, THL7V2ModelField(pB).DataElement);
 End;
-
 
 Function THL7V2ModelFields.CompareByRepeatable(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.BooleanCompare(THL7V2ModelField(pA).Repeatable, THL7V2ModelField(pB).Repeatable);
 End;
 
-
 Function THL7V2ModelFields.CompareByRepeatCount(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelField(pA).RepeatCount, THL7V2ModelField(pB).RepeatCount);
 End;
-
 
 Function THL7V2ModelFields.CompareByRequired(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.BooleanCompare(THL7V2ModelField(pA).Required, THL7V2ModelField(pB).Required);
 End;
 
-
 Function THL7V2ModelFields.CompareByFieldNumber(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.IntegerCompare(THL7V2ModelField(pA).FieldNumber, THL7V2ModelField(pB).FieldNumber);
 End;
-
 
 Function THL7V2ModelFields.IndexByDataElement(Const aValue : THL7V2ModelFieldDataElement) : Integer;
 Var
@@ -3163,7 +2924,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelFields.IndexByFieldNumber(Const aValue : THL7V2ModelFieldFieldNumber) : Integer;
 Var
   oElement : THL7V2ModelField;
@@ -3181,60 +2941,50 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelFields.Get(Const aValue : Integer) : THL7V2ModelField;
 Begin
   Result := THL7V2ModelField(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelFields.GetByDataElement(Const aValue : THL7V2ModelFieldDataElement) : THL7V2ModelField;
 Begin
   Result := Get(IndexByDataElement(aValue));
 End;
 
-
 Function THL7V2ModelFields.GetByFieldNumber(Const aValue : THL7V2ModelFieldFieldNumber) : THL7V2ModelField;
 Begin
   Result := Get(IndexByFieldNumber(aValue));
 End;
-
 
 Function THL7V2ModelFields.ExistsByDataElement(Const aValue : THL7V2ModelFieldDataElement) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDataElement(aValue));
 End;
 
-
 Function THL7V2ModelFields.ExistsByFieldNumber(Const aValue : THL7V2ModelFieldFieldNumber) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByFieldNumber(aValue));
 End;
-
 
 Procedure THL7V2ModelFields.SortedByDataElement;
 Begin
   SortedBy(CompareByDataElement);
 End;
 
-
 Procedure THL7V2ModelFields.SortedByFieldNumber;
 Begin
   SortedBy(CompareByFieldNumber);
 End;
-
 
 Function THL7V2ModelFields.IsSortedByDataElement : Boolean;
 Begin
   Result := IsSortedBy(CompareByDataElement);
 End;
 
-
 Function THL7V2ModelFields.IsSortedByFieldNumber : Boolean;
 Begin
   Result := IsSortedBy(CompareByFieldNumber);
 End;
-
 
 Procedure THL7V2ModelField.SetRefDataElement(Const Value: THL7V2ModelDataElement);
 Begin
@@ -3261,13 +3011,11 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelSegment.Create;
 Begin
   Inherited;
   FFields := THL7V2ModelFields.Create;
 End;
-
 
 Destructor THL7V2ModelSegment.Destroy;
 Begin
@@ -3275,18 +3023,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelSegment.Link : THL7V2ModelSegment;
 Begin
   Result := THL7V2ModelSegment(Inherited Link);
 End;
 
-
 Function THL7V2ModelSegment.Clone : THL7V2ModelSegment;
 Begin
   Result := THL7V2ModelSegment(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelSegment.Assign(oObject : TFslObject);
 Begin
@@ -3297,54 +3042,45 @@ Begin
   Fields.Assign(THL7V2ModelSegment(oObject).FFields);
 End;
 
-
 Function THL7V2ModelSegments.Link : THL7V2ModelSegments;
 Begin
   Result := THL7V2ModelSegments(Inherited Link);
 End;
-
 
 Function THL7V2ModelSegments.Clone : THL7V2ModelSegments;
 Begin
   Result := THL7V2ModelSegments(Inherited Clone);
 End;
 
-
 Function THL7V2ModelSegments.New : THL7V2ModelSegment;
 Begin
   Result := THL7V2ModelSegment(Inherited New);
 End;
-
 
 Function THL7V2ModelSegments.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelSegment;
 End;
 
-
 Function THL7V2ModelSegments.GetElement(Const iIndex : Integer) : THL7V2ModelSegment;
 Begin
   Result := THL7V2ModelSegment(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelSegments.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelSegment);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelSegments.CompareByCode(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelSegment(pA).Code, THL7V2ModelSegment(pB).Code);
 End;
 
-
 Function THL7V2ModelSegments.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelSegment(pA).Description, THL7V2ModelSegment(pB).Description);
 End;
-
 
 Function THL7V2ModelSegments.IndexByCode(Const aValue : THL7V2ModelSegmentCode) : Integer;
 Var
@@ -3363,7 +3099,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelSegments.IndexByDescription(Const aValue : THL7V2ModelSegmentDescription) : Integer;
 Var
   oElement : THL7V2ModelSegment;
@@ -3381,60 +3116,50 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelSegments.Get(Const aValue : Integer) : THL7V2ModelSegment;
 Begin
   Result := THL7V2ModelSegment(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelSegments.GetByCode(Const aValue : THL7V2ModelSegmentCode) : THL7V2ModelSegment;
 Begin
   Result := Get(IndexByCode(aValue));
 End;
 
-
 Function THL7V2ModelSegments.GetByDescription(Const aValue : THL7V2ModelSegmentDescription) : THL7V2ModelSegment;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelSegments.ExistsByCode(Const aValue : THL7V2ModelSegmentCode) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByCode(aValue));
 End;
 
-
 Function THL7V2ModelSegments.ExistsByDescription(Const aValue : THL7V2ModelSegmentDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Procedure THL7V2ModelSegments.SortedByCode;
 Begin
   SortedBy(CompareByCode);
 End;
 
-
 Procedure THL7V2ModelSegments.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelSegments.IsSortedByCode : Boolean;
 Begin
   Result := IsSortedBy(CompareByCode);
 End;
 
-
 Function THL7V2ModelSegments.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Procedure THL7V2ModelSegment.SetFields(Const Value: THL7V2ModelFields);
 Begin
@@ -3453,8 +3178,6 @@ begin
     result.Free;
   End;
 end;
-
-
 
 Constructor THL7V2ModelSegmentGroup.Create;
 Begin
@@ -3477,18 +3200,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelSegmentGroup.Link : THL7V2ModelSegmentGroup;
 Begin
   Result := THL7V2ModelSegmentGroup(Inherited Link);
 End;
 
-
 Function THL7V2ModelSegmentGroup.Clone : THL7V2ModelSegmentGroup;
 Begin
   Result := THL7V2ModelSegmentGroup(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelSegmentGroup.Assign(oObject : TFslObject);
 Begin
@@ -3501,60 +3221,50 @@ Begin
   Children := THL7V2ModelSegmentGroup(oObject).Children.Clone;
 End;
 
-
 Function THL7V2ModelSegmentGroups.Link : THL7V2ModelSegmentGroups;
 Begin
   Result := THL7V2ModelSegmentGroups(Inherited Link);
 End;
-
 
 Function THL7V2ModelSegmentGroups.Clone : THL7V2ModelSegmentGroups;
 Begin
   Result := THL7V2ModelSegmentGroups(Inherited Clone);
 End;
 
-
 Function THL7V2ModelSegmentGroups.New : THL7V2ModelSegmentGroup;
 Begin
   Result := THL7V2ModelSegmentGroup(Inherited New);
 End;
-
 
 Function THL7V2ModelSegmentGroups.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelSegmentGroup;
 End;
 
-
 Function THL7V2ModelSegmentGroups.GetElement(Const iIndex : Integer) : THL7V2ModelSegmentGroup;
 Begin
   Result := THL7V2ModelSegmentGroup(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelSegmentGroups.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelSegmentGroup);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelSegmentGroups.CompareByCode(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelSegmentGroup(pA).Code, THL7V2ModelSegmentGroup(pB).Code);
 End;
-
 
 Function THL7V2ModelSegmentGroups.CompareByOptional(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.BooleanCompare(THL7V2ModelSegmentGroup(pA).Optional, THL7V2ModelSegmentGroup(pB).Optional);
 End;
 
-
 Function THL7V2ModelSegmentGroups.CompareByRepeating(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.BooleanCompare(THL7V2ModelSegmentGroup(pA).Repeating, THL7V2ModelSegmentGroup(pB).Repeating);
 End;
-
 
 Function THL7V2ModelSegmentGroups.IndexByCode(Const aValue : THL7V2ModelSegmentGroupCode) : Integer;
 Var
@@ -3573,37 +3283,30 @@ Begin
   End;
 End;
 
-
-
 Function THL7V2ModelSegmentGroups.Get(Const aValue : Integer) : THL7V2ModelSegmentGroup;
 Begin
   Result := THL7V2ModelSegmentGroup(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelSegmentGroups.GetByCode(Const aValue : THL7V2ModelSegmentGroupCode) : THL7V2ModelSegmentGroup;
 Begin
   Result := Get(IndexByCode(aValue));
 End;
 
-
 Function THL7V2ModelSegmentGroups.ExistsByCode(Const aValue : THL7V2ModelSegmentGroupCode) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByCode(aValue));
 End;
-
 
 Procedure THL7V2ModelSegmentGroups.SortedByCode;
 Begin
   SortedBy(CompareByCode);
 End;
 
-
 Function THL7V2ModelSegmentGroups.IsSortedByCode : Boolean;
 Begin
   Result := IsSortedBy(CompareByCode);
 End;
-
 
 Procedure THL7V2ModelSegmentGroup.SetChildren(Const Value: THL7V2ModelSegmentGroups);
 Begin
@@ -3639,13 +3342,10 @@ begin
   End;
 end;
 
-
-
 Constructor THL7V2ModelMessageStructure.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelMessageStructure.Destroy;
 Begin
@@ -3654,18 +3354,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelMessageStructure.Link : THL7V2ModelMessageStructure;
 Begin
   Result := THL7V2ModelMessageStructure(Inherited Link);
 End;
 
-
 Function THL7V2ModelMessageStructure.Clone : THL7V2ModelMessageStructure;
 Begin
   Result := THL7V2ModelMessageStructure(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelMessageStructure.Assign(oObject : TFslObject);
 Begin
@@ -3680,72 +3377,60 @@ Begin
   XMLMap :=  THL7V2ModelMessageStructure(oObject).XMLMap.Clone;
 End;
 
-
 Function THL7V2ModelMessageStructures.Link : THL7V2ModelMessageStructures;
 Begin
   Result := THL7V2ModelMessageStructures(Inherited Link);
 End;
-
 
 Function THL7V2ModelMessageStructures.Clone : THL7V2ModelMessageStructures;
 Begin
   Result := THL7V2ModelMessageStructures(Inherited Clone);
 End;
 
-
 Function THL7V2ModelMessageStructures.New : THL7V2ModelMessageStructure;
 Begin
   Result := THL7V2ModelMessageStructure(Inherited New);
 End;
-
 
 Function THL7V2ModelMessageStructures.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelMessageStructure;
 End;
 
-
 Function THL7V2ModelMessageStructures.GetElement(Const iIndex : Integer) : THL7V2ModelMessageStructure;
 Begin
   Result := THL7V2ModelMessageStructure(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelMessageStructures.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelMessageStructure);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelMessageStructures.CompareByName(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelMessageStructure(pA).Name, THL7V2ModelMessageStructure(pB).Name);
 End;
-
 
 Function THL7V2ModelMessageStructures.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelMessageStructure(pA).Description, THL7V2ModelMessageStructure(pB).Description);
 End;
 
-
 Function THL7V2ModelMessageStructures.CompareByExampleEvent(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelMessageStructure(pA).ExampleEvent, THL7V2ModelMessageStructure(pB).ExampleEvent);
 End;
-
 
 Function THL7V2ModelMessageStructures.CompareByExampleMsgType(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelMessageStructure(pA).ExampleMsgType, THL7V2ModelMessageStructure(pB).ExampleMsgType);
 End;
 
-
 Function THL7V2ModelMessageStructures.CompareByAction(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelMessageStructure(pA).Action, THL7V2ModelMessageStructure(pB).Action);
 End;
-
 
 Function THL7V2ModelMessageStructures.IndexByName(Const aValue : THL7V2ModelMessageStructureName) : Integer;
 Var
@@ -3764,7 +3449,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelMessageStructures.IndexByDescription(Const aValue : THL7V2ModelMessageStructureDescription) : Integer;
 Var
   oElement : THL7V2ModelMessageStructure;
@@ -3781,7 +3465,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelMessageStructures.IndexByExampleEvent(Const aValue : THL7V2ModelMessageStructureExampleEvent) : Integer;
 Var
@@ -3800,7 +3483,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelMessageStructures.IndexByExampleMsgType(Const aValue : THL7V2ModelMessageStructureExampleMsgType) : Integer;
 Var
   oElement : THL7V2ModelMessageStructure;
@@ -3817,7 +3499,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelMessageStructures.IndexByAction(Const aValue : THL7V2ModelMessageStructureAction) : Integer;
 Var
@@ -3836,132 +3517,110 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelMessageStructures.Get(Const aValue : Integer) : THL7V2ModelMessageStructure;
 Begin
   Result := THL7V2ModelMessageStructure(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelMessageStructures.GetByName(Const aValue : THL7V2ModelMessageStructureName) : THL7V2ModelMessageStructure;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelMessageStructures.GetByDescription(Const aValue : THL7V2ModelMessageStructureDescription) : THL7V2ModelMessageStructure;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelMessageStructures.GetByExampleEvent(Const aValue : THL7V2ModelMessageStructureExampleEvent) : THL7V2ModelMessageStructure;
 Begin
   Result := Get(IndexByExampleEvent(aValue));
 End;
 
-
 Function THL7V2ModelMessageStructures.GetByExampleMsgType(Const aValue : THL7V2ModelMessageStructureExampleMsgType) : THL7V2ModelMessageStructure;
 Begin
   Result := Get(IndexByExampleMsgType(aValue));
 End;
-
 
 Function THL7V2ModelMessageStructures.GetByAction(Const aValue : THL7V2ModelMessageStructureAction) : THL7V2ModelMessageStructure;
 Begin
   Result := Get(IndexByAction(aValue));
 End;
 
-
 Function THL7V2ModelMessageStructures.ExistsByName(Const aValue : THL7V2ModelMessageStructureName) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
-
 
 Function THL7V2ModelMessageStructures.ExistsByDescription(Const aValue : THL7V2ModelMessageStructureDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
 
-
 Function THL7V2ModelMessageStructures.ExistsByExampleEvent(Const aValue : THL7V2ModelMessageStructureExampleEvent) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByExampleEvent(aValue));
 End;
-
 
 Function THL7V2ModelMessageStructures.ExistsByExampleMsgType(Const aValue : THL7V2ModelMessageStructureExampleMsgType) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByExampleMsgType(aValue));
 End;
 
-
 Function THL7V2ModelMessageStructures.ExistsByAction(Const aValue : THL7V2ModelMessageStructureAction) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByAction(aValue));
 End;
-
 
 Procedure THL7V2ModelMessageStructures.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
-
 Procedure THL7V2ModelMessageStructures.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Procedure THL7V2ModelMessageStructures.SortedByExampleEvent;
 Begin
   SortedBy(CompareByExampleEvent);
 End;
 
-
 Procedure THL7V2ModelMessageStructures.SortedByExampleMsgType;
 Begin
   SortedBy(CompareByExampleMsgType);
 End;
-
 
 Procedure THL7V2ModelMessageStructures.SortedByAction;
 Begin
   SortedBy(CompareByAction);
 End;
 
-
 Function THL7V2ModelMessageStructures.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
-
 
 Function THL7V2ModelMessageStructures.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
 
-
 Function THL7V2ModelMessageStructures.IsSortedByExampleEvent : Boolean;
 Begin
   Result := IsSortedBy(CompareByExampleEvent);
 End;
-
 
 Function THL7V2ModelMessageStructures.IsSortedByExampleMsgType : Boolean;
 Begin
   Result := IsSortedBy(CompareByExampleMsgType);
 End;
 
-
 Function THL7V2ModelMessageStructures.IsSortedByAction : Boolean;
 Begin
   Result := IsSortedBy(CompareByAction);
 End;
-
 
 Procedure THL7V2ModelMessageStructure.SetSegmentMap(Const Value: THL7V2ModelSegmentGroup);
 Begin
@@ -3995,12 +3654,10 @@ begin
   End;
 end;
 
-
 Constructor THL7V2ModelEventMessage.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ModelEventMessage.Destroy;
 Begin
@@ -4009,18 +3666,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelEventMessage.Link : THL7V2ModelEventMessage;
 Begin
   Result := THL7V2ModelEventMessage(Inherited Link);
 End;
 
-
 Function THL7V2ModelEventMessage.Clone : THL7V2ModelEventMessage;
 Begin
   Result := THL7V2ModelEventMessage(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelEventMessage.Assign(oObject : TFslObject);
 Begin
@@ -4032,66 +3686,55 @@ Begin
   ReplyStructure := THL7V2ModelEventMessage(oObject).ReplyStructure;
 End;
 
-
 Function THL7V2ModelEventMessages.Link : THL7V2ModelEventMessages;
 Begin
   Result := THL7V2ModelEventMessages(Inherited Link);
 End;
-
 
 Function THL7V2ModelEventMessages.Clone : THL7V2ModelEventMessages;
 Begin
   Result := THL7V2ModelEventMessages(Inherited Clone);
 End;
 
-
 Function THL7V2ModelEventMessages.New : THL7V2ModelEventMessage;
 Begin
   Result := THL7V2ModelEventMessage(Inherited New);
 End;
-
 
 Function THL7V2ModelEventMessages.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelEventMessage;
 End;
 
-
 Function THL7V2ModelEventMessages.GetElement(Const iIndex : Integer) : THL7V2ModelEventMessage;
 Begin
   Result := THL7V2ModelEventMessage(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelEventMessages.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelEventMessage);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelEventMessages.CompareByMessage(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEventMessage(pA).Message, THL7V2ModelEventMessage(pB).Message);
 End;
-
 
 Function THL7V2ModelEventMessages.CompareByStructure(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEventMessage(pA).Structure, THL7V2ModelEventMessage(pB).Structure);
 End;
 
-
 Function THL7V2ModelEventMessages.CompareByReply(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEventMessage(pA).Reply, THL7V2ModelEventMessage(pB).Reply);
 End;
 
-
 Function THL7V2ModelEventMessages.CompareByReplyStructure(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEventMessage(pA).ReplyStructure, THL7V2ModelEventMessage(pB).ReplyStructure);
 End;
-
 
 Function THL7V2ModelEventMessages.IndexByMessage(Const aValue : THL7V2ModelEventMessageMessage) : Integer;
 Var
@@ -4110,7 +3753,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelEventMessages.IndexByStructure(Const aValue : THL7V2ModelEventMessageStructure) : Integer;
 Var
   oElement : THL7V2ModelEventMessage;
@@ -4127,7 +3769,6 @@ Begin
     oElement.Free;
   End;
 End;
-
 
 Function THL7V2ModelEventMessages.IndexByReply(Const aValue : THL7V2ModelEventMessageReply) : Integer;
 Var
@@ -4146,7 +3787,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelEventMessages.IndexByReplyStructure(Const aValue : THL7V2ModelEventMessageReplyStructure) : Integer;
 Var
   oElement : THL7V2ModelEventMessage;
@@ -4164,108 +3804,90 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelEventMessages.Get(Const aValue : Integer) : THL7V2ModelEventMessage;
 Begin
   Result := THL7V2ModelEventMessage(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelEventMessages.GetByMessage(Const aValue : THL7V2ModelEventMessageMessage) : THL7V2ModelEventMessage;
 Begin
   Result := Get(IndexByMessage(aValue));
 End;
 
-
 Function THL7V2ModelEventMessages.GetByStructure(Const aValue : THL7V2ModelEventMessageStructure) : THL7V2ModelEventMessage;
 Begin
   Result := Get(IndexByStructure(aValue));
 End;
-
 
 Function THL7V2ModelEventMessages.GetByReply(Const aValue : THL7V2ModelEventMessageReply) : THL7V2ModelEventMessage;
 Begin
   Result := Get(IndexByReply(aValue));
 End;
 
-
 Function THL7V2ModelEventMessages.GetByReplyStructure(Const aValue : THL7V2ModelEventMessageReplyStructure) : THL7V2ModelEventMessage;
 Begin
   Result := Get(IndexByReplyStructure(aValue));
 End;
-
 
 Function THL7V2ModelEventMessages.ExistsByMessage(Const aValue : THL7V2ModelEventMessageMessage) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByMessage(aValue));
 End;
 
-
 Function THL7V2ModelEventMessages.ExistsByStructure(Const aValue : THL7V2ModelEventMessageStructure) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByStructure(aValue));
 End;
-
 
 Function THL7V2ModelEventMessages.ExistsByReply(Const aValue : THL7V2ModelEventMessageReply) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByReply(aValue));
 End;
 
-
 Function THL7V2ModelEventMessages.ExistsByReplyStructure(Const aValue : THL7V2ModelEventMessageReplyStructure) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByReplyStructure(aValue));
 End;
-
 
 Procedure THL7V2ModelEventMessages.SortedByMessage;
 Begin
   SortedBy(CompareByMessage);
 End;
 
-
 Procedure THL7V2ModelEventMessages.SortedByStructure;
 Begin
   SortedBy(CompareByStructure);
 End;
-
 
 Procedure THL7V2ModelEventMessages.SortedByReply;
 Begin
   SortedBy(CompareByReply);
 End;
 
-
 Procedure THL7V2ModelEventMessages.SortedByReplyStructure;
 Begin
   SortedBy(CompareByReplyStructure);
 End;
-
 
 Function THL7V2ModelEventMessages.IsSortedByMessage : Boolean;
 Begin
   Result := IsSortedBy(CompareByMessage);
 End;
 
-
 Function THL7V2ModelEventMessages.IsSortedByStructure : Boolean;
 Begin
   Result := IsSortedBy(CompareByStructure);
 End;
-
 
 Function THL7V2ModelEventMessages.IsSortedByReply : Boolean;
 Begin
   Result := IsSortedBy(CompareByReply);
 End;
 
-
 Function THL7V2ModelEventMessages.IsSortedByReplyStructure : Boolean;
 Begin
   Result := IsSortedBy(CompareByReplyStructure);
 End;
-
 
 Procedure THL7V2ModelEventMessage.SetRefReplyStructure(Const Value: THL7V2ModelMessageStructure);
 Begin
@@ -4294,13 +3916,11 @@ begin
 
 end;
 
-
 Constructor THL7V2ModelEvent.Create;
 Begin
   Inherited;
   FMessages := THL7V2ModelEventMessages.Create;
 End;
-
 
 Destructor THL7V2ModelEvent.Destroy;
 Begin
@@ -4308,18 +3928,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ModelEvent.Link : THL7V2ModelEvent;
 Begin
   Result := THL7V2ModelEvent(Inherited Link);
 End;
 
-
 Function THL7V2ModelEvent.Clone : THL7V2ModelEvent;
 Begin
   Result := THL7V2ModelEvent(Inherited Clone);
 End;
-
 
 Procedure THL7V2ModelEvent.Assign(oObject : TFslObject);
 Begin
@@ -4330,54 +3947,45 @@ Begin
   Messages.Assign(THL7V2ModelEvent(oObject).Messages)
 End;
 
-
 Function THL7V2ModelEvents.Link : THL7V2ModelEvents;
 Begin
   Result := THL7V2ModelEvents(Inherited Link);
 End;
-
 
 Function THL7V2ModelEvents.Clone : THL7V2ModelEvents;
 Begin
   Result := THL7V2ModelEvents(Inherited Clone);
 End;
 
-
 Function THL7V2ModelEvents.New : THL7V2ModelEvent;
 Begin
   Result := THL7V2ModelEvent(Inherited New);
 End;
-
 
 Function THL7V2ModelEvents.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ModelEvent;
 End;
 
-
 Function THL7V2ModelEvents.GetElement(Const iIndex : Integer) : THL7V2ModelEvent;
 Begin
   Result := THL7V2ModelEvent(ObjectByIndex[iIndex]);
 End;
-
 
 Procedure THL7V2ModelEvents.SetElement(Const iIndex : Integer; Const oValue : THL7V2ModelEvent);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ModelEvents.CompareByName(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEvent(pA).Name, THL7V2ModelEvent(pB).Name);
 End;
 
-
 Function THL7V2ModelEvents.CompareByDescription(pA, pB : Pointer) : Integer;
 Begin
   Result := FHIR.Support.Utilities.StringCompare(THL7V2ModelEvent(pA).Description, THL7V2ModelEvent(pB).Description);
 End;
-
 
 Function THL7V2ModelEvents.IndexByName(Const aValue : THL7V2ModelEventName) : Integer;
 Var
@@ -4396,7 +4004,6 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelEvents.IndexByDescription(Const aValue : THL7V2ModelEventDescription) : Integer;
 Var
   oElement : THL7V2ModelEvent;
@@ -4414,60 +4021,50 @@ Begin
   End;
 End;
 
-
 Function THL7V2ModelEvents.Get(Const aValue : Integer) : THL7V2ModelEvent;
 Begin
   Result := THL7V2ModelEvent(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ModelEvents.GetByName(Const aValue : THL7V2ModelEventName) : THL7V2ModelEvent;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelEvents.GetByDescription(Const aValue : THL7V2ModelEventDescription) : THL7V2ModelEvent;
 Begin
   Result := Get(IndexByDescription(aValue));
 End;
-
 
 Function THL7V2ModelEvents.ExistsByName(Const aValue : THL7V2ModelEventName) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
-
 Function THL7V2ModelEvents.ExistsByDescription(Const aValue : THL7V2ModelEventDescription) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByDescription(aValue));
 End;
-
 
 Procedure THL7V2ModelEvents.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
-
 Procedure THL7V2ModelEvents.SortedByDescription;
 Begin
   SortedBy(CompareByDescription);
 End;
-
 
 Function THL7V2ModelEvents.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
-
 Function THL7V2ModelEvents.IsSortedByDescription : Boolean;
 Begin
   Result := IsSortedBy(CompareByDescription);
 End;
-
 
 Procedure THL7V2ModelEvent.SetMessages(Const Value: THL7V2ModelEventMessages);
 Begin
@@ -4756,7 +4353,6 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2SchemaStore.ProduceSchemaMap(aVersion : THL7V2Version; Const sStruct: String): THL7V2ModelSegmentGroup;
 Var
   aDate : TDateTime;
@@ -4894,7 +4490,6 @@ Begin
   oWriter.WriteString(sName);
   oWriter.WriteString(SaveSegmentMap(oMap));
 End;
-
 
 Procedure THL7V2SchemaStore.ReadSegmentGroup(oReader : TReader; oGroup : THL7V2ModelSegmentGroup);
 Var
@@ -5034,7 +4629,6 @@ Begin
     End;
 End;
 
-
 Function THL7V2SchemaStore.LoadSchemaFromXML(aVersion: THL7V2Version; Const sStruct: String): THL7V2ModelSegmentGroup;
 Var
   sFilename : String;
@@ -5062,7 +4656,6 @@ Begin
     Result.Free;
   End;
 End;
-
 
 Procedure THL7V2SchemaStore.BuildFromSchemas(AProgress: TOnSchemaTransferProgress);
 Var
@@ -5523,7 +5116,6 @@ begin
   FSchemaStore := Value;
 end;
 
-
 { THL7V2BinaryDictionaryContext }
 
 destructor THL7V2BinaryDictionaryContext.Destroy;
@@ -5884,7 +5476,6 @@ begin
       end;
 end;
 
-
 procedure THL7V2BinaryDictionary.LoadDataElements(aVersion : THL7V2Version; oDataElements : THL7V2ModelDataElements);
 var
   oContext : THL7V2BinaryDictionaryContext;
@@ -5980,7 +5571,6 @@ begin
       WriteInteger(oDataType.Length);
       end;
 end;
-
 
 procedure THL7V2BinaryDictionary.LoadSegments(aVersion : THL7V2Version; oSegments : THL7V2ModelSegments);
 var
@@ -6269,7 +5859,6 @@ begin
         end;
       end;
 end;
-
 
 procedure THL7V2BinaryDictionary.LoadMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures);
 var

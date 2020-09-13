@@ -179,7 +179,6 @@ begin
   end;
 end;
 
-
 class procedure TFHIRPackageClient.loadPackages(list : TFslList<TFHIRPackageInfo>; server, id: String);
 var
   this : TFHIRPackageClient;
@@ -239,7 +238,6 @@ begin
   end;
 end;
 
-
 function TFHIRPackageClient.search(name, canonical, fhirVersion: String; preRelease: boolean): TFslList<TFHIRPackageInfo>;
 var
   b : TCommaBuilder;
@@ -285,7 +283,6 @@ begin
   result := trunc(TFslDateTime.fromFormat('xxx, dd mmm, yyyy hh:NN:ss', df).DateTime);
 end;
 
-
 { TFHIRPackageInfo }
 
 constructor TFHIRPackageInfo.Create(id, version, fhirVersion, description, canonical, url: String);
@@ -323,6 +320,5 @@ begin
   else
     result := FormatDateTime('c', FDate)
 end;
-
 
 end.

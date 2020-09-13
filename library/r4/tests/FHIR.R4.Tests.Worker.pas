@@ -64,6 +64,7 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
 
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
     class function Use : TFHIRWorkerContext;
     class procedure closeUp;
   end;
@@ -105,6 +106,11 @@ end;
 function TTestingWorkerContext4.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
   raise EFHIRPathTodo.create('TTestingWorkerContext4.expand');
+end;
+
+function TTestingWorkerContext4.getSearchParameter(resourceType, name: String): TFHIRResourceV;
+begin
+  result := nil;
 end;
 
 function TTestingWorkerContext4.supportsSystem(system, version: string): boolean;

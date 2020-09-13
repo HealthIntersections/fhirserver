@@ -507,7 +507,6 @@ Begin
     End;
 End;
 
-
 function Tv2Protocol.ConvertIPtoCardinal(const AStr: String): Cardinal;
 var
   LArray: array [1..4] of Byte;
@@ -783,7 +782,6 @@ Begin
     StopClient;
     End;
 End;
-
 
 {==========================================================
   Server Connection Maintainance
@@ -1106,7 +1104,6 @@ Begin
     FLock.Leave;
     End;
 End;
-
 
 {==========================================================
   Client Connection Maintainance

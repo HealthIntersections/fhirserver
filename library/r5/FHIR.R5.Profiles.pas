@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, IOUtils, Types,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.OIDs,
-  FHIR.R5.Resources, FHIR.R5.Parser, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Context, FHIR.R5.Utilities, FHIR.R5.Constants;
+  FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Parser, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Context, FHIR.R5.Utilities, FHIR.R5.Constants;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';

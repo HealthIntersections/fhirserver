@@ -40,7 +40,7 @@ uses
   SysUtils, Classes, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types;
+  FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types, FHIR.R3.Resources.Base;
 
 Type
 
@@ -2532,7 +2532,6 @@ Type
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); override;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
-
 
 implementation
 
@@ -45755,7 +45754,6 @@ begin
   else
     inherited ComposeBase(xml, name, base);
 end;
-
 
 end.
 

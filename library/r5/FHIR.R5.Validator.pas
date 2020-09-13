@@ -39,7 +39,7 @@ Uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Fpc,
 
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.PathEngine,
-  FHIR.R5.PathNode, FHIR.R5.Context, FHIR.R5.Resources, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.PathEngine, FHIR.R5.ElementModel;
+  FHIR.R5.PathNode, FHIR.R5.Context, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.PathEngine, FHIR.R5.ElementModel;
 
 
 Type

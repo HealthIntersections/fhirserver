@@ -49,13 +49,11 @@ begin
   js.registerElement(def, 'Element3', 'extension', 'Extension', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
-
 procedure defineBackboneElementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
   js.registerElement(def, 'BackboneElement3', 'modifierExtension', 'Extension', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
-
 
 procedure defineResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -65,7 +63,6 @@ begin
   js.registerElement(def, 'Resource3', 'language', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
-
 procedure defineDomainResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineResourcePropsJs(js, def);
@@ -74,7 +71,6 @@ begin
   js.registerElement(def, 'DomainResource3', 'extension', 'Extension', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DomainResource3', 'modifierExtension', 'Extension', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
-
 
 procedure defineParametersParameterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -130,7 +126,6 @@ begin
   defineParametersParameterPropsJs(js, def);
 end;
 
-
 procedure defineParametersPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineResourcePropsJs(js, def);
@@ -145,12 +140,10 @@ begin
   defineParametersPropsJs(js, def);
 end;
 
-
 procedure defineMetadataResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
 end;
-
 
 procedure defineExtensionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -204,7 +197,6 @@ begin
   defineExtensionPropsJs(js, def);
 end;
 
-
 procedure defineNarrativePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -219,7 +211,6 @@ begin
   def := js.defineClass('Narrative3', nil, js.FHIRFactoryJs);
   defineNarrativePropsJs(js, def);
 end;
-
 
 procedure defineContributorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -236,7 +227,6 @@ begin
   def := js.defineClass('Contributor3', nil, js.FHIRFactoryJs);
   defineContributorPropsJs(js, def);
 end;
-
 
 procedure defineAttachmentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -259,7 +249,6 @@ begin
   defineAttachmentPropsJs(js, def);
 end;
 
-
 procedure defineDataRequirementCodeFilterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -278,7 +267,6 @@ begin
   defineDataRequirementCodeFilterPropsJs(js, def);
 end;
 
-
 procedure defineDataRequirementDateFilterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -296,7 +284,6 @@ begin
   defineDataRequirementDateFilterPropsJs(js, def);
 end;
 
-
 procedure defineDataRequirementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -312,7 +299,6 @@ begin
   def := js.defineClass('DataRequirement3', nil, js.FHIRFactoryJs);
   defineDataRequirementPropsJs(js, def);
 end;
-
 
 procedure defineDosagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -345,7 +331,6 @@ begin
   defineDosagePropsJs(js, def);
 end;
 
-
 procedure defineIdentifierPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -365,7 +350,6 @@ begin
   defineIdentifierPropsJs(js, def);
 end;
 
-
 procedure defineCodingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -383,7 +367,6 @@ begin
   def := js.defineClass('Coding3', nil, js.FHIRFactoryJs);
   defineCodingPropsJs(js, def);
 end;
-
 
 procedure defineSampledDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -405,7 +388,6 @@ begin
   defineSampledDataPropsJs(js, def);
 end;
 
-
 procedure defineRatioPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -420,7 +402,6 @@ begin
   def := js.defineClass('Ratio3', nil, js.FHIRFactoryJs);
   defineRatioPropsJs(js, def);
 end;
-
 
 procedure defineReferencePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -437,7 +418,6 @@ begin
   def := js.defineClass('Reference3', nil, js.FHIRFactoryJs);
   defineReferencePropsJs(js, def);
 end;
-
 
 procedure defineTriggerDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -459,7 +439,6 @@ begin
   defineTriggerDefinitionPropsJs(js, def);
 end;
 
-
 procedure definePeriodPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -474,7 +453,6 @@ begin
   def := js.defineClass('Period3', nil, js.FHIRFactoryJs);
   definePeriodPropsJs(js, def);
 end;
-
 
 procedure defineQuantityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -494,7 +472,6 @@ begin
   defineQuantityPropsJs(js, def);
 end;
 
-
 procedure defineRangePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -509,7 +486,6 @@ begin
   def := js.defineClass('Range3', nil, js.FHIRFactoryJs);
   defineRangePropsJs(js, def);
 end;
-
 
 procedure defineRelatedArtifactPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -530,7 +506,6 @@ begin
   defineRelatedArtifactPropsJs(js, def);
 end;
 
-
 procedure defineAnnotationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -548,7 +523,6 @@ begin
   defineAnnotationPropsJs(js, def);
 end;
 
-
 procedure defineContactDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -563,7 +537,6 @@ begin
   def := js.defineClass('ContactDetail3', nil, js.FHIRFactoryJs);
   defineContactDetailPropsJs(js, def);
 end;
-
 
 procedure defineUsageContextPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -581,7 +554,6 @@ begin
   def := js.defineClass('UsageContext3', nil, js.FHIRFactoryJs);
   defineUsageContextPropsJs(js, def);
 end;
-
 
 procedure defineSignaturePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -604,7 +576,6 @@ begin
   defineSignaturePropsJs(js, def);
 end;
 
-
 procedure defineCodeableConceptPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -619,7 +590,6 @@ begin
   def := js.defineClass('CodeableConcept3', nil, js.FHIRFactoryJs);
   defineCodeableConceptPropsJs(js, def);
 end;
-
 
 procedure defineParameterDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -641,7 +611,6 @@ begin
   defineParameterDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineContactPointPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -660,7 +629,6 @@ begin
   defineContactPointPropsJs(js, def);
 end;
 
-
 procedure defineHumanNamePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -678,7 +646,6 @@ begin
   defineHumanNamePropsJs(js, def);
 end;
 
-
 procedure defineMetaPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -695,7 +662,6 @@ begin
   def := js.defineClass('Meta3', nil, js.FHIRFactoryJs);
   defineMetaPropsJs(js, def);
 end;
-
 
 procedure defineAddressPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -719,7 +685,6 @@ begin
   defineAddressPropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionSlicingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -737,7 +702,6 @@ begin
   defineElementDefinitionSlicingPropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionSlicingDiscriminatorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -752,7 +716,6 @@ begin
   def := js.defineClass('ElementDefinitionSlicingDiscriminator3', nil, js.FHIRFactoryJs);
   defineElementDefinitionSlicingDiscriminatorPropsJs(js, def);
 end;
-
 
 procedure defineElementDefinitionBasePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -770,7 +733,6 @@ begin
   defineElementDefinitionBasePropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionTypePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -787,7 +749,6 @@ begin
   def := js.defineClass('ElementDefinitionType3', nil, js.FHIRFactoryJs);
   defineElementDefinitionTypePropsJs(js, def);
 end;
-
 
 procedure defineElementDefinitionExamplePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -841,7 +802,6 @@ begin
   defineElementDefinitionExamplePropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionConstraintPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -862,7 +822,6 @@ begin
   defineElementDefinitionConstraintPropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionBindingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -880,7 +839,6 @@ begin
   defineElementDefinitionBindingPropsJs(js, def);
 end;
 
-
 procedure defineElementDefinitionMappingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -897,7 +855,6 @@ begin
   def := js.defineClass('ElementDefinitionMapping3', nil, js.FHIRFactoryJs);
   defineElementDefinitionMappingPropsJs(js, def);
 end;
-
 
 procedure defineElementDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1068,7 +1025,6 @@ begin
   defineElementDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineTimingRepeatPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -1096,7 +1052,6 @@ begin
   defineTimingRepeatPropsJs(js, def);
 end;
 
-
 procedure defineTimingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
@@ -1112,7 +1067,6 @@ begin
   defineTimingPropsJs(js, def);
 end;
 
-
 procedure defineCountPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineQuantityPropsJs(js, def);
@@ -1125,7 +1079,6 @@ begin
   def := js.defineClass('Count3', nil, js.FHIRFactoryJs);
   defineCountPropsJs(js, def);
 end;
-
 
 procedure defineMoneyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1140,7 +1093,6 @@ begin
   defineMoneyPropsJs(js, def);
 end;
 
-
 procedure defineAgePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineQuantityPropsJs(js, def);
@@ -1153,7 +1105,6 @@ begin
   def := js.defineClass('Age3', nil, js.FHIRFactoryJs);
   defineAgePropsJs(js, def);
 end;
-
 
 procedure defineDistancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1168,7 +1119,6 @@ begin
   defineDistancePropsJs(js, def);
 end;
 
-
 procedure defineDurationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineQuantityPropsJs(js, def);
@@ -1181,7 +1131,6 @@ begin
   def := js.defineClass('Duration3', nil, js.FHIRFactoryJs);
   defineDurationPropsJs(js, def);
 end;
-
 
 procedure defineAccountCoveragePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1198,7 +1147,6 @@ begin
   defineAccountCoveragePropsJs(js, def);
 end;
 
-
 procedure defineAccountGuarantorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1214,7 +1162,6 @@ begin
   def := js.defineClass('AccountGuarantor3', nil, js.FHIRFactoryJs);
   defineAccountGuarantorPropsJs(js, def);
 end;
-
 
 procedure defineAccountPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1241,7 +1188,6 @@ begin
   defineAccountPropsJs(js, def);
 end;
 
-
 procedure defineActivityDefinitionParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1256,7 +1202,6 @@ begin
   def := js.defineClass('ActivityDefinitionParticipant3', nil, js.FHIRFactoryJs);
   defineActivityDefinitionParticipantPropsJs(js, def);
 end;
-
 
 procedure defineActivityDefinitionDynamicValuePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1274,7 +1219,6 @@ begin
   def := js.defineClass('ActivityDefinitionDynamicValue3', nil, js.FHIRFactoryJs);
   defineActivityDefinitionDynamicValuePropsJs(js, def);
 end;
-
 
 procedure defineActivityDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1327,7 +1271,6 @@ begin
   defineActivityDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineAdverseEventSuspectEntityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1347,7 +1290,6 @@ begin
   def := js.defineClass('AdverseEventSuspectEntity3', nil, js.FHIRFactoryJs);
   defineAdverseEventSuspectEntityPropsJs(js, def);
 end;
-
 
 procedure defineAdverseEventPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1378,7 +1320,6 @@ begin
   defineAdverseEventPropsJs(js, def);
 end;
 
-
 procedure defineAllergyIntoleranceReactionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1398,7 +1339,6 @@ begin
   def := js.defineClass('AllergyIntoleranceReaction3', nil, js.FHIRFactoryJs);
   defineAllergyIntoleranceReactionPropsJs(js, def);
 end;
-
 
 procedure defineAllergyIntolerancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1431,7 +1371,6 @@ begin
   defineAllergyIntolerancePropsJs(js, def);
 end;
 
-
 procedure defineAppointmentParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1448,7 +1387,6 @@ begin
   def := js.defineClass('AppointmentParticipant3', nil, js.FHIRFactoryJs);
   defineAppointmentParticipantPropsJs(js, def);
 end;
-
 
 procedure defineAppointmentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1483,7 +1421,6 @@ begin
   defineAppointmentPropsJs(js, def);
 end;
 
-
 procedure defineAppointmentResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -1504,7 +1441,6 @@ begin
   def := js.defineClass('AppointmentResponse3', nil, js.FHIRFactoryJs);
   defineAppointmentResponsePropsJs(js, def);
 end;
-
 
 procedure defineAuditEventAgentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1529,7 +1465,6 @@ begin
   defineAuditEventAgentPropsJs(js, def);
 end;
 
-
 procedure defineAuditEventAgentNetworkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1544,7 +1479,6 @@ begin
   def := js.defineClass('AuditEventAgentNetwork3', nil, js.FHIRFactoryJs);
   defineAuditEventAgentNetworkPropsJs(js, def);
 end;
-
 
 procedure defineAuditEventSourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1561,7 +1495,6 @@ begin
   def := js.defineClass('AuditEventSource3', nil, js.FHIRFactoryJs);
   defineAuditEventSourcePropsJs(js, def);
 end;
-
 
 procedure defineAuditEventEntityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1586,7 +1519,6 @@ begin
   defineAuditEventEntityPropsJs(js, def);
 end;
 
-
 procedure defineAuditEventEntityDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1601,7 +1533,6 @@ begin
   def := js.defineClass('AuditEventEntityDetail3', nil, js.FHIRFactoryJs);
   defineAuditEventEntityDetailPropsJs(js, def);
 end;
-
 
 procedure defineAuditEventPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1626,7 +1557,6 @@ begin
   defineAuditEventPropsJs(js, def);
 end;
 
-
 procedure defineBasicPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -1645,7 +1575,6 @@ begin
   defineBasicPropsJs(js, def);
 end;
 
-
 procedure defineBinaryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineResourcePropsJs(js, def);
@@ -1661,7 +1590,6 @@ begin
   def := js.defineClass('Binary3', nil, js.FHIRFactoryJs);
   defineBinaryPropsJs(js, def);
 end;
-
 
 procedure defineBodySitePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1683,7 +1611,6 @@ begin
   defineBodySitePropsJs(js, def);
 end;
 
-
 procedure defineBundleLinkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1698,7 +1625,6 @@ begin
   def := js.defineClass('BundleLink3', nil, js.FHIRFactoryJs);
   defineBundleLinkPropsJs(js, def);
 end;
-
 
 procedure defineBundleEntryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1719,7 +1645,6 @@ begin
   defineBundleEntryPropsJs(js, def);
 end;
 
-
 procedure defineBundleEntrySearchPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1734,7 +1659,6 @@ begin
   def := js.defineClass('BundleEntrySearch3', nil, js.FHIRFactoryJs);
   defineBundleEntrySearchPropsJs(js, def);
 end;
-
 
 procedure defineBundleEntryRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1755,7 +1679,6 @@ begin
   defineBundleEntryRequestPropsJs(js, def);
 end;
 
-
 procedure defineBundleEntryResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1773,7 +1696,6 @@ begin
   def := js.defineClass('BundleEntryResponse3', nil, js.FHIRFactoryJs);
   defineBundleEntryResponsePropsJs(js, def);
 end;
-
 
 procedure defineBundlePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1794,7 +1716,6 @@ begin
   defineBundlePropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementSoftwarePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1811,7 +1732,6 @@ begin
   defineCapabilityStatementSoftwarePropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementImplementationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1826,7 +1746,6 @@ begin
   def := js.defineClass('CapabilityStatementImplementation3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementImplementationPropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementRestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1848,7 +1767,6 @@ begin
   defineCapabilityStatementRestPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementRestSecurityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1866,7 +1784,6 @@ begin
   defineCapabilityStatementRestSecurityPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementRestSecurityCertificatePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1881,7 +1798,6 @@ begin
   def := js.defineClass('CapabilityStatementRestSecurityCertificate3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementRestSecurityCertificatePropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementRestResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1908,7 +1824,6 @@ begin
   defineCapabilityStatementRestResourcePropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementRestResourceInteractionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1923,7 +1838,6 @@ begin
   def := js.defineClass('CapabilityStatementRestResourceInteraction3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementRestResourceInteractionPropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementRestResourceSearchParamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1942,7 +1856,6 @@ begin
   defineCapabilityStatementRestResourceSearchParamPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementRestInteractionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1958,7 +1871,6 @@ begin
   defineCapabilityStatementRestInteractionPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementRestOperationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -1973,7 +1885,6 @@ begin
   def := js.defineClass('CapabilityStatementRestOperation3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementRestOperationPropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementMessagingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -1993,7 +1904,6 @@ begin
   defineCapabilityStatementMessagingPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementMessagingEndpointPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2009,7 +1919,6 @@ begin
   defineCapabilityStatementMessagingEndpointPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementMessagingSupportedMessagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2024,7 +1933,6 @@ begin
   def := js.defineClass('CapabilityStatementMessagingSupportedMessage3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementMessagingSupportedMessagePropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementMessagingEventPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2046,7 +1954,6 @@ begin
   defineCapabilityStatementMessagingEventPropsJs(js, def);
 end;
 
-
 procedure defineCapabilityStatementDocumentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2062,7 +1969,6 @@ begin
   def := js.defineClass('CapabilityStatementDocument3', nil, js.FHIRFactoryJs);
   defineCapabilityStatementDocumentPropsJs(js, def);
 end;
-
 
 procedure defineCapabilityStatementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2100,7 +2006,6 @@ begin
   defineCapabilityStatementPropsJs(js, def);
 end;
 
-
 procedure defineCarePlanActivityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2118,7 +2023,6 @@ begin
   def := js.defineClass('CarePlanActivity3', nil, js.FHIRFactoryJs);
   defineCarePlanActivityPropsJs(js, def);
 end;
-
 
 procedure defineCarePlanActivityDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2151,7 +2055,6 @@ begin
   def := js.defineClass('CarePlanActivityDetail3', nil, js.FHIRFactoryJs);
   defineCarePlanActivityDetailPropsJs(js, def);
 end;
-
 
 procedure defineCarePlanPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2186,7 +2089,6 @@ begin
   defineCarePlanPropsJs(js, def);
 end;
 
-
 procedure defineCareTeamParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2203,7 +2105,6 @@ begin
   def := js.defineClass('CareTeamParticipant3', nil, js.FHIRFactoryJs);
   defineCareTeamParticipantPropsJs(js, def);
 end;
-
 
 procedure defineCareTeamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2230,7 +2131,6 @@ begin
   defineCareTeamPropsJs(js, def);
 end;
 
-
 procedure defineChargeItemParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2245,7 +2145,6 @@ begin
   def := js.defineClass('ChargeItemParticipant3', nil, js.FHIRFactoryJs);
   defineChargeItemParticipantPropsJs(js, def);
 end;
-
 
 procedure defineChargeItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2284,7 +2183,6 @@ begin
   defineChargeItemPropsJs(js, def);
 end;
 
-
 procedure defineClaimRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2301,7 +2199,6 @@ begin
   defineClaimRelatedPropsJs(js, def);
 end;
 
-
 procedure defineClaimPayeePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2317,7 +2214,6 @@ begin
   def := js.defineClass('ClaimPayee3', nil, js.FHIRFactoryJs);
   defineClaimPayeePropsJs(js, def);
 end;
-
 
 procedure defineClaimCareTeamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2336,7 +2232,6 @@ begin
   def := js.defineClass('ClaimCareTeam3', nil, js.FHIRFactoryJs);
   defineClaimCareTeamPropsJs(js, def);
 end;
-
 
 procedure defineClaimInformationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2361,7 +2256,6 @@ begin
   defineClaimInformationPropsJs(js, def);
 end;
 
-
 procedure defineClaimDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2380,7 +2274,6 @@ begin
   defineClaimDiagnosisPropsJs(js, def);
 end;
 
-
 procedure defineClaimProcedurePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2397,7 +2290,6 @@ begin
   def := js.defineClass('ClaimProcedure3', nil, js.FHIRFactoryJs);
   defineClaimProcedurePropsJs(js, def);
 end;
-
 
 procedure defineClaimInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2417,7 +2309,6 @@ begin
   defineClaimInsurancePropsJs(js, def);
 end;
 
-
 procedure defineClaimAccidentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2434,7 +2325,6 @@ begin
   def := js.defineClass('ClaimAccident3', nil, js.FHIRFactoryJs);
   defineClaimAccidentPropsJs(js, def);
 end;
-
 
 procedure defineClaimItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2469,7 +2359,6 @@ begin
   defineClaimItemPropsJs(js, def);
 end;
 
-
 procedure defineClaimItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2495,7 +2384,6 @@ begin
   defineClaimItemDetailPropsJs(js, def);
 end;
 
-
 procedure defineClaimItemDetailSubDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2519,7 +2407,6 @@ begin
   def := js.defineClass('ClaimItemDetailSubDetail3', nil, js.FHIRFactoryJs);
   defineClaimItemDetailSubDetailPropsJs(js, def);
 end;
-
 
 procedure defineClaimPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2564,7 +2451,6 @@ begin
   defineClaimPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2580,7 +2466,6 @@ begin
   def := js.defineClass('ClaimResponseItem3', nil, js.FHIRFactoryJs);
   defineClaimResponseItemPropsJs(js, def);
 end;
-
 
 procedure defineClaimResponseItemAdjudicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2599,7 +2484,6 @@ begin
   defineClaimResponseItemAdjudicationPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2616,7 +2500,6 @@ begin
   defineClaimResponseItemDetailPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseItemDetailSubDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2631,7 +2514,6 @@ begin
   def := js.defineClass('ClaimResponseItemDetailSubDetail3', nil, js.FHIRFactoryJs);
   defineClaimResponseItemDetailSubDetailPropsJs(js, def);
 end;
-
 
 procedure defineClaimResponseAddItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2653,7 +2535,6 @@ begin
   defineClaimResponseAddItemPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseAddItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2673,7 +2554,6 @@ begin
   defineClaimResponseAddItemDetailPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseErrorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2690,7 +2570,6 @@ begin
   def := js.defineClass('ClaimResponseError3', nil, js.FHIRFactoryJs);
   defineClaimResponseErrorPropsJs(js, def);
 end;
-
 
 procedure defineClaimResponsePaymentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2711,7 +2590,6 @@ begin
   defineClaimResponsePaymentPropsJs(js, def);
 end;
 
-
 procedure defineClaimResponseProcessNotePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2728,7 +2606,6 @@ begin
   def := js.defineClass('ClaimResponseProcessNote3', nil, js.FHIRFactoryJs);
   defineClaimResponseProcessNotePropsJs(js, def);
 end;
-
 
 procedure defineClaimResponseInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2747,7 +2624,6 @@ begin
   def := js.defineClass('ClaimResponseInsurance3', nil, js.FHIRFactoryJs);
   defineClaimResponseInsurancePropsJs(js, def);
 end;
-
 
 procedure defineClaimResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2785,7 +2661,6 @@ begin
   defineClaimResponsePropsJs(js, def);
 end;
 
-
 procedure defineClinicalImpressionInvestigationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2800,7 +2675,6 @@ begin
   def := js.defineClass('ClinicalImpressionInvestigation3', nil, js.FHIRFactoryJs);
   defineClinicalImpressionInvestigationPropsJs(js, def);
 end;
-
 
 procedure defineClinicalImpressionFindingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2817,7 +2691,6 @@ begin
   def := js.defineClass('ClinicalImpressionFinding3', nil, js.FHIRFactoryJs);
   defineClinicalImpressionFindingPropsJs(js, def);
 end;
-
 
 procedure defineClinicalImpressionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2851,7 +2724,6 @@ begin
   defineClinicalImpressionPropsJs(js, def);
 end;
 
-
 procedure defineCodeSystemFilterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2867,7 +2739,6 @@ begin
   def := js.defineClass('CodeSystemFilter3', nil, js.FHIRFactoryJs);
   defineCodeSystemFilterPropsJs(js, def);
 end;
-
 
 procedure defineCodeSystemPropertyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2885,7 +2756,6 @@ begin
   def := js.defineClass('CodeSystemProperty3', nil, js.FHIRFactoryJs);
   defineCodeSystemPropertyPropsJs(js, def);
 end;
-
 
 procedure defineCodeSystemConceptPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2906,7 +2776,6 @@ begin
   defineCodeSystemConceptPropsJs(js, def);
 end;
 
-
 procedure defineCodeSystemConceptDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2922,7 +2791,6 @@ begin
   def := js.defineClass('CodeSystemConceptDesignation3', nil, js.FHIRFactoryJs);
   defineCodeSystemConceptDesignationPropsJs(js, def);
 end;
-
 
 procedure defineCodeSystemConceptPropertyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2943,7 +2811,6 @@ begin
   def := js.defineClass('CodeSystemConceptProperty3', nil, js.FHIRFactoryJs);
   defineCodeSystemConceptPropertyPropsJs(js, def);
 end;
-
 
 procedure defineCodeSystemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -2983,7 +2850,6 @@ begin
   defineCodeSystemPropsJs(js, def);
 end;
 
-
 procedure defineCommunicationPayloadPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -2999,7 +2865,6 @@ begin
   def := js.defineClass('CommunicationPayload3', nil, js.FHIRFactoryJs);
   defineCommunicationPayloadPropsJs(js, def);
 end;
-
 
 procedure defineCommunicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3034,7 +2899,6 @@ begin
   defineCommunicationPropsJs(js, def);
 end;
 
-
 procedure defineCommunicationRequestPayloadPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3051,7 +2915,6 @@ begin
   defineCommunicationRequestPayloadPropsJs(js, def);
 end;
 
-
 procedure defineCommunicationRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3066,7 +2929,6 @@ begin
   def := js.defineClass('CommunicationRequestRequester3', nil, js.FHIRFactoryJs);
   defineCommunicationRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineCommunicationRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3102,7 +2964,6 @@ begin
   defineCommunicationRequestPropsJs(js, def);
 end;
 
-
 procedure defineCompartmentDefinitionResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3117,7 +2978,6 @@ begin
   def := js.defineClass('CompartmentDefinitionResource3', nil, js.FHIRFactoryJs);
   defineCompartmentDefinitionResourcePropsJs(js, def);
 end;
-
 
 procedure defineCompartmentDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3147,7 +3007,6 @@ begin
   defineCompartmentDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineCompositionAttesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3162,7 +3021,6 @@ begin
   def := js.defineClass('CompositionAttester3', nil, js.FHIRFactoryJs);
   defineCompositionAttesterPropsJs(js, def);
 end;
-
 
 procedure defineCompositionRelatesToPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3180,7 +3038,6 @@ begin
   defineCompositionRelatesToPropsJs(js, def);
 end;
 
-
 procedure defineCompositionEventPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3196,7 +3053,6 @@ begin
   def := js.defineClass('CompositionEvent3', nil, js.FHIRFactoryJs);
   defineCompositionEventPropsJs(js, def);
 end;
-
 
 procedure defineCompositionSectionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3218,7 +3074,6 @@ begin
   def := js.defineClass('CompositionSection3', nil, js.FHIRFactoryJs);
   defineCompositionSectionPropsJs(js, def);
 end;
-
 
 procedure defineCompositionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3248,7 +3103,6 @@ begin
   defineCompositionPropsJs(js, def);
 end;
 
-
 procedure defineConceptMapGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3268,7 +3122,6 @@ begin
   defineConceptMapGroupPropsJs(js, def);
 end;
 
-
 procedure defineConceptMapGroupElementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3284,7 +3137,6 @@ begin
   def := js.defineClass('ConceptMapGroupElement3', nil, js.FHIRFactoryJs);
   defineConceptMapGroupElementPropsJs(js, def);
 end;
-
 
 procedure defineConceptMapGroupElementTargetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3305,7 +3157,6 @@ begin
   defineConceptMapGroupElementTargetPropsJs(js, def);
 end;
 
-
 procedure defineConceptMapGroupElementTargetDependsOnPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3323,7 +3174,6 @@ begin
   defineConceptMapGroupElementTargetDependsOnPropsJs(js, def);
 end;
 
-
 procedure defineConceptMapGroupUnmappedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3340,7 +3190,6 @@ begin
   def := js.defineClass('ConceptMapGroupUnmapped3', nil, js.FHIRFactoryJs);
   defineConceptMapGroupUnmappedPropsJs(js, def);
 end;
-
 
 procedure defineConceptMapPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3375,7 +3224,6 @@ begin
   defineConceptMapPropsJs(js, def);
 end;
 
-
 procedure defineConditionStagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3391,7 +3239,6 @@ begin
   defineConditionStagePropsJs(js, def);
 end;
 
-
 procedure defineConditionEvidencePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3406,7 +3253,6 @@ begin
   def := js.defineClass('ConditionEvidence3', nil, js.FHIRFactoryJs);
   defineConditionEvidencePropsJs(js, def);
 end;
-
 
 procedure defineConditionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3446,7 +3292,6 @@ begin
   defineConditionPropsJs(js, def);
 end;
 
-
 procedure defineConsentActorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3461,7 +3306,6 @@ begin
   def := js.defineClass('ConsentActor3', nil, js.FHIRFactoryJs);
   defineConsentActorPropsJs(js, def);
 end;
-
 
 procedure defineConsentPolicyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3478,7 +3322,6 @@ begin
   defineConsentPolicyPropsJs(js, def);
 end;
 
-
 procedure defineConsentDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3493,7 +3336,6 @@ begin
   def := js.defineClass('ConsentData3', nil, js.FHIRFactoryJs);
   defineConsentDataPropsJs(js, def);
 end;
-
 
 procedure defineConsentExceptPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3518,7 +3360,6 @@ begin
   defineConsentExceptPropsJs(js, def);
 end;
 
-
 procedure defineConsentExceptActorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3534,7 +3375,6 @@ begin
   defineConsentExceptActorPropsJs(js, def);
 end;
 
-
 procedure defineConsentExceptDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3549,7 +3389,6 @@ begin
   def := js.defineClass('ConsentExceptData3', nil, js.FHIRFactoryJs);
   defineConsentExceptDataPropsJs(js, def);
 end;
-
 
 procedure defineConsentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3584,7 +3423,6 @@ begin
   defineConsentPropsJs(js, def);
 end;
 
-
 procedure defineContractAgentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3599,7 +3437,6 @@ begin
   def := js.defineClass('ContractAgent3', nil, js.FHIRFactoryJs);
   defineContractAgentPropsJs(js, def);
 end;
-
 
 procedure defineContractSignerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3616,7 +3453,6 @@ begin
   def := js.defineClass('ContractSigner3', nil, js.FHIRFactoryJs);
   defineContractSignerPropsJs(js, def);
 end;
-
 
 procedure defineContractValuedItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3639,7 +3475,6 @@ begin
   def := js.defineClass('ContractValuedItem3', nil, js.FHIRFactoryJs);
   defineContractValuedItemPropsJs(js, def);
 end;
-
 
 procedure defineContractTermPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3667,7 +3502,6 @@ begin
   defineContractTermPropsJs(js, def);
 end;
 
-
 procedure defineContractTermAgentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3682,7 +3516,6 @@ begin
   def := js.defineClass('ContractTermAgent3', nil, js.FHIRFactoryJs);
   defineContractTermAgentPropsJs(js, def);
 end;
-
 
 procedure defineContractTermValuedItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3706,7 +3539,6 @@ begin
   defineContractTermValuedItemPropsJs(js, def);
 end;
 
-
 procedure defineContractFriendlyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3721,7 +3553,6 @@ begin
   def := js.defineClass('ContractFriendly3', nil, js.FHIRFactoryJs);
   defineContractFriendlyPropsJs(js, def);
 end;
-
 
 procedure defineContractLegalPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3738,7 +3569,6 @@ begin
   defineContractLegalPropsJs(js, def);
 end;
 
-
 procedure defineContractRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3753,7 +3583,6 @@ begin
   def := js.defineClass('ContractRule3', nil, js.FHIRFactoryJs);
   defineContractRulePropsJs(js, def);
 end;
-
 
 procedure defineContractPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3792,7 +3621,6 @@ begin
   defineContractPropsJs(js, def);
 end;
 
-
 procedure defineCoverageGroupingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3817,7 +3645,6 @@ begin
   def := js.defineClass('CoverageGrouping3', nil, js.FHIRFactoryJs);
   defineCoverageGroupingPropsJs(js, def);
 end;
-
 
 procedure defineCoveragePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3848,7 +3675,6 @@ begin
   defineCoveragePropsJs(js, def);
 end;
 
-
 procedure defineDataElementMappingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3865,7 +3691,6 @@ begin
   def := js.defineClass('DataElementMapping3', nil, js.FHIRFactoryJs);
   defineDataElementMappingPropsJs(js, def);
 end;
-
 
 procedure defineDataElementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3896,7 +3721,6 @@ begin
   defineDataElementPropsJs(js, def);
 end;
 
-
 procedure defineDetectedIssueMitigationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3912,7 +3736,6 @@ begin
   def := js.defineClass('DetectedIssueMitigation3', nil, js.FHIRFactoryJs);
   defineDetectedIssueMitigationPropsJs(js, def);
 end;
-
 
 procedure defineDetectedIssuePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3938,7 +3761,6 @@ begin
   defineDetectedIssuePropsJs(js, def);
 end;
 
-
 procedure defineDeviceUdiPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -3958,7 +3780,6 @@ begin
   def := js.defineClass('DeviceUdi3', nil, js.FHIRFactoryJs);
   defineDeviceUdiPropsJs(js, def);
 end;
-
 
 procedure defineDevicePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -3990,7 +3811,6 @@ begin
   defineDevicePropsJs(js, def);
 end;
 
-
 procedure defineDeviceComponentProductionSpecificationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4006,7 +3826,6 @@ begin
   def := js.defineClass('DeviceComponentProductionSpecification3', nil, js.FHIRFactoryJs);
   defineDeviceComponentProductionSpecificationPropsJs(js, def);
 end;
-
 
 procedure defineDeviceComponentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4031,7 +3850,6 @@ begin
   defineDeviceComponentPropsJs(js, def);
 end;
 
-
 procedure defineDeviceMetricCalibrationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4047,7 +3865,6 @@ begin
   def := js.defineClass('DeviceMetricCalibration3', nil, js.FHIRFactoryJs);
   defineDeviceMetricCalibrationPropsJs(js, def);
 end;
-
 
 procedure defineDeviceMetricPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4072,7 +3889,6 @@ begin
   defineDeviceMetricPropsJs(js, def);
 end;
 
-
 procedure defineDeviceRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4087,7 +3903,6 @@ begin
   def := js.defineClass('DeviceRequestRequester3', nil, js.FHIRFactoryJs);
   defineDeviceRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineDeviceRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4126,7 +3941,6 @@ begin
   defineDeviceRequestPropsJs(js, def);
 end;
 
-
 procedure defineDeviceUseStatementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -4153,7 +3967,6 @@ begin
   defineDeviceUseStatementPropsJs(js, def);
 end;
 
-
 procedure defineDiagnosticReportPerformerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4169,7 +3982,6 @@ begin
   defineDiagnosticReportPerformerPropsJs(js, def);
 end;
 
-
 procedure defineDiagnosticReportImagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4184,7 +3996,6 @@ begin
   def := js.defineClass('DiagnosticReportImage3', nil, js.FHIRFactoryJs);
   defineDiagnosticReportImagePropsJs(js, def);
 end;
-
 
 procedure defineDiagnosticReportPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4217,7 +4028,6 @@ begin
   defineDiagnosticReportPropsJs(js, def);
 end;
 
-
 procedure defineDocumentManifestContentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4233,7 +4043,6 @@ begin
   defineDocumentManifestContentPropsJs(js, def);
 end;
 
-
 procedure defineDocumentManifestRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4248,7 +4057,6 @@ begin
   def := js.defineClass('DocumentManifestRelated3', nil, js.FHIRFactoryJs);
   defineDocumentManifestRelatedPropsJs(js, def);
 end;
-
 
 procedure defineDocumentManifestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4275,7 +4083,6 @@ begin
   defineDocumentManifestPropsJs(js, def);
 end;
 
-
 procedure defineDocumentReferenceRelatesToPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4291,7 +4098,6 @@ begin
   defineDocumentReferenceRelatesToPropsJs(js, def);
 end;
 
-
 procedure defineDocumentReferenceContentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4306,7 +4112,6 @@ begin
   def := js.defineClass('DocumentReferenceContent3', nil, js.FHIRFactoryJs);
   defineDocumentReferenceContentPropsJs(js, def);
 end;
-
 
 procedure defineDocumentReferenceContextPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4328,7 +4133,6 @@ begin
   defineDocumentReferenceContextPropsJs(js, def);
 end;
 
-
 procedure defineDocumentReferenceContextRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4343,7 +4147,6 @@ begin
   def := js.defineClass('DocumentReferenceContextRelated3', nil, js.FHIRFactoryJs);
   defineDocumentReferenceContextRelatedPropsJs(js, def);
 end;
-
 
 procedure defineDocumentReferencePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4375,7 +4178,6 @@ begin
   defineDocumentReferencePropsJs(js, def);
 end;
 
-
 procedure defineEligibilityRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -4405,7 +4207,6 @@ begin
   defineEligibilityRequestPropsJs(js, def);
 end;
 
-
 procedure defineEligibilityResponseInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4421,7 +4222,6 @@ begin
   def := js.defineClass('EligibilityResponseInsurance3', nil, js.FHIRFactoryJs);
   defineEligibilityResponseInsurancePropsJs(js, def);
 end;
-
 
 procedure defineEligibilityResponseInsuranceBenefitBalancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4445,7 +4245,6 @@ begin
   defineEligibilityResponseInsuranceBenefitBalancePropsJs(js, def);
 end;
 
-
 procedure defineEligibilityResponseInsuranceBenefitBalanceFinancialPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4465,7 +4264,6 @@ begin
   defineEligibilityResponseInsuranceBenefitBalanceFinancialPropsJs(js, def);
 end;
 
-
 procedure defineEligibilityResponseErrorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4479,7 +4277,6 @@ begin
   def := js.defineClass('EligibilityResponseError3', nil, js.FHIRFactoryJs);
   defineEligibilityResponseErrorPropsJs(js, def);
 end;
-
 
 procedure defineEligibilityResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4507,7 +4304,6 @@ begin
   defineEligibilityResponsePropsJs(js, def);
 end;
 
-
 procedure defineEncounterStatusHistoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4523,7 +4319,6 @@ begin
   defineEncounterStatusHistoryPropsJs(js, def);
 end;
 
-
 procedure defineEncounterClassHistoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4538,7 +4333,6 @@ begin
   def := js.defineClass('EncounterClassHistory3', nil, js.FHIRFactoryJs);
   defineEncounterClassHistoryPropsJs(js, def);
 end;
-
 
 procedure defineEncounterParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4556,7 +4350,6 @@ begin
   defineEncounterParticipantPropsJs(js, def);
 end;
 
-
 procedure defineEncounterDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4572,7 +4365,6 @@ begin
   def := js.defineClass('EncounterDiagnosis3', nil, js.FHIRFactoryJs);
   defineEncounterDiagnosisPropsJs(js, def);
 end;
-
 
 procedure defineEncounterHospitalizationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4596,7 +4388,6 @@ begin
   defineEncounterHospitalizationPropsJs(js, def);
 end;
 
-
 procedure defineEncounterLocationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4612,7 +4403,6 @@ begin
   def := js.defineClass('EncounterLocation3', nil, js.FHIRFactoryJs);
   defineEncounterLocationPropsJs(js, def);
 end;
-
 
 procedure defineEncounterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4648,7 +4438,6 @@ begin
   defineEncounterPropsJs(js, def);
 end;
 
-
 procedure defineEndpointPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -4671,7 +4460,6 @@ begin
   defineEndpointPropsJs(js, def);
 end;
 
-
 procedure defineEnrollmentRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -4692,7 +4480,6 @@ begin
   def := js.defineClass('EnrollmentRequest3', nil, js.FHIRFactoryJs);
   defineEnrollmentRequestPropsJs(js, def);
 end;
-
 
 procedure defineEnrollmentResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4716,7 +4503,6 @@ begin
   defineEnrollmentResponsePropsJs(js, def);
 end;
 
-
 procedure defineEpisodeOfCareStatusHistoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4731,7 +4517,6 @@ begin
   def := js.defineClass('EpisodeOfCareStatusHistory3', nil, js.FHIRFactoryJs);
   defineEpisodeOfCareStatusHistoryPropsJs(js, def);
 end;
-
 
 procedure defineEpisodeOfCareDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4748,7 +4533,6 @@ begin
   def := js.defineClass('EpisodeOfCareDiagnosis3', nil, js.FHIRFactoryJs);
   defineEpisodeOfCareDiagnosisPropsJs(js, def);
 end;
-
 
 procedure defineEpisodeOfCarePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4775,7 +4559,6 @@ begin
   defineEpisodeOfCarePropsJs(js, def);
 end;
 
-
 procedure defineExpansionProfileFixedVersionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4792,7 +4575,6 @@ begin
   defineExpansionProfileFixedVersionPropsJs(js, def);
 end;
 
-
 procedure defineExpansionProfileExcludedSystemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4807,7 +4589,6 @@ begin
   def := js.defineClass('ExpansionProfileExcludedSystem3', nil, js.FHIRFactoryJs);
   defineExpansionProfileExcludedSystemPropsJs(js, def);
 end;
-
 
 procedure defineExpansionProfileDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4824,7 +4605,6 @@ begin
   defineExpansionProfileDesignationPropsJs(js, def);
 end;
 
-
 procedure defineExpansionProfileDesignationIncludePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4838,7 +4618,6 @@ begin
   def := js.defineClass('ExpansionProfileDesignationInclude3', nil, js.FHIRFactoryJs);
   defineExpansionProfileDesignationIncludePropsJs(js, def);
 end;
-
 
 procedure defineExpansionProfileDesignationIncludeDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4855,7 +4634,6 @@ begin
   defineExpansionProfileDesignationIncludeDesignationPropsJs(js, def);
 end;
 
-
 procedure defineExpansionProfileDesignationExcludePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4869,7 +4647,6 @@ begin
   def := js.defineClass('ExpansionProfileDesignationExclude3', nil, js.FHIRFactoryJs);
   defineExpansionProfileDesignationExcludePropsJs(js, def);
 end;
-
 
 procedure defineExpansionProfileDesignationExcludeDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4885,7 +4662,6 @@ begin
   def := js.defineClass('ExpansionProfileDesignationExcludeDesignation3', nil, js.FHIRFactoryJs);
   defineExpansionProfileDesignationExcludeDesignationPropsJs(js, def);
 end;
-
 
 procedure defineExpansionProfilePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4923,7 +4699,6 @@ begin
   defineExpansionProfilePropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4940,7 +4715,6 @@ begin
   defineExplanationOfBenefitRelatedPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitPayeePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4956,7 +4730,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitPayee3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitPayeePropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitInformationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -4981,7 +4754,6 @@ begin
   defineExplanationOfBenefitInformationPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitCareTeamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4999,7 +4771,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitCareTeam3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitCareTeamPropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5019,7 +4790,6 @@ begin
   defineExplanationOfBenefitDiagnosisPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitProcedurePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5037,7 +4807,6 @@ begin
   defineExplanationOfBenefitProcedurePropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5051,7 +4820,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitInsurance3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitInsurancePropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitAccidentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5069,7 +4837,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitAccident3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitAccidentPropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5105,7 +4872,6 @@ begin
   defineExplanationOfBenefitItemPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitItemAdjudicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5122,7 +4888,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitItemAdjudication3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitItemAdjudicationPropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5151,7 +4916,6 @@ begin
   defineExplanationOfBenefitItemDetailPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitItemDetailSubDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5178,7 +4942,6 @@ begin
   defineExplanationOfBenefitItemDetailSubDetailPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitAddItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5199,7 +4962,6 @@ begin
   defineExplanationOfBenefitAddItemPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitAddItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5218,7 +4980,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitAddItemDetail3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitAddItemDetailPropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitPaymentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5239,7 +5000,6 @@ begin
   defineExplanationOfBenefitPaymentPropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitProcessNotePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5256,7 +5016,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitProcessNote3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitProcessNotePropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitBenefitBalancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5280,7 +5039,6 @@ begin
   defineExplanationOfBenefitBenefitBalancePropsJs(js, def);
 end;
 
-
 procedure defineExplanationOfBenefitBenefitBalanceFinancialPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5299,7 +5057,6 @@ begin
   def := js.defineClass('ExplanationOfBenefitBenefitBalanceFinancial3', nil, js.FHIRFactoryJs);
   defineExplanationOfBenefitBenefitBalanceFinancialPropsJs(js, def);
 end;
-
 
 procedure defineExplanationOfBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5353,7 +5110,6 @@ begin
   defineExplanationOfBenefitPropsJs(js, def);
 end;
 
-
 procedure defineFamilyMemberHistoryConditionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5373,7 +5129,6 @@ begin
   def := js.defineClass('FamilyMemberHistoryCondition3', nil, js.FHIRFactoryJs);
   defineFamilyMemberHistoryConditionPropsJs(js, def);
 end;
-
 
 procedure defineFamilyMemberHistoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5414,7 +5169,6 @@ begin
   defineFamilyMemberHistoryPropsJs(js, def);
 end;
 
-
 procedure defineFlagPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -5436,7 +5190,6 @@ begin
   defineFlagPropsJs(js, def);
 end;
 
-
 procedure defineGoalTargetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5455,7 +5208,6 @@ begin
   def := js.defineClass('GoalTarget3', nil, js.FHIRFactoryJs);
   defineGoalTargetPropsJs(js, def);
 end;
-
 
 procedure defineGoalPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5486,7 +5238,6 @@ begin
   defineGoalPropsJs(js, def);
 end;
 
-
 procedure defineGraphDefinitionLinkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5506,7 +5257,6 @@ begin
   defineGraphDefinitionLinkPropsJs(js, def);
 end;
 
-
 procedure defineGraphDefinitionLinkTargetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5524,7 +5274,6 @@ begin
   defineGraphDefinitionLinkTargetPropsJs(js, def);
 end;
 
-
 procedure defineGraphDefinitionLinkTargetCompartmentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5541,7 +5290,6 @@ begin
   def := js.defineClass('GraphDefinitionLinkTargetCompartment3', nil, js.FHIRFactoryJs);
   defineGraphDefinitionLinkTargetCompartmentPropsJs(js, def);
 end;
-
 
 procedure defineGraphDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5571,7 +5319,6 @@ begin
   defineGraphDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineGroupCharacteristicPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5592,7 +5339,6 @@ begin
   defineGroupCharacteristicPropsJs(js, def);
 end;
 
-
 procedure defineGroupMemberPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5608,7 +5354,6 @@ begin
   def := js.defineClass('GroupMember3', nil, js.FHIRFactoryJs);
   defineGroupMemberPropsJs(js, def);
 end;
-
 
 procedure defineGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5631,7 +5376,6 @@ begin
   def := js.defineClass('Group3', nil, js.FHIRFactoryJs);
   defineGroupPropsJs(js, def);
 end;
-
 
 procedure defineGuidanceResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5661,7 +5405,6 @@ begin
   defineGuidanceResponsePropsJs(js, def);
 end;
 
-
 procedure defineHealthcareServiceAvailableTimePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5678,7 +5421,6 @@ begin
   defineHealthcareServiceAvailableTimePropsJs(js, def);
 end;
 
-
 procedure defineHealthcareServiceNotAvailablePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5693,7 +5435,6 @@ begin
   def := js.defineClass('HealthcareServiceNotAvailable3', nil, js.FHIRFactoryJs);
   defineHealthcareServiceNotAvailablePropsJs(js, def);
 end;
-
 
 procedure defineHealthcareServicePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5731,7 +5472,6 @@ begin
   defineHealthcareServicePropsJs(js, def);
 end;
 
-
 procedure defineImagingManifestStudyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5749,7 +5489,6 @@ begin
   defineImagingManifestStudyPropsJs(js, def);
 end;
 
-
 procedure defineImagingManifestStudySeriesPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5766,7 +5505,6 @@ begin
   defineImagingManifestStudySeriesPropsJs(js, def);
 end;
 
-
 procedure defineImagingManifestStudySeriesInstancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5781,7 +5519,6 @@ begin
   def := js.defineClass('ImagingManifestStudySeriesInstance3', nil, js.FHIRFactoryJs);
   defineImagingManifestStudySeriesInstancePropsJs(js, def);
 end;
-
 
 procedure defineImagingManifestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5801,7 +5538,6 @@ begin
   def := js.defineClass('ImagingManifest3', nil, js.FHIRFactoryJs);
   defineImagingManifestPropsJs(js, def);
 end;
-
 
 procedure defineImagingStudySeriesPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5828,7 +5564,6 @@ begin
   defineImagingStudySeriesPropsJs(js, def);
 end;
 
-
 procedure defineImagingStudySeriesInstancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5845,7 +5580,6 @@ begin
   def := js.defineClass('ImagingStudySeriesInstance3', nil, js.FHIRFactoryJs);
   defineImagingStudySeriesInstancePropsJs(js, def);
 end;
-
 
 procedure defineImagingStudyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5879,7 +5613,6 @@ begin
   defineImagingStudyPropsJs(js, def);
 end;
 
-
 procedure defineImmunizationPractitionerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5894,7 +5627,6 @@ begin
   def := js.defineClass('ImmunizationPractitioner3', nil, js.FHIRFactoryJs);
   defineImmunizationPractitionerPropsJs(js, def);
 end;
-
 
 procedure defineImmunizationExplanationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5911,7 +5643,6 @@ begin
   defineImmunizationExplanationPropsJs(js, def);
 end;
 
-
 procedure defineImmunizationReactionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -5927,7 +5658,6 @@ begin
   def := js.defineClass('ImmunizationReaction3', nil, js.FHIRFactoryJs);
   defineImmunizationReactionPropsJs(js, def);
 end;
-
 
 procedure defineImmunizationVaccinationProtocolPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5949,7 +5679,6 @@ begin
   def := js.defineClass('ImmunizationVaccinationProtocol3', nil, js.FHIRFactoryJs);
   defineImmunizationVaccinationProtocolPropsJs(js, def);
 end;
-
 
 procedure defineImmunizationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -5985,7 +5714,6 @@ begin
   defineImmunizationPropsJs(js, def);
 end;
 
-
 procedure defineImmunizationRecommendationRecommendationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6008,7 +5736,6 @@ begin
   defineImmunizationRecommendationRecommendationPropsJs(js, def);
 end;
 
-
 procedure defineImmunizationRecommendationRecommendationDateCriterionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6023,7 +5750,6 @@ begin
   def := js.defineClass('ImmunizationRecommendationRecommendationDateCriterion3', nil, js.FHIRFactoryJs);
   defineImmunizationRecommendationRecommendationDateCriterionPropsJs(js, def);
 end;
-
 
 procedure defineImmunizationRecommendationRecommendationProtocolPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6042,7 +5768,6 @@ begin
   defineImmunizationRecommendationRecommendationProtocolPropsJs(js, def);
 end;
 
-
 procedure defineImmunizationRecommendationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -6059,7 +5784,6 @@ begin
   defineImmunizationRecommendationPropsJs(js, def);
 end;
 
-
 procedure defineImplementationGuideDependencyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6074,7 +5798,6 @@ begin
   def := js.defineClass('ImplementationGuideDependency3', nil, js.FHIRFactoryJs);
   defineImplementationGuideDependencyPropsJs(js, def);
 end;
-
 
 procedure defineImplementationGuidePackagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6091,7 +5814,6 @@ begin
   def := js.defineClass('ImplementationGuidePackage3', nil, js.FHIRFactoryJs);
   defineImplementationGuidePackagePropsJs(js, def);
 end;
-
 
 procedure defineImplementationGuidePackageResourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6113,7 +5835,6 @@ begin
   defineImplementationGuidePackageResourcePropsJs(js, def);
 end;
 
-
 procedure defineImplementationGuideGlobalPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6128,7 +5849,6 @@ begin
   def := js.defineClass('ImplementationGuideGlobal3', nil, js.FHIRFactoryJs);
   defineImplementationGuideGlobalPropsJs(js, def);
 end;
-
 
 procedure defineImplementationGuidePagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6147,7 +5867,6 @@ begin
   def := js.defineClass('ImplementationGuidePage3', nil, js.FHIRFactoryJs);
   defineImplementationGuidePagePropsJs(js, def);
 end;
-
 
 procedure defineImplementationGuidePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6178,7 +5897,6 @@ begin
   def := js.defineClass('ImplementationGuide3', nil, js.FHIRFactoryJs);
   defineImplementationGuidePropsJs(js, def);
 end;
-
 
 procedure defineLibraryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6219,7 +5937,6 @@ begin
   defineLibraryPropsJs(js, def);
 end;
 
-
 procedure defineLinkageItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6234,7 +5951,6 @@ begin
   def := js.defineClass('LinkageItem3', nil, js.FHIRFactoryJs);
   defineLinkageItemPropsJs(js, def);
 end;
-
 
 procedure defineLinkagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6252,7 +5968,6 @@ begin
   defineLinkagePropsJs(js, def);
 end;
 
-
 procedure defineListEntryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6269,7 +5984,6 @@ begin
   def := js.defineClass('ListEntry3', nil, js.FHIRFactoryJs);
   defineListEntryPropsJs(js, def);
 end;
-
 
 procedure defineListPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6297,7 +6011,6 @@ begin
   defineListPropsJs(js, def);
 end;
 
-
 procedure defineLocationPositionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6313,7 +6026,6 @@ begin
   def := js.defineClass('LocationPosition3', nil, js.FHIRFactoryJs);
   defineLocationPositionPropsJs(js, def);
 end;
-
 
 procedure defineLocationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6342,7 +6054,6 @@ begin
   defineLocationPropsJs(js, def);
 end;
 
-
 procedure defineMeasureGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6360,7 +6071,6 @@ begin
   def := js.defineClass('MeasureGroup3', nil, js.FHIRFactoryJs);
   defineMeasureGroupPropsJs(js, def);
 end;
-
 
 procedure defineMeasureGroupPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6380,7 +6090,6 @@ begin
   defineMeasureGroupPopulationPropsJs(js, def);
 end;
 
-
 procedure defineMeasureGroupStratifierPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6396,7 +6105,6 @@ begin
   def := js.defineClass('MeasureGroupStratifier3', nil, js.FHIRFactoryJs);
   defineMeasureGroupStratifierPropsJs(js, def);
 end;
-
 
 procedure defineMeasureSupplementalDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6414,7 +6122,6 @@ begin
   def := js.defineClass('MeasureSupplementalData3', nil, js.FHIRFactoryJs);
   defineMeasureSupplementalDataPropsJs(js, def);
 end;
-
 
 procedure defineMeasurePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6465,7 +6172,6 @@ begin
   defineMeasurePropsJs(js, def);
 end;
 
-
 procedure defineMeasureReportGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6482,7 +6188,6 @@ begin
   def := js.defineClass('MeasureReportGroup3', nil, js.FHIRFactoryJs);
   defineMeasureReportGroupPropsJs(js, def);
 end;
-
 
 procedure defineMeasureReportGroupPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6501,7 +6206,6 @@ begin
   defineMeasureReportGroupPopulationPropsJs(js, def);
 end;
 
-
 procedure defineMeasureReportGroupStratifierPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6516,7 +6220,6 @@ begin
   def := js.defineClass('MeasureReportGroupStratifier3', nil, js.FHIRFactoryJs);
   defineMeasureReportGroupStratifierPropsJs(js, def);
 end;
-
 
 procedure defineMeasureReportGroupStratifierStratumPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6534,7 +6237,6 @@ begin
   defineMeasureReportGroupStratifierStratumPropsJs(js, def);
 end;
 
-
 procedure defineMeasureReportGroupStratifierStratumPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6551,7 +6253,6 @@ begin
   def := js.defineClass('MeasureReportGroupStratifierStratumPopulation3', nil, js.FHIRFactoryJs);
   defineMeasureReportGroupStratifierStratumPopulationPropsJs(js, def);
 end;
-
 
 procedure defineMeasureReportPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6575,7 +6276,6 @@ begin
   def := js.defineClass('MeasureReport3', nil, js.FHIRFactoryJs);
   defineMeasureReportPropsJs(js, def);
 end;
-
 
 procedure defineMediaPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6609,7 +6309,6 @@ begin
   defineMediaPropsJs(js, def);
 end;
 
-
 procedure defineMedicationIngredientPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6627,7 +6326,6 @@ begin
   defineMedicationIngredientPropsJs(js, def);
 end;
 
-
 procedure defineMedicationPackagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6643,7 +6341,6 @@ begin
   def := js.defineClass('MedicationPackage3', nil, js.FHIRFactoryJs);
   defineMedicationPackagePropsJs(js, def);
 end;
-
 
 procedure defineMedicationPackageContentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6661,7 +6358,6 @@ begin
   defineMedicationPackageContentPropsJs(js, def);
 end;
 
-
 procedure defineMedicationPackageBatchPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6676,7 +6372,6 @@ begin
   def := js.defineClass('MedicationPackageBatch3', nil, js.FHIRFactoryJs);
   defineMedicationPackageBatchPropsJs(js, def);
 end;
-
 
 procedure defineMedicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6700,7 +6395,6 @@ begin
   defineMedicationPropsJs(js, def);
 end;
 
-
 procedure defineMedicationAdministrationPerformerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6715,7 +6409,6 @@ begin
   def := js.defineClass('MedicationAdministrationPerformer3', nil, js.FHIRFactoryJs);
   defineMedicationAdministrationPerformerPropsJs(js, def);
 end;
-
 
 procedure defineMedicationAdministrationDosagePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6736,7 +6429,6 @@ begin
   def := js.defineClass('MedicationAdministrationDosage3', nil, js.FHIRFactoryJs);
   defineMedicationAdministrationDosagePropsJs(js, def);
 end;
-
 
 procedure defineMedicationAdministrationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6773,7 +6465,6 @@ begin
   defineMedicationAdministrationPropsJs(js, def);
 end;
 
-
 procedure defineMedicationDispensePerformerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6788,7 +6479,6 @@ begin
   def := js.defineClass('MedicationDispensePerformer3', nil, js.FHIRFactoryJs);
   defineMedicationDispensePerformerPropsJs(js, def);
 end;
-
 
 procedure defineMedicationDispenseSubstitutionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6806,7 +6496,6 @@ begin
   def := js.defineClass('MedicationDispenseSubstitution3', nil, js.FHIRFactoryJs);
   defineMedicationDispenseSubstitutionPropsJs(js, def);
 end;
-
 
 procedure defineMedicationDispensePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6847,7 +6536,6 @@ begin
   defineMedicationDispensePropsJs(js, def);
 end;
 
-
 procedure defineMedicationRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6862,7 +6550,6 @@ begin
   def := js.defineClass('MedicationRequestRequester3', nil, js.FHIRFactoryJs);
   defineMedicationRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineMedicationRequestDispenseRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6882,7 +6569,6 @@ begin
   defineMedicationRequestDispenseRequestPropsJs(js, def);
 end;
 
-
 procedure defineMedicationRequestSubstitutionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6897,7 +6583,6 @@ begin
   def := js.defineClass('MedicationRequestSubstitution3', nil, js.FHIRFactoryJs);
   defineMedicationRequestSubstitutionPropsJs(js, def);
 end;
-
 
 procedure defineMedicationRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -6937,7 +6622,6 @@ begin
   defineMedicationRequestPropsJs(js, def);
 end;
 
-
 procedure defineMedicationStatementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -6971,7 +6655,6 @@ begin
   defineMedicationStatementPropsJs(js, def);
 end;
 
-
 procedure defineMessageDefinitionFocusPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6989,7 +6672,6 @@ begin
   defineMessageDefinitionFocusPropsJs(js, def);
 end;
 
-
 procedure defineMessageDefinitionAllowedResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7004,7 +6686,6 @@ begin
   def := js.defineClass('MessageDefinitionAllowedResponse3', nil, js.FHIRFactoryJs);
   defineMessageDefinitionAllowedResponsePropsJs(js, def);
 end;
-
 
 procedure defineMessageDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7042,7 +6723,6 @@ begin
   defineMessageDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineMessageHeaderDestinationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7058,7 +6738,6 @@ begin
   def := js.defineClass('MessageHeaderDestination3', nil, js.FHIRFactoryJs);
   defineMessageHeaderDestinationPropsJs(js, def);
 end;
-
 
 procedure defineMessageHeaderSourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7078,7 +6757,6 @@ begin
   defineMessageHeaderSourcePropsJs(js, def);
 end;
 
-
 procedure defineMessageHeaderResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7094,7 +6772,6 @@ begin
   def := js.defineClass('MessageHeaderResponse3', nil, js.FHIRFactoryJs);
   defineMessageHeaderResponsePropsJs(js, def);
 end;
-
 
 procedure defineMessageHeaderPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7121,7 +6798,6 @@ begin
   defineMessageHeaderPropsJs(js, def);
 end;
 
-
 procedure defineNamingSystemUniqueIdPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7139,7 +6815,6 @@ begin
   def := js.defineClass('NamingSystemUniqueId3', nil, js.FHIRFactoryJs);
   defineNamingSystemUniqueIdPropsJs(js, def);
 end;
-
 
 procedure defineNamingSystemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7168,7 +6843,6 @@ begin
   defineNamingSystemPropsJs(js, def);
 end;
 
-
 procedure defineNutritionOrderOralDietPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7188,7 +6862,6 @@ begin
   defineNutritionOrderOralDietPropsJs(js, def);
 end;
 
-
 procedure defineNutritionOrderOralDietNutrientPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7204,7 +6877,6 @@ begin
   defineNutritionOrderOralDietNutrientPropsJs(js, def);
 end;
 
-
 procedure defineNutritionOrderOralDietTexturePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7219,7 +6891,6 @@ begin
   def := js.defineClass('NutritionOrderOralDietTexture3', nil, js.FHIRFactoryJs);
   defineNutritionOrderOralDietTexturePropsJs(js, def);
 end;
-
 
 procedure defineNutritionOrderSupplementPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7238,7 +6909,6 @@ begin
   def := js.defineClass('NutritionOrderSupplement3', nil, js.FHIRFactoryJs);
   defineNutritionOrderSupplementPropsJs(js, def);
 end;
-
 
 procedure defineNutritionOrderEnteralFormulaPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7262,7 +6932,6 @@ begin
   defineNutritionOrderEnteralFormulaPropsJs(js, def);
 end;
 
-
 procedure defineNutritionOrderEnteralFormulaAdministrationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7279,7 +6948,6 @@ begin
   def := js.defineClass('NutritionOrderEnteralFormulaAdministration3', nil, js.FHIRFactoryJs);
   defineNutritionOrderEnteralFormulaAdministrationPropsJs(js, def);
 end;
-
 
 procedure defineNutritionOrderPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7306,7 +6974,6 @@ begin
   defineNutritionOrderPropsJs(js, def);
 end;
 
-
 procedure defineObservationReferenceRangePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7326,7 +6993,6 @@ begin
   defineObservationReferenceRangePropsJs(js, def);
 end;
 
-
 procedure defineObservationRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7341,7 +7007,6 @@ begin
   def := js.defineClass('ObservationRelated3', nil, js.FHIRFactoryJs);
   defineObservationRelatedPropsJs(js, def);
 end;
-
 
 procedure defineObservationComponentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7369,7 +7034,6 @@ begin
   def := js.defineClass('ObservationComponent3', nil, js.FHIRFactoryJs);
   defineObservationComponentPropsJs(js, def);
 end;
-
 
 procedure defineObservationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7416,7 +7080,6 @@ begin
   defineObservationPropsJs(js, def);
 end;
 
-
 procedure defineOperationDefinitionParameterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7440,7 +7103,6 @@ begin
   defineOperationDefinitionParameterPropsJs(js, def);
 end;
 
-
 procedure defineOperationDefinitionParameterBindingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7457,7 +7119,6 @@ begin
   defineOperationDefinitionParameterBindingPropsJs(js, def);
 end;
 
-
 procedure defineOperationDefinitionOverloadPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7471,7 +7132,6 @@ begin
   def := js.defineClass('OperationDefinitionOverload3', nil, js.FHIRFactoryJs);
   defineOperationDefinitionOverloadPropsJs(js, def);
 end;
-
 
 procedure defineOperationDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7508,7 +7168,6 @@ begin
   defineOperationDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineOperationOutcomeIssuePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7526,7 +7185,6 @@ begin
   defineOperationOutcomeIssuePropsJs(js, def);
 end;
 
-
 procedure defineOperationOutcomePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -7540,7 +7198,6 @@ begin
   def := js.defineClass('OperationOutcome3', nil, js.FHIRFactoryJs);
   defineOperationOutcomePropsJs(js, def);
 end;
-
 
 procedure defineOrganizationContactPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7558,7 +7215,6 @@ begin
   def := js.defineClass('OrganizationContact3', nil, js.FHIRFactoryJs);
   defineOrganizationContactPropsJs(js, def);
 end;
-
 
 procedure defineOrganizationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7582,7 +7238,6 @@ begin
   defineOrganizationPropsJs(js, def);
 end;
 
-
 procedure definePatientContactPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7603,7 +7258,6 @@ begin
   definePatientContactPropsJs(js, def);
 end;
 
-
 procedure definePatientAnimalPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7620,7 +7274,6 @@ begin
   definePatientAnimalPropsJs(js, def);
 end;
 
-
 procedure definePatientCommunicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7636,7 +7289,6 @@ begin
   definePatientCommunicationPropsJs(js, def);
 end;
 
-
 procedure definePatientLinkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7651,7 +7303,6 @@ begin
   def := js.defineClass('PatientLink3', nil, js.FHIRFactoryJs);
   definePatientLinkPropsJs(js, def);
 end;
-
 
 procedure definePatientPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7685,7 +7336,6 @@ begin
   definePatientPropsJs(js, def);
 end;
 
-
 procedure definePaymentNoticePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -7709,7 +7359,6 @@ begin
   definePaymentNoticePropsJs(js, def);
 end;
 
-
 procedure definePaymentReconciliationDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7730,7 +7379,6 @@ begin
   definePaymentReconciliationDetailPropsJs(js, def);
 end;
 
-
 procedure definePaymentReconciliationProcessNotePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7745,7 +7393,6 @@ begin
   def := js.defineClass('PaymentReconciliationProcessNote3', nil, js.FHIRFactoryJs);
   definePaymentReconciliationProcessNotePropsJs(js, def);
 end;
-
 
 procedure definePaymentReconciliationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7774,7 +7421,6 @@ begin
   definePaymentReconciliationPropsJs(js, def);
 end;
 
-
 procedure definePersonLinkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7789,7 +7435,6 @@ begin
   def := js.defineClass('PersonLink3', nil, js.FHIRFactoryJs);
   definePersonLinkPropsJs(js, def);
 end;
-
 
 procedure definePersonPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7814,7 +7459,6 @@ begin
   definePersonPropsJs(js, def);
 end;
 
-
 procedure definePlanDefinitionGoalPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7835,7 +7479,6 @@ begin
   definePlanDefinitionGoalPropsJs(js, def);
 end;
 
-
 procedure definePlanDefinitionGoalTargetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7853,7 +7496,6 @@ begin
   def := js.defineClass('PlanDefinitionGoalTarget3', nil, js.FHIRFactoryJs);
   definePlanDefinitionGoalTargetPropsJs(js, def);
 end;
-
 
 procedure definePlanDefinitionActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7896,7 +7538,6 @@ begin
   definePlanDefinitionActionPropsJs(js, def);
 end;
 
-
 procedure definePlanDefinitionActionConditionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7913,7 +7554,6 @@ begin
   def := js.defineClass('PlanDefinitionActionCondition3', nil, js.FHIRFactoryJs);
   definePlanDefinitionActionConditionPropsJs(js, def);
 end;
-
 
 procedure definePlanDefinitionActionRelatedActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7932,7 +7572,6 @@ begin
   definePlanDefinitionActionRelatedActionPropsJs(js, def);
 end;
 
-
 procedure definePlanDefinitionActionParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -7947,7 +7586,6 @@ begin
   def := js.defineClass('PlanDefinitionActionParticipant3', nil, js.FHIRFactoryJs);
   definePlanDefinitionActionParticipantPropsJs(js, def);
 end;
-
 
 procedure definePlanDefinitionActionDynamicValuePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -7965,7 +7603,6 @@ begin
   def := js.defineClass('PlanDefinitionActionDynamicValue3', nil, js.FHIRFactoryJs);
   definePlanDefinitionActionDynamicValuePropsJs(js, def);
 end;
-
 
 procedure definePlanDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8006,7 +7643,6 @@ begin
   definePlanDefinitionPropsJs(js, def);
 end;
 
-
 procedure definePractitionerQualificationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8023,7 +7659,6 @@ begin
   def := js.defineClass('PractitionerQualification3', nil, js.FHIRFactoryJs);
   definePractitionerQualificationPropsJs(js, def);
 end;
-
 
 procedure definePractitionerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8048,7 +7683,6 @@ begin
   definePractitionerPropsJs(js, def);
 end;
 
-
 procedure definePractitionerRoleAvailableTimePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8065,7 +7699,6 @@ begin
   definePractitionerRoleAvailableTimePropsJs(js, def);
 end;
 
-
 procedure definePractitionerRoleNotAvailablePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8080,7 +7713,6 @@ begin
   def := js.defineClass('PractitionerRoleNotAvailable3', nil, js.FHIRFactoryJs);
   definePractitionerRoleNotAvailablePropsJs(js, def);
 end;
-
 
 procedure definePractitionerRolePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8109,7 +7741,6 @@ begin
   definePractitionerRolePropsJs(js, def);
 end;
 
-
 procedure defineProcedurePerformerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8126,7 +7757,6 @@ begin
   defineProcedurePerformerPropsJs(js, def);
 end;
 
-
 procedure defineProcedureFocalDevicePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8141,7 +7771,6 @@ begin
   def := js.defineClass('ProcedureFocalDevice3', nil, js.FHIRFactoryJs);
   defineProcedureFocalDevicePropsJs(js, def);
 end;
-
 
 procedure defineProcedurePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8183,7 +7812,6 @@ begin
   defineProcedurePropsJs(js, def);
 end;
 
-
 procedure defineProcedureRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8198,7 +7826,6 @@ begin
   def := js.defineClass('ProcedureRequestRequester3', nil, js.FHIRFactoryJs);
   defineProcedureRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineProcedureRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8242,7 +7869,6 @@ begin
   defineProcedureRequestPropsJs(js, def);
 end;
 
-
 procedure defineProcessRequestItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8256,7 +7882,6 @@ begin
   def := js.defineClass('ProcessRequestItem3', nil, js.FHIRFactoryJs);
   defineProcessRequestItemPropsJs(js, def);
 end;
-
 
 procedure defineProcessRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8284,7 +7909,6 @@ begin
   defineProcessRequestPropsJs(js, def);
 end;
 
-
 procedure defineProcessResponseProcessNotePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8299,7 +7923,6 @@ begin
   def := js.defineClass('ProcessResponseProcessNote3', nil, js.FHIRFactoryJs);
   defineProcessResponseProcessNotePropsJs(js, def);
 end;
-
 
 procedure defineProcessResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8327,7 +7950,6 @@ begin
   defineProcessResponsePropsJs(js, def);
 end;
 
-
 procedure defineProvenanceAgentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8347,7 +7969,6 @@ begin
   defineProvenanceAgentPropsJs(js, def);
 end;
 
-
 procedure defineProvenanceEntityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8365,7 +7986,6 @@ begin
   def := js.defineClass('ProvenanceEntity3', nil, js.FHIRFactoryJs);
   defineProvenanceEntityPropsJs(js, def);
 end;
-
 
 procedure defineProvenancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8388,7 +8008,6 @@ begin
   def := js.defineClass('Provenance3', nil, js.FHIRFactoryJs);
   defineProvenancePropsJs(js, def);
 end;
-
 
 procedure defineQuestionnaireItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8429,7 +8048,6 @@ begin
   defineQuestionnaireItemPropsJs(js, def);
 end;
 
-
 procedure defineQuestionnaireItemEnableWhenPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8457,7 +8075,6 @@ begin
   defineQuestionnaireItemEnableWhenPropsJs(js, def);
 end;
 
-
 procedure defineQuestionnaireItemOptionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8475,7 +8092,6 @@ begin
   def := js.defineClass('QuestionnaireItemOption3', nil, js.FHIRFactoryJs);
   defineQuestionnaireItemOptionPropsJs(js, def);
 end;
-
 
 procedure defineQuestionnairePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8510,7 +8126,6 @@ begin
   defineQuestionnairePropsJs(js, def);
 end;
 
-
 procedure defineQuestionnaireResponseItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8529,7 +8144,6 @@ begin
   def := js.defineClass('QuestionnaireResponseItem3', nil, js.FHIRFactoryJs);
   defineQuestionnaireResponseItemPropsJs(js, def);
 end;
-
 
 procedure defineQuestionnaireResponseItemAnswerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8557,7 +8171,6 @@ begin
   defineQuestionnaireResponseItemAnswerPropsJs(js, def);
 end;
 
-
 procedure defineQuestionnaireResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -8582,7 +8195,6 @@ begin
   defineQuestionnaireResponsePropsJs(js, def);
 end;
 
-
 procedure defineReferralRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8597,7 +8209,6 @@ begin
   def := js.defineClass('ReferralRequestRequester3', nil, js.FHIRFactoryJs);
   defineReferralRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineReferralRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8636,7 +8247,6 @@ begin
   defineReferralRequestPropsJs(js, def);
 end;
 
-
 procedure defineRelatedPersonPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -8660,7 +8270,6 @@ begin
   def := js.defineClass('RelatedPerson3', nil, js.FHIRFactoryJs);
   defineRelatedPersonPropsJs(js, def);
 end;
-
 
 procedure defineRequestGroupActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8697,7 +8306,6 @@ begin
   defineRequestGroupActionPropsJs(js, def);
 end;
 
-
 procedure defineRequestGroupActionConditionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8715,7 +8323,6 @@ begin
   defineRequestGroupActionConditionPropsJs(js, def);
 end;
 
-
 procedure defineRequestGroupActionRelatedActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8732,7 +8339,6 @@ begin
   def := js.defineClass('RequestGroupActionRelatedAction3', nil, js.FHIRFactoryJs);
   defineRequestGroupActionRelatedActionPropsJs(js, def);
 end;
-
 
 procedure defineRequestGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8763,7 +8369,6 @@ begin
   defineRequestGroupPropsJs(js, def);
 end;
 
-
 procedure defineResearchStudyArmPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8779,7 +8384,6 @@ begin
   def := js.defineClass('ResearchStudyArm3', nil, js.FHIRFactoryJs);
   defineResearchStudyArmPropsJs(js, def);
 end;
-
 
 procedure defineResearchStudyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8814,7 +8418,6 @@ begin
   defineResearchStudyPropsJs(js, def);
 end;
 
-
 procedure defineResearchSubjectPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -8836,7 +8439,6 @@ begin
   defineResearchSubjectPropsJs(js, def);
 end;
 
-
 procedure defineRiskAssessmentPredictionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8857,7 +8459,6 @@ begin
   def := js.defineClass('RiskAssessmentPrediction3', nil, js.FHIRFactoryJs);
   defineRiskAssessmentPredictionPropsJs(js, def);
 end;
-
 
 procedure defineRiskAssessmentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8890,7 +8491,6 @@ begin
   defineRiskAssessmentPropsJs(js, def);
 end;
 
-
 procedure defineSchedulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -8912,7 +8512,6 @@ begin
   defineSchedulePropsJs(js, def);
 end;
 
-
 procedure defineSearchParameterComponentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8927,7 +8526,6 @@ begin
   def := js.defineClass('SearchParameterComponent3', nil, js.FHIRFactoryJs);
   defineSearchParameterComponentPropsJs(js, def);
 end;
-
 
 procedure defineSearchParameterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -8961,7 +8559,6 @@ begin
   defineSearchParameterPropsJs(js, def);
 end;
 
-
 procedure defineSequenceReferenceSeqPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8983,7 +8580,6 @@ begin
   defineSequenceReferenceSeqPropsJs(js, def);
 end;
 
-
 procedure defineSequenceVariantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9002,7 +8598,6 @@ begin
   def := js.defineClass('SequenceVariant3', nil, js.FHIRFactoryJs);
   defineSequenceVariantPropsJs(js, def);
 end;
-
 
 procedure defineSequenceQualityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9031,7 +8626,6 @@ begin
   defineSequenceQualityPropsJs(js, def);
 end;
 
-
 procedure defineSequenceRepositoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9050,7 +8644,6 @@ begin
   def := js.defineClass('SequenceRepository3', nil, js.FHIRFactoryJs);
   defineSequenceRepositoryPropsJs(js, def);
 end;
-
 
 procedure defineSequencePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9079,7 +8672,6 @@ begin
   def := js.defineClass('Sequence3', nil, js.FHIRFactoryJs);
   defineSequencePropsJs(js, def);
 end;
-
 
 procedure defineServiceDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9119,7 +8711,6 @@ begin
   defineServiceDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineSlotPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -9144,7 +8735,6 @@ begin
   defineSlotPropsJs(js, def);
 end;
 
-
 procedure defineSpecimenCollectionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9164,7 +8754,6 @@ begin
   defineSpecimenCollectionPropsJs(js, def);
 end;
 
-
 procedure defineSpecimenProcessingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9182,7 +8771,6 @@ begin
   def := js.defineClass('SpecimenProcessing3', nil, js.FHIRFactoryJs);
   defineSpecimenProcessingPropsJs(js, def);
 end;
-
 
 procedure defineSpecimenContainerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9203,7 +8791,6 @@ begin
   def := js.defineClass('SpecimenContainer3', nil, js.FHIRFactoryJs);
   defineSpecimenContainerPropsJs(js, def);
 end;
-
 
 procedure defineSpecimenPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9230,7 +8817,6 @@ begin
   defineSpecimenPropsJs(js, def);
 end;
 
-
 procedure defineStructureDefinitionMappingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9248,7 +8834,6 @@ begin
   defineStructureDefinitionMappingPropsJs(js, def);
 end;
 
-
 procedure defineStructureDefinitionSnapshotPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9263,7 +8848,6 @@ begin
   defineStructureDefinitionSnapshotPropsJs(js, def);
 end;
 
-
 procedure defineStructureDefinitionDifferentialPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9277,7 +8861,6 @@ begin
   def := js.defineClass('StructureDefinitionDifferential3', nil, js.FHIRFactoryJs);
   defineStructureDefinitionDifferentialPropsJs(js, def);
 end;
-
 
 procedure defineStructureDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9318,7 +8901,6 @@ begin
   defineStructureDefinitionPropsJs(js, def);
 end;
 
-
 procedure defineStructureMapStructurePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9335,7 +8917,6 @@ begin
   def := js.defineClass('StructureMapStructure3', nil, js.FHIRFactoryJs);
   defineStructureMapStructurePropsJs(js, def);
 end;
-
 
 procedure defineStructureMapGroupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9356,7 +8937,6 @@ begin
   defineStructureMapGroupPropsJs(js, def);
 end;
 
-
 procedure defineStructureMapGroupInputPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9373,7 +8953,6 @@ begin
   def := js.defineClass('StructureMapGroupInput3', nil, js.FHIRFactoryJs);
   defineStructureMapGroupInputPropsJs(js, def);
 end;
-
 
 procedure defineStructureMapGroupRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9393,7 +8972,6 @@ begin
   def := js.defineClass('StructureMapGroupRule3', nil, js.FHIRFactoryJs);
   defineStructureMapGroupRulePropsJs(js, def);
 end;
-
 
 procedure defineStructureMapGroupRuleSourcePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9455,7 +9033,6 @@ begin
   defineStructureMapGroupRuleSourcePropsJs(js, def);
 end;
 
-
 procedure defineStructureMapGroupRuleTargetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9476,7 +9053,6 @@ begin
   defineStructureMapGroupRuleTargetPropsJs(js, def);
 end;
 
-
 procedure defineStructureMapGroupRuleTargetParameterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9495,7 +9071,6 @@ begin
   defineStructureMapGroupRuleTargetParameterPropsJs(js, def);
 end;
 
-
 procedure defineStructureMapGroupRuleDependentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9509,7 +9084,6 @@ begin
   def := js.defineClass('StructureMapGroupRuleDependent3', nil, js.FHIRFactoryJs);
   defineStructureMapGroupRuleDependentPropsJs(js, def);
 end;
-
 
 procedure defineStructureMapPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9541,7 +9115,6 @@ begin
   defineStructureMapPropsJs(js, def);
 end;
 
-
 procedure defineSubscriptionChannelPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9557,7 +9130,6 @@ begin
   def := js.defineClass('SubscriptionChannel3', nil, js.FHIRFactoryJs);
   defineSubscriptionChannelPropsJs(js, def);
 end;
-
 
 procedure defineSubscriptionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9580,7 +9152,6 @@ begin
   defineSubscriptionPropsJs(js, def);
 end;
 
-
 procedure defineSubstanceInstancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9597,7 +9168,6 @@ begin
   defineSubstanceInstancePropsJs(js, def);
 end;
 
-
 procedure defineSubstanceIngredientPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9613,7 +9183,6 @@ begin
   def := js.defineClass('SubstanceIngredient3', nil, js.FHIRFactoryJs);
   defineSubstanceIngredientPropsJs(js, def);
 end;
-
 
 procedure defineSubstancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9635,7 +9204,6 @@ begin
   defineSubstancePropsJs(js, def);
 end;
 
-
 procedure defineSupplyDeliverySuppliedItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9651,7 +9219,6 @@ begin
   def := js.defineClass('SupplyDeliverySuppliedItem3', nil, js.FHIRFactoryJs);
   defineSupplyDeliverySuppliedItemPropsJs(js, def);
 end;
-
 
 procedure defineSupplyDeliveryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9679,7 +9246,6 @@ begin
   defineSupplyDeliveryPropsJs(js, def);
 end;
 
-
 procedure defineSupplyRequestOrderedItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9696,7 +9262,6 @@ begin
   defineSupplyRequestOrderedItemPropsJs(js, def);
 end;
 
-
 procedure defineSupplyRequestRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9711,7 +9276,6 @@ begin
   def := js.defineClass('SupplyRequestRequester3', nil, js.FHIRFactoryJs);
   defineSupplyRequestRequesterPropsJs(js, def);
 end;
-
 
 procedure defineSupplyRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9741,7 +9305,6 @@ begin
   defineSupplyRequestPropsJs(js, def);
 end;
 
-
 procedure defineTaskRequesterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9756,7 +9319,6 @@ begin
   def := js.defineClass('TaskRequester3', nil, js.FHIRFactoryJs);
   defineTaskRequesterPropsJs(js, def);
 end;
-
 
 procedure defineTaskRestrictionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9773,7 +9335,6 @@ begin
   def := js.defineClass('TaskRestriction3', nil, js.FHIRFactoryJs);
   defineTaskRestrictionPropsJs(js, def);
 end;
-
 
 procedure defineTaskInputPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9827,7 +9388,6 @@ begin
   defineTaskInputPropsJs(js, def);
 end;
 
-
 procedure defineTaskOutputPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9880,7 +9440,6 @@ begin
   defineTaskOutputPropsJs(js, def);
 end;
 
-
 procedure defineTaskPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -9922,7 +9481,6 @@ begin
   defineTaskPropsJs(js, def);
 end;
 
-
 procedure defineTestReportParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9939,7 +9497,6 @@ begin
   defineTestReportParticipantPropsJs(js, def);
 end;
 
-
 procedure defineTestReportSetupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -9953,7 +9510,6 @@ begin
   def := js.defineClass('TestReportSetup3', nil, js.FHIRFactoryJs);
   defineTestReportSetupPropsJs(js, def);
 end;
-
 
 procedure defineTestReportSetupActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9969,7 +9525,6 @@ begin
   def := js.defineClass('TestReportSetupAction3', nil, js.FHIRFactoryJs);
   defineTestReportSetupActionPropsJs(js, def);
 end;
-
 
 procedure defineTestReportSetupActionOperationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -9987,7 +9542,6 @@ begin
   defineTestReportSetupActionOperationPropsJs(js, def);
 end;
 
-
 procedure defineTestReportSetupActionAssertPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10003,7 +9557,6 @@ begin
   def := js.defineClass('TestReportSetupActionAssert3', nil, js.FHIRFactoryJs);
   defineTestReportSetupActionAssertPropsJs(js, def);
 end;
-
 
 procedure defineTestReportTestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10021,7 +9574,6 @@ begin
   defineTestReportTestPropsJs(js, def);
 end;
 
-
 procedure defineTestReportTestActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10037,7 +9589,6 @@ begin
   defineTestReportTestActionPropsJs(js, def);
 end;
 
-
 procedure defineTestReportTeardownPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10052,7 +9603,6 @@ begin
   defineTestReportTeardownPropsJs(js, def);
 end;
 
-
 procedure defineTestReportTeardownActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10066,7 +9616,6 @@ begin
   def := js.defineClass('TestReportTeardownAction3', nil, js.FHIRFactoryJs);
   defineTestReportTeardownActionPropsJs(js, def);
 end;
-
 
 procedure defineTestReportPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10093,7 +9642,6 @@ begin
   defineTestReportPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptOriginPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10108,7 +9656,6 @@ begin
   def := js.defineClass('TestScriptOrigin3', nil, js.FHIRFactoryJs);
   defineTestScriptOriginPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptDestinationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10125,7 +9672,6 @@ begin
   defineTestScriptDestinationPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptMetadataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10141,7 +9687,6 @@ begin
   defineTestScriptMetadataPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptMetadataLinkPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10156,7 +9701,6 @@ begin
   def := js.defineClass('TestScriptMetadataLink3', nil, js.FHIRFactoryJs);
   defineTestScriptMetadataLinkPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptMetadataCapabilityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10176,7 +9720,6 @@ begin
   defineTestScriptMetadataCapabilityPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptFixturePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10192,7 +9735,6 @@ begin
   def := js.defineClass('TestScriptFixture3', nil, js.FHIRFactoryJs);
   defineTestScriptFixturePropsJs(js, def);
 end;
-
 
 procedure defineTestScriptVariablePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10215,7 +9757,6 @@ begin
   defineTestScriptVariablePropsJs(js, def);
 end;
 
-
 procedure defineTestScriptRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10230,7 +9771,6 @@ begin
   def := js.defineClass('TestScriptRule3', nil, js.FHIRFactoryJs);
   defineTestScriptRulePropsJs(js, def);
 end;
-
 
 procedure defineTestScriptRuleParamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10247,7 +9787,6 @@ begin
   defineTestScriptRuleParamPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptRulesetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10262,7 +9801,6 @@ begin
   def := js.defineClass('TestScriptRuleset3', nil, js.FHIRFactoryJs);
   defineTestScriptRulesetPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptRulesetRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10279,7 +9817,6 @@ begin
   defineTestScriptRulesetRulePropsJs(js, def);
 end;
 
-
 procedure defineTestScriptRulesetRuleParamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10295,7 +9832,6 @@ begin
   defineTestScriptRulesetRuleParamPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptSetupPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10309,7 +9845,6 @@ begin
   def := js.defineClass('TestScriptSetup3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptSetupActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10325,7 +9860,6 @@ begin
   def := js.defineClass('TestScriptSetupAction3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupActionPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptSetupActionOperationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10356,7 +9890,6 @@ begin
   defineTestScriptSetupActionOperationPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptSetupActionOperationRequestHeaderPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10371,7 +9904,6 @@ begin
   def := js.defineClass('TestScriptSetupActionOperationRequestHeader3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupActionOperationRequestHeaderPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptSetupActionAssertPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10410,7 +9942,6 @@ begin
   defineTestScriptSetupActionAssertPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptSetupActionAssertRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10425,7 +9956,6 @@ begin
   def := js.defineClass('TestScriptSetupActionAssertRule3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulePropsJs(js, def);
 end;
-
 
 procedure defineTestScriptSetupActionAssertRuleParamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10442,7 +9972,6 @@ begin
   defineTestScriptSetupActionAssertRuleParamPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptSetupActionAssertRulesetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10457,7 +9986,6 @@ begin
   def := js.defineClass('TestScriptSetupActionAssertRuleset3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulesetPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptSetupActionAssertRulesetRulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10474,7 +10002,6 @@ begin
   defineTestScriptSetupActionAssertRulesetRulePropsJs(js, def);
 end;
 
-
 procedure defineTestScriptSetupActionAssertRulesetRuleParamPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10489,7 +10016,6 @@ begin
   def := js.defineClass('TestScriptSetupActionAssertRulesetRuleParam3', nil, js.FHIRFactoryJs);
   defineTestScriptSetupActionAssertRulesetRuleParamPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptTestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10507,7 +10033,6 @@ begin
   defineTestScriptTestPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptTestActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10523,7 +10048,6 @@ begin
   defineTestScriptTestActionPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptTeardownPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10538,7 +10062,6 @@ begin
   defineTestScriptTeardownPropsJs(js, def);
 end;
 
-
 procedure defineTestScriptTeardownActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10552,7 +10075,6 @@ begin
   def := js.defineClass('TestScriptTeardownAction3', nil, js.FHIRFactoryJs);
   defineTestScriptTeardownActionPropsJs(js, def);
 end;
-
 
 procedure defineTestScriptPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10593,7 +10115,6 @@ begin
   defineTestScriptPropsJs(js, def);
 end;
 
-
 procedure defineValueSetComposePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10610,7 +10131,6 @@ begin
   def := js.defineClass('ValueSetCompose3', nil, js.FHIRFactoryJs);
   defineValueSetComposePropsJs(js, def);
 end;
-
 
 procedure defineValueSetComposeIncludePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10629,7 +10149,6 @@ begin
   defineValueSetComposeIncludePropsJs(js, def);
 end;
 
-
 procedure defineValueSetComposeIncludeConceptPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10645,7 +10164,6 @@ begin
   def := js.defineClass('ValueSetComposeIncludeConcept3', nil, js.FHIRFactoryJs);
   defineValueSetComposeIncludeConceptPropsJs(js, def);
 end;
-
 
 procedure defineValueSetComposeIncludeConceptDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10663,7 +10181,6 @@ begin
   defineValueSetComposeIncludeConceptDesignationPropsJs(js, def);
 end;
 
-
 procedure defineValueSetComposeIncludeFilterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10679,7 +10196,6 @@ begin
   def := js.defineClass('ValueSetComposeIncludeFilter3', nil, js.FHIRFactoryJs);
   defineValueSetComposeIncludeFilterPropsJs(js, def);
 end;
-
 
 procedure defineValueSetExpansionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10699,7 +10215,6 @@ begin
   def := js.defineClass('ValueSetExpansion3', nil, js.FHIRFactoryJs);
   defineValueSetExpansionPropsJs(js, def);
 end;
-
 
 procedure defineValueSetExpansionParameterPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10721,7 +10236,6 @@ begin
   defineValueSetExpansionParameterPropsJs(js, def);
 end;
 
-
 procedure defineValueSetExpansionContainsPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10742,7 +10256,6 @@ begin
   def := js.defineClass('ValueSetExpansionContains3', nil, js.FHIRFactoryJs);
   defineValueSetExpansionContainsPropsJs(js, def);
 end;
-
 
 procedure defineValueSetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
@@ -10776,7 +10289,6 @@ begin
   defineValueSetPropsJs(js, def);
 end;
 
-
 procedure defineVisionPrescriptionDispensePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -10805,7 +10317,6 @@ begin
   defineVisionPrescriptionDispensePropsJs(js, def);
 end;
 
-
 procedure defineVisionPrescriptionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -10827,7 +10338,6 @@ begin
   def := js.defineClass('VisionPrescription3', nil, js.FHIRFactoryJs);
   defineVisionPrescriptionPropsJs(js, def);
 end;
-
 
 procedure registerFHIRTypes(js : TFHIRJavascript);
 

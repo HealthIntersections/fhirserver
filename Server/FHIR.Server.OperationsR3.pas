@@ -39,7 +39,7 @@ uses
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Parser, FHIR.Base.Utilities,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.OpBase, FHIR.R3.Operations, FHIR.R3.PathEngine, FHIR.R3.PathNode,
-  FHIR.R3.Common, FHIR.R3.Questionnaire, FHIR.R3.Validator, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Narrative,
+  FHIR.R3.Common, FHIR.R3.Questionnaire, FHIR.R3.Validator, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Narrative, FHIR.R3.Resources.Base,
   FHIR.Tools.CodeGen, FHIR.Tools.DiffEngine,
   FHIR.Tx.Operations, FHIR.Ucum.Services,
   FHIR.Server.Session, FHIR.Server.Tags, FHIR.Server.Storage, FHIR.Server.Database, FHIR.Server.ObsStats, FHIR.Server.Search,

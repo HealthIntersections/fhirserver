@@ -38,7 +38,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
-  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants;
+  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants, FHIR.R3.Resources.Base;
 
 const
   FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');

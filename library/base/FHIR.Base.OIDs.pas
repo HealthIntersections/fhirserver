@@ -59,6 +59,5 @@ begin
   if (r.startsWith('2.16.840.1.113883.12.')) then
     exit('http://hl7.org/fhir/sid/v2-'+r.substring(21));
 
-
     end;
 end.

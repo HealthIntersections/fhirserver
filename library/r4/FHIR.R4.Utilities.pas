@@ -42,8 +42,7 @@ uses
   FHIR.Web.Fetcher,
 
   FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.R4.Context, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants;
-
+  FHIR.R4.Context, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Resources.Base;
 
 const
 
@@ -72,7 +71,6 @@ const
     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap, {$ENDIF}
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
     frtValueSet];
-
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;
 function HumanNameAsText(name : TFhirHumanName):String;
@@ -737,7 +735,6 @@ type
 
   TFhirValueSetCodeSystem = TFhirCodeSystem;
 
-
   TFHIRNamingSystemHelper = class helper for TFHIRNamingSystem
   public
     function hasOid(oid : String) : boolean;
@@ -830,7 +827,6 @@ type
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
 {$ENDIF}
-
 
 implementation
 
@@ -1035,7 +1031,6 @@ procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 begin
   iterateAttachments(CODES_TFhirResourceType[resource.resourceType], resource, list);
 end;
-
 
 function asUTCMin(value : TFhirInstant) : TDateTime;
 begin
@@ -1320,7 +1315,6 @@ begin
   end;
 end;
 
-
 function gen(ref : TFhirReference) : String;
 begin
   if (ref = nil) then
@@ -1588,7 +1582,6 @@ begin
   b.addText('Display');
 end;
 
-
 procedure addDefineRowToTable(t : TFhirXHtmlNode; c : TFhirCodeSystemConcept; indent : integer);
 var
   tr, td : TFhirXHtmlNode;
@@ -1627,7 +1620,6 @@ begin
   for i := 0 to c.containsList.count - 1 do
     addContainsRowToTable(t, c.containsList[i], indent+1);
 end;
-
 
 procedure generateExpansion(x : TFhirXHtmlNode; vs : TFhirValueSet);
 var
@@ -1709,7 +1701,6 @@ begin
     x.free;
   end;
 end;
-
 
 function GetEmailAddress(contacts : TFhirContactPointList):String;
 var
@@ -1848,10 +1839,7 @@ begin
   end;
 end;
 
-
 (*
-
-
 
   procedure generateComposition(x : TFHIRXHtmlNode; vs : TFHIRValueSet, Map<String, AtomEntry> codeSystems) throws Exception begin
     TFhirXHtmlNode h := x.addTag('h2');
@@ -1943,8 +1931,6 @@ end;
     return nil;
   end;
 
-
-
   private ValueSetDefineConceptComponent getConceptForCode(ValueSetDefineConceptComponent c, String code) begin
     if (code.equals(c.Code)) then
       return c;
@@ -1990,7 +1976,6 @@ end;
 
 *)
 
-
 function getConformanceResourceUrl(res : TFHIRResource) : string;
 begin
   case res.ResourceType of
@@ -2010,7 +1995,6 @@ begin
 end;
 
 { TFHIROperationOutcomeHelper }
-
 
 function TFHIROperationOutcomeHelper.asExceptionMessage: String;
 var
@@ -2854,7 +2838,6 @@ end;
 
 { TFhirValueSetHelper }
 
-
 { TFHIRContactPointListHelper }
 
 procedure TFHIRContactPointListHelper.setSystem(type_: TFHIRContactPointSystemEnum; value: String);
@@ -2918,7 +2901,6 @@ begin
   else
     result := TFhirReference(target).reference
 end;
-
 
 { TFHIRDomainResourceHelper }
 
@@ -3752,7 +3734,6 @@ begin
       end;
 end;
 
-
 function TFHIRCodeableConceptHelper.hasCoding: boolean;
 begin
   result := CodingList.Count > 0;
@@ -3857,7 +3838,6 @@ begin
   end;
 end;
 
-
 function TFHIRElementHelper.getExtensionString(url: String; index: integer): String;
 var
   ndx : Integer;
@@ -3943,7 +3923,6 @@ begin
   end;
 end;
 
-
 function gen(t : TFhirType):String;
 begin
   if (t = nil) then
@@ -3999,7 +3978,6 @@ begin
     raise EFHIRException.create('Type '+t.className+' not handled yet');
 end;
 
-
 function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
 var
   e : TFHIRElementDefinition;
@@ -4029,7 +4007,6 @@ begin
     end;
   end;
 end;
-
 
 {*
  * Given a Structure, navigate to the element given by the path and return the direct children of that element
@@ -4748,7 +4725,6 @@ begin
   end;
 end;
 
-
 function asExtension(obj : TFHIRObject) : TFHIRExtension;
 begin
   if obj is TFHIRExtension then
@@ -4759,7 +4735,6 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
   end;
 end;
-
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
@@ -4916,7 +4891,6 @@ begin
      Remove(i);
 end;
 
-
 { TFhirCodeSystemHelper }
 
 function TFhirCodeSystemHelper.locate(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirCodeSystemConcept) : boolean;
@@ -4937,7 +4911,6 @@ begin
       exit;
   end;
 end;
-
 
 procedure TFhirCodeSystemHelper.scanForSubsumes(parentList, conceptList: TFhirCodeSystemConceptList; code: String);
 var
@@ -5036,7 +5009,6 @@ begin
       exit(true);
 end;
 
-
 { TFhirAuditEventHelper }
 
 function TFhirAuditEventHelper.GetdateTime: TFslDateTime;
@@ -5068,7 +5040,6 @@ procedure TFhirAuditEventHelper.SetEvent(const Value: TFhirAuditEvent);
 begin
   value.Free;
 end;
-
 
 { TFhirCodingHelper }
 
@@ -5180,7 +5151,6 @@ begin
   else
     result := system+'|'+code;
 end;
-
 
 function TFhirCodingHelper.hasCode(System, Code: String): boolean;
 begin
@@ -5704,7 +5674,6 @@ Begin
 End;
 {$ENDIF}
 
-
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
@@ -5910,7 +5879,6 @@ begin
   end;
 end;
 
-
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   f : TFileStream;
@@ -5991,7 +5959,6 @@ begin
 end;
 
 { TFHIRCodeableConceptListHelper }
-
 
 function TFHIRCodeableConceptListHelper.GetHasCode(System, Code: String): boolean;
 var
@@ -6181,7 +6148,6 @@ begin
   for c in itemList do
     inc(result, c.countDescendents);
 end;
-
 
 { TFhirExtensionListHelper }
 
@@ -6415,7 +6381,6 @@ begin
     result := '??'; // ??
 end;
 
-
 { TFhirCanonicalListHelper }
 
 function TFhirCanonicalListHelper.hasUri(uri: String): boolean;
@@ -6585,7 +6550,6 @@ function makeMarkdownOrString : TFhirMarkdown;
 begin
   result := TFhirMarkdown.Create;
 end;
-
 
 { TFhirBinaryHelper }
 

@@ -18,7 +18,6 @@ type
     { Public declarations }
   end;
 
-
 procedure showTextPresentation(owner : TComponent; title, text : String);
 
 implementation

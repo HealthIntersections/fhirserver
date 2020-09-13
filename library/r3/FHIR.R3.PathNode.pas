@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Xml, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Lang,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Parser;
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Parser, FHIR.R3.Resources.Base;
 
 type
   TFHIRPathOperation = (

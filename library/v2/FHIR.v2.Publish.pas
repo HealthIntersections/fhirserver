@@ -117,7 +117,6 @@ Type
     Function PublishMsg(oMsg : THL7V2Message; bHtml, bFullView, b3 : Boolean) : String;
   End;
 
-
 implementation
 
 Function CellString(Const s: String): String;
@@ -146,7 +145,6 @@ Begin
     Result := Result + ' ';
 End;
 
-
 Function LeftPad(Const bHtml: Boolean; iIndex : Integer; sStr : String = '') : String;
 Var
   iLoop : Integer;
@@ -166,7 +164,6 @@ Begin
     Result := StringPadLeft(sStr, ' ', iIndex);
 End;
 
-
 { THL7V2DocumentPublisher }
 
 constructor THL7V2DocumentPublisher.Create;
@@ -178,7 +175,6 @@ begin
   FTitleStyle.Font.Bold := tsTrue;
   FTitleStyle.Font.Size := 12;
 end;
-
 
 destructor THL7V2DocumentPublisher.Destroy;
 begin
@@ -192,16 +188,12 @@ begin
   FTitleStyle := Value;
 end;
 
-
-
-
 function THL7V2DocumentPublisher.AddError(const sText: String): TWPDocumentText;
 begin
   StartParagraph;
   Result := AddText(sText, True, True, 11);
   EndParagraph;
 end;
-
 
 function THL7V2DocumentPublisher.Heading(const sText: String): TWPDocumentParagraph;
 begin
@@ -211,13 +203,11 @@ begin
   EndParagraph;
 end;
 
-
 function THL7V2DocumentPublisher.AddTitle(sText: String): TWPDocumentParagraph;
 begin
   FTitle := sText;
   Result := Heading(sText);
 end;
-
 
 Function THL7V2DocumentPublisher.StartTable(aReadOnly : TWPDocumentObjectReadOnly = ReadOnlyDefault) : TWPDocumentTable;
 Begin
@@ -253,14 +243,12 @@ begin
   EndTableRow;
 end;
 
-
 function THL7V2DocumentPublisher.AddTableCellURL(const sText, sLink, sPrefix, sSuffix: String): TWPDocumentTableCell;
 begin
   Result := StartTableCell;
   ParaURL(sText, sLink, sPrefix, sSuffix);
   EndTableCell;
 end;
-
 
 function THL7V2DocumentPublisher.ParaURL(const sText, sLink, sPrefix, sSuffix: String): TWPDocumentParagraph;
 begin
@@ -272,7 +260,6 @@ begin
     AddTextStyledByContext(sSuffix);
   EndParagraph;
 end;
-
 
 { THL7V2HTMLPublisher }
 
@@ -331,7 +318,6 @@ Begin
     oMap.Free;
   End;
 End;
-
 
 Function THL7V2HTMLPublisher.DocToHTML(oDocument : TWPDocument; Const sTitle: String): String;
 Var
@@ -453,7 +439,6 @@ Begin
   oBuilder.ParaURL('Events', sPrefix + 'view=events').Format.LeftIndent := 2;
   oBuilder.ParaURL('Messages', sPrefix + 'view=msgtypes').Format.LeftIndent := 2;
 End;
-
 
 Procedure THL7V2HTMLPublisher.ViewTables(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
@@ -587,7 +572,6 @@ Begin
     oBuilder.AddTableCell(oElement.RefTable.Description + ' (No specified values)');
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewField(oField : THL7V2ModelField; oMap: TFslStringMatch; Const sPrefix: String; oBuilder : THL7V2DocumentPublisher);
 Var
   sReq: String;
@@ -610,7 +594,6 @@ Begin
   oBuilder.AddTableCell('');
   oBuilder.AddTableCell(sRep);
 End;
-
 
 Procedure THL7V2HTMLPublisher.ViewSegment(oModel: THL7V2Model; oMap: TFslStringMatch; Const sPrefix: String; oBuilder : THL7V2DocumentPublisher);
 Var
@@ -635,7 +618,6 @@ Begin
   oBuilder.EndTable;
   oBuilder.addLine;
   oBuilder.Heading('Events using this segment');
-
 
   For iLoop := 0 To oModel.Events.Count - 1 Do
     Begin
@@ -673,7 +655,6 @@ Begin
   End;
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewElements(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
   iLoop : Integer;
@@ -689,7 +670,6 @@ Begin
   End;
   oBuilder.EndTable;
 End;
-
 
 Procedure THL7V2HTMLPublisher.ViewComponent(oComponent : THL7V2ModelComponent; oMap: TFslStringMatch; Const sPrefix: String; bExpand : Boolean; oBuilder : THL7V2DocumentPublisher);
 Begin
@@ -714,7 +694,6 @@ Begin
     oBuilder.AddTableCell('');
   End;
 End;
-
 
 Procedure THL7V2HTMLPublisher.ViewStructure(oStructure : THL7V2ModelStructure; oMap: TFslStringMatch; Const sPrefix: String; bQuick, bStructureTableView : Boolean; oModel : THL7V2Model; oBuilder : THL7V2DocumentPublisher);
 Var
@@ -810,7 +789,6 @@ Begin
   End;
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewStructures(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
   iLoop : Integer;
@@ -836,8 +814,6 @@ Begin
     oBuilder.EndTable;
   End;
 End;
-
-
 
 Function THL7V2HTMLPublisher.ViewMessageSummary(oEvent : THL7V2ModelEvent; oMap: TFslStringMatch; Const sPrefix: String): String;
 Var
@@ -878,7 +854,6 @@ Begin
     End;
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewEvents(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
   iLoop : Integer;
@@ -910,7 +885,6 @@ Begin
 
 End;
 
-
 Function DescribeCardinality(oGroup : THL7V2ModelSegmentGroup): String;
 Begin
   If oGroup.Optional Then
@@ -922,7 +896,6 @@ Begin
   Else
     Result := Result + '1'
 End;
-
 
 Procedure THL7V2HTMLPublisher.ViewSegmentMap(oGroup : THL7V2ModelSegmentGroup; oMap : TFslStringMatch; Const sPrefix : String; iLevel : Integer; Var iCount : Integer; oBuilder : THL7V2DocumentPublisher);
 Var
@@ -971,7 +944,6 @@ Begin
   End;
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewMessageType(oModel : THL7V2Model; oStruc : THL7V2ModelMessageStructure; oMap : TFslStringMatch; Const sPrefix : String; bEvents, bTitle : Boolean; oBuilder : THL7V2DocumentPublisher);
 Var
   iLoop : Integer;
@@ -999,7 +971,6 @@ Begin
   if bTitle Then
     oBuilder.AddTitle('v' + NAMES_HL7V2_VERSION[oModel.Version] + ' Message Type ' + oStruc.Name);
 
-
   If sXMLError <> '' Then
     oBuilder.AddError(sXMLError);
 
@@ -1024,7 +995,6 @@ Begin
   End;
 End;
 
-
 Procedure THL7V2HTMLPublisher.ViewMessageTypes(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
   iLoop : Integer;
@@ -1044,13 +1014,10 @@ Begin
     End;
 End;
 
-
-
 Function THL7V2HTMLPublisher.PublishMsg(oMsg: THL7V2Message; bHtml, bFullView, b3: Boolean): String;
 Begin
   Result := HTMLViewMessage(oMsg, bHtml, bFullView, 0);
 End;
-
 
 Function THL7V2HTMLPublisher.HTMLView(oObject : THL7V2BaseObject; bHtml, bFullView : Boolean; iOffset, iIndex : Integer; sPrefix: String) : String;
 Begin
@@ -1063,7 +1030,6 @@ Begin
   Else
     Result := 'THL7V2HTMLPublisher.HTMLView: Unknown Object ' + oObject.ClassName  + '<br>';
 End;
-
 
 Function THL7V2HTMLPublisher.HTMLViewMessage(oMsg : THL7V2Message; bHtml, bFullView : Boolean; iOffset : Integer) : String;
 Var
@@ -1085,7 +1051,6 @@ Begin
     End;
   Result := sStr;
 End;
-
 
 Function THL7V2HTMLPublisher.HTMLViewSegment(oSegment : THL7V2Segment; bHtml, bFullView : Boolean; iOffset : Integer) : String;
 Var
@@ -1113,7 +1078,6 @@ Begin
     End;
 End;
 
-
 Function THL7V2HTMLPublisher.HTMLViewDataElement(oDataElement : THL7V2DataElement; bHtml, bFullView: Boolean; iOffset, iIndex: Integer): String;
 Var
   iLoop : Integer;
@@ -1135,7 +1099,6 @@ Begin
       End;
     End;
 End;
-
 
 Function THL7V2HTMLPublisher.HTMLViewLocalDataElement(oDataElement : THL7V2DataElement; bHtml, bFullView : Boolean; iOffset, iIndex: Integer) : String;
 Var
@@ -1178,7 +1141,6 @@ Begin
     End;
 End;
 
-
 Function THL7V2HTMLPublisher.HTMLViewComponent(oComponent : THL7V2Component; bHtml, bFullView : Boolean; iOffset, iIndex : Integer; sPrefix: String) : String;
 Var
   iLoop : Integer;
@@ -1203,12 +1165,10 @@ Begin
       Result := Result + '=' + ShowContent(oComponent, true) + cReturn;
 End;
 
-
 Function THL7V2HTMLPublisher.FormatTextToHTML(Const sValue: String): String;
 Begin
   Result := StringReplace(EncodeXML(sValue), '&#x0D;&#x0A;', '<br>');
 End;
-
 
 function THL7V2HTMLPublisher.ShowContent(oCell: THL7V2Cell;  bHtml: Boolean): String;
 begin
@@ -1232,6 +1192,5 @@ Begin
     oBuilder.EndParagraph;
   End;
 End;
-
 
 end.

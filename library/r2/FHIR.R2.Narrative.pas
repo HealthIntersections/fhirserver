@@ -36,7 +36,7 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Narrative, FHIR.Base.Lang,
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Context, FHIR.R2.Utilities;
+  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Context, FHIR.R2.Utilities, FHIR.R2.Resources.Base;
 
 Const
   BooleanStrings : array [boolean] of String = ('false', 'true');

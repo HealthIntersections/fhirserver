@@ -38,7 +38,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Context, FHIR.R4.Client,
+  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Context, FHIR.R4.Client, FHIR.R4.Resources.Base,
   FHIR.Server.Session, FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Context;
 
 type

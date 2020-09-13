@@ -28,7 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
 {$DEFINE DIFF}
 
 interface
@@ -90,7 +89,6 @@ Type
     [TestCase] procedure testAddFail;
   end;
 
-
 type
   [TextFixture]
   TOSXTests = class (TObject)
@@ -108,8 +106,6 @@ type
     [TestCase] procedure TestAdvFile;
     [TestCase] procedure TestRemoveAccents;
   end;
-
-
 
 Type
   [TextFixture]
@@ -225,7 +221,6 @@ Type
     [XmlPatchTestCase]
     procedure PatchTest(Name : String);
   End;
-
 
 Type
   [TextFixture]
@@ -670,7 +665,6 @@ Type
 
 implementation
 
-
 { TFslGenericsTests }
 
 {$HINTS OFF}
@@ -838,7 +832,6 @@ begin
 end;
 
 { TXmlTests }
-
 
 { XmlPatchTestCaseAttribute }
 
@@ -1330,7 +1323,6 @@ begin
   tests.Free;
 end;
 
-
 { TDecimalTests }
 
 procedure TDecimalTests.testString(s, st, std: String);
@@ -1469,8 +1461,6 @@ begin
   TestAdd('2', '0.001', '2.001');
   TestAdd('2.0', '0.001', '2.001');
 end;
-
-
 
 procedure TDecimalTests.TestAdd(s1, s2, s3: String);
 var
@@ -1843,7 +1833,6 @@ begin
   assert.isFalse(TFslDecimal.makeNull.IsInfinite);
   assert.isFalse(TFslDecimal.makeNull.isANumber);
   assert.isTrue(TFslDecimal.makeInfinity.Equals(TFslDecimal.makeInfinity));
-
 
   assert.isTrue(TFslDecimal.ValueOf('Inf').IsInfinite);
   assert.isTrue(TFslDecimal.ValueOf('-Inf').IsInfinite);
@@ -3024,7 +3013,6 @@ begin
   parseTtl('turtle-syntax-bad-n3-extras-05.ttl', false);
 end;
 
-
 procedure TTurtleTests.test_turtle_syntax_bad_n3_extras_07();
 begin
   parseTtl('turtle-syntax-bad-n3-extras-07.ttl', false);
@@ -3109,7 +3097,6 @@ procedure TTurtleTests.test_turtle_syntax_bad_pname_02();
 begin
   parseTtl('turtle-syntax-bad-pname-02.ttl', false);
 end;
-
 
 procedure TTurtleTests.test_turtle_syntax_bad_prefix_01();
 begin
@@ -3256,7 +3243,6 @@ begin
   parseTtl('turtle-syntax-bad-struct-17.ttl', true);
 end;
 
-
 procedure TTurtleTests.test_turtle_syntax_bad_uri_02();
 begin
   parseTtl('turtle-syntax-bad-uri-02.ttl', false);
@@ -3266,7 +3252,6 @@ procedure TTurtleTests.test_turtle_syntax_bad_uri_03();
 begin
   parseTtl('turtle-syntax-bad-uri-03.ttl', false);
 end;
-
 
 procedure TTurtleTests.test_turtle_syntax_base_01();
 begin
@@ -3423,7 +3408,6 @@ begin
   parseTtl('turtle-syntax-number-04.ttl', true);
 end;
 
-
 procedure TTurtleTests.test_turtle_syntax_number_06();
 begin
   parseTtl('turtle-syntax-number-06.ttl', true);
@@ -3469,7 +3453,6 @@ begin
   parseTtl('turtle-syntax-prefix-01.ttl', true);
 end;
 
-
 procedure TTurtleTests.test_turtle_syntax_prefix_03();
 begin
   parseTtl('turtle-syntax-prefix-03.ttl', true);
@@ -3479,8 +3462,6 @@ procedure TTurtleTests.test_turtle_syntax_prefix_04();
 begin
   parseTtl('turtle-syntax-prefix-04.ttl', true);
 end;
-
-
 
 procedure TTurtleTests.test_turtle_syntax_prefix_07();
 begin
@@ -3692,8 +3673,6 @@ begin
   parseTtl('blankNodePropertyList_as_subject.nt', true);
 end;
 
-
-
 procedure TTurtleTests.test_blankNodePropertyList_containing_collectionNT();
 begin
   parseTtl('blankNodePropertyList_containing_collection.nt', true);
@@ -3754,7 +3733,6 @@ begin
   parseTtl('default_namespace_IRI.ttl', true);
 end;
 //
-
 
 var
   globalInt : cardinal;
@@ -3997,7 +3975,6 @@ begin
   Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
   Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')));
 
-
   // Min/Max
   Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
   Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
@@ -4084,12 +4061,10 @@ begin
   end;
 end;
 
-
 var
   gs : String;
 
 { TJWTTests }
-
 
 procedure TJWTTests.Setup;
 begin
@@ -4393,10 +4368,8 @@ begin
   tests.Free;
 end;
 
-
 (*
 { TDigitalSignatureTests }
-
 
 procedure TDigitalSignatureTests.testFile(filename : String);
 var

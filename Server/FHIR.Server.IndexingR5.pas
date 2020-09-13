@@ -49,7 +49,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.PathEngine,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.IndexInfo, FHIR.R5.Utilities, FHIR.R5.PathEngine, FHIR.R5.Context,
+  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Constants, FHIR.R5.IndexInfo, FHIR.R5.Utilities, FHIR.R5.PathEngine, FHIR.R5.Context,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;

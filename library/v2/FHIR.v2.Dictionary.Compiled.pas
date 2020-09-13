@@ -77,7 +77,6 @@ Type
     procedure Initialise; Override;
   End;
 
-
 Function  DefinitionsListVersions : THL7V2Versions;
 function  DefinitionsVersionDefined(aVersion : THL7V2Version; var sDesc: String): Boolean;
 procedure DefinitionsLoadTables(aVersion : THL7V2Version; oTables : THL7V2ModelTables);
@@ -441,6 +440,5 @@ procedure THL7V2CompiledDictionary.LoadSegmentMaps(aVersion : THL7V2Version; oSt
 Begin
   DefinitionsLoadSegmentMaps(aVersion, oStructures);
 End;
-
 
 End.

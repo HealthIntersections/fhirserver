@@ -192,7 +192,6 @@ implementation
 uses
   FHIR.Support.Stream;
 
-
 function getId(expr : TFHIRPathExpressionNodeV; op : boolean) : String;
 begin
   if (op) then

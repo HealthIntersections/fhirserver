@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R5.Types, FHIR.R5.Resources;
+  FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Resources.Base;
 
 type
   TFHIRCustomResourceInformation = class (TFslObject)

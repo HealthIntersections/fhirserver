@@ -109,7 +109,6 @@ begin
   result := gResources[test.str['focus']];
 end;
 
-
 procedure TLiquidEngineTest.Setup;
 begin
   engine := TFHIRLiquidEngine.Create(TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil));

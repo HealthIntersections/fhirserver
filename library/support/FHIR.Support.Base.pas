@@ -42,7 +42,6 @@ const
   {$ENDIF}
   EMPTY_HASH = -1;
 
-
 threadvar
   gExceptionStack : String;
   gException : Exception;
@@ -208,7 +207,6 @@ Type
     Public
       constructor Create(Const sSender, sMethod, sReason : String); Overload; Override;
   End;
-
 
 Type
   TFslEnumerable<T : class> = class (TFslObject)
@@ -632,7 +630,6 @@ Type
 
 Implementation
 
-
 Function ExceptObject : Exception;
 Begin
 {$IFDEF FPC}
@@ -641,7 +638,6 @@ Begin
   Result := Exception(System.ExceptObject);
 {$ENDIF}
 End;
-
 
 Function HasExceptObject : Boolean;
 Begin
@@ -678,12 +674,10 @@ Begin
   {$ENDIF}
 End;
 
-
 //Procedure AssertionHandler(Const sMessage, sFilename : AnsiString; iLineNumber : Integer);
 //Begin
 //  Raise EFslAssertion.Create('FHIR.Support.Base', 'AssertionHandler', String.Format('%s (%s:%d)', [sMessage, sFilename, iLineNumber]));
 //End;
-
 
 procedure recordStack(e : Exception);
 begin
@@ -720,7 +714,6 @@ Begin
   Message := FReason;
 End;
 
-
 Constructor EFslException.Create(oSender : TObject; Const sMethod, sReason : String);
 Var
   sSender : String;
@@ -736,7 +729,6 @@ Begin
 
   Create(sSender, sMethod, sReason);
 End;
-
 
 Function EFslException.Description : String;
 Begin
@@ -765,18 +757,15 @@ Begin
   {$ENDIF}
 End;
 
-
 Destructor TFslObject.Destroy;
 Begin
   Inherited;
 End;
 
-
 Procedure TFslObject.AfterConstruction;
 Begin
   Inherited;
 End;
-
 
 Procedure TFslObject.BeforeDestruction;
 Begin
@@ -785,7 +774,6 @@ Begin
 
   Inherited;
 End;
-
 
 Procedure TFslObject.Free;
 Begin
@@ -800,12 +788,10 @@ Begin
   End;
 End;
 
-
 Function TFslObject.ClassType : TFslObjectClass;
 Begin
   Result := TFslObjectClass(Inherited ClassType);
 End;
-
 
 Function TFslObject.Unlink : TFslObject;
 Begin
@@ -823,7 +809,6 @@ Begin
   End;
 End;
 
-
 Function TFslObject.Link : TFslObject;
 Begin
   Result := Self;
@@ -836,12 +821,10 @@ Begin
   End;
 End;
 
-
 Function TFslObject.Duplicate : TFslObject;
 Begin
   Result := ClassType.Create;
 End;
-
 
 Function TFslObject.Clone : TFslObject;
 Begin
@@ -860,7 +843,6 @@ Begin
   End;
 End;
 
-
 Function TFslObject._AddRef : Integer; stdcall;
 Begin
   If Assigned(Self) Then
@@ -874,7 +856,6 @@ Begin
     Result := 0;
   End;
 End;
-
 
 Function TFslObject._Release: Integer; stdcall;
 Begin
@@ -893,7 +874,6 @@ Begin
   End;
 End;
 
-
 Function TFslObject.QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID: TGUID; Out Obj): HResult; stdcall;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
@@ -906,30 +886,25 @@ Begin
     Result := E_NOINTERFACE;
 End;
 
-
 Function TFslObject.Assignable : Boolean;
 Begin
   Result := True;
 End;
-
 
 Function TFslObject.ErrorClass : EFslExceptionClass;
 Begin
   Result := EFslException;
 End;
 
-
 Procedure TFslObject.RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String);
 Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
 
-
 Procedure TFslObject.RaiseError(Const sMethod, sMessage : String);
 Begin
   RaiseError(ErrorClass, sMethod, sMessage);
 End;
-
 
 Function TFslObject.Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin
@@ -941,7 +916,6 @@ Begin
   Result := Alterable(sLocation);
 End;
 
-
 Procedure TFslObject.Assign(oObject : TFslObject);
 Begin
   Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
@@ -949,7 +923,6 @@ Begin
 
   // Override and inherit to assign the properties of your class.
 End;
-
 
 Function TFslObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
 Begin
@@ -963,7 +936,6 @@ Begin
 
   Result := True;
 End;
-
 
 Function TFslObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
 Begin
@@ -980,7 +952,6 @@ Begin
   Result := True;
 End;
 
-
 Function TFslObject.Invariants(Const sLocation : String; oObject: TFslObject; aClass: TClass; Const sObject : String) : Boolean;
 Begin
   Invariants(sLocation, TObject(oObject), aClass, sObject);
@@ -988,14 +959,12 @@ Begin
   Result := True;
 End;
 
-
 Function TFslObject.Invariants(Const sLocation: String; aClass: TClass) : Boolean;
 Begin
   Invariants(sLocation, TObject(Self), aClass, 'Self');
 
   Result := True;
 End;
-
 
 Function TFslObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
 Begin
@@ -1007,7 +976,6 @@ Begin
   Result := True;
 End;
 
-
 Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
@@ -1018,7 +986,6 @@ Begin
   Result := True;
 End;
 
-
 Function TFslObject.Invariant(Const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Error method to raise an exception.
@@ -1028,7 +995,6 @@ Begin
 
   Result := True;
 End;
-
 
 Function TFslObject.Alterable(Const sMethod: String): Boolean;
 Begin
@@ -2352,7 +2318,6 @@ begin
     Destroy;
 end;
 
-
 procedure TFslMap<T>.addAll(other: TFslMap<T>);
 var
   s : String;
@@ -2375,7 +2340,6 @@ begin
   else
     DoAdd(hc, not index, Key, Value);
 end;
-
 
 function TFslMap<T>.ContainsKey(const Key: String): Boolean;
 begin
@@ -2597,7 +2561,6 @@ begin
 //  Result := ToArrayImpl(FMap.Count);
 end;
 
-
 { TFslStringDictionary }
 
 procedure TFslStringDictionary.Free;
@@ -2663,7 +2626,6 @@ begin
         ToArray[ToIndex + I] := FromArray[FromIndex + I];
 end;
 {$ENDIF}
-
 
 {$R-}
 function TFslMap<T>.Hash(const Key: String): Integer;
@@ -2865,7 +2827,6 @@ procedure TFslStringMap.SetItem(const Key, Value: String);
 begin
   FDict[key] := value;
 end;
-
 
 { ETodo }
 

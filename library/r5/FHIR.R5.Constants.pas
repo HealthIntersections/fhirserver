@@ -35,12 +35,10 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   SysUtils, Classes,
   FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.R5.Types, FHIR.R5.Resources;
+  FHIR.Base.Objects, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Resources.Base;
 
 const
   currentFHIRVersionRelease = fhirVersionRelease5;
@@ -806,8 +804,6 @@ const
     {$IFDEF FHIR_VERIFICATIONRESULT} 'VerificationResult', {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION} 'VisionPrescription', {$ENDIF}
     'Custom');
-
-
 
 type
 
@@ -4787,8 +4783,6 @@ type
     spVisionPrescription_Status {http://hl7.org/fhir/SearchParameter/VisionPrescriptionstatus});
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
-
 const
 
 {$IFDEF FHIR_ACCOUNT}
@@ -5401,7 +5395,6 @@ const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content {http://hl7.org/fhir/SearchParameter/Resource-content}', '_filter {http://hl7.org/fhir/SearchParameter/filter}', '_id {http://hl7.org/fhir/SearchParameter/Resource-id}', '_lastUpdated {http://hl7.org/fhir/SearchParameter/Resource-lastUpdated}', '_profile {http://hl7.org/fhir/SearchParameter/Resource-profile}', '_query {http://hl7.org/fhir/SearchParameter/Resource-query}', '_security {http://hl7.org/fhir/SearchParameter/Resource-security}', '_source {http://hl7.org/fhir/SearchParameter/Resource-source}', '_tag {http://hl7.org/fhir/SearchParameter/Resource-tag}', '_text {http://hl7.org/fhir/SearchParameter/DomainResource-text}', 'datewritten {http://hl7.org/fhir/SearchParameter/VisionPrescription-datewritten}', 'encounter {http://hl7.org/fhir/SearchParameter/clinical-encounter}', 'identifier {http://hl7.org/fhir/SearchParameter/clinical-identifier}',
        'patient {http://hl7.org/fhir/SearchParameter/clinical-patient}', 'prescriber {http://hl7.org/fhir/SearchParameter/VisionPrescription-prescriber}', 'status {http://hl7.org/fhir/SearchParameter/VisionPrescription-status}');
 {$ENDIF}
-
 
 implementation
 

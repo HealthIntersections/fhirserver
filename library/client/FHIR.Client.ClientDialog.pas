@@ -55,7 +55,6 @@ implementation
 
 {$R *.dfm}
 
-
 procedure TRegisterClientForm.btnOkClick(Sender: TObject);
 var
   http: TIdHTTP;

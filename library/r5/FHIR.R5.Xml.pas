@@ -36,13 +36,11 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   SysUtils, Classes, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
+  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
 
 Type
 
@@ -63,7 +61,6 @@ Type
     Function ParseBackboneTypeChild(value : TFhirBackboneType; path : string; child : TMXmlElement) : boolean;
     Procedure ParsePrimitiveTypeAttributes(value : TFhirPrimitiveType; path : string; element : TMXmlElement);
     Function ParsePrimitiveTypeChild(value : TFhirPrimitiveType; path : string; child : TMXmlElement) : boolean;
-
 
     function ParseEnum(Const aNames, aSystems : Array Of String; element : TMXmlElement; path : String) : TFhirEnum;
     function ParseDate(element : TMXmlElement; path : string) : TFhirDate;
@@ -209,7 +206,6 @@ Type
     function ParseTiming(element : TMXmlElement; path : string) : TFhirTiming;
     function ParseTimingChild(value : TFhirTiming; path : string; child : TMXmlElement) : boolean;
 
-
     Procedure ParseResourceAttributes(value : TFhirResource; path : string; element : TMXmlElement);
     Function ParseResourceChild(value : TFhirResource; path : string; child : TMXmlElement) : boolean;
     Procedure ParseDomainResourceAttributes(value : TFhirDomainResource; path : string; element : TMXmlElement);
@@ -218,7 +214,6 @@ Type
     Function ParseCanonicalResourceChild(value : TFhirCanonicalResource; path : string; child : TMXmlElement) : boolean;
     Procedure ParseMetadataResourceAttributes(value : TFhirMetadataResource; path : string; element : TMXmlElement);
     Function ParseMetadataResourceChild(value : TFhirMetadataResource; path : string; child : TMXmlElement) : boolean;
-
 
 {$IFDEF FHIR_ACCOUNT}
     function ParseAccountCoverage(element : TMXmlElement; path : string) : TFhirAccountCoverage;
@@ -1857,7 +1852,6 @@ Type
     function ParseVisionPrescriptionChild(value : TFhirVisionPrescription; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
     function ParseResource(element : TMXmlElement; path : String) : TFhirResource; override;
     function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType; override;
   public
@@ -1881,7 +1875,6 @@ Type
     Procedure ComposeBackboneTypeChildren(xml : TXmlBuilder; value : TFhirBackboneType);
     Procedure ComposePrimitiveTypeAttributes(xml : TXmlBuilder; value : TFhirPrimitiveType);
     Procedure ComposePrimitiveTypeChildren(xml : TXmlBuilder; value : TFhirPrimitiveType);
-
 
     Procedure ComposeEnum(xml : TXmlBuilder; name : String; value : TFhirEnum; Const aNames : Array Of String);
     Procedure ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
@@ -2027,7 +2020,6 @@ Type
     procedure ComposeTiming(xml : TXmlBuilder; name : string; value : TFhirTiming);
     procedure ComposeTimingChildren(xml : TXmlBuilder; value : TFhirTiming);
 
-
     Procedure ComposeResourceAttributes(xml : TXmlBuilder; value : TFhirResource);
     Procedure ComposeResourceChildren(xml : TXmlBuilder; value : TFhirResource);
     Procedure ComposeDomainResourceAttributes(xml : TXmlBuilder; value : TFhirDomainResource);
@@ -2036,7 +2028,6 @@ Type
     Procedure ComposeCanonicalResourceChildren(xml : TXmlBuilder; value : TFhirCanonicalResource);
     Procedure ComposeMetadataResourceAttributes(xml : TXmlBuilder; value : TFhirMetadataResource);
     Procedure ComposeMetadataResourceChildren(xml : TXmlBuilder; value : TFhirMetadataResource);
-
 
 {$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(xml : TXmlBuilder; name : string; value : TFhirAccountCoverage);
@@ -3675,12 +3666,10 @@ Type
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; value : TFhirVisionPrescription);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
   public
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); override;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
-
 
 implementation
 
@@ -3727,7 +3716,6 @@ Procedure TFHIRXmlComposer.ComposeBaseChildren(xml : TXmlBuilder; value : TFhirR
 begin
   // nothing
 end;
-
 
 Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : TMXmlElement);
 begin
@@ -3861,8 +3849,6 @@ Procedure TFHIRXmlComposer.ComposePrimitiveTypeChildren(xml : TXmlBuilder; value
 begin
   composeDataTypeChildren(xml, value);
 end;
-
-
 
 function TFHIRXmlParser.ParseEnum(Const aNames, aSystems : Array Of String; element : TMXmlElement; path : String) : TFhirEnum;
 var
@@ -9783,8 +9769,6 @@ begin
     ComposeCodeableConcept(xml, 'code', value.code); {L741}
 end;
 
-
-
 Procedure TFHIRXmlParser.ParseResourceAttributes(value : TFhirResource; path : string; element : TMXmlElement);
 begin
   ParseBaseAttributes(value, path, element);
@@ -9909,8 +9893,6 @@ Procedure TFHIRXmlComposer.ComposeMetadataResourceChildren(xml : TXmlBuilder; va
 begin
   composeCanonicalResourceChildren(xml, value);
 end;
-
-
 
 {$IFDEF FHIR_ACCOUNT}
 function TFHIRXmlParser.ParseAccountCoverage(element : TMXmlElement; path : string) : TFhirAccountCoverage;
@@ -63196,7 +63178,6 @@ end;
 
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
 function TFHIRXmlParser.ParseResource(element : TMXmlElement; path : String) : TFhirResource;
 begin
   if (element = nil) Then
@@ -65400,7 +65381,6 @@ begin
   else
     inherited ComposeBase(xml, name, base);
 end;
-
 
 end.
 

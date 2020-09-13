@@ -34,7 +34,6 @@ Uses
   Windows, SysUtils, Classes, Graphics, Generics.Collections,
   FHIR.Support.Utilities;
 
-
 Const
   Unicode_Zero_Width_Joiner = #$200D;
   Unicode_Zero_Width_NonJoiner = #$200C;
@@ -82,8 +81,6 @@ Const
   Unicode_Right_to_left_override = #$202E;
 
 Function IsUnicodeWhiteSpace(ch : Char) : Boolean;
-
-
 
 Type
   TUnicodeBlock = (
@@ -299,8 +296,6 @@ begin
     end;
   end;
 end;
-
-
 
 Function GetBlocksForFont(fontName : String) : TUnicodeBlockSet;
 var

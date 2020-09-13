@@ -409,7 +409,17 @@ uses
   FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
   FHIR.Server.WebBase in '..\..\Server\FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in '..\..\Server\FHIR.Server.ClientCacheManager.pas',
-  FHIR.Tx.HGVS in '..\..\Server\FHIR.Tx.HGVS.pas';
+  FHIR.Tx.HGVS in '..\..\Server\FHIR.Tx.HGVS.pas',
+  FHIR.R2.Resources.Clinical in '..\..\library\r2\FHIR.R2.Resources.Clinical.pas',
+  FHIR.R2.Resources.Canonical in '..\..\library\r2\FHIR.R2.Resources.Canonical.pas',
+  FHIR.R2.Resources.Other in '..\..\library\r2\FHIR.R2.Resources.Other.pas',
+  FHIR.R2.Resources.Admin in '..\..\library\r2\FHIR.R2.Resources.Admin.pas',
+  FHIR.R3.Resources.Canonical in '..\..\library\r3\FHIR.R3.Resources.Canonical.pas',
+  FHIR.R3.Resources.Clinical in '..\..\library\r3\FHIR.R3.Resources.Clinical.pas',
+  FHIR.R3.Resources.Other in '..\..\library\r3\FHIR.R3.Resources.Other.pas',
+  FHIR.R3.Resources.Admin in '..\..\library\r3\FHIR.R3.Resources.Admin.pas',
+  FHIR.R3.Resources.Base in '..\..\library\r3\FHIR.R3.Resources.Base.pas',
+  FHIR.R2.Resources.Base in '..\..\library\r2\FHIR.R2.Resources.Base.pas';
 
 var
   runner : ITestRunner;

@@ -41,12 +41,10 @@ uses
 Type
   THL7V2Format = (hfUnknown, hfER7, hfXML);
 
-
 Const
   HL7V2_VALID_FORMATS = [hfER7..hfXML];
 
   NAMES_HL7V2FORMAT : Array [THL7V2Format] Of String = ('Unknown', 'ER7', 'XML');
-
 
 Function FromHL7V2FormatCode(Const sValue : String) : THL7V2Format;
 
@@ -106,7 +104,6 @@ type
 
   THL7V2EncodingOptionSet = set of THL7V2EncodingOption;
 
-
   THL7V2EncodingOptions = class (THL7V2WorkerObject)
   private
     FExtraFieldDelimiter: Boolean;
@@ -135,13 +132,11 @@ type
     // wrong
     property OptimisticMapping : Boolean read FOptimisticMapping write FOptimisticMapping;
 
-
     // If this is set, then if mapping fails, any remaining segments not
     // mapped will be mapped into the root segment. If this is not set,
     // and mapping fails, then an exception will be raised and encoding
     // will fail. Relevent for XML
     property AllowMappingToFail : Boolean read FAllowMappingToFail write FAllowMappingToFail;
-
 
     // When this is set the extended characters will automatically
     // be escaped in ER7 format. This was added to maintain backward
@@ -165,7 +160,6 @@ type
 const
   NAMES_HL7V2ENCODINGOPTION : array [THL7V2EncodingOption] of String =
     ('OptimisticMapping', 'AllowMappingToFail', 'EscapeExtendedCharacters', 'ExtraFieldDelimiter', 'NoAddStructureName', 'Pretty');
-
 
 type
   THL7V2Delimiters = class (THL7V2WorkerObject)
@@ -236,7 +230,6 @@ type
     Procedure ErrorXML(const sMethod, sMessage : String); overload; virtual;
     Procedure ErrorValidationFailed(const sMethod, sMessage : String); overload; virtual;
     Procedure ErrorDuplicateMsgId(const sMethod, sMessage : String); overload; virtual;
-
 
   Public
     function Link : THL7V2BaseObject; overload;
@@ -318,7 +311,6 @@ Type
 
   End;
 
-
 Type
   THL7V2ContentType = (CONTENT_TYPE_NULL, CONTENT_TYPE_TEXT, CONTENT_TYPE_BINARY, CONTENT_TYPE_ESCAPE);
 
@@ -398,7 +390,6 @@ Type
 
     Property Contents[iIndex : Integer] : THL7V2Content Read GetContent; Default;
   End;
-
 
 Type
   THL7V2CellType = (ctUnknown, ctDataElement, ctComponent, ctSubComponent);
@@ -574,7 +565,6 @@ type
     Property ActiveCount : Integer Read GetActiveCount;
   End;
 
-
 type
 
   THL7V2DataElementCloneOption = (coAllowUnknownContent, coOverwriteEmpty, coOverwriteUnDefined);
@@ -630,7 +620,6 @@ type
     Procedure Commit; Override;
     procedure StripUndefinedContent;
 
-
     Procedure Decode(oSource : TFslBuffer; oOptions : THL7V2DecodingOptions = Nil); Overload; Override;
     Procedure Decode(sSource : TBytes; oOptions : THL7V2DecodingOptions = Nil); Overload; Override;
     Procedure Encode(oBuffer : TFslBuffer; oOptions : THL7V2EncodingOptions = Nil); Overload; Override;
@@ -641,7 +630,6 @@ type
     procedure MakeForBuild(bClear : Boolean = true);
     procedure SpecifyDataType(const sType: String); // used for whether escaping is required/allowed on OBX-5
     procedure MapToDefinitions(Model: THL7V2ModelSegment; ndx : integer);
-
 
     property _Repeat[iIndex : Integer] : THL7V2DataElement read GetRepeat; // NOTE: 1 based not 0 based - and 0 is self in this case
     Property Children : THL7V2Components Read GetChildren Write SetChildren;
@@ -665,7 +653,6 @@ type
     Function Clone : THL7V2DataElements; Overload;
     Property DataElement[iIndex : Integer] : THL7V2DataElement Read GetDataElement; Default;
   End;
-
 
 type
   THL7V2Segment = class (THL7V2BaseObject)
@@ -781,7 +768,6 @@ type
     property Segments : THL7V2SegmentList read FSegments write SetSegments;
   end;
 
-
   THL7V2SegmentGroups = class (TFslTreeList)
   Private
     Function GetGroup(iIndex: Integer): THL7V2SegmentGroup;
@@ -791,10 +777,8 @@ type
     Property Group[iIndex : Integer] : THL7V2SegmentGroup Read GetGroup; Default;
   end;
 
-
 Const
   DEFAULT_ENCODING_OPTIONS = [eoEscapeExtendedCharacters];
-
 
 Type
   THL7V2Message = Class (THL7V2ModelProvider)
@@ -847,7 +831,6 @@ Type
     Function Link : THL7V2Message;
     Function Clone : THL7V2Message; overload;
     Procedure Assign(oObject : TFslObject); Overload; Override;
-
 
     Function AddMSHForBuild : THL7V2Segment;
     Function AddSegment(Const sCode: String): THL7V2Segment;
@@ -995,7 +978,6 @@ type
     Property Batches[iIndex : Integer] : THL7V2Batch Read GetBatch; Default;
   End;
 
-
 Type
   // note regarding versions on Files:
   // the BHS does not carry a version code, so the version assigned does not go in the
@@ -1049,7 +1031,6 @@ Type
     Property FileID: String Read GetFileID Write SetFileID;
     Property ReplyFileID: String Read GetReplyFileID Write SetReplyFileID;
   End;
-
 
 type
   THL7V2BatchIterator = class (THL7V2WorkerObject)
@@ -1328,7 +1309,6 @@ type
     procedure EncodeFile(oFile : THL7V2File; oStream : TFslStream; oOptions : THL7V2EncodingOptions); overload; virtual;
   end;
 
-
 Type
   THL7V2EncoderFactory = class (THL7V2DictionaryProvider)
   public
@@ -1410,7 +1390,6 @@ type
 Const
   V2_XML_NS = 'urn:hl7-org:v2xml';
 
-
 Type
   THL7V2XMLDecoder = Class (THL7V2Decoder)
   Private
@@ -1457,8 +1436,6 @@ Type
     Function EncodeMessage(oMessage : THL7V2Message; oOptions : THL7V2EncodingOptions) : TBytes; Override;
   End;
 
-
-
 type
   THL7V2ErrorCollector = class (TFslObject)
   Public
@@ -1480,8 +1457,6 @@ type
 
 Const
   FULL_VALIDATION = [voSegmentOrder, voRequired, voDateFormat];
-
-
 
 Type
   THL7V2ValidationErrorError = String;
@@ -1538,7 +1513,6 @@ Type
       Property Elements[Const iIndex : Integer] : THL7V2ValidationError Read GetElement Write SetElement; Default;
   End;
 
-
 Const
   THL7V2VALIDATIONERROR_ERROR_FIELD = 'Error';
   THL7V2VALIDATIONERROR_ELEMENT_FIELD = 'Element';
@@ -1556,7 +1530,6 @@ type
   end;
 
 implementation
-
 
 Function FromHL7V2FormatCode(Const sValue : String) : THL7V2Format;
 Var
@@ -1954,9 +1927,7 @@ Begin
     RaiseError('getDelimiterEscapeChar', 'internal error in getDelimiterEscapeChar, illegal char '+ch);
 End;
 
-
 { THL7V2Contents }
-
 
 Constructor THL7V2Contents.Create(Const sPath : String; const bComplex : Boolean);
 Begin
@@ -1989,7 +1960,6 @@ function THL7V2Contents.Link: THL7V2Contents;
 begin
   result := THL7V2Contents(inherited Link);
 end;
-
 
 { THL7V2Content }
 
@@ -2099,7 +2069,6 @@ Begin
   Result := FBinary;
 End;
 
-
 Function THL7V2ContentBinary.XMLText : String;
 var
   buf : TFslStringBuilder;
@@ -2204,12 +2173,10 @@ Begin
   Result := FEscape;
 End;
 
-
 function THL7V2ContentEscape.Encoded: String;
 begin
   Result := '\'+FEscape+'\';
 end;
-
 
 { THL7V2Cell }
 
@@ -2226,8 +2193,6 @@ Begin
   Inherited;
 End;
 
-
-
 Procedure THL7V2Cell.CreateContents;
 Begin
   If (FContents = nil) Then
@@ -2236,13 +2201,11 @@ Begin
     FContents.Clear;
 End;
 
-
 Procedure THL7V2Cell.ClearContents;
 Begin
   FContents.Free;
   FContents := Nil;
 End;
-
 
 Function THL7V2Cell.GetChildren: THL7V2Cells;
 Begin
@@ -2253,7 +2216,6 @@ Procedure THL7V2Cell.SetChildren(Const oValue: THL7V2Cells);
 Begin
   Inherited Children := oValue;
 End;
-
 
 Function THL7V2Cell.GetAsDate: TDateTime;
 Begin
@@ -2475,14 +2437,12 @@ Begin
     End;
 End;
 
-
 Function THL7V2Cell.GetSimpleTextContent : String;
 Begin
   If not IsSimple Then
     RaiseError('GetSimpleTextContent', 'Attempt to access rawContent when complex content exists');
   Result := GetRawContent;
 End;
-
 
 Procedure THL7V2Cell.SetRawContent(Const sValue: String);
 Begin
@@ -2502,7 +2462,6 @@ Begin
     FContents.add(THL7V2ContentText.create(sValue));
     End;
 End;
-
 
 Function THL7V2Cell.GetElement(Const sCode: String): THL7V2Cell;
 Var
@@ -2531,7 +2490,6 @@ Begin
       Result := Result.GetElement(sRight);
     End;
 End;
-
 
 Procedure THL7V2Cell.ForceElement(Const sCode: String);
 Var
@@ -2877,7 +2835,6 @@ Begin
       Result := false;
 End;
 
-
 function THL7V2Cell.GetContents: THL7V2Contents;
 begin
   if HasChildren Then
@@ -2889,7 +2846,6 @@ begin
     Result := FContents;
     End;
 end;
-
 
 function THL7V2Cell.GetNullify: Boolean;
 begin
@@ -3154,7 +3110,6 @@ begin
       Components[i].MapToDefinitions(THL7V2ModelStructure(Definition.RefStructure), i);
 end;
 
-
 { THL7V2Components }
 
 function THL7V2Components.GetComponent(iIndex: Integer): THL7V2Component;
@@ -3185,8 +3140,6 @@ begin
   FRepeats.Free;
   inherited;
 end;
-
-
 
 procedure THL7V2DataElement.SpecifyDataType(const sType: String);
 begin
@@ -3233,7 +3186,6 @@ begin
     result := nil;
 end;
 
-
 function THL7V2DataElement.IsElement(const sName: String): Boolean;
 var
   sLeft : String;
@@ -3252,7 +3204,6 @@ begin
       Result := StringIsInteger32(sRight) and (StringToInteger32(sRight) = RepeatIndex);
     end;
 end;
-
 
 procedure THL7V2DataElement.MakeForBuild(bClear : Boolean);
 var
@@ -3295,8 +3246,6 @@ begin
       End
   End;
 end;
-
-
 
 function THL7V2DataElement.ChildrenClass: TFslTreeListClass;
 begin
@@ -3343,7 +3292,6 @@ begin
     end;
 end;
 
-
 function THL7V2DataElement.FullPathName: String;
 var
   s : String;
@@ -3375,7 +3323,6 @@ begin
       FRepeats[iLoop].Parent := Self;
     end;
 end;
-
 
 function THL7V2DataElement.GetRepeats: THL7V2DataElements;
 begin
@@ -3442,7 +3389,6 @@ begin
   End;
 End;
 
-
 function THL7V2DataElement.ChooseRepeat(const sLocation, sValue: String): THL7V2DataElement;
 var
   oRepeats : THL7V2DataElements;
@@ -3464,7 +3410,6 @@ begin
     end;
 end;
 
-
 // coAllowUnknownContent, coOverwriteEmpty, coOverwriteUnDefined
 procedure THL7V2DataElement.Clone(oSource: THL7V2DataElement; aOptions: THL7V2DataElementCloneOptions);
 var
@@ -3475,7 +3420,6 @@ Begin
     For iLoop := 0 to oSource.FRepeats.Count - 1 Do
       AddRepeat(false).CloneRepeat(oSource.FRepeats[iLoop], aOptions);
 End;
-
 
 procedure THL7V2DataElement.CloneRepeat(oSource: THL7V2DataElement; aOptions: THL7V2DataElementCloneOptions);
 var
@@ -3536,7 +3480,6 @@ begin
       end;
     end;
 end;
-
 
 function THL7V2DataElement.HasRepeats: Boolean;
 begin
@@ -3661,7 +3604,6 @@ Begin
     GHL7V2DecoderFactory.ConsumeDecoder(oDecoder);
   End;
 End;
-
 
 Function THL7V2DataElement.Encode(aFormat: THL7V2Format; aOptions: THL7V2EncodingOptionSet): TBytes;
 Var
@@ -3805,7 +3747,6 @@ begin
     result := result + ':'+IntegerToString(iSeq);
 end;
 
-
 function THL7V2Segment.ChildrenClass: TFslTreeListClass;
 begin
   result := THL7V2DataElements;
@@ -3830,7 +3771,6 @@ begin
   else
     result := nil;
 end;
-
 
 function THL7V2Segment.ForceField(iIndex: Integer): THL7V2DataElement;
 begin
@@ -4115,7 +4055,6 @@ begin
   Result := sMask = sCode;
 end;
 
-
 procedure THL7V2Segment.Clear;
 begin
   ErrorApplication('Clear', 'Cannot clear a segment');
@@ -4360,7 +4299,6 @@ begin
   result := THL7V2SegmentGroup;
 end;
 
-
 { THL7V2Message }
 
 Constructor THL7V2Message.Create;
@@ -4499,7 +4437,6 @@ Begin
     End;
 End;
 
-
 Procedure THL7V2Message.ForceElement(Const sCode: String);
 Var
   sSeg: String;
@@ -4593,7 +4530,6 @@ Begin
     oSegment.Field[11].AsString := 'P';
   End;
 
-
   oSegment := AddSegment('MSA');
   oSegment.Field[1].AsString := 'AA'; // OK by default
   If oSrc <> Nil Then
@@ -4667,7 +4603,6 @@ Begin
   Segment['MSA', 0].Field[3].AsString := sMessage;
 End;
 
-
 Function THL7V2Message.GetEvent: String;
 Var
   oSegment : THL7V2Segment;
@@ -4725,7 +4660,6 @@ Begin
       Result := oSegment.Field[9].Component[3].AsString;
     End;
 End;
-
 
 Function THL7V2Message.Query(Const sCode: String; oResults: THL7V2BaseObjectList): Boolean;
 Var
@@ -5245,7 +5179,6 @@ begin
   BindToMSH;
 end;
 
-
 Function THL7V2Message.SegmentQuery(query : String):THL7V2SegmentList;
 var
   i : integer;
@@ -5265,8 +5198,6 @@ Begin
     result.Free;
   End;
 End;
-
-
 
 procedure THL7V2Message.SetExceptionCode(const sMessage, sResponseCode, SErrorCode: String);
 begin
@@ -5295,7 +5226,6 @@ begin
         Segments[i].StripUndefinedContent;
 end;
 
-
 Class Function THL7V2Message.HardCodedNack(AVersion, AErrMsg, AMsgid: String): String;
 Begin
   If AErrMsg = '' Then
@@ -5321,7 +5251,6 @@ Begin
       Result := oField.AsString;
     End;
 End;
-
 
 Function THL7V2Message.GetHL7V2MessagePatientID(SuppressExceptions: Boolean): String;
 Var
@@ -5376,7 +5305,6 @@ Begin
     End;
 End;
 
-
 Function NextFieldDelimeter(InSegment: String; FieldDelim: Char; InitialPos: Integer): Integer;
 
 Var
@@ -5402,7 +5330,6 @@ Begin
 
 End;
 
-
 Class Function THL7V2Message.HL7PacketReplaceMSHField(FieldNumber: Integer; Field: String; Var HL7Msg: TBytes): Boolean;
 Var
   StartPos, EndPos: Integer;
@@ -5426,7 +5353,6 @@ Begin
   Result := True;
   HL7Msg := StringAsBytes(msg);
 End;
-
 
 procedure CompareHL7Messages(AMsg1, AMsg2 : THL7V2Message);
 var
@@ -5562,7 +5488,6 @@ begin
     end;
 end;
 
-
 Function THL7V2Message.AddNOKToMsg(AName, AGiven, ATitle, AAddress1, AAddress2, AAddress3, AAddress4, APostCode, AHomephone, AWorkphone, ARelationship : String) : THL7V2Segment;
 Var
   LNokCount : Integer;
@@ -5624,7 +5549,6 @@ Begin
     LNok.Element['3'].AsString := ARelationship;
   Result := LNok;
 End;
-
 
 { THL7V2BatchMessage }
 
@@ -6031,7 +5955,6 @@ begin
 
 end;
 
-
 { THL7V2BatchIterator }
 
 destructor THL7V2BatchIterator.Destroy;
@@ -6059,7 +5982,6 @@ begin
   FMessageIndex := -1;
   Next;
 end;
-
 
 function THL7V2BatchIterator.GetPosition: integer;
 var
@@ -6501,8 +6423,6 @@ begin
              ((FSegQuery[3] = '#') or (FSegQuery[3] = Upcase(ACode[3])))
 end;
 
-
-
 function THL7V2ParsedQuery.ResultType: THL7V2BaseObjectClass;
 begin
   if assigned(FDE) then
@@ -6513,7 +6433,6 @@ begin
   else
     result := THL7V2Segment;
 end;
-
 
 { THL7V2QueryParser }
 
@@ -7295,7 +7214,6 @@ begin
     end;
 end;
 
-
 destructor THL7V2Query.Destroy;
 begin
   FSegCondition.Free;
@@ -7379,7 +7297,6 @@ Begin
     ErrorBadMessage('GetDelimiter', sName+' Delimiter not found in MSH-2: "'+sStr+'"');
     End;
 End;
-
 
 function THL7V2Decoder.getOptions(opt: THL7V2DecodingOptions): THL7V2DecodingOptions;
 begin
@@ -7723,8 +7640,6 @@ Begin
     End;
 End;
 
-
-
 Function THL7V2ModelProvider.CanChangeVersion: Boolean;
 Begin
   Result := Not Assigned(FModel);
@@ -7940,7 +7855,6 @@ begin
   FDelimiters.Check;
 end;
 
-
 procedure THL7V2ER7Decoder.DecodeMessage(oMessage: THL7V2Message; const sContent: TBytes; oOptions: THL7V2DecodingOptions);
 var
   iCursor : Integer;
@@ -8069,7 +7983,6 @@ Function BytesSlice(Const sValue : TBytes; iBegin, iEnd : Integer) : TBytes;
 Begin
   Result := Copy(sValue, iBegin, iEnd - iBegin + 1);
 End;
-
 
 procedure THL7V2ER7Decoder.ParseDataElement(oDataElement: THL7V2DataElement; var iCursor : Integer);
 var
@@ -8348,7 +8261,6 @@ begin
     iCursor := 4;
     ParseSegmentInner(oBatch.Header, iCursor);
 
-
     sLine := BytesAsString(oExtractor.ConsumeLine)+#13;
     while (copy(sLine, 1, 3) = 'MSH') do
     Begin
@@ -8511,7 +8423,6 @@ begin
     WriteChars(sContent);
 end;
 
-
 Procedure THL7V2ER7Encoder.buildComplexContent(oCell: THL7V2Cell; oOptions: THL7V2EncodingOptions);
 var
   iIndex : integer;
@@ -8545,7 +8456,6 @@ Begin
       RaiseError('buildComplexContent', 'unknown content type');
     End;
 End;
-
 
 Procedure THL7V2ER7Encoder.FormatCell(oCell: THL7V2Cell; oOptions: THL7V2EncodingOptions);
 var
@@ -8589,7 +8499,6 @@ begin
       BuildComplexContent(oCell, oOptions);
   End;
 end;
-
 
 Procedure THL7V2ER7Encoder.FormatDataElement(oDataElement: THL7V2DataElement; oOptions: THL7V2EncodingOptions);
 var
@@ -8719,12 +8628,10 @@ Begin
     ErrorXML(sMethod, sMessage);
 End;
 
-
 Function  THL7V2XMLDecoder.LoadDom(Const sContent: TBytes) : TMxMLDocument;
 Begin
   result := TMXmlParser.parse(sContent, [xpResolveNamespaces, xpDropWhitespace, xpDropComments]);
 End;
-
 
 Procedure THL7V2XMLDecoder.DecodeMessage(oMessage: THL7V2Message; Const sContent: TBytes; oOptions: THL7V2DecodingOptions);
 Var
@@ -8998,7 +8905,6 @@ Begin
   ReadCell(oDataElement, oRoot);
 End;
 
-
 procedure THL7V2XMLDecoder.DecodeCellEx(oCell: THL7V2Cell; iStart: integer; const sContent: TBytes; oOptions: THL7V2DecodingOptions; aLevelOperation : THL7v2DecodingLevelOperation);
 begin
   ErrorHL7Library('DecodeCellEx', 'not supported in xml');
@@ -9044,7 +8950,6 @@ Begin
     Inc(i);
     End;
 End;
-
 
 Destructor THL7V2XMLEncoder.Destroy;
 Begin
@@ -9159,7 +9064,6 @@ Begin
     End;
 End;
 
-
 Function THL7V2XMLEncoder.FormatCell(oCell : THL7V2Cell; Const sName : String) : String;
 Var
   sComp : String;
@@ -9263,7 +9167,6 @@ begin
     end;
 end;
 
-
 function THL7V2DictionaryValidator.ValidateSegment(oSegment: THL7V2Segment; aOptions: THL7V2ValidationOptions; oErrors: THL7V2ErrorCollector): Boolean;
 var
   iLoop : Integer;
@@ -9365,13 +9268,10 @@ begin
       end;
 end;
 
-
-
 Constructor THL7V2ValidationError.Create;
 Begin
   Inherited;
 End;
-
 
 Destructor THL7V2ValidationError.Destroy;
 Begin
@@ -9379,18 +9279,15 @@ Begin
   Inherited;
 End;
 
-
 Function THL7V2ValidationError.Link : THL7V2ValidationError;
 Begin
   Result := THL7V2ValidationError(Inherited Link);
 End;
 
-
 Function THL7V2ValidationError.Clone : THL7V2ValidationError;
 Begin
   Result := THL7V2ValidationError(Inherited Clone);
 End;
-
 
 Procedure THL7V2ValidationError.Assign(oObject : TFslObject);
 Begin
@@ -9405,42 +9302,35 @@ Begin
   Result := THL7V2ValidationErrors(Inherited Link);
 End;
 
-
 Function THL7V2ValidationErrors.Clone : THL7V2ValidationErrors;
 Begin
   Result := THL7V2ValidationErrors(Inherited Clone);
 End;
-
 
 Function THL7V2ValidationErrors.New : THL7V2ValidationError;
 Begin
   Result := THL7V2ValidationError(Inherited New);
 End;
 
-
 Function THL7V2ValidationErrors.ItemClass : TFslObjectClass;
 Begin
   Result := THL7V2ValidationError;
 End;
-
 
 Function THL7V2ValidationErrors.GetElement(Const iIndex : Integer) : THL7V2ValidationError;
 Begin
   Result := THL7V2ValidationError(ObjectByIndex[iIndex]);
 End;
 
-
 Procedure THL7V2ValidationErrors.SetElement(Const iIndex : Integer; Const oValue : THL7V2ValidationError);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
-
 Function THL7V2ValidationErrors.CompareByError(pA, pB : Pointer) : Integer;
 Begin
   Result := StringCompare(THL7V2ValidationError(pA).ErrorMsg, THL7V2ValidationError(pB).ErrorMsg);
 End;
-
 
 Function THL7V2ValidationErrors.IndexByError(Const aValue : THL7V2ValidationErrorError) : Integer;
 Var
@@ -9459,36 +9349,30 @@ Begin
   End;
 End;
 
-
 Function THL7V2ValidationErrors.Get(Const aValue : Integer) : THL7V2ValidationError;
 Begin
   Result := THL7V2ValidationError(Inherited Get(aValue));
 End;
-
 
 Function THL7V2ValidationErrors.GetByError(Const aValue : THL7V2ValidationErrorError) : THL7V2ValidationError;
 Begin
   Result := Get(IndexByError(aValue));
 End;
 
-
 Function THL7V2ValidationErrors.ExistsByError(Const aValue : THL7V2ValidationErrorError) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByError(aValue));
 End;
-
 
 Procedure THL7V2ValidationErrors.SortedByError;
 Begin
   SortedBy(CompareByError);
 End;
 
-
 Function THL7V2ValidationErrors.IsSortedByError : Boolean;
 Begin
   Result := IsSortedBy(CompareByError);
 End;
-
 
 Procedure THL7V2ValidationError.SetElement(Const Value: THL7V2BaseObject);
 Begin
@@ -9521,7 +9405,6 @@ Begin
   For iLoop := 0 To Count - 1 Do
     StringAppend(Result, Elements[iLoop].AsText, cReturn);
 End;
-
 
 { THL7V2SimpleErrorCollector }
 
@@ -9556,7 +9439,6 @@ begin
   FErrors.Free;
   FErrors := Value;
 end;
-
 
 initialization
   GHL7V2EncoderFactory := nil;

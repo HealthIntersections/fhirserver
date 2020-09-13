@@ -39,7 +39,7 @@ interface
 uses
   SysUtils, Classes, 
   FHIR.Support.Utilities, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources;
+  FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Resources.Base;
 
 const
   currentFHIRVersionRelease = fhirVersionRelease2;
@@ -2893,8 +2893,6 @@ Const
   FHIR_GENERATED_PUBLICATION = '2';
 
   FHIR_GENERATED_DATE = '2015-10-24T07:41:03+11:00';
-
-
 
 implementation
 

@@ -78,7 +78,6 @@ Type
     hecValidationFailed,  // some validation profile has failed the message, we aren't exactly sure what category
     hecDuplicateMsgId);   // duplicate message id received
 
-
 Const
   NAMES_HL7V2ERRORCONDITION : Array [THL7V2ErrorCondition] Of String =
      ('Accepted', 'SequenceError', 'RequiredField', 'DataTypeError', 'NoTableValue',
@@ -86,7 +85,6 @@ Const
       'RequiredSeg', 'UnknownKey', 'DuplicateKey', 'RecordLocked', 'InternalError',
       'DictionaryError', 'BadSegCode', 'NoDictionary', 'HL7LibraryError', 'ApplicationError',
       'BadField', 'BadMessage', 'XML', 'ValidationFailed', 'DuplicateMsgId');
-
 
   RESPONSES_HL7V2ERRORCONDITION_NEW : Array [THL7V2ErrorCondition] Of String =
      ('AA', 'AE', 'AE', 'AE', 'AE',
@@ -112,7 +110,6 @@ Const
 function CodeToErrorCondition(sCode : String):THL7V2ErrorCondition;
 
 Function FromVersionCode(Const sValue : String) : THL7V2Version;
-
 
 Type
   THL7V2AcceptAcknowledgmentType = (hv2aaAlways, hv2aaNever, hv2aaError, hv2aaSuccess);
@@ -193,7 +190,6 @@ Procedure CheckDODReal(Const sDate, sDescription: String);
 
 implementation
 
-
 Function FromVersionCode(Const sValue : String) : THL7V2Version;
 Var
   iIndex : Integer;
@@ -214,7 +210,6 @@ begin
   else
     result := THL7V2ErrorCondition(iIndex);
 end;
-
 
 Function FromAcceptAcknowledgmentTypeCode(Const sValue : String) : THL7V2AcceptAcknowledgmentType;
 Var
@@ -601,7 +596,6 @@ Begin
     Result := True;
 End;
 
-
 Function CheckSection(sFormat, sContent : String; Var iYear, iMonth : Integer; Var sError : String; Var bInFraction : Boolean) : Boolean;
 Begin
   Result := True;
@@ -841,7 +835,6 @@ Begin
   If aValue > LocalDateTime + 30 * DATETIME_MINUTE_ONE Then
     Raise EHL7V2Exception.Create(Nil, hecBadField, 'CheckDOBReal', 'DOB ' + sDescription + ' is not a valid Date: Value '+sDate+'" is in the future');
 End;
-
 
 Procedure CheckDODReal(Const sDate, sDescription: String);
 Var

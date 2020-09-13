@@ -315,7 +315,6 @@ begin
   inherited;
 end;
 
-
 procedure TFHIRLiquidIf.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   ok : boolean;
@@ -747,7 +746,4 @@ begin
 end;
 
 end.
-
-
-
 

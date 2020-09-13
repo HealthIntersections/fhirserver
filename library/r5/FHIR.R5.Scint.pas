@@ -7,7 +7,6 @@ uses
   ScintEdit,
   FHIR.Support.Base;
 
-
 const
   AlphaChars = ['A'..'Z', 'a'..'z'];
   DigitChars = ['0'..'9'];
@@ -62,7 +61,6 @@ implementation
 
 const
   WhitespaceChars = [#0..' '];
-
 
 { TFHIRMapStyler }
 

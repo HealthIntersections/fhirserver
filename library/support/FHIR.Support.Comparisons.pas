@@ -7,7 +7,6 @@ Uses
   IdGlobalProtocols,
   FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.Stream, FHIR.Support.Shell;
 
-
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
@@ -35,7 +34,6 @@ begin
       result := AStr+result;
   end;
 end;
-
 
 function MakeXmlPretty(ASrc: String): String;
 var
@@ -556,6 +554,5 @@ begin
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
   end;
 end;
-
 
 end.

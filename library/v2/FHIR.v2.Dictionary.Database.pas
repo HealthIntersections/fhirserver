@@ -99,7 +99,6 @@ const
   TN_STRUCTSEGS = 'MsgStructIDSegments';
   TN_EVNTMSGSEGS = 'EventMessageTypeSegments';
 
-
 type
   THL7V2OdbcDictionary = class(THL7V2Dictionary)
   Private
@@ -151,7 +150,6 @@ type
 
 function FixActionFieldName(platform: TFslDBPlatform): String;
 
-
 type
   // you need this driver: https://www.microsoft.com/en-us/download/details.aspx?id=13255
   THL7V2AccessDictionary = class(THL7V2OdbcDictionary)
@@ -201,7 +199,6 @@ begin
   // GDG 10/12/2000. This routine used to handle ':' as well, but this is redundant
   // after upgrade to latest odbc version many months before.
 end;
-
 
 { THL7V2OdbcDictionary }
 
@@ -562,7 +559,6 @@ begin
   end;
 end;
 
-
 procedure THL7V2OdbcDictionary.LoadSegments(aVersion : THL7V2Version; oSegments : THL7V2ModelSegments);
 var
   oConn: TFslDBConnection;
@@ -620,7 +616,6 @@ begin
     YieldConnection(oConn);
   end;
 end;
-
 
 procedure THL7V2OdbcDictionary.LoadStructures(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures);
 var
@@ -683,7 +678,6 @@ begin
     YieldConnection(oConn);
   end;
 end;
-
 
 procedure THL7V2OdbcDictionary.LoadStructureComponents(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures; oComponents : THL7V2ModelComponents);
 var
@@ -853,7 +847,6 @@ begin
     YieldConnection(oConn);
   end;
 end;
-
 
 procedure THL7V2OdbcDictionary.LoadEvents(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents);
 var

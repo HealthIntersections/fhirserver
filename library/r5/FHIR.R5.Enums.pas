@@ -37,8 +37,6 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   Classes, SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
@@ -57,14 +55,12 @@ type
     AccountStatusUnknown);
   TFhirAccountStatusEnumList = set of TFhirAccountStatusEnum;
 
-
   // Defines behavior for an action or a group for how many times that item may be repeated. (from http://hl7.org/fhir/ValueSet/action-cardinality-behavior)
   TFhirActionCardinalityBehaviorEnum = (
     ActionCardinalityBehaviorNull, // Value is missing from Instance
     ActionCardinalityBehaviorSingle,
     ActionCardinalityBehaviorMultiple);
   TFhirActionCardinalityBehaviorEnumList = set of TFhirActionCardinalityBehaviorEnum;
-
 
   // Defines the kinds of conditions that can appear on actions. (from http://hl7.org/fhir/ValueSet/action-condition-kind)
   TFhirActionConditionKindEnum = (
@@ -74,7 +70,6 @@ type
     ActionConditionKindStop);
   TFhirActionConditionKindEnumList = set of TFhirActionConditionKindEnum;
 
-
   // Defines organization behavior of a group. (from http://hl7.org/fhir/ValueSet/action-grouping-behavior)
   TFhirActionGroupingBehaviorEnum = (
     ActionGroupingBehaviorNull, // Value is missing from Instance
@@ -82,7 +77,6 @@ type
     ActionGroupingBehaviorLogicalGroup,
     ActionGroupingBehaviorSentenceGroup);
   TFhirActionGroupingBehaviorEnumList = set of TFhirActionGroupingBehaviorEnum;
-
 
   // The type of participant for the action. (from http://hl7.org/fhir/ValueSet/action-participant-type)
   TFhirActionParticipantTypeEnum = (
@@ -93,14 +87,12 @@ type
     ActionParticipantTypeDevice);
   TFhirActionParticipantTypeEnumList = set of TFhirActionParticipantTypeEnum;
 
-
   // Defines selection frequency behavior for an action or group. (from http://hl7.org/fhir/ValueSet/action-precheck-behavior)
   TFhirActionPrecheckBehaviorEnum = (
     ActionPrecheckBehaviorNull, // Value is missing from Instance
     ActionPrecheckBehaviorYes,
     ActionPrecheckBehaviorNo);
   TFhirActionPrecheckBehaviorEnumList = set of TFhirActionPrecheckBehaviorEnum;
-
 
   // Defines the types of relationships between actions. (from http://hl7.org/fhir/ValueSet/action-relationship-type)
   TFhirActionRelationshipTypeEnum = (
@@ -116,7 +108,6 @@ type
     ActionRelationshipTypeAfterEnd);
   TFhirActionRelationshipTypeEnumList = set of TFhirActionRelationshipTypeEnum;
 
-
   // Defines expectations around whether an action or action group is required. (from http://hl7.org/fhir/ValueSet/action-required-behavior)
   TFhirActionRequiredBehaviorEnum = (
     ActionRequiredBehaviorNull, // Value is missing from Instance
@@ -124,7 +115,6 @@ type
     ActionRequiredBehaviorCould,
     ActionRequiredBehaviorMustUnlessDocumented);
   TFhirActionRequiredBehaviorEnumList = set of TFhirActionRequiredBehaviorEnum;
-
 
   // Defines selection behavior of a group. (from http://hl7.org/fhir/ValueSet/action-selection-behavior)
   TFhirActionSelectionBehaviorEnum = (
@@ -137,7 +127,6 @@ type
     ActionSelectionBehaviorOneOrMore);
   TFhirActionSelectionBehaviorEnumList = set of TFhirActionSelectionBehaviorEnum;
 
-
   // The type of an address (physical / postal). (from http://hl7.org/fhir/ValueSet/address-type)
   TFhirAddressTypeEnum = (
     AddressTypeNull, // Value is missing from Instance
@@ -145,7 +134,6 @@ type
     AddressTypePhysical,
     AddressTypeBoth);
   TFhirAddressTypeEnumList = set of TFhirAddressTypeEnum;
-
 
   // The use of an address. (from http://hl7.org/fhir/ValueSet/address-use)
   TFhirAddressUseEnum = (
@@ -157,7 +145,6 @@ type
     AddressUseBilling);
   TFhirAddressUseEnumList = set of TFhirAddressUseEnum;
 
-
   // The gender of a person used for administrative purposes. (from http://hl7.org/fhir/ValueSet/administrative-gender)
   TFhirAdministrativeGenderEnum = (
     AdministrativeGenderNull, // Value is missing from Instance
@@ -167,14 +154,12 @@ type
     AdministrativeGenderUnknown);
   TFhirAdministrativeGenderEnumList = set of TFhirAdministrativeGenderEnum;
 
-
   // Overall nature of the adverse event, e.g. real or potential. (from http://hl7.org/fhir/ValueSet/adverse-event-actuality)
   TFhirAdverseEventActualityEnum = (
     AdverseEventActualityNull, // Value is missing from Instance
     AdverseEventActualityActual,
     AdverseEventActualityPotential);
   TFhirAdverseEventActualityEnumList = set of TFhirAdverseEventActualityEnum;
-
 
   // Codes identifying the lifecycle stage of an adverse event. (from http://hl7.org/fhir/ValueSet/adverse-event-status)
   TFhirAdverseEventStatusEnum = (
@@ -185,7 +170,6 @@ type
     AdverseEventStatusUnknown);
   TFhirAdverseEventStatusEnumList = set of TFhirAdverseEventStatusEnum;
 
-
   // How resource references can be aggregated. (from http://hl7.org/fhir/ValueSet/resource-aggregation-mode)
   TFhirAggregationModeEnum = (
     AggregationModeNull, // Value is missing from Instance
@@ -193,7 +177,6 @@ type
     AggregationModeReferenced,
     AggregationModeBundled);
   TFhirAggregationModeEnumList = set of TFhirAggregationModeEnum;
-
 
   // A list of all the concrete types defined in this version of the FHIR specification - Abstract Types, Data Types and Resource Types. (from http://hl7.org/fhir/ValueSet/all-types)
   TFhirAllTypesEnum = (
@@ -421,7 +404,6 @@ type
     AllTypesAny);
   TFhirAllTypesEnumList = set of TFhirAllTypesEnum;
 
-
   // Category of an identified substance associated with allergies or intolerances. (from http://hl7.org/fhir/ValueSet/allergy-intolerance-category)
   TFhirAllergyIntoleranceCategoryEnum = (
     AllergyIntoleranceCategoryNull, // Value is missing from Instance
@@ -431,7 +413,6 @@ type
     AllergyIntoleranceCategoryBiologic);
   TFhirAllergyIntoleranceCategoryEnumList = set of TFhirAllergyIntoleranceCategoryEnum;
 
-
   // Estimate of the potential clinical harm, or seriousness, of a reaction to an identified substance. (from http://hl7.org/fhir/ValueSet/allergy-intolerance-criticality)
   TFhirAllergyIntoleranceCriticalityEnum = (
     AllergyIntoleranceCriticalityNull, // Value is missing from Instance
@@ -439,7 +420,6 @@ type
     AllergyIntoleranceCriticalityHigh,
     AllergyIntoleranceCriticalityUnableToAssess);
   TFhirAllergyIntoleranceCriticalityEnumList = set of TFhirAllergyIntoleranceCriticalityEnum;
-
 
   // Clinical assessment of the severity of a reaction event as a whole, potentially considering multiple different manifestations. (from http://hl7.org/fhir/ValueSet/reaction-event-severity)
   TFhirAllergyIntoleranceSeverityEnum = (
@@ -449,14 +429,12 @@ type
     AllergyIntoleranceSeveritySevere);
   TFhirAllergyIntoleranceSeverityEnumList = set of TFhirAllergyIntoleranceSeverityEnum;
 
-
   // Identification of the underlying physiological mechanism for a Reaction Risk. (from http://hl7.org/fhir/ValueSet/allergy-intolerance-type)
   TFhirAllergyIntoleranceTypeEnum = (
     AllergyIntoleranceTypeNull, // Value is missing from Instance
     AllergyIntoleranceTypeAllergy,
     AllergyIntoleranceTypeIntolerance);
   TFhirAllergyIntoleranceTypeEnumList = set of TFhirAllergyIntoleranceTypeEnum;
-
 
   // The free/busy status of an appointment. (from http://hl7.org/fhir/ValueSet/appointmentstatus)
   TFhirAppointmentStatusEnum = (
@@ -473,14 +451,12 @@ type
     AppointmentStatusWaitlist);
   TFhirAppointmentStatusEnumList = set of TFhirAppointmentStatusEnum;
 
-
   // The type of direction to use for assertion. (from http://hl7.org/fhir/ValueSet/assert-direction-codes)
   TFhirAssertionDirectionTypeEnum = (
     AssertionDirectionTypeNull, // Value is missing from Instance
     AssertionDirectionTypeResponse,
     AssertionDirectionTypeRequest);
   TFhirAssertionDirectionTypeEnumList = set of TFhirAssertionDirectionTypeEnum;
-
 
   // The type of operator to use for assertion. (from http://hl7.org/fhir/ValueSet/assert-operator-codes)
   TFhirAssertionOperatorTypeEnum = (
@@ -497,7 +473,6 @@ type
     AssertionOperatorTypeNotContains,
     AssertionOperatorTypeEval);
   TFhirAssertionOperatorTypeEnumList = set of TFhirAssertionOperatorTypeEnum;
-
 
   // The type of response code to use for assertion. (from http://hl7.org/fhir/ValueSet/assert-response-code-types)
   TFhirAssertionResponseTypesEnum = (
@@ -516,7 +491,6 @@ type
     AssertionResponseTypesUnprocessable);
   TFhirAssertionResponseTypesEnumList = set of TFhirAssertionResponseTypesEnum;
 
-
   // Indicator for type of action performed during the event that generated the event. (from http://hl7.org/fhir/ValueSet/audit-event-action)
   TFhirAuditEventActionEnum = (
     AuditEventActionNull, // Value is missing from Instance
@@ -527,7 +501,6 @@ type
     AuditEventActionE);
   TFhirAuditEventActionEnumList = set of TFhirAuditEventActionEnum;
 
-
   // The type of network access point of this agent in the audit event. (from http://hl7.org/fhir/ValueSet/network-type)
   TFhirAuditEventAgentNetworkTypeEnum = (
     AuditEventAgentNetworkTypeNull, // Value is missing from Instance
@@ -537,7 +510,6 @@ type
     AuditEventAgentNetworkType4,
     AuditEventAgentNetworkType5);
   TFhirAuditEventAgentNetworkTypeEnumList = set of TFhirAuditEventAgentNetworkTypeEnum;
-
 
   // The severity of the audit entry. (from http://hl7.org/fhir/ValueSet/audit-event-severity)
   TFhirAuditEventSeverityEnum = (
@@ -552,7 +524,6 @@ type
     AuditEventSeverityDebug);
   TFhirAuditEventSeverityEnumList = set of TFhirAuditEventSeverityEnum;
 
-
   // Indication of the degree of conformance expectations associated with a binding. (from http://hl7.org/fhir/ValueSet/binding-strength)
   TFhirBindingStrengthEnum = (
     BindingStrengthNull, // Value is missing from Instance
@@ -561,7 +532,6 @@ type
     BindingStrengthPreferred,
     BindingStrengthExample);
   TFhirBindingStrengthEnumList = set of TFhirBindingStrengthEnum;
-
 
   // Biologically Derived Product Category. (from http://hl7.org/fhir/ValueSet/product-category)
   TFhirBiologicallyDerivedProductCategoryEnum = (
@@ -573,14 +543,12 @@ type
     BiologicallyDerivedProductCategoryBiologicalAgent);
   TFhirBiologicallyDerivedProductCategoryEnumList = set of TFhirBiologicallyDerivedProductCategoryEnum;
 
-
   // Biologically Derived Product Status. (from http://hl7.org/fhir/ValueSet/product-status)
   TFhirBiologicallyDerivedProductStatusEnum = (
     BiologicallyDerivedProductStatusNull, // Value is missing from Instance
     BiologicallyDerivedProductStatusAvailable,
     BiologicallyDerivedProductStatusUnavailable);
   TFhirBiologicallyDerivedProductStatusEnumList = set of TFhirBiologicallyDerivedProductStatusEnum;
-
 
   // BiologicallyDerived Product Storage Scale. (from http://hl7.org/fhir/ValueSet/product-storage-scale)
   TFhirBiologicallyDerivedProductStorageScaleEnum = (
@@ -589,7 +557,6 @@ type
     BiologicallyDerivedProductStorageScaleCelsius,
     BiologicallyDerivedProductStorageScaleKelvin);
   TFhirBiologicallyDerivedProductStorageScaleEnumList = set of TFhirBiologicallyDerivedProductStorageScaleEnum;
-
 
   // Indicates the purpose of a bundle - how it is intended to be used. (from http://hl7.org/fhir/ValueSet/bundle-type)
   TFhirBundleTypeEnum = (
@@ -606,7 +573,6 @@ type
     BundleTypeSubscriptionNotification);
   TFhirBundleTypeEnumList = set of TFhirBundleTypeEnum;
 
-
   // How a capability statement is intended to be used. (from http://hl7.org/fhir/ValueSet/capability-statement-kind)
   TFhirCapabilityStatementKindEnum = (
     CapabilityStatementKindNull, // Value is missing from Instance
@@ -614,7 +580,6 @@ type
     CapabilityStatementKindCapability,
     CapabilityStatementKindRequirements);
   TFhirCapabilityStatementKindEnumList = set of TFhirCapabilityStatementKindEnum;
-
 
   // Resource types defined as part of FHIR that can be represented as in-line definitions of a care plan activity. (from http://hl7.org/fhir/ValueSet/care-plan-activity-kind)
   TFhirCarePlanActivityKindEnum = (
@@ -628,7 +593,6 @@ type
     CarePlanActivityKindServiceRequest,
     CarePlanActivityKindVisionPrescription);
   TFhirCarePlanActivityKindEnumList = set of TFhirCarePlanActivityKindEnum;
-
 
   // Codes that reflect the current state of a care plan activity within its overall life cycle. (from http://hl7.org/fhir/ValueSet/care-plan-activity-status)
   TFhirCarePlanActivityStatusEnum = (
@@ -644,7 +608,6 @@ type
     CarePlanActivityStatusEnteredInError);
   TFhirCarePlanActivityStatusEnumList = set of TFhirCarePlanActivityStatusEnum;
 
-
   // Codes indicating the degree of authority/intentionality associated with a care plan. (from http://hl7.org/fhir/ValueSet/care-plan-intent)
   TFhirCarePlanIntentEnum = (
     CarePlanIntentNull, // Value is missing from Instance
@@ -654,7 +617,6 @@ type
     CarePlanIntentOption,
     CarePlanIntentDirective);
   TFhirCarePlanIntentEnumList = set of TFhirCarePlanIntentEnum;
-
 
   // Indicates the status of the care team. (from http://hl7.org/fhir/ValueSet/care-team-status)
   TFhirCareTeamStatusEnum = (
@@ -666,7 +628,6 @@ type
     CareTeamStatusEnteredInError);
   TFhirCareTeamStatusEnumList = set of TFhirCareTeamStatusEnum;
 
-
   // Types of relationships between entries. (from http://hl7.org/fhir/ValueSet/catalogentry-relation-type)
   TFhirCatalogEntryRelationTypeEnum = (
     CatalogEntryRelationTypeNull, // Value is missing from Instance
@@ -676,7 +637,6 @@ type
     CatalogEntryRelationTypeIncludes);
   TFhirCatalogEntryRelationTypeEnumList = set of TFhirCatalogEntryRelationTypeEnum;
 
-
   // Public usability statuses for catalog entries. (from http://hl7.org/fhir/ValueSet/catalogentry-status)
   TFhirCatalogEntryStatusEnum = (
     CatalogEntryStatusNull, // Value is missing from Instance
@@ -684,7 +644,6 @@ type
     CatalogEntryStatusActive,
     CatalogEntryStatusRetired);
   TFhirCatalogEntryStatusEnumList = set of TFhirCatalogEntryStatusEnum;
-
 
   // Types of resources that can be attached to catalog entries. (from http://hl7.org/fhir/ValueSet/catalogentry-type)
   TFhirCatalogEntryTypeEnum = (
@@ -704,14 +663,12 @@ type
     CatalogEntryTypeLocation);
   TFhirCatalogEntryTypeEnumList = set of TFhirCatalogEntryTypeEnum;
 
-
   // Logical grouping of characteristics. (from http://hl7.org/fhir/ValueSet/characteristic-combination)
   TFhirCharacteristicCombinationEnum = (
     CharacteristicCombinationNull, // Value is missing from Instance
     CharacteristicCombinationIntersection,
     CharacteristicCombinationUnion);
   TFhirCharacteristicCombinationEnumList = set of TFhirCharacteristicCombinationEnum;
-
 
   // Codes identifying the lifecycle stage of a ChargeItem. (from http://hl7.org/fhir/ValueSet/chargeitem-status)
   TFhirChargeItemStatusEnum = (
@@ -725,7 +682,6 @@ type
     ChargeItemStatusUnknown);
   TFhirChargeItemStatusEnumList = set of TFhirChargeItemStatusEnum;
 
-
   // This value set includes Claim Processing Outcome codes. (from http://hl7.org/fhir/ValueSet/remittance-outcome)
   TFhirClaimProcessingCodesEnum = (
     ClaimProcessingCodesNull, // Value is missing from Instance
@@ -734,7 +690,6 @@ type
     ClaimProcessingCodesError,
     ClaimProcessingCodesPartial);
   TFhirClaimProcessingCodesEnumList = set of TFhirClaimProcessingCodesEnum;
-
 
   // Overall defining type of this clinical use issue. (from http://hl7.org/fhir/ValueSet/clinical-use-issue-type)
   TFhirClinicalUseIssueTypeEnum = (
@@ -746,14 +701,12 @@ type
     ClinicalUseIssueTypeWarning);
   TFhirClinicalUseIssueTypeEnumList = set of TFhirClinicalUseIssueTypeEnum;
 
-
   // The degree to which the server supports the code search parameter on ValueSet, if it is supported. (from http://hl7.org/fhir/ValueSet/code-search-support)
   TFhirCodeSearchSupportEnum = (
     CodeSearchSupportNull, // Value is missing from Instance
     CodeSearchSupportExplicit,
     CodeSearchSupportAll);
   TFhirCodeSearchSupportEnumList = set of TFhirCodeSearchSupportEnum;
-
 
   // The extent of the content of the code system (the concepts and codes it defines) are represented in a code system resource. (from http://hl7.org/fhir/ValueSet/codesystem-content-mode)
   TFhirCodeSystemContentModeEnum = (
@@ -765,7 +718,6 @@ type
     CodeSystemContentModeSupplement);
   TFhirCodeSystemContentModeEnumList = set of TFhirCodeSystemContentModeEnum;
 
-
   // The meaning of the hierarchy of concepts in a code system. (from http://hl7.org/fhir/ValueSet/codesystem-hierarchy-meaning)
   TFhirCodeSystemHierarchyMeaningEnum = (
     CodeSystemHierarchyMeaningNull, // Value is missing from Instance
@@ -774,7 +726,6 @@ type
     CodeSystemHierarchyMeaningPartOf,
     CodeSystemHierarchyMeaningClassifiedWith);
   TFhirCodeSystemHierarchyMeaningEnumList = set of TFhirCodeSystemHierarchyMeaningEnum;
-
 
   // Which type a compartment definition describes. (from http://hl7.org/fhir/ValueSet/compartment-type)
   TFhirCompartmentTypeEnum = (
@@ -786,7 +737,6 @@ type
     CompartmentTypeDevice);
   TFhirCompartmentTypeEnumList = set of TFhirCompartmentTypeEnum;
 
-
   // The way in which a person authenticated a composition. (from http://hl7.org/fhir/ValueSet/composition-attestation-mode)
   TFhirCompositionAttestationModeEnum = (
     CompositionAttestationModeNull, // Value is missing from Instance
@@ -795,7 +745,6 @@ type
     CompositionAttestationModeLegal,
     CompositionAttestationModeOfficial);
   TFhirCompositionAttestationModeEnumList = set of TFhirCompositionAttestationModeEnum;
-
 
   // The workflow/clinical status of the composition. (from http://hl7.org/fhir/ValueSet/composition-status)
   TFhirCompositionStatusEnum = (
@@ -806,7 +755,6 @@ type
     CompositionStatusEnteredInError);
   TFhirCompositionStatusEnumList = set of TFhirCompositionStatusEnum;
 
-
   // Defines which action to take if there is no match in the group. (from http://hl7.org/fhir/ValueSet/conceptmap-unmapped-mode)
   TFhirConceptMapGroupUnmappedModeEnum = (
     ConceptMapGroupUnmappedModeNull, // Value is missing from Instance
@@ -814,7 +762,6 @@ type
     ConceptMapGroupUnmappedModeFixed,
     ConceptMapGroupUnmappedModeOtherMap);
   TFhirConceptMapGroupUnmappedModeEnumList = set of TFhirConceptMapGroupUnmappedModeEnum;
-
 
   // The relationship between concepts. (from http://hl7.org/fhir/ValueSet/concept-map-relationship)
   TFhirConceptMapRelationshipEnum = (
@@ -825,7 +772,6 @@ type
     ConceptMapRelationshipSourceIsBroaderThanTarget,
     ConceptMapRelationshipNotRelatedTo);
   TFhirConceptMapRelationshipEnumList = set of TFhirConceptMapRelationshipEnum;
-
 
   // The type of a property value. (from http://hl7.org/fhir/ValueSet/concept-property-type)
   TFhirConceptPropertyTypeEnum = (
@@ -839,14 +785,12 @@ type
     ConceptPropertyTypeDecimal);
   TFhirConceptPropertyTypeEnumList = set of TFhirConceptPropertyTypeEnum;
 
-
   // Kind of precondition for the condition. (from http://hl7.org/fhir/ValueSet/condition-precondition-type)
   TFhirConditionPreconditionTypeEnum = (
     ConditionPreconditionTypeNull, // Value is missing from Instance
     ConditionPreconditionTypeSensitive,
     ConditionPreconditionTypeSpecific);
   TFhirConditionPreconditionTypeEnumList = set of TFhirConditionPreconditionTypeEnum;
-
 
   // The use of a questionnaire. (from http://hl7.org/fhir/ValueSet/condition-questionnaire-purpose)
   TFhirConditionQuestionnairePurposeEnum = (
@@ -856,7 +800,6 @@ type
     ConditionQuestionnairePurposeOutcome);
   TFhirConditionQuestionnairePurposeEnumList = set of TFhirConditionQuestionnairePurposeEnum;
 
-
   // A code that indicates how the server supports conditional delete. (from http://hl7.org/fhir/ValueSet/conditional-delete-status)
   TFhirConditionalDeleteStatusEnum = (
     ConditionalDeleteStatusNull, // Value is missing from Instance
@@ -864,7 +807,6 @@ type
     ConditionalDeleteStatusSingle,
     ConditionalDeleteStatusMultiple);
   TFhirConditionalDeleteStatusEnumList = set of TFhirConditionalDeleteStatusEnum;
-
 
   // A code that indicates how the server supports conditional read. (from http://hl7.org/fhir/ValueSet/conditional-read-status)
   TFhirConditionalReadStatusEnum = (
@@ -875,7 +817,6 @@ type
     ConditionalReadStatusFullSupport);
   TFhirConditionalReadStatusEnumList = set of TFhirConditionalReadStatusEnum;
 
-
   // How a resource reference is interpreted when testing consent restrictions. (from http://hl7.org/fhir/ValueSet/consent-data-meaning)
   TFhirConsentDataMeaningEnum = (
     ConsentDataMeaningNull, // Value is missing from Instance
@@ -885,14 +826,12 @@ type
     ConsentDataMeaningAuthoredby);
   TFhirConsentDataMeaningEnumList = set of TFhirConsentDataMeaningEnum;
 
-
   // How a rule statement is applied, such as adding additional consent or removing consent. (from http://hl7.org/fhir/ValueSet/consent-provision-type)
   TFhirConsentProvisionTypeEnum = (
     ConsentProvisionTypeNull, // Value is missing from Instance
     ConsentProvisionTypeDeny,
     ConsentProvisionTypePermit);
   TFhirConsentProvisionTypeEnumList = set of TFhirConsentProvisionTypeEnum;
-
 
   // Indicates the state of the consent. (from http://hl7.org/fhir/ValueSet/consent-state-codes)
   TFhirConsentStateEnum = (
@@ -904,14 +843,12 @@ type
     ConsentStateUnknown);
   TFhirConsentStateEnumList = set of TFhirConsentStateEnum;
 
-
   // SHALL applications comply with this constraint? (from http://hl7.org/fhir/ValueSet/constraint-severity)
   TFhirConstraintSeverityEnum = (
     ConstraintSeverityNull, // Value is missing from Instance
     ConstraintSeverityError,
     ConstraintSeverityWarning);
   TFhirConstraintSeverityEnumList = set of TFhirConstraintSeverityEnum;
-
 
   // Telecommunications form for contact point. (from http://hl7.org/fhir/ValueSet/contact-point-system)
   TFhirContactPointSystemEnum = (
@@ -925,7 +862,6 @@ type
     ContactPointSystemOther);
   TFhirContactPointSystemEnumList = set of TFhirContactPointSystemEnum;
 
-
   // Use of contact point. (from http://hl7.org/fhir/ValueSet/contact-point-use)
   TFhirContactPointUseEnum = (
     ContactPointUseNull, // Value is missing from Instance
@@ -935,7 +871,6 @@ type
     ContactPointUseOld,
     ContactPointUseMobile);
   TFhirContactPointUseEnumList = set of TFhirContactPointUseEnum;
-
 
   // This value set contract specific codes for status. (from http://hl7.org/fhir/ValueSet/contract-publicationstatus)
   TFhirContractResourcePublicationStatusCodesEnum = (
@@ -957,7 +892,6 @@ type
     ContractResourcePublicationStatusCodesTerminated);
   TFhirContractResourcePublicationStatusCodesEnumList = set of TFhirContractResourcePublicationStatusCodesEnum;
 
-
   // This value set contract specific codes for status. (from http://hl7.org/fhir/ValueSet/contract-status)
   TFhirContractResourceStatusCodesEnum = (
     ContractResourceStatusCodesNull, // Value is missing from Instance
@@ -978,7 +912,6 @@ type
     ContractResourceStatusCodesTerminated);
   TFhirContractResourceStatusCodesEnumList = set of TFhirContractResourceStatusCodesEnum;
 
-
   // The type of contributor. (from http://hl7.org/fhir/ValueSet/contributor-type)
   TFhirContributorTypeEnum = (
     ContributorTypeNull, // Value is missing from Instance
@@ -987,7 +920,6 @@ type
     ContributorTypeReviewer,
     ContributorTypeEndorser);
   TFhirContributorTypeEnumList = set of TFhirContributorTypeEnum;
-
 
   // The days of the week. (from http://hl7.org/fhir/ValueSet/days-of-week)
   TFhirDaysOfWeekEnum = (
@@ -1001,7 +933,6 @@ type
     DaysOfWeekSun);
   TFhirDaysOfWeekEnumList = set of TFhirDaysOfWeekEnum;
 
-
   // Indicates the potential degree of impact of the identified issue on the patient. (from http://hl7.org/fhir/ValueSet/detectedissue-severity)
   TFhirDetectedIssueSeverityEnum = (
     DetectedIssueSeverityNull, // Value is missing from Instance
@@ -1009,7 +940,6 @@ type
     DetectedIssueSeverityModerate,
     DetectedIssueSeverityLow);
   TFhirDetectedIssueSeverityEnumList = set of TFhirDetectedIssueSeverityEnum;
-
 
   // Describes the state of a metric calibration. (from http://hl7.org/fhir/ValueSet/metric-calibration-state)
   TFhirDeviceMetricCalibrationStateEnum = (
@@ -1020,7 +950,6 @@ type
     DeviceMetricCalibrationStateUnspecified);
   TFhirDeviceMetricCalibrationStateEnumList = set of TFhirDeviceMetricCalibrationStateEnum;
 
-
   // Describes the type of a metric calibration. (from http://hl7.org/fhir/ValueSet/metric-calibration-type)
   TFhirDeviceMetricCalibrationTypeEnum = (
     DeviceMetricCalibrationTypeNull, // Value is missing from Instance
@@ -1030,7 +959,6 @@ type
     DeviceMetricCalibrationTypeTwoPoint);
   TFhirDeviceMetricCalibrationTypeEnumList = set of TFhirDeviceMetricCalibrationTypeEnum;
 
-
   // Describes the category of the metric. (from http://hl7.org/fhir/ValueSet/metric-category)
   TFhirDeviceMetricCategoryEnum = (
     DeviceMetricCategoryNull, // Value is missing from Instance
@@ -1039,7 +967,6 @@ type
     DeviceMetricCategoryCalculation,
     DeviceMetricCategoryUnspecified);
   TFhirDeviceMetricCategoryEnumList = set of TFhirDeviceMetricCategoryEnum;
-
 
   // Describes the typical color of representation. (from http://hl7.org/fhir/ValueSet/metric-color)
   TFhirDeviceMetricColorEnum = (
@@ -1054,7 +981,6 @@ type
     DeviceMetricColorWhite);
   TFhirDeviceMetricColorEnumList = set of TFhirDeviceMetricColorEnum;
 
-
   // Describes the operational status of the DeviceMetric. (from http://hl7.org/fhir/ValueSet/metric-operational-status)
   TFhirDeviceMetricOperationalStatusEnum = (
     DeviceMetricOperationalStatusNull, // Value is missing from Instance
@@ -1063,7 +989,6 @@ type
     DeviceMetricOperationalStatusStandby,
     DeviceMetricOperationalStatusEnteredInError);
   TFhirDeviceMetricOperationalStatusEnumList = set of TFhirDeviceMetricOperationalStatusEnum;
-
 
   // The type of name the device is referred by. (from http://hl7.org/fhir/ValueSet/device-nametype)
   TFhirDeviceNameTypeEnum = (
@@ -1076,7 +1001,6 @@ type
     DeviceNameTypeOther);
   TFhirDeviceNameTypeEnumList = set of TFhirDeviceNameTypeEnum;
 
-
   // A coded concept indicating the current status of the Device Usage. (from http://hl7.org/fhir/ValueSet/device-statement-status)
   TFhirDeviceUseStatementStatusEnum = (
     DeviceUseStatementStatusNull, // Value is missing from Instance
@@ -1087,7 +1011,6 @@ type
     DeviceUseStatementStatusStopped,
     DeviceUseStatementStatusOnHold);
   TFhirDeviceUseStatementStatusEnumList = set of TFhirDeviceUseStatementStatusEnum;
-
 
   // The status of the diagnostic report. (from http://hl7.org/fhir/ValueSet/diagnostic-report-status)
   TFhirDiagnosticReportStatusEnum = (
@@ -1104,7 +1027,6 @@ type
     DiagnosticReportStatusUnknown);
   TFhirDiagnosticReportStatusEnumList = set of TFhirDiagnosticReportStatusEnum;
 
-
   // How an element value is interpreted when discrimination is evaluated. (from http://hl7.org/fhir/ValueSet/discriminator-type)
   TFhirDiscriminatorTypeEnum = (
     DiscriminatorTypeNull, // Value is missing from Instance
@@ -1115,7 +1037,6 @@ type
     DiscriminatorTypeProfile);
   TFhirDiscriminatorTypeEnumList = set of TFhirDiscriminatorTypeEnum;
 
-
   // The way in which a person authenticated a document. (from http://hl7.org/fhir/ValueSet/document-attestation-mode)
   TFhirDocumentAttestationModeEnum = (
     DocumentAttestationModeNull, // Value is missing from Instance
@@ -1125,14 +1046,12 @@ type
     DocumentAttestationModeOfficial);
   TFhirDocumentAttestationModeEnumList = set of TFhirDocumentAttestationModeEnum;
 
-
   // Whether the application produces or consumes documents. (from http://hl7.org/fhir/ValueSet/document-mode)
   TFhirDocumentModeEnum = (
     DocumentModeNull, // Value is missing from Instance
     DocumentModeProducer,
     DocumentModeConsumer);
   TFhirDocumentModeEnumList = set of TFhirDocumentModeEnum;
-
 
   // The status of the document reference. (from http://hl7.org/fhir/ValueSet/document-reference-status)
   TFhirDocumentReferenceStatusEnum = (
@@ -1141,7 +1060,6 @@ type
     DocumentReferenceStatusSuperseded,
     DocumentReferenceStatusEnteredInError);
   TFhirDocumentReferenceStatusEnumList = set of TFhirDocumentReferenceStatusEnum;
-
 
   // The type of relationship between documents. (from http://hl7.org/fhir/ValueSet/document-relationship-type)
   TFhirDocumentRelationshipTypeEnum = (
@@ -1152,7 +1070,6 @@ type
     DocumentRelationshipTypeAppends);
   TFhirDocumentRelationshipTypeEnumList = set of TFhirDocumentRelationshipTypeEnum;
 
-
   // A code specifying the types of information being requested. (from http://hl7.org/fhir/ValueSet/eligibilityrequest-purpose)
   TFhirEligibilityRequestPurposeEnum = (
     EligibilityRequestPurposeNull, // Value is missing from Instance
@@ -1161,7 +1078,6 @@ type
     EligibilityRequestPurposeDiscovery,
     EligibilityRequestPurposeValidation);
   TFhirEligibilityRequestPurposeEnumList = set of TFhirEligibilityRequestPurposeEnum;
-
 
   // A code specifying the types of information being requested. (from http://hl7.org/fhir/ValueSet/eligibilityresponse-purpose)
   TFhirEligibilityResponsePurposeEnum = (
@@ -1172,14 +1088,12 @@ type
     EligibilityResponsePurposeValidation);
   TFhirEligibilityResponsePurposeEnumList = set of TFhirEligibilityResponsePurposeEnum;
 
-
   // Controls how multiple enableWhen values are interpreted -  whether all or any must be true. (from http://hl7.org/fhir/ValueSet/questionnaire-enable-behavior)
   TFhirEnableWhenBehaviorEnum = (
     EnableWhenBehaviorNull, // Value is missing from Instance
     EnableWhenBehaviorAll,
     EnableWhenBehaviorAny);
   TFhirEnableWhenBehaviorEnumList = set of TFhirEnableWhenBehaviorEnum;
-
 
   // The status of the location. (from http://hl7.org/fhir/ValueSet/encounter-location-status)
   TFhirEncounterLocationStatusEnum = (
@@ -1189,7 +1103,6 @@ type
     EncounterLocationStatusReserved,
     EncounterLocationStatusCompleted);
   TFhirEncounterLocationStatusEnumList = set of TFhirEncounterLocationStatusEnum;
-
 
   // Current state of the encounter. (from http://hl7.org/fhir/ValueSet/encounter-status)
   TFhirEncounterStatusEnum = (
@@ -1203,7 +1116,6 @@ type
     EncounterStatusUnknown);
   TFhirEncounterStatusEnumList = set of TFhirEncounterStatusEnum;
 
-
   // The status of the endpoint. (from http://hl7.org/fhir/ValueSet/endpoint-status)
   TFhirEndpointStatusEnum = (
     EndpointStatusNull, // Value is missing from Instance
@@ -1214,7 +1126,6 @@ type
     EndpointStatusEnteredInError,
     EndpointStatusTest);
   TFhirEndpointStatusEnumList = set of TFhirEndpointStatusEnum;
-
 
   // The status of the episode of care. (from http://hl7.org/fhir/ValueSet/episode-of-care-status)
   TFhirEpisodeOfCareStatusEnum = (
@@ -1228,14 +1139,12 @@ type
     EpisodeOfCareStatusEnteredInError);
   TFhirEpisodeOfCareStatusEnumList = set of TFhirEpisodeOfCareStatusEnum;
 
-
   // The mode of a message capability statement. (from http://hl7.org/fhir/ValueSet/event-capability-mode)
   TFhirEventCapabilityModeEnum = (
     EventCapabilityModeNull, // Value is missing from Instance
     EventCapabilityModeSender,
     EventCapabilityModeReceiver);
   TFhirEventCapabilityModeEnumList = set of TFhirEventCapabilityModeEnum;
-
 
   // Codes identifying the lifecycle stage of an event. (from http://hl7.org/fhir/ValueSet/event-status)
   TFhirEventStatusEnum = (
@@ -1249,7 +1158,6 @@ type
     EventStatusEnteredInError,
     EventStatusUnknown);
   TFhirEventStatusEnumList = set of TFhirEventStatusEnum;
-
 
   // Real world event relating to the schedule. (from http://hl7.org/fhir/ValueSet/event-timing)
   TFhirEventTimingEnum = (
@@ -1282,7 +1190,6 @@ type
     EventTimingPCV);
   TFhirEventTimingEnumList = set of TFhirEventTimingEnum;
 
-
   // The handling of the variable in statistical analysis for exposures or outcomes (E.g. Dichotomous, Continuous, Descriptive). (from http://hl7.org/fhir/ValueSet/variable-handling)
   TFhirEvidenceVariableHandlingEnum = (
     EvidenceVariableHandlingNull, // Value is missing from Instance
@@ -1292,14 +1199,12 @@ type
     EvidenceVariableHandlingPolychotomous);
   TFhirEvidenceVariableHandlingEnumList = set of TFhirEvidenceVariableHandlingEnum;
 
-
   // The type of actor - system or human. (from http://hl7.org/fhir/ValueSet/examplescenario-actor-type)
   TFhirExampleScenarioActorTypeEnum = (
     ExampleScenarioActorTypeNull, // Value is missing from Instance
     ExampleScenarioActorTypePerson,
     ExampleScenarioActorTypeEntity);
   TFhirExampleScenarioActorTypeEnumList = set of TFhirExampleScenarioActorTypeEnum;
-
 
   // A code specifying the state of the resource instance. (from http://hl7.org/fhir/ValueSet/explanationofbenefit-status)
   TFhirExplanationOfBenefitStatusEnum = (
@@ -1310,7 +1215,6 @@ type
     ExplanationOfBenefitStatusEnteredInError);
   TFhirExplanationOfBenefitStatusEnumList = set of TFhirExplanationOfBenefitStatusEnum;
 
-
   // How an extension context is interpreted. (from http://hl7.org/fhir/ValueSet/extension-context-type)
   TFhirExtensionContextTypeEnum = (
     ExtensionContextTypeNull, // Value is missing from Instance
@@ -1318,7 +1222,6 @@ type
     ExtensionContextTypeElement,
     ExtensionContextTypeExtension);
   TFhirExtensionContextTypeEnumList = set of TFhirExtensionContextTypeEnum;
-
 
   // A list of all the concrete types defined in this version of the FHIR specification - Data Types and Resource Types. (from http://hl7.org/fhir/ValueSet/defined-types)
   TFhirFHIRDefinedTypeEnum = (
@@ -1544,7 +1447,6 @@ type
     FHIRDefinedTypeVisionPrescription);
   TFhirFHIRDefinedTypeEnumList = set of TFhirFHIRDefinedTypeEnum;
 
-
   // The availability status of the device. (from http://hl7.org/fhir/ValueSet/device-status)
   TFhirFHIRDeviceStatusEnum = (
     FHIRDeviceStatusNull, // Value is missing from Instance
@@ -1554,7 +1456,6 @@ type
     FHIRDeviceStatusUnknown);
   TFhirFHIRDeviceStatusEnumList = set of TFhirFHIRDeviceStatusEnum;
 
-
   // A code to indicate if the substance is actively used. (from http://hl7.org/fhir/ValueSet/substance-status)
   TFhirFHIRSubstanceStatusEnum = (
     FHIRSubstanceStatusNull, // Value is missing from Instance
@@ -1562,7 +1463,6 @@ type
     FHIRSubstanceStatusInactive,
     FHIRSubstanceStatusEnteredInError);
   TFhirFHIRSubstanceStatusEnumList = set of TFhirFHIRSubstanceStatusEnum;
-
 
   // All published FHIR Versions. (from http://hl7.org/fhir/ValueSet/FHIR-version)
   TFhirFHIRVersionEnum = (
@@ -1596,7 +1496,6 @@ type
     FHIRVersion450);
   TFhirFHIRVersionEnumList = set of TFhirFHIRVersionEnum;
 
-
   // A code that identifies the status of the family history record. (from http://hl7.org/fhir/ValueSet/history-status)
   TFhirFamilyHistoryStatusEnum = (
     FamilyHistoryStatusNull, // Value is missing from Instance
@@ -1605,7 +1504,6 @@ type
     FamilyHistoryStatusEnteredInError,
     FamilyHistoryStatusHealthUnknown);
   TFhirFamilyHistoryStatusEnumList = set of TFhirFamilyHistoryStatusEnum;
-
 
   // The kind of operation to perform as a part of a property based filter. (from http://hl7.org/fhir/ValueSet/filter-operator)
   TFhirFilterOperatorEnum = (
@@ -1621,7 +1519,6 @@ type
     FilterOperatorExists);
   TFhirFilterOperatorEnumList = set of TFhirFilterOperatorEnum;
 
-
   // This value set includes Status codes. (from http://hl7.org/fhir/ValueSet/fm-status)
   TFhirFinancialResourceStatusCodesEnum = (
     FinancialResourceStatusCodesNull, // Value is missing from Instance
@@ -1631,7 +1528,6 @@ type
     FinancialResourceStatusCodesEnteredInError);
   TFhirFinancialResourceStatusCodesEnumList = set of TFhirFinancialResourceStatusCodesEnum;
 
-
   // Indicates whether this flag is active and needs to be displayed to a user, or whether it is no longer needed or was entered in error. (from http://hl7.org/fhir/ValueSet/flag-status)
   TFhirFlagStatusEnum = (
     FlagStatusNull, // Value is missing from Instance
@@ -1639,7 +1535,6 @@ type
     FlagStatusInactive,
     FlagStatusEnteredInError);
   TFhirFlagStatusEnumList = set of TFhirFlagStatusEnum;
-
 
   // Codes that reflect the current state of a goal and whether the goal is still being targeted. (from http://hl7.org/fhir/ValueSet/goal-status)
   TFhirGoalLifecycleStatusEnum = (
@@ -1655,7 +1550,6 @@ type
     GoalLifecycleStatusRejected);
   TFhirGoalLifecycleStatusEnumList = set of TFhirGoalLifecycleStatusEnum;
 
-
   // How a compartment must be linked. (from http://hl7.org/fhir/ValueSet/graph-compartment-rule)
   TFhirGraphCompartmentRuleEnum = (
     GraphCompartmentRuleNull, // Value is missing from Instance
@@ -1665,14 +1559,12 @@ type
     GraphCompartmentRuleCustom);
   TFhirGraphCompartmentRuleEnumList = set of TFhirGraphCompartmentRuleEnum;
 
-
   // Defines how a compartment rule is used. (from http://hl7.org/fhir/ValueSet/graph-compartment-use)
   TFhirGraphCompartmentUseEnum = (
     GraphCompartmentUseNull, // Value is missing from Instance
     GraphCompartmentUseCondition,
     GraphCompartmentUseRequirement);
   TFhirGraphCompartmentUseEnumList = set of TFhirGraphCompartmentUseEnum;
-
 
   // Possible group measure aggregates (E.g. Mean, Median). (from http://hl7.org/fhir/ValueSet/group-measure)
   TFhirGroupMeasureEnum = (
@@ -1685,7 +1577,6 @@ type
     GroupMeasureMedianOfMedian);
   TFhirGroupMeasureEnumList = set of TFhirGroupMeasureEnum;
 
-
   // Types of resources that are part of group. (from http://hl7.org/fhir/ValueSet/group-type)
   TFhirGroupTypeEnum = (
     GroupTypeNull, // Value is missing from Instance
@@ -1696,7 +1587,6 @@ type
     GroupTypeMedication,
     GroupTypeSubstance);
   TFhirGroupTypeEnumList = set of TFhirGroupTypeEnum;
-
 
   // The status of a guidance response. (from http://hl7.org/fhir/ValueSet/guidance-response-status)
   TFhirGuidanceResponseStatusEnum = (
@@ -1709,7 +1599,6 @@ type
     GuidanceResponseStatusEnteredInError);
   TFhirGuidanceResponseStatusEnumList = set of TFhirGuidanceResponseStatusEnum;
 
-
   // A code that indicates how the page is generated. (from http://hl7.org/fhir/ValueSet/guide-page-generation)
   TFhirGuidePageGenerationEnum = (
     GuidePageGenerationNull, // Value is missing from Instance
@@ -1718,7 +1607,6 @@ type
     GuidePageGenerationXml,
     GuidePageGenerationGenerated);
   TFhirGuidePageGenerationEnumList = set of TFhirGuidePageGenerationEnum;
-
 
   // HTTP verbs (in the HTTP command line). See [HTTP rfc](https://tools.ietf.org/html/rfc7231) for details. (from http://hl7.org/fhir/ValueSet/http-verb)
   TFhirHTTPVerbEnum = (
@@ -1731,7 +1619,6 @@ type
     HTTPVerbPATCH);
   TFhirHTTPVerbEnumList = set of TFhirHTTPVerbEnum;
 
-
   // Identifies the purpose for this identifier, if known . (from http://hl7.org/fhir/ValueSet/identifier-use)
   TFhirIdentifierUseEnum = (
     IdentifierUseNull, // Value is missing from Instance
@@ -1742,7 +1629,6 @@ type
     IdentifierUseOld);
   TFhirIdentifierUseEnumList = set of TFhirIdentifierUseEnum;
 
-
   // The level of confidence that this link represents the same actual person, based on NIST Authentication Levels. (from http://hl7.org/fhir/ValueSet/identity-assuranceLevel)
   TFhirIdentityAssuranceLevelEnum = (
     IdentityAssuranceLevelNull, // Value is missing from Instance
@@ -1751,7 +1637,6 @@ type
     IdentityAssuranceLevelLevel3,
     IdentityAssuranceLevelLevel4);
   TFhirIdentityAssuranceLevelEnumList = set of TFhirIdentityAssuranceLevelEnum;
-
 
   // The status of the ImagingStudy. (from http://hl7.org/fhir/ValueSet/imagingstudy-status)
   TFhirImagingStudyStatusEnum = (
@@ -1763,14 +1648,12 @@ type
     ImagingStudyStatusUnknown);
   TFhirImagingStudyStatusEnumList = set of TFhirImagingStudyStatusEnum;
 
-
   // The value set to instantiate this attribute should be drawn from a terminologically robust code system that consists of or contains concepts to support describing the current status of the evaluation for vaccine administration event. (from http://hl7.org/fhir/ValueSet/immunization-evaluation-status)
   TFhirImmunizationEvaluationStatusCodesEnum = (
     ImmunizationEvaluationStatusCodesNull, // Value is missing from Instance
     ImmunizationEvaluationStatusCodesCompleted,
     ImmunizationEvaluationStatusCodesEnteredInError);
   TFhirImmunizationEvaluationStatusCodesEnumList = set of TFhirImmunizationEvaluationStatusCodesEnum;
-
 
   // The value set to instantiate this attribute should be drawn from a terminologically robust code system that consists of or contains concepts to support describing the current status of the administered dose of vaccine. (from http://hl7.org/fhir/ValueSet/immunization-status)
   TFhirImmunizationStatusCodesEnum = (
@@ -1780,7 +1663,6 @@ type
     ImmunizationStatusCodesNotDone);
   TFhirImmunizationStatusCodesEnumList = set of TFhirImmunizationStatusCodesEnum;
 
-
   // FHIR RESTful interaction codes used for SubscriptionTopic trigger. (from http://hl7.org/fhir/ValueSet/interaction-trigger)
   TFhirInteractionTriggerEnum = (
     InteractionTriggerNull, // Value is missing from Instance
@@ -1788,7 +1670,6 @@ type
     InteractionTriggerUpdate,
     InteractionTriggerDelete);
   TFhirInteractionTriggerEnumList = set of TFhirInteractionTriggerEnum;
-
 
   // Codes indicating the kind of the price component. (from http://hl7.org/fhir/ValueSet/invoice-priceComponentType)
   TFhirInvoicePriceComponentTypeEnum = (
@@ -1801,7 +1682,6 @@ type
     InvoicePriceComponentTypeInformational);
   TFhirInvoicePriceComponentTypeEnumList = set of TFhirInvoicePriceComponentTypeEnum;
 
-
   // Codes identifying the lifecycle stage of an Invoice. (from http://hl7.org/fhir/ValueSet/invoice-status)
   TFhirInvoiceStatusEnum = (
     InvoiceStatusNull, // Value is missing from Instance
@@ -1812,7 +1692,6 @@ type
     InvoiceStatusEnteredInError);
   TFhirInvoiceStatusEnumList = set of TFhirInvoiceStatusEnum;
 
-
   // How the issue affects the success of the action. (from http://hl7.org/fhir/ValueSet/issue-severity)
   TFhirIssueSeverityEnum = (
     IssueSeverityNull, // Value is missing from Instance
@@ -1821,7 +1700,6 @@ type
     IssueSeverityWarning,
     IssueSeverityInformation);
   TFhirIssueSeverityEnumList = set of TFhirIssueSeverityEnum;
-
 
   // A code that describes the type of issue. (from http://hl7.org/fhir/ValueSet/issue-type)
   TFhirIssueTypeEnum = (
@@ -1859,7 +1737,6 @@ type
     IssueTypeInformational);
   TFhirIssueTypeEnumList = set of TFhirIssueTypeEnum;
 
-
   // The type of link between this patient resource and another patient resource. (from http://hl7.org/fhir/ValueSet/link-type)
   TFhirLinkTypeEnum = (
     LinkTypeNull, // Value is missing from Instance
@@ -1869,7 +1746,6 @@ type
     LinkTypeSeealso);
   TFhirLinkTypeEnumList = set of TFhirLinkTypeEnum;
 
-
   // Used to distinguish different roles a resource can play within a set of linked resources. (from http://hl7.org/fhir/ValueSet/linkage-type)
   TFhirLinkageTypeEnum = (
     LinkageTypeNull, // Value is missing from Instance
@@ -1877,7 +1753,6 @@ type
     LinkageTypeAlternate,
     LinkageTypeHistorical);
   TFhirLinkageTypeEnumList = set of TFhirLinkageTypeEnum;
-
 
   // The processing mode that applies to this list. (from http://hl7.org/fhir/ValueSet/list-mode)
   TFhirListModeEnum = (
@@ -1887,7 +1762,6 @@ type
     ListModeChanges);
   TFhirListModeEnumList = set of TFhirListModeEnum;
 
-
   // The current state of the list. (from http://hl7.org/fhir/ValueSet/list-status)
   TFhirListStatusEnum = (
     ListStatusNull, // Value is missing from Instance
@@ -1896,14 +1770,12 @@ type
     ListStatusEnteredInError);
   TFhirListStatusEnumList = set of TFhirListStatusEnum;
 
-
   // Indicates whether a resource instance represents a specific location or a class of locations. (from http://hl7.org/fhir/ValueSet/location-mode)
   TFhirLocationModeEnum = (
     LocationModeNull, // Value is missing from Instance
     LocationModeInstance,
     LocationModeKind);
   TFhirLocationModeEnumList = set of TFhirLocationModeEnum;
-
 
   // Indicates whether the location is still in use. (from http://hl7.org/fhir/ValueSet/location-status)
   TFhirLocationStatusEnum = (
@@ -1913,7 +1785,6 @@ type
     LocationStatusInactive);
   TFhirLocationStatusEnumList = set of TFhirLocationStatusEnum;
 
-
   // The status of the measure report. (from http://hl7.org/fhir/ValueSet/measure-report-status)
   TFhirMeasureReportStatusEnum = (
     MeasureReportStatusNull, // Value is missing from Instance
@@ -1921,7 +1792,6 @@ type
     MeasureReportStatusPending,
     MeasureReportStatusError);
   TFhirMeasureReportStatusEnumList = set of TFhirMeasureReportStatusEnum;
-
 
   // The type of the measure report. (from http://hl7.org/fhir/ValueSet/measure-report-type)
   TFhirMeasureReportTypeEnum = (
@@ -1931,7 +1801,6 @@ type
     MeasureReportTypeSummary,
     MeasureReportTypeDataCollection);
   TFhirMeasureReportTypeEnumList = set of TFhirMeasureReportTypeEnum;
-
 
   // MedicationAdministration Status Codes (from http://hl7.org/fhir/ValueSet/medication-admin-status)
   TFhirMedicationAdministrationStatusCodesEnum = (
@@ -1944,7 +1813,6 @@ type
     MedicationAdministrationStatusCodesStopped,
     MedicationAdministrationStatusCodesUnknown);
   TFhirMedicationAdministrationStatusCodesEnumList = set of TFhirMedicationAdministrationStatusCodesEnum;
-
 
   // MedicationDispense Status Codes (from http://hl7.org/fhir/ValueSet/medicationdispense-status)
   TFhirMedicationDispenseStatusCodesEnum = (
@@ -1960,7 +1828,6 @@ type
     MedicationDispenseStatusCodesUnknown);
   TFhirMedicationDispenseStatusCodesEnumList = set of TFhirMedicationDispenseStatusCodesEnum;
 
-
   // MedicationKnowledge Status Codes (from http://hl7.org/fhir/ValueSet/medicationknowledge-status)
   TFhirMedicationKnowledgeStatusCodesEnum = (
     MedicationKnowledgeStatusCodesNull, // Value is missing from Instance
@@ -1968,7 +1835,6 @@ type
     MedicationKnowledgeStatusCodesInactive,
     MedicationKnowledgeStatusCodesEnteredInError);
   TFhirMedicationKnowledgeStatusCodesEnumList = set of TFhirMedicationKnowledgeStatusCodesEnum;
-
 
   // MedicationRequest Intent Codes (from http://hl7.org/fhir/ValueSet/medicationrequest-intent)
   TFhirMedicationRequestIntentEnum = (
@@ -1983,7 +1849,6 @@ type
     MedicationRequestIntentOption);
   TFhirMedicationRequestIntentEnumList = set of TFhirMedicationRequestIntentEnum;
 
-
   // Medication Status Codes (from http://hl7.org/fhir/ValueSet/medication-status)
   TFhirMedicationStatusCodesEnum = (
     MedicationStatusCodesNull, // Value is missing from Instance
@@ -1991,7 +1856,6 @@ type
     MedicationStatusCodesInactive,
     MedicationStatusCodesEnteredInError);
   TFhirMedicationStatusCodesEnumList = set of TFhirMedicationStatusCodesEnum;
-
 
   // MedicationUsage Status Codes (from http://hl7.org/fhir/ValueSet/medication-usage-status)
   TFhirMedicationUsageStatusCodesEnum = (
@@ -2006,7 +1870,6 @@ type
     MedicationUsageStatusCodesNotTaken);
   TFhirMedicationUsageStatusCodesEnumList = set of TFhirMedicationUsageStatusCodesEnum;
 
-
   // MedicationRequest Status Codes (from http://hl7.org/fhir/ValueSet/medicationrequest-status)
   TFhirMedicationrequestStatusEnum = (
     MedicationrequestStatusNull, // Value is missing from Instance
@@ -2020,7 +1883,6 @@ type
     MedicationrequestStatusUnknown);
   TFhirMedicationrequestStatusEnumList = set of TFhirMedicationrequestStatusEnum;
 
-
   // The impact of the content of a message. (from http://hl7.org/fhir/ValueSet/message-significance-category)
   TFhirMessageSignificanceCategoryEnum = (
     MessageSignificanceCategoryNull, // Value is missing from Instance
@@ -2028,7 +1890,6 @@ type
     MessageSignificanceCategoryCurrency,
     MessageSignificanceCategoryNotification);
   TFhirMessageSignificanceCategoryEnumList = set of TFhirMessageSignificanceCategoryEnum;
-
 
   // HL7-defined table of codes which identify conditions under which acknowledgments are required to be returned in response to a message. (from http://hl7.org/fhir/ValueSet/messageheader-response-request)
   TFhirMessageheaderResponseRequestEnum = (
@@ -2038,7 +1899,6 @@ type
     MessageheaderResponseRequestNever,
     MessageheaderResponseRequestOnSuccess);
   TFhirMessageheaderResponseRequestEnumList = set of TFhirMessageheaderResponseRequestEnum;
-
 
   // The use of a human name. (from http://hl7.org/fhir/ValueSet/name-use)
   TFhirNameUseEnum = (
@@ -2052,7 +1912,6 @@ type
     NameUseMaiden);
   TFhirNameUseEnumList = set of TFhirNameUseEnum;
 
-
   // Identifies the style of unique identifier used to identify a namespace. (from http://hl7.org/fhir/ValueSet/namingsystem-identifier-type)
   TFhirNamingSystemIdentifierTypeEnum = (
     NamingSystemIdentifierTypeNull, // Value is missing from Instance
@@ -2062,7 +1921,6 @@ type
     NamingSystemIdentifierTypeOther);
   TFhirNamingSystemIdentifierTypeEnumList = set of TFhirNamingSystemIdentifierTypeEnum;
 
-
   // Identifies the purpose of the naming system. (from http://hl7.org/fhir/ValueSet/namingsystem-type)
   TFhirNamingSystemTypeEnum = (
     NamingSystemTypeNull, // Value is missing from Instance
@@ -2070,7 +1928,6 @@ type
     NamingSystemTypeIdentifier,
     NamingSystemTypeRoot);
   TFhirNamingSystemTypeEnumList = set of TFhirNamingSystemTypeEnum;
-
 
   // The status of a resource narrative. (from http://hl7.org/fhir/ValueSet/narrative-status)
   TFhirNarrativeStatusEnum = (
@@ -2081,7 +1938,6 @@ type
     NarrativeStatusEmpty);
   TFhirNarrativeStatusEnumList = set of TFhirNarrativeStatusEnum;
 
-
   // The presentation types of notes. (from http://hl7.org/fhir/ValueSet/note-type)
   TFhirNoteTypeEnum = (
     NoteTypeNull, // Value is missing from Instance
@@ -2090,7 +1946,6 @@ type
     NoteTypePrintoper);
   TFhirNoteTypeEnumList = set of TFhirNoteTypeEnum;
 
-
   // Codes identifying the lifecycle stage of a product. (from http://hl7.org/fhir/ValueSet/nutritionproduct-status)
   TFhirNutritionProductStatusEnum = (
     NutritionProductStatusNull, // Value is missing from Instance
@@ -2098,7 +1953,6 @@ type
     NutritionProductStatusInactive,
     NutritionProductStatusEnteredInError);
   TFhirNutritionProductStatusEnumList = set of TFhirNutritionProductStatusEnum;
-
 
   // Permitted data type for observation value. (from http://hl7.org/fhir/ValueSet/permitted-data-type)
   TFhirObservationDataTypeEnum = (
@@ -2116,7 +1970,6 @@ type
     ObservationDataTypePeriod);
   TFhirObservationDataTypeEnumList = set of TFhirObservationDataTypeEnum;
 
-
   // Codes identifying the category of observation range. (from http://hl7.org/fhir/ValueSet/observation-range-category)
   TFhirObservationRangeCategoryEnum = (
     ObservationRangeCategoryNull, // Value is missing from Instance
@@ -2124,7 +1977,6 @@ type
     ObservationRangeCategoryCritical,
     ObservationRangeCategoryAbsolute);
   TFhirObservationRangeCategoryEnumList = set of TFhirObservationRangeCategoryEnum;
-
 
   // Codes providing the status of an observation. (from http://hl7.org/fhir/ValueSet/observation-status)
   TFhirObservationStatusEnum = (
@@ -2139,14 +1991,12 @@ type
     ObservationStatusUnknown);
   TFhirObservationStatusEnumList = set of TFhirObservationStatusEnum;
 
-
   // Whether an operation is a normal operation or a query. (from http://hl7.org/fhir/ValueSet/operation-kind)
   TFhirOperationKindEnum = (
     OperationKindNull, // Value is missing from Instance
     OperationKindOperation,
     OperationKindQuery);
   TFhirOperationKindEnumList = set of TFhirOperationKindEnum;
-
 
   // Whether an operation parameter is an input or an output parameter. (from http://hl7.org/fhir/ValueSet/operation-parameter-use)
   TFhirOperationParameterUseEnum = (
@@ -2155,14 +2005,12 @@ type
     OperationParameterUseOut);
   TFhirOperationParameterUseEnumList = set of TFhirOperationParameterUseEnum;
 
-
   // Type for orientation. (from http://hl7.org/fhir/ValueSet/orientation-type)
   TFhirOrientationTypeEnum = (
     OrientationTypeNull, // Value is missing from Instance
     OrientationTypeSense,
     OrientationTypeAntisense);
   TFhirOrientationTypeEnumList = set of TFhirOrientationTypeEnum;
-
 
   // Is the Participant required to attend the appointment. (from http://hl7.org/fhir/ValueSet/participantrequired)
   TFhirParticipantRequiredEnum = (
@@ -2171,7 +2019,6 @@ type
     ParticipantRequiredOptional,
     ParticipantRequiredInformationOnly);
   TFhirParticipantRequiredEnumList = set of TFhirParticipantRequiredEnum;
-
 
   // The Participation status of an appointment. (from http://hl7.org/fhir/ValueSet/participationstatus)
   TFhirParticipationStatusEnum = (
@@ -2182,7 +2029,6 @@ type
     ParticipationStatusNeedsAction);
   TFhirParticipationStatusEnumList = set of TFhirParticipationStatusEnum;
 
-
   // Codes identifying the lifecycle stage of a product. (from http://hl7.org/fhir/ValueSet/permission-status)
   TFhirPermissionStatusEnum = (
     PermissionStatusNull, // Value is missing from Instance
@@ -2191,7 +2037,6 @@ type
     PermissionStatusDraft,
     PermissionStatusRejected);
   TFhirPermissionStatusEnumList = set of TFhirPermissionStatusEnum;
-
 
   // How a property is represented when serialized. (from http://hl7.org/fhir/ValueSet/property-representation)
   TFhirPropertyRepresentationEnum = (
@@ -2203,7 +2048,6 @@ type
     PropertyRepresentationXhtml);
   TFhirPropertyRepresentationEnumList = set of TFhirPropertyRepresentationEnum;
 
-
   // How an entity was used in an activity. (from http://hl7.org/fhir/ValueSet/provenance-entity-role)
   TFhirProvenanceEntityRoleEnum = (
     ProvenanceEntityRoleNull, // Value is missing from Instance
@@ -2214,7 +2058,6 @@ type
     ProvenanceEntityRoleRemoval);
   TFhirProvenanceEntityRoleEnumList = set of TFhirProvenanceEntityRoleEnum;
 
-
   // The lifecycle status of an artifact. (from http://hl7.org/fhir/ValueSet/publication-status)
   TFhirPublicationStatusEnum = (
     PublicationStatusNull, // Value is missing from Instance
@@ -2224,7 +2067,6 @@ type
     PublicationStatusUnknown);
   TFhirPublicationStatusEnumList = set of TFhirPublicationStatusEnum;
 
-
   // Type for quality report. (from http://hl7.org/fhir/ValueSet/quality-type)
   TFhirQualityTypeEnum = (
     QualityTypeNull, // Value is missing from Instance
@@ -2232,7 +2074,6 @@ type
     QualityTypeSnp,
     QualityTypeUnknown);
   TFhirQualityTypeEnumList = set of TFhirQualityTypeEnum;
-
 
   // How the Quantity should be understood and represented. (from http://hl7.org/fhir/ValueSet/quantity-comparator)
   TFhirQuantityComparatorEnum = (
@@ -2242,7 +2083,6 @@ type
     QuantityComparatorGreaterOrEquals,
     QuantityComparatorGreaterThan);
   TFhirQuantityComparatorEnumList = set of TFhirQuantityComparatorEnum;
-
 
   // The criteria by which a question is enabled. (from http://hl7.org/fhir/ValueSet/questionnaire-enable-operator)
   TFhirQuestionnaireItemOperatorEnum = (
@@ -2255,7 +2095,6 @@ type
     QuestionnaireItemOperatorGreaterOrEquals,
     QuestionnaireItemOperatorLessOrEquals);
   TFhirQuestionnaireItemOperatorEnumList = set of TFhirQuestionnaireItemOperatorEnum;
-
 
   // Distinguishes groups from questions and display text and indicates data type for questions. (from http://hl7.org/fhir/ValueSet/item-type)
   TFhirQuestionnaireItemTypeEnum = (
@@ -2279,7 +2118,6 @@ type
     QuestionnaireItemTypeQuantity);
   TFhirQuestionnaireItemTypeEnumList = set of TFhirQuestionnaireItemTypeEnum;
 
-
   // Lifecycle status of the questionnaire response. (from http://hl7.org/fhir/ValueSet/questionnaire-answers-status)
   TFhirQuestionnaireResponseStatusEnum = (
     QuestionnaireResponseStatusNull, // Value is missing from Instance
@@ -2289,7 +2127,6 @@ type
     QuestionnaireResponseStatusEnteredInError,
     QuestionnaireResponseStatusStopped);
   TFhirQuestionnaireResponseStatusEnumList = set of TFhirQuestionnaireResponseStatusEnum;
-
 
   // A set of flags that defines how references are supported. (from http://hl7.org/fhir/ValueSet/reference-handling-policy)
   TFhirReferenceHandlingPolicyEnum = (
@@ -2301,7 +2138,6 @@ type
     ReferenceHandlingPolicyLocal);
   TFhirReferenceHandlingPolicyEnumList = set of TFhirReferenceHandlingPolicyEnum;
 
-
   // Whether a reference needs to be version specific or version independent, or whether either can be used. (from http://hl7.org/fhir/ValueSet/reference-version-rules)
   TFhirReferenceVersionRulesEnum = (
     ReferenceVersionRulesNull, // Value is missing from Instance
@@ -2309,7 +2145,6 @@ type
     ReferenceVersionRulesIndependent,
     ReferenceVersionRulesSpecific);
   TFhirReferenceVersionRulesEnumList = set of TFhirReferenceVersionRulesEnum;
-
 
   // The type of relationship to the related artifact. (from http://hl7.org/fhir/ValueSet/related-artifact-type)
   TFhirRelatedArtifactTypeEnum = (
@@ -2324,7 +2159,6 @@ type
     RelatedArtifactTypeComposedOf);
   TFhirRelatedArtifactTypeEnumList = set of TFhirRelatedArtifactTypeEnum;
 
-
   // The type of relationship between reports. (from http://hl7.org/fhir/ValueSet/report-relation-type)
   TFhirReportRelationshipTypeEnum = (
     ReportRelationshipTypeNull, // Value is missing from Instance
@@ -2333,7 +2167,6 @@ type
     ReportRelationshipTypeAppends,
     ReportRelationshipTypeTransforms);
   TFhirReportRelationshipTypeEnumList = set of TFhirReportRelationshipTypeEnum;
-
 
   // Type for access of external URI. (from http://hl7.org/fhir/ValueSet/repository-type)
   TFhirRepositoryTypeEnum = (
@@ -2344,7 +2177,6 @@ type
     RepositoryTypeOauth,
     RepositoryTypeOther);
   TFhirRepositoryTypeEnumList = set of TFhirRepositoryTypeEnum;
-
 
   // Codes indicating the degree of authority/intentionality associated with a request. (from http://hl7.org/fhir/ValueSet/request-intent)
   TFhirRequestIntentEnum = (
@@ -2360,7 +2192,6 @@ type
     RequestIntentOption);
   TFhirRequestIntentEnumList = set of TFhirRequestIntentEnum;
 
-
   // The clinical priority of a diagnostic order. (from http://hl7.org/fhir/ValueSet/request-priority)
   TFhirRequestPriorityEnum = (
     RequestPriorityNull, // Value is missing from Instance
@@ -2369,7 +2200,6 @@ type
     RequestPriorityAsap,
     RequestPriorityStat);
   TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
-
 
   // A list of all the request resource types defined in this version of the FHIR specification. (from http://hl7.org/fhir/ValueSet/request-resource-types)
   TFhirRequestResourceTypeEnum = (
@@ -2391,7 +2221,6 @@ type
     RequestResourceTypeVisionPrescription);
   TFhirRequestResourceTypeEnumList = set of TFhirRequestResourceTypeEnum;
 
-
   // Codes identifying the lifecycle stage of a request. (from http://hl7.org/fhir/ValueSet/request-status)
   TFhirRequestStatusEnum = (
     RequestStatusNull, // Value is missing from Instance
@@ -2403,7 +2232,6 @@ type
     RequestStatusEnteredInError,
     RequestStatusUnknown);
   TFhirRequestStatusEnumList = set of TFhirRequestStatusEnum;
-
 
   // Codes that convey the current status of the research study. (from http://hl7.org/fhir/ValueSet/research-study-status)
   TFhirResearchStudyStatusEnum = (
@@ -2420,7 +2248,6 @@ type
     ResearchStudyStatusTemporarilyClosedToAccrualAndIntervention,
     ResearchStudyStatusWithdrawn);
   TFhirResearchStudyStatusEnumList = set of TFhirResearchStudyStatusEnum;
-
 
   // Indicates the progression of a study subject through a study. (from http://hl7.org/fhir/ValueSet/research-subject-status)
   TFhirResearchSubjectStatusEnum = (
@@ -2439,7 +2266,6 @@ type
     ResearchSubjectStatusScreening,
     ResearchSubjectStatusWithdrawn);
   TFhirResearchSubjectStatusEnumList = set of TFhirResearchSubjectStatusEnum;
-
 
   // One of the resource types defined as part of this version of FHIR. (from http://hl7.org/fhir/ValueSet/resource-types)
   TFhirResourceTypesEnum = (
@@ -2595,7 +2421,6 @@ type
     ResourceTypesVisionPrescription);
   TFhirResourceTypesEnumList = set of TFhirResourceTypesEnum;
 
-
   // How the system supports versioning for a resource. (from http://hl7.org/fhir/ValueSet/versioning-policy)
   TFhirResourceVersionPolicyEnum = (
     ResourceVersionPolicyNull, // Value is missing from Instance
@@ -2603,7 +2428,6 @@ type
     ResourceVersionPolicyVersioned,
     ResourceVersionPolicyVersionedUpdate);
   TFhirResourceVersionPolicyEnumList = set of TFhirResourceVersionPolicyEnum;
-
 
   // The kind of response to a message. (from http://hl7.org/fhir/ValueSet/response-code)
   TFhirResponseTypeEnum = (
@@ -2613,14 +2437,12 @@ type
     ResponseTypeFatalError);
   TFhirResponseTypeEnumList = set of TFhirResponseTypeEnum;
 
-
   // The mode of a RESTful capability statement. (from http://hl7.org/fhir/ValueSet/restful-capability-mode)
   TFhirRestfulCapabilityModeEnum = (
     RestfulCapabilityModeNull, // Value is missing from Instance
     RestfulCapabilityModeClient,
     RestfulCapabilityModeServer);
   TFhirRestfulCapabilityModeEnumList = set of TFhirRestfulCapabilityModeEnum;
-
 
   // The license that applies to an Implementation Guide (using an SPDX license Identifiers, or 'not-open-source'). The binding is required but new SPDX license Identifiers are allowed to be used (https://spdx.org/licenses/). (from http://hl7.org/fhir/ValueSet/spdx-license)
   TFhirSPDXLicenseEnum = (
@@ -2985,7 +2807,6 @@ type
     SearchComparatorAp);
   TFhirSearchComparatorEnumList = set of TFhirSearchComparatorEnum;
 
-
   // Why an entry is in the result set - whether it's included as a match or because of an _include requirement, or to convey information or warning information about the search process. (from http://hl7.org/fhir/ValueSet/search-entry-mode)
   TFhirSearchEntryModeEnum = (
     SearchEntryModeNull, // Value is missing from Instance
@@ -2993,7 +2814,6 @@ type
     SearchEntryModeInclude,
     SearchEntryModeOutcome);
   TFhirSearchEntryModeEnumList = set of TFhirSearchEntryModeEnum;
-
 
   // A supported modifier for a search parameter. (from http://hl7.org/fhir/ValueSet/search-modifier-code)
   TFhirSearchModifierCodeEnum = (
@@ -3012,7 +2832,6 @@ type
     SearchModifierCodeOfType);
   TFhirSearchModifierCodeEnumList = set of TFhirSearchModifierCodeEnum;
 
-
   // Data types allowed to be used for search parameters. (from http://hl7.org/fhir/ValueSet/search-param-type)
   TFhirSearchParamTypeEnum = (
     SearchParamTypeNull, // Value is missing from Instance
@@ -3027,7 +2846,6 @@ type
     SearchParamTypeSpecial);
   TFhirSearchParamTypeEnumList = set of TFhirSearchParamTypeEnum;
 
-
   // Type if a sequence -- DNA, RNA, or amino acid sequence. (from http://hl7.org/fhir/ValueSet/sequence-type)
   TFhirSequenceTypeEnum = (
     SequenceTypeNull, // Value is missing from Instance
@@ -3036,7 +2854,6 @@ type
     SequenceTypeRna);
   TFhirSequenceTypeEnumList = set of TFhirSequenceTypeEnum;
 
-
   // How slices are interpreted when evaluating an instance. (from http://hl7.org/fhir/ValueSet/resource-slicing-rules)
   TFhirSlicingRulesEnum = (
     SlicingRulesNull, // Value is missing from Instance
@@ -3044,7 +2861,6 @@ type
     SlicingRulesOpen,
     SlicingRulesOpenAtEnd);
   TFhirSlicingRulesEnumList = set of TFhirSlicingRulesEnum;
-
 
   // The free/busy status of the slot. (from http://hl7.org/fhir/ValueSet/slotstatus)
   TFhirSlotStatusEnum = (
@@ -3056,7 +2872,6 @@ type
     SlotStatusEnteredInError);
   TFhirSlotStatusEnumList = set of TFhirSlotStatusEnum;
 
-
   // The possible sort directions, ascending or descending. (from http://hl7.org/fhir/ValueSet/sort-direction)
   TFhirSortDirectionEnum = (
     SortDirectionNull, // Value is missing from Instance
@@ -3064,14 +2879,12 @@ type
     SortDirectionDescending);
   TFhirSortDirectionEnumList = set of TFhirSortDirectionEnum;
 
-
   // Degree of preference of a type of conditioned specimen. (from http://hl7.org/fhir/ValueSet/specimen-contained-preference)
   TFhirSpecimenContainedPreferenceEnum = (
     SpecimenContainedPreferenceNull, // Value is missing from Instance
     SpecimenContainedPreferencePreferred,
     SpecimenContainedPreferenceAlternate);
   TFhirSpecimenContainedPreferenceEnumList = set of TFhirSpecimenContainedPreferenceEnum;
-
 
   // Codes providing the status/availability of a specimen. (from http://hl7.org/fhir/ValueSet/specimen-status)
   TFhirSpecimenStatusEnum = (
@@ -3081,7 +2894,6 @@ type
     SpecimenStatusUnsatisfactory,
     SpecimenStatusEnteredInError);
   TFhirSpecimenStatusEnumList = set of TFhirSpecimenStatusEnum;
-
 
   // The validation status of the target (from http://hl7.org/fhir/ValueSet/verificationresult-status)
   TFhirStatusEnum = (
@@ -3094,14 +2906,12 @@ type
     StatusRevalFail);
   TFhirStatusEnumList = set of TFhirStatusEnum;
 
-
   // Type for strand. (from http://hl7.org/fhir/ValueSet/strand-type)
   TFhirStrandTypeEnum = (
     StrandTypeNull, // Value is missing from Instance
     StrandTypeWatson,
     StrandTypeCrick);
   TFhirStrandTypeEnumList = set of TFhirStrandTypeEnum;
-
 
   // Defines the type of structure that a definition is describing. (from http://hl7.org/fhir/ValueSet/structure-definition-kind)
   TFhirStructureDefinitionKindEnum = (
@@ -3112,14 +2922,12 @@ type
     StructureDefinitionKindLogical);
   TFhirStructureDefinitionKindEnumList = set of TFhirStructureDefinitionKindEnum;
 
-
   // How to interpret the context. (from http://hl7.org/fhir/ValueSet/map-context-type)
   TFhirStructureMapContextTypeEnum = (
     StructureMapContextTypeNull, // Value is missing from Instance
     StructureMapContextTypeType,
     StructureMapContextTypeVariable);
   TFhirStructureMapContextTypeEnumList = set of TFhirStructureMapContextTypeEnum;
-
 
   // If this is the default rule set to apply for the source type, or this combination of types. (from http://hl7.org/fhir/ValueSet/map-group-type-mode)
   TFhirStructureMapGroupTypeModeEnum = (
@@ -3128,14 +2936,12 @@ type
     StructureMapGroupTypeModeTypeAndTypes);
   TFhirStructureMapGroupTypeModeEnumList = set of TFhirStructureMapGroupTypeModeEnum;
 
-
   // Mode for this instance of data. (from http://hl7.org/fhir/ValueSet/map-input-mode)
   TFhirStructureMapInputModeEnum = (
     StructureMapInputModeNull, // Value is missing from Instance
     StructureMapInputModeSource,
     StructureMapInputModeTarget);
   TFhirStructureMapInputModeEnumList = set of TFhirStructureMapInputModeEnum;
-
 
   // How the referenced structure is used in this mapping. (from http://hl7.org/fhir/ValueSet/map-model-mode)
   TFhirStructureMapModelModeEnum = (
@@ -3145,7 +2951,6 @@ type
     StructureMapModelModeTarget,
     StructureMapModelModeProduced);
   TFhirStructureMapModelModeEnumList = set of TFhirStructureMapModelModeEnum;
-
 
   // If field is a list, how to manage the source. (from http://hl7.org/fhir/ValueSet/map-source-list-mode)
   TFhirStructureMapSourceListModeEnum = (
@@ -3157,7 +2962,6 @@ type
     StructureMapSourceListModeOnlyOne);
   TFhirStructureMapSourceListModeEnumList = set of TFhirStructureMapSourceListModeEnum;
 
-
   // If field is a list, how to manage the production. (from http://hl7.org/fhir/ValueSet/map-target-list-mode)
   TFhirStructureMapTargetListModeEnum = (
     StructureMapTargetListModeNull, // Value is missing from Instance
@@ -3166,7 +2970,6 @@ type
     StructureMapTargetListModeLast,
     StructureMapTargetListModeCollate);
   TFhirStructureMapTargetListModeEnumList = set of TFhirStructureMapTargetListModeEnum;
-
 
   // How data is copied/created. (from http://hl7.org/fhir/ValueSet/map-transform)
   TFhirStructureMapTransformEnum = (
@@ -3190,7 +2993,6 @@ type
     StructureMapTransformCp);
   TFhirStructureMapTransformEnumList = set of TFhirStructureMapTransformEnum;
 
-
   // The type of notification represented by the status message. (from http://hl7.org/fhir/ValueSet/subscription-notification-type)
   TFhirSubscriptionNotificationTypeEnum = (
     SubscriptionNotificationTypeNull, // Value is missing from Instance
@@ -3200,7 +3002,6 @@ type
     SubscriptionNotificationTypeQueryStatus);
   TFhirSubscriptionNotificationTypeEnumList = set of TFhirSubscriptionNotificationTypeEnum;
 
-
   // Codes to represent how much resource content to send in the notification payload. (from http://hl7.org/fhir/ValueSet/subscription-payload-content)
   TFhirSubscriptionPayloadContentEnum = (
     SubscriptionPayloadContentNull, // Value is missing from Instance
@@ -3208,7 +3009,6 @@ type
     SubscriptionPayloadContentIdOnly,
     SubscriptionPayloadContentFullResource);
   TFhirSubscriptionPayloadContentEnumList = set of TFhirSubscriptionPayloadContentEnum;
-
 
   // FHIR search modifiers allowed for use in Subscriptions and SubscriptionTopics. (from http://hl7.org/fhir/ValueSet/subscription-search-modifier)
   TFhirSubscriptionSearchModifierEnum = (
@@ -3230,7 +3030,6 @@ type
     SubscriptionSearchModifierOfType);
   TFhirSubscriptionSearchModifierEnumList = set of TFhirSubscriptionSearchModifierEnum;
 
-
   // State values for FHIR Subscriptions. (from http://hl7.org/fhir/ValueSet/subscription-state)
   TFhirSubscriptionStateEnum = (
     SubscriptionStateNull, // Value is missing from Instance
@@ -3240,7 +3039,6 @@ type
     SubscriptionStateOff);
   TFhirSubscriptionStateEnumList = set of TFhirSubscriptionStateEnum;
 
-
   // Status of the supply delivery. (from http://hl7.org/fhir/ValueSet/supplydelivery-status)
   TFhirSupplyDeliveryStatusEnum = (
     SupplyDeliveryStatusNull, // Value is missing from Instance
@@ -3249,7 +3047,6 @@ type
     SupplyDeliveryStatusAbandoned,
     SupplyDeliveryStatusEnteredInError);
   TFhirSupplyDeliveryStatusEnumList = set of TFhirSupplyDeliveryStatusEnum;
-
 
   // Status of the supply request. (from http://hl7.org/fhir/ValueSet/supplyrequest-status)
   TFhirSupplyRequestStatusEnum = (
@@ -3263,7 +3060,6 @@ type
     SupplyRequestStatusUnknown);
   TFhirSupplyRequestStatusEnumList = set of TFhirSupplyRequestStatusEnum;
 
-
   // Operations supported by REST at the system level. (from http://hl7.org/fhir/ValueSet/system-restful-interaction)
   TFhirSystemRestfulInteractionEnum = (
     SystemRestfulInteractionNull, // Value is missing from Instance
@@ -3272,7 +3068,6 @@ type
     SystemRestfulInteractionSearchSystem,
     SystemRestfulInteractionHistorySystem);
   TFhirSystemRestfulInteractionEnumList = set of TFhirSystemRestfulInteractionEnum;
-
 
   // Distinguishes whether the task is a proposal, plan or full order. (from http://hl7.org/fhir/ValueSet/task-intent)
   TFhirTaskIntentEnum = (
@@ -3287,7 +3082,6 @@ type
     TaskIntentInstanceOrder,
     TaskIntentOption);
   TFhirTaskIntentEnumList = set of TFhirTaskIntentEnum;
-
 
   // The current status of the task. (from http://hl7.org/fhir/ValueSet/task-status)
   TFhirTaskStatusEnum = (
@@ -3306,7 +3100,6 @@ type
     TaskStatusEnteredInError);
   TFhirTaskStatusEnumList = set of TFhirTaskStatusEnum;
 
-
   // The results of executing an action. (from http://hl7.org/fhir/ValueSet/report-action-result-codes)
   TFhirTestReportActionResultEnum = (
     TestReportActionResultNull, // Value is missing from Instance
@@ -3317,7 +3110,6 @@ type
     TestReportActionResultError);
   TFhirTestReportActionResultEnumList = set of TFhirTestReportActionResultEnum;
 
-
   // The type of participant. (from http://hl7.org/fhir/ValueSet/report-participant-type)
   TFhirTestReportParticipantTypeEnum = (
     TestReportParticipantTypeNull, // Value is missing from Instance
@@ -3326,7 +3118,6 @@ type
     TestReportParticipantTypeServer);
   TFhirTestReportParticipantTypeEnumList = set of TFhirTestReportParticipantTypeEnum;
 
-
   // The reported execution result. (from http://hl7.org/fhir/ValueSet/report-result-codes)
   TFhirTestReportResultEnum = (
     TestReportResultNull, // Value is missing from Instance
@@ -3334,7 +3125,6 @@ type
     TestReportResultFail,
     TestReportResultPending);
   TFhirTestReportResultEnumList = set of TFhirTestReportResultEnum;
-
 
   // The current status of the test report. (from http://hl7.org/fhir/ValueSet/report-status-codes)
   TFhirTestReportStatusEnum = (
@@ -3345,7 +3135,6 @@ type
     TestReportStatusStopped,
     TestReportStatusEnteredInError);
   TFhirTestReportStatusEnumList = set of TFhirTestReportStatusEnum;
-
 
   // The allowable request method or HTTP operation codes. (from http://hl7.org/fhir/ValueSet/http-operations)
   TFhirTestScriptRequestMethodCodeEnum = (
@@ -3358,7 +3147,6 @@ type
     TestScriptRequestMethodCodePut,
     TestScriptRequestMethodCodeHead);
   TFhirTestScriptRequestMethodCodeEnumList = set of TFhirTestScriptRequestMethodCodeEnum;
-
 
   // The type of trigger. (from http://hl7.org/fhir/ValueSet/trigger-type)
   TFhirTriggerTypeEnum = (
@@ -3373,14 +3161,12 @@ type
     TriggerTypeDataAccessEnded);
   TFhirTriggerTypeEnumList = set of TFhirTriggerTypeEnum;
 
-
   // How a type relates to its baseDefinition. (from http://hl7.org/fhir/ValueSet/type-derivation-rule)
   TFhirTypeDerivationRuleEnum = (
     TypeDerivationRuleNull, // Value is missing from Instance
     TypeDerivationRuleSpecialization,
     TypeDerivationRuleConstraint);
   TFhirTypeDerivationRuleEnumList = set of TFhirTypeDerivationRuleEnum;
-
 
   // Operations supported by REST at the type or instance level. (from http://hl7.org/fhir/ValueSet/type-restful-interaction)
   TFhirTypeRestfulInteractionEnum = (
@@ -3396,7 +3182,6 @@ type
     TypeRestfulInteractionSearchType);
   TFhirTypeRestfulInteractionEnumList = set of TFhirTypeRestfulInteractionEnum;
 
-
   // Codes to identify how UDI data was entered. (from http://hl7.org/fhir/ValueSet/udi-entry-type)
   TFhirUDIEntryTypeEnum = (
     UDIEntryTypeNull, // Value is missing from Instance
@@ -3408,7 +3193,6 @@ type
     UDIEntryTypeElectronicTransmission,
     UDIEntryTypeUnknown);
   TFhirUDIEntryTypeEnumList = set of TFhirUDIEntryTypeEnum;
-
 
   // A unit of time (units from UCUM). (from http://hl7.org/fhir/ValueSet/units-of-time)
   TFhirUnitsOfTimeEnum = (
@@ -3422,7 +3206,6 @@ type
     UnitsOfTimeA);
   TFhirUnitsOfTimeEnumList = set of TFhirUnitsOfTimeEnum;
 
-
   // The purpose of the Claim: predetermination, preauthorization, claim. (from http://hl7.org/fhir/ValueSet/claim-use)
   TFhirUseEnum = (
     UseNull, // Value is missing from Instance
@@ -3430,7 +3213,6 @@ type
     UsePreauthorization,
     UsePredetermination);
   TFhirUseEnumList = set of TFhirUseEnum;
-
 
   // A coded concept listing the base codes. (from http://hl7.org/fhir/ValueSet/vision-base-codes)
   TFhirVisionBaseEnum = (
@@ -3441,14 +3223,12 @@ type
     VisionBaseOut);
   TFhirVisionBaseEnumList = set of TFhirVisionBaseEnum;
 
-
   // A coded concept listing the eye codes. (from http://hl7.org/fhir/ValueSet/vision-eye-codes)
   TFhirVisionEyesEnum = (
     VisionEyesNull, // Value is missing from Instance
     VisionEyesRight,
     VisionEyesLeft);
   TFhirVisionEyesEnumList = set of TFhirVisionEyesEnum;
-
 
   // How a search parameter relates to the set of elements returned by evaluating its xpath query. (from http://hl7.org/fhir/ValueSet/search-xpath-usage)
   TFhirXPathUsageTypeEnum = (
@@ -3459,9 +3239,6 @@ type
     XPathUsageTypeDistance,
     XPathUsageTypeOther);
   TFhirXPathUsageTypeEnumList = set of TFhirXPathUsageTypeEnum;
-
-
-
 
 const
   CODES_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'active', 'inactive', 'entered-in-error', 'on-hold', 'unknown');
@@ -3954,7 +3731,6 @@ const
   CODES_TFhirXPathUsageTypeEnum : Array[TFhirXPathUsageTypeEnum] of String = ('', 'normal', 'phonetic', 'nearby', 'distance', 'other');
   SYSTEMS_TFhirXPathUsageTypeEnum : Array[TFhirXPathUsageTypeEnum] of String = ('', 'http://hl7.org/fhir/search-xpath-usage', 'http://hl7.org/fhir/search-xpath-usage', 'http://hl7.org/fhir/search-xpath-usage', 'http://hl7.org/fhir/search-xpath-usage', 'http://hl7.org/fhir/search-xpath-usage');
 
-
 function TFhirAccountStatusEnumListAsInteger(aSet : TFhirAccountStatusEnumList) : Integer; overload;
 function IntegerAsTFhirAccountStatusEnumList(i : integer) : TFhirAccountStatusEnumList; overload;
 function TFhirActionCardinalityBehaviorEnumListAsInteger(aSet : TFhirActionCardinalityBehaviorEnumList) : Integer; overload;
@@ -4394,9 +4170,7 @@ function IntegerAsTFhirVisionEyesEnumList(i : integer) : TFhirVisionEyesEnumList
 function TFhirXPathUsageTypeEnumListAsInteger(aSet : TFhirXPathUsageTypeEnumList) : Integer; overload;
 function IntegerAsTFhirXPathUsageTypeEnumList(i : integer) : TFhirXPathUsageTypeEnumList; overload;
 
-
 implementation
-
 
 function TFhirAccountStatusEnumListAsInteger(aSet : TFhirAccountStatusEnumList) : Integer;
 var
@@ -10091,8 +9865,6 @@ begin
       result := result + [aLoop];
   end;
 end;
-
-
 
 end.
 

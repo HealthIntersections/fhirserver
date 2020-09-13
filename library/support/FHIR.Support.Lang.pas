@@ -318,5 +318,4 @@ begin
   doLoad('ZWL', 2, 'Z$', 'Zimbabwean dollar A/10', 'Zimbabwe');
 end;
 
-
 end.

@@ -42,7 +42,7 @@ uses
   FHIR.Web.Fetcher,
 
   FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Utilities,
-  FHIR.R3.Context, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants;
+  FHIR.R3.Context, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Resources.Base;
 
 
 const

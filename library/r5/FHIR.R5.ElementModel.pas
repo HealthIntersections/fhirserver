@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Cda.Narrative,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
-  FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Context, FHIR.R5.Utilities, FHIR.R5.PathNode, FHIR.R5.Common;
+  FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Context, FHIR.R5.Utilities, FHIR.R5.PathNode, FHIR.R5.Common;
 
 
 type

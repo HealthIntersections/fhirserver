@@ -120,10 +120,24 @@
       <Filename Value="project1"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="C:\work\fhirserver\library\support;C:\work\fhirserver\library\base;C:\work\fhirserver\library\web;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\markdown\source;C:\work\fhirserver\library\ucum;C:\work\fhirserver\library\cache;C:\work\fhirserver\library\client;C:\work\fhirserver\library\r2"/>
+      <IncludeFiles Value="$(ProjOutDir);C:\work\fhirserver\dependencies\Indy10\System\;C:\work\fhirserver\dependencies\Indy10\Protocols\;C:\work\fhirserver\dependencies\Indy10\Core\"/>
+      <OtherUnitFiles Value="C:\work\fhirserver\library\support\;C:\work\fhirserver\library\base\;C:\work\fhirserver\library\web\;C:\work\fhirserver\dependencies\Indy10\Protocols\;C:\work\fhirserver\dependencies\Indy10\System\;C:\work\fhirserver\dependencies\Indy10\Core\;C:\work\markdown\source\;C:\work\fhirserver\library\ucum\;C:\work\fhirserver\library\cache\;C:\work\fhirserver\library\client\;C:\work\fhirserver\library\r2\"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <RelocatableUnit Value="True"/>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
+      <SmallerCode Value="True"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseExternalDbgSyms Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

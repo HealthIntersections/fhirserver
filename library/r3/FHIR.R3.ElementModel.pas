@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.ElementModel,
-  FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
+  FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common, FHIR.R3.Resources.Base;
 
 
 type

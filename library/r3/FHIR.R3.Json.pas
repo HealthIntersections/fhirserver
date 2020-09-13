@@ -40,7 +40,7 @@ uses
   SysUtils, Classes, 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types;
+  FHIR.R3.ParserBase, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types, FHIR.R3.Resources.Base;
 
 Type
 
@@ -2566,7 +2566,6 @@ Type
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
-
 
 implementation
 
@@ -47401,7 +47400,6 @@ begin
     raise EJsonException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
-
 
 end.
 

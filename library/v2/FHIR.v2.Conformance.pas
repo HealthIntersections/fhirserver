@@ -32,7 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 // HCP = HL7 Conformance Profile
 {$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
-
 Interface
 
 Uses
@@ -90,7 +89,6 @@ Type
   THCPProfileType = (hcpptHL7,              // represents a specific HL7 published standard (may only be submitted by the HL7 Organization)
                      hcpptConstrainable,    // May contain "Optional" elements which must be further constrained in order to create implementation profiles
                      hcpptImplementation);  // Fully constrained with no optionality (reflects the behavior of a runtime system)
-
 
   THCPElement = Class (THL7V2WorkerObject)
   Public
@@ -1203,7 +1201,6 @@ Begin
     End;
 End;
 
-
 Procedure THCPTable.updateProperties;
 Begin
   Inherited;
@@ -1289,7 +1286,6 @@ Begin
     LElem := LElem.nextElement;
     End;
 End;
-
 
 { THCPCell }
 
@@ -3041,7 +3037,6 @@ Begin
     f.Free;
   end;
 End;
-
 
 { THCPUseCaseElement }
 

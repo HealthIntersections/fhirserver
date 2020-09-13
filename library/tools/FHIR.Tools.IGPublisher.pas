@@ -87,7 +87,6 @@ begin
   end;
 end;
 
-
 { TFHIRIGPublisher }
 
 constructor TFHIRIGPublisher.Create(ini: TIniFile);
@@ -162,7 +161,6 @@ begin
     thread.Free;
   end;
 end;
-
 
 function TFHIRIGPublisher.needsUpgrade(folder : String; var msg: String): boolean;
 begin

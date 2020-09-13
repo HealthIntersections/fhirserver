@@ -31,7 +31,6 @@ unit InstanceValidator;
 
 interface
 
-
 uses
   Windows, SysUtils, Classes, RegularExpressions, Character,
   FHIR.Support.Base, FHIR.Support.Utilities,
@@ -1568,7 +1567,6 @@ begin
   end;
 end;
 
-
 procedure TInstanceValidator.doResourceProfile(hostContext : TFhirValidatorHostContext; resource : TFhirMMElement; profile : String; errors : TFslList<TFhirValidationMessage>; stack : TNodeStack; path : String; element : TFhirMMElement);
 //var
 //  resourceProfiles : TValidationProfileSet;
@@ -2575,10 +2573,6 @@ begin
   else  if (element.type_= 'CodeSystem') then
     validateCodeSystem(errors, element, stack);
 
-
-
-
-
   for profileUsage in resourceProfiles.uncheckedProfiles do
   begin
       profileUsage.Checked := true;
@@ -2942,7 +2936,6 @@ begin
 //       validateAnswerCode(errors, v, stack, qSrc, qItem.getAnswerValueSet(), theOpenChoice);
 //else
 //       hint(errors, itSTRUCTURE, v.LocationStart.line, v.LocationStart.col, stack.getLiteralPath(), false, 'Cannot validate options because no option or options are provided');
-
 
 end;
 
@@ -4518,7 +4511,6 @@ begin
 //
 //  end;
 end;
-
 
 (*
 //          unsupportedSlicing = matchSlice(hostContext, errors, profile, stack, slicer, unsupportedSlicing, problematicPaths, sliceOffset, i, ed, childUnsupportedSlicing, ei);

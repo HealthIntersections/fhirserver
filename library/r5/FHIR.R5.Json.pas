@@ -36,13 +36,11 @@ interface
 
 // Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
 
-
-
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json,
   FHIR.Base.Parser, FHIR.Base.Objects,
-  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
+  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Resources.Base, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
 
 Type
 
@@ -57,7 +55,6 @@ Type
     procedure ParseDataTypeProperties(jsn : TJsonObject; value : TFhirDataType);
     procedure ParseBackboneTypeProperties(jsn : TJsonObject; value : TFhirBackboneType);
     procedure ParsePrimitiveTypeProperties(jsn : TJsonObject; value : TFhirPrimitiveType);
-
 
     procedure ParseEnum(path :String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
     function ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
@@ -284,7 +281,6 @@ Type
     function ParseTiming(jsn : TJsonObject) : TFhirTiming; overload; {b\}
     procedure ParseTimingProperties(jsn : TJsonObject; value : TFhirTiming); overload; {b\}
     procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload;  {L1025}
-
 
     procedure ParseResourceProperties(jsn : TJsonObject; value : TFhirResource);
     procedure ParseDomainResourceProperties(jsn : TJsonObject; value : TFhirDomainResource);
@@ -2598,7 +2594,6 @@ Type
     procedure ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload;  {L1025}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType; override;
   public
@@ -2616,7 +2611,6 @@ Type
     Procedure ComposeDataTypeProperties(json : TJSONWriter; value : TFhirDataType);
     Procedure ComposeBackboneTypeProperties(json : TJSONWriter; value : TFhirBackboneType);
     Procedure ComposePrimitiveTypeProperties(json : TJSONWriter; value : TFhirPrimitiveType);
-
 
     Procedure ComposeEnumValue(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
     Procedure ComposeEnumProps(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
@@ -2723,7 +2717,6 @@ Type
     procedure ComposeStatistic(json : TJSONWriter; name : string; value : TFhirStatistic; noObj : boolean = false);
     procedure ComposeTimingRepeat(json : TJSONWriter; name : string; value : TFhirTimingRepeat; noObj : boolean = false);
     procedure ComposeTiming(json : TJSONWriter; name : string; value : TFhirTiming; noObj : boolean = false);
-
 
     Procedure ComposeResourceProperties(json : TJSONWriter; value : TFhirResource);
     Procedure ComposeDomainResourceProperties(json : TJSONWriter; value : TFhirDomainResource);
@@ -3695,12 +3688,10 @@ Type
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; value : TFhirVisionPrescription; noObj : boolean = false);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
-
   public
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
-
 
 implementation
 
@@ -3729,7 +3720,6 @@ Procedure TFHIRJsonComposer.ComposeBaseProperties(json : TJSONWriter; value : TF
 begin
   {no-comments composeComments(json, elem);}
 end;
-
 
 procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; value : TFhirElement);
 begin
@@ -3819,8 +3809,6 @@ Procedure TFHIRJsonComposer.ComposePrimitiveTypeProperties(json : TJSONWriter; v
 begin
   ComposeDataTypeProperties(json, value);  {L430}
 end;
-
-
 
 procedure TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
 begin
@@ -10465,7 +10453,6 @@ begin
     ComposeCodeableConcept(json, 'code', value.code); {L772}
   if not noObj then json.finishObject;
 end;
-
 
 procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; value : TFhirResource);
 begin
@@ -66187,7 +66174,6 @@ begin
 end;
 
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-
 
 function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;
 var
