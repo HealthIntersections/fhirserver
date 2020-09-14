@@ -93,8 +93,6 @@ uses
   FHIR.Snomed.Expressions in '..\..\library\snomed\FHIR.Snomed.Expressions.pas',
   FHIR.Snomed.Publisher in '..\..\library\snomed\FHIR.Snomed.Publisher.pas',
   FHIR.Snomed.Services in '..\..\library\snomed\FHIR.Snomed.Services.pas',
-  DISystemCompat in '..\..\dependencies\Stem\DISystemCompat.pas',
-  YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas',
   FHIR.Ucum.Base in '..\..\library\Ucum\FHIR.Ucum.Base.pas',
   FHIR.Ucum.Expressions in '..\..\library\Ucum\FHIR.Ucum.Expressions.pas',
   FHIR.Ucum.Handlers in '..\..\library\Ucum\FHIR.Ucum.Handlers.pas',

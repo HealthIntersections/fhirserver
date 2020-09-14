@@ -115,7 +115,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R2.AuthMap;FHIR.Version.Constants=FHIR.R2.Constants;FHIR.Version.Context=FHIR.R2.Context;FHIR.Version.IndexInfo=FHIR.R2.IndexInfo;FHIR.Version.Javascript=FHIR.R2.Javascript;FHIR.Version.ElementModel=FHIR.R2.ElementModel;FHIR.Version.Narrative=FHIR.R2.Narrative;FHIR.Version.Operations=FHIR.R2.Operations;FHIR.Version.Json=FHIR.R2.Json;FHIR.Version.Turtle=FHIRParserTurtle2;FHIR.Version.Xml=FHIR.R2.Xml;FHIR.Version.PathNode=FHIR.R2.PathNode;FHIR.Version.Profiles=FHIR.R2.Profiles;FHIR.Version.Resources=FHIR.R2.Resources;FHIR.Version.MapUtilities=FHIRStructureMapUtilities2;FHIR.Version.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Version.Types=FHIR.R2.Types;FHIR.Version.Utilities=FHIR.R2.Utilities;FHIR.Version.Validator=FHIR.R2.Validator;FHIR.Version.OpBase=FHIR.R2.OpBase;FHIR.Version.PathEngine=FHIR.R2.PathEngine;FHIR.Version.Narrative2=FHIR.R2.Narrative2;FHIR.Version.Questionnaire=FHIR.R2.Questionnaire;FHIR.Version.Resources.Base=FHIR.R2.Resources.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r264\</DCC_DcuOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\d64\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UseMSBuildExternally>true</DCC_UseMSBuildExternally>
@@ -244,8 +244,8 @@
                     <Source Name="MainSource">FhirVclDemo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

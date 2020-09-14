@@ -85,8 +85,6 @@ uses
   FHIR.R4.Operations in '..\..\library\r4\FHIR.R4.Operations.pas',
   FHIR.R4.OpBase in '..\..\library\r4\FHIR.R4.OpBase.pas',
   FHIR.Tx.Service in '..\..\library\FHIR.Tx.Service.pas',
-  YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas',
-  DISystemCompat in '..\..\dependencies\Stem\DISystemCompat.pas',
   FHIR.Snomed.Services in '..\..\library\snomed\FHIR.Snomed.Services.pas',
   FHIR.Snomed.Expressions in '..\..\library\snomed\FHIR.Snomed.Expressions.pas',
   FHIR.Loinc.Services in '..\..\library\loinc\FHIR.Loinc.Services.pas',

@@ -138,7 +138,7 @@
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r464nc\</DCC_DcuOutput>
         <DCC_Define>NO_CONVERSION;NO_JS;$(DCC_Define)</DCC_Define>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;$(DCC_UnitAlias)</DCC_UnitAlias>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>VocabTxServer_Icon.ico</Icon_MainIcon>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -217,8 +217,6 @@
         <DCCReference Include="..\..\library\r4\FHIR.R4.Operations.pas"/>
         <DCCReference Include="..\..\library\r4\FHIR.R4.OpBase.pas"/>
         <DCCReference Include="..\..\library\FHIR.Tx.Service.pas"/>
-        <DCCReference Include="..\..\dependencies\Stem\YuStemmer.pas"/>
-        <DCCReference Include="..\..\dependencies\Stem\DISystemCompat.pas"/>
         <DCCReference Include="..\..\library\snomed\FHIR.Snomed.Services.pas"/>
         <DCCReference Include="..\..\library\snomed\FHIR.Snomed.Expressions.pas"/>
         <DCCReference Include="..\..\library\loinc\FHIR.Loinc.Services.pas"/>

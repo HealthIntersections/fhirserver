@@ -87,8 +87,6 @@ uses
   SysUtils,
   Classes,
   IdSSLOpenSSLHeaders,
-  YuStemmer in '..\dependencies\Stem\YuStemmer.pas',
-  DISystemCompat in '..\dependencies\Stem\DISystemCompat.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',

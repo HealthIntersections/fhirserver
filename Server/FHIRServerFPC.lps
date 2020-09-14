@@ -8,10 +8,10 @@
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="387"/>
         <CursorPos X="51" Y="393"/>
         <UsageCount Value="169"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\dependencies\stem\YuStemmer.pas"/>
@@ -24,10 +24,10 @@
       <Unit2>
         <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="219"/>
-        <CursorPos X="21" Y="256"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="91" Y="38"/>
         <UsageCount Value="169"/>
+        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\library\support\FHIR.Support.Fpc.pas"/>
@@ -362,12 +362,10 @@
       <Unit61>
         <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="824"/>
         <CursorPos Y="866"/>
         <UsageCount Value="169"/>
-        <Loaded Value="True"/>
       </Unit61>
       <Unit62>
         <Filename Value="..\library\r2\FHIR.R2.Types.pas"/>
@@ -560,11 +558,10 @@
       <Unit98>
         <Filename Value="..\library\r4\FHIR.R4.Json.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="24829"/>
         <CursorPos X="69" Y="24839"/>
         <UsageCount Value="169"/>
-        <Loaded Value="True"/>
       </Unit98>
       <Unit99>
         <Filename Value="..\library\r4\FHIR.R4.MapUtilities.pas"/>
@@ -2204,130 +2201,32 @@
       </Unit377>
       <Unit378>
         <Filename Value="FHIR.Tx.AreaCode.pas"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="117" Y="79"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit378>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="626" TopLine="588"/>
+        <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
+        <Caret Line="256" Column="21" TopLine="219"/>
       </Position1>
       <Position2>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="630" TopLine="592"/>
+        <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
       </Position2>
       <Position3>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="636" TopLine="598"/>
+        <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
+        <Caret Line="576" Column="18" TopLine="537"/>
       </Position3>
       <Position4>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="648" TopLine="610"/>
+        <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
+        <Caret Line="14539" TopLine="14522"/>
       </Position4>
       <Position5>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="652" TopLine="614"/>
+        <Filename Value="..\library\support\FHIR.Support.Utilities.pas"/>
+        <Caret Line="577" TopLine="554"/>
       </Position5>
-      <Position6>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="660" TopLine="622"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="666" TopLine="628"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="674" TopLine="636"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="682" TopLine="644"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="686" TopLine="648"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="692" TopLine="654"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="698" TopLine="660"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="708" TopLine="670"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="716" TopLine="678"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="726" TopLine="688"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="730" TopLine="692"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="734" TopLine="696"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="740" TopLine="702"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="744" TopLine="706"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="750" TopLine="712"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="754" TopLine="716"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="764" TopLine="726"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="776" TopLine="738"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="782" TopLine="744"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="790" TopLine="752"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="794" TopLine="756"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="800" TopLine="762"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="834" TopLine="796"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\library\r2\FHIR.R2.Resources.pas"/>
-        <Caret Line="860" TopLine="822"/>
-      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

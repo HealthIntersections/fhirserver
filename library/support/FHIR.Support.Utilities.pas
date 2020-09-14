@@ -35,7 +35,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
-  SysUtils, Types, {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, {$ENDIF}
+  SysUtils, Types, {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, YuStemmer, {$ENDIF}
   Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
@@ -572,8 +572,14 @@ type
   end;
 
   TFslWordStemmer = class (TFslObject)
+  private
+    {$IFDEF FPC}
+    {$ELSE}
+    FStem : TYuStemmer;
+    {$ENDIF}
   public
-    constructor create(lang : String);
+    constructor Create(lang : String);
+    destructor Destroy; override;
     function stem(word : String) : String;
   end;
 
@@ -14533,12 +14539,28 @@ end;
 
 constructor TFslWordStemmer.create(lang: String);
 begin
+  {$IFDEF FPC}
+  {$ELSE}
+  FStem := GetStemmer(lang);
+  {$ENDIF}
+end;
 
+destructor TFslWordStemmer.Destroy;
+begin
+  {$IFDEF FPC}
+  {$ELSE}
+  FStem.Free;
+  {$ENDIF}
+  inherited;
 end;
 
 function TFslWordStemmer.stem(word: String): String;
 begin
-
+  {$IFDEF FPC}
+  result := EncodeNYSIIS(word); // temporary hack
+  {$ELSE}
+  result := FStem.Stem(word);
+  {$ENDIF}
 end;
 
 

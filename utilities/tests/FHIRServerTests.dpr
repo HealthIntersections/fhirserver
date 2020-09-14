@@ -41,7 +41,6 @@ uses
   TestInsight.DUnitX,
   {$ENDIF }
   IdSSLOpenSSLHeaders,
-  DISystemCompat in '..\..\dependencies\Stem\DISystemCompat.pas',
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -345,7 +344,6 @@ uses
   FHIR.v2.Tests in '..\..\library\v2\FHIR.v2.Tests.pas',
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
-  YuStemmer in '..\..\dependencies\Stem\YuStemmer.pas',
   ChakraCore in '..\..\dependencies\chakracore-delphi\ChakraCore.pas',
   Compat in '..\..\dependencies\chakracore-delphi\Compat.pas',
   ChakraCommon in '..\..\dependencies\chakracore-delphi\ChakraCommon.pas',

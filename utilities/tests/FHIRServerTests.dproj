@@ -168,7 +168,7 @@
         <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64</DCC_DcuOutput>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
@@ -243,7 +243,6 @@
         </DelphiCompile>
         <DCCReference Include="..\..\dependencies\FMM\FastMM4.pas"/>
         <DCCReference Include="..\..\dependencies\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="..\..\dependencies\Stem\DISystemCompat.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.Factory.pas"/>
@@ -544,7 +543,6 @@
         <DCCReference Include="..\..\library\v2\FHIR.v2.Tests.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\..\dependencies\Stem\YuStemmer.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCore.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\Compat.pas"/>
         <DCCReference Include="..\..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
@@ -658,8 +656,8 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FHIR.Server.Tests.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -702,8 +700,8 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FHIR.Server.Tests.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
