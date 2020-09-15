@@ -4170,7 +4170,7 @@ End;
 Function SystemMemory : TSystemMemory;
 Begin
   FillChar(Result, SizeOf(Result), 0);
-  Result.Length := SizeOf(Result);
+  Result.dwLength := SizeOf(Result);
 
   GlobalMemoryStatus(TMemoryStatus(Result));
 End;

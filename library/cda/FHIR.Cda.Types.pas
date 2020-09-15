@@ -2892,7 +2892,7 @@ var
 begin
   SetLength(b1, 0);
   SetLength(b2, 0);
-  if oOther is Tv3ED and isNonNull and Tv3ED(oOther).isNonNull Then
+  if (oOther is Tv3ED) and isNonNull and Tv3ED(oOther).isNonNull Then
   Begin
     b1 := Getbytes;
     b2 := Tv3ED(oOther).Getbytes;
