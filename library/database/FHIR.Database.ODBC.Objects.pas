@@ -2161,7 +2161,7 @@ End;
 
 Function MemoryStreamToString(M: TMemoryStream): String;
 Var
-  NewCapacity: {$IFDEF FPC} Int64 {$ELSE} LongInt {$ENDIF};
+  NewCapacity: {$IFDEF WIN64} {$IFDEF FPC} Int64 {$ELSE} LongInt {$ENDIF} {$ELSE} LongInt {$ENDIF};
 Begin
   If (M.Size = 0) Or (M.Memory = Nil) Then
     Result:= ''

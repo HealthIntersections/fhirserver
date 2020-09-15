@@ -4170,7 +4170,7 @@ End;
 Function SystemMemory : TSystemMemory;
 Begin
   FillChar(Result, SizeOf(Result), 0);
-  Result.dwLength := SizeOf(Result);
+  Result.{$IFDEF FPC}dwLength{$ELSE}Length{$ENDIF} := SizeOf(Result);
 
   GlobalMemoryStatus(TMemoryStatus(Result));
 End;

@@ -6637,7 +6637,15 @@ var
 function InternalReadProcMem(ProcessHandle: THandle; Address: DWORD;
   Buffer: Pointer; Size: Integer): Boolean;
 var
-  BR: QWORD;
+  {$IFDEF FPC}
+  {$IFDEF WIN64}
+  BR: QWord;
+  {$ELSE}
+  BR: LongWord;
+  {$ENDIF}
+  {$ELSE}
+  BR: LongWord;
+  {$ENDIF}
 {$ENDIF}
 begin
   BR := 0;

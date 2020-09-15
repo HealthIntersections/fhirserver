@@ -328,12 +328,16 @@ begin
   {$IFDEF WIN64}
   ZDecompress(s, result);
   {$ELSE}
+  {$IFDEF FPC}
+  ZDecompress(s, result);
+  {$ELSE}
   ZDecompress(@s[0],Length(s),buffer,size);
 
   SetLength(result,size);
   Move(buffer^,result[0],size);
 
   FreeMem(buffer);
+  {$ENDIF}
   {$ENDIF}
 end;
 
