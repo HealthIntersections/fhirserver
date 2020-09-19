@@ -550,6 +550,7 @@
         <DCCReference Include="..\library\r5\FHIR.R5.Resources.Financial.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.Resources.Medications.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.Resources.Other.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

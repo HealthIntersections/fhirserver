@@ -455,7 +455,8 @@ uses
   FHIR.R5.Resources.Clinical in '..\library\r5\FHIR.R5.Resources.Clinical.pas',
   FHIR.R5.Resources.Financial in '..\library\r5\FHIR.R5.Resources.Financial.pas',
   FHIR.R5.Resources.Medications in '..\library\r5\FHIR.R5.Resources.Medications.pas',
-  FHIR.R5.Resources.Other in '..\library\r5\FHIR.R5.Resources.Other.pas';
+  FHIR.R5.Resources.Other in '..\library\r5\FHIR.R5.Resources.Other.pas',
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas';
 
 begin
   if (FileExists('c:\temp')) then

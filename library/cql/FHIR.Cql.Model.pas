@@ -27,6 +27,9 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
@@ -76,7 +79,11 @@ const
     '', '', '', '', '',  '');
   NAMES_CqlFunctions : array [TCqlFunctionDefinitionId] of string = ('', '.xx..', '.xx..', 'AgeInYears', 'AgeInYearsAt', 'Today', 'DateTime', 'Last', 'Count', 'Concept');
 
+  {$IFDEF FPC}
   NAMES_UNPREFIXED_OPERATORS : array of String = ['start', 'end', 'width', 'successor', 'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct', 'collapse', 'flatten', '-', '+'];
+  {$ELSE}
+  NAMES_UNPREFIXED_OPERATORS : array of String = ['start', 'end', 'width', 'successor', 'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct', 'collapse', 'flatten', '-', '+'];
+  {$ENDIF}
 
 type
   { Foundation Stuff }

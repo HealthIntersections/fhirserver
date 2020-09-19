@@ -28,17 +28,63 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 {$DEFINE DIFF}
 
 interface
 
 Uses
   Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF FPC}
+  FPCUnit,
+  {$ELSE}
+  DUnitX.TestFramework,
+  {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
-  FHIR.Support.Certs, FHIR.Support.Comparisons, FHIR.Web.Parsers,
-  DUnitX.TestFramework;
+  FHIR.Support.Certs, FHIR.Support.Comparisons, FHIR.Web.Parsers;
+
+// *** General Testing Infrastructure ******************************************
+
+type
+  {
+    TFslTestCase
+
+    Base test case for all tests.
+
+    For DUnitX, this doesn't do much directly, but it does define common assertions mechanism for FPCUnit and DUnitX.
+
+    For FPC, it also makes it easy to register tests with alternative names
+
+  }
+  {$M+}
+  TFslTestCase = class {$IFDEF FPC} (TTestCase) {$ENDIF}
+  protected
+    {$IFDEF FPC}
+    FName : String;
+    function GetTestName: string; override;
+    {$ENDIF}
+    procedure assertPass;
+    procedure assertFail(message : String);
+    procedure assertTrue(test : boolean; message : String); overload;
+    procedure assertTrue(test : boolean); overload;
+    procedure assertFalse(test : boolean; message : String); overload;
+    procedure assertFalse(test : boolean); overload;
+    procedure assertEqual(left, right : String; message : String); overload;
+    procedure assertEqual(left, right : String); overload;
+    procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+  public
+    {$IFDEF FPC}
+    constructor Create(name : String);
+    {$ENDIF}
+    procedure TestCase(name : String); virtual;
+  published
+    {$IFDEF FPC}
+    procedure Test;
+    {$ENDIF}
+  end;
 
 var
   FHIR_TEST_CASE_ROOT : String = 'C:\work\org.hl7.fhir\fhir-test-cases';  // lots of the tests depend on content found in the FHIR publication
@@ -47,24 +93,12 @@ function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String; o
 function FHIR_TESTING_FILE(folder, filename : String) : String; overload;
 
 Type
-  TFslString = class (TFslObject)
+  TFslTestString = class (TFslObject)
   private
     FString : String;
   public
     constructor Create(value : String);
-    function Link :  TFslString; overload;
-  end;
-
-  [TextFixture]
-  TFslGenericsTests = class (TObject)
-  public
-    [TestCase] procedure testSimple; //(obj : TFslObject);
-    [TestCase] procedure testiterate;
-    [TestCase] procedure testRemove;
-    [TestCase] procedure testAddAll;
-    [TestCase] procedure testReplace;
-    [TestCase] procedure testMap;
-    [TestCase] procedure testSort;
+    function Link :  TFslTestString; overload;
   end;
 
   TFslTestObject = class (TFslObject)
@@ -75,6 +109,27 @@ Type
     property value : String read FValue write FValue;
   end;
 
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TFslGenericsTests = class (TFslTestCase)
+  private
+    function doSort(sender : TObject; const left, right : TFslTestObject) : integer;
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testSimple; //(obj : TFslObject);
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testiterate;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testRemove;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testAddAll;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testReplace;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testMap;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure testSort;
+  end;
+
   TFslTestObjectList = class (TFslObjectList)
   private
   protected
@@ -82,34 +137,34 @@ Type
   public
   end;
 
-  [TextFixture]
-  TFslCollectionsTests = class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TFslCollectionsTests = class (TFslTestCase)
   public
-    [TestCase] procedure testAdd;
-    [TestCase] procedure testAddFail;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAdd;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAddFail;
   end;
 
 type
-  [TextFixture]
-  TOSXTests = class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TOSXTests = class (TFslTestCase)
   private
     procedure test60sec;
   public
-    [TestCase] procedure TestAdvObject;
-    [TestCase] procedure TestCriticalSectionSimple;
-    [TestCase] procedure TestCriticalSectionThreaded;
-    [TestCase] procedure TestKCriticalSectionThreaded;
-    [TestCase] procedure TestKCriticalSectionSimple;
-    [TestCase] procedure TestSemaphore;
-    [TestCase] procedure TestTemp;
-    [TestCase] procedure TesTFslDateTime;
-    [TestCase] procedure TestAdvFile;
-    [TestCase] procedure TestRemoveAccents;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestAdvObject;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionSimple;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionThreaded;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestKCriticalSectionThreaded;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestKCriticalSectionSimple;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTemp;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TesTFslDateTime;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestAdvFile;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestRemoveAccents;
   end;
 
 Type
-  [TextFixture]
-  TDecimalTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TDecimalTests = Class (TFslTestCase)
   Private
     procedure testString(s, st, std : String);
     procedure TestAdd(s1,s2,s3:String);
@@ -125,69 +180,75 @@ Type
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
     procedure TestTruncation(value : String; digits : integer; outcome : String; round : boolean);
   Published
-    [TestCase] Procedure TestIsDecimal;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestIsDecimal;
 
-    [TestCase] Procedure TestAsInteger;
-    [TestCase] Procedure TestStringSupport;
-    [TestCase] Procedure TestAddition;
-    [TestCase] Procedure TestMultiplication;
-    [TestCase] Procedure TestBounds;
-    [TestCase] Procedure TestNormalisedDecimal;
-    [TestCase] Procedure TestInfinity;
-    [TestCase] Procedure TestOverloading;
-    [TestCase] Procedure TestTrunc;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestAsInteger;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestStringSupport;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestAddition;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestMultiplication;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestBounds;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestNormalisedDecimal;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestInfinity;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestOverloading;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestTrunc;
   End;
 
 Type
+  {$IFNDEF FPC}
   XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
+  {$ENDIF}
 
-  [TextFixture]
-  TXmlParserTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TXmlParserTests = Class (TFslTestCase)
   Published
-    [XmlParserTestCase]
+    {$IFNDEF FPC}[XmlParserTestCase]{$ENDIF}
     procedure ParserTest(Name : String);
   End;
 
+  {$IFNDEF FPC}
   XPathParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
+  {$ENDIF}
 
-  [TextFixture]
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TXmlUtilsTests = Class (TObject)
   Private
   Published
-    [TestCase]
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestUnPretty;
     procedure TestPretty;
     procedure TestNoPretty;
     procedure TestNoDense;
   End;
 
-  [TextFixture]
-  TXPathParserTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TXPathParserTests = Class (TFslTestCase)
   Private
     tests : TMXmlDocument;
     functionNames : TStringList;
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
   Published
-    [SetupFixture] procedure setup;
-    [TearDownFixture] procedure teardown;
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
-    [XPathParserTestCase]
+    {$IFNDEF FPC}[XPathParserTestCase]{$ENDIF}
     procedure PathTest(Name : String);
   End;
 
+  {$IFNDEF FPC}
   XPathEngineTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
+  {$ENDIF}
 
-  [TextFixture]
-  TXPathEngineTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TXPathEngineTests = Class (TFslTestCase)
   Private
     tests : TMXmlDocument;
     mstests : IXMLDOMDocument2;
@@ -197,470 +258,477 @@ Type
     procedure runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
     procedure runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   Published
-    [SetupFixture] procedure setup;
-    [TearDownFixture] procedure teardown;
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
-    [XPathEngineTestCase]
+    {$IFNDEF FPC}[XPathEngineTestCase]{$ENDIF}
     procedure PathTest(Name : String);
   End;
 
+  {$IFNDEF FPC}
   XmlPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
+  {$ENDIF}
 
-  [TextFixture]
-  TXmlPatchTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TXmlPatchTests = Class (TFslTestCase)
   Private
     tests : TMXmlDocument;
     engine : TXmlPatchEngine;
+    // here for FPC to make the exception procedure event.
+    test, target, patch, error, patched : TMXmlElement;
+    procedure doExecute;
   Published
-    [SetupFixture] procedure setup;
-    [TearDownFixture] procedure teardown;
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
-    [XmlPatchTestCase]
+    {$IFNDEF FPC}[XmlPatchTestCase]{$ENDIF}
     procedure PatchTest(Name : String);
   End;
 
 Type
-  [TextFixture]
-  TJsonTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TJsonTests = Class (TFslTestCase)
   Private
   Published
-    [TestCase] procedure TestResource;
-    [TestCase] procedure TestCustomDoc2;
-    [TestCase] procedure TestCustomDoc2Loose;
-    [TestCase] procedure TestCustomDecimal;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestResource;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDoc2;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDoc2Loose;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDecimal;
   End;
 
+  {$IFNDEF FPC}
   JsonPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
+  {$ENDIF}
 
-  [TextFixture]
-  TJsonPatchTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TJsonPatchTests = Class (TFslTestCase)
   Private
     tests : TJsonArray;
     engine : TJsonPatchEngine;
   Published
-    [SetupFixture] procedure setup;
-    [TearDownFixture] procedure teardown;
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
-    [JsonPatchTestCase]
+    {$IFNDEF FPC}[JsonPatchTestCase]{$ENDIF}
     procedure PatchTest(Name : String);
   End;
 
 Type
-  [TextFixture]
-  TJWTTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TJWTTests = Class (TFslTestCase)
   Private
   Published
-    [SetUp] procedure Setup;
-    [TestCase] procedure TestPacking;
-    [TestCase] procedure TestUnpacking;
-    [TestCase] procedure TestCert;
+    {$IFNDEF FPC}[SetUp]{$ENDIF} procedure Setup;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestPacking;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestUnpacking;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCert;
   End;
 
 Type
-  [TextFixture]
-  TTurtleTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TTurtleTests = Class (TFslTestCase)
   Private
     procedure parseTTl(filename : String; ok : boolean);
   Published
-    [TestCase] procedure test_double_lower_case_e1;
-    [TestCase] procedure test_double_lower_case_e2();
-    [TestCase] procedure test_empty_collection1();
-    [TestCase] procedure test_empty_collection2();
-    [TestCase] procedure test_first1();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_double_lower_case_e1;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_double_lower_case_e2();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_empty_collection1();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_empty_collection2();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_first1();
 //    procedure test_first2();
-    [TestCase] procedure test_HYPHEN_MINUS_in_localNameNT();
-    [TestCase] procedure test_HYPHEN_MINUS_in_localName();
-    [TestCase] procedure test_IRI_spoNT();
-    [TestCase] procedure test_IRI_subject();
-    [TestCase] procedure test_IRI_with_all_punctuationNT();
-    [TestCase] procedure test_IRI_with_all_punctuation();
-    [TestCase] procedure test_IRI_with_eight_digit_numeric_escape();
-    [TestCase] procedure test_IRI_with_four_digit_numeric_escape();
-    [TestCase] procedure test_IRIREF_datatypeNT();
-    [TestCase] procedure test_IRIREF_datatype();
-    [TestCase] procedure test_labeled_blank_node_objectNT();
-    [TestCase] procedure test_labeled_blank_node_object();
-    [TestCase] procedure test_labeled_blank_node_subjectNT();
-    [TestCase] procedure test_labeled_blank_node_subject();
-    [TestCase] procedure test_labeled_blank_node_with_leading_digit();
-    [TestCase] procedure test_labeled_blank_node_with_leading_underscore();
-    [TestCase] procedure test_labeled_blank_node_with_non_leading_extras();
-    [TestCase] procedure test_labeled_blank_node_with_PN_CHARS_BASE_character_boundaries();
-    [TestCase] procedure test_langtagged_LONG();
-    [TestCase] procedure test_langtagged_LONG_with_subtagNT();
-    [TestCase] procedure test_langtagged_LONG_with_subtag();
-    [TestCase] procedure test_langtagged_non_LONGNT();
-    [TestCase] procedure test_langtagged_non_LONG();
-    [TestCase] procedure test_lantag_with_subtagNT();
-    [TestCase] procedure test_lantag_with_subtag();
-    [TestCase] procedure test_lastNT();
-    [TestCase] procedure test_last();
-    [TestCase] procedure test_literal_falseNT();
-    [TestCase] procedure test_literal_false();
-    [TestCase] procedure test_LITERAL_LONG1();
-    [TestCase] procedure test_LITERAL_LONG1_ascii_boundariesNT();
-    [TestCase] procedure test_LITERAL_LONG1_ascii_boundaries();
-    [TestCase] procedure test_LITERAL_LONG1_with_1_squoteNT();
-    [TestCase] procedure test_LITERAL_LONG1_with_1_squote();
-    [TestCase] procedure test_LITERAL_LONG1_with_2_squotesNT();
-    [TestCase] procedure test_LITERAL_LONG1_with_2_squotes();
-    [TestCase] procedure test_LITERAL_LONG1_with_UTF8_boundaries();
-    [TestCase] procedure test_LITERAL_LONG2();
-    [TestCase] procedure test_LITERAL_LONG2_ascii_boundariesNT();
-    [TestCase] procedure test_LITERAL_LONG2_ascii_boundaries();
-    [TestCase] procedure test_LITERAL_LONG2_with_1_squoteNT();
-    [TestCase] procedure test_LITERAL_LONG2_with_1_squote();
-    [TestCase] procedure test_LITERAL_LONG2_with_2_squotesNT();
-    [TestCase] procedure test_LITERAL_LONG2_with_2_squotes();
-    [TestCase] procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUSNT();
-    [TestCase] procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUS();
-    [TestCase] procedure test_LITERAL_LONG2_with_UTF8_boundaries();
-    [TestCase] procedure test_literal_trueNT();
-    [TestCase] procedure test_literal_true();
-    [TestCase] procedure test_literal_with_BACKSPACENT();
-    [TestCase] procedure test_literal_with_BACKSPACE();
-    [TestCase] procedure test_literal_with_CARRIAGE_RETURNNT();
-    [TestCase] procedure test_literal_with_CARRIAGE_RETURN();
-    [TestCase] procedure test_literal_with_CHARACTER_TABULATIONNT();
-    [TestCase] procedure test_literal_with_CHARACTER_TABULATION();
-    [TestCase] procedure test_literal_with_escaped_BACKSPACE();
-    [TestCase] procedure test_literal_with_escaped_CARRIAGE_RETURN();
-    [TestCase] procedure test_literal_with_escaped_CHARACTER_TABULATION();
-    [TestCase] procedure test_literal_with_escaped_FORM_FEED();
-    [TestCase] procedure test_literal_with_escaped_LINE_FEED();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_HYPHEN_MINUS_in_localNameNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_HYPHEN_MINUS_in_localName();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_spoNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_subject();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_all_punctuationNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_all_punctuation();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_eight_digit_numeric_escape();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_four_digit_numeric_escape();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRIREF_datatypeNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRIREF_datatype();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_objectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_object();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_subjectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_subject();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_leading_digit();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_leading_underscore();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_non_leading_extras();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_PN_CHARS_BASE_character_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG_with_subtagNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG_with_subtag();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_non_LONGNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_non_LONG();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lantag_with_subtagNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lantag_with_subtag();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lastNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_last();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_falseNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_false();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_ascii_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_ascii_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_1_squoteNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_1_squote();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_2_squotesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_2_squotes();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_UTF8_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_ascii_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_ascii_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_1_squoteNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_1_squote();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_2_squotesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_2_squotes();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUSNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUS();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_UTF8_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_trueNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_true();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_BACKSPACENT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_BACKSPACE();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CARRIAGE_RETURNNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CARRIAGE_RETURN();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CHARACTER_TABULATIONNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CHARACTER_TABULATION();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_BACKSPACE();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_CARRIAGE_RETURN();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_CHARACTER_TABULATION();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_FORM_FEED();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_LINE_FEED();
 //    procedure test_literal_with_FORM_FEEDNT();
-    [TestCase] procedure test_literal_with_FORM_FEED();
-    [TestCase] procedure test_literal_with_LINE_FEEDNT();
-    [TestCase] procedure test_literal_with_LINE_FEED();
-    [TestCase] procedure test_literal_with_numeric_escape4NT();
-    [TestCase] procedure test_literal_with_numeric_escape4();
-    [TestCase] procedure test_literal_with_numeric_escape8();
-    [TestCase] procedure test_literal_with_REVERSE_SOLIDUSNT();
-    [TestCase] procedure test_literal_with_REVERSE_SOLIDUS();
-    [TestCase] procedure test_LITERAL_with_UTF8_boundariesNT();
-    [TestCase] procedure test_LITERAL1NT();
-    [TestCase] procedure test_LITERAL1();
-    [TestCase] procedure test_LITERAL1_all_controlsNT();
-    [TestCase] procedure test_LITERAL1_all_controls();
-    [TestCase] procedure test_LITERAL1_all_punctuationNT();
-    [TestCase] procedure test_LITERAL1_all_punctuation();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_FORM_FEED();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_LINE_FEEDNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_LINE_FEED();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape4NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape4();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape8();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_REVERSE_SOLIDUSNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_REVERSE_SOLIDUS();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_with_UTF8_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_controlsNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_controls();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_punctuationNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_punctuation();
 //    procedure test_LITERAL1_ascii_boundariesNT();
-    [TestCase] procedure test_LITERAL1_ascii_boundaries();
-    [TestCase] procedure test_LITERAL1_with_UTF8_boundaries();
-    [TestCase] procedure test_LITERAL2();
-    [TestCase] procedure test_LITERAL2_ascii_boundariesNT();
-    [TestCase] procedure test_LITERAL2_ascii_boundaries();
-    [TestCase] procedure test_LITERAL2_with_UTF8_boundaries();
-    [TestCase] procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundariesNT();
-    [TestCase] procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundaries();
-    [TestCase] procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundariesNT();
-    [TestCase] procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_ascii_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_with_UTF8_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_ascii_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_ascii_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_with_UTF8_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries();
 //    procedure test_localname_with_COLONNT();
 //    procedure test_localname_with_COLON();
-    [TestCase] procedure test_localName_with_leading_digitNT();
-    [TestCase] procedure test_localName_with_leading_digit();
-    [TestCase] procedure test_localName_with_leading_underscoreNT();
-    [TestCase] procedure test_localName_with_leading_underscore();
-    [TestCase] procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundariesNT();
-    [TestCase] procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundaries();
-    [TestCase] procedure test_localName_with_non_leading_extrasNT();
-    [TestCase] procedure test_localName_with_non_leading_extras();
-    [TestCase] procedure test_negative_numericNT();
-    [TestCase] procedure test_negative_numeric();
-    [TestCase] procedure test_nested_blankNodePropertyListsNT();
-    [TestCase] procedure test_nested_blankNodePropertyLists();
-    [TestCase] procedure test_nested_collectionNT();
-    [TestCase] procedure test_nested_collection();
-    [TestCase] procedure test_number_sign_following_localNameNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_digitNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_digit();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_underscoreNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_underscore();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundariesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_non_leading_extrasNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_non_leading_extras();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_negative_numericNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_negative_numeric();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_blankNodePropertyListsNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_blankNodePropertyLists();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_collectionNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_collection();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_number_sign_following_localNameNT();
 //    procedure test_number_sign_following_localName();
-    [TestCase] procedure test_number_sign_following_PNAME_NSNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_number_sign_following_PNAME_NSNT();
 //    procedure test_number_sign_following_PNAME_NS();
-    [TestCase] procedure test_numeric_with_leading_0NT();
-    [TestCase] procedure test_numeric_with_leading_0();
-    [TestCase] procedure test_objectList_with_two_objectsNT();
-    [TestCase] procedure test_objectList_with_two_objects();
-    [TestCase] procedure test_old_style_base();
-    [TestCase] procedure test_old_style_prefix();
-    [TestCase] procedure test_percent_escaped_localNameNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_numeric_with_leading_0NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_numeric_with_leading_0();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_objectList_with_two_objectsNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_objectList_with_two_objects();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_old_style_base();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_old_style_prefix();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_percent_escaped_localNameNT();
 //    procedure test_percent_escaped_localName();
-    [TestCase] procedure test_positive_numericNT();
-    [TestCase] procedure test_positive_numeric();
-    [TestCase] procedure test_predicateObjectList_with_two_objectListsNT();
-    [TestCase] procedure test_predicateObjectList_with_two_objectLists();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_positive_numericNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_positive_numeric();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_predicateObjectList_with_two_objectListsNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_predicateObjectList_with_two_objectLists();
 //    procedure test_prefix_only_IRI();
-    [TestCase] procedure test_prefix_reassigned_and_usedNT();
-    [TestCase] procedure test_prefix_reassigned_and_used();
-    [TestCase] procedure test_prefix_with_non_leading_extras();
-    [TestCase] procedure test_prefix_with_PN_CHARS_BASE_character_boundaries();
-    [TestCase] procedure test_prefixed_IRI_object();
-    [TestCase] procedure test_prefixed_IRI_predicate();
-    [TestCase] procedure test_prefixed_name_datatype();
-    [TestCase] procedure test_repeated_semis_at_end();
-    [TestCase] procedure test_repeated_semis_not_at_endNT();
-    [TestCase] procedure test_repeated_semis_not_at_end();
-    [TestCase] procedure test_reserved_escaped_localNameNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_reassigned_and_usedNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_reassigned_and_used();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_with_non_leading_extras();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_with_PN_CHARS_BASE_character_boundaries();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_IRI_object();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_IRI_predicate();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_name_datatype();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_at_end();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_not_at_endNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_not_at_end();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_reserved_escaped_localNameNT();
 //    procedure test_reserved_escaped_localName();
-    [TestCase] procedure test_sole_blankNodePropertyList();
-    [TestCase] procedure test_SPARQL_style_base();
-    [TestCase] procedure test_SPARQL_style_prefix();
-    [TestCase] procedure test_turtle_eval_bad_01();
-    [TestCase] procedure test_turtle_eval_bad_02();
-    [TestCase] procedure test_turtle_eval_bad_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_sole_blankNodePropertyList();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_SPARQL_style_base();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_SPARQL_style_prefix();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_03();
 //    procedure test_turtle_eval_bad_04();
-    [TestCase] procedure test_turtle_eval_struct_01NT();
-    [TestCase] procedure test_turtle_eval_struct_01();
-    [TestCase] procedure test_turtle_eval_struct_02NT();
-    [TestCase] procedure test_turtle_eval_struct_02();
-    [TestCase] procedure test_turtle_subm_01NT();
-    [TestCase] procedure test_turtle_subm_01();
-    [TestCase] procedure test_turtle_subm_02NT();
-    [TestCase] procedure test_turtle_subm_02();
-    [TestCase] procedure test_turtle_subm_03NT();
-    [TestCase] procedure test_turtle_subm_03();
-    [TestCase] procedure test_turtle_subm_04NT();
-    [TestCase] procedure test_turtle_subm_04();
-    [TestCase] procedure test_turtle_subm_05NT();
-    [TestCase] procedure test_turtle_subm_05();
-    [TestCase] procedure test_turtle_subm_06NT();
-    [TestCase] procedure test_turtle_subm_06();
-    [TestCase] procedure test_turtle_subm_07NT();
-    [TestCase] procedure test_turtle_subm_07();
-    [TestCase] procedure test_NT();
-    [TestCase] procedure test_turtle_subm_08();
-    [TestCase] procedure test_turtle_subm_09NT();
-    [TestCase] procedure test_turtle_subm_09();
-    [TestCase] procedure test_turtle_subm_10NT();
-    [TestCase] procedure test_turtle_subm_10();
-    [TestCase] procedure test_turtle_subm_11NT();
-    [TestCase] procedure test_turtle_subm_11();
-    [TestCase] procedure test_turtle_subm_12NT();
-    [TestCase] procedure test_turtle_subm_12();
-    [TestCase] procedure test_turtle_subm_13NT();
-    [TestCase] procedure test_turtle_subm_13();
-    [TestCase] procedure test_turtle_subm_14NT();
-    [TestCase] procedure test_turtle_subm_14();
-    [TestCase] procedure test_turtle_subm_15NT();
-    [TestCase] procedure test_turtle_subm_15();
-    [TestCase] procedure test_turtle_subm_16NT();
-    [TestCase] procedure test_turtle_subm_16();
-    [TestCase] procedure test_turtle_subm_17NT();
-    [TestCase] procedure test_turtle_subm_17();
-    [TestCase] procedure test_turtle_subm_18NT();
-    [TestCase] procedure test_turtle_subm_18();
-    [TestCase] procedure test_turtle_subm_19NT();
-    [TestCase] procedure test_turtle_subm_19();
-    [TestCase] procedure test_turtle_subm_20NT();
-    [TestCase] procedure test_turtle_subm_20();
-    [TestCase] procedure test_turtle_subm_21NT();
-    [TestCase] procedure test_turtle_subm_21();
-    [TestCase] procedure test_turtle_subm_22NT();
-    [TestCase] procedure test_turtle_subm_22();
-    [TestCase] procedure test_turtle_subm_23NT();
-    [TestCase] procedure test_turtle_subm_23();
-    [TestCase] procedure test_turtle_subm_24NT();
-    [TestCase] procedure test_turtle_subm_24();
-    [TestCase] procedure test_turtle_subm_25NT();
-    [TestCase] procedure test_turtle_subm_25();
-    [TestCase] procedure test_turtle_subm_26NT();
-    [TestCase] procedure test_turtle_subm_26();
-    [TestCase] procedure test_turtle_subm_27NT();
-    [TestCase] procedure test_turtle_subm_27();
-    [TestCase] procedure test_turtle_syntax_bad_base_01();
-    [TestCase] procedure test_turtle_syntax_bad_base_02();
-    [TestCase] procedure test_turtle_syntax_bad_base_03();
-    [TestCase] procedure test_turtle_syntax_bad_esc_01();
-    [TestCase] procedure test_turtle_syntax_bad_esc_02();
-    [TestCase] procedure test_turtle_syntax_bad_esc_03();
-    [TestCase] procedure test_turtle_syntax_bad_esc_04();
-    [TestCase] procedure test_turtle_syntax_bad_kw_01();
-    [TestCase] procedure test_turtle_syntax_bad_kw_02();
-    [TestCase] procedure test_turtle_syntax_bad_kw_03();
-    [TestCase] procedure test_turtle_syntax_bad_kw_04();
-    [TestCase] procedure test_turtle_syntax_bad_kw_05();
-    [TestCase] procedure test_turtle_syntax_bad_lang_01();
-    [TestCase] procedure test_turtle_syntax_bad_LITERAL2_with_langtag_and_datatype();
-    [TestCase] procedure test_turtle_syntax_bad_ln_dash_start();
-    [TestCase] procedure test_turtle_syntax_bad_ln_escape();
-    [TestCase] procedure test_turtle_syntax_bad_ln_escape_start();
-    [TestCase] procedure test_turtle_syntax_bad_missing_ns_dot_end();
-    [TestCase] procedure test_turtle_syntax_bad_missing_ns_dot_start();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_01();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_02();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_03();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_04();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_05();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_07();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_08();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_09();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_10();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_11();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_12();
-    [TestCase] procedure test_turtle_syntax_bad_n3_extras_13();
-    [TestCase] procedure test_turtle_syntax_bad_ns_dot_end();
-    [TestCase] procedure test_turtle_syntax_bad_ns_dot_start();
-    [TestCase] procedure test_turtle_syntax_bad_num_01();
-    [TestCase] procedure test_turtle_syntax_bad_num_02();
-    [TestCase] procedure test_turtle_syntax_bad_num_03();
-    [TestCase] procedure test_turtle_syntax_bad_num_04();
-    [TestCase] procedure test_turtle_syntax_bad_num_05();
-    [TestCase] procedure test_turtle_syntax_bad_number_dot_in_anon();
-    [TestCase] procedure test_turtle_syntax_bad_pname_01();
-    [TestCase] procedure test_turtle_syntax_bad_pname_02();
-    [TestCase] procedure test_turtle_syntax_bad_prefix_01();
-    [TestCase] procedure test_turtle_syntax_bad_prefix_02();
-    [TestCase] procedure test_turtle_syntax_bad_prefix_03();
-    [TestCase] procedure test_turtle_syntax_bad_prefix_04();
-    [TestCase] procedure test_turtle_syntax_bad_prefix_05();
-    [TestCase] procedure test_turtle_syntax_bad_string_01();
-    [TestCase] procedure test_turtle_syntax_bad_string_02();
-    [TestCase] procedure test_turtle_syntax_bad_string_03();
-    [TestCase] procedure test_turtle_syntax_bad_string_04();
-    [TestCase] procedure test_turtle_syntax_bad_string_05();
-    [TestCase] procedure test_turtle_syntax_bad_string_06();
-    [TestCase] procedure test_turtle_syntax_bad_string_07();
-    [TestCase] procedure test_turtle_syntax_bad_struct_01();
-    [TestCase] procedure test_turtle_syntax_bad_struct_02();
-    [TestCase] procedure test_turtle_syntax_bad_struct_03();
-    [TestCase] procedure test_turtle_syntax_bad_struct_04();
-    [TestCase] procedure test_turtle_syntax_bad_struct_05();
-    [TestCase] procedure test_turtle_syntax_bad_struct_06();
-    [TestCase] procedure test_turtle_syntax_bad_struct_07();
-    [TestCase] procedure test_turtle_syntax_bad_struct_08();
-    [TestCase] procedure test_turtle_syntax_bad_struct_09();
-    [TestCase] procedure test_turtle_syntax_bad_struct_10();
-    [TestCase] procedure test_turtle_syntax_bad_struct_11();
-    [TestCase] procedure test_turtle_syntax_bad_struct_12();
-    [TestCase] procedure test_turtle_syntax_bad_struct_13();
-    [TestCase] procedure test_turtle_syntax_bad_struct_14();
-    [TestCase] procedure test_turtle_syntax_bad_struct_15();
-    [TestCase] procedure test_turtle_syntax_bad_struct_16();
-    [TestCase] procedure test_turtle_syntax_bad_struct_17();
-    [TestCase] procedure test_turtle_syntax_bad_uri_02();
-    [TestCase] procedure test_turtle_syntax_bad_uri_03();
-    [TestCase] procedure test_turtle_syntax_base_01();
-    [TestCase] procedure test_turtle_syntax_base_02();
-    [TestCase] procedure test_turtle_syntax_base_03();
-    [TestCase] procedure test_turtle_syntax_base_04();
-    [TestCase] procedure test_turtle_syntax_blank_label();
-    [TestCase] procedure test_turtle_syntax_bnode_01();
-    [TestCase] procedure test_turtle_syntax_bnode_02();
-    [TestCase] procedure test_turtle_syntax_bnode_03();
-    [TestCase] procedure test_turtle_syntax_bnode_04();
-    [TestCase] procedure test_turtle_syntax_bnode_05();
-    [TestCase] procedure test_turtle_syntax_bnode_06();
-    [TestCase] procedure test_turtle_syntax_bnode_07();
-    [TestCase] procedure test_turtle_syntax_bnode_08();
-    [TestCase] procedure test_turtle_syntax_bnode_09();
-    [TestCase] procedure test_turtle_syntax_bnode_10();
-    [TestCase] procedure test_turtle_syntax_datatypes_01();
-    [TestCase] procedure test_turtle_syntax_datatypes_02();
-    [TestCase] procedure test_turtle_syntax_file_01();
-    [TestCase] procedure test_turtle_syntax_file_02();
-    [TestCase] procedure test_turtle_syntax_file_03();
-    [TestCase] procedure test_turtle_syntax_kw_01();
-    [TestCase] procedure test_turtle_syntax_kw_02();
-    [TestCase] procedure test_turtle_syntax_kw_03();
-    [TestCase] procedure test_turtle_syntax_lists_01();
-    [TestCase] procedure test_turtle_syntax_lists_02();
-    [TestCase] procedure test_turtle_syntax_ln_dots();
-    [TestCase] procedure test_turtle_syntax_ns_dots();
-    [TestCase] procedure test_turtle_syntax_number_01();
-    [TestCase] procedure test_turtle_syntax_number_02();
-    [TestCase] procedure test_turtle_syntax_number_03();
-    [TestCase] procedure test_turtle_syntax_number_04();
-    [TestCase] procedure test_turtle_syntax_number_06();
-    [TestCase] procedure test_turtle_syntax_number_07();
-    [TestCase] procedure test_turtle_syntax_number_09();
-    [TestCase] procedure test_turtle_syntax_number_10();
-    [TestCase] procedure test_turtle_syntax_number_11();
-    [TestCase] procedure test_turtle_syntax_pname_esc_01();
-    [TestCase] procedure test_turtle_syntax_pname_esc_02();
-    [TestCase] procedure test_turtle_syntax_pname_esc_03();
-    [TestCase] procedure test_turtle_syntax_prefix_01();
-    [TestCase] procedure test_turtle_syntax_prefix_03();
-    [TestCase] procedure test_turtle_syntax_prefix_04();
-    [TestCase] procedure test_turtle_syntax_prefix_07();
-    [TestCase] procedure test_turtle_syntax_prefix_08();
-    [TestCase] procedure test_turtle_syntax_prefix_09();
-    [TestCase] procedure test_turtle_syntax_str_esc_01();
-    [TestCase] procedure test_turtle_syntax_str_esc_02();
-    [TestCase] procedure test_turtle_syntax_str_esc_03();
-    [TestCase] procedure test_turtle_syntax_string_01();
-    [TestCase] procedure test_turtle_syntax_string_02();
-    [TestCase] procedure test_turtle_syntax_string_03();
-    [TestCase] procedure test_turtle_syntax_string_04();
-    [TestCase] procedure test_turtle_syntax_string_05();
-    [TestCase] procedure test_turtle_syntax_string_06();
-    [TestCase] procedure test_turtle_syntax_string_07();
-    [TestCase] procedure test_turtle_syntax_string_08();
-    [TestCase] procedure test_turtle_syntax_string_09();
-    [TestCase] procedure test_turtle_syntax_string_10();
-    [TestCase] procedure test_turtle_syntax_string_11();
-    [TestCase] procedure test_turtle_syntax_struct_01();
-    [TestCase] procedure test_turtle_syntax_struct_02();
-    [TestCase] procedure test_turtle_syntax_struct_03();
-    [TestCase] procedure test_turtle_syntax_struct_04();
-    [TestCase] procedure test_turtle_syntax_struct_05();
-    [TestCase] procedure test_turtle_syntax_uri_01();
-    [TestCase] procedure test_turtle_syntax_uri_02();
-    [TestCase] procedure test_turtle_syntax_uri_03();
-    [TestCase] procedure test_turtle_syntax_uri_04();
-    [TestCase] procedure test_two_LITERAL_LONG2sNT();
-    [TestCase] procedure test_two_LITERAL_LONG2s();
-    [TestCase] procedure test_underscore_in_localNameNT();
-    [TestCase] procedure test_underscore_in_localName();
-    [TestCase] procedure test_anonymous_blank_node_object();
-    [TestCase] procedure test_anonymous_blank_node_subject();
-    [TestCase] procedure test_bareword_a_predicateNT();
-    [TestCase] procedure test_bareword_a_predicate();
-    [TestCase] procedure test_bareword_decimalNT();
-    [TestCase] procedure test_bareword_decimal();
-    [TestCase] procedure test_bareword_doubleNT();
-    [TestCase] procedure test_bareword_double();
-    [TestCase] procedure test_bareword_integer();
-    [TestCase] procedure test_blankNodePropertyList_as_objectNT();
-    [TestCase] procedure test_blankNodePropertyList_as_object();
-    [TestCase] procedure test_blankNodePropertyList_as_subjectNT();
-    [TestCase] procedure test_blankNodePropertyList_containing_collectionNT();
-    [TestCase] procedure test_blankNodePropertyList_containing_collection();
-    [TestCase] procedure test_blankNodePropertyList_with_multiple_triplesNT();
-    [TestCase] procedure test_blankNodePropertyList_with_multiple_triples();
-    [TestCase] procedure test_collection_objectNT();
-    [TestCase] procedure test_collection_object();
-    [TestCase] procedure test_collection_subjectNT();
-    [TestCase] procedure test_collection_subject();
-    [TestCase] procedure test_comment_following_localName();
-    [TestCase] procedure test_comment_following_PNAME_NSNT();
-    [TestCase] procedure test_comment_following_PNAME_NS();
-    [TestCase] procedure test__default_namespace_IRI();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_01NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_02NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_01NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_02NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_03NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_04NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_05NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_06NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_07NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_09NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_10NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_11NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_11();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_12NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_12();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_13NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_13();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_14NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_14();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_15NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_15();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_16NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_16();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_17NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_17();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_18NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_18();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_19NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_19();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_20NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_20();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_21NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_21();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_22NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_22();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_23NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_23();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_24NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_24();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_25NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_25();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_26NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_26();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_27NT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_27();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_lang_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_LITERAL2_with_langtag_and_datatype();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_dash_start();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_escape();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_escape_start();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_missing_ns_dot_end();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_missing_ns_dot_start();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_11();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_12();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_13();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ns_dot_end();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ns_dot_start();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_number_dot_in_anon();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_pname_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_pname_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_11();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_12();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_13();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_14();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_15();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_16();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_17();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_uri_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_uri_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_blank_label();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_datatypes_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_datatypes_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_lists_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_lists_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_ln_dots();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_ns_dots();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_11();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_06();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_07();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_08();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_09();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_10();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_11();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_05();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_01();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_02();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_03();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_04();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_two_LITERAL_LONG2sNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_two_LITERAL_LONG2s();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_underscore_in_localNameNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_underscore_in_localName();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_anonymous_blank_node_object();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_anonymous_blank_node_subject();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_a_predicateNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_a_predicate();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_decimalNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_decimal();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_doubleNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_double();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_integer();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_objectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_object();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_subjectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_containing_collectionNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_containing_collection();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_with_multiple_triplesNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_with_multiple_triples();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_objectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_object();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_subjectNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_subject();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_localName();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_PNAME_NSNT();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_PNAME_NS();
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test__default_namespace_IRI();
   End;
    (*
 Type
-  [TextFixture]
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TDigitalSignatureTests = Class (TObject)
   private
     procedure testFile(filename : String);
   Published
-    [TestCase] Procedure testFileRSA;
-    [TestCase] Procedure testFileDSA;
-    [TestCase] Procedure testFileJames;
-    [TestCase] Procedure testGenRSA_1;
-    [TestCase] Procedure testGenRSA_256;
-//    [TestCase] Procedure testGenDSA_1;
-//    [TestCase] Procedure testGenDSA_256;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileRSA;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileDSA;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileJames;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenRSA_1;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenRSA_256;
+//    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenDSA_1;
+//    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenDSA_256;
   End;
      *)
 
-  [TextFixture]
-  TLangParserTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TLangParserTests = Class (TFslTestCase)
   Published
-    [TestCase] Procedure testBase;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testBase;
   End;
 
 implementation
@@ -678,12 +746,17 @@ begin
   l := TFslList<TFslObject>.create;
   try
     l.Add(TFslObject.Create);
-    Assert.IsTrue(l.Count = 1);
+    assertTrue(l.Count = 1, 'Count should be 1');
   finally
     l.Free;
   end;
 end;
 {$HINTS ON}
+
+function TFslGenericsTests.doSort(sender : TObject; const left, right : TFslTestObject) : integer;
+begin
+  result := CompareStr(left.value, right.value);
+end;
 
 procedure TFslGenericsTests.testSort;
 var
@@ -692,33 +765,27 @@ begin
   list := TFslList<TFslTestObject>.Create;
   try
     list.Add(TFslTestObject.Create('a'));
-    list.Sort(function (const L, R: TFslTestObject): Integer begin
-        result := CompareStr(l.value, r.value);
-      end);
-    Assert.IsTrue(list.Count = 1);
-    Assert.IsTrue(list[0].value = 'a');
+    list.Sort(doSort);
+    assertTrue(list.Count = 1);
+    assertTrue(list[0].value = 'a');
     list.Insert(0, TFslTestObject.Create('b'));
-    Assert.IsTrue(list.Count = 2);
-    Assert.IsTrue(list[0].value = 'b');
-    Assert.IsTrue(list[1].value = 'a');
-    list.Sort(function (const l, r : TFslTestObject) : Integer begin
-        result := CompareStr(l.value, r.value);
-      end);
-    Assert.IsTrue(list.Count = 2);
-    Assert.IsTrue(list[0].value = 'a');
-    Assert.IsTrue(list[1].value = 'b');
+    assertTrue(list.Count = 2);
+    assertTrue(list[0].value = 'b');
+    assertTrue(list[1].value = 'a');
+    list.Sort(doSort);
+    assertTrue(list.Count = 2);
+    assertTrue(list[0].value = 'a');
+    assertTrue(list[1].value = 'b');
     list.Insert(1, TFslTestObject.Create('c'));
-    Assert.IsTrue(list.Count = 3);
-    Assert.IsTrue(list[0].value = 'a');
-    Assert.IsTrue(list[1].value = 'c');
-    Assert.IsTrue(list[2].value = 'b');
-    list.Sort(function (const l, r : TFslTestObject) : Integer begin
-        result := 0 - CompareStr(l.value, r.value);
-      end);
-    Assert.IsTrue(list.Count = 3);
-    Assert.IsTrue(list[0].value = 'c');
-    Assert.IsTrue(list[1].value = 'b');
-    Assert.IsTrue(list[2].value = 'a');
+    assertTrue(list.Count = 3);
+    assertTrue(list[0].value = 'a');
+    assertTrue(list[1].value = 'c');
+    assertTrue(list[2].value = 'b');
+    list.Sort(doSort);
+    assertTrue(list.Count = 3);
+    assertTrue(list[0].value = 'c');
+    assertTrue(list[1].value = 'b');
+    assertTrue(list[2].value = 'a');
   finally
     list.Free;
   end;
@@ -727,17 +794,17 @@ end;
 procedure TFslGenericsTests.testAddAll;
 var
   l : TFslList<TFslObject>;
-  l2 : TFslList<TFslString>;
-  o : TFslString;
+  l2 : TFslList<TFslTestString>;
+  o : TFslTestString;
 begin
   l := TFslList<TFslObject>.create;
-  l2 := TFslList<TFslString>.create;
+  l2 := TFslList<TFslTestString>.create;
   try
     l.Add(TFslObject.Create);
-    l2.Add(TFslString.create('test'));
+    l2.Add(TFslTestString.create('test'));
     for o in l2 do
       l.add(o.Link);
-    Assert.IsTrue(l.Count = 2);
+    assertTrue(l.Count = 2);
   finally
     l.Free;
     l2.Free;
@@ -751,11 +818,11 @@ begin
   l := TFslList<TFslObject>.create;
   try
     l.Add(TFslObject.Create);
-    Assert.IsTrue(l.Count = 1);
+    assertTrue(l.Count = 1);
     l.Delete(0);
-    Assert.IsTrue(l.Count = 0);
+    assertTrue(l.Count = 0);
     l.Add(TFslObject.Create);
-    Assert.IsTrue(l.Count = 1);
+    assertTrue(l.Count = 1);
   finally
     l.Free;
   end;
@@ -769,7 +836,7 @@ begin
   try
     l.Add(TFslObject.Create);
     l[0] := TFslObject.Create;
-    Assert.IsTrue(l.Count = 1);
+    assertTrue(l.Count = 1);
   finally
     l.Free;
   end;
@@ -792,7 +859,7 @@ begin
         inc(c);
     if c <> 3 then
       raise ETestCase.create('Wrong Count');
-    Assert.IsTrue(l.Count = 3);
+    assertTrue(l.Count = 3);
   finally
     l.Free;
   end;
@@ -800,38 +867,40 @@ end;
 
 procedure TFslGenericsTests.testMap;
 var
-  map : TFslMap<TFslString>;
+  map : TFslMap<TFslTestString>;
 begin
-  map := TFslMap<TFslString>.create('tests');
+  map := TFslMap<TFslTestString>.create('tests');
   try
-    map.Add('test1', TFslString.create('test1'));
-    map.Add('test2', TFslString.create('test2'));
-    map.AddOrSetValue('test2', TFslString.create('test3'));
+    map.Add('test1', TFslTestString.create('test1'));
+    map.Add('test2', TFslTestString.create('test2'));
+    map.AddOrSetValue('test2', TFslTestString.create('test3'));
     if map['test1'].FString <> 'test1' then
       raise ETestCase.create('Mismatch');
     if map['test2'].FString <> 'test3' then
       raise ETestCase.create('Mismatch');
     map.Remove('1est1');
-    Assert.IsTrue(map.Count = 2);
+    assertTrue(map.Count = 2);
   finally
     map.Free;
   end;
 end;
 
-{ TFslString }
+{ TFslTestString }
 
-constructor TFslString.create(value: String);
+constructor TFslTestString.create(value: String);
 begin
   inherited Create;
   FString := value;
 end;
 
-function TFslString.Link: TFslString;
+function TFslTestString.Link: TFslTestString;
 begin
- result := TFslString(inherited link);
+ result := TFslTestString(inherited link);
 end;
 
 { TXmlTests }
+
+{$IFNDEF FPC}
 
 { XmlPatchTestCaseAttribute }
 
@@ -864,11 +933,17 @@ begin
   end;
 end;
 
+{$ENDIF}
+
 { TXmlPatchTests }
+
+procedure TXmlPatchTests.doExecute();
+begin
+  engine.execute(tests, target, patch);
+end;
 
 procedure TXmlPatchTests.PatchTest(Name: String);
 var
-  test, target, patch, error, patched : TMXmlElement;
   s : String;
   ok : boolean;
 begin
@@ -883,17 +958,21 @@ begin
       patched := test.element('patched');
 
       if (error <> nil) then
+        {$IFDEF FPC}
+        assertWillRaise(doExecute, EXmlException, error.text)
+        {$ELSE}
         Assert.WillRaiseWithMessage(
           procedure begin
             engine.execute(tests, target, patch);
           end, EXmlException, error.text)
+        {$ENDIF}
       else
       begin
         engine.execute(tests, target, patch);
         StringToFile(target.first.ToXml(true), 'c:\temp\outcome.xml', TEncoding.UTF8);
         StringToFile(patched.first.ToXml(true), 'c:\temp\patched.xml', TEncoding.UTF8);
         ok := CheckXMLIsSame('c:\temp\patched.xml', 'c:\temp\outcome.xml', s);
-        Assert.IsTrue(ok, s);
+        assertTrue(ok, s);
       end;
     end;
     test := test.Next;
@@ -920,11 +999,13 @@ var
 begin
   xml := TMXmlParser.parseFile(name, []);
   try
-    Assert.Pass();
+    assertPass();
   finally
     xml.Free;
   end;
 end;
+
+{$IFNDEF FPC}
 
 { XmlParserTestCaseAttribute }
 
@@ -979,6 +1060,8 @@ begin
     tests.Free;
   end;
 end;
+
+{$ENDIF}
 
 { TXPathTests }
 
@@ -1054,7 +1137,7 @@ begin
   xp := TMXmlParser.parseXPath(test.attribute['value']);
   try
     collectFunctionNames(xp);
-    Assert.Pass();
+    assertPass();
   finally
     xp.Free
   end;
@@ -1071,6 +1154,8 @@ begin
   functionNames.Free;
   tests.Free;
 end;
+
+{$IFNDEF FPC}
 
 { XPathEngineTestCaseAttribute }
 
@@ -1100,6 +1185,8 @@ begin
     tests.Free;
   end;
 end;
+
+{$ENDIF}
 
 { TXPathEngineTests }
 
@@ -1168,49 +1255,49 @@ begin
   nodes := tests.select(test.element('xpath').attribute['value'], focus);
   try
   if test.element('outcomes').hasAttribute['count'] then
-    Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
+    assertTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
   else
   begin
-    Assert.IsTrue(outcomes.Count = nodes.Count, 'Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.Count));
+    assertTrue(outcomes.Count = nodes.Count, 'Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.Count));
     for i := 0 to outcomes.Count - 1 do
     begin
       node := nodes[i];
       outcome := outcomes[i];
       if outcome.attribute['type'] = 'string' then
       begin
-        Assert.IsTrue(node is TMXmlString, 'Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
-        Assert.IsTrue(TMXmlString(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
+        assertTrue(node is TMXmlString, 'Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlString(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
       end
       else if outcome.attribute['type'] = 'number' then
       begin
-        Assert.IsTrue(node is TMXmlNumber, 'Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
-        Assert.IsTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
+        assertTrue(node is TMXmlNumber, 'Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
       end
       else if outcome.attribute['type'] = 'boolean' then
       begin
-        Assert.IsTrue(node is TMXmlBoolean, 'Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
-        Assert.IsTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
+        assertTrue(node is TMXmlBoolean, 'Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
       end
       else if outcome.attribute['type'] = 'attribute' then
       begin
-        Assert.IsTrue(node is TMXmlAttribute, 'Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+node.ClassName.substring(5));
-        Assert.IsTrue(TMXmlAttribute(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlAttribute(node).LocalName);
-        Assert.IsTrue(TMXmlAttribute(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlAttribute(node).value);
+        assertTrue(node is TMXmlAttribute, 'Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlAttribute(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlAttribute(node).LocalName);
+        assertTrue(TMXmlAttribute(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlAttribute(node).value);
       end
       else if outcome.attribute['type'] = 'element' then
       begin
-        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntElement), 'Node '+inttostr(i)+' has the wrong type (expected element, found '+node.ClassName.substring(5));
-        Assert.IsTrue(TMXmlElement(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlElement(node).LocalName);
-        Assert.IsTrue(TMXmlElement(node).NamespaceURI = outcome.attribute['namespace'], 'Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+TMXmlElement(node).NamespaceURI);
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntElement), 'Node '+inttostr(i)+' has the wrong type (expected element, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlElement(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlElement(node).LocalName);
+        assertTrue(TMXmlElement(node).NamespaceURI = outcome.attribute['namespace'], 'Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+TMXmlElement(node).NamespaceURI);
       end
       else if outcome.attribute['type'] = 'text' then
       begin
-        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntText), 'Node '+inttostr(i)+' has the wrong type (expected text, found '+node.ClassName.substring(5));
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntText), 'Node '+inttostr(i)+' has the wrong type (expected text, found '+node.ClassName.substring(5));
 
       end
       else if outcome.attribute['type'] = 'comment' then
       begin
-        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
 
       end
       else
@@ -1239,10 +1326,10 @@ begin
   focus := TMsXmlParser.FirstChild(findSampleMs(test.attribute['id']));
   nodes := focus.selectNodes(test.element('xpath').attribute['value']);
   if test.element('outcomes').HasAttribute['count'] then
-    Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.length, 'MS: Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.length))
+    assertTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.length, 'MS: Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.length))
   else
   begin
-    Assert.IsTrue(outcomes.Count = nodes.length, 'MS: Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.length));
+    assertTrue(outcomes.Count = nodes.length, 'MS: Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.length));
     for i := 0 to outcomes.Count - 1 do
     begin
       node := nodes.item[i];
@@ -1250,42 +1337,42 @@ begin
       if outcome.attribute['type'] = 'string' then
       begin
         raise ETestCase.create('not done yet');
-  //      Assert.IsTrue(node is TMXmlString, 'MS: Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
-  //      Assert.IsTrue(TMXmlString(node).value = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
+  //      assertTrue(node is TMXmlString, 'MS: Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
+  //      assertTrue(TMXmlString(node).value = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
       end
       else if outcome.attribute['type'] = 'number' then
       begin
         raise ETestCase.create('not done yet');
-  //      Assert.IsTrue(node is TMXmlNumber, 'MS: Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
-  //      Assert.IsTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
+  //      assertTrue(node is TMXmlNumber, 'MS: Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
+  //      assertTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
       end
       else if outcome.attribute['type'] = 'boolean' then
       begin
         raise ETestCase.create('not done yet');
-  //      Assert.IsTrue(node is TMXmlBoolean, 'MS: Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
-  //      Assert.IsTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
+  //      assertTrue(node is TMXmlBoolean, 'MS: Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
+  //      assertTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
       end
       else if outcome.attribute['type'] = 'attribute' then
       begin
-        Assert.IsTrue(node.nodeType = NODE_ATTRIBUTE, 'MS: Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+inttostr(node.nodeType));
-        Assert.IsTrue(node.text = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+node.text);
+        assertTrue(node.nodeType = NODE_ATTRIBUTE, 'MS: Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+inttostr(node.nodeType));
+        assertTrue(node.text = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+node.text);
       end
       else if outcome.attribute['type'] = 'element' then
       begin
-        Assert.IsTrue(node.nodeType = NODE_ELEMENT, 'MS: Node '+inttostr(i)+' has the wrong type (expected element, found '+inttostr(node.nodeType));
-        Assert.IsTrue(node.baseName = outcome.attribute['name'], 'MS: Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+node.baseName);
-        Assert.IsTrue(node.namespaceURI = outcome.attribute['namespace'], 'MS: Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+node.NamespaceURI);
+        assertTrue(node.nodeType = NODE_ELEMENT, 'MS: Node '+inttostr(i)+' has the wrong type (expected element, found '+inttostr(node.nodeType));
+        assertTrue(node.baseName = outcome.attribute['name'], 'MS: Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+node.baseName);
+        assertTrue(node.namespaceURI = outcome.attribute['namespace'], 'MS: Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+node.NamespaceURI);
       end
       else if outcome.attribute['type'] = 'text' then
       begin
-        Assert.IsTrue(node.nodeType = NODE_TEXT, 'MS: Node '+inttostr(i)+' has the wrong type (expected text, found '+inttostr(node.nodeType));
+        assertTrue(node.nodeType = NODE_TEXT, 'MS: Node '+inttostr(i)+' has the wrong type (expected text, found '+inttostr(node.nodeType));
         if outcome.HasAttribute['value'] then
-          Assert.IsTrue(node.text = outcome.Attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong type (expected text "'+outcome.Attribute['value']+'", found '+node.text);
+          assertTrue(node.text = outcome.Attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong type (expected text "'+outcome.Attribute['value']+'", found '+node.text);
       end
       else if outcome.attribute['type'] = 'comment' then
       begin
         raise ETestCase.create('not done yet');
-  //      Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
+  //      assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
   //
       end
       else
@@ -1333,11 +1420,11 @@ begin
   dec := TFslDecimal.valueOf(s);
   s1 := dec.AsString;
   s2 := dec.AsScientific;
-  Assert.IsTrue(s1 = st);
-  Assert.IsTrue(s2 = std);
+  assertTrue(s1 = st);
+  assertTrue(s2 = std);
   dec := TFslDecimal.valueOf(std);
   s1 := dec.AsDecimal;
-  Assert.IsTrue(s1 = st);
+  assertTrue(s1 = st);
 end;
 
 procedure TDecimalTests.TestStringSupport;
@@ -1469,7 +1556,7 @@ begin
     o1 := TFslDecimal.valueOf(s1);
     o2 := TFslDecimal.valueOf(s2);
     o3 := o1.add(o2);
-    Assert.IsTrue(o3.AsDecimal = s3);
+    assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestSubtract(s1, s2, s3: String);
@@ -1479,7 +1566,7 @@ begin
   o1 := TFslDecimal.valueOf(s1);
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Subtract(o2);
-  Assert.IsTrue(o3.AsDecimal = s3);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.testTrunc;
@@ -1513,7 +1600,7 @@ var
 begin
   o1 := TFslDecimal.valueOf(value);
   o2 := o1.Trunc(digits);
-  Assert.IsTrue(o2.AsDecimal = outcome);
+  assertTrue(o2.AsDecimal = outcome);
 end;
 
 procedure TDecimalTests.TestMultiplication;
@@ -1624,7 +1711,7 @@ begin
   o1 := TFslDecimal.valueOf(s1);
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Multiply(o2);
-  Assert.IsTrue(o3.AsDecimal = s3);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestRoundTrip(n1, n2, n3, t: String);
@@ -1635,7 +1722,7 @@ begin
   o2 := TFslDecimal.valueOf(n2);
   o3 := o1.Divide(o2);
   o4 := o3.Multiply(TFslDecimal.valueOf(n3));
-  Assert.IsTrue(o4.AsDecimal = t);
+  assertTrue(o4.AsDecimal = t);
 end;
 
 procedure TDecimalTests.TestDivide(s1, s2, s3: String);
@@ -1645,7 +1732,7 @@ begin
   o1 := TFslDecimal.valueOf(s1);
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Divide(o2);
-  Assert.IsTrue(o3.AsDecimal = s3);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestDivInt(s1, s2, s3: String);
@@ -1655,7 +1742,7 @@ begin
   o1 := TFslDecimal.valueOf(s1);
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.DivInt(o2);
-  Assert.IsTrue(o3.AsDecimal = s3);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestModulo(s1, s2, s3: String);
@@ -1665,7 +1752,7 @@ begin
   o1 := TFslDecimal.valueOf(s1);
   o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Modulo(o2);
-  Assert.IsTrue(o3.AsDecimal = s3);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestAsInteger;
@@ -1709,8 +1796,8 @@ var
   o1: TFslDecimal;
 begin
   o1 := TFslDecimal.valueOf(v);
-  Assert.IsTrue(o1.upperBound.AsDecimal = high);
-  Assert.IsTrue(o1.lowerBound.AsDecimal = low);
+  assertTrue(o1.upperBound.AsDecimal = high);
+  assertTrue(o1.lowerBound.AsDecimal = low);
 //    check(o1.immediateUpperBound.AsDecimal = ihigh);
 //    check(o1.immediateLowerBound.AsDecimal = ilow);
 end;
@@ -1724,57 +1811,57 @@ const up = true; dn = false;
 procedure TDecimalTests.TestNormalisedDecimal;
 begin
   // simple numbers
-  assert.isTrue(n('0',         up) = '000000.00000');
-  assert.isTrue(n('0',         dn) = '000000.00000');
-  assert.isTrue(n('-0',        up) = '000000.00000');
-  assert.isTrue(n('-0',        dn) = '000000.00000');
-  assert.isTrue(n('1',         up) = '000001.00000');
-  assert.isTrue(n('1',         dn) = '000001.00000');
-  assert.isTrue(n('0.1',       up) = '000000.10000');
-  assert.isTrue(n('0.1',       dn) = '000000.10000');
-  assert.isTrue(n('-1',        up) = '!99999.00000');
-  assert.isTrue(n('-1',        dn) = '!99999.00000');
-  assert.isTrue(n('-0.1',      up) = '!99999.90000');
-  assert.isTrue(n('-0.1',      dn) = '!99999.90000');
+  assertTrue(n('0',         up) = '000000.00000');
+  assertTrue(n('0',         dn) = '000000.00000');
+  assertTrue(n('-0',        up) = '000000.00000');
+  assertTrue(n('-0',        dn) = '000000.00000');
+  assertTrue(n('1',         up) = '000001.00000');
+  assertTrue(n('1',         dn) = '000001.00000');
+  assertTrue(n('0.1',       up) = '000000.10000');
+  assertTrue(n('0.1',       dn) = '000000.10000');
+  assertTrue(n('-1',        up) = '!99999.00000');
+  assertTrue(n('-1',        dn) = '!99999.00000');
+  assertTrue(n('-0.1',      up) = '!99999.90000');
+  assertTrue(n('-0.1',      dn) = '!99999.90000');
 
   // limits
-  assert.isTrue(n('99999',     up) = '099999.00000');
-  assert.isTrue(n('99999',     dn) = '099999.00000');
-  assert.isTrue(n('-99999',    up) = '!00001.00000');
-  assert.isTrue(n('-99999',    dn) = '!00001.00000');
-  assert.isTrue(n('0.00001',   up) = '000000.00001');
-  assert.isTrue(n('0.00001',   dn) = '000000.00001');
-  assert.isTrue(n('-0.00001',  up) = '!99999.99999');
-  assert.isTrue(n('-0.00001',  dn) = '!99999.99999');
+  assertTrue(n('99999',     up) = '099999.00000');
+  assertTrue(n('99999',     dn) = '099999.00000');
+  assertTrue(n('-99999',    up) = '!00001.00000');
+  assertTrue(n('-99999',    dn) = '!00001.00000');
+  assertTrue(n('0.00001',   up) = '000000.00001');
+  assertTrue(n('0.00001',   dn) = '000000.00001');
+  assertTrue(n('-0.00001',  up) = '!99999.99999');
+  assertTrue(n('-0.00001',  dn) = '!99999.99999');
 
   // past the limit +large
-  assert.isTrue(n('100000',    up) = '0XXXXX.XXXXX');
-  assert.isTrue(n('100000',    dn) = '099999.99999');
+  assertTrue(n('100000',    up) = '0XXXXX.XXXXX');
+  assertTrue(n('100000',    dn) = '099999.99999');
 
   // past the limit -large
-  assert.isTrue(n('-100001',   up) = '!00000.00000');
-  assert.isTrue(n('-100001',   dn) = '!#####.#####');
+  assertTrue(n('-100001',   up) = '!00000.00000');
+  assertTrue(n('-100001',   dn) = '!#####.#####');
 
   // past the limit +small
-  assert.isTrue(n('0.000001',  up) = '000000.00001');
-  assert.isTrue(n('0.000001',  dn) = '000000.00000');
+  assertTrue(n('0.000001',  up) = '000000.00001');
+  assertTrue(n('0.000001',  dn) = '000000.00000');
 
   // past the limit -small
-  assert.isTrue(n('-0.000001', up) = '000000.00000');
-  assert.isTrue(n('-0.000001', dn) = '!99999.99999');
+  assertTrue(n('-0.000001', up) = '000000.00000');
+  assertTrue(n('-0.000001', dn) = '!99999.99999');
 
   // now, check order:
-  assert.isTrue(n('1000000', true) > n('1000', true));
-  assert.isTrue(n('10000', true) > n('1', true));
-  assert.isTrue(n('1', true) > n('0.1', true));
-  assert.isTrue(n('1', true) > n('-1', true));
-  assert.isTrue(n('-1', true) > n('-10000', true));
-  assert.isTrue(n('-10000', true) > n('-1000000', true));
+  assertTrue(n('1000000', true) > n('1000', true));
+  assertTrue(n('10000', true) > n('1', true));
+  assertTrue(n('1', true) > n('0.1', true));
+  assertTrue(n('1', true) > n('-1', true));
+  assertTrue(n('-1', true) > n('-10000', true));
+  assertTrue(n('-10000', true) > n('-1000000', true));
 end;
 
 procedure TDecimalTests.TestOverloading;
 begin
-  Assert.IsTrue(TFslDecimal('1') + TFslDecimal(2) = TFslDecimal('3'));
+  assertTrue(TFslDecimal('1') + TFslDecimal(2) = TFslDecimal('3'));
 end;
 
 procedure TDecimalTests.TestInteger(i: integer);
@@ -1782,34 +1869,34 @@ var
   d : TFslDecimal;
 begin
   d := TFslDecimal.valueOf(i);
-  Assert.IsTrue(d.AsInteger = i);
+  assertTrue(d.AsInteger = i);
 end;
 
 procedure TDecimalTests.TestIsDecimal;
 begin
-  Assert.IsTrue(StringIsDecimal('0'), '"0" is a decimal');
-  Assert.IsTrue(StringIsDecimal('+0'), '"+0" is a decimal');
-  Assert.IsFalse(StringIsDecimal('0+'), '"0+" is not a decimal');
-  Assert.IsFalse(StringIsDecimal('+'), '"+" is not a decimal');
-  Assert.IsTrue(StringIsDecimal('-0'), '"-0" is a decimal');
-  Assert.IsFalse(StringIsDecimal('0-'), '"0-" is not a decimal');
-  Assert.IsFalse(StringIsDecimal('-'), '"-" is not a decimal');
-  Assert.IsTrue(StringIsDecimal('0e0'), '"0e0" is a decimal');
-  Assert.IsTrue(StringIsDecimal('+0e+0'), '"+0e+0" is a decimal');
-  Assert.IsTrue(StringIsDecimal('-0e-0'), '"-0e-0" is a decimal');
-  Assert.IsFalse(StringIsDecimal('0e'), '"0e" is not a decimal');
-  Assert.IsFalse(StringIsDecimal('e0'), '"e0" is not a decimal');
-  Assert.IsTrue(StringIsDecimal('1.2'), '"1.2" is a decimal');
-  Assert.IsTrue(StringIsDecimal('-1.2'), '"-1.2" is a decimal');
-  Assert.IsTrue(StringIsDecimal('+1.2'), '"+1.2" is a decimal');
-  Assert.IsFalse(StringIsDecimal('1. 2'), '"1. 2" is not a decimal');
-  Assert.IsFalse(StringIsDecimal('1 .2'), '"1 .2" is not a decimal');
-  Assert.IsFalse(StringIsDecimal(' 1.2'), '" 1.2" is not a decimal');
-  Assert.IsFalse(StringIsDecimal('1.2 '), '"1.2 " is not a decimal');
-  Assert.IsTrue(StringIsDecimal('1.2e2'), '"1.2e2" is a decimal');
-  Assert.IsTrue(StringIsDecimal('1.2e-2'), '"1.2e2" is a decimal');
-  Assert.IsTrue(StringIsDecimal('1.2e+2'), '"1.2e2" is a decimal');
-  Assert.IsFalse(StringIsDecimal('1.2e2e3'), '"1.2e2e3" is not a decimal');
+  assertTrue(StringIsDecimal('0'), '"0" is a decimal');
+  assertTrue(StringIsDecimal('+0'), '"+0" is a decimal');
+  assertFalse(StringIsDecimal('0+'), '"0+" is not a decimal');
+  assertFalse(StringIsDecimal('+'), '"+" is not a decimal');
+  assertTrue(StringIsDecimal('-0'), '"-0" is a decimal');
+  assertFalse(StringIsDecimal('0-'), '"0-" is not a decimal');
+  assertFalse(StringIsDecimal('-'), '"-" is not a decimal');
+  assertTrue(StringIsDecimal('0e0'), '"0e0" is a decimal');
+  assertTrue(StringIsDecimal('+0e+0'), '"+0e+0" is a decimal');
+  assertTrue(StringIsDecimal('-0e-0'), '"-0e-0" is a decimal');
+  assertFalse(StringIsDecimal('0e'), '"0e" is not a decimal');
+  assertFalse(StringIsDecimal('e0'), '"e0" is not a decimal');
+  assertTrue(StringIsDecimal('1.2'), '"1.2" is a decimal');
+  assertTrue(StringIsDecimal('-1.2'), '"-1.2" is a decimal');
+  assertTrue(StringIsDecimal('+1.2'), '"+1.2" is a decimal');
+  assertFalse(StringIsDecimal('1. 2'), '"1. 2" is not a decimal');
+  assertFalse(StringIsDecimal('1 .2'), '"1 .2" is not a decimal');
+  assertFalse(StringIsDecimal(' 1.2'), '" 1.2" is not a decimal');
+  assertFalse(StringIsDecimal('1.2 '), '"1.2 " is not a decimal');
+  assertTrue(StringIsDecimal('1.2e2'), '"1.2e2" is a decimal');
+  assertTrue(StringIsDecimal('1.2e-2'), '"1.2e2" is a decimal');
+  assertTrue(StringIsDecimal('1.2e+2'), '"1.2e2" is a decimal');
+  assertFalse(StringIsDecimal('1.2e2e3'), '"1.2e2e3" is not a decimal');
 end;
 
 procedure TDecimalTests.TestCardinal(i: cardinal);
@@ -1819,32 +1906,32 @@ var
 begin
   i64 := i;
   d := TFslDecimal.valueOf(i64);
-  Assert.IsTrue(d.AsCardinal = i);
+  assertTrue(d.AsCardinal = i);
   //check(d.AsInteger = i);
 end;
 
 procedure TDecimalTests.TestInfinity;
 begin
-  assert.isTrue(TFslDecimal.makeInfinity.IsInfinite);
-  assert.isTrue(TFslDecimal.makeInfinity.Negated.IsNegative);
-  assert.isFalse(TFslDecimal.makeUndefined.IsInfinite);
-  assert.isFalse(TFslDecimal.makeInfinity.IsUndefined);
-  assert.isFalse(TFslDecimal.makeNull.IsUndefined);
-  assert.isFalse(TFslDecimal.makeNull.IsInfinite);
-  assert.isFalse(TFslDecimal.makeNull.isANumber);
-  assert.isTrue(TFslDecimal.makeInfinity.Equals(TFslDecimal.makeInfinity));
+  assertTrue(TFslDecimal.makeInfinity.IsInfinite);
+  assertTrue(TFslDecimal.makeInfinity.Negated.IsNegative);
+  assertFalse(TFslDecimal.makeUndefined.IsInfinite);
+  assertFalse(TFslDecimal.makeInfinity.IsUndefined);
+  assertFalse(TFslDecimal.makeNull.IsUndefined);
+  assertFalse(TFslDecimal.makeNull.IsInfinite);
+  assertFalse(TFslDecimal.makeNull.isANumber);
+  assertTrue(TFslDecimal.makeInfinity.Equals(TFslDecimal.makeInfinity));
 
-  assert.isTrue(TFslDecimal.ValueOf('Inf').IsInfinite);
-  assert.isTrue(TFslDecimal.ValueOf('-Inf').IsInfinite);
-  assert.isTrue(not TFslDecimal.ValueOf('Inf').IsNegative);
-  assert.isTrue(TFslDecimal.ValueOf('-Inf').IsNegative);
+  assertTrue(TFslDecimal.ValueOf('Inf').IsInfinite);
+  assertTrue(TFslDecimal.ValueOf('-Inf').IsInfinite);
+  assertTrue(not TFslDecimal.ValueOf('Inf').IsNegative);
+  assertTrue(TFslDecimal.ValueOf('-Inf').IsNegative);
 
-  assert.isTrue(n('Inf',    up) = '0XXXXX.XXXXX');
-  assert.isTrue(n('Inf',    dn) = '099999.99999');
-  assert.isTrue(n('+Inf',    up) = '0XXXXX.XXXXX');
+  assertTrue(n('Inf',    up) = '0XXXXX.XXXXX');
+  assertTrue(n('Inf',    dn) = '099999.99999');
+  assertTrue(n('+Inf',    up) = '0XXXXX.XXXXX');
 
-  assert.isTrue(n('-Inf',   up) = '!00000.00000');
-  assert.isTrue(n('-Inf',   dn) = '!#####.#####');
+  assertTrue(n('-Inf',   up) = '!00000.00000');
+  assertTrue(n('-Inf',   dn) = '!#####.#####');
 
 end;
 
@@ -1853,7 +1940,7 @@ var
   d : TFslDecimal;
 begin
   d := TFslDecimal.valueOf(i);
-  Assert.IsTrue(d.AsInt64 = i);
+  assertTrue(d.AsInt64 = i);
 end;
 
 { TTurtleTests }
@@ -1867,13 +1954,13 @@ begin
   try
     ttl := TTurtleParser.parse(s);
     try
-      Assert.IsNotNull(ttl);
-      Assert.IsTrue(ok);
+      assertTrue(ttl <> nil);
+      assertTrue(ok);
     finally
       ttl.Free;
     end;
   except
-    Assert.IsTrue(not ok);
+    assertTrue(not ok);
   end;
 end;
 
@@ -3760,29 +3847,29 @@ begin
     FileSetReadOnly(filename, false);
     FileDelete(filename);
   end;
-  Assert.IsFalse(FileExists(filename));
+  assertFalse(FileExists(filename));
   f := TFslFile.Create(filename, fmCreate);
   try
     f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
   finally
     f.Free;
   end;
-  Assert.IsTrue(FileExists(filename));
-  Assert.IsTrue(FileSize(filename) = 27);
+  assertTrue(FileExists(filename));
+  assertTrue(FileSize(filename) = 27);
   f := TFslFile.Create(filename, fmOpenRead);
   try
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
-    Assert.IsTrue(s = TEST_FILE_CONTENT);
+    assertTrue(s = TEST_FILE_CONTENT);
   finally
     f.Free;
   end;
   FileSetReadOnly(filename, true);
   FileDelete(filename);
-  Assert.IsTrue(FileExists(filename));
+  assertTrue(FileExists(filename));
   FileSetReadOnly(filename, false);
   FileDelete(filename);
-  Assert.IsFalse(FileExists(filename));
+  assertFalse(FileExists(filename));
 end;
 
 procedure TOSXTests.TestAdvObject;
@@ -3791,11 +3878,11 @@ var
 begin
   obj := TFslObject.Create;
   try
-    Assert.IsTrue(obj.FslObjectReferenceCount = 0);
+    assertTrue(obj.FslObjectReferenceCount = 0);
     obj.Link;
-    Assert.IsTrue(obj.FslObjectReferenceCount = 1);
+    assertTrue(obj.FslObjectReferenceCount = 1);
     obj.Free;
-    Assert.IsTrue(obj.FslObjectReferenceCount = 0);
+    assertTrue(obj.FslObjectReferenceCount = 0);
   finally
     obj.Free;
   end;
@@ -3807,7 +3894,7 @@ begin
   try
     EnterCriticalSection(cs);
     try
-      Assert.IsTrue(true);
+      assertTrue(true);
     finally
       LeaveCriticalSection(cs);
     end;
@@ -3822,7 +3909,7 @@ begin
   try
     kcs.Enter;
     try
-      Assert.IsTrue(true);
+      assertTrue(true);
     finally
       kcs.Leave;
     end;
@@ -3854,16 +3941,16 @@ begin
   try
     EnterCriticalSection(cs);
     try
-      TTestCriticalSectionThread.create();
+      TTestCriticalSectionThread.create(false);
       Sleep(10);
-      Assert.IsTrue(globalInt = GetCurrentThreadId);
+      assertTrue(globalInt = GetCurrentThreadId);
     finally
       LeaveCriticalSection(cs);
     end;
     sleep(10);
     EnterCriticalSection(cs);
     try
-      Assert.IsTrue(globalInt <> GetCurrentThreadId);
+      assertTrue(globalInt <> GetCurrentThreadId);
     finally
       LeaveCriticalSection(cs);
     end;
@@ -3879,16 +3966,16 @@ begin
   try
     kcs.Enter;
     try
-      TTestKCriticalSectionThread.create();
+      TTestKCriticalSectionThread.create(false);
       Sleep(10);
-      Assert.IsTrue(globalInt = GetCurrentThreadId);
+      assertTrue(globalInt = GetCurrentThreadId);
     finally
       kcs.Leave;
     end;
     sleep(10);
     kcs.Enter;
     try
-      Assert.IsTrue(globalInt <> GetCurrentThreadId);
+      assertTrue(globalInt <> GetCurrentThreadId);
     finally
       kcs.Leave;
     end;
@@ -3899,14 +3986,14 @@ end;
 
 procedure TOSXTests.TestRemoveAccents;
 begin
-  Assert.AreEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
-  Assert.AreEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
-  Assert.AreEqual('Валерии Николаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
+  assertEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
+  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
+  assertEqual('Валерии Николаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
 end;
 
 procedure TOSXTests.TestTemp;
 begin
-  Assert.IsNotEmpty(SystemTemp);
+  assertTrue(SystemTemp <> '');
 end;
 
 procedure TOSXTests.TesTFslDateTime;
@@ -3915,82 +4002,82 @@ var
   dt1, dt2 : Double;
 begin
   // null
-  Assert.IsTrue(d1.null);
-  Assert.IsFalse(d1.notNull);
+  assertTrue(d1.null);
+  assertFalse(d1.notNull);
   d1 := TFslDateTime.makeToday;
-  Assert.IsTrue(d1.notNull);
-  Assert.IsFalse(d1.null);
+  assertTrue(d1.notNull);
+  assertFalse(d1.null);
   d1 := TFslDateTime.makeNull;
-  Assert.IsTrue(d1.null);
-  Assert.IsFalse(d1.notNull);
+  assertTrue(d1.null);
+  assertFalse(d1.notNull);
 
   // format support
-  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456');
-  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z');
-  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000');
-  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000');
-  Assert.IsTrue(TFslDateTime.fromXML('2013-04-05').toHL7 = '20130405');
-  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56').toHL7 = '20130405123456');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56Z').toHL7 = '20130405123456Z');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56+10:00').toHL7 = '20130405123456+1000');
+  assertTrue(TFslDateTime.fromXML('2013-04-05T12:34:56-10:00').toHL7 = '20130405123456-1000');
+  assertTrue(TFslDateTime.fromXML('2013-04-05').toHL7 = '20130405');
+  assertTrue(TFslDateTime.fromHL7('20130405123456-1000').toXML = '2013-04-05T12:34:56-10:00');
 
   // Date Time conversion
-  Assert.IsTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
-  Assert.WillRaise(test60Sec);
+  assertTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
+  assertWillRaise(test60Sec, Exception, '');
   dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
   dt2 := TFslDateTime.fromHL7('20130405123456').DateTime;
-  Assert.IsTrue(dt1 = dt2);
+  assertTrue(dt1 = dt2);
 
   // comparison
   d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal);
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(15, 0, 0, 0), dttzLocal);
-  Assert.IsTrue(d2.after(d1, false));
-  Assert.IsFalse(d1.after(d1, false));
-  Assert.IsTrue(d1.after(d1, true));
-  Assert.IsFalse(d2.before(d1, false));
-  Assert.IsFalse(d1.before(d1, false));
-  Assert.IsTrue(d1.before(d1, true));
-  Assert.IsFalse(d1.after(d2, false));
-  Assert.IsTrue(d1.before(d2, false));
-  Assert.IsTrue(d1.compare(d2) = -1);
-  Assert.IsTrue(d2.compare(d1) = 1);
-  Assert.IsTrue(d1.compare(d1) = 0);
+  assertTrue(d2.after(d1, false));
+  assertFalse(d1.after(d1, false));
+  assertTrue(d1.after(d1, true));
+  assertFalse(d2.before(d1, false));
+  assertFalse(d1.before(d1, false));
+  assertTrue(d1.before(d1, true));
+  assertFalse(d1.after(d2, false));
+  assertTrue(d1.before(d2, false));
+  assertTrue(d1.compare(d2) = -1);
+  assertTrue(d2.compare(d1) = 1);
+  assertTrue(d1.compare(d1) = 0);
 
   // Timezone Wrangling
   d1 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TFslDateTime.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
-  Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime));
-  Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
-  Assert.IsTrue(not d1.equal(d2));
-  Assert.IsTrue(d1.sameTime(d2));
+  assertTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime));
+  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
+  assertTrue(not d1.equal(d2));
+  assertTrue(d1.sameTime(d2));
   d1 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
   d2 := TFslDateTime.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
   dt1 := d1.DateTime - TimezoneBias(EncodeDate(2011, 7, 2));
   dt2 := d2.DateTime;
-  Assert.IsTrue(sameInstant(dt1, dt2));
-  Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
-  Assert.IsTrue(not d1.equal(d2));
-  Assert.IsTrue(d1.sameTime(d2));
-  Assert.IsTrue(TFslDateTime.fromHL7('20130405120000+1000').sameTime(TFslDateTime.fromHL7('20130405100000+0800')));
-  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
-  Assert.IsTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')));
+  assertTrue(sameInstant(dt1, dt2));
+  assertTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
+  assertTrue(not d1.equal(d2));
+  assertTrue(d1.sameTime(d2));
+  assertTrue(TFslDateTime.fromHL7('20130405120000+1000').sameTime(TFslDateTime.fromHL7('20130405100000+0800')));
+  assertTrue(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  assertTrue(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00').sameTime(TFslDateTime.fromXML('2017-11-05T05:30:00.0Z')));
+  assertTrue(TFslDateTime.fromXML('2017-11-05T09:30:00.0+04:00').sameTime(TFslDateTime.fromXML('2017-11-05T01:30:00.0-04:00')));
 
   // Min/Max
-  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
-  Assert.IsTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
-  Assert.IsTrue(TFslDateTime.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
-  Assert.IsTrue(TFslDateTime.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
+  assertTrue(TFslDateTime.fromHL7('20130405123456').Min.toHL7 = '20130405123456.000');
+  assertTrue(TFslDateTime.fromHL7('20130405123456').Max.toHL7 = '20130405123457.000');
+  assertTrue(TFslDateTime.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
+  assertTrue(TFslDateTime.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
 
-  Assert.IsTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), true));
-  Assert.IsTrue(not TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), false));
-  Assert.IsTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010001'), true));
-  Assert.IsTrue(not TFslDateTime.fromHL7('201301010001').before(TFslDateTime.fromHL7('201301010000'), true));
+  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), true));
+  assertTrue(not TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010000'), false));
+  assertTrue(TFslDateTime.fromHL7('201301010000').before(TFslDateTime.fromHL7('201301010001'), true));
+  assertTrue(not TFslDateTime.fromHL7('201301010001').before(TFslDateTime.fromHL7('201301010000'), true));
   //
 //  d1 := UniversalDateTime;
 //  d2 := LocalDateTime;
 //  d3 := TimeZoneBias;
-//  Assert.IsTrue(d1 <> d2);
-//  Assert.IsTrue(d1 = d2 - d3);
+//  assertTrue(d1 <> d2);
+//  assertTrue(d1 = d2 - d3);
 end;
 
 { TTestCriticalSectionThread }
@@ -4012,25 +4099,25 @@ begin
   globalInt := 0;
   sem := TSemaphore.Create(nil, 0, 1, '');
   try
-    thread := TTestSemaphoreThread.Create;
+    thread := TTestSemaphoreThread.Create(false);
     try
       thread.FreeOnTerminate := true;
       while (globalInt = 0) do
         sleep(10);
-      Assert.IsTrue(globalInt = 1, '1');
+      assertTrue(globalInt = 1, '1');
       sem.Release;
       sleep(10);
-      Assert.IsTrue(globalInt = 2, '2');
+      assertTrue(globalInt = 2, '2');
       sem.Release;
       sleep(10);
-      Assert.IsTrue(globalInt = 3, '3');
+      assertTrue(globalInt = 3, '3');
       sleep(900);
-      Assert.IsTrue(globalInt = 4, '4');
+      assertTrue(globalInt = 4, '4');
     finally
       thread.Terminate;
     end;
     sleep(900);
-    Assert.IsTrue(globalInt = 100, '100');
+    assertTrue(globalInt = 100, '100');
   finally
     sem.Free;
   end;
@@ -4081,7 +4168,7 @@ begin
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     Writeln(s);
-    Assert.IsTrue(true);
+    assertTrue(true);
   finally
     jwk.Free;
   end;
@@ -4100,7 +4187,7 @@ begin
       '{"typ":"JWT",'+#13#10+' "alg":"HS256"}',
       '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
       jwt_hmac_sha256, jwk);
-    Assert.IsTrue(s = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+    assertTrue(s = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
       'packing failed. expected '+#13#10+'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk, but got '+s);
   finally
     jwk.Free;
@@ -4127,7 +4214,7 @@ begin
   try
     jwt.id := GUIDToString(CreateGUID);
     s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, 'C:\work\fhirserver\Exec\jwt-test.key.key', 'fhirserver');
-    Assert.isTrue(true);
+    assertTrue(true);
   finally
     jwt.Free;
   end;
@@ -4146,7 +4233,7 @@ begin
     jwt := TJWTUtils.unpack('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk', true, jwk);
     try
       // inspect
-      Assert.IsTrue(true);
+      assertTrue(true);
     finally
       jwt.Free;
     end;
@@ -4182,7 +4269,7 @@ begin
     jwt := TJWTUtils.unpack('eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyNDgwNmQwOWU2MDY3Y2EyMWJjNmUyNTIxOWQxNWRkOTgxZGRmOWQifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwic3ViIjoiMTExOTA0NjIwMDUzMzY0MzkyMjg2Ii'+'wiYXpwIjoiOTQwMDA2MzEwMTM4LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiZW1haWwiOiJncmFoYW1lZ0BnbWFpbC5jb20iLCJhdF9oYXNoIjoidDg0MGJMS3FsRU'+'ZqUmQwLWlJS2dZUSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdWQiOiI5NDAwMDYzMTAxMzguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjE0MDIxODUxMjksImV'+'4cCI6MTQwMjE4OTAyOX0.Jybn06gURs7lcpCYaXBuszC7vacnWxwSwH_ffIDDu7bxOPo9fiVnRDCidKSLy4m0sAL1xxDHA5gXSZ9C6nj7abGqQ_LOrcPdTncuvYUPhF7mUq7fr3EPW-34PVkBSiOrjYdO6SOYyeP443WzPQRkhVJkRP4oQF-k0zXuwCkWlfc', true, jwk);
     try
       // inspect
-      Assert.IsTrue(true);
+      assertTrue(true);
     finally
       jwt.Free;
     end;
@@ -4203,7 +4290,7 @@ begin
     jwt := TJWTUtils.unpack(gs {'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.LteI-Jtns1KTLm0-lnDU_gI8_QHDnnIfZCEB2dI-ix4YxLQjaOTVQolkaa-Y4Cie-mEd8c34vSWeeNRgVcXuJsZ_iVYywDWqUDpXY6KwdMx6kXZQ0-'+'mihsowKzrFbmhUWun2aGOx44w3wAxHpU5cqE55B0wx2v_f98zUojMp6mkje_pFRdgPmCIYTbym54npXz7goROYyVl8MEhi1HgKmkOVsihaVLfaf5rt3OMbK70Lup3RrkxFbneKslTQ3bwdMdl_Zk1vmjRklvjhmVXyFlEHZVAe4_4n_FYk6oq6UFFJDkEjrWo25B0lKC7XucZZ5b8NDr04xujyV4XaR11ZuQ'}, true, jwk);
     try
       // inspect
-      Assert.IsTrue(true);
+      assertTrue(true);
     finally
       jwt.Free;
     end;
@@ -4224,7 +4311,7 @@ begin
   try
     json := TJSONParser.Parse(f);
     try
-      assert.IsNotNull(json);
+      assertTrue(json <> nil);
     finally
       json.Free;
     end;
@@ -4242,11 +4329,11 @@ begin
   try
     json := TJSONParser.Parse(f);
     try
-      assert.IsNotNull(json);
-      assert.IsTrue(json.properties.Count = 3);
-      assert.IsTrue(json.str['type'] = 'FHIR Custom Resource Directory');
-      assert.IsTrue(json.arr['prefixes'].Count = 1);
-      assert.IsTrue(json.arr['names'].Count = 1);
+      assertTrue(json <> nil);
+      assertTrue(json.properties.Count = 3);
+      assertTrue(json.str['type'] = 'FHIR Custom Resource Directory');
+      assertTrue(json.arr['prefixes'].Count = 1);
+      assertTrue(json.arr['names'].Count = 1);
     finally
       json.Free;
     end;
@@ -4264,11 +4351,11 @@ begin
   try
     json := TJSONParser.Parse(f, 0, true);
     try
-      assert.IsNotNull(json);
-      assert.IsTrue(json.properties.Count = 3);
-      assert.IsTrue(json.str['type'] = 'FHIR Custom Resource Directory');
-      assert.IsTrue(json.arr['prefixes'].Count = 1);
-      assert.IsTrue(json.arr['names'].Count = 1);
+      assertTrue(json <> nil);
+      assertTrue(json.properties.Count = 3);
+      assertTrue(json.str['type'] = 'FHIR Custom Resource Directory');
+      assertTrue(json.arr['prefixes'].Count = 1);
+      assertTrue(json.arr['names'].Count = 1);
     finally
       json.Free;
     end;
@@ -4286,7 +4373,7 @@ begin
   try
     json := TJSONParser.Parse(f);
     try
-      assert.IsNotNull(json);
+      assertTrue(json <> nil);
     finally
       json.Free;
     end;
@@ -4295,6 +4382,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 { JsonPatchTestCaseAttribute }
 
 function JsonPatchTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -4321,6 +4409,7 @@ begin
     tests.free;
   end;
 end;
+{$ENDIF}
 
 { TJsonPatchTests }
 
@@ -4347,7 +4436,7 @@ begin
       begin
         outcome := engine.applyPatch(test.obj['doc'], test.arr['patch']);
         try
-          Assert.IsTrue(TJsonNode.compare(outcome, test.obj['expected']))
+          assertTrue(TJsonNode.compare(outcome, test.obj['expected']))
         finally
           outcome.Free;
         end;
@@ -4386,7 +4475,7 @@ begin
   end;
   sig := TDigitalSigner.Create;
   try
-    Assert.isTrue(sig.verifySignature(bytes));
+    assertTrue(sig.verifySignature(bytes));
   finally
     sig.Free;
   end;
@@ -4423,7 +4512,7 @@ begin
 
   sig := TDigitalSigner.Create;
   try
-    Assert.IsTrue(sig.verifySignature(bytes));
+    assertTrue(sig.verifySignature(bytes));
   finally
     sig.Free;
   end;
@@ -4445,7 +4534,7 @@ begin
 
   sig := TDigitalSigner.Create;
   try
-    Assert.IsTrue(sig.verifySignature(bytes));
+    assertTrue(sig.verifySignature(bytes));
   finally
     sig.Free;
   end;
@@ -4468,7 +4557,7 @@ end;
 //
 //  sig := TDigitalSigner.Create;
 //  try
-//    Assert.IsTrue(sig.verifySignature(bytes));
+//    assertTrue(sig.verifySignature(bytes));
 //  finally
 //    sig.Free;
 //  end;
@@ -4491,7 +4580,7 @@ end;
 //
 //  sig := TDigitalSigner.Create;
 //  try
-//    Assert.IsTrue(sig.verifySignature(bytes));
+//    assertTrue(sig.verifySignature(bytes));
 //  finally
 //    sig.Free;
 //  end;
@@ -4524,7 +4613,7 @@ begin
   list := TFslTestObjectList.create;
   try
     list.Add(TFslTestObject.create);
-    Assert.IsTrue(list.Count = 1);
+    assertTrue(list.Count = 1);
   finally
     list.Free;
   end;
@@ -4537,7 +4626,7 @@ begin
   list := TFslTestObjectList.create;
   try
     Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslInvariant);
-    Assert.IsTrue(list.Count = 0);
+    assertTrue(list.Count = 0);
   finally
     list.Free;
   end;
@@ -4567,7 +4656,7 @@ begin
     x.Free;
   end;
   StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
-  Assert.AreEqual(output, tgt);
+  assertEqual(output, tgt);
 end;
 
 procedure TXmlUtilsTests.TestNoPretty;
@@ -4584,7 +4673,7 @@ begin
     x.Free;
   end;
   StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
-  Assert.AreEqual(output, tgt);
+  assertEqual(output, tgt);
 end;
 
 procedure TXmlUtilsTests.TestPretty;
@@ -4601,7 +4690,7 @@ begin
     x.Free;
   end;
   StringToFile(output, 'C:\work\fhirserver\utilities\tests\xml\xml-output.xml', TEncoding.UTF8);
-  Assert.AreEqual(output, tgt);
+  assertEqual(output, tgt);
 end;
 
 procedure TXmlUtilsTests.TestUnPretty;
@@ -4617,7 +4706,7 @@ begin
   finally
     x.Free;
   end;
-  Assert.AreEqual(output, tgt);
+  assertEqual(output, tgt);
 end;
 
 Procedure TLangParserTests.testBase;
@@ -4625,13 +4714,40 @@ var
   lang : THTTPLanguages;
 begin
   lang := THTTPLanguages.create('en');
-  Assert.isTrue(lang.header = 'en');
-  Assert.isTrue(length(lang.Codes) = 1);
-  Assert.isTrue(lang.Codes[0] = 'en');
-  Assert.isTrue(lang.prefLang = 'en');
-  Assert.isTrue(lang.matches('en'));
-  Assert.isTrue(lang.matches('en-AU'));
-  Assert.isTrue(not lang.matches('eng'));
+  assertTrue(lang.header = 'en');
+  assertTrue(length(lang.Codes) = 1);
+  assertTrue(lang.Codes[0] = 'en');
+  assertTrue(lang.prefLang = 'en');
+  assertTrue(lang.matches('en'));
+  assertTrue(lang.matches('en-AU'));
+  assertTrue(not lang.matches('eng'));
+end;
+
+{ TFslTestCase }
+
+procedure TFslTestCase.assertEqual(left, right, message: String);
+begin
+  Aassert.AreEqual(left, right, message);
+end;
+
+procedure TFslTestCase.assertFail(message: String);
+begin
+  Assert.Fail(message);
+end;
+
+procedure TFslTestCase.assertTrue(test: boolean; message: String);
+begin
+  Assert.IsTrue(test, message);
+end;
+
+procedure TFslTestCase.assertTrue(test: boolean);
+begin
+  Assert.IsTrue(test);
+end;
+
+procedure TFslTestCase.TestCase(name: String);
+begin
+  // nothing - override this
 end;
 
 initialization

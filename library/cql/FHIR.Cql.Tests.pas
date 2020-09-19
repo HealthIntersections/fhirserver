@@ -27,24 +27,35 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes,
+  {$IFDEF FPC}
+  FPCUnit,
+  {$ELSE}
   DUnitX.TestFramework,
-  FHIR.Support.Stream,
+  {$ENDIF}
+  FHIR.Support.Stream, FHIR.Support.Tests,
   FHIR.Cql.Model, FHIR.Cql.Parser;
 
 Type
+  {$IFNDEF FPC}
   CqlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TCqlParserTests = Class (TObject)
-  Published
+  {$ENDIF}
+   TCqlParserTest = Class (TObject)
+   {$IFNDEF FPC}
+   Published
     [CqlParserTestCase]
+    {$ENDIF}
     procedure ParserTest(Name : String);
   End;
 
@@ -80,9 +91,9 @@ begin
 end;
 
 
-{ TCqlParserTests }
+{  TCqlParserTest }
 
-procedure TCqlParserTests.ParserTest(Name: String);
+procedure  TCqlParserTest.ParserTest(Name: String);
 var
   Cql : TCqlElement;
   parser : TCQLParser;
@@ -102,6 +113,6 @@ end;
 
 initialization
   {$IFNDEF EXCLUDE_FAILING_TESTS}
-  TDUnitX.RegisterTestFixture(TCqlParserTests);
+  TDUnitX.RegisterTestFixture( TCqlParserTest);
   {$ENDIF}
 end.

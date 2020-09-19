@@ -28,18 +28,25 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}
-{$mode objfpc}{$H+}
-
+{$IFDEF FPC}{$mode DELPHI}{$H+}
 {$MODESWITCH ADVANCEDRECORDS}
 {$MODESWITCH TYPEHELPERS}
 {$ENDIF}
 
 interface
 
-{$IFDEF FPC}
 uses
-  Classes, SysUtils, SyncObjs, Contnrs, Character, RegExpr, FileUtil, Generics.Collections, Graphics, ZLib;
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, Graphics, ZLib;
+
+
+{$IFNDEF FPC}
+type
+  UnicodeChar = char;
+{$ENDIF}
+
+function unicodeChars(s : String) : TArray<UnicodeChar>;
+
+{$IFDEF FPC}
 
 type
 
@@ -54,6 +61,12 @@ type
     function IsWhiteSpace : boolean;
     function ToLower : char;
     function ToUpper : char;
+  end;
+
+  TShortStringHelper = type helper for ShortString
+  public
+    function substring(start, stop : integer) : String; overload;
+    function substring(start : integer) : String; overload;
   end;
 
   { TTimeZone }
@@ -130,6 +143,50 @@ type
 {$ENDIF}
 
 implementation
+
+
+{$IFDEF FPC}
+uses
+  RegExpr, FileUtil, LazUTF8;
+{$ENDIF}
+
+
+{$IFDEF FPC}
+
+function unicodeChars(s : String) : TArray<UnicodeChar>;
+var
+  i, c, l, cl : integer;
+  ch : UnicodeChar;
+  p: PChar;
+begin
+  l := length(s);
+  SetLength(result, l); // maximum possible length
+  i := 0;
+  c := 1;
+  p := @s[1];
+  while l > 0 do
+  begin
+    ch := UnicodeChar(UTF8CodepointToUnicode(p, cl));
+    result[i] := ch;
+    inc(i);
+    dec(l, cl);
+    inc(p, cl);
+  end;
+  SetLength(result, i);
+end;
+
+{$ELSE}
+
+function unicodeChars(s : String) : TArray<UnicodeChar>;
+var
+  i : Integer;
+begin
+  SetLength(result, length(s));
+  for i := 1 to length(s) do
+    result[i-1] := s[i];
+end;
+
+{$ENDIF}
 
 {$IFDEF FPC}
 
@@ -420,7 +477,20 @@ begin
   inherited Destroy;
 end;
 
+{ TShortStringHelper }
+
+function TShortStringHelper.substring(start, stop : integer) : String;
+begin
+  result := copy(self, start, stop-start);
+end;
+
+function TShortStringHelper.substring(start : integer) : String;
+begin
+  result := copy(self, start, $FF);
+end;
+
 {$ENDIF}
+
 
 end.
 
