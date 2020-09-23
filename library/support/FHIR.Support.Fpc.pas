@@ -114,7 +114,7 @@ type
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
 
-function ColorToString(Color: TColor): AnsiString;
+//function ColorToString(Color: TColor): AnsiString;
 
 type
   TZCompressionLevel = (zcNone, zcFastest, zcDefault, zcMax);
@@ -257,11 +257,6 @@ end;
 function TCharHelper.ToUpper: char;
 begin
   result := Character.ToUpper(self);
-end;
-
-function ColorToString(Color: TColor): AnsiString;
-begin
-  result := Graphics.ColorToString(Color);
 end;
 
 function ZCompressCheck(code: Integer; bufOk : boolean): Integer; overload;

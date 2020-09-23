@@ -1996,6 +1996,9 @@ Uses
   {$ELSE}
   ActiveX, ComObj,
   {$ENDIF}
+  {$IFDEF FPC}
+  Graphics,
+  {$ENDIF}
   IOUtils, DateUtils;
 
 
@@ -3152,7 +3155,11 @@ End;
 
 Function ColourToString(iColour : TColour) : String;
 Begin
+  {$IFDEF FPC}
+  result := Graphics.ColorToString(iColour);
+  {$ELSE}
   Result := ColorToString(iColour);
+  {$ENDIF}
 End;
 
 Function ColourMakeGrey(iColour : TColour) : TColour; Overload;

@@ -62,7 +62,8 @@ Uses
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
-  FHIR.Server.Indexing, FHIR.Server.Subscriptions, {$IFNDEF FPC} FHIR.Server.Manager, {$ENDIF} FHIR.Server.Ini, FHIR.Server.Version;
+  FHIR.Server.Indexing, FHIR.Server.Subscriptions, {$IFNDEF FPC} FHIR.Server.Manager, {$ENDIF} FHIR.Server.Ini,
+  FHIR.Server.Version, FHIR.Server.Telnet;
 
 Type
   TKernelServerFactory = class (TFHIRServerFactory)
@@ -110,6 +111,7 @@ Type
     FProgress : integer;
     FProgressName : string;
     FContexts : TFslMap<TFHIRServerContext>;
+    FTelnet : TFHIRTelnetServer;
 
     function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
     function doGetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
@@ -442,14 +444,16 @@ begin
   end;
 end;
 
-
 { TFHIRService }
 
 constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
 begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
+  FTelnet := TFHIRTelnetServer.Create(44123);
   FIni := TFHIRServerIniFile.Create(AIniName);
+  FTelnet.Password := FIni.web['telnet-password'];
+
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not hasParam('noload');
   FSettings.load(FIni);
@@ -465,6 +469,7 @@ begin
   FDatabases.Free;
   FIni.Free;
   FSettings.Free;
+  FTelnet.Free;
   inherited;
 end;
 

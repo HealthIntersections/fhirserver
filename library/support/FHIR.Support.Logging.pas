@@ -168,11 +168,12 @@ begin
   delta := '';
   if log_as_starting then
     delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
+  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
   if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s+#13#10);
+    log.WriteToLog(s+#13#10);
   if consolelog then
     try
-      System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s);
+      System.Writeln(s);
     except
       consolelog := false;
     end;
@@ -218,9 +219,6 @@ begin
   if (assigned(logEvent)) then
     logEvent(s);
 end;
-
-
-
 
 { TLogger }
 
