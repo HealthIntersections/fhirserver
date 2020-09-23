@@ -223,3 +223,9 @@ System
 /library/r4/backup
 /library/r5/backup
 /dependencies/$stem
+/Server/Modules/backup
+/library/cql/backup
+/library/java/backup
+/library/r4/tests/backup
+/library/version/backup
+/library/xversion/backup

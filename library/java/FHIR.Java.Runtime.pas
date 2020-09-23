@@ -33,6 +33,8 @@ unit FHIR.Java.Runtime;
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 // This unit is devoted to locating the JVM install directory
 // and using the invocation API to create a JVM.
 // All of the code here is Win32-specific heuristics.
@@ -40,7 +42,8 @@ unit FHIR.Java.Runtime;
 interface
 
 uses
-  System.Classes, WinAPI.Windows, System.Win.Registry, System.SysUtils,
+  Windows, Registry,
+  Classes, SysUtils,
   FHIR.Java.JNI, FHIR.Java.Utilities, FHIR.Java.Strings, FHIR.Java.Wrapper;
 
 type
@@ -367,7 +370,7 @@ begin
     PVO := FPVMOption;
     S := '-Djava.class.path=' + Classpath;
   {$IFDEF FPC}
-    !PVMOption^.optionString := StrNew(PUTF8char(S));
+    FPVMOption^.optionString := StrNew(PUTF8char(S));
   {$ELSE}
     FPVMOption^.optionString := FHIR.Java.Strings.StrNew(S);
   {$ENDIF}
@@ -396,7 +399,7 @@ begin
       if FVerboseGC <> 0 then
         S := S + 'gc';
   {$IFDEF FPC}
-      !PVO^.optionString := StrNew(PUTF8char(S));
+      PVO^.optionString := StrNew(PUTF8char(S));
   {$ELSE}
       PVO^.optionString := FHIR.Java.Strings.StrNew(S);
   {$ENDIF}

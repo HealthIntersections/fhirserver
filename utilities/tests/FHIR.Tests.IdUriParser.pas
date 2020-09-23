@@ -28,12 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
-  Windows, Sysutils, DUnitX.TestFramework,
+  Windows, Sysutils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdUri;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TIdUriParserTests = Class (TObject)
@@ -45,10 +49,12 @@ type
     [TestCase] Procedure TestUnicode1;
     [TestCase] Procedure TestUnicode2;
   end;
+{$ENDIF}
 
 
 implementation
 
+{$IFNDEF FPC}
 
 //
 
@@ -88,4 +94,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TIdUriParserTests);
+{$ENDIF}
 end.

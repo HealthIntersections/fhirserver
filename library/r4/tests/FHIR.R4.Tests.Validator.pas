@@ -1,6 +1,5 @@
 unit FHIR.R4.Tests.Validator;
 
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,15 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Tests,
   FHIR.Base.Objects, FHIR.Server.Session, FHIR.Version.Parser, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.Validator,
-  DUnitX.TestFramework;
+  FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.Validator;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TFHIRValidatorTests4 = class (TObject)
@@ -113,8 +114,11 @@ type
     [TestCase] procedure testXmlListXXE2;
 
   end;
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 uses
   SysUtils, Classes,
@@ -530,4 +534,5 @@ end;
 initialization
   if FindCmdLineSwitch('dev') then
     TDUnitX.RegisterTestFixture(TFHIRValidatorTests4);
+{$ENDIF}
 end.

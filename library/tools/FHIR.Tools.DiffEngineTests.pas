@@ -28,11 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  Windows, SysUtils, classes,
+  SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
@@ -47,8 +49,9 @@ uses
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Common,
   {$ENDIF}
   FHIR.Tools.DiffEngine,
-  FHIR.Support.MXml, DUnitX.TestFramework;
+  FHIR.Support.MXml;
 
+{$IFNDEF FPC}
 Type
   [TextFixture]
   TDifferenceEngineTests = Class (TObject)
@@ -79,9 +82,11 @@ Type
     [DifferenceEngineTestCase]
     procedure DifferenceEngineTest(Name : String);
   End;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 { DifferenceEngineTestCaseAttribute }
 
 function DifferenceEngineTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -279,4 +284,5 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TDifferenceEngineTest);
   TDUnitX.RegisterTestFixture(TDifferenceEngineTests);
+{$ENDIF}
 end.

@@ -198,7 +198,8 @@ uses
   FHIR.R4.Resources.Other in '..\library\r4\FHIR.R4.Resources.Other.pas',
   FHIR.R4.Resources.Medications in '..\library\r4\FHIR.R4.Resources.Medications.pas',
   FHIR.R4.Resources.Financial in '..\library\r4\FHIR.R4.Resources.Financial.pas',
-  FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas';
+  FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas',
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas';
 
 {$R *.res}
 

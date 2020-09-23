@@ -1,6 +1,5 @@
 unit FHIR.R4.Tests.Parser;
 
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,17 +28,19 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  Windows, SysUtils, Classes, System.IOUtils,
-  DUnitX.TestFramework,
+  Windows, SysUtils, Classes, IOUtils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Version.Parser, FHIR.Base.Parser,
   FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker,
   FHIR.Support.Tests, FHIR.Support.Comparisons;
 
+{$IFNDEF FPC}
 type
   FHIRParserTestCase4Attribute = class (FHIRFolderBasedTestCase4Attribute)
   public
@@ -57,8 +58,11 @@ type
   public
     [TestCase] procedure DecimalTest;
   end;
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 uses
   IdGlobalProtocols,
@@ -224,4 +228,5 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TFHIRParserTests);
   TDUnitX.RegisterTestFixture(TFHIRParserSpecialTests);
+{$ENDIF}
 end.

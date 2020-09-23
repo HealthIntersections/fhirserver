@@ -462,6 +462,7 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Medications.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Financial.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

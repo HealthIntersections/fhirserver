@@ -30,16 +30,15 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
-// -tests  -definitions
-
 interface
 
 uses
   SysUtils, Classes,
-  DUnitX.TestFramework,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml,
   FHIR.Ucum.Services;
 
+{$IFNDEF FPC}
 type
   UcumTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
@@ -73,10 +72,11 @@ type
     procedure TestIssue10;
   end;
 
-
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 var
   tests : TMXmlElement;
   svc : TUcumServices;
@@ -281,4 +281,5 @@ initialization
 finalization
   tests.Free;
   svc.Free;
+{$ENDIF}
 end.

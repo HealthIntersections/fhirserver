@@ -185,7 +185,7 @@ begin
       begin
         ssl.SSLOptions.CertFile := Certificate;
         ssl.SSLOptions.KeyFile := ChangeFileExt(Certificate, '.key');
-        ssl.OnGetPassword := getSSLpassword;
+        ssl.OnGetPassword := {$IFDEF FPC}@{$ENDIF}getSSLpassword;
       end;
     end;
     indy.Request.ContentType := 'application/x-www-form-urlencoded';

@@ -32,12 +32,12 @@ interface
 
 uses
   SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker,
-  DUnitX.TestFramework;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
 
-
+{$IFNDEF FPC}
 Type
   [TextFixture]
   TFhirHTTPClientTests4 = class (TObject)
@@ -49,9 +49,11 @@ Type
     [TearDownFixture] procedure teardown;
 
   end;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 
 { TFhirHTTPClientTests4 }
 (*
@@ -158,5 +160,6 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFhirHTTPClientTests4);
+{$ENDIF}
 end.
 

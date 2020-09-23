@@ -32,13 +32,13 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base, FHIR.Javascript, FHIR.Support.Tests,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Profiles, FHIR.R4.Context, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.Javascript,
-  FHIR.Javascript.Base,
-  DUnitX.TestFramework;
+  FHIR.Javascript.Base;
 
-
+{$IFNDEF FPC}
 Type
   [TextFixture]
   TFHIRJavascriptTests = Class (TObject)
@@ -56,9 +56,10 @@ Type
     [TestCase] Procedure TestPatientMutation;
     [TestCase] Procedure TestPatientImmutable;
   End;
-
+{$ENDIF}
 implementation
 
+{$IFNDEF FPC}
 type
   TTestWorkerContext = class (TBaseWorkerContext)
   public
@@ -219,7 +220,7 @@ begin
   finally
     pat.Free;
   end;
-end;
+end;
 
 procedure TFHIRJavascriptTests.TestPatientMutation;
 var
@@ -238,7 +239,7 @@ begin
   finally
     pat.Free;
   end;
-end;
+end;
 
 procedure TFHIRJavascriptTests.TestPatientUnknownProperty;
 var
@@ -355,4 +356,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRJavascriptTests);
+{$ENDIF}
 end.

@@ -35,11 +35,13 @@ interface
 
 Uses
   SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper,
-  DUnitX.TestFramework, FHIR.R4.Tests.Worker;
+  FHIR.R4.Tests.Worker;
 
+{$IFNDEF FPC}
 Type
 
   [TextFixture]
@@ -53,8 +55,9 @@ Type
     // {[TestCase] }procedure TestMySQLMaria;
     [TestCase] procedure TestSQLite;
   End;
-
+{$ENDIF}
 implementation
+{$IFNDEF FPC}
 
 const
   Name_405 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh';
@@ -522,5 +525,5 @@ end;
 initialization
 
 TDUnitX.RegisterTestFixture(TFslDBTests);
-
+{$ENDIF}
 end.

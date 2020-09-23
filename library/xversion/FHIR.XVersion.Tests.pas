@@ -28,16 +28,19 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
-  SysUtils,
-  DUnitX.TestFramework,
+  SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.R3.Parser, FHIR.R4.Parser,
   FHIR.XVersion.Convertors;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TVersionConversionTests = Class (TObject)
@@ -118,9 +121,11 @@ type
     [TestCase] Procedure TestSupplyDelivery_34;
     [TestCase] Procedure TestValueSet_34;
   End;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 { TVersionConversionTests }
 
 procedure TVersionConversionTests.Setup;
@@ -494,4 +499,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TVersionConversionTests);
+{$ENDIF}
 end.

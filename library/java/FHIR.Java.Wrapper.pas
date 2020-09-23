@@ -33,6 +33,7 @@ unit FHIR.Java.Wrapper;
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 // an object-oriented wrapper around the JNI.
 // The code here (by contrast with JavaRuntime.pas) should be
@@ -41,7 +42,8 @@ unit FHIR.Java.Wrapper;
 interface
 
 uses 
-  WinAPI.Windows, System.Classes, System.SysUtils,   
+  Windows,
+  Classes, SysUtils,
   FHIR.Java.Strings, FHIR.Java.JNI, FHIR.Java.Utilities;
 
 type

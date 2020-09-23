@@ -28,6 +28,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 unit FHIR.Java.Utilities;
 
 // Global utility routines
@@ -38,9 +40,9 @@ unit FHIR.Java.Utilities;
 interface
    
 uses 
-  System.Classes, 
-  FHIR.Java.Strings,
-  WinAPI.Windows;
+  Windows,
+  Classes,
+  FHIR.Java.Strings;
 
 
 {$IF Declared(PUTF8Char)} {$ELSE} type PUTF8char = PAnsiChar;
@@ -76,7 +78,7 @@ uses
 implementation
 
 uses 
-  System.SysUtils, FHIR.Java.Runtime;
+  SysUtils, FHIR.Java.Runtime;
   
     
 var

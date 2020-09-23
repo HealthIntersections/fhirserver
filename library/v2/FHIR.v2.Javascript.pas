@@ -482,60 +482,77 @@ begin
   end;
 end;
 
+type
+  TV2JavascriptCallBackCellContext = record
+    js : TJavascript;
+    params : TJsValues;
+    owns : boolean;
+    cell : TV2Cell;
+    defCell : TJavascriptClassDefinition;
+  end;
+  PV2JavascriptCallBackCellContext = ^TV2JavascriptCallBackCellContext;
+
+
+procedure iterateArrayComponents(context : pointer; i : integer; v : JsValueRef);
+var
+  o : TV2Cell;
+  ctxt : PV2JavascriptCallBackCellContext;
+begin
+  ctxt := context;
+  o := ctxt.js.getWrapped<TV2Cell>(v).Link;
+  try
+    if (o = nil) then
+    begin
+      ctxt.params[0] := v;
+      o := ctxt.defCell.factory(ctxt.js, ctxt.defCell, ctxt.params, ctxt.owns) as TV2Cell;
+    end;
+    ctxt.cell.componentList.Add(o.Link);
+  finally
+    o.Free;
+  end;
+end;
+
 procedure TV2JavascriptHelper.setCellComponents(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
 var
-  cell : TV2Cell;
-  o : TV2Cell;
-  owns : boolean;
-  params : TJsValues;
+  ctxt : TV2JavascriptCallBackCellContext;
 begin
-  cell := this as TV2Cell;
-  cell.componentList.Clear;
-  cell.componentList.jsInstance := 0;
-  setLength(params, 1);
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
+  ctxt.cell := this as TV2Cell;
+  ctxt.cell.componentList.Clear;
+  ctxt.cell.componentList.jsInstance := 0;
+  ctxt.defCell := defCell;
+  setLength(ctxt.params, 1);
+  js.iterateArray(value, iterateArrayComponents, @ctxt);
+end;
+
+procedure iterateArrayContents(context : pointer; i : integer; v : JsValueRef);
+var
+  ctxt : PV2JavascriptCallBackCellContext;
+  o : TV2Content;
+begin
+  ctxt := context;
+  o := ctxt.js.getWrapped<TV2Content>(v).Link;
+  try
+    if (o = nil) then
     begin
-      o := js.getWrapped<TV2Cell>(v).Link;
-      try
-        if (o = nil) then
-        begin
-          params[0] := v;
-          o := defCell.factory(js, defCell, params, owns) as TV2Cell;
-        end;
-        cell.componentList.Add(o.Link);
-      finally
-        o.Free;
-      end;
-    end, nil);
+      ctxt.params[0] := v;
+      o := ctxt.defCell.factory(ctxt.js, ctxt.defCell, ctxt.params, ctxt.owns) as TV2Content;
+    end;
+    ctxt.cell.contentList.Add(o.Link);
+  finally
+    o.Free;
+  end;
 end;
 
 procedure TV2JavascriptHelper.setCellContents(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
 var
-  cell : TV2Cell;
-  o : TV2Content;
-  owns : boolean;
-  params : TJsValues;
+  ctxt : TV2JavascriptCallBackCellContext;
 begin
-  cell := this as TV2Cell;
-  cell.contentList.Clear;
-  cell.contentList.jsInstance := 0;
-  setLength(params, 1);
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
-    begin
-      o := js.getWrapped<TV2Content>(v).Link;
-      try
-        if (o = nil) then
-        begin
-          params[0] := v;
-          o := defCell.factory(js, defCell, params, owns) as TV2Content;
-        end;
-        cell.contentList.Add(o.Link);
-      finally
-        o.Free;
-      end;
-    end, nil);
+  ctxt.cell := this as TV2Cell;
+  ctxt.cell.contentList.Clear;
+  ctxt.cell.contentList.jsInstance := 0;
+  setLength(ctxt.params, 1);
+  ctxt.defCell := defCell;
+  js.iterateArray(value, iterateArrayContents, @ctxt);
 end;
 
 procedure TV2JavascriptHelper.setCellText(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -566,60 +583,86 @@ begin
   content.value := js.asString(value);
 end;
 
+type
+  TV2JavascriptCallBackFieldContext = record
+    js : TJavascript;
+    params : TJsValues;
+    owns : boolean;
+    field : TV2Field;
+    defCell : TJavascriptClassDefinition;
+  end;
+  PV2JavascriptCallBackFieldContext = ^TV2JavascriptCallBackFieldContext;
+
+procedure iterateArrayFields(context : pointer; i : integer; v : JsValueRef);
+var
+  ctxt : PV2JavascriptCallBackFieldContext;
+  o : TV2Cell;
+begin
+  ctxt := context;
+  o := ctxt.js.getWrapped<TV2Cell>(v).Link;
+  try
+    if (o = nil) then
+    begin
+      ctxt.params[0] := v;
+      o := ctxt.defCell.factory(ctxt.js, ctxt.defCell, ctxt.params, ctxt.owns) as TV2Cell;
+    end;
+    ctxt.field.elementList.Add(o.Link);
+  finally
+    o.Free;
+  end;
+end;
+
 procedure TV2JavascriptHelper.setFieldElements(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
 var
-  field : TV2Field;
-  o : TV2Cell;
-  owns : boolean;
-  params : TJsValues;
+  ctxt : TV2JavascriptCallBackFieldContext;
 begin
-  field := this as TV2Field;
-  field.elementList.Clear;
-  field.elementList.jsInstance := 0;
-  setLength(params, 1);
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
+  ctxt.field := this as TV2Field;
+  ctxt.field.elementList.Clear;
+  ctxt.field.elementList.jsInstance := 0;
+  ctxt.defCell := defCell;
+  setLength(ctxt.params, 1);
+  js.iterateArray(value, iterateArrayFields, @ctxt);
+end;
+
+type
+  TV2JavascriptCallBackMessageContext = record
+    js : TJavascript;
+    params : TJsValues;
+    owns : boolean;
+    message : TV2Message;
+    defCell : TJavascriptClassDefinition;
+  end;
+  PV2JavascriptCallBackMessageContext = ^TV2JavascriptCallBackMessageContext;
+
+procedure iterateArraySegments(context : pointer; i : integer; v : JsValueRef);
+var
+  ctxt : PV2JavascriptCallBackMessageContext;
+  o : TV2Segment;
+begin
+  ctxt := context;
+  o := ctxt.js.getWrapped<TV2Segment>(v).Link;
+  try
+    if (o = nil) then
     begin
-      o := js.getWrapped<TV2Cell>(v).Link;
-      try
-        if (o = nil) then
-        begin
-          params[0] := v;
-          o := defCell.factory(js, defCell, params, owns) as TV2Cell;
-        end;
-        field.elementList.Add(o.Link);
-      finally
-        o.Free;
-      end;
-    end, nil);
+      ctxt.params[0] := v;
+      o := ctxt.defCell.factory(ctxt.js, ctxt.defCell, ctxt.params, ctxt.owns) as TV2Segment;
+    end;
+    ctxt.message.segmentList.Add(o.Link);
+  finally
+    o.Free;
+  end;
 end;
 
 procedure TV2JavascriptHelper.setMessageSegments(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
 var
-  message : TV2Message;
-  o : TV2Segment;
-  owns : boolean;
-  params : TJsValues;
+  ctxt : TV2JavascriptCallBackMessageContext;
 begin
-  message := this as TV2Message;
-  message.segmentList.Clear;
-  message.segmentList.jsInstance := 0;
-  setLength(params, 1);
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
-    begin
-      o := js.getWrapped<TV2Segment>(v).Link;
-      try
-        if (o = nil) then
-        begin
-          params[0] := v;
-          o := defCell.factory(js, defCell, params, owns) as TV2Segment;
-        end;
-        message.segmentList.Add(o.Link);
-      finally
-        o.Free;
-      end;
-    end, nil);
+  ctxt.message := this as TV2Message;
+  ctxt.message.segmentList.Clear;
+  ctxt.message.segmentList.jsInstance := 0;
+  ctxt.defCell := defCell;
+  setLength(ctxt.params, 1);
+  js.iterateArray(value, iterateArraySegments, @ctxt);
 end;
 
 procedure TV2JavascriptHelper.setObjectId(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
@@ -638,32 +681,45 @@ begin
   segment.code := js.asString(value);
 end;
 
+type
+  TV2JavascriptCallBackSegmentContext = record
+    js : TJavascript;
+    params : TJsValues;
+    owns : boolean;
+    segment : TV2Segment;
+    defCell : TJavascriptClassDefinition;
+  end;
+  PV2JavascriptCallBackSegmentContext = ^TV2JavascriptCallBackSegmentContext;
+
+procedure iterateArraySegmentFields(context : pointer; i : integer; v : JsValueRef);
+var
+  ctxt : PV2JavascriptCallBackSegmentContext;
+  o : TV2Field;
+begin
+  ctxt := context;
+  o := ctxt.js.getWrapped<TV2Field>(v).Link;
+  try
+    if (o = nil) then
+    begin
+      ctxt.params[0] := v;
+      o := ctxt.defCell.factory(ctxt.js, ctxt.defCell, ctxt.params, ctxt.owns) as TV2Field;
+    end;
+    ctxt.segment.fieldList.Add(o.Link);
+  finally
+    o.Free;
+  end;
+end;
+
 procedure TV2JavascriptHelper.setSegmentFields(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
 var
-  segment : TV2Segment;
-  o : TV2Field;
-  owns : boolean;
-  params : TJsValues;
+  ctxt : TV2JavascriptCallBackSegmentContext;
 begin
-  segment := this as TV2Segment;
-  segment.fieldList.Clear;
-  segment.fieldList.jsInstance := 0;
-  setLength(params, 1);
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
-    begin
-      o := js.getWrapped<TV2Field>(v).Link;
-      try
-        if (o = nil) then
-        begin
-          params[0] := v;
-          o := defCell.factory(js, defCell, params, owns) as TV2Field;
-        end;
-        segment.fieldList.Add(o.Link);
-      finally
-        o.Free;
-      end;
-    end, nil);
+  ctxt.segment := this as TV2Segment;
+  ctxt.segment.fieldList.Clear;
+  ctxt.segment.fieldList.jsInstance := 0;
+  ctxt.defCell := defCell;
+  setLength(ctxt.params, 1);
+  js.iterateArray(value, iterateArraySegmentFields, @ctxt);
 end;
 
 end.

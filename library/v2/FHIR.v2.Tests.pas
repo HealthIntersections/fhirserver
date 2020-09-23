@@ -34,15 +34,15 @@ interface
 
 uses
   SysUtils, Classes,
-  DUnitX.TestFramework,
-  IdTCPConnection, FHIR.v2.Protocol,
+  IdTCPConnection,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Stream,
   FHIR.Base.Objects,
   FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
   FHIR.R4.PathNode, FHIR.R4.PathEngine, FHIR.R4.Javascript,
-  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Javascript;
+  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Javascript, FHIR.v2.Protocol;
 
-
+{$IFNDEF FPC}
 const
   TEST_PORT = 20032; // err, we hope that this is unused
 
@@ -95,8 +95,11 @@ type
     [TestCase] procedure TestSingleThreadTimeout;
   end;
 
+{$ENDIF}
+
 implementation
 
+{$IFNDEF FPC}
 
 Function StringAsBytes(s : String):TBytes;
 Begin
@@ -689,4 +692,5 @@ initialization
   TDUnitX.RegisterTestFixture(THL7v2ParserTests);
   TDUnitX.RegisterTestFixture(Tv2ParserTests);
   TDUnitX.RegisterTestFixture(TLLPTests);
+{$ENDIF}
 end.

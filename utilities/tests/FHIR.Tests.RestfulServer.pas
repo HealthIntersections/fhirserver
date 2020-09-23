@@ -27,11 +27,14 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   Windows, Sysutils, Classes, IniFiles,
-  DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json, FHIR.Web.Parsers,
   FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Ucum.Services,
@@ -45,6 +48,7 @@ uses
   FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT,
   FHIR.Server.ValidatorR4, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4;
 
+{$IFNDEF FPC}
 Const
   TEST_USER_NAME = 'DunitX-test-user';
   TEST_ANON_USER_NAME = 'DunitX-anon-user';
@@ -224,9 +228,11 @@ Type
     [TestCase] Procedure TestPatientExampleCertificateJWTNoCert;
   end;
 
+{$ENDIF}
+
 implementation
 
-
+{$IFNDEF FPC}
 { TTestStorageService }
 
 destructor TTestStorageService.Destroy;
@@ -1589,4 +1595,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TRestFulServerTests);
+{$ENDIF}
 end.

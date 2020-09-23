@@ -28,15 +28,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, DUnitX.TestFramework, Variants,
+  SysUtils, Classes, Variants,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml, FHIR.Web.Parsers,
   FHIR.Web.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.R4.Factory,
   FHIR.R4.Tests.Worker, FHIR.Support.Tests, FHIR.Support.Comparisons;
 
+{$IFNDEF FPC}
 type
   GraphQLParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
@@ -68,9 +71,11 @@ type
     [GraphQLTestCase]
     procedure TestCase(source,output,context,resource,opName: String);
   end;
-
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 { GraphQLParserTestCaseAttribute }
 
@@ -322,4 +327,5 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TFHIRGraphQLParserTests);
   TDUnitX.RegisterTestFixture(TFHIRGraphQLTests);
+{$ENDIF}
 end.

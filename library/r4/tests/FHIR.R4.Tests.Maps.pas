@@ -28,17 +28,20 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes, IOUtils,
-  DUnitX.TestFramework,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
   FHIR.Support.Base, FHIR.Support.Comparisons,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
 
+{$IFNDEF FPC}
 type
   StructureMapTestCase4Attribute = class (FHIRFolderBasedTestCase4Attribute)
   public
@@ -93,8 +96,11 @@ type
     [MapParserTest2Case4]
     procedure Test(filename : String);
   End;
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 function normalise(text : String) : String;
 begin
@@ -298,4 +304,5 @@ initialization
   TDUnitX.RegisterTestFixture(TMapParserTests4);
   TDUnitX.RegisterTestFixture(TMapParserTests24);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests4);
+{$ENDIF}
 end.

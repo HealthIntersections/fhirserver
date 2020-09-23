@@ -28,15 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  Windows, Sysutils, DUnitX.TestFramework,
+  Windows, Sysutils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Stream,
   FHIR.Tx.Lang;
 
-
+{$IFNDEF FPC}
 type
   [TextFixture]
   TIETFLangTests = Class (TObject)
@@ -50,9 +52,11 @@ type
     [TestCase] Procedure TestSimple;
     [TestCase] Procedure TestWrong;
   end;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 { TIETFLangTests }
 
 procedure TIETFLangTests.fail(code : String);
@@ -109,4 +113,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TIETFLangTests);
+{$ENDIF}
 end.

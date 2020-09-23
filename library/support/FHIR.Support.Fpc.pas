@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, Graphics, ZLib;
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib;
 
 
 {$IFNDEF FPC}

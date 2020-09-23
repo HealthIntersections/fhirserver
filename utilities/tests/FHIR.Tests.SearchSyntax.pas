@@ -28,14 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes,
-  DUnitX.TestFramework,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base,
   FHIR.Server.SearchSyntax;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TFSFilterParserTests = class (TObject)
@@ -53,9 +56,11 @@ type
     [TestCase] procedure testParentheses;
     [TestCase] procedure testPrecedence;
   end;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 { TFSFilterParserTests }
 
 procedure TFSFilterParserTests.test(expression: String);
@@ -121,4 +126,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFSFilterParserTests);
+{$ENDIF}
 end.

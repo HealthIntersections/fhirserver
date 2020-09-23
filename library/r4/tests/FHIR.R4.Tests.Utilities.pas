@@ -27,16 +27,20 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes,
-  DUnitX.TestFramework,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdSSLOpenSSLHeaders,
   FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Version.Parser, 
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TFHIRUtilityTests4 = Class (TObject)
@@ -49,9 +53,11 @@ type
     {[TestCase] }Procedure TestBundleSigningXml;
     {[TestCase] }Procedure TestBundleSigningJson;
   end;
-
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 { TFHIRUtilityTests4 }
 
@@ -174,4 +180,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRUtilityTests4);
+{$ENDIF}
 end.

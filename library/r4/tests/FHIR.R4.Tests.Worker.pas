@@ -33,16 +33,17 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd,
-  FHIR.Support.Utilities,
+  {$IFDEF WINDOWS}Windows, ShellAPI, {$ENDIF}
+  SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Version.Parser,
   FHIR.Support.Tests,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
-  FHIR.Cache.PackageManager,
-  FHIR.Support.Json, DUnitX.TestFramework;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine;
 
+{$IFNDEF FPC}
 Type
   FHIRFolderBasedTestCase4Attribute = class (CustomTestCaseSourceAttribute)
   private
@@ -86,11 +87,14 @@ Type
   public
   end;
 
+{$ENDIF}
+
 implementation
 
 uses
   IdGlobalProtocols, FHIR.R4.Factory;
 
+{$IFNDEF FPC}
 
 
 { TTestingWorkerContext4 }
@@ -222,5 +226,6 @@ end;
 initialization
 finalization
   TTestingWorkerContext4.closeUp;
+{$ENDIF}
 end.
 

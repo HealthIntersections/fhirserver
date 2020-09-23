@@ -28,17 +28,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  SysUtils, Classes, DUnitX.TestFramework, Variants, IOUtils,
+  SysUtils, Classes, Variants, IOUtils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser,
   FHIR.Web.Parsers, FHIR.Web.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
   FHIR.R4.GraphDefinition,
   FHIR.R4.Tests.Worker, FHIR.Support.Tests;
 
+{$IFNDEF FPC}
 type
   GraphDefinitionTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
@@ -55,9 +59,11 @@ type
   public
     [GraphDefinitionTestCase]  procedure TestCase(name : String);
   end;
-
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 var
   tests : TMXmlElement;
@@ -254,4 +260,5 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRGraphDefinitionTests);
 finalization
   tests.Free;
+{$ENDIF}
 end.

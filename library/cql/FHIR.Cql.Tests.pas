@@ -51,7 +51,7 @@ Type
 
   [TextFixture]
   {$ENDIF}
-   TCqlParserTest = Class (TObject)
+   TCqlParserTest = Class (TFslTestCase)
    {$IFNDEF FPC}
    Published
     [CqlParserTestCase]
@@ -61,6 +61,8 @@ Type
 
 
 implementation
+
+{$IFNDEF FPC}
 
 { CqlParserTestCaseAttribute }
 
@@ -90,7 +92,7 @@ begin
   end;
 end;
 
-
+{$ENDIF}
 {  TCqlParserTest }
 
 procedure  TCqlParserTest.ParserTest(Name: String);
@@ -102,7 +104,7 @@ begin
   try
     Cql := parser.parseCql(FileToString(name, TEncoding.UTF8));
     try
-      Assert.IsNotNull(cql);
+      assertTrue(cql <> nil);
     finally
       Cql.Free;
     end;
@@ -112,7 +114,9 @@ begin
 end;
 
 initialization
+  {$IFNDEF FPC}
   {$IFNDEF EXCLUDE_FAILING_TESTS}
   TDUnitX.RegisterTestFixture( TCqlParserTest);
+  {$ENDIF}
   {$ENDIF}
 end.

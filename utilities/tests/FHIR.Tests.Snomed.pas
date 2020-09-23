@@ -28,15 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  Windows, Sysutils,
+  SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base,
-  FHIR.Snomed.Services, FHIR.Snomed.Expressions,
-  DUnitX.TestFramework;
+  FHIR.Snomed.Services, FHIR.Snomed.Expressions;
 
+{$IFNDEF FPC}
 type
   [TextFixture]
   TSnomedTests = Class (TObject)
@@ -61,8 +63,11 @@ type
     [TestCase] Procedure Subsumes;
   end;
 
+{$ENDIF}
+
 implementation
 
+{$IFNDEF FPC}
 { TSnomedTests }
 
 procedure TSnomedTests.Base;
@@ -262,4 +267,6 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TSnomedTests);
+{$ENDIF}
+
 end.

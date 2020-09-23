@@ -36,11 +36,12 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base,
   FHIR.Base.Objects,
-  FHIR.Javascript,
-  DUnitX.TestFramework;
+  FHIR.Javascript;
 
+{$IFNDEF FPC}
 Type
   [TextFixture]
   TJavascriptTests = Class (TObject)
@@ -75,10 +76,11 @@ Type
     [TestCase] Procedure TestArrayComplexAnonymous;
     [TestCase] Procedure TestArrayComplexPush;
   End;
-
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 Type
   TIntObj = class
   private
@@ -641,4 +643,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TJavascriptTests);
+{$ENDIF}
 end.

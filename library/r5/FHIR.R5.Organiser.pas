@@ -61,10 +61,10 @@ var
 begin
   for csr in res.restList do
   begin
-    csr.resourceList.SortedBy(sortCSRest);
+    csr.resourceList.SortedBy(@sortCSRest);
     for csrr in csr.resourceList do
     begin
-      csrr.interactionList.SortedBy(sortCSRInteraction);
+      csrr.interactionList.SortedBy(@sortCSRInteraction);
     end;
   end;
 end;

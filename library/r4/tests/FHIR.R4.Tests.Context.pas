@@ -28,16 +28,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker,
-  DUnitX.TestFramework;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
 
-
+{$IFNDEF FPC}
 Type
   [TextFixture]
   TFhirHTTPMetadataResourceManagerTests4 = class (TObject)
@@ -49,9 +51,11 @@ Type
 
     [Fixture] procedure testSingleNoVersion;
   end;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF FPC}
 
 { TFhirHTTPMetadataResourceManagerTests4 }
 
@@ -70,5 +74,6 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFhirHTTPMetadataResourceManagerTests4);
+{$ENDIF}
 end.
 

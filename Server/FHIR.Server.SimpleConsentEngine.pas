@@ -1,5 +1,35 @@
 unit FHIR.Server.SimpleConsentEngine;
 
+{
+Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 
 {
 This unit implements a simple consent engine that implements that following aspects of the Consent resource:
@@ -21,7 +51,7 @@ This engine uses the latest matching consent statement
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Defaults, System.Generics.Collections,
+  SysUtils, Classes, Generics.Defaults, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Client.Base,
   FHIR.Server.ConsentEngine, FHIR.Server.Session;
@@ -32,7 +62,7 @@ type
     FLock : TFslLock;
     FIdMap : TDictionary<String, String>; // records patients for consents, for updates that change patient (rare, but allowed)
     FCache : TFslMap<TFslList<TFhirConsentW>>;
-    function compare(const Left, Right: TFhirConsentW): Integer;
+    function compare(constref Left, Right: TFhirConsentW): Integer;
     procedure dropConsentById(patId, consentId : string);
   public
     constructor Create; override;
@@ -80,7 +110,7 @@ end;
 
 { TFHIRSimpleConsentEngine }
 
-constructor TFHIRSimpleConsentEngine.Create;
+constructor TFHIRSimpleConsentEngine.Create(factory : TFHIRFactory);
 begin
   inherited;
   FCache := TConsentCache.create;

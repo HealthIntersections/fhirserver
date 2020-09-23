@@ -27,11 +27,15 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+
 interface
 
 uses
   Windows, Sysutils, Classes, IniFiles,
-  DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
 
   FHIR.Web.Fetcher, FHIR.Web.Parsers,
@@ -52,6 +56,7 @@ uses
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
+{$IFNDEF FPC}
 Type
   TFullTestServerFactory = class (TFHIRServerFactory)
   public
@@ -111,7 +116,11 @@ Type
 
   end;
 
+{$ENDIF}
+
 implementation
+
+{$IFNDEF FPC}
 
 { TFullTestServerFactory }
 
@@ -600,4 +609,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFullServerTests);
+{$ENDIF}
 end.

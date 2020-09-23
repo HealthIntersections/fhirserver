@@ -28,20 +28,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
   {$IFNDEF SIMPLETEST}
   FHIR.Ucum.Services,
   {$ENDIF}
-  FHIR.Support.MXml, FHIR.Support.Tests,
-  DUnitX.TestFramework;
+  FHIR.Support.MXml, FHIR.Support.Tests;
+
+{$IFNDEF FPC}
 
 Type
   FHIRPathTestCase4Attribute = class (CustomTestCaseSourceAttribute)
@@ -65,8 +68,11 @@ Type
     [FHIRPathTestCase4]
     procedure FHIRPathTest(Name : String);
   End;
+{$ENDIF}
 
 implementation
+
+{$IFNDEF FPC}
 
 var
   gtests : TMXmlElement;
@@ -301,4 +307,5 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRPathTests4);
 finalization
   gTests.Free;
+{$ENDIF}
 end.

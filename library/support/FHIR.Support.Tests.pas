@@ -36,11 +36,7 @@ interface
 
 Uses
   Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
-  {$IFDEF FPC}
-  FPCUnit,
-  {$ELSE}
-  DUnitX.TestFramework,
-  {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
@@ -49,6 +45,9 @@ Uses
 // *** General Testing Infrastructure ******************************************
 
 type
+  {$IFNDEF FPC}
+  TRunMethod = TTestMethod;
+  {$ENDIF}
   {
     TFslTestCase
 
@@ -138,7 +137,13 @@ Type
   end;
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
+
+  { TFslCollectionsTests }
+
   TFslCollectionsTests = class (TFslTestCase)
+  private
+    list : TFslTestObjectList;
+    procedure executeFail();
   public
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAdd;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAddFail;
@@ -216,7 +221,7 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXmlUtilsTests = Class (TObject)
+  TXmlUtilsTests = Class (TFslTestCase)
   Private
   Published
     {$IFNDEF FPC}[TestCase]{$ENDIF}
@@ -307,10 +312,15 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
+
+  { TJsonPatchTests }
+
   TJsonPatchTests = Class (TFslTestCase)
   Private
     tests : TJsonArray;
+    test : TJsonObject;
     engine : TJsonPatchEngine;
+    procedure execute;
   Published
     {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
     {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
@@ -4413,10 +4423,15 @@ end;
 
 { TJsonPatchTests }
 
+procedure TJsonPatchTests.execute;
+begin
+  engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
+end;
+
 procedure TJsonPatchTests.PatchTest(Name: String);
 var
   t : TJsonNode;
-  test, outcome : TJsonObject;
+  outcome : TJsonObject;
   s : String;
 begin
   for t in tests do
@@ -4427,10 +4442,7 @@ begin
     begin
       if test.has('error') then
       begin
-        Assert.WillRaise(
-          procedure begin
-            engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
-          end, EJsonException);
+        assertWillRaise(execute, EJsonException, '');
       end
       else
       begin
@@ -4607,8 +4619,6 @@ end;
 { TFslCollectionsTests }
 
 procedure TFslCollectionsTests.testAdd;
-var
-  list : TFslTestObjectList;
 begin
   list := TFslTestObjectList.create;
   try
@@ -4619,13 +4629,16 @@ begin
   end;
 end;
 
+procedure TFslCollectionsTests.executeFail();
+begin
+  list.Add(TFslTestObjectList.create);
+end;
+
 procedure TFslCollectionsTests.testAddFail;
-var
-  list : TFslTestObjectList;
 begin
   list := TFslTestObjectList.create;
   try
-    Assert.WillRaise(procedure begin list.Add(TFslTestObjectList.create) end, EFslInvariant);
+    assertWillRaise(executeFail, EFslInvariant, '');
     assertTrue(list.Count = 0);
   finally
     list.Free;
@@ -4725,32 +4738,114 @@ end;
 
 { TFslTestCase }
 
-procedure TFslTestCase.assertEqual(left, right, message: String);
+{$IFDEF FPC}
+constructor TFslTestCase.Create(name : String);
 begin
-  Aassert.AreEqual(left, right, message);
+  inherited CreateWith('Test', name);
+  FName := name;
 end;
 
-procedure TFslTestCase.assertFail(message: String);
+function TFslTestCase.GetTestName: string;
 begin
-  Assert.Fail(message);
+  Result := FName;
 end;
 
-procedure TFslTestCase.assertTrue(test: boolean; message: String);
+procedure TFslTestCase.Test;
 begin
-  Assert.IsTrue(test, message);
+  TestCase(FName);
 end;
 
-procedure TFslTestCase.assertTrue(test: boolean);
-begin
-  Assert.IsTrue(test);
-end;
+{$ENDIF}
 
 procedure TFslTestCase.TestCase(name: String);
 begin
   // nothing - override this
 end;
 
+procedure TFslTestCase.assertPass;
+begin
+  {$IFDEF FPC}
+  // nothing
+  {$ELSE}
+  Assert.Pass;
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertFail(message: String);
+begin
+  {$IFDEF FPC}
+  TAssert.Fail(message);
+  {$ELSE}
+  Assert.Fail(message);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertTrue(test: boolean; message: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertTrue(message, test);
+  {$ELSE}
+  Assert.IsTrue(test, message);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertTrue(test: boolean);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertTrue(test);
+  {$ELSE}
+  Assert.IsTrue(test);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertFalse(test: boolean; message: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertFalse(message, test);
+  {$ELSE}
+  Assert.IsFalse(test, message);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertFalse(test: boolean);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertFalse(test);
+  {$ELSE}
+  Assert.IsFalse(test);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(left, right, message: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertEquals(message, left, right);
+  {$ELSE}
+  Assert.AreEqual(left, right, message);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(left, right: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertEquals(left, right);
+  {$ELSE}
+  Assert.AreEqual(left, right);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
+  {$ELSE}
+  Assert.WillRaise(AMethod, AExceptionClass, AExceptionMessage);
+  {$ENDIF}
+end;
+
 initialization
+  {$IFDEF FPC}
+  {$ELSE}
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
   TDUnitX.RegisterTestFixture(TOSXTests);
@@ -4766,6 +4861,7 @@ initialization
   TDUnitX.RegisterTestFixture(TDecimalTests);
   TDUnitX.RegisterTestFixture(TLangParserTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
+  {$ENDIF}
 end.
 
 
