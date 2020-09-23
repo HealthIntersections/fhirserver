@@ -6436,6 +6436,7 @@ end;
 procedure TFHIRNativeStorageService.Sweep;
 var
   d: TDateTime;
+  k : Integer;
   list: TFslList<TFHIRQueuedResource>;
   storage: TFHIRNativeOperationEngine;
   conn: TFslDBConnection;
@@ -6460,19 +6461,20 @@ begin
     begin
       conn := FDB.GetConnection('Sweep.search');
       try
-        conn.SQL :=
-          'Delete from SearchEntries where SearchKey in (select SearchKey from Searches where Date < :d)';
-        conn.Prepare;
-        conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
-        conn.Execute;
-        conn.terminate;
+        k := conn.CountSQL('Select Max(SearchKey) from Searches');
+        if (k > 200) then
+        begin
+          k := k - 200;
+          conn.SQL := 'Delete from SearchEntries where SearchKey < '+inttostr(k);
+          conn.Prepare;
+          conn.Execute;
+          conn.terminate;
 
-        conn.SQL := 'Delete from Searches where Date < :d';
-        conn.Prepare;
-        conn.BindTimeStamp('d', DateTimeToTS(d - 0.3));
-        conn.Execute;
-        conn.terminate;
-
+          conn.SQL := 'Delete from Searches where SearchKey < '+inttostr(k);
+          conn.Prepare;
+          conn.Execute;
+          conn.terminate;
+        end;
         conn.Release;
       except
         on e: Exception do
