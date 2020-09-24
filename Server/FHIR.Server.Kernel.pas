@@ -139,7 +139,7 @@ Type
     procedure DoStop; Override;
     procedure dump; override;
   public
-    constructor Create(const ASystemName, ADisplayName, AIniName: String);
+    constructor Create(const ASystemName, ADisplayName, AIniName, Welcome : String);
     destructor Destroy; override;
 
     procedure Load(name, plist : String; mode : TFHIRInstallerSecurityMode);
@@ -200,6 +200,7 @@ var
   svc : TFHIRService;
   smode, plist : String;
   mode : TFHIRInstallerSecurityMode;
+  logMsg : String;
 begin
   //AllocConsole;
   try
@@ -220,14 +221,15 @@ begin
     iniName := iniName.replace('.dstu', '.dev');
 
     if JclExceptionTrackingActive then
-      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
+      logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (+stack dumps)'
     else
-      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
+      logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName;
     if filelog then
-      logt('Log File = '+logfile);
+      logMsg := logMsg + 'Log File = '+logfile;
+    logt(logMsg);
     dispName := dispName + ' '+SERVER_VERSION;
 
-    svc := TFHIRService.Create(svcName, dispName, iniName);
+    svc := TFHIRService.Create(svcName, dispName, iniName, logMsg);
     try
         GJsHost := TJsHost.Create;
         try
@@ -446,11 +448,11 @@ end;
 
 { TFHIRService }
 
-constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
+constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName, Welcome: String);
 begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
-  FTelnet := TFHIRTelnetServer.Create(44123);
+  FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := TFHIRServerIniFile.Create(AIniName);
   FTelnet.Password := FIni.web['telnet-password'];
 
@@ -499,9 +501,6 @@ begin
   try
     if FDatabases.IsEmpty then
       ConnectToDatabases;
-    if FTerminologies = nil then
-      LoadTerminologies;
-    InitialiseRestServer(FknownVersion);
     result := true;
   except
     on e : Exception do
@@ -510,8 +509,6 @@ begin
       raise;
     end;
   end;
-  logt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
-  log_as_starting := false;
 end;
 
 procedure TFHIRService.DoStop;
@@ -812,6 +809,11 @@ end;
 
 procedure TFHIRService.postStart;
 begin
+  if FTerminologies = nil then
+    LoadTerminologies;
+  InitialiseRestServer(FknownVersion);
+  logt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
+  log_as_starting := false;
 end;
 
 procedure TFHIRService.UnloadTerminologies;
