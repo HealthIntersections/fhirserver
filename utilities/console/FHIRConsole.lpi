@@ -66,6 +66,7 @@
         <Filename Value="frmserverconnection.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ServerConnectionForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmServerConnection"/>
       </Unit>

@@ -251,7 +251,10 @@ end;
 procedure TTelnetThreadHelper.ping;
 begin
   if now > FNextPing then
-    send('.');
+  begin
+    send('$@ping: '+inttostr(threadCount)+' threads, '+MemoryStatus);
+    FNextPing := now + (DATETIME_SECOND_ONE * 10);
+  end;
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
@@ -261,7 +264,6 @@ end;
 
 procedure TTelnetThreadHelper.send(s: String);
 begin
-  FNextPing := now + DATETIME_MINUTE_ONE;
   FContext.Connection.Socket.WriteLn(s);
   FHasSent := true;
 end;

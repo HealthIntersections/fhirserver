@@ -53,6 +53,7 @@ type
     FLock : TFslLock;
     FTelnet: TIdTelnet;
     FIncoming : TStringList;
+    FServerStatus : String;
     FLines : TStringList;
     FLastIncoming : TDateTime;
     FStatus : TConnectionStatus;
@@ -65,6 +66,7 @@ type
     procedure DoConnected(Sender: TObject);
     procedure processIncomingLine(line: String);
     function passesFilter(line: String) : boolean;
+    function handleCommand(line: String) : boolean;
     procedure Connect;
   public
 
@@ -152,7 +154,7 @@ end;
 procedure TForm1.Timer1Timer(Sender: TObject);
 var
   ts : TStringList;
-  s : String;
+  s, ss : String;
   st : TConnectionStatus;
 begin
   ts := TStringList.create;
@@ -160,6 +162,7 @@ begin
     Flock.Lock;
     try
       st := FStatus;
+      ss := FServerStatus;
       ts.assign(FIncoming);
       FIncoming.clear;
     finally
@@ -217,9 +220,15 @@ begin
     ts.free;
   end;
   if st = csDiconnected then
-    sBar.Panels[1].Text := 'n/a'
+  begin
+    sBar.Panels[1].Text := 'n/a';
+    sBar.Panels[4].Text := 'Last Server: '+ss;
+  end
   else
+  begin
     sBar.Panels[1].Text := DescribePeriodNoMsec(now - FLastIncoming);
+    sBar.Panels[4].Text := 'Server: '+ss;
+  end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
   sBar.Panels[3].Text := MemoryStatus;
 end;
@@ -292,8 +301,9 @@ begin
         else
           ; // ignore line
       csConnected:
-        if not ignoreLine(line) then
-          FIncoming.add(line);
+        if not handleCommand(line) then
+          if not ignoreLine(line) then
+            FIncoming.add(line);
     end;
   finally
     FLock.Unlock;
@@ -305,6 +315,24 @@ end;
 function TForm1.passesFilter(line: String): boolean;
 begin
   result := (FFilter = '') or line.ToLower.Contains(FFilter);
+end;
+
+function TForm1.handleCommand(line: String): boolean;
+begin
+  result := false;
+  if (line.startsWith('$@')) then
+  begin
+    if line.startsWith('$@ping: ') then
+    begin
+      FLock.Lock;
+      try
+        FServerStatus := line.Substring(8);
+      finally
+        FLock.unLock;
+      end;
+      exit(true);
+    end;
+  end;
 end;
 
 procedure TForm1.Connect;

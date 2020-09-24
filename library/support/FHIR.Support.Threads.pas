@@ -35,7 +35,7 @@ interface
 {$OVERFLOWCHECKS OFF}
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows,{$ENDIF}
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF} {$ENDIF}
   SysUtils, SyncObjs, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
@@ -57,6 +57,8 @@ Procedure ThreadBreakpoint; Overload;
 
 procedure SetThreadName(name : String);
 function GetThreadName(id : integer) : String;
+
+function threadCount : Integer;
 
 type
   {$IFNDEF FPC}
@@ -1066,6 +1068,30 @@ end;
 function TBackgroundTaskUIResponse.link: TBackgroundTaskUIResponse;
 begin
   result := TBackgroundTaskUIResponse(inherited link);
+end;
+
+function threadCount : integer;
+var
+  h : THandle;
+  te : THREADENTRY32;
+begin
+  h := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+  result := 0;
+  if (h <> INVALID_HANDLE_VALUE) then
+  begin
+    try
+      te.dwSize := sizeof(te);
+      if (Thread32First(h, te)) then
+      begin
+        repeat
+          if (te.th32OwnerProcessID = GetCurrentProcessId) then
+            inc(result);
+        until not Thread32Next(h, te);
+      end;
+    finally
+      CloseHandle(h);
+    end;
+  end;
 end;
 
 Initialization
