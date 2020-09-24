@@ -7078,8 +7078,6 @@ var
   cfg : TFHIRResourceConfig;
 begin
   key := 0;
-  if aType = 'Composition' then
-    writeln('test');
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
@@ -7104,8 +7102,6 @@ function TFHIRNativeStorageService.NextResourceKeySetId(connection : TFslDBConne
 var
   i: integer;
 begin
-  if aType = 'Composition' then
-    writeln('test');
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
