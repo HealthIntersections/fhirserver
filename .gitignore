@@ -229,3 +229,9 @@ System
 /library/r4/tests/backup
 /library/version/backup
 /library/xversion/backup
+/dependencies/FMM/backup
+/Server/lib/i386-win32
+/utilities/console/backup
+/utilities/console/lib/i386-win32
+/utilities/tests/backup
+/utilities/tests/lib/i386-win32

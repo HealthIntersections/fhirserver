@@ -1,0 +1,64 @@
+object ServerConnectionForm: TServerConnectionForm
+  Left = 3923
+  Height = 110
+  Top = 159
+  Width = 287
+  Caption = 'Choose Server'
+  ClientHeight = 110
+  ClientWidth = 287
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  LCLVersion = '2.1.0.0'
+  object Label1: TLabel
+    Left = 16
+    Height = 15
+    Top = 19
+    Width = 35
+    Caption = 'Server:'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 15
+    Top = 48
+    Width = 53
+    Caption = 'Password:'
+    ParentColor = False
+  end
+  object edtServer: TEdit
+    Left = 72
+    Height = 23
+    Top = 16
+    Width = 200
+    TabOrder = 0
+    TextHint = 'Server'
+  end
+  object edtPassword: TEdit
+    Left = 72
+    Height = 23
+    Top = 44
+    Width = 200
+    TabOrder = 1
+    TextHint = 'Password'
+  end
+  object Button1: TButton
+    Left = 120
+    Height = 25
+    Top = 72
+    Width = 75
+    Caption = 'OK'
+    Default = True
+    ModalResult = 1
+    TabOrder = 2
+  end
+  object Button2: TButton
+    Left = 200
+    Height = 25
+    Top = 72
+    Width = 75
+    Cancel = True
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 3
+  end
+end

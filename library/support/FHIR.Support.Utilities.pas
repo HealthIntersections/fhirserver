@@ -1593,6 +1593,7 @@ Function ToYear(Const Value : TDateTime) : TYear; Overload;
 Function DateTimeMax(Const aA, aB : TDateTime) : TDateTime; Overload;
 Function DateTimeMin(Const aA, aB : TDateTime) : TDateTime; Overload;
 function DescribePeriod(Period: TDateTime): String;
+function DescribePeriodNoMSec(Period: TDateTime): String;
 function TSToDateTime(TS: TTimeStamp): TDateTime;
 function DateTimeToTS(Value : TDateTime): TTimeStamp;
 
@@ -9391,6 +9392,22 @@ begin
     period := -period;
   if Period < SECOND_LENGTH then
     Result := IntToStr(trunc(Period * 1000 / SECOND_LENGTH)) + 'ms'
+  else if Period < 180 * SECOND_LENGTH then
+    Result := IntToStr(trunc(Period / SECOND_LENGTH)) + 'sec'
+  else if Period < 180 * MINUTE_LENGTH then
+    Result := IntToStr(trunc(Period / MINUTE_LENGTH)) + 'min'
+  else if Period < 72 * 60 * MINUTE_LENGTH then
+    Result := IntToStr(trunc(Period / (MINUTE_LENGTH * 60))) + 'hr'
+  else
+    Result := IntToStr(trunc(Period)) + ' days';
+end;
+
+function DescribePeriodNoMSec(Period: TDateTime): String;
+begin
+  if period < 0 then
+    period := -period;
+  if Period < SECOND_LENGTH then
+    Result := '<1 sec'
   else if Period < 180 * SECOND_LENGTH then
     Result := IntToStr(trunc(Period / SECOND_LENGTH)) + 'sec'
   else if Period < 180 * MINUTE_LENGTH then

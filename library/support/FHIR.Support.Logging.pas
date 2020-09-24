@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF} {$ENDIF}
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC}JwaPsApi, FastMM4, {$ELSE} PsApi, {$ENDIF} {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections;
 
@@ -474,9 +474,6 @@ end;
 
 function MemoryStatus: String;
 var
-  {$IFDEF FPC}
-  heap : TFPCHeapStatus;
-  {$ELSE}
   st: TMemoryManagerState;
   sb: TSmallBlockTypeState;
   v : UInt64;
@@ -484,12 +481,7 @@ var
   {$IFDEF MSWINDOWS}
   pmc: PROCESS_MEMORY_COUNTERS;
   {$ENDIF}
-  {$ENDIF}
 begin
-  {$IFDEF FPC}
-  heap := GetFPCHeapStatus;
-  result := memToMB(heap.CurrHeapSize);
-  {$ELSE}
   result := '';
   {$IFDEF MSWINDOWS}
   GetMemoryManagerState(st);
@@ -501,7 +493,7 @@ begin
 
   hProcess := GetCurrentProcess;
   try
-    if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
+    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
       if result = '' then
         result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
       else
@@ -509,7 +501,6 @@ begin
   finally
     CloseHandle(hProcess);
   end;
-  {$ENDIF}
   {$ENDIF}
 end;
 
