@@ -28,12 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
   MarkDownProcessor,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
@@ -687,7 +687,7 @@ procedure TCDSHooksManagerWorkThread.Execute;
 //  client : TFhirClient;
 begin
 (*  SetThreadName('CDSHooks manager');
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   CoInitialize(nil); // though there's no reason internal reason to initialize
   {$ENDIF}
   try
@@ -739,7 +739,7 @@ begin
     end;
   finally
     // todo: detach from Java...
-    {$IFDEF MSWINDOWS}
+    {$IFDEF WINDOWS}
     CoUninitialize;
     {$ENDIF}
   end;

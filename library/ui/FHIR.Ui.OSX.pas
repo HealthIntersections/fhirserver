@@ -29,11 +29,13 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 interface
 
+{$I fhir.inc}
+
 uses
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   FMX.Platform.Win, Winapi.Windows, Winapi.ShellAPI, ComObj, ShlObj, ActiveX, FMX.Types;
-  {$ENDIF MSWINDOWS}
-  {$IFDEF MACOS}
+  {$ENDIF WINDOWS}
+  {$IFDEF OSX}
   FMX.Types, Macapi.AppKit, Macapi.Foundation, Macapi.ObjectiveC, Posix.Stdlib;
   {$ENDIF MACOS}
 
@@ -54,7 +56,7 @@ implementation
 var
   init : PChar;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function BI_CallBack_Proc(hwnd: HWND; uMsg: UINT; lParam: DWORD; lpData: DWORD): integer; stdcall;
 var
   PathName: array[0..MAX_PATH] of Char;
@@ -70,10 +72,10 @@ begin
   Result := 0;
 end;
 
-{$ENDIF MSWINDOWS}
+{$ENDIF WINDOWS}
 
 function SelectDirectory(Handle : TWindowHandle; const ATitle: string; const Existing : String; var ADir: string): boolean;
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 var
   hr: HRESULT;
   FormHandle: THandle;
@@ -127,8 +129,8 @@ begin
       Malloc.Free(lpBuf);
     end;
 end;
-{$ENDIF MSWINDOWS}
-{$IFDEF MACOS}
+{$ENDIF WINDOWS}
+{$IFDEF OSX}
 var
   LOpenDir: NSOpenPanel;
   LInitialDir: NSURL;
@@ -163,9 +165,9 @@ end;
 
 procedure OpenURL(sCommand: string);
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   ShellExecute(0, 'OPEN', PChar(sCommand), '', '', SW_SHOWNORMAL);
-{$ENDIF MSWINDOWS}
+{$ENDIF WINDOWS}
 {$IFDEF POSIX}
   _system(PAnsiChar('open ' + AnsiString(sCommand)));
 {$ENDIF POSIX}

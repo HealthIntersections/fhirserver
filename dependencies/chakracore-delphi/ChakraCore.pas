@@ -149,7 +149,7 @@ type
   ///     Returns a <c>JsNoError</c> if the operation succeeded an error code otherwise.
   /// </returns>
   FetchImportedModuleCallBack = function(referencingModule: JsModuleRecord; specifier: JsValueRef;
-      out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     User implemented callback to fetch imported modules dynamically in scripts.
@@ -173,7 +173,7 @@ type
   ///     Returns <c>JsNoError</c> if the operation succeeded or an error code otherwise.
   /// </returns>
   FetchImportedModuleFromScriptCallBack = function(dwReferencingSourceContext: JsSourceContext; specifier: JsValueRef;
-    out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     User implemented callback to get notification when the module is ready.
@@ -189,7 +189,7 @@ type
   ///     Returns a JsErrorCode - note, the return value is ignored.
   /// </returns>
   NotifyModuleReadyCallback = function(referencingModule: JsModuleRecord; exceptionVar: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A structure containing information about a native function callback.
@@ -215,7 +215,7 @@ type
   /// </param>
   /// <returns>The result of the call, if any.</returns>
   JsEnhancedNativeFunction = function(callee: JsValueRef; arguments: PJsValueRef; argumentCount: Word;
-      info: PJsNativeFunctionInfo; callbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      info: PJsNativeFunctionInfo; callbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A Promise Rejection Tracker callback.
@@ -237,7 +237,7 @@ type
   ///                         true for promiseHandled: i.e. if it was rejected before without a handler and is now being handled.</param>
   /// <param name="callbackState">The state passed to <c>JsSetHostPromiseRejectionTracker</c>.</param>
   JsHostPromiseRejectionTrackerCallback = procedure(promise, reason: JsValueRef; handled: bool; callbackState: Pointer);
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new enhanced JavaScript function.
@@ -255,7 +255,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsCreateEnhancedFunction(nativeFunction: JsEnhancedNativeFunction; metadata: JsValueRef;
-      callbackState: Pointer; out _function: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      callbackState: Pointer; out _function: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Initialize a ModuleRecord from host
@@ -273,7 +273,7 @@ type
   function JsInitializeModuleRecord(
       referencingModule: JsModuleRecord;
       normalizedSpecifier: JsValueRef;
-      out moduleRecord: JsModuleRecord): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out moduleRecord: JsModuleRecord): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Parse the source for an ES module
@@ -299,7 +299,7 @@ type
       script: PByte;
       scriptLength: Cardinal;
       sourceFlag: JsParseModuleSourceFlags;
-      out exceptionValueRef: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out exceptionValueRef: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Execute module code.
@@ -318,7 +318,7 @@ type
   /// </returns>
   function JsModuleEvaluation(
       requestModule: JsModuleRecord;
-      out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Set host info for the specified module.
@@ -344,7 +344,7 @@ type
   function JsSetModuleHostInfo(
       requestModule: JsModuleRecord;
       moduleHostInfo: JsModuleHostInfoKind;
-      hostInfo: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      hostInfo: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieve the host info for the specified module.
@@ -361,7 +361,7 @@ type
   function JsGetModuleHostInfo(
       requestModule: JsModuleRecord;
       moduleHostInfo: JsModuleHostInfoKind;
-      out hostInfo: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out hostInfo: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Returns metadata relating to the exception that caused the runtime of the current context
@@ -393,7 +393,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetAndClearExceptionWithMetadata(
-      out metadata: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out metadata: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 type
   /// <summary>
@@ -407,7 +407,7 @@ type
   JsSerializedLoadScriptCallback = function(
       sourceContext: JsSourceContext;
       out value: JsValueRef;
-      out parseAttributes: JsParseScriptAttributes): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out parseAttributes: JsParseScriptAttributes): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Create JavascriptString variable from ASCII or Utf8 string
@@ -429,7 +429,7 @@ type
   function JsCreateString(
           content: PAnsiChar;
           length: size_t;
-          out value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Create JavascriptString variable from Utf16 string
@@ -451,7 +451,7 @@ type
   function JsCreateStringUtf16(
           content: PUnicodeChar;
           length: size_t;
-          out value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Write JavascriptString value into C string buffer (Utf8)
@@ -474,7 +474,7 @@ type
           value: JsValueRef;
           buffer: PAnsiChar;
           bufferSize: size_t;
-          length: Psize_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          length: Psize_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Write string value into Utf16 string buffer
@@ -506,7 +506,7 @@ type
           start: Integer;
           length: Integer;
           buffer: PUnicodeChar;
-          written: Psize_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          written: Psize_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Parses a script and returns a function representing the script.
@@ -540,7 +540,7 @@ type
           sourceContext: JsSourceContext;
           sourceUrl: JsValueRef;
           parseAttributes: JsParseScriptAttributes;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Executes a script.
@@ -574,7 +574,7 @@ type
           sourceContext: JsSourceContext;
           sourceUrl: JsValueRef;
           parseAttributes: JsParseScriptAttributes;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates the property ID associated with the name.
@@ -599,7 +599,7 @@ type
   function JsCreatePropertyId(
           name: PAnsiChar;
           length: size_t;
-          out propertyId: JsPropertyIdRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertyId: JsPropertyIdRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Copies the name associated with the property ID into a buffer.
@@ -625,7 +625,7 @@ type
           propertyId: JsPropertyIdRef;
           buffer: PAnsiChar;
           bufferSize: size_t;
-          out length: size_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out length: size_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Serializes a parsed script to a buffer than can be reused.
@@ -658,7 +658,7 @@ type
   function JsSerialize(
           script: JsValueRef;
           out buffer: JsValueRef;
-          parseAttributes: JsParseScriptAttributes): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          parseAttributes: JsParseScriptAttributes): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Parses a serialized script and returns a function representing the script.
@@ -688,7 +688,7 @@ type
           scriptLoadCallback: JsSerializedLoadScriptCallback;
           sourceContext: JsSourceContext;
           sourceUrl: JsValueRef;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Runs a serialized script.
@@ -721,7 +721,7 @@ type
           scriptLoadCallback: JsSerializedLoadScriptCallback;
           sourceContext: JsSourceContext;
           sourceUrl: JsValueRef;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the state of a given Promise object.
@@ -736,7 +736,7 @@ type
   /// </returns>
   function JsGetPromiseState(
       promise: JsValueRef;
-      out state: JsPromiseState): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out state: JsPromiseState): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the result of a given Promise object.
@@ -751,7 +751,7 @@ type
   /// </returns>
   function JsGetPromiseResult(
       promise: JsValueRef;
-      out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript Promise object.
@@ -768,7 +768,7 @@ type
   function JsCreatePromise(
           out promise: JsValueRef;
           out resolveFunction: JsValueRef;
-          out rejectFunction: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out rejectFunction: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 type
   /// <summary>
@@ -791,7 +791,7 @@ type
   /// </returns>
   function JsCreateWeakReference(
           value: JsValueRef;
-          out weakRef: JsWeakRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out weakRef: JsWeakRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets a strong reference to the value referred to by a weak reference.
@@ -804,7 +804,7 @@ type
   /// </returns>
   function JsGetWeakReferenceValue(
           weakRef: JsWeakRef;
-          value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript SharedArrayBuffer object with shared content get from JsGetSharedArrayBufferContent.
@@ -821,7 +821,7 @@ type
   /// </returns>
   function JsCreateSharedArrayBufferWithSharedContent(
       sharedContents: JsSharedArrayBufferContentHandle;
-      out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Get the storage object from a SharedArrayBuffer.
@@ -839,7 +839,7 @@ type
   /// </returns>
   function JsGetSharedArrayBufferContent(
       sharedArrayBuffer: JsValueRef;
-      out sharedContents: JsSharedArrayBufferContentHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out sharedContents: JsSharedArrayBufferContentHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Decrease the reference count on a SharedArrayBuffer storage object.
@@ -854,7 +854,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsReleaseSharedArrayBufferContentHandle(
-      sharedContents: JsSharedArrayBufferContentHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      sharedContents: JsSharedArrayBufferContentHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object has a non-inherited property.
@@ -869,7 +869,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsHasOwnProperty(_object: JsValueRef; propertyId: JsPropertyIdRef; out hasOwnProperty: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Write JS string value into char string buffer without a null terminator
@@ -902,7 +902,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsCopyStringOneByte(value: JsValueRef; start, length: Integer; buffer: PAnsiChar;
-      written: Psize_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      written: Psize_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Obtains frequently used properties of a data view.
@@ -915,7 +915,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetDataViewInfo(dataView: JsValueRef; arrayBuffer: PJsValueRef;
-      byteOffset, byteLength: PCardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      byteOffset, byteLength: PCardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determine if one JavaScript value is less than another JavaScript value.
@@ -935,7 +935,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsLessThan(object1, object2: JsValueRef; out result: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determine if one JavaScript value is less than or equal to another JavaScript value.
@@ -955,7 +955,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsLessThanOrEqual(object1, object2: JsValueRef; out result: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new object (with prototype) that stores some external data.
@@ -976,7 +976,7 @@ type
       data: Pointer;
       finalizeCallback: JsFinalizeCallback;
       prototype: JsValueRef;
-      out _object: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out _object: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets an object's property.
@@ -991,7 +991,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectGetProperty(_object, key: JsValueRef; out value: JsValueRef): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Puts an object's property.
@@ -1007,7 +1007,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectSetProperty(_object, key, value: JsValueRef; useStrictRules: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object has a property.
@@ -1022,7 +1022,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectHasProperty(_object, key: JsValueRef; out hasProperty: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Defines a new object's own property from a property descriptor.
@@ -1038,7 +1038,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectDefineProperty(_object, key, propertyDescriptor: JsValueRef; out result: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Deletes an object's property.
@@ -1054,7 +1054,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectDeleteProperty(_object, key: JsValueRef; useStrictRules: bool; out result: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets a property descriptor for an object's own property.
@@ -1069,7 +1069,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectGetOwnPropertyDescriptor(_object, key: JsValueRef; out propertyDescriptor: JsValueRef): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object has a non-inherited property.
@@ -1084,7 +1084,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsObjectHasOwnProperty(_object, key: JsValueRef; out hasOwnProperty: bool): JsErrorCode;
-      {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets whether any action should be taken when a promise is rejected with no reactions
@@ -1105,7 +1105,7 @@ type
   /// </returns>
   function JsSetHostPromiseRejectionTracker(
       promiseRejectionTrackerCallback: JsHostPromiseRejectionTrackerCallback;
-      callbackState: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      callbackState: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieve the namespace object for a module.
@@ -1120,7 +1120,7 @@ type
   /// </returns>
   function JsGetModuleNamespace(
     requestModule: JsModuleRecord;
-    out moduleNamespace: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out moduleNamespace: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines if a provided object is a JavscriptProxy Object and
@@ -1146,7 +1146,7 @@ type
       _object: JsValueRef;
       out isProxy: bool;
       out target: JsValueRef;
-      out handler: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+      out handler: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Parses a script and stores the generated parser state cache into a buffer which can be reused.
@@ -1179,7 +1179,7 @@ type
   function JsSerializeParserState(
     scriptVal: JsValueRef;
     out bufferVal: JsValueRef;
-    parseAttributes: JsParseScriptAttributes): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    parseAttributes: JsParseScriptAttributes): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Deserializes the cache of initial parser state and (along with the same
@@ -1218,39 +1218,39 @@ type
     sourceUrl: JsValueRef;
     parseAttributes: JsParseScriptAttributes;
     parserState: JsValueRef;
-    out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsRunScript(
           script: PChar;
           sourceContext: JsSourceContext;
           sourceUrl: PChar;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsPointerToString(
     const stringValue: PChar;
     stringLength: size_t;
     var value: JsValueRef
-  ): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsStringToPointer(
     value: JsValueRef;
     var stringValue: PChar;
     var stringLength: size_t
-  ): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsParseScript(
     const script: PChar;
     sourceContext: JsSourceContext;
     const sourceUrl: PChar;
     var result: JsValueRef
-  ): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 implementation
 
 uses
   Math;
 
-{$ifdef MSWINDOWS}
+{$IFDEF MSWINDOWS}
 const
   _chakracore = 'chakracore.dll';
 {$endif}

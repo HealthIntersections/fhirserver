@@ -28,12 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  {$IFDEF OSX} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging, FHIR.Support.Json,
   FHIR.Web.Parsers,

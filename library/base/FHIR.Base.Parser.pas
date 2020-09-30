@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 
 {$WARN SYMBOL_DEPRECATED OFF}
@@ -36,8 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, Generics.Collections, Character, {$IFNDEF VER260} system.NetEncoding, {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils, Classes, Math, Generics.Collections, Character, {$IFNDEF VER260} system.NetEncoding, {$ENDIF}
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.Osx,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
 

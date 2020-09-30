@@ -28,15 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base,
+  FHIR.Support.Threads,
+  {$IFNDEF NO_JS}FHIR.Javascript, {$ENDIF}FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
-  FHIR.Javascript.Base,
+  {$IFNDEF NO_JS} FHIR.Javascript.Base, {$ENDIF}
   FHIR.Server.Session;
 
 Const
@@ -87,6 +88,7 @@ Type
   TJsGetFHIRResource = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRResourceV;
   TJsGetFHIRClient = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRClientV;
 
+{$IFNDEF NO_JS}
   // we create one of these for evrey thread, but it will only actually create a javscript engine when it needs to.
   // then, we retain it as long as we can
   TJsHost = class (TFslObject)
@@ -108,9 +110,11 @@ Type
 
 threadvar
   GJsHost : TJsHost;
+{$ENDIF}
 
 implementation
 
+{$IFNDEF NO_JS}
 
 { TJsHost }
 
@@ -193,6 +197,8 @@ begin
   FRegistry.Free;
   FRegistry := Value;
 end;
+
+{$ENDIF}
 
 { TEventScriptRegistry }
 

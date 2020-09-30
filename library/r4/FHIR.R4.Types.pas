@@ -31,7 +31,7 @@ unit FHIR.R4.Types;
   
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

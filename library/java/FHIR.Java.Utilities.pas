@@ -1,5 +1,5 @@
 {
-Copyright (C) 1998-2001 Jonathan Revusky
+Copyright (C) 1998+ Jonathan Revusky
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 unit FHIR.Java.Utilities;
 

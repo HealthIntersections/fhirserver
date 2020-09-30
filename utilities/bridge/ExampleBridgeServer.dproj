@@ -61,7 +61,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_UnitSearchPath>..\Libraries\jcl;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d32\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\Libraries\jcl;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d32\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d332</DCC_DcuOutput>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_Hints>false</DCC_Hints>
@@ -265,6 +265,8 @@
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Clinical.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.Canonical.pas"/>
         <DCCReference Include="..\..\library\r3\FHIR.R3.Resources.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.Telnet.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

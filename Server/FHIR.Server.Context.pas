@@ -28,18 +28,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
+  SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Validator, FHIR.Database.Manager,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
   FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine,
-  FHIR.Server.ClientCacheManager
+  FHIR.Server.ClientCacheManager, FHIR.Server.Telnet
   {$IFNDEF NO_JS}, FHIR.Server.Javascript {$ENDIF};
 
 Const
@@ -107,6 +107,7 @@ Type
     FConsentEngine: TFHIRConsentEngine;
     FClientCacheManager: TClientCacheManager;
     FOnGetNamedContext : TGetNamedContextEvent;
+    FTelnetServer : TFHIRTelnetServer;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -119,6 +120,7 @@ Type
     procedure SetValidate(const Value: Boolean);
 
     procedure SetClientCacheManager(const Value: TClientCacheManager);
+    procedure SetTelnetServer(const Value: TFHIRTelnetServer);
   public
     constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -144,6 +146,7 @@ Type
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
     property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
+    property TelnetServer : TFHIRTelnetServer read FTelnetServer write SetTelnetServer;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -377,6 +380,7 @@ begin
   FServerFactory.Free;
   FTerminologyServer.Free;
   FClientCacheManager.Free;
+  FTelnetServer.Free;
 
   FValidatorContext.Free;
   FValidator.free;
@@ -463,6 +467,12 @@ procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionMa
 begin
   FSubscriptionManager.Free;
   FSubscriptionManager := Value;
+end;
+
+procedure TFHIRServerContext.SetTelnetServer(const Value: TFHIRTelnetServer);
+begin
+  FTelnetServer.Free;
+  FTelnetServer := Value;
 end;
 
 procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServer);

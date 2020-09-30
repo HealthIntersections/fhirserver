@@ -1,7 +1,7 @@
 Unit FHIR.Support.Stream;
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,18 +28,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 Interface
 
 
 Uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, FHIR.Support.Fpc, {$ENDIF}
-  SysUtils, {$IFNDEF FPC}AnsiStrings, {$ENDIF}Classes, RTLConsts, ZLib, {$IFDEF FPC}ZStream,{$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
+  {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
+  {$IFNDEF FPC} AnsiStrings, {$ENDIF}{$IFDEF FPC} ZStream,{$ENDIF}
+  SysUtils,Classes, RTLConsts, ZLib,
   IdHeaderList, idGlobal, IdGlobalProtocols,
   FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
-
-
 
 type
 
@@ -532,7 +532,7 @@ Type
   End;
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Type
 
   TAfsMode = (amRead, amWrite, amCreate);
@@ -1503,6 +1503,7 @@ Type
 
 
 Implementation
+
 
 Function TFslStream.Link : TFslStream;
 Begin
@@ -2825,7 +2826,7 @@ begin
   result := 0; // ?
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 Procedure TAfsObject.RaiseError(Const sMethod, sException : String);
 
@@ -5678,39 +5679,40 @@ end;
 
 
 function FileTimeGMT (SearchRec : TSearchRec) : TDateTime;
-(*$IFDEF MSWINDOWS *)
+{$IFDEF WINDOWS}
 var
   SystemFileTime: TSystemTime;
-(*$ENDIF *)
-(*$IFDEF Unix *)
+begin
+  {$WARNINGS OFF}
+  Result := 0.0;
+  if (SearchRec.FindData.dwFileAttributes and faDirectory) = 0 then
+    if FileTimeToSystemTime (SearchRec.FindData.ftLastWriteTime, SystemFileTime) then
+      Result := EncodeDate (SystemFileTime.wYear, SystemFileTime.wMonth, SystemFileTime.wDay)
+              + EncodeTime (SystemFileTime.wHour, SystemFileTime.wMinute, SystemFileTime.wSecond, SystemFileTime.wMilliseconds);
+  {$WARNINGS ON}
+end;
+{$ENDIF}
+{$IFDEF LINUX}
 var
   TimeVal  : TTimeVal;
   TimeZone : TTimeZone;
-(*$ENDIF *)
 begin
   Result := 0.0;
-  (*$IFDEF MSWINDOWS *) (*$WARNINGS OFF *)
-    if (SearchRec.FindData.dwFileAttributes and faDirectory) = 0 then
-      if FileTimeToSystemTime (SearchRec.FindData.ftLastWriteTime, SystemFileTime) then
-        Result := EncodeDate (SystemFileTime.wYear, SystemFileTime.wMonth, SystemFileTime.wDay)
-                + EncodeTime (SystemFileTime.wHour, SystemFileTime.wMinute, SystemFileTime.wSecond, SystemFileTime.wMilliseconds);
-  (*$ENDIF *) (*$WARNINGS ON *)
-  (*$IFDEF Unix *)
-     if SearchRec.Attr and faDirectory = 0 then
-     begin
-       FillChar(TimeVal, SizeOf(TimeVal), #0);
-       FillChar(TimeZone, SizeOf(TimeZone), #0);
-       Result := FileDateToDateTime (SearchRec.Time);
-       {$IFDEF Kylix}
-       GetTimeOfDay (TimeVal, TimeZone);
-       {$else}
-       fpGetTimeOfDay (@TimeVal, @TimeZone);
-       {$ENDIF}
-       Result := Result + TimeZone.tz_minuteswest / (60 * 24);
-     end;
-  (*$ENDIF *)
+  if SearchRec.Attr and faDirectory = 0 then
+  begin
+    FillChar(TimeVal, SizeOf(TimeVal), #0);
+    FillChar(TimeZone, SizeOf(TimeZone), #0);
+    Result := FileDateToDateTime (SearchRec.Time);
+    fpGetTimeOfDay (@TimeVal, @TimeZone);
+    Result := Result + TimeZone.tz_minuteswest / (60 * 24);
+  end;
 end;
-
+{$ENDIF}
+{$IFDEF OSX}
+begin
+  raise Exception.create('To do');
+end;
+{$ENDIF}
 
 procedure ClearDirRec (var DirRec : TTarDirRec);
           // This is included because a FillChar (DirRec, SizeOf (DirRec), 0)

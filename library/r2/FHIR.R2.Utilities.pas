@@ -28,13 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r2.inc}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.MXml, 
@@ -686,7 +686,7 @@ uses
   {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Registry,
   {$ENDIF}
   FHIR.R2.ElementModel, FHIR.R2.Parser;

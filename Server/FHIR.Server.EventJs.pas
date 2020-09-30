@@ -28,14 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Javascript,
+  {$IFNDEF NO_JS} FHIR.Javascript, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Server.Session;
 

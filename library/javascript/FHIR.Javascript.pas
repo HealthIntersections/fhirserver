@@ -49,12 +49,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  Windows,
+  {$IFDEF WINDOWS} WINDOWS, {$ENDIF}
   SysUtils, Classes, {$IFNDEF FPC} AnsiStrings, {$ENDIF}
   Generics.Collections,
   ChakraCoreUtils, ChakraCore, ChakraCommon,
@@ -481,7 +481,7 @@ valueOf()	Returns the primitive value of an array
 
 implementation
 
-procedure FreeCallBack(ref: JsRef; callbackState: Pointer); stdcall;
+procedure FreeCallBack(ref: JsRef; callbackState: Pointer); {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   js : TJavascript;
 begin
@@ -489,7 +489,7 @@ begin
   js.freeObject(js.getWrapped<TObject>(ref));
 end;
 
-function GetterCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function GetterCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   prop : TJavascriptRegisteredProperty;
   p : PJsValueRefArray absolute arguments;
@@ -503,7 +503,7 @@ begin
   end;
 end;
 
-function SetterCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function SetterCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   prop : TJavascriptRegisteredProperty;
   p : PJsValueRefArray absolute arguments;
@@ -518,7 +518,7 @@ begin
   end;
 end;
 
-function RoutineCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function RoutineCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   prop : TJavascriptRegisteredProperty;
   pl : TJsValues;
@@ -537,7 +537,7 @@ begin
   end;
 end;
 
-function factoryCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function factoryCallback(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   def : TJavascriptClassDefinition;
   pl : TJsValues;
@@ -559,7 +559,7 @@ begin
   end;
 end;
 
-function DoPush(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function DoPush(callee: JsValueRef; isConstructCall: byteBool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; {$IFDEF WINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   p : PJsValueRefArray absolute arguments;
   manager : TJavascriptArrayManager;

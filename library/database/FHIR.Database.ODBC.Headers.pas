@@ -4,7 +4,7 @@
 {                                                       }
 {           CodeGear Delphi Runtime Library             }
 {                                                       }
-{ Copyright(c) 1995-2017 Embarcadero Technologies, Inc. }
+{ Copyright(c) 1995+ Embarcadero Technologies, Inc. }
 {              All rights reserved                      }
 {                                                       }
 {             ODBC API Interface Unit                   }
@@ -15,13 +15,13 @@
 
 unit FHIR.Database.ODBC.Headers;
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 {$WEAKPACKAGEUNIT}
 
 interface                                                       
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 uses
   Windows
 ;
@@ -48,10 +48,13 @@ uses
 { Translated from sqltypes.h }
 
 const
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   odbcdll = 'odbc32.dll';
 {$ENDIF}
-{$IFDEF MACOS}
+{$IFDEF OSX}
+  odbcdll = '/usr/lib/libiodbc.dylib';
+{$ENDIF}
+{$IFDEF LINUX}
   odbcdll = '/usr/lib/libiodbc.dylib';
 {$ENDIF}
 
@@ -60,7 +63,7 @@ const
 
 // API declaration data types
 type
-{$IFNDEF MSWINDOWS}
+{$IFNDEF WINDOWS}
   LPCWSTR             = MarshaledString;
   LPCSTR              = MarshaledAString;
   {$NODEFINE LPCWSTR}
@@ -81,7 +84,7 @@ type
   {$EXTERNALSYM SQLFLOAT}
   SQLINTEGER          = LongInt;
   {$EXTERNALSYM SQLINTEGER}
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   SQLUINTEGER         = DWord;
 {$ELSE}
   SQLUINTEGER         = LongWord;
@@ -155,7 +158,7 @@ type
   RETCODE             = SQLSMALLINT;
   {$EXTERNALSYM RETCODE}
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   SQLHWND             = HWND;
 {$ELSE}
   SQLHWND             = Pointer;
@@ -1052,417 +1055,417 @@ const
   SQL_NC_LOW = 1;
   {$EXTERNALSYM SQL_NC_LOW}
 
-function SQLAllocConnect(EnvironmentHandle: SQLHENV; var ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLAllocConnect(EnvironmentHandle: SQLHENV; var ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLAllocConnect}
 
-function SQLAllocEnv(var EnvironmentHandle: SQLHENV): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLAllocEnv(var EnvironmentHandle: SQLHENV): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLAllocEnv}
 
-function SQLAllocHandle(HandleType: SQLSMALLINT; InputHandle: SQLHANDLE; var OutputHandle: SQLHANDLE): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLAllocHandle(HandleType: SQLSMALLINT; InputHandle: SQLHANDLE; var OutputHandle: SQLHANDLE): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLAllocHandle}
 
-function SQLAllocStmt(ConnectionHandle: SQLHDBC; var StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLAllocStmt(ConnectionHandle: SQLHDBC; var StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLAllocStmt}
 
 function SQLBindCol(StatementHandle: SQLHSTMT; ColumnNumber: SQLUSMALLINT;
                     TargetType: SQLSMALLINT; TargetValue: SQLPOINTER;
-                    BufferLength: SQLLEN; StrLen_or_Ind: PSQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    BufferLength: SQLLEN; StrLen_or_Ind: PSQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBindCol}
 
 function SQLBindParam(StatementHandle: SQLHSTMT; ParameterNumber: SQLUSMALLINT;
                       ValueType, ParameterType: SQLSMALLINT; LengthPrecision: SQLULEN;
                       ParameterScale: SQLSMALLINT; ParameterValue: SQLPOINTER;
-                      StrLen_or_Ind: PSQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                      StrLen_or_Ind: PSQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBindParam}
 
-function SQLCancel(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLCancel(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCancel}
 
-function SQLCancelHandle(HandleType: SQLSMALLINT; InputHandle: SQLHANDLE): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLCancelHandle(HandleType: SQLSMALLINT; InputHandle: SQLHANDLE): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCancelHandle}
 
-function SQLCloseCursor(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLCloseCursor(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCloseCursor}
 
 function SQLColAttribute(hstmt: SQLHSTMT; iCol, iField: SQLUSMALLINT; pCharAttr: SQLPOINTER;
                          cbDescMax: SQLSMALLINT; var pcbCharAttr: SQLSMALLINT;
-                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttribute}
 function SQLColAttributeA(hstmt: SQLHSTMT; iCol, iField: SQLUSMALLINT; pCharAttr: SQLPOINTER;
                          cbDescMax: SQLSMALLINT; var pcbCharAttr: SQLSMALLINT;
-                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttributeA}
 function SQLColAttributeW(hstmt: SQLHSTMT; iCol, iField: SQLUSMALLINT; pCharAttr: SQLPOINTER;
                          cbDescMax: SQLSMALLINT; var pcbCharAttr: SQLSMALLINT;
-                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pNumAttr: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttributeW}
 
 function SQLColumns(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                     szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                     szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                    szColumnName: LPCWSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    szColumnName: LPCWSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumns}
 function SQLColumnsA(hstmt: SQLHSTMT; szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                     szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
                     szTableName: LPCSTR; cchTableName: SQLSMALLINT;
-                    szColumnName: LPCSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    szColumnName: LPCSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumnsA}
 function SQLColumnsW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                     szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                     szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                    szColumnName: LPCWSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    szColumnName: LPCWSTR; cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumnsW}
 
 function SQLConnect(hdbc: SQLHDBC; szDSN: LPCWSTR; cchDSN: SQLSMALLINT;
                     szUID: LPCWSTR; cchUID: SQLSMALLINT; szAuthStr: LPCWSTR;
-                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLConnect}
 function SQLConnectA(hdbc: SQLHDBC; szDSN: LPCSTR; cchDSN: SQLSMALLINT;
                     szUID: LPCSTR; cchUID: SQLSMALLINT; szAuthStr: LPCSTR;
-                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLConnectA}
 function SQLConnectW(hdbc: SQLHDBC; szDSN: LPCWSTR; cchDSN: SQLSMALLINT;
                     szUID: LPCWSTR; cchUID: SQLSMALLINT; szAuthStr: LPCWSTR;
-                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cchAuthStr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLConnectW}
 
-function SqlCopyDesc(SourceDescHandle: SQLHDESC; TargetDescHandle: SQLHDESC): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SqlCopyDesc(SourceDescHandle: SQLHDESC; TargetDescHandle: SQLHDESC): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SqlCopyDesc}
 
 function SQLDataSources(henv: SQLHENV; fDirection: SQLUSMALLINT; szDSN: LPCWSTR;
                          cchDSNMax: SQLSMALLINT; var pcchDSN: SQLSMALLINT;
                          wszDescription: LPCWSTR; cchDescriptionMax: SQLSMALLINT;
-                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDataSources}
 function SQLDataSourcesA(henv: SQLHENV; fDirection: SQLUSMALLINT; szDSN: LPCSTR;
                          cchDSNMax: SQLSMALLINT; var pcchDSN: SQLSMALLINT;
                          wszDescription: LPCSTR; cchDescriptionMax: SQLSMALLINT;
-                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDataSourcesA}
 function SQLDataSourcesW(henv: SQLHENV; fDirection: SQLUSMALLINT; szDSN: LPCWSTR;
                          cchDSNMax: SQLSMALLINT; var pcchDSN: SQLSMALLINT;
                          wszDescription: LPCWSTR; cchDescriptionMax: SQLSMALLINT;
-                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var pcchDescription: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDataSourcesW}
 
 function SQLDescribeCol(hstmt: SQLHSTMT; icol: SQLUSMALLINT; szColName: LPCWSTR;
                         cchColNameMax: SQLSMALLINT; var pcchColName: SQLSMALLINT;
                         var pfSqlType: SQLSMALLINT; var pcbColDef: SQLULEN;
-                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeCol}
 function SQLDescribeColA(hstmt: SQLHSTMT; icol: SQLUSMALLINT; szColName: LPCSTR;
                         cchColNameMax: SQLSMALLINT; var pcchColName: SQLSMALLINT;
                         var pfSqlType: SQLSMALLINT; var pcbColDef: SQLULEN;
-                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeColA}
 function SQLDescribeColW(hstmt: SQLHSTMT; icol: SQLUSMALLINT; szColName: LPCWSTR;
                         cchColNameMax: SQLSMALLINT; var pcchColName: SQLSMALLINT;
                         var pfSqlType: SQLSMALLINT; var pcbColDef: SQLULEN;
-                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        var pibScale: SQLSMALLINT; var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeColW}
 
-function SQLDisconnect(ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLDisconnect(ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDisconnect}
 
-function SQLEndTran(HandleType: SQLSMALLINT; Handle: SQLHANDLE; CompletionType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLEndTran(HandleType: SQLSMALLINT; Handle: SQLHANDLE; CompletionType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLEndTran}
 
 function SQLError(henv: SQLHENV; hdbc: SQLHDBC; hstmt: SQLHSTMT; SqlState: LPCWSTR;
                   var pfNativeError: SQLINTEGER; wszErrorMesg: LPCWSTR;
-                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLError}
 function SQLErrorA(henv: SQLHENV; hdbc: SQLHDBC; hstmt: SQLHSTMT; SqlState: LPCSTR;
                   var pfNativeError: SQLINTEGER; wszErrorMesg: LPCSTR;
-                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLErrorA}
 function SQLErrorW(henv: SQLHENV; hdbc: SQLHDBC; hstmt: SQLHSTMT; SqlState: LPCWSTR;
                   var pfNativeError: SQLINTEGER; wszErrorMesg: LPCWSTR;
-                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                  cchErrorMsgMax: SQLSMALLINT; var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLErrorW}
 
-function SQLExecDirect(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLExecDirect(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLExecDirect}
-function SQLExecDirectA(hstmt: SQLHSTMT; szSqlStr: LPCSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLExecDirectA(hstmt: SQLHSTMT; szSqlStr: LPCSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLExecDirectA}
-function SQLExecDirectW(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLExecDirectW(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; TextLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLExecDirectW}
 
-function SQLExecute(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLExecute(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLExecute}
 
-function SQLFetch(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLFetch(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFetch}
 
 function SQLFetchScroll(StatementHandle: SQLHSTMT; FetchOrientation: SQLSMALLINT;
-                        FetchOffset: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        FetchOffset: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFetchScroll}
 
-function SQLFreeConnect(ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLFreeConnect(ConnectionHandle: SQLHDBC): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFreeConnect}
 
-function SQLFreeEnv(EnvironmentHandle: SQLHENV): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLFreeEnv(EnvironmentHandle: SQLHENV): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFreeEnv}
 
-function SQLFreeHandle(HandleType: SQLSMALLINT; Handle: SQLHANDLE): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLFreeHandle(HandleType: SQLSMALLINT; Handle: SQLHANDLE): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFreeHandle}
 
-function SQLFreeStmt(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLFreeStmt(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLFreeStmt}
 
 function SQLGetConnectAttr(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectAttr}
 function SQLGetConnectAttrA(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectAttrA}
 function SQLGetConnectAttrW(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectAttrW}
 
-function SQLGetConnectOption(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetConnectOption(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectOption}
-function SQLGetConnectOptionA(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetConnectOptionA(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectOptionA}
-function SQLGetConnectOptionW(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetConnectOptionW(hdbc: SQLHDBC; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetConnectOptionW}
 
 function SQLGetCursorName(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursorMax: SQLSMALLINT;
-                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetCursorName}
 function SQLGetCursorNameA(hstmt: SQLHSTMT; szCursor: LPCSTR; cchCursorMax: SQLSMALLINT;
-                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetCursorNameA}
 function SQLGetCursorNameW(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursorMax: SQLSMALLINT;
-                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetCursorNameW}
 
 function SQLGetData(StatementHandle: SQLHSTMT; ColumnNumber: SQLUSMALLINT;
                     TargetType: SQLSMALLINT; TargetValue: SQLPOINTER; BufferLength: SQLLEN;
-                    StrLen_or_IndPtr: PSQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    StrLen_or_IndPtr: PSQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetData}
 
 function SQLGetDescField(hdesc: SQLHDESC; iRecord, iField: SQLSMALLINT;
                          rgbValue: SQLPOINTER; cbBufferLength: SQLINTEGER;
-                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescField}
 function SQLGetDescFieldA(hdesc: SQLHDESC; iRecord, iField: SQLSMALLINT;
                          rgbValue: SQLPOINTER; cbBufferLength: SQLINTEGER;
-                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescFieldA}
 function SQLGetDescFieldW(hdesc: SQLHDESC; iRecord, iField: SQLSMALLINT;
                          rgbValue: SQLPOINTER; cbBufferLength: SQLINTEGER;
-                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var StringLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescFieldW}
 
 function SQLGetDescRec(hdesc: SQLHDESC; iRecord: SQLSMALLINT; szName: LPCWSTR;
                        cchNameMax: SQLSMALLINT; var pcchName: SQLSMALLINT;
                        var pfType: SQLSMALLINT; var pfSubType: SQLSMALLINT;
                        var pLength: SQLLEN; var pPrecision: SQLSMALLINT;
-                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescRec}
 function SQLGetDescRecA(hdesc: SQLHDESC; iRecord: SQLSMALLINT; szName: LPCSTR;
                        cchNameMax: SQLSMALLINT; var pcchName: SQLSMALLINT;
                        var pfType: SQLSMALLINT; var pfSubType: SQLSMALLINT;
                        var pLength: SQLLEN; var pPrecision: SQLSMALLINT;
-                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescRecA}
 function SQLGetDescRecW(hdesc: SQLHDESC; iRecord: SQLSMALLINT; szName: LPCWSTR;
                        cchNameMax: SQLSMALLINT; var pcchName: SQLSMALLINT;
                        var pfType: SQLSMALLINT; var pfSubType: SQLSMALLINT;
                        var pLength: SQLLEN; var pPrecision: SQLSMALLINT;
-                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pScale: SQLSMALLINT; var pNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDescRecW}
 
 function SQLGetDiagField(fHandleType: SQLSMALLINT; handle: SQLHANDLE;
                          iRecord, fDiagField: SQLSMALLINT; rgbDiagInfo: SQLPOINTER;
-                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagField}
 function SQLGetDiagFieldA(fHandleType: SQLSMALLINT; handle: SQLHANDLE;
                          iRecord, fDiagField: SQLSMALLINT; rgbDiagInfo: SQLPOINTER;
-                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagFieldA}
 function SQLGetDiagFieldW(fHandleType: SQLSMALLINT; handle: SQLHANDLE;
                          iRecord, fDiagField: SQLSMALLINT; rgbDiagInfo: SQLPOINTER;
-                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         cbBufferLength: SQLSMALLINT; var pcbStringLength: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagFieldW}
 
 function SQLGetDiagRec(fHandleType: SQLSMALLINT; handle: SQLHANDLE; iRecord: SQLSMALLINT;
                        szSqlState: LPCWSTR; var pfNativeError: SQLINTEGER;
                        szErrorMsg: LPCWSTR; cchErrorMsgMax: SQLSMALLINT;
-                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagRec}
 function SQLGetDiagRecA(fHandleType: SQLSMALLINT; handle: SQLHANDLE; iRecord: SQLSMALLINT;
                        szSqlState: LPCSTR; var pfNativeError: SQLINTEGER;
                        szErrorMsg: LPCSTR; cchErrorMsgMax: SQLSMALLINT;
-                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagRecA}
 function SQLGetDiagRecW(fHandleType: SQLSMALLINT; handle: SQLHANDLE; iRecord: SQLSMALLINT;
                        szSqlState: LPCWSTR; var pfNativeError: SQLINTEGER;
                        szErrorMsg: LPCWSTR; cchErrorMsgMax: SQLSMALLINT;
-                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var pcchErrorMsg: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetDiagRecW}
 
 function SQLGetEnvAttr(EnvironmentHandle: SQLHENV; Attribute: SQLINTEGER; Value: SQLPOINTER;
-                       BufferLength: SQLINTEGER; var StringLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       BufferLength: SQLINTEGER; var StringLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetEnvAttr}
 
 function SQLGetFunctions(ConnectionHandle: SQLHDBC; FunctionId: SQLUSMALLINT;
-                         var Supported: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         var Supported: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetFunctions}
 
 function SQLGetInfo(hdbc: SQLHDBC; fInfoType: SQLUSMALLINT; rgbInfoValue: SQLPOINTER;
-                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetInfo}
 function SQLGetInfoA(hdbc: SQLHDBC; fInfoType: SQLUSMALLINT; rgbInfoValue: SQLPOINTER;
-                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetInfoA}
 function SQLGetInfoW(hdbc: SQLHDBC; fInfoType: SQLUSMALLINT; rgbInfoValue: SQLPOINTER;
-                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    cbInfoValueMax: SQLSMALLINT; var pcbInfoValue: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetInfoW}
 
 function SQLGetStmtAttr(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtAttr}
 function SQLGetStmtAttrA(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtAttrA}
 function SQLGetStmtAttrW(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cbValueMax: SQLINTEGER; var pcbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtAttrW}
 
-function SQLGetStmtOption(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT; Value: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetStmtOption(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT; Value: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtOption}
 
-function SQLGetTypeInfo(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetTypeInfo(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetTypeInfo}
-function SQLGetTypeInfoA(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetTypeInfoA(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetTypeInfoA}
-function SQLGetTypeInfoW(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetTypeInfoW(StatementHandle: SQLHSTMT; DataType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetTypeInfoW}
 
-function SQLNumResultCols(StatementHandle: SQLHSTMT; var ColumnCount: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLNumResultCols(StatementHandle: SQLHSTMT; var ColumnCount: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLNumResultCols}
 
-function SQLParamData(StatementHandle: SQLHSTMT; Value: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLParamData(StatementHandle: SQLHSTMT; Value: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLParamData}
 
-function SQLPrepare(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLPrepare(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrepare}
-function SQLPrepareA(hstmt: SQLHSTMT; szSqlStr: LPCSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLPrepareA(hstmt: SQLHSTMT; szSqlStr: LPCSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrepareA}
-function SQLPrepareW(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLPrepareW(hstmt: SQLHSTMT; szSqlStr: LPCWSTR; cchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrepareW}
 
-function SQLPutData(StatementHandle: SQLHSTMT; Data: SQLPOINTER; StrLen_or_Ind: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLPutData(StatementHandle: SQLHSTMT; Data: SQLPOINTER; StrLen_or_Ind: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPutData}
 
-function SQLRowCount(StatementHandle: SQLHSTMT; var RowCount: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLRowCount(StatementHandle: SQLHSTMT; var RowCount: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLRowCount}
 
 function SQLSetConnectAttr(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectAttr}
 function SQLSetConnectAttrA(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectAttrA}
 function SQLSetConnectAttrW(hdbc: SQLHDBC; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           cbValue: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectAttrW}
 
-function SQLSetConnectOption(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetConnectOption(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectOption}
-function SQLSetConnectOptionA(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetConnectOptionA(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectOptionA}
-function SQLSetConnectOptionW(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetConnectOptionW(hdbc: SQLHDBC; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetConnectOptionW}
 
-function SQLSetCursorName(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetCursorName(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetCursorName}
-function SQLSetCursorNameA(hstmt: SQLHSTMT; szCursor: LPCSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetCursorNameA(hstmt: SQLHSTMT; szCursor: LPCSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetCursorNameA}
-function SQLSetCursorNameW(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetCursorNameW(hstmt: SQLHSTMT; szCursor: LPCWSTR; cchCursor: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetCursorNameW}
 
 function SQLSetDescField(DescriptorHandle: SQLHDESC; RecNumber, FieldIdentifier: SQLSMALLINT;
-                         Value: SQLPOINTER; BufferLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         Value: SQLPOINTER; BufferLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetDescField}
 
 function SQLSetDescRec(DescriptorHandle: SQLHDESC; RecNumber, _Type, SubType: SQLSMALLINT;
                        Length: SQLLEN; Precision, Scale: SQLSMALLINT;
                        Data: SQLPOINTER; var StringLength: SQLLEN;
-                       var Indicator: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       var Indicator: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetDescRec}
 
 function SQLSetEnvAttr(EnvironmentHandle: SQLHENV; Attribute: SQLINTEGER;
-                       Value: SQLPOINTER; StringLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       Value: SQLPOINTER; StringLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetEnvAttr}
 
 function SQLSetParam(StatementHandle: SQLHSTMT; ParameterNumber: SQLUSMALLINT;
                      ValueType, ParameterType: SQLSMALLINT; LengthPrecision: SQLULEN;
                      ParameterScale: SQLSMALLINT; ParameterValue: SQLPOINTER;
-                     var StrLen_or_Ind: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                     var StrLen_or_Ind: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetParam}
 
 function SQLSetStmtAttr(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                        cbValueMax: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cbValueMax: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetStmtAttr}
 
-function SQLSetStmtOption(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT; Value: SQLULEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetStmtOption(StatementHandle: SQLHSTMT; Option: SQLUSMALLINT; Value: SQLULEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetStmtOption}
 
 function SQLSpecialColumns(hstmt: SQLHSTMT; fColType: SQLUSMALLINT;
                            szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                            szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                            szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSpecialColumns}
 function SQLSpecialColumnsA(hstmt: SQLHSTMT; fColType: SQLUSMALLINT;
                            szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                            szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
                            szTableName: LPCSTR; cchTableName: SQLSMALLINT;
-                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSpecialColumnsA}
 function SQLSpecialColumnsW(hstmt: SQLHSTMT; fColType: SQLUSMALLINT;
                            szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                            szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                            szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           fScope, fNullable: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSpecialColumnsW}
 
 function SQLStatistics(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLStatistics}
 function SQLStatisticsA(hstmt: SQLHSTMT; szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
                        szTableName: LPCSTR; cchTableName: SQLSMALLINT;
-                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLStatisticsA}
 function SQLStatisticsW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       fUnique, fAccuracy: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLStatisticsW}
 
 function SQLTables(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                    szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                    szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                   szTableType: LPCWSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                   szTableType: LPCWSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTables}
 function SQLTablesA(hstmt: SQLHSTMT; szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                    szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
                    szTableName: LPCSTR; cchTableName: SQLSMALLINT;
-                   szTableType: LPCSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                   szTableType: LPCSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTablesA}
 function SQLTablesW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                    szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
                    szTableName: LPCWSTR; cchTableName: SQLSMALLINT;
-                   szTableType: LPCWSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                   szTableType: LPCWSTR; cchTableType: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTablesW}
 
 function SQLTransact(EnvironmentHandle: SQLHENV; ConnectionHandle: SQLHDBC;
-                     CompletionType: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                     CompletionType: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTransact}
 
 
@@ -3935,7 +3938,7 @@ const
   SQL_SETPOS_MAX_LOCK_VALUE = SQL_LOCK_UNLOCK;
   {$EXTERNALSYM SQL_SETPOS_MAX_LOCK_VALUE}
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 // Macros for SQLSetPos
 function SQL_POSITION_TO(hstmt: SQLHSTMT; irow: SQLSETPOSIROW): SQLRETURN;
 {$EXTERNALSYM SQL_POSITION_TO}
@@ -3996,17 +3999,17 @@ const
 function SQLDriverConnect(hdbc: SQLHDBC; hwnd: SQLHWND; szConnStrIn: LPCWSTR;
                           cchConnStrIn: SQLSMALLINT; szConnStrOut: LPCWSTR;
                           cchConnStrOutMax: SQLSMALLINT; var pcchConnStrOut: SQLSMALLINT;
-                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDriverConnect}
 function SQLDriverConnectA(hdbc: SQLHDBC; hwnd: SQLHWND; szConnStrIn: LPCSTR;
                           cchConnStrIn: SQLSMALLINT; szConnStrOut: LPCSTR;
                           cchConnStrOutMax: SQLSMALLINT; var pcchConnStrOut: SQLSMALLINT;
-                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDriverConnectA}
 function SQLDriverConnectW(hdbc: SQLHDBC; hwnd: SQLHWND; szConnStrIn: LPCWSTR;
                           cchConnStrIn: SQLSMALLINT; szConnStrOut: LPCWSTR;
                           cchConnStrOutMax: SQLSMALLINT; var pcchConnStrOut: SQLSMALLINT;
-                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          fDriverCompletion: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDriverConnectW}
 
 
@@ -4118,42 +4121,42 @@ const
 
 function SQLBrowseConnect(hdbc: SQLHDBC; szConnStrIn: LPCWSTR; cchConnStrIn: SQLSMALLINT;
                           szConnStrOut: LPCWSTR; cchConnStrOutMax: SQLSMALLINT;
-                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBrowseConnect}
 function SQLBrowseConnectA(hdbc: SQLHDBC; szConnStrIn: LPCSTR; cchConnStrIn: SQLSMALLINT;
                           szConnStrOut: LPCSTR; cchConnStrOutMax: SQLSMALLINT;
-                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBrowseConnectA}
 function SQLBrowseConnectW(hdbc: SQLHDBC; szConnStrIn: LPCWSTR; cchConnStrIn: SQLSMALLINT;
                           szConnStrOut: LPCWSTR; cchConnStrOutMax: SQLSMALLINT;
-                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pcchConnStrOut: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBrowseConnectW}
 
-function SQLBulkOperations(StatementHandle: SQLHSTMT; Operation: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLBulkOperations(StatementHandle: SQLHSTMT; Operation: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBulkOperations}
 
 function SQLColumnPrivileges(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                              cchSchemaName: SQLSMALLINT; szTableName: LPCWSTR;
                              cchTableName: SQLSMALLINT; szColumnName: LPCWSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumnPrivileges}
 function SQLColumnPrivilegesA(hstmt: SQLHSTMT; szCatalogName: LPCSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCSTR;
                              cchSchemaName: SQLSMALLINT; szTableName: LPCSTR;
                              cchTableName: SQLSMALLINT; szColumnName: LPCSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumnPrivilegesA}
 function SQLColumnPrivilegesW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                              cchSchemaName: SQLSMALLINT; szTableName: LPCWSTR;
                              cchTableName: SQLSMALLINT; szColumnName: LPCWSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColumnPrivilegesW}
 
 function SQLDescribeParam(hstmt: SQLHSTMT; ipar: SQLUSMALLINT; var pfSqlType: SQLSMALLINT;
                           var pcbParamDef: SQLULEN; var pibScale: SQLSMALLINT;
-                          var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeParam}
 
 function SQLForeignKeys(hstmt: SQLHSTMT; szPkCatalogName: LPCWSTR;
@@ -4162,7 +4165,7 @@ function SQLForeignKeys(hstmt: SQLHSTMT; szPkCatalogName: LPCWSTR;
                         cchPkTableName: SQLSMALLINT; szFkCatalogName: LPCWSTR;
                         cchFkCatalogName: SQLSMALLINT; szFkSchemaName: LPCWSTR;
                         cchFkSchemaName: SQLSMALLINT; szFkTableName: LPCWSTR;
-                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLForeignKeys}
 function SQLForeignKeysA(hstmt: SQLHSTMT; szPkCatalogName: LPCSTR;
                         cchPkCatalogName: SQLSMALLINT; szPkSchemaName: LPCSTR;
@@ -4170,7 +4173,7 @@ function SQLForeignKeysA(hstmt: SQLHSTMT; szPkCatalogName: LPCSTR;
                         cchPkTableName: SQLSMALLINT; szFkCatalogName: LPCSTR;
                         cchFkCatalogName: SQLSMALLINT; szFkSchemaName: LPCSTR;
                         cchFkSchemaName: SQLSMALLINT; szFkTableName: LPCSTR;
-                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLForeignKeysA}
 function SQLForeignKeysW(hstmt: SQLHSTMT; szPkCatalogName: LPCWSTR;
                         cchPkCatalogName: SQLSMALLINT; szPkSchemaName: LPCWSTR;
@@ -4178,113 +4181,113 @@ function SQLForeignKeysW(hstmt: SQLHSTMT; szPkCatalogName: LPCWSTR;
                         cchPkTableName: SQLSMALLINT; szFkCatalogName: LPCWSTR;
                         cchFkCatalogName: SQLSMALLINT; szFkSchemaName: LPCWSTR;
                         cchFkSchemaName: SQLSMALLINT; szFkTableName: LPCWSTR;
-                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        cchFkTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLForeignKeysW}
 
-function SQLMoreResults(hstmt: SQLHSTMT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLMoreResults(hstmt: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLMoreResults}
 
 function SQLNativeSql(hdbc: SQLHDBC; szSqlStrIn: LPCWSTR; cchSqlStrIn: SQLINTEGER;
                       szSqlStr: LPCWSTR; cchSqlStrMax: SQLINTEGER;
-                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLNativeSql}
 function SQLNativeSqlA(hdbc: SQLHDBC; szSqlStrIn: LPCSTR; cchSqlStrIn: SQLINTEGER;
                       szSqlStr: LPCSTR; cchSqlStrMax: SQLINTEGER;
-                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLNativeSqlA}
 function SQLNativeSqlW(hdbc: SQLHDBC; szSqlStrIn: LPCWSTR; cchSqlStrIn: SQLINTEGER;
                       szSqlStr: LPCWSTR; cchSqlStrMax: SQLINTEGER;
-                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                      var pcchSqlStr: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLNativeSqlW}
 
-function SQLNumParams(hstmt: SQLHSTMT; var pcpar: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLNumParams(hstmt: SQLHSTMT; var pcpar: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLNumParams}
 
 function SQLPrimaryKeys(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                         szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
-                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrimaryKeys}
 function SQLPrimaryKeysA(hstmt: SQLHSTMT; szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                         szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
-                        szTableName: LPCSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        szTableName: LPCSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrimaryKeysA}
 function SQLPrimaryKeysW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                         szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
-                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                        szTableName: LPCWSTR; cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLPrimaryKeysW}
 
 function SQLProcedureColumns(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                              cchSchemaName: SQLSMALLINT; szProcName: LPCWSTR;
                              cchProcName: SQLSMALLINT; szColumnName: LPCWSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProcedureColumns}
 function SQLProcedureColumnsA(hstmt: SQLHSTMT; szCatalogName: LPCSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCSTR;
                              cchSchemaName: SQLSMALLINT; szProcName: LPCSTR;
                              cchProcName: SQLSMALLINT; szColumnName: LPCSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProcedureColumnsA}
 function SQLProcedureColumnsW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                              cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                              cchSchemaName: SQLSMALLINT; szProcName: LPCWSTR;
                              cchProcName: SQLSMALLINT; szColumnName: LPCWSTR;
-                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                             cchColumnName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProcedureColumnsW}
 
 function SQLProcedures(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
-                       szProcName: LPCWSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       szProcName: LPCWSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProcedures}
 function SQLProceduresA(hstmt: SQLHSTMT; szCatalogName: LPCSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCSTR; cchSchemaName: SQLSMALLINT;
-                       szProcName: LPCSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       szProcName: LPCSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProceduresA}
 function SQLProceduresW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR; cchCatalogName: SQLSMALLINT;
                        szSchemaName: LPCWSTR; cchSchemaName: SQLSMALLINT;
-                       szProcName: LPCWSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                       szProcName: LPCWSTR; cchProcName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLProceduresW}
 
-{$IFDEF MSWINDOWS}
-function SQLSetPos(hstmt: SQLHSTMT; irow: SQLSETPOSIROW; fOption, fLock: SQLUSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+{$IFDEF WINDOWS}
+function SQLSetPos(hstmt: SQLHSTMT; irow: SQLSETPOSIROW; fOption, fLock: SQLUSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetPos}
 {$ENDIF}
 
 function SQLTablePrivileges(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                             cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                             cchSchemaName: SQLSMALLINT; szTableName: LPCWSTR;
-                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTablePrivileges}
 function SQLTablePrivilegesA(hstmt: SQLHSTMT; szCatalogName: LPCSTR;
                             cchCatalogName: SQLSMALLINT; szSchemaName: LPCSTR;
                             cchSchemaName: SQLSMALLINT; szTableName: LPCSTR;
-                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTablePrivilegesA}
 function SQLTablePrivilegesW(hstmt: SQLHSTMT; szCatalogName: LPCWSTR;
                             cchCatalogName: SQLSMALLINT; szSchemaName: LPCWSTR;
                             cchSchemaName: SQLSMALLINT; szTableName: LPCWSTR;
-                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                            cchTableName: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLTablePrivilegesW}
 
 function SQLDrivers(henv: SQLHENV; fDirection: SQLUSMALLINT; szDriverDesc: LPCWSTR;
                     cchDriverDescMax: SQLSMALLINT; var pcchDriverDesc: SQLSMALLINT;
                     szDriverAttributes: LPCWSTR; cchDrvrAttrMax: SQLSMALLINT;
-                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDrivers}
 function SQLDriversA(henv: SQLHENV; fDirection: SQLUSMALLINT; szDriverDesc: LPCSTR;
                     cchDriverDescMax: SQLSMALLINT; var pcchDriverDesc: SQLSMALLINT;
                     szDriverAttributes: LPCSTR; cchDrvrAttrMax: SQLSMALLINT;
-                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDriversA}
 function SQLDriversW(henv: SQLHENV; fDirection: SQLUSMALLINT; szDriverDesc: LPCWSTR;
                     cchDriverDescMax: SQLSMALLINT; var pcchDriverDesc: SQLSMALLINT;
                     szDriverAttributes: LPCWSTR; cchDrvrAttrMax: SQLSMALLINT;
-                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                    var pcchDrvrAttr: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDriversW}
 
 function SQLBindParameter(hstmt: SQLHSTMT; ipar: SQLUSMALLINT; fParamType, fCType, fSqlType: SQLSMALLINT;
                           cbColDef: SQLULEN; ibScale: SQLSMALLINT; rgbValue: SQLPOINTER;
-                          cbValueMax: SQLLEN; pcbValue: PSQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          cbValueMax: SQLLEN; pcbValue: PSQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLBindParameter}
 
 
@@ -4323,8 +4326,8 @@ const
   SQL_MINUTE_TO_SECOND = SQL_CODE_MINUTE_TO_SECOND;
   {$EXTERNALSYM SQL_MINUTE_TO_SECOND}
 
-{$IFDEF MSWINDOWS}
-function SQLAllocHandleStd(fHandleType: SQLSMALLINT; hInput: SQLHANDLE; var phOutput: SQLHANDLE): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+{$IFDEF WINDOWS}
+function SQLAllocHandleStd(fHandleType: SQLSMALLINT; hInput: SQLHANDLE; var phOutput: SQLHANDLE): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLAllocHandleStd}
 {$ENDIF}
 
@@ -4369,13 +4372,13 @@ const
   {$EXTERNALSYM TRACE_VERSION}
 
 // open a trace log file
-function TraceOpenLogFile(szFileName: PWideChar; var lpwszOutputMsg; cbOutputMsg: LongWord): RETCODE {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function TraceOpenLogFile(szFileName: PWideChar; var lpwszOutputMsg; cbOutputMsg: LongWord): RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM TraceOpenLogFile}
-function TraceCloseLogFile: RETCODE {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Request to close a trace log
+function TraceCloseLogFile: RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Request to close a trace log
 {$EXTERNALSYM TraceOpenLogFile}
-procedure TraceReturn(Param1, Param2: RETCODE) {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Processes trace after FN is called
+procedure TraceReturn(Param1, Param2: RETCODE) {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Processes trace after FN is called
 {$EXTERNALSYM TraceOpenLogFile}
-function TraceVersion: LongWord {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Returns trace API version
+function TraceVersion: LongWord {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // Returns trace API version
 {$EXTERNALSYM TraceOpenLogFile}
 
 const
@@ -4386,7 +4389,7 @@ const
   TRACE_VS_EVENT_ON = $00000002;
   {$EXTERNALSYM TRACE_VS_EVENT_ON}
 
-function TraceVSControl(Param: LongWord): RETCODE {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function TraceVSControl(Param: LongWord): RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM TraceVSControl}
 
 // Functions for setting the connection pooling failure detection code */
@@ -4396,14 +4399,14 @@ function TraceVSControl(Param: LongWord): RETCODE {$IFDEF MSWINDOWS}stdcall{$ELS
 // interval, connection requests will get "The server appears to be    */
 // dead" error returns.                                                */
 
-{$IFDEF MSWINDOWS}
-function ODBCSetTryWaitValue(dwValue: LongWord): BOOL {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In seconds
+{$IFDEF WINDOWS}
+function ODBCSetTryWaitValue(dwValue: LongWord): BOOL {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In seconds
 {$EXTERNALSYM ODBCSetTryWaitValue}
 {$ELSE}
-function ODBCSetTryWaitValue(dwValue: LongWord): LongBool {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In seconds
+function ODBCSetTryWaitValue(dwValue: LongWord): LongBool {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In seconds
 {$EXTERNALSYM ODBCSetTryWaitValue}
 {$ENDIF}
-function ODBCGetTryWaitValue: LongWord {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In Milliseconds(!)
+function ODBCGetTryWaitValue: LongWord {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In Milliseconds(!)
 {$EXTERNALSYM ODBCGetTryWaitValue}
 
 const
@@ -4429,34 +4432,34 @@ const
 
 function SQLColAttributes(hstmt: SQLHSTMT; icol, fDescType: SQLUSMALLINT;
                            rgbDesc: SQLPOINTER; cbDescMax: SQLSMALLINT;
-                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttributes}
 function SQLColAttributesA(hstmt: SQLHSTMT; icol, fDescType: SQLUSMALLINT;
                            rgbDesc: SQLPOINTER; cbDescMax: SQLSMALLINT;
-                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttributesA}
 function SQLColAttributesW(hstmt: SQLHSTMT; icol, fDescType: SQLUSMALLINT;
                            rgbDesc: SQLPOINTER; cbDescMax: SQLSMALLINT;
-                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           var pcbDesc: SQLSMALLINT; var pfDesc: SQLLEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLColAttributesW}
 
 function SQLSetDescFieldW(DescriptorHandle: SQLHDESC; RecNumber, FieldIdentifier: SQLSMALLINT;
-                          Value: SQLPOINTER; BufferLength: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                          Value: SQLPOINTER; BufferLength: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetDescFieldW}
 
 function SQLSetStmtAttrW(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLPOINTER;
-                         cbValueMax: SQLINTEGER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                         cbValueMax: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetStmtAttrW}
 
-function SQLGetStmtOptionA(hstmt: SQLHSTMT; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLGetStmtOptionA(hstmt: SQLHSTMT; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtOptionA}
 
-function SQLSetStmtOptionA(hstmt: SQLHSTMT; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+function SQLSetStmtOptionA(hstmt: SQLHSTMT; fOption: SQLUSMALLINT; vParam: SQLULEN): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetStmtOptionA}
 
 function SQLDescribeParamA(hstmt: SQLHSTMT; ipar: SQLUSMALLINT; var pfSqlType: SQLSMALLINT;
                            var pcbParamDef: SQLUINTEGER; var pibScale: SQLSMALLINT;
-                           var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+                           var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeParamA}
 
 implementation
@@ -4485,7 +4488,7 @@ begin
     Result := SQL_FALSE;
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function SQL_POSITION_TO(hstmt: SQLHSTMT; irow: SQLSETPOSIROW): SQLRETURN;
 begin
   Result := SQLSetPos(hstmt, irow, SQL_POSITION, SQL_LOCK_NO_CHANGE);
@@ -4517,179 +4520,179 @@ begin
 end;
 {$ENDIF}
 
-function SQLAllocConnect; external odbcdll name {$IFDEF MACOS}'_SQLAllocConnect'{$ELSE}'SQLAllocConnect'{$ENDIF};
-function SQLAllocEnv; external odbcdll name {$IFDEF MACOS}'_SQLAllocEnv'{$ELSE}'SQLAllocEnv'{$ENDIF};
-function SQLAllocHandle; external odbcdll name {$IFDEF MACOS}'_SQLAllocHandle'{$ELSE}'SQLAllocHandle'{$ENDIF};
-function SQLAllocStmt; external odbcdll name {$IFDEF MACOS}'_SQLAllocStmt'{$ELSE}'SQLAllocStmt'{$ENDIF};
-function SQLBindCol; external odbcdll name {$IFDEF MACOS}'_SQLBindCol'{$ELSE}'SQLBindCol'{$ENDIF};
-function SQLBindParam; external odbcdll name {$IFDEF MACOS}'_SQLBindParam'{$ELSE}'SQLBindParam'{$ENDIF};
-function SQLCancel; external odbcdll name {$IFDEF MACOS}'_SQLCancel'{$ELSE}'SQLCancel'{$ENDIF};
-function SQLCancelHandle; external odbcdll name {$IFDEF MACOS}'_SQLCancelHandle'{$ELSE}'SQLCancelHandle'{$ENDIF};
-function SQLCloseCursor; external odbcdll name {$IFDEF MACOS}'_SQLCloseCursor'{$ELSE}'SQLCloseCursor'{$ENDIF};
-function SQLColAttribute; external odbcdll name {$IFDEF MACOS}'_SQLColAttributeW'{$ELSE}'SQLColAttributeW'{$ENDIF};
-function SQLColAttributeA; external odbcdll name {$IFDEF MACOS}'_SQLColAttributeA'{$ELSE}'SQLColAttributeA'{$ENDIF};
-function SQLColAttributeW; external odbcdll name {$IFDEF MACOS}'_SQLColAttributeW'{$ELSE}'SQLColAttributeW'{$ENDIF};
-function SQLColumns; external odbcdll name {$IFDEF MACOS}'_SQLColumnsW'{$ELSE}'SQLColumnsW'{$ENDIF};
-function SQLColumnsA; external odbcdll name {$IFDEF MACOS}'_SQLColumnsA'{$ELSE}'SQLColumnsA'{$ENDIF};
-function SQLColumnsW; external odbcdll name {$IFDEF MACOS}'_SQLColumnsW'{$ELSE}'SQLColumnsW'{$ENDIF};
-function SQLConnect; external odbcdll name {$IFDEF MACOS}'_SQLConnectW'{$ELSE}'SQLConnectW'{$ENDIF};
-function SQLConnectA; external odbcdll name {$IFDEF MACOS}'_SQLConnectA'{$ELSE}'SQLConnectA'{$ENDIF};
-function SQLConnectW; external odbcdll name {$IFDEF MACOS}'_SQLConnectW'{$ELSE}'SQLConnectW'{$ENDIF};
-function SQLCopyDesc; external odbcdll name {$IFDEF MACOS}'_SQLCopyDesc'{$ELSE}'SQLCopyDesc'{$ENDIF};
-function SQLDataSources; external odbcdll name {$IFDEF MACOS}'_SQLDataSourcesW'{$ELSE}'SQLDataSourcesW'{$ENDIF};
-function SQLDataSourcesA; external odbcdll name {$IFDEF MACOS}'_SQLDataSourcesA'{$ELSE}'SQLDataSourcesA'{$ENDIF};
-function SQLDataSourcesW; external odbcdll name {$IFDEF MACOS}'_SQLDataSourcesW'{$ELSE}'SQLDataSourcesW'{$ENDIF};
-function SQLDescribeCol; external odbcdll name {$IFDEF MACOS}'_SQLDescribeColW'{$ELSE}'SQLDescribeColW'{$ENDIF};
-function SQLDescribeColA; external odbcdll name {$IFDEF MACOS}'_SQLDescribeColA'{$ELSE}'SQLDescribeColA'{$ENDIF};
-function SQLDescribeColW; external odbcdll name {$IFDEF MACOS}'_SQLDescribeColW'{$ELSE}'SQLDescribeColW'{$ENDIF};
-function SQLDisconnect; external odbcdll name {$IFDEF MACOS}'_SQLDisconnect'{$ELSE}'SQLDisconnect'{$ENDIF};
-function SQLEndTran; external odbcdll name {$IFDEF MACOS}'_SQLEndTran'{$ELSE}'SQLEndTran'{$ENDIF};
-function SQLError; external odbcdll name {$IFDEF MACOS}'_SQLErrorW'{$ELSE}'SQLErrorW'{$ENDIF};
-function SQLErrorA; external odbcdll name {$IFDEF MACOS}'_SQLErrorA'{$ELSE}'SQLErrorA'{$ENDIF};
-function SQLErrorW; external odbcdll name {$IFDEF MACOS}'_SQLErrorW'{$ELSE}'SQLErrorW'{$ENDIF};
-function SQLExecDirect; external odbcdll name {$IFDEF MACOS}'_SQLExecDirectW'{$ELSE}'SQLExecDirectW'{$ENDIF};
-function SQLExecDirectA; external odbcdll name {$IFDEF MACOS}'_SQLExecDirectA'{$ELSE}'SQLExecDirectA'{$ENDIF};
-function SQLExecDirectW; external odbcdll name {$IFDEF MACOS}'_SQLExecDirectW'{$ELSE}'SQLExecDirectW'{$ENDIF};
-function SQLExecute; external odbcdll name {$IFDEF MACOS}'_SQLExecute'{$ELSE}'SQLExecute'{$ENDIF};
-function SQLFetch; external odbcdll name {$IFDEF MACOS}'_SQLFetch'{$ELSE}'SQLFetch'{$ENDIF};
-function SQLFetchScroll; external odbcdll name {$IFDEF MACOS}'_SQLFetchScroll'{$ELSE}'SQLFetchScroll'{$ENDIF};
-function SQLFreeConnect; external odbcdll name {$IFDEF MACOS}'_SQLFreeConnect'{$ELSE}'SQLFreeConnect'{$ENDIF};
-function SQLFreeEnv; external odbcdll name {$IFDEF MACOS}'_SQLFreeEnv'{$ELSE}'SQLFreeEnv'{$ENDIF};
-function SQLFreeHandle; external odbcdll name {$IFDEF MACOS}'_SQLFreeHandle'{$ELSE}'SQLFreeHandle'{$ENDIF};
-function SQLFreeStmt; external odbcdll name {$IFDEF MACOS}'_SQLFreeStmt'{$ELSE}'SQLFreeStmt'{$ENDIF};
-function SQLGetConnectAttr; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectAttrW'{$ELSE}'SQLGetConnectAttrW'{$ENDIF};
-function SQLGetConnectAttrA; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectAttrA'{$ELSE}'SQLGetConnectAttrA'{$ENDIF};
-function SQLGetConnectAttrW; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectAttrW'{$ELSE}'SQLGetConnectAttrW'{$ENDIF};
-function SQLGetConnectOption; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectOptionW'{$ELSE}'SQLGetConnectOptionW'{$ENDIF};
-function SQLGetConnectOptionA; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectOptionA'{$ELSE}'SQLGetConnectOptionA'{$ENDIF};
-function SQLGetConnectOptionW; external odbcdll name {$IFDEF MACOS}'_SQLGetConnectOptionW'{$ELSE}'SQLGetConnectOptionW'{$ENDIF};
-function SQLGetCursorName; external odbcdll name {$IFDEF MACOS}'_SQLGetCursorNameW'{$ELSE}'SQLGetCursorNameW'{$ENDIF};
-function SQLGetCursorNameA; external odbcdll name {$IFDEF MACOS}'_SQLGetCursorNameA'{$ELSE}'SQLGetCursorNameA'{$ENDIF};
-function SQLGetCursorNameW; external odbcdll name {$IFDEF MACOS}'_SQLGetCursorNameW'{$ELSE}'SQLGetCursorNameW'{$ENDIF};
-function SQLGetData; external odbcdll name {$IFDEF MACOS}'_SQLGetData'{$ELSE}'SQLGetData'{$ENDIF};
-function SQLGetDescField; external odbcdll name {$IFDEF MACOS}'_SQLGetDescFieldW'{$ELSE}'SQLGetDescFieldW'{$ENDIF};
-function SQLGetDescFieldA; external odbcdll name {$IFDEF MACOS}'_SQLGetDescFieldA'{$ELSE}'SQLGetDescFieldA'{$ENDIF};
-function SQLGetDescFieldW; external odbcdll name {$IFDEF MACOS}'_SQLGetDescFieldW'{$ELSE}'SQLGetDescFieldW'{$ENDIF};
-function SQLGetDescRec; external odbcdll name {$IFDEF MACOS}'_SQLGetDescRecW'{$ELSE}'SQLGetDescRecW'{$ENDIF};
-function SQLGetDescRecA; external odbcdll name {$IFDEF MACOS}'_SQLGetDescRecA'{$ELSE}'SQLGetDescRecA'{$ENDIF};
-function SQLGetDescRecW; external odbcdll name {$IFDEF MACOS}'_SQLGetDescRecW'{$ELSE}'SQLGetDescRecW'{$ENDIF};
-function SQLGetDiagField; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagFieldW'{$ELSE}'SQLGetDiagFieldW'{$ENDIF};
-function SQLGetDiagFieldA; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagFieldA'{$ELSE}'SQLGetDiagFieldA'{$ENDIF};
-function SQLGetDiagFieldW; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagFieldW'{$ELSE}'SQLGetDiagFieldW'{$ENDIF};
-function SQLGetDiagRec; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagRecW'{$ELSE}'SQLGetDiagRecW'{$ENDIF};
-function SQLGetDiagRecA; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagRecA'{$ELSE}'SQLGetDiagRecA'{$ENDIF};
-function SQLGetDiagRecW; external odbcdll name {$IFDEF MACOS}'_SQLGetDiagRecW'{$ELSE}'SQLGetDiagRecW'{$ENDIF};
-function SQLGetEnvAttr; external odbcdll name {$IFDEF MACOS}'_SQLGetEnvAttr'{$ELSE}'SQLGetEnvAttr'{$ENDIF};
-function SQLGetFunctions; external odbcdll name {$IFDEF MACOS}'_SQLGetFunctions'{$ELSE}'SQLGetFunctions'{$ENDIF};
-function SQLGetInfo; external odbcdll name {$IFDEF MACOS}'_SQLGetInfoW'{$ELSE}'SQLGetInfoW'{$ENDIF};
-function SQLGetInfoA; external odbcdll name {$IFDEF MACOS}'_SQLGetInfoA'{$ELSE}'SQLGetInfoA'{$ENDIF};
-function SQLGetInfoW; external odbcdll name {$IFDEF MACOS}'_SQLGetInfoW'{$ELSE}'SQLGetInfoW'{$ENDIF};
-function SQLGetStmtAttr; external odbcdll name {$IFDEF MACOS}'_SQLGetStmtAttrW'{$ELSE}'SQLGetStmtAttrW'{$ENDIF};
-function SQLGetStmtAttrA; external odbcdll name {$IFDEF MACOS}'_SQLGetStmtAttrA'{$ELSE}'SQLGetStmtAttrA'{$ENDIF};
-function SQLGetStmtAttrW; external odbcdll name {$IFDEF MACOS}'_SQLGetStmtAttrW'{$ELSE}'SQLGetStmtAttrW'{$ENDIF};
-function SQLGetStmtOption; external odbcdll name {$IFDEF MACOS}'_SQLGetStmtOption'{$ELSE}'SQLGetStmtOption'{$ENDIF};
-function SQLGetTypeInfo; external odbcdll name {$IFDEF MACOS}'_SQLGetTypeInfoW'{$ELSE}'SQLGetTypeInfoW'{$ENDIF};
-function SQLGetTypeInfoA; external odbcdll name {$IFDEF MACOS}'_SQLGetTypeInfoA'{$ELSE}'SQLGetTypeInfoA'{$ENDIF};
-function SQLGetTypeInfoW; external odbcdll name {$IFDEF MACOS}'_SQLGetTypeInfoW'{$ELSE}'SQLGetTypeInfoW'{$ENDIF};
-function SQLNumResultCols; external odbcdll name {$IFDEF MACOS}'_SQLNumResultCols'{$ELSE}'SQLNumResultCols'{$ENDIF};
-function SQLParamData; external odbcdll name {$IFDEF MACOS}'_SQLParamData'{$ELSE}'SQLParamData'{$ENDIF};
-function SQLPrepare; external odbcdll name {$IFDEF MACOS}'_SQLPrepareW'{$ELSE}'SQLPrepareW'{$ENDIF};
-function SQLPrepareA; external odbcdll name {$IFDEF MACOS}'_SQLPrepareA'{$ELSE}'SQLPrepareA'{$ENDIF};
-function SQLPrepareW; external odbcdll name {$IFDEF MACOS}'_SQLPrepareW'{$ELSE}'SQLPrepareW'{$ENDIF};
-function SQLPutData; external odbcdll name {$IFDEF MACOS}'_SQLPutData'{$ELSE}'SQLPutData'{$ENDIF};
-function SQLRowCount; external odbcdll name {$IFDEF MACOS}'_SQLRowCount'{$ELSE}'SQLRowCount'{$ENDIF};
-function SQLSetConnectAttr; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectAttrW'{$ELSE}'SQLSetConnectAttrW'{$ENDIF};
-function SQLSetConnectAttrA; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectAttrA'{$ELSE}'SQLSetConnectAttrA'{$ENDIF};
-function SQLSetConnectAttrW; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectAttrW'{$ELSE}'SQLSetConnectAttrW'{$ENDIF};
-function SQLSetConnectOption; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectOptionW'{$ELSE}'SQLSetConnectOptionW'{$ENDIF};
-function SQLSetConnectOptionA; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectOptionA'{$ELSE}'SQLSetConnectOptionA'{$ENDIF};
-function SQLSetConnectOptionW; external odbcdll name {$IFDEF MACOS}'_SQLSetConnectOptionW'{$ELSE}'SQLSetConnectOptionW'{$ENDIF};
-function SQLSetCursorName; external odbcdll name {$IFDEF MACOS}'_SQLSetCursorNameW'{$ELSE}'SQLSetCursorNameW'{$ENDIF};
-function SQLSetCursorNameA; external odbcdll name {$IFDEF MACOS}'_SQLSetCursorNameA'{$ELSE}'SQLSetCursorNameA'{$ENDIF};
-function SQLSetCursorNameW; external odbcdll name {$IFDEF MACOS}'_SQLSetCursorNameW'{$ELSE}'SQLSetCursorNameW'{$ENDIF};
-function SQLSetDescField; external odbcdll name {$IFDEF MACOS}'_SQLSetDescFieldW'{$ELSE}'SQLSetDescFieldW'{$ENDIF};
-function SQLSetDescRec; external odbcdll name {$IFDEF MACOS}'_SQLSetDescRec'{$ELSE}'SQLSetDescRec'{$ENDIF};
-function SQLSetEnvAttr; external odbcdll name {$IFDEF MACOS}'_SQLSetEnvAttr'{$ELSE}'SQLSetEnvAttr'{$ENDIF};
-function SQLSetParam; external odbcdll name {$IFDEF MACOS}'_SQLSetParam'{$ELSE}'SQLSetParam'{$ENDIF};
-function SQLSetStmtAttr; external odbcdll name {$IFDEF MACOS}'_SQLSetStmtAttrW'{$ELSE}'SQLSetStmtAttrW'{$ENDIF};
-function SQLSetStmtOption; external odbcdll name {$IFDEF MACOS}'_SQLSetStmtOption'{$ELSE}'SQLSetStmtOption'{$ENDIF};
-function SQLSpecialColumns; external odbcdll name {$IFDEF MACOS}'_SQLSpecialColumnsW'{$ELSE}'SQLSpecialColumnsW'{$ENDIF};
-function SQLSpecialColumnsA; external odbcdll name {$IFDEF MACOS}'_SQLSpecialColumnsA'{$ELSE}'SQLSpecialColumnsA'{$ENDIF};
-function SQLSpecialColumnsW; external odbcdll name {$IFDEF MACOS}'_SQLSpecialColumnsW'{$ELSE}'SQLSpecialColumnsW'{$ENDIF};
-function SQLStatistics; external odbcdll name {$IFDEF MACOS}'_SQLStatisticsW'{$ELSE}'SQLStatisticsW'{$ENDIF};
-function SQLStatisticsA; external odbcdll name {$IFDEF MACOS}'_SQLStatisticsA'{$ELSE}'SQLStatisticsA'{$ENDIF};
-function SQLStatisticsW; external odbcdll name {$IFDEF MACOS}'_SQLStatisticsW'{$ELSE}'SQLStatisticsW'{$ENDIF};
-function SQLTables; external odbcdll name {$IFDEF MACOS}'_SQLTablesW'{$ELSE}'SQLTablesW'{$ENDIF};
-function SQLTablesA; external odbcdll name {$IFDEF MACOS}'_SQLTablesA'{$ELSE}'SQLTablesA'{$ENDIF};
-function SQLTablesW; external odbcdll name {$IFDEF MACOS}'_SQLTablesW'{$ELSE}'SQLTablesW'{$ENDIF};
-function SQLTransact; external odbcdll name {$IFDEF MACOS}'_SQLTransact'{$ELSE}'SQLTransact'{$ENDIF};
+function SQLAllocConnect; external odbcdll name {$IFDEF OSX}'_SQLAllocConnect'{$ELSE}'SQLAllocConnect'{$ENDIF};
+function SQLAllocEnv; external odbcdll name {$IFDEF OSX}'_SQLAllocEnv'{$ELSE}'SQLAllocEnv'{$ENDIF};
+function SQLAllocHandle; external odbcdll name {$IFDEF OSX}'_SQLAllocHandle'{$ELSE}'SQLAllocHandle'{$ENDIF};
+function SQLAllocStmt; external odbcdll name {$IFDEF OSX}'_SQLAllocStmt'{$ELSE}'SQLAllocStmt'{$ENDIF};
+function SQLBindCol; external odbcdll name {$IFDEF OSX}'_SQLBindCol'{$ELSE}'SQLBindCol'{$ENDIF};
+function SQLBindParam; external odbcdll name {$IFDEF OSX}'_SQLBindParam'{$ELSE}'SQLBindParam'{$ENDIF};
+function SQLCancel; external odbcdll name {$IFDEF OSX}'_SQLCancel'{$ELSE}'SQLCancel'{$ENDIF};
+function SQLCancelHandle; external odbcdll name {$IFDEF OSX}'_SQLCancelHandle'{$ELSE}'SQLCancelHandle'{$ENDIF};
+function SQLCloseCursor; external odbcdll name {$IFDEF OSX}'_SQLCloseCursor'{$ELSE}'SQLCloseCursor'{$ENDIF};
+function SQLColAttribute; external odbcdll name {$IFDEF OSX}'_SQLColAttributeW'{$ELSE}'SQLColAttributeW'{$ENDIF};
+function SQLColAttributeA; external odbcdll name {$IFDEF OSX}'_SQLColAttributeA'{$ELSE}'SQLColAttributeA'{$ENDIF};
+function SQLColAttributeW; external odbcdll name {$IFDEF OSX}'_SQLColAttributeW'{$ELSE}'SQLColAttributeW'{$ENDIF};
+function SQLColumns; external odbcdll name {$IFDEF OSX}'_SQLColumnsW'{$ELSE}'SQLColumnsW'{$ENDIF};
+function SQLColumnsA; external odbcdll name {$IFDEF OSX}'_SQLColumnsA'{$ELSE}'SQLColumnsA'{$ENDIF};
+function SQLColumnsW; external odbcdll name {$IFDEF OSX}'_SQLColumnsW'{$ELSE}'SQLColumnsW'{$ENDIF};
+function SQLConnect; external odbcdll name {$IFDEF OSX}'_SQLConnectW'{$ELSE}'SQLConnectW'{$ENDIF};
+function SQLConnectA; external odbcdll name {$IFDEF OSX}'_SQLConnectA'{$ELSE}'SQLConnectA'{$ENDIF};
+function SQLConnectW; external odbcdll name {$IFDEF OSX}'_SQLConnectW'{$ELSE}'SQLConnectW'{$ENDIF};
+function SQLCopyDesc; external odbcdll name {$IFDEF OSX}'_SQLCopyDesc'{$ELSE}'SQLCopyDesc'{$ENDIF};
+function SQLDataSources; external odbcdll name {$IFDEF OSX}'_SQLDataSourcesW'{$ELSE}'SQLDataSourcesW'{$ENDIF};
+function SQLDataSourcesA; external odbcdll name {$IFDEF OSX}'_SQLDataSourcesA'{$ELSE}'SQLDataSourcesA'{$ENDIF};
+function SQLDataSourcesW; external odbcdll name {$IFDEF OSX}'_SQLDataSourcesW'{$ELSE}'SQLDataSourcesW'{$ENDIF};
+function SQLDescribeCol; external odbcdll name {$IFDEF OSX}'_SQLDescribeColW'{$ELSE}'SQLDescribeColW'{$ENDIF};
+function SQLDescribeColA; external odbcdll name {$IFDEF OSX}'_SQLDescribeColA'{$ELSE}'SQLDescribeColA'{$ENDIF};
+function SQLDescribeColW; external odbcdll name {$IFDEF OSX}'_SQLDescribeColW'{$ELSE}'SQLDescribeColW'{$ENDIF};
+function SQLDisconnect; external odbcdll name {$IFDEF OSX}'_SQLDisconnect'{$ELSE}'SQLDisconnect'{$ENDIF};
+function SQLEndTran; external odbcdll name {$IFDEF OSX}'_SQLEndTran'{$ELSE}'SQLEndTran'{$ENDIF};
+function SQLError; external odbcdll name {$IFDEF OSX}'_SQLErrorW'{$ELSE}'SQLErrorW'{$ENDIF};
+function SQLErrorA; external odbcdll name {$IFDEF OSX}'_SQLErrorA'{$ELSE}'SQLErrorA'{$ENDIF};
+function SQLErrorW; external odbcdll name {$IFDEF OSX}'_SQLErrorW'{$ELSE}'SQLErrorW'{$ENDIF};
+function SQLExecDirect; external odbcdll name {$IFDEF OSX}'_SQLExecDirectW'{$ELSE}'SQLExecDirectW'{$ENDIF};
+function SQLExecDirectA; external odbcdll name {$IFDEF OSX}'_SQLExecDirectA'{$ELSE}'SQLExecDirectA'{$ENDIF};
+function SQLExecDirectW; external odbcdll name {$IFDEF OSX}'_SQLExecDirectW'{$ELSE}'SQLExecDirectW'{$ENDIF};
+function SQLExecute; external odbcdll name {$IFDEF OSX}'_SQLExecute'{$ELSE}'SQLExecute'{$ENDIF};
+function SQLFetch; external odbcdll name {$IFDEF OSX}'_SQLFetch'{$ELSE}'SQLFetch'{$ENDIF};
+function SQLFetchScroll; external odbcdll name {$IFDEF OSX}'_SQLFetchScroll'{$ELSE}'SQLFetchScroll'{$ENDIF};
+function SQLFreeConnect; external odbcdll name {$IFDEF OSX}'_SQLFreeConnect'{$ELSE}'SQLFreeConnect'{$ENDIF};
+function SQLFreeEnv; external odbcdll name {$IFDEF OSX}'_SQLFreeEnv'{$ELSE}'SQLFreeEnv'{$ENDIF};
+function SQLFreeHandle; external odbcdll name {$IFDEF OSX}'_SQLFreeHandle'{$ELSE}'SQLFreeHandle'{$ENDIF};
+function SQLFreeStmt; external odbcdll name {$IFDEF OSX}'_SQLFreeStmt'{$ELSE}'SQLFreeStmt'{$ENDIF};
+function SQLGetConnectAttr; external odbcdll name {$IFDEF OSX}'_SQLGetConnectAttrW'{$ELSE}'SQLGetConnectAttrW'{$ENDIF};
+function SQLGetConnectAttrA; external odbcdll name {$IFDEF OSX}'_SQLGetConnectAttrA'{$ELSE}'SQLGetConnectAttrA'{$ENDIF};
+function SQLGetConnectAttrW; external odbcdll name {$IFDEF OSX}'_SQLGetConnectAttrW'{$ELSE}'SQLGetConnectAttrW'{$ENDIF};
+function SQLGetConnectOption; external odbcdll name {$IFDEF OSX}'_SQLGetConnectOptionW'{$ELSE}'SQLGetConnectOptionW'{$ENDIF};
+function SQLGetConnectOptionA; external odbcdll name {$IFDEF OSX}'_SQLGetConnectOptionA'{$ELSE}'SQLGetConnectOptionA'{$ENDIF};
+function SQLGetConnectOptionW; external odbcdll name {$IFDEF OSX}'_SQLGetConnectOptionW'{$ELSE}'SQLGetConnectOptionW'{$ENDIF};
+function SQLGetCursorName; external odbcdll name {$IFDEF OSX}'_SQLGetCursorNameW'{$ELSE}'SQLGetCursorNameW'{$ENDIF};
+function SQLGetCursorNameA; external odbcdll name {$IFDEF OSX}'_SQLGetCursorNameA'{$ELSE}'SQLGetCursorNameA'{$ENDIF};
+function SQLGetCursorNameW; external odbcdll name {$IFDEF OSX}'_SQLGetCursorNameW'{$ELSE}'SQLGetCursorNameW'{$ENDIF};
+function SQLGetData; external odbcdll name {$IFDEF OSX}'_SQLGetData'{$ELSE}'SQLGetData'{$ENDIF};
+function SQLGetDescField; external odbcdll name {$IFDEF OSX}'_SQLGetDescFieldW'{$ELSE}'SQLGetDescFieldW'{$ENDIF};
+function SQLGetDescFieldA; external odbcdll name {$IFDEF OSX}'_SQLGetDescFieldA'{$ELSE}'SQLGetDescFieldA'{$ENDIF};
+function SQLGetDescFieldW; external odbcdll name {$IFDEF OSX}'_SQLGetDescFieldW'{$ELSE}'SQLGetDescFieldW'{$ENDIF};
+function SQLGetDescRec; external odbcdll name {$IFDEF OSX}'_SQLGetDescRecW'{$ELSE}'SQLGetDescRecW'{$ENDIF};
+function SQLGetDescRecA; external odbcdll name {$IFDEF OSX}'_SQLGetDescRecA'{$ELSE}'SQLGetDescRecA'{$ENDIF};
+function SQLGetDescRecW; external odbcdll name {$IFDEF OSX}'_SQLGetDescRecW'{$ELSE}'SQLGetDescRecW'{$ENDIF};
+function SQLGetDiagField; external odbcdll name {$IFDEF OSX}'_SQLGetDiagFieldW'{$ELSE}'SQLGetDiagFieldW'{$ENDIF};
+function SQLGetDiagFieldA; external odbcdll name {$IFDEF OSX}'_SQLGetDiagFieldA'{$ELSE}'SQLGetDiagFieldA'{$ENDIF};
+function SQLGetDiagFieldW; external odbcdll name {$IFDEF OSX}'_SQLGetDiagFieldW'{$ELSE}'SQLGetDiagFieldW'{$ENDIF};
+function SQLGetDiagRec; external odbcdll name {$IFDEF OSX}'_SQLGetDiagRecW'{$ELSE}'SQLGetDiagRecW'{$ENDIF};
+function SQLGetDiagRecA; external odbcdll name {$IFDEF OSX}'_SQLGetDiagRecA'{$ELSE}'SQLGetDiagRecA'{$ENDIF};
+function SQLGetDiagRecW; external odbcdll name {$IFDEF OSX}'_SQLGetDiagRecW'{$ELSE}'SQLGetDiagRecW'{$ENDIF};
+function SQLGetEnvAttr; external odbcdll name {$IFDEF OSX}'_SQLGetEnvAttr'{$ELSE}'SQLGetEnvAttr'{$ENDIF};
+function SQLGetFunctions; external odbcdll name {$IFDEF OSX}'_SQLGetFunctions'{$ELSE}'SQLGetFunctions'{$ENDIF};
+function SQLGetInfo; external odbcdll name {$IFDEF OSX}'_SQLGetInfoW'{$ELSE}'SQLGetInfoW'{$ENDIF};
+function SQLGetInfoA; external odbcdll name {$IFDEF OSX}'_SQLGetInfoA'{$ELSE}'SQLGetInfoA'{$ENDIF};
+function SQLGetInfoW; external odbcdll name {$IFDEF OSX}'_SQLGetInfoW'{$ELSE}'SQLGetInfoW'{$ENDIF};
+function SQLGetStmtAttr; external odbcdll name {$IFDEF OSX}'_SQLGetStmtAttrW'{$ELSE}'SQLGetStmtAttrW'{$ENDIF};
+function SQLGetStmtAttrA; external odbcdll name {$IFDEF OSX}'_SQLGetStmtAttrA'{$ELSE}'SQLGetStmtAttrA'{$ENDIF};
+function SQLGetStmtAttrW; external odbcdll name {$IFDEF OSX}'_SQLGetStmtAttrW'{$ELSE}'SQLGetStmtAttrW'{$ENDIF};
+function SQLGetStmtOption; external odbcdll name {$IFDEF OSX}'_SQLGetStmtOption'{$ELSE}'SQLGetStmtOption'{$ENDIF};
+function SQLGetTypeInfo; external odbcdll name {$IFDEF OSX}'_SQLGetTypeInfoW'{$ELSE}'SQLGetTypeInfoW'{$ENDIF};
+function SQLGetTypeInfoA; external odbcdll name {$IFDEF OSX}'_SQLGetTypeInfoA'{$ELSE}'SQLGetTypeInfoA'{$ENDIF};
+function SQLGetTypeInfoW; external odbcdll name {$IFDEF OSX}'_SQLGetTypeInfoW'{$ELSE}'SQLGetTypeInfoW'{$ENDIF};
+function SQLNumResultCols; external odbcdll name {$IFDEF OSX}'_SQLNumResultCols'{$ELSE}'SQLNumResultCols'{$ENDIF};
+function SQLParamData; external odbcdll name {$IFDEF OSX}'_SQLParamData'{$ELSE}'SQLParamData'{$ENDIF};
+function SQLPrepare; external odbcdll name {$IFDEF OSX}'_SQLPrepareW'{$ELSE}'SQLPrepareW'{$ENDIF};
+function SQLPrepareA; external odbcdll name {$IFDEF OSX}'_SQLPrepareA'{$ELSE}'SQLPrepareA'{$ENDIF};
+function SQLPrepareW; external odbcdll name {$IFDEF OSX}'_SQLPrepareW'{$ELSE}'SQLPrepareW'{$ENDIF};
+function SQLPutData; external odbcdll name {$IFDEF OSX}'_SQLPutData'{$ELSE}'SQLPutData'{$ENDIF};
+function SQLRowCount; external odbcdll name {$IFDEF OSX}'_SQLRowCount'{$ELSE}'SQLRowCount'{$ENDIF};
+function SQLSetConnectAttr; external odbcdll name {$IFDEF OSX}'_SQLSetConnectAttrW'{$ELSE}'SQLSetConnectAttrW'{$ENDIF};
+function SQLSetConnectAttrA; external odbcdll name {$IFDEF OSX}'_SQLSetConnectAttrA'{$ELSE}'SQLSetConnectAttrA'{$ENDIF};
+function SQLSetConnectAttrW; external odbcdll name {$IFDEF OSX}'_SQLSetConnectAttrW'{$ELSE}'SQLSetConnectAttrW'{$ENDIF};
+function SQLSetConnectOption; external odbcdll name {$IFDEF OSX}'_SQLSetConnectOptionW'{$ELSE}'SQLSetConnectOptionW'{$ENDIF};
+function SQLSetConnectOptionA; external odbcdll name {$IFDEF OSX}'_SQLSetConnectOptionA'{$ELSE}'SQLSetConnectOptionA'{$ENDIF};
+function SQLSetConnectOptionW; external odbcdll name {$IFDEF OSX}'_SQLSetConnectOptionW'{$ELSE}'SQLSetConnectOptionW'{$ENDIF};
+function SQLSetCursorName; external odbcdll name {$IFDEF OSX}'_SQLSetCursorNameW'{$ELSE}'SQLSetCursorNameW'{$ENDIF};
+function SQLSetCursorNameA; external odbcdll name {$IFDEF OSX}'_SQLSetCursorNameA'{$ELSE}'SQLSetCursorNameA'{$ENDIF};
+function SQLSetCursorNameW; external odbcdll name {$IFDEF OSX}'_SQLSetCursorNameW'{$ELSE}'SQLSetCursorNameW'{$ENDIF};
+function SQLSetDescField; external odbcdll name {$IFDEF OSX}'_SQLSetDescFieldW'{$ELSE}'SQLSetDescFieldW'{$ENDIF};
+function SQLSetDescRec; external odbcdll name {$IFDEF OSX}'_SQLSetDescRec'{$ELSE}'SQLSetDescRec'{$ENDIF};
+function SQLSetEnvAttr; external odbcdll name {$IFDEF OSX}'_SQLSetEnvAttr'{$ELSE}'SQLSetEnvAttr'{$ENDIF};
+function SQLSetParam; external odbcdll name {$IFDEF OSX}'_SQLSetParam'{$ELSE}'SQLSetParam'{$ENDIF};
+function SQLSetStmtAttr; external odbcdll name {$IFDEF OSX}'_SQLSetStmtAttrW'{$ELSE}'SQLSetStmtAttrW'{$ENDIF};
+function SQLSetStmtOption; external odbcdll name {$IFDEF OSX}'_SQLSetStmtOption'{$ELSE}'SQLSetStmtOption'{$ENDIF};
+function SQLSpecialColumns; external odbcdll name {$IFDEF OSX}'_SQLSpecialColumnsW'{$ELSE}'SQLSpecialColumnsW'{$ENDIF};
+function SQLSpecialColumnsA; external odbcdll name {$IFDEF OSX}'_SQLSpecialColumnsA'{$ELSE}'SQLSpecialColumnsA'{$ENDIF};
+function SQLSpecialColumnsW; external odbcdll name {$IFDEF OSX}'_SQLSpecialColumnsW'{$ELSE}'SQLSpecialColumnsW'{$ENDIF};
+function SQLStatistics; external odbcdll name {$IFDEF OSX}'_SQLStatisticsW'{$ELSE}'SQLStatisticsW'{$ENDIF};
+function SQLStatisticsA; external odbcdll name {$IFDEF OSX}'_SQLStatisticsA'{$ELSE}'SQLStatisticsA'{$ENDIF};
+function SQLStatisticsW; external odbcdll name {$IFDEF OSX}'_SQLStatisticsW'{$ELSE}'SQLStatisticsW'{$ENDIF};
+function SQLTables; external odbcdll name {$IFDEF OSX}'_SQLTablesW'{$ELSE}'SQLTablesW'{$ENDIF};
+function SQLTablesA; external odbcdll name {$IFDEF OSX}'_SQLTablesA'{$ELSE}'SQLTablesA'{$ENDIF};
+function SQLTablesW; external odbcdll name {$IFDEF OSX}'_SQLTablesW'{$ELSE}'SQLTablesW'{$ENDIF};
+function SQLTransact; external odbcdll name {$IFDEF OSX}'_SQLTransact'{$ELSE}'SQLTransact'{$ENDIF};
 
-function SQLDriverConnect; external odbcdll name {$IFDEF MACOS}'_SQLDriverConnectW'{$ELSE}'SQLDriverConnectW'{$ENDIF};
-function SQLDriverConnectA; external odbcdll name {$IFDEF MACOS}'_SQLDriverConnectA'{$ELSE}'SQLDriverConnectA'{$ENDIF};
-function SQLDriverConnectW; external odbcdll name {$IFDEF MACOS}'_SQLDriverConnectW'{$ELSE}'SQLDriverConnectW'{$ENDIF};
-function SQLBrowseConnect; external odbcdll name {$IFDEF MACOS}'_SQLBrowseConnectW'{$ELSE}'SQLBrowseConnectW'{$ENDIF};
-function SQLBrowseConnectA; external odbcdll name {$IFDEF MACOS}'_SQLBrowseConnectA'{$ELSE}'SQLBrowseConnectA'{$ENDIF};
-function SQLBrowseConnectW; external odbcdll name {$IFDEF MACOS}'_SQLBrowseConnectW'{$ELSE}'SQLBrowseConnectW'{$ENDIF};
-function SQLBulkOperations; external odbcdll name {$IFDEF MACOS}'_SQLBulkOperations'{$ELSE}'SQLBulkOperations'{$ENDIF};
-function SQLColumnPrivileges; external odbcdll name {$IFDEF MACOS}'_SQLColumnPrivilegesW'{$ELSE}'SQLColumnPrivilegesW'{$ENDIF};
-function SQLColumnPrivilegesA; external odbcdll name {$IFDEF MACOS}'_SQLColumnPrivilegesA'{$ELSE}'SQLColumnPrivilegesA'{$ENDIF};
-function SQLColumnPrivilegesW; external odbcdll name {$IFDEF MACOS}'_SQLColumnPrivilegesW'{$ELSE}'SQLColumnPrivilegesW'{$ENDIF};
-function SQLDescribeParam; external odbcdll name {$IFDEF MACOS}'_SQLDescribeParam'{$ELSE}'SQLDescribeParam'{$ENDIF};
-function SQLForeignKeys; external odbcdll name {$IFDEF MACOS}'_SQLForeignKeysW'{$ELSE}'SQLForeignKeysW'{$ENDIF};
-function SQLForeignKeysA; external odbcdll name {$IFDEF MACOS}'_SQLForeignKeysA'{$ELSE}'SQLForeignKeysA'{$ENDIF};
-function SQLForeignKeysW; external odbcdll name {$IFDEF MACOS}'_SQLForeignKeysW'{$ELSE}'SQLForeignKeysW'{$ENDIF};
-function SQLMoreResults; external odbcdll name {$IFDEF MACOS}'_SQLMoreResults'{$ELSE}'SQLMoreResults'{$ENDIF};
-function SQLNativeSql; external odbcdll name {$IFDEF MACOS}'_SQLNativeSqlW'{$ELSE}'SQLNativeSqlW'{$ENDIF};
-function SQLNativeSqlA; external odbcdll name {$IFDEF MACOS}'_SQLNativeSqlA'{$ELSE}'SQLNativeSqlA'{$ENDIF};
-function SQLNativeSqlW; external odbcdll name {$IFDEF MACOS}'_SQLNativeSqlW'{$ELSE}'SQLNativeSqlW'{$ENDIF};
-function SQLNumParams; external odbcdll name {$IFDEF MACOS}'_SQLNumParams'{$ELSE}'SQLNumParams'{$ENDIF};
-function SQLPrimaryKeys; external odbcdll name {$IFDEF MACOS}'_SQLPrimaryKeysW'{$ELSE}'SQLPrimaryKeysW'{$ENDIF};
-function SQLPrimaryKeysA; external odbcdll name {$IFDEF MACOS}'_SQLPrimaryKeysA'{$ELSE}'SQLPrimaryKeysA'{$ENDIF};
-function SQLPrimaryKeysW; external odbcdll name {$IFDEF MACOS}'_SQLPrimaryKeysW'{$ELSE}'SQLPrimaryKeysW'{$ENDIF};
-function SQLProcedureColumns; external odbcdll name {$IFDEF MACOS}'_SQLProcedureColumnsW'{$ELSE}'SQLProcedureColumnsW'{$ENDIF};
-function SQLProcedureColumnsA; external odbcdll name {$IFDEF MACOS}'_SQLProcedureColumnsA'{$ELSE}'SQLProcedureColumnsA'{$ENDIF};
-function SQLProcedureColumnsW; external odbcdll name {$IFDEF MACOS}'_SQLProcedureColumnsW'{$ELSE}'SQLProcedureColumnsW'{$ENDIF};
-function SQLProcedures; external odbcdll name {$IFDEF MACOS}'_SQLProceduresW'{$ELSE}'SQLProceduresW'{$ENDIF};
-function SQLProceduresA; external odbcdll name {$IFDEF MACOS}'_SQLProceduresA'{$ELSE}'SQLProceduresA'{$ENDIF};
-function SQLProceduresW; external odbcdll name {$IFDEF MACOS}'_SQLProceduresW'{$ELSE}'SQLProceduresW'{$ENDIF};
-{$IFDEF MSWINDOWS}
+function SQLDriverConnect; external odbcdll name {$IFDEF OSX}'_SQLDriverConnectW'{$ELSE}'SQLDriverConnectW'{$ENDIF};
+function SQLDriverConnectA; external odbcdll name {$IFDEF OSX}'_SQLDriverConnectA'{$ELSE}'SQLDriverConnectA'{$ENDIF};
+function SQLDriverConnectW; external odbcdll name {$IFDEF OSX}'_SQLDriverConnectW'{$ELSE}'SQLDriverConnectW'{$ENDIF};
+function SQLBrowseConnect; external odbcdll name {$IFDEF OSX}'_SQLBrowseConnectW'{$ELSE}'SQLBrowseConnectW'{$ENDIF};
+function SQLBrowseConnectA; external odbcdll name {$IFDEF OSX}'_SQLBrowseConnectA'{$ELSE}'SQLBrowseConnectA'{$ENDIF};
+function SQLBrowseConnectW; external odbcdll name {$IFDEF OSX}'_SQLBrowseConnectW'{$ELSE}'SQLBrowseConnectW'{$ENDIF};
+function SQLBulkOperations; external odbcdll name {$IFDEF OSX}'_SQLBulkOperations'{$ELSE}'SQLBulkOperations'{$ENDIF};
+function SQLColumnPrivileges; external odbcdll name {$IFDEF OSX}'_SQLColumnPrivilegesW'{$ELSE}'SQLColumnPrivilegesW'{$ENDIF};
+function SQLColumnPrivilegesA; external odbcdll name {$IFDEF OSX}'_SQLColumnPrivilegesA'{$ELSE}'SQLColumnPrivilegesA'{$ENDIF};
+function SQLColumnPrivilegesW; external odbcdll name {$IFDEF OSX}'_SQLColumnPrivilegesW'{$ELSE}'SQLColumnPrivilegesW'{$ENDIF};
+function SQLDescribeParam; external odbcdll name {$IFDEF OSX}'_SQLDescribeParam'{$ELSE}'SQLDescribeParam'{$ENDIF};
+function SQLForeignKeys; external odbcdll name {$IFDEF OSX}'_SQLForeignKeysW'{$ELSE}'SQLForeignKeysW'{$ENDIF};
+function SQLForeignKeysA; external odbcdll name {$IFDEF OSX}'_SQLForeignKeysA'{$ELSE}'SQLForeignKeysA'{$ENDIF};
+function SQLForeignKeysW; external odbcdll name {$IFDEF OSX}'_SQLForeignKeysW'{$ELSE}'SQLForeignKeysW'{$ENDIF};
+function SQLMoreResults; external odbcdll name {$IFDEF OSX}'_SQLMoreResults'{$ELSE}'SQLMoreResults'{$ENDIF};
+function SQLNativeSql; external odbcdll name {$IFDEF OSX}'_SQLNativeSqlW'{$ELSE}'SQLNativeSqlW'{$ENDIF};
+function SQLNativeSqlA; external odbcdll name {$IFDEF OSX}'_SQLNativeSqlA'{$ELSE}'SQLNativeSqlA'{$ENDIF};
+function SQLNativeSqlW; external odbcdll name {$IFDEF OSX}'_SQLNativeSqlW'{$ELSE}'SQLNativeSqlW'{$ENDIF};
+function SQLNumParams; external odbcdll name {$IFDEF OSX}'_SQLNumParams'{$ELSE}'SQLNumParams'{$ENDIF};
+function SQLPrimaryKeys; external odbcdll name {$IFDEF OSX}'_SQLPrimaryKeysW'{$ELSE}'SQLPrimaryKeysW'{$ENDIF};
+function SQLPrimaryKeysA; external odbcdll name {$IFDEF OSX}'_SQLPrimaryKeysA'{$ELSE}'SQLPrimaryKeysA'{$ENDIF};
+function SQLPrimaryKeysW; external odbcdll name {$IFDEF OSX}'_SQLPrimaryKeysW'{$ELSE}'SQLPrimaryKeysW'{$ENDIF};
+function SQLProcedureColumns; external odbcdll name {$IFDEF OSX}'_SQLProcedureColumnsW'{$ELSE}'SQLProcedureColumnsW'{$ENDIF};
+function SQLProcedureColumnsA; external odbcdll name {$IFDEF OSX}'_SQLProcedureColumnsA'{$ELSE}'SQLProcedureColumnsA'{$ENDIF};
+function SQLProcedureColumnsW; external odbcdll name {$IFDEF OSX}'_SQLProcedureColumnsW'{$ELSE}'SQLProcedureColumnsW'{$ENDIF};
+function SQLProcedures; external odbcdll name {$IFDEF OSX}'_SQLProceduresW'{$ELSE}'SQLProceduresW'{$ENDIF};
+function SQLProceduresA; external odbcdll name {$IFDEF OSX}'_SQLProceduresA'{$ELSE}'SQLProceduresA'{$ENDIF};
+function SQLProceduresW; external odbcdll name {$IFDEF OSX}'_SQLProceduresW'{$ELSE}'SQLProceduresW'{$ENDIF};
+{$IFDEF WINDOWS}
 function SQLSetPos; external odbcdll name 'SQLSetPos';
 {$ENDIF}
-function SQLTablePrivileges; external odbcdll name {$IFDEF MACOS}'_SQLTablePrivilegesW'{$ELSE}'SQLTablePrivilegesW'{$ENDIF};
-function SQLTablePrivilegesA; external odbcdll name {$IFDEF MACOS}'_SQLTablePrivilegesA'{$ELSE}'SQLTablePrivilegesA'{$ENDIF};
-function SQLTablePrivilegesW; external odbcdll name {$IFDEF MACOS}'_SQLTablePrivilegesW'{$ELSE}'SQLTablePrivilegesW'{$ENDIF};
-function SQLDrivers; external odbcdll name {$IFDEF MACOS}'_SQLDriversW'{$ELSE}'SQLDriversW'{$ENDIF};
-function SQLDriversA; external odbcdll name {$IFDEF MACOS}'_SQLDriversA'{$ELSE}'SQLDriversA'{$ENDIF};
-function SQLDriversW; external odbcdll name {$IFDEF MACOS}'_SQLDriversW'{$ELSE}'SQLDriversW'{$ENDIF};
-function SQLBindParameter; external odbcdll name {$IFDEF MACOS}'_SQLBindParameter'{$ELSE}'SQLBindParameter'{$ENDIF};
+function SQLTablePrivileges; external odbcdll name {$IFDEF OSX}'_SQLTablePrivilegesW'{$ELSE}'SQLTablePrivilegesW'{$ENDIF};
+function SQLTablePrivilegesA; external odbcdll name {$IFDEF OSX}'_SQLTablePrivilegesA'{$ELSE}'SQLTablePrivilegesA'{$ENDIF};
+function SQLTablePrivilegesW; external odbcdll name {$IFDEF OSX}'_SQLTablePrivilegesW'{$ELSE}'SQLTablePrivilegesW'{$ENDIF};
+function SQLDrivers; external odbcdll name {$IFDEF OSX}'_SQLDriversW'{$ELSE}'SQLDriversW'{$ENDIF};
+function SQLDriversA; external odbcdll name {$IFDEF OSX}'_SQLDriversA'{$ELSE}'SQLDriversA'{$ENDIF};
+function SQLDriversW; external odbcdll name {$IFDEF OSX}'_SQLDriversW'{$ELSE}'SQLDriversW'{$ENDIF};
+function SQLBindParameter; external odbcdll name {$IFDEF OSX}'_SQLBindParameter'{$ELSE}'SQLBindParameter'{$ENDIF};
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function SQLAllocHandleStd; external odbcdll name 'SQLAllocHandleStd';
 {$ENDIF}
 
-function TraceOpenLogFile; external odbcdll name {$IFDEF MACOS}'_TraceOpenLogFile'{$ELSE}'TraceOpenLogFile'{$ENDIF};
-function TraceCloseLogFile; external odbcdll name {$IFDEF MACOS}'_TraceCloseLogFile'{$ELSE}'TraceCloseLogFile'{$ENDIF};
-procedure TraceReturn; external odbcdll name {$IFDEF MACOS}'_TraceReturn'{$ELSE}'TraceReturn'{$ENDIF};
-function TraceVersion; external odbcdll name {$IFDEF MACOS}'_TraceVersion'{$ELSE}'TraceVersion'{$ENDIF};
+function TraceOpenLogFile; external odbcdll name {$IFDEF OSX}'_TraceOpenLogFile'{$ELSE}'TraceOpenLogFile'{$ENDIF};
+function TraceCloseLogFile; external odbcdll name {$IFDEF OSX}'_TraceCloseLogFile'{$ELSE}'TraceCloseLogFile'{$ENDIF};
+procedure TraceReturn; external odbcdll name {$IFDEF OSX}'_TraceReturn'{$ELSE}'TraceReturn'{$ENDIF};
+function TraceVersion; external odbcdll name {$IFDEF OSX}'_TraceVersion'{$ELSE}'TraceVersion'{$ENDIF};
 
-function TraceVSControl; external odbcdll name {$IFDEF MACOS}'_TraceVSControl'{$ELSE}'TraceVSControl'{$ENDIF};
+function TraceVSControl; external odbcdll name {$IFDEF OSX}'_TraceVSControl'{$ELSE}'TraceVSControl'{$ENDIF};
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function ODBCSetTryWaitValue; external odbcdll name 'ODBCSetTryWaitValue';
 {$ELSE}
 function ODBCSetTryWaitValue; external odbcdll name '_ODBCSetTryWaitValue';
 {$ENDIF}
-function ODBCGetTryWaitValue; external odbcdll name {$IFDEF MACOS}'_ODBCGetTryWaitValue'{$ELSE}'ODBCGetTryWaitValue'{$ENDIF};
+function ODBCGetTryWaitValue; external odbcdll name {$IFDEF OSX}'_ODBCGetTryWaitValue'{$ELSE}'ODBCGetTryWaitValue'{$ENDIF};
 
-function SQLColAttributes; external odbcdll name {$IFDEF MACOS}'_SQLColAttributesW'{$ELSE}'SQLColAttributesW'{$ENDIF};
-function SQLColAttributesA; external odbcdll name {$IFDEF MACOS}'_SQLColAttributesA'{$ELSE}'SQLColAttributesA'{$ENDIF};
-function SQLColAttributesW; external odbcdll name {$IFDEF MACOS}'_SQLColAttributesW'{$ELSE}'SQLColAttributesW'{$ENDIF};
-function SQLSetDescFieldW; external odbcdll name {$IFDEF MACOS}'_SQLSetDescFieldW'{$ELSE}'SQLSetDescFieldW'{$ENDIF};
-function SQLSetStmtAttrW; external odbcdll name {$IFDEF MACOS}'_SQLSetStmtAttrW'{$ELSE}'SQLSetStmtAttrW'{$ENDIF};
+function SQLColAttributes; external odbcdll name {$IFDEF OSX}'_SQLColAttributesW'{$ELSE}'SQLColAttributesW'{$ENDIF};
+function SQLColAttributesA; external odbcdll name {$IFDEF OSX}'_SQLColAttributesA'{$ELSE}'SQLColAttributesA'{$ENDIF};
+function SQLColAttributesW; external odbcdll name {$IFDEF OSX}'_SQLColAttributesW'{$ELSE}'SQLColAttributesW'{$ENDIF};
+function SQLSetDescFieldW; external odbcdll name {$IFDEF OSX}'_SQLSetDescFieldW'{$ELSE}'SQLSetDescFieldW'{$ENDIF};
+function SQLSetStmtAttrW; external odbcdll name {$IFDEF OSX}'_SQLSetStmtAttrW'{$ELSE}'SQLSetStmtAttrW'{$ENDIF};
 
-function SQLGetStmtOptionA; external odbcdll name {$IFDEF MACOS}'_SQLGetStmtOptionA'{$ELSE}'SQLGetStmtOptionA'{$ENDIF};
-function SQLSetStmtOptionA; external odbcdll name {$IFDEF MACOS}'_SQLSetStmtOptionA'{$ELSE}'SQLSetStmtOptionA'{$ENDIF};
-function SQLDescribeParamA; external odbcdll name {$IFDEF MACOS}'_SQLDescribeParamA'{$ELSE}'SQLDescribeParamA'{$ENDIF};
+function SQLGetStmtOptionA; external odbcdll name {$IFDEF OSX}'_SQLGetStmtOptionA'{$ELSE}'SQLGetStmtOptionA'{$ENDIF};
+function SQLSetStmtOptionA; external odbcdll name {$IFDEF OSX}'_SQLSetStmtOptionA'{$ELSE}'SQLSetStmtOptionA'{$ENDIF};
+function SQLDescribeParamA; external odbcdll name {$IFDEF OSX}'_SQLDescribeParamA'{$ELSE}'SQLDescribeParamA'{$ENDIF};
 
 end.
 

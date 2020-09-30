@@ -352,14 +352,14 @@ type
     APrototype: JsValueRef;
   end;
 
-procedure BeforeCollectCallback(callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+procedure BeforeCollectCallback(callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   if Assigned(callbackState) then
     TChakraCoreRuntime(callbackState).DoBeforeCollect;
 end;
 
 function ThreadServiceCallback(callback: JsBackgroundWorkItemCallback; callbackState: Pointer): bool;
-  {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   Result := False; // let ChakraCore handle this work item
 
@@ -369,21 +369,21 @@ begin
 end;
 
 function FetchImportedModuleCallBack(referencingModule: JsModuleRecord; specifier: JsValueRef;
-  out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   Result := TChakraCoreContext.CurrentContext.HandleFetchImportedModuleCallback(referencingModule, specifier,
     dependentModuleRecord);
 end;
 
 function FetchImportedModuleFromScriptCallBack(dwReferencingSourceContext: JsSourceContext; specifier: JsValueRef;
-  out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  out dependentModuleRecord: JsModuleRecord): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   Result := TChakraCoreContext.CurrentContext.HandleFetchImportedModuleFromScriptCallback(dwReferencingSourceContext,
     specifier, dependentModuleRecord);
 end;
 
 function MemoryAllocationCallback(callbackState: Pointer; allocationEvent: JsMemoryEventType;
-  allocationSize: size_t): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  allocationSize: size_t): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   Result := True;
 
@@ -398,13 +398,13 @@ begin
     end;
 end;
 
-procedure Native_FinalizeCallback(data: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+procedure Native_FinalizeCallback(data: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   TObject(data).Free;
 end;
 
 function Native_ConstructorCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRef; ArgCount: Word;
-  CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   NativeClass: TNativeClass absolute CallbackState;
   NativeInstance: TNativeObject;
@@ -434,7 +434,7 @@ begin
 end;
 
 function Native_GetConstructorCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRef; ArgCount: Word;
-  CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   NativeClass: TNativeClass absolute CallbackState;
   Context: TChakraCoreContext;
@@ -466,7 +466,7 @@ begin
 end;
 
 function Native_ClassMethodCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRef;
-  ArgCount: Word; CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  ArgCount: Word; CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   Context: TChakraCoreContext;
   Info: PNativeClassInfo;
@@ -502,7 +502,7 @@ begin
 end;
 
 function Native_MethodCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRef;
-  ArgCount: Word; CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  ArgCount: Word; CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   NativeMethod: TNativeMethod;
 begin
@@ -534,7 +534,7 @@ begin
 end;
 
 function Native_PropGetCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRef; ArgCount: Word;
-  CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   NativeMethod: TNativeGetAccessorMethod;
 begin
@@ -560,7 +560,7 @@ begin
 end;
 
 function Native_PropSetCallback(Callee: JsValueRef; IsConstructCall: bool; Args: PJsValueRefArray; ArgCount: Word;
-  CallbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  CallbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 var
   NativeMethod: TNativeSetAccessorMethod;
 begin
@@ -586,7 +586,7 @@ begin
 end;
 
 function NotifyModuleReadyCallback(referencingModule: JsModuleRecord; exceptionVar: JsValueRef): JsErrorCode;
-  {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   Result := TChakraCoreContext.CurrentContext.HandleNotifyModuleReadyCallback(referencingModule, exceptionVar);
 end;
@@ -1027,7 +1027,7 @@ begin
   end;
 end;
 
-procedure PromiseContinuation(task: JsValueRef; callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+procedure PromiseContinuation(task: JsValueRef; callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 begin
   if Assigned(callbackState) then
     TChakraCoreContext(callbackState).DoPromiseContinuation(task);

@@ -16,8 +16,16 @@
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
+    <MacroValues Count="1">
+      <Macro2 Name="LCLWidgetType" Value="gtk2"/>
+    </MacroValues>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
+      <SharedMatrixOptions Count="3">
+        <Item1 ID="678426317693" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item2 ID="714078438566" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item3 ID="047760613800" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -31,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="372">
+    <Units Count="376">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1529,6 +1537,22 @@
         <Filename Value="..\library\r5\FHIR.R5.Resources.Other.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit371>
+      <Unit372>
+        <Filename Value="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit372>
+      <Unit373>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit373>
+      <Unit374>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4Messages.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit374>
+      <Unit375>
+        <Filename Value="..\library\support\FHIR.Support.SystemService.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit375>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1538,12 +1562,13 @@
       <Filename Value="FHIRServerFPC"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\stem"/>
+      <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
       <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
       <TargetCPU Value="x86_64"/>
+      <TargetOS Value="linux"/>
       <Optimizations>
         <OptimizationLevel Value="4"/>
       </Optimizations>
@@ -1562,6 +1587,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dODBC"/>
     </Other>
   </CompilerOptions>
   <Debugging>

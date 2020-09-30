@@ -80,7 +80,8 @@ uses
   FHIR.R2.Resources.Clinical in '..\..\library\r2\FHIR.R2.Resources.Clinical.pas',
   FHIR.R2.Resources.Canonical in '..\..\library\r2\FHIR.R2.Resources.Canonical.pas',
   FHIR.R2.Resources.Base in '..\..\library\r2\FHIR.R2.Resources.Base.pas',
-  FHIR.R2.Resources.Admin in '..\..\library\r2\FHIR.R2.Resources.Admin.pas';
+  FHIR.R2.Resources.Admin in '..\..\library\r2\FHIR.R2.Resources.Admin.pas',
+  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas';
 
 {$R *.res}
 

@@ -30,7 +30,7 @@ unit FHIR.R2.Resources.Admin;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r2.inc}
 
 interface

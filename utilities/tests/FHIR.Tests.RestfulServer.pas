@@ -45,7 +45,7 @@ uses
   FHIR.Smart.Utilities, FHIR.Tests.SmartLogin,
   FHIR.Tx.Server,
   FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Server.Ini,
-  FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT,
+  FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT, FHIR.Server.Telnet,
   FHIR.Server.ValidatorR4, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4;
 
 {$IFNDEF FPC}
@@ -685,7 +685,7 @@ begin
   FGlobals := TFHIRServerSettings.Create;
   FGLobals.load(FIni);
 
-  FServer := TFhirWebServer.create(FGlobals.Link, 'Test-Server');
+  FServer := TFhirWebServer.create(FGlobals.Link, TFHIRTelnetServer.create(44122, 'test'), 'Test-Server');
   FServer.OnRegisterJs := registerJs;
   FServer.loadConfiguration(FIni);
   FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\server\web');

@@ -28,9 +28,8 @@ Unit FHIR.Server.Web;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}
-{$MODE Delphi}
-{$ENDIF}
+{$I fhir.inc}
+
 {
 
   how security works for the FHIR Server
@@ -76,16 +75,16 @@ Unit FHIR.Server.Web;
 Interface
 
 Uses
-  {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections, {JCL JclDebug,} {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
-  {$IFDEF MSWINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
+  {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   FHIR.Database.ODBC,
   {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
@@ -100,7 +99,7 @@ Uses
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.UsageStats,
   {$IFNDEF NO_JS} FHIR.Server.Javascript, {$ENDIF}
-  FHIR.Server.Subscriptions, {$IFNDEF FHIR3}FHIR.Server.Packages, {$ENDIF}FHIR.Server.Twilio;
+  FHIR.Server.Subscriptions, {$IFNDEF FHIR3}FHIR.Server.Packages, {$ENDIF}FHIR.Server.Twilio, FHIR.Server.Telnet;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -377,7 +376,7 @@ Type
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509) : String;
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
     function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -399,7 +398,7 @@ Type
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     procedure startHooks(ctxt: TFHIRWebServerPatientViewContext; patient: TFHIRPatientW; url: String);
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
-   {$IFDEF MSWINDOWS}
+   {$IFDEF WINDOWS}
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     {$ENDIF}
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
@@ -505,6 +504,7 @@ Type
     FPackageServer : TFHIRPackageServer;
     {$ENDIF}
     FTwilioServer : TTwilioServer;
+    FTelnet : TFHIRTelnetServer;
 
     function TerminologyWebServer: TTerminologyWebServer;
 
@@ -546,7 +546,7 @@ Type
     function endpointList: String;
 
   Public
-    constructor Create(settings : TFHIRServerSettings; name: String);
+    constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerIniFile);
 
@@ -617,7 +617,7 @@ Function ProcessPath(base, path: String): string;
 Implementation
 
 Uses
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   Registry,
 {$ENDIF}
   FHIR.Web.Facebook{$IFDEF COVID}, FHIR.Server.Covid{$ENDIF};
@@ -637,7 +637,7 @@ type
   end;
 
 Function GetMimeTypeForExt(AExt: String): String;
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Var
   fReg: TRegistry;
 {$ENDIF}
@@ -660,7 +660,7 @@ Begin
     result := 'text/javascript'
   Else
   Begin
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
     Try
       fReg := TRegistry.Create;
       Try
@@ -1605,7 +1605,7 @@ end;
 
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 function TFhirWebServerEndPoint.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 //var
@@ -1781,7 +1781,7 @@ begin
   end;
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 function TFhirWebServerEndPoint.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 //var
@@ -2008,7 +2008,7 @@ begin
   end;
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function TFhirWebServerEndPoint.HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 var
   id, ver: String;
@@ -2115,7 +2115,7 @@ begin
     result := HandleWebEdit(request, response)
   else if request.id.EndsWith('$post') then
     result := HandleWebPost(request, response)
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   else if request.id.EndsWith('$qa-edit') then
     result := HandleWebQuestionnaireInstance(request, response)
   else if request.id.StartsWith('Questionnaire/') then
@@ -3302,7 +3302,6 @@ begin
   finally
     counts.Free;
   end;
-writeln('fhp12');
 end;
 
 function TFhirWebServerEndpoint.BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
@@ -3318,7 +3317,7 @@ begin
     [aType]) + '</title>'#13#10 + '    <link rel="Stylesheet" href="/css/fhir.css" type="text/css" media="screen" />'#13#10 + FHIR_JS + '</head>'#13#10 +
     ''#13#10 + '<body>'#13#10 + ''#13#10 + '<div class="header">'#13#10 + '  <a href="http://www.hl7.org/fhir" title="' +
     GetFhirMessage('MSG_HOME_PAGE_TITLE', lang) + '"><img border="0" src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10 +
-    ''#13#10 + '  &copy; HL7.org 2011-2013'#13#10 + '  &nbsp;'#13#10 + '  ' + FWebServer.FOwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + ''#13#10 +
+    ''#13#10 + '  &copy; HL7.org 2011+'#13#10 + '  &nbsp;'#13#10 + '  ' + FWebServer.FOwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + ''#13#10 +
     '  &nbsp;'#13#10 + '  FHIR ' + GetFhirMessage('NAME_VERSION', lang) + ' ' + Factory.versionString + ''#13#10;
 
   if Session <> nil then
@@ -4055,7 +4054,7 @@ begin
   end;
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 function TFhirWebServerEndPoint.transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
 var
@@ -4246,9 +4245,10 @@ end;
 
 { TFhirWebServer }
 
-Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
+Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
 Begin
   Inherited Create;
+  FTelnet := telnet;
   FLock := TFslLock.Create('fhir-rest');
   FThreads := TList<TAsyncTaskThread>.create;
   FEndPoints := TFslList<TFhirWebServerEndpoint>.create;
@@ -4271,6 +4271,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FTelnet.Free;
   FTwilioServer.Free;
   {$IFNDEF FHIR3}
   FPackageServer.Free;
@@ -4410,7 +4411,7 @@ begin
     TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
 
   InterlockedIncrement(GCounterWebConnections);
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   CoInitialize(nil);
 {$ENDIF}
 {$IFNDEF NO_JS}
@@ -4444,7 +4445,7 @@ begin
   GJsHost.Free;
   GJshost := nil;
   {$ENDIF}
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   CoUninitialize;
 {$ENDIF}
 end;
@@ -4493,7 +4494,7 @@ end;
 
 Procedure TFhirWebServer.Start(active: boolean);
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   if FTwilioDB <> '' then
     FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
   {$ENDIF}
@@ -4760,85 +4761,91 @@ var
   ep : TFhirWebServerEndpoint;
   ok : boolean;
   sp : TFHIRWebServerSourceProvider;
+  session : TTelnetSession;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
   SetThreadName('WebRequest - '+request.Document);
-  MarkEntry(AContext, request, response);
+  session := FTelnet.makeSession(AContext.Binding.PeerIP+' p '+request.RawHTTPCommand);
   try
-    id := FSettings.nextRequestId;
-    logRequest(false, id, request);
-    response.CustomHeaders.Add('X-Request-Id: '+id);
-    if (request.CommandType = hcOption) then
-    begin
-      response.ResponseNo := 200;
-      response.ContentText := 'ok';
-      response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-    end
-    else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
-    begin
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-      FUsageServer.HandleRequest(AContext, request, response)
-    end
-    else
-    begin
-      ok := false;
-      for ep in FEndPoints do
-        if request.Document.StartsWith(ep.path) then
-        begin
-          ok := true;
-          summ := ep.PlainRequest(AContext, request, response, id);
-        end;
-      if not ok then
+    MarkEntry(AContext, request, response);
+    try
+      id := FSettings.nextRequestId;
+      logRequest(false, id, request);
+      response.CustomHeaders.Add('X-Request-Id: '+id);
+      if (request.CommandType = hcOption) then
       begin
-        sp := FSourceProvider;
-        if request.Document = '/diagnostics' then
-          summ := ReturnDiagnostics(AContext, request, response, false, false)
-        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+        response.ResponseNo := 200;
+        response.ContentText := 'ok';
+        response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+      end
+      else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
+      begin
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+        FUsageServer.HandleRequest(AContext, request, response)
+      end
+      else
+      begin
+        ok := false;
+        for ep in FEndPoints do
+          if request.Document.StartsWith(ep.path) then
+          begin
+            ok := true;
+            summ := ep.PlainRequest(AContext, request, response, id);
+          end;
+        if not ok then
         begin
-          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
-        end
-        {$IFNDEF FHIR3}
-        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          summ := FPackageServer.serve(request, response)
-        {$ENDIF}
-        else if sp.exists(sp.AltFile(request.Document, '/')) then
-        begin
-          summ := 'Static File';
-          ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
-        end
-        else if request.Document = '/' then
-        begin
-          summ := 'processed File';
-          ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false);
-        end
-        else
-        begin
-          response.ResponseNo := 404;
-          response.ContentText := 'Document ' + request.Document + ' not found';
-          summ := 'Not Found';
+          sp := FSourceProvider;
+          if request.Document = '/diagnostics' then
+            summ := ReturnDiagnostics(AContext, request, response, false, false)
+          else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+          begin
+            summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
+          end
+          {$IFNDEF FHIR3}
+          else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
+            summ := FPackageServer.serve(request, response)
+          {$ENDIF}
+          else if sp.exists(sp.AltFile(request.Document, '/')) then
+          begin
+            summ := 'Static File';
+            ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
+          end
+          else if request.Document = '/' then
+          begin
+            summ := 'processed File';
+            ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false);
+          end
+          else
+          begin
+            response.ResponseNo := 404;
+            response.ContentText := 'Document ' + request.Document + ' not found';
+            summ := 'Not Found';
+          end;
         end;
       end;
+      logResponse(id, response);
+      t := GetTickCount - t;
+      logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
+      response.CloseConnection := not PLAIN_KEEP_ALIVE;
+    finally
+      InterlockedDecrement(GCounterWebRequests);
+      MarkExit(AContext);
+      SetThreadName('');
     end;
-    logResponse(id, response);
-    t := GetTickCount - t;
-    logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
-    response.CloseConnection := not PLAIN_KEEP_ALIVE;
   finally
-    InterlockedDecrement(GCounterWebRequests);
-    MarkExit(AContext);
-    SetThreadName('');
+    session.Free;
   end;
 end;
 
@@ -4850,81 +4857,87 @@ var
   ok : boolean;
   ep: TFhirWebServerEndpoint;
   sp : TFHIRWebServerSourceProvider;
+  session : TTelnetSession;
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
-  MarkEntry(AContext, request, response);
+  session := FTelnet.makeSession(AContext.Binding.PeerIP+' s '+request.RawHTTPCommand);
   try
-    id := FSettings.nextRequestId;
-    logRequest(true, id, request);
-    response.CustomHeaders.Add('X-Request-Id: '+id);
-    if (request.CommandType = hcOption) then
-    begin
-      response.ResponseNo := 200;
-      response.ContentText := 'ok';
-      response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-    end
-    else
-    begin
-      ok := false;
-      sp := FSourceProvider;
-      for ep in FEndPoints do
-        if request.Document.StartsWith(ep.path) then
-        begin
-          ok := true;
-          summ := ep.SecureRequest(AContext, request, response, cert, id);
-        end;
-      if not ok then
+    MarkEntry(AContext, request, response);
+    try
+      id := FSettings.nextRequestId;
+      logRequest(true, id, request);
+      response.CustomHeaders.Add('X-Request-Id: '+id);
+      if (request.CommandType = hcOption) then
       begin
-        if request.Document = '/diagnostics' then
-          summ := ReturnDiagnostics(AContext, request, response, false, false)
-        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+        response.ResponseNo := 200;
+        response.ContentText := 'ok';
+        response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+      end
+      else
+      begin
+        ok := false;
+        sp := FSourceProvider;
+        for ep in FEndPoints do
+          if request.Document.StartsWith(ep.path) then
+          begin
+            ok := true;
+            summ := ep.SecureRequest(AContext, request, response, cert, id);
+          end;
+        if not ok then
         begin
-          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
-        end
-        {$IFNDEF FHIR3}
-        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          summ := FPackageServer.serve(request, response)
-        {$ENDIF}
-        else if request.Document = '/twilio' then
-          summ := HandleTwilio(AContext, request, response, false, false)
-        else if sp.exists(sp.AltFile(request.Document, '/')) then
-        begin
-          summ := 'Static File';
-          ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
-        end
-        else if request.Document = '/' then
-        begin
-          summ := 'Processed File';
-          ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
-        end
-        else
-        begin
-          response.ResponseNo := 404;
-          response.ContentText := 'Document ' + request.Document + ' not found';
+          if request.Document = '/diagnostics' then
+            summ := ReturnDiagnostics(AContext, request, response, false, false)
+          else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+          begin
+            summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
+          end
+          {$IFNDEF FHIR3}
+          else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
+            summ := FPackageServer.serve(request, response)
+          {$ENDIF}
+          else if request.Document = '/twilio' then
+            summ := HandleTwilio(AContext, request, response, false, false)
+          else if sp.exists(sp.AltFile(request.Document, '/')) then
+          begin
+            summ := 'Static File';
+            ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
+          end
+          else if request.Document = '/' then
+          begin
+            summ := 'Processed File';
+            ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
+          end
+          else
+          begin
+            response.ResponseNo := 404;
+            response.ContentText := 'Document ' + request.Document + ' not found';
+          end;
         end;
       end;
-    end;
 
-    logResponse(id, response);
-    t := GetTickCount - t;
-    logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
-    logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
-    {$IFNDEF OSX}
-//    if GService <> nil then
-//      logt(GService.ThreadStatus);
-    {$ENDIF}
-    response.CloseConnection := not SECURE_KEEP_ALIVE;
+      logResponse(id, response);
+      t := GetTickCount - t;
+      logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
+      logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
+      {$IFNDEF OSX}
+  //    if GService <> nil then
+  //      logt(GService.ThreadStatus);
+      {$ENDIF}
+      response.CloseConnection := not SECURE_KEEP_ALIVE;
+    finally
+      InterlockedDecrement(GCounterWebRequests);
+      MarkExit(AContext);
+    end;
   finally
-    InterlockedDecrement(GCounterWebRequests);
-    MarkExit(AContext);
+    session.free;
   end;
 end;
 
@@ -5432,7 +5445,7 @@ begin
   logt('Starting TFhirServerMaintenanceThread');
   try
     FServer.FSettings.MaintenanceThreadStatus := 'starting';
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
     CoInitialize(nil);
 {$ENDIF}
     {$IFNDEF NO_JS}
@@ -5514,7 +5527,7 @@ begin
     {$ENDIF}
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
     CoUninitialize;
 {$ENDIF}
     logt('Ending TFhirServerMaintenanceThread');
@@ -5853,7 +5866,7 @@ end;
 
 procedure TAsyncTaskThread.kill;
 begin
-  {$IFNDEF OSX}
+  {$IFDEF WINDOWS}
   TerminateThread(ThreadHandle, 1);
   {$ENDIF}
 end;

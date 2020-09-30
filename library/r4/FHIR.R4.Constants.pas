@@ -29,7 +29,7 @@ unit FHIR.R4.Constants;
   
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r4.inc}
 
 interface

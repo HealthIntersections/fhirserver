@@ -223,7 +223,9 @@ uses
   FHIR.R4.Resources.Base in '..\..\library\r4\FHIR.R4.Resources.Base.pas',
   FHIR.R4.Resources.Financial in '..\..\library\r4\FHIR.R4.Resources.Financial.pas',
   FHIR.R4.Resources.Clinical in '..\..\library\r4\FHIR.R4.Resources.Clinical.pas',
-  FHIR.R4.Resources.Canonical in '..\..\library\r4\FHIR.R4.Resources.Canonical.pas';
+  FHIR.R4.Resources.Canonical in '..\..\library\r4\FHIR.R4.Resources.Canonical.pas',
+  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  FHIR.Server.Telnet in '..\..\Server\FHIR.Server.Telnet.pas';
 
 {$R *.res}
 

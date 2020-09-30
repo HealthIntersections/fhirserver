@@ -1,7 +1,7 @@
 unit FHIR.Ucum.Services;
 
 {
-Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 Interface
 
@@ -466,7 +466,7 @@ begin
     s := validate(code);
     if s <> '' then
       b.Append('* Error: '+s+#13#10);
-    b.Append(#13#10+'Copyright: UCUM is Copyright &copy; 1999-2013 Regenstrief Institute, Inc. and The UCUM Organization, Indianapolis, IN. See [Terms Of Use](http://unitsofmeasure.org/trac//wiki/TermsOfUse)'+#13#10);
+    b.Append(#13#10+'Copyright: UCUM is Copyright &copy; 1999+ Regenstrief Institute, Inc. and The UCUM Organization, Indianapolis, IN. See [Terms Of Use](http://unitsofmeasure.org/trac//wiki/TermsOfUse)'+#13#10);
     card.detail := b.ToString;
   finally
     b.Free;

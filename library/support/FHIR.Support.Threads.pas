@@ -1,7 +1,7 @@
 unit FHIR.Support.Threads;
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,35 +28,34 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 {$OVERFLOWCHECKS OFF}
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF} {$ENDIF}
+  {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
   SysUtils, SyncObjs, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc;
 
 const
-  NO_THREAD = 0;
+  NO_THREAD = TThreadID(0);
 
 type
-  TThreadID = Cardinal;
   TThreadHandle = THandle;
-
 
 Procedure ThreadSleep(iTime : Cardinal); Overload;
 Function ThreadID : TThreadID; Overload;
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function ThreadHandle : TThreadHandle; Overload;
 {$ENDIF}
 Procedure ThreadYield; Overload;
 Procedure ThreadBreakpoint; Overload;
 
 procedure SetThreadName(name : String);
-function GetThreadName(id : integer) : String;
+function GetThreadName(id : TThreadId) : String;
 
 function threadCount : Integer;
 
@@ -276,8 +275,7 @@ implementation
 var
   GHaveCritSect : Boolean = False;
   GCritSct: TRTLCriticalSection;
-  GThreadManager : TDictionary<cardinal,String>;
-  GQPFrequency : Int64;
+  GThreadManager : TDictionary<TThreadId,String>;
 
   GFirst: TFslLock = NIL;
   GCount: Integer = 0;
@@ -285,12 +283,10 @@ var
 
 procedure InitUnit;
 begin
-  QueryPerformanceFrequency(GQPFrequency);
-  GQPFrequency := GQPFrequency div 1000; // in milliseconds
   InitializeCriticalSection(GCritSct);
   GHaveCritSect := true;
   GBackgroundTasks := TBackgroundTaskManager.Create;
-  GThreadManager := TDictionary<cardinal,String>.create;
+  GThreadManager := TDictionary<TThreadId,String>.create;
 end;
 
 procedure DoneUnit;
@@ -371,10 +367,19 @@ begin
 end;
 
 
+function threadToString(id : TThreadId) : String;
+begin
+  {$IFDEF OSX}
+  result := inttostr(UInt64(id));
+  {$ELSE}
+  result := inttostr(id);
+  {$ENDIF}
+end;
+
 procedure TFslLock.MarkEntered;
 begin
   assert((FLockThread = NO_THREAD) or (FLockThread = GetCurrentThreadId),
-     'Thread '+inttostr(GetCurrentThreadId)+' entering critical section '+inttohex(integer(Self), 8)+'/'+inttohex(integer(@FCritSect), 8)+' owned '+inttostr(FEntryCount)+' times by '+inttostr(FLockThread));
+     'Thread '+threadToString(GetCurrentThreadId)+' entering critical section '+inttohex(integer(Self), 8)+'/'+inttohex(integer(@FCritSect), 8)+' owned '+inttostr(FEntryCount)+' times by '+threadToString(FLockThread));
   if FLockThread = GetCurrentThreadid then
     inc(FEntryCount)
   else
@@ -382,14 +387,12 @@ begin
     FLockThread := GetCurrentThreadId;
     FEntryCount := 1;
     inc(FUseCount);
-    QueryPerformanceCounter(FCurrLockTime);
+    FCurrLockTime := GetTickCount64;
   end;
   SetLength(FLockName, FEntryCount);
 end;
 
 procedure TFslLock.MarkLeft;
-var
-  LEndTime: Int64;
 begin
   assert(FLockThread = GetCurrentThreadID);
   dec(FEntryCount);
@@ -397,8 +400,7 @@ begin
   if FEntryCount = 0 then
     begin
     FLockThread := NO_THREAD;
-    QueryPerformanceCounter(LEndTime);
-    FTimeLocked := FTimeLocked + (LEndTime - FCurrLockTime);
+    FTimeLocked := FTimeLocked + (GetTickCount64 - FCurrLockTime);
     FCurrLockTime := 0;
     end;
 end;
@@ -415,7 +417,7 @@ begin
   // the current time is set by a successful trylock.
   if not TryLock then
     begin
-    QueryPerformanceCounter(LStartTime);
+    LStartTime := GetTickCount64;
     EnterCriticalSection(FCritSect);
     MarkEntered;
     FDelayTime := FDelayTime + (FCurrLockTime - LStartTime);
@@ -483,18 +485,13 @@ begin
   Result := GCount;
 end;
 
-function ms(count : int64) : integer;
-begin
-  result := count div GQPFrequency;
-end;
-
 function TFslLock.DebugSummary: String;
 var
   i : integer;
 begin
   Result := IntToStr(FOwnID)+' "'+FCategory+'" "'+FName+'" '+IntToStr(FDelayCount)+' '+
-     IntToStr(FUseCount)+' ' +IntToStr(ms(FCurrLockTime))+' '+IntToStr(ms(FTimeLocked))+' '+IntToStr(ms(FDelayTime))+' '+
-     IntToStr(FEntryCount)+' '+IntToStr(FLockThread)+' ';
+     IntToStr(FUseCount)+' ' +IntToStr(FCurrLockTime)+' '+IntToStr(FTimeLocked)+' '+IntToStr(FDelayTime)+' '+
+     IntToStr(FEntryCount)+' '+threadToString(FLockThread)+' ';
   for i := 0 to High(FLockName) do
     result := result + '/' + FLockName[i];
 end;
@@ -505,8 +502,7 @@ var
   LCheckTime: Int64;
 Begin
   result := true;
-  QueryPerformanceCounter(LCheckTime);
-  LCheckTime := LCheckTime - (30 * GQPFrequency * 1000);
+  LCheckTime := GetTickCount64 - (30 * 1000);
   EnterCriticalSection(GCritSct);
   Try
     oCrit := GFirst;
@@ -530,10 +526,8 @@ End;
 function DumpLocks : String;
 var
   oCrit : TFslLock;
-  aTime : Int64;
 Begin
-  QueryPerformanceCounter(aTime);
-  Result := IntToStr(TFslLock.CurrentCount) + ' Locked Critical Sections (@'+InttoStr(ms(aTime))+')'+#13#10;
+  Result := IntToStr(TFslLock.CurrentCount) + ' Locked Critical Sections (@'+InttoStr(GetTickCount64)+')'+#13#10;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
@@ -615,7 +609,7 @@ End;
 Procedure TFslThread.Kill;
 Begin
   FInternal.Terminate;
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   TerminateThread(FInternal.Handle, 0);
   {$ENDIF}
   FInternal.Free;
@@ -993,7 +987,7 @@ Begin
 End;
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function ThreadHandle : TThreadHandle;
 Begin
   Result := GetCurrentThread;
@@ -1043,7 +1037,7 @@ begin
   end;
 end;
 
-function GetThreadName(id : integer) : String;
+function GetThreadName(id : TThreadId) : String;
 begin
   EnterCriticalSection(GCritSct);
   try
@@ -1071,6 +1065,7 @@ begin
 end;
 
 function threadCount : integer;
+{$IFDEF WINDOWS}
 var
   h : THandle;
   te : THREADENTRY32;
@@ -1093,6 +1088,11 @@ begin
     end;
   end;
 end;
+{$ELSE}
+begin
+  raise Exception.Create('how to do this is to be determined');
+end;
+{$ENDIF}
 
 Initialization
   InitUnit;

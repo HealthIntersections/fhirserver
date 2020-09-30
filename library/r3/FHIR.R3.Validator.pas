@@ -29,7 +29,7 @@ Unit FHIR.R3.Validator;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

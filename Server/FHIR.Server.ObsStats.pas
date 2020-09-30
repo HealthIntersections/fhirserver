@@ -34,7 +34,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -71,7 +71,12 @@ Type
     function v(mode : TObservationStatsMode): Double;
   end;
 
-  TObservationStatsEvaluator = class (TFslObject, IComparer<TObservation>)
+  TObservationStatsComparer = class (TInterfacedObject, IComparer<TObservation>)
+  public
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
+  end;
+
+  TObservationStatsEvaluator = class (TFslObject)
   private
     FFactory : TFHIRFactory;
     FConn : TFslDBConnection;
@@ -136,7 +141,6 @@ Type
     function genKurtosis() : Double;
     function genRegression() : Double;
     function genIntercept() : Double;
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
 
   public
     constructor Create(factory : TFHIRFactory; conn : TFslDBConnection; resp : TFHIRStatsOpResponseW);
@@ -189,9 +193,9 @@ Type
 
 implementation
 
-{ TObservationStatsEvaluator }
+{ TObservationStatsComparer }
 
-function TObservationStatsEvaluator.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
+function TObservationStatsComparer.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
 begin
   if (left = nil) or (right = nil) then
     exit(0);
@@ -203,6 +207,8 @@ begin
   else
     result := 1;
 end;
+
+{ TObservationStatsEvaluator }
 
 constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TFslDBConnection; resp : TFHIRStatsOpResponseW);
 begin
@@ -295,6 +301,7 @@ var
   obs : TObservation;
   ck, u, cu : integer;
   AllSameUnit, AllSameCanonicalUnit : boolean;
+  comp : TObservationStatsComparer;
 begin
   ck := lookupConcept(c);
   if ck = 0 then
@@ -326,7 +333,12 @@ begin
   end;
   if not FValidData.Empty then
   begin
-    FValidData.Sort(self);
+    comp := TObservationStatsComparer.create;
+    try
+      FValidData.Sort(comp);
+    finally
+      comp.free;
+    end;
     AllSameUnit := true;
     AllSameCanonicalUnit := true;
     u := FValidData[0].vunit;

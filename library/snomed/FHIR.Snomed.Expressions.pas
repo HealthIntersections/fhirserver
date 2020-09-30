@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 
 interface
@@ -148,15 +148,15 @@ Type
     function canonical : TSnomedRefinementGroup;
   end;
 
-  TSnomedConceptSorter = class (TFslObject, IComparer<TSnomedConcept>)
+  TSnomedConceptSorter = class (TInterfacedObject, IComparer<TSnomedConcept>)
   public
     function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedConcept) : Integer;
   end;
-  TSnomedRefinementSorter = class (TFslObject, IComparer<TSnomedRefinement>)
+  TSnomedRefinementSorter = class (TInterfacedObject, IComparer<TSnomedRefinement>)
   public
     function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinement) : Integer;
   end;
-  TSnomedRefinementGroupSorter = class (TFslObject, IComparer<TSnomedRefinementGroup>)
+  TSnomedRefinementGroupSorter = class (TInterfacedObject, IComparer<TSnomedRefinementGroup>)
   public
     function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinementGroup) : Integer;
   end;

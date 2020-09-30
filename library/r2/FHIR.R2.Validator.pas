@@ -28,13 +28,13 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 
 Uses
-  SysUtils, Classes, Character, RegularExpressions, ActiveX, ComObj,
+  SysUtils, Classes, Character, RegularExpressions,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,

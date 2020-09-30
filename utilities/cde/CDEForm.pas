@@ -1160,7 +1160,7 @@ Begin
   Try
     wrdEditor.Settings.Images := True;
     wrdEditor.Settings.TableBorders := false;
-    wrdEditor.Settings.SnapshotEmail := 'grahame@kestral.com.au';
+    wrdEditor.Settings.SnapshotEmail := 'grahameg@gmail.com';
     wrdEditor.Settings.ShowDocumentInspector := True;
     wrdEditor.Settings.Background := clWhite; // $FFD5CF;
     wrdEditor.Settings.LinkColour := clNavy;

@@ -121,7 +121,7 @@
         <DCC_ExeOutput>C:\Program Files\Notepad++\plugins\FormatUtils</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\d64\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -144,6 +144,7 @@
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
@@ -199,7 +200,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\graha\AppData\Roaming\Notepad++\plugins\formatUtils.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Program Files\Notepad++\plugins\FormatUtils\formatUtils.dll" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>formatUtils.dll</RemoteName>
                         <Overwrite>true</Overwrite>

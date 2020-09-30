@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -46,14 +46,14 @@ Type
 
   TSorterType = (byUrl, byVer, byName, byContext, byPub, bySource);
 
-  TCodeSystemSorter = class (TFslObject, IComparer<TFHIRCodeSystemW>)
+  TCodeSystemSorter = class (TInterfacedObject, IComparer<TFHIRCodeSystemW>)
   private
     FSortType : TSorterType;
   public
     function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRCodeSystemW): Integer;
   end;
 
-  TValueSetSorter = class (TFslObject, IComparer<TFHIRValueSetW>)
+  TValueSetSorter = class (TInterfacedObject, IComparer<TFHIRValueSetW>)
   private
     FSortType : TSorterType;
   public

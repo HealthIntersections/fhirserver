@@ -143,7 +143,7 @@ type
   /// <param name="eventData">Additional data related to the debug event.</param>
   /// <param name="callbackState">The state passed to <c>JsDiagStartDebugging</c>.</param>
   JsDiagDebugEventCallback = function(debugEvent: JsDiagDebugEvent; eventData: JsValueRef; callbackState: Pointer): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Starts debugging in the given runtime.
@@ -158,7 +158,7 @@ type
   ///     The runtime should be active on the current thread and should not be in debug state.
   /// </remarks>
   function JsDiagStartDebugging(runtimeHandle: JsRuntimeHandle; debugEventCallback: JsDiagDebugEventCallback;
-    callbackState: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    callbackState: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Stops debugging in the given runtime.
@@ -172,7 +172,7 @@ type
   ///     The runtime should be active on the current thread and in debug state.
   /// </remarks>
   function JsDiagStopDebugging(runtimeHandle: JsRuntimeHandle; callbackState: PPointer): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Request the runtime to break on next JavaScript statement.
@@ -185,7 +185,7 @@ type
   ///     The runtime should be in debug state. This API can be called from another runtime.
   /// </remarks>
   function JsDiagRequestAsyncBreak(runtimeHandle: JsRuntimeHandle): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     List all breakpoints in the current runtime.
@@ -207,7 +207,7 @@ type
   /// <remarks>
   ///     The current runtime should be in debug state. This API can be called when runtime is at a break or running.
   /// </remarks>
-  function JsDiagGetBreakpoints(out breakpoints: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsDiagGetBreakpoints(out breakpoints: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets breakpoint in the specified script at give location.
@@ -232,7 +232,7 @@ type
   ///     The current runtime should be in debug state. This API can be called when runtime is at a break or running.
   /// </remarks>
   function JsDiagSetBreakpoint(scriptId, lineNumber, columnNumber: Cardinal; out breakpoint: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Remove a breakpoint.
@@ -244,7 +244,7 @@ type
   /// <remarks>
   ///     The current runtime should be in debug state. This API can be called when runtime is at a break or running.
   /// </remarks>
-  function JsDiagRemoveBreakpoint(breakpointId: Cardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsDiagRemoveBreakpoint(breakpointId: Cardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets break on exception handling.
@@ -263,7 +263,7 @@ type
   ///     The runtime should be in debug state. This API can be called from another runtime.
   /// </remarks>
   function JsDiagSetBreakOnException(runtimeHandle: JsRuntimeHandle;
-    exceptionAttributes: JsDiagBreakOnExceptionAttributes): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    exceptionAttributes: JsDiagBreakOnExceptionAttributes): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets break on exception setting.
@@ -278,7 +278,7 @@ type
   /// </remarks>
   function JsDiagGetBreakOnException(runtimeHandle: JsRuntimeHandle;
     out exceptionAttributes: JsDiagBreakOnExceptionAttributes): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the step type in the runtime after a debug break.
@@ -293,7 +293,7 @@ type
   /// <remarks>
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
-  function JsDiagSetStepType(stepType: JsDiagStepType): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsDiagSetStepType(stepType: JsDiagStepType): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets list of scripts.
@@ -321,7 +321,7 @@ type
   /// <remarks>
   ///     The current runtime should be in debug state. This API can be called when runtime is at a break or running.
   /// </remarks>
-  function JsDiagGetScripts(out scriptsArray: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsDiagGetScripts(out scriptsArray: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets source for a specific script identified by scriptId from JsDiagGetScripts.
@@ -346,7 +346,7 @@ type
   ///     The current runtime should be in debug state. This API can be called when runtime is at a break or running.
   /// </remarks>
   function JsDiagGetSource(scriptId: Cardinal; out source: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the source information for a function object.
@@ -372,7 +372,7 @@ type
   ///     This API can be called when runtime is at a break or running.
   /// </remarks>
   function JsDiagGetFunctionPosition(_function: JsValueRef; out functionPosition: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the stack trace information.
@@ -397,7 +397,7 @@ type
   /// <remarks>
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
-  function JsDiagGetStackTrace(out stackTrace: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsDiagGetStackTrace(out stackTrace: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the list of properties corresponding to the frame.
@@ -471,7 +471,7 @@ type
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
   function JsDiagGetStackProperties(stackFrameIndex: Cardinal; out properties: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the list of children of a handle.
@@ -513,7 +513,7 @@ type
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
   function JsDiagGetProperties(objectHandle, fromCount, totalCount: Cardinal;
-    out propertiesObject: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out propertiesObject: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the object corresponding to handle.
@@ -539,7 +539,7 @@ type
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
   function JsDiagGetObjectFromHandle(objectHandle: Cardinal; out handleObject: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Evaluates an expression on given frame.
@@ -588,7 +588,7 @@ type
   ///     The current runtime should be in debug state. This API can only be called when runtime is at a break.
   /// </remarks>
   function JsDiagEvaluate(expression: JsValueRef; stackFrameIndex: Cardinal; parseAttributes: JsParseScriptAttributes;
-    forceSetValueProp: bool; out evalResult: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    forceSetValueProp: bool; out evalResult: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 type
   /////////////////////
@@ -654,7 +654,7 @@ type
   /// <param name="write">If the handle should be opened for writing.</param>
   /// <returns>A JsTTDStreamHandle opened in read/write mode as specified.</returns>
   TTDOpenResourceStreamCallback = function(uriLength: size_t; uri: PAnsiChar; asciiNameLength: size_t;
-    asciiResourceName: PAnsiChar; read, write: bool): JsTTDStreamHandle; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    asciiResourceName: PAnsiChar; read, write: bool): JsTTDStreamHandle; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -666,7 +666,7 @@ type
   /// <param name="readCount">The actual number of bytes read and placed in the buffer.</param>
   /// <returns>true if the read was successful false otherwise.</returns>
   JsTTDReadBytesFromStreamCallback = function(handle: JsTTDStreamHandle; buff: PByte; size: size_t;
-    out readCount: size_t): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out readCount: size_t): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -678,7 +678,7 @@ type
   /// <param name="readCount">The actual number of bytes written to the HANDLE.</param>
   /// <returns>true if the write was successful false otherwise.</returns>
   JsTTDWriteBytesToStreamCallback = function (handle: JsTTDStreamHandle; buff: PByte; size: size_t;
-    out writtenCount: size_t): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out writtenCount: size_t): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -691,7 +691,7 @@ type
   /// <param name="read">If the handle was opened for reading.</param>
   /// <param name="write">If the handle was opened for writing.</param>
   JsTTDFlushAndCloseStreamCallback = procedure(handle: JsTTDStreamHandle; read, write: bool);
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -715,7 +715,7 @@ type
   function JsTTDCreateRecordRuntime(attributes: JsRuntimeAttributes; enableDebugging: bool; snapInterval, snapHistoryLength: size_t;
     openResourceStream: TTDOpenResourceStreamCallback; writeBytesToStream: JsTTDWriteBytesToStreamCallback;
     flushAndCloseStream: JsTTDFlushAndCloseStreamCallback; threadService: JsThreadServiceCallback;
-    out runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -739,7 +739,7 @@ type
     enableDebugging: bool; openResourceStream: TTDOpenResourceStreamCallback;
     readBytesFromStream: JsTTDReadBytesFromStreamCallback; flushAndCloseStream: JsTTDFlushAndCloseStreamCallback;
     threadService: JsThreadServiceCallback; out runtime: JsRuntimeHandle): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -752,7 +752,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsTTDCreateContext(runtimeHandle: JsRuntimeHandle; useRuntimeTTDMode: bool;
-    out newContext: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out newContext: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -762,42 +762,42 @@ type
   /// <returns>
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
-  function JsTTDNotifyContextDestroy(context: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDNotifyContextDestroy(context: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
   ///     Start Time-Travel record or replay at next turn of event loop.
   /// </summary>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDStart: JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDStart: JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
   ///     Stop Time-Travel record or replay.
   /// </summary>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDStop: JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDStop: JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
   ///     Pause Time-Travel recording before executing code on behalf of debugger or other diagnostic/telemetry.
   /// </summary>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDPauseTimeTravelBeforeRuntimeOperation: JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDPauseTimeTravelBeforeRuntimeOperation: JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
   ///     ReStart Time-Travel recording after executing code on behalf of debugger or other diagnostic/telemetry.
   /// </summary>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDReStartTimeTravelAfterRuntimeOperation: JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDReStartTimeTravelAfterRuntimeOperation: JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
   ///     Notify the Js runtime we are at a safe yield point in the event loop (i.e. no locals on the stack and we can process as desired).
   /// </summary>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDNotifyYield: JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDNotifyYield: JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -806,7 +806,7 @@ type
   /// <param name="value">The value we are adding the ref to.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDNotifyLongLivedReferenceAdd(value: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -814,7 +814,7 @@ type
   /// </summary>
   /// <param name="statusCode">The exit status code.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDHostExit(statusCode: Integer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDHostExit(statusCode: Integer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -827,7 +827,7 @@ type
   /// <param name="count">The number of bytes copied.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDRawBufferCopySyncIndirect(dst: JsValueRef; dstIndex: size_t; src: JsValueRef;
-    srcIndex, count: size_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    srcIndex, count: size_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -838,7 +838,7 @@ type
   /// <param name="count">The number of bytes written.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDRawBufferModifySyncIndirect(buffer: JsValueRef; index, count: size_t): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -848,7 +848,7 @@ type
   /// <param name="initialModPos">The first position in the buffer that may be modified.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDRawBufferAsyncModificationRegister(instance: JsValueRef; initialModPos: PByte): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -857,7 +857,7 @@ type
   /// <param name="finalModPos">One past the last modified position in the buffer.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDRawBufferAsyncModifyComplete(finalModPos: PByte): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -866,7 +866,7 @@ type
   /// </summary>
   /// <param name="msg">The message to print if we should be catching this as a TTD operation.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDCheckAndAssertIfTTDRunning(msg: PAnsiChar): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDCheckAndAssertIfTTDRunning(msg: PAnsiChar): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -882,7 +882,7 @@ type
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDGetSnapTimeTopLevelEventMove(runtimeHandle: JsRuntimeHandle; moveMode: JsTTDMoveMode; kthEvent: Cardinal;
     targetEventTime: Int64; out targetStartSnapTime: Int64; targetEndSnapTime: PInt64): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -894,7 +894,7 @@ type
   /// <param name="endSnapTime">The snapshot time that comes after the desired event (-1 if the leg ends before a snapshot appears).</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDGetSnapShotBoundInterval(runtimeHandle: JsRuntimeHandle; targetEventTime: Int64;
-    out startSnapTime, endSnapTime: Int64): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out startSnapTime, endSnapTime: Int64): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -905,7 +905,7 @@ type
   /// <param name="previousSnapTime">The resulting previous snapshot interval start time or -1 if no such time.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDGetPreviousSnapshotInterval(runtimeHandle: JsRuntimeHandle; currentSnapStartTime: Int64;
-    out previousSnapTime: Int64): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    out previousSnapTime: Int64): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -919,7 +919,7 @@ type
   /// <param name="newTargetEventTime">The updated target event time set according to the moveMode (-1 if not found).</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDPreExecuteSnapShotInterval(runtimeHandle: JsRuntimeHandle; startSnapTime, endSnapTime: Int64;
-    moveMode: JsTTDMoveMode; out newTargetEventTime: Int64): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    moveMode: JsTTDMoveMode; out newTargetEventTime: Int64): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -932,7 +932,7 @@ type
   /// <param name="eventTime">The event that we want to move to.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDMoveToTopLevelEvent(runtimeHandle: JsRuntimeHandle; moveMode: JsTTDMoveMode;
-    snapshotTime, eventTime: Int64): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    snapshotTime, eventTime: Int64): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -946,7 +946,7 @@ type
   ///     If there was an unhandled script exception the code is JsErrorCategoryScript.
   /// </returns>
   function JsTTDReplayExecution(moveMode: JsTTDMoveMode; out rootEventTime: Int64): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -954,7 +954,7 @@ type
   /// </summary>
   /// <param name="status">True to enable autotracing false to disable it.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
-  function JsTTDDiagSetAutoTraceStatus(status: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  function JsTTDDiagSetAutoTraceStatus(status: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     TTD API -- may change in future versions:
@@ -964,11 +964,11 @@ type
   /// <param name="uriLength">The length of the uri array that the host passed in for storing log info.</param>
   /// <returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns>
   function JsTTDDiagWriteLog(uri: PAnsiChar; uriLength: size_t): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 implementation
 
-{$ifdef MSWINDOWS}
+{$IFDEF MSWINDOWS}
 const
   _chakracore = 'chakracore.dll';
 {$endif}

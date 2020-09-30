@@ -1,7 +1,7 @@
 unit FHIR.Java.Runtime;
 
 {
-  Copyright (c) 1998-2001 Jonathan Revusky
+  Copyright (c) 1998+ Jonathan Revusky
   All rights reserved.
 
   This software was enhanced and ported to 32 bit and 64 bit by Amine Moulay Ramdane.
@@ -33,7 +33,7 @@ unit FHIR.Java.Runtime;
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 // This unit is devoted to locating the JVM install directory
 // and using the invocation API to create a JVM.

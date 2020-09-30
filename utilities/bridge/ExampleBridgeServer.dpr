@@ -213,7 +213,9 @@ uses
   FHIR.R3.Resources.Other in '..\..\library\r3\FHIR.R3.Resources.Other.pas',
   FHIR.R3.Resources.Clinical in '..\..\library\r3\FHIR.R3.Resources.Clinical.pas',
   FHIR.R3.Resources.Canonical in '..\..\library\r3\FHIR.R3.Resources.Canonical.pas',
-  FHIR.R3.Resources in '..\..\library\r3\FHIR.R3.Resources.pas';
+  FHIR.R3.Resources in '..\..\library\r3\FHIR.R3.Resources.pas',
+  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  FHIR.Server.Telnet in '..\..\Server\FHIR.Server.Telnet.pas';
 
 var
   gsrv : TExampleFhirServer;

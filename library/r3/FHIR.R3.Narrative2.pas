@@ -29,7 +29,7 @@ unit FHIR.R3.Narrative2;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

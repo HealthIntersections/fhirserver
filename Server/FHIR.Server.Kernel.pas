@@ -29,21 +29,21 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 Uses
-  Windows, SysUtils, StrUtils, Classes, IniFiles, ActiveX, ComObj,
+  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
+  SysUtils, StrUtils, Classes, IniFiles,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Service,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  {$IFDEF WINDOWS} FHIR.Support.Service, {$ELSE} FHIR.Support.SystemService, {$ENDIF}
   FHIR.Web.Fetcher, FHIR.Web.Parsers,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services, FHIR.Ucum.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Base.Common, FHIR.Base.PathEngine,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}FHIR.Base.Common, FHIR.Base.PathEngine,
 
   FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
   FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context, FHIR.R5.Context,
@@ -53,7 +53,7 @@ Uses
   FHIR.Server.OperationsR2, FHIR.Server.OperationsR3, FHIR.Server.OperationsR4, FHIR.Server.OperationsR5,
   FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator, FHIR.R5.Validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
-  FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript, FHIR.R5.Javascript,
+  {$IFNDEF NO_JS} FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript, FHIR.R5.Javascript, {$ENDIF}
   FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine, FHIR.R5.PathEngine,
 
   FHIR.Tools.Indexing,
@@ -127,7 +127,9 @@ Type
     procedure cb(i : integer; s : WideString);
     procedure identifyValueSets(db : TFslDBManager);
 //    function RegisterValueSet(id: String; conn: TFslDBConnection): integer;
+    {$IFNDEF NO_JS}
     procedure registerJs(sender: TObject; js: TJsHost);
+    {$ENDIF}
     function getLoadResourceList(factory: TFHIRFactory; mode: TFHIRInstallerSecurityMode): TArray<String>;
     procedure resetProgress(name : String);
     procedure finishProgress(status : String);
@@ -158,7 +160,7 @@ procedure ExecuteFhirServer;
 implementation
 
 uses
-  FHIR.Support.Logging, JclDebug;
+  FHIR.Support.Logging {$IFDEF WINDOWS}, JclDebug {$ENDIF};
 
 procedure CauseException;
 begin
@@ -211,7 +213,8 @@ begin
       logfile := fn;
     end;
 
-    CoInitialize(nil);
+
+    {$IFDEF WINDOWS} CoInitialize(nil) {$ENDIF};
     if not getParam('ini', iniName) then
       iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
     if not getParam('name', svcName) then
@@ -220,9 +223,11 @@ begin
       dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
 
+    {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
       logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (+stack dumps)'
     else
+    {$ENDIF}
       logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName;
     if filelog then
       logMsg := logMsg + 'Log File = '+logfile;
@@ -231,8 +236,10 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName, logMsg);
     try
+        {$IFNDEF NO_JS}
         GJsHost := TJsHost.Create;
         try
+          {$ENDIF}
           if hasParam('installer') then
           begin
             svc.FInstaller := true;
@@ -333,9 +340,11 @@ begin
             end;
             svc.Execute;
           end;
+        {$IFNDEF NO_JS}
         finally
           GJsHost.free;
         end;
+        {$ENDIF}
 //      finally
 //        factory.Free;
 //      end;
@@ -480,6 +489,7 @@ begin
   result := FContexts[name];
 end;
 
+{$IFNDEF NO_JS}
 procedure TFHIRService.registerJs(sender : TObject; js : TJsHost);
 begin
   js.engine.registerFactory(FHIR.R2.Javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
@@ -488,6 +498,7 @@ begin
   js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
   js.engine.registerFactory(FHIR.R5.Javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
+{$ENDIF}
 
 function TFHIRService.CanStart: boolean;
 begin
@@ -891,8 +902,10 @@ var
 begin
   store := nil;
 
-  FWebServer := TFhirWebServer.create(FSettings.Link, DisplayName);
+  FWebServer := TFhirWebServer.create(FSettings.Link, FTelnet.Link, DisplayName);
+  {$IFNDEF NO_JS}
   FWebServer.OnRegisterJs := registerJs;
+  {$ENDIF}
   FWebServer.loadConfiguration(FIni);
   logt('Web source from '+FIni.web['folder']);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
@@ -940,6 +953,7 @@ begin
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
       try
+        ctxt.TelnetServer := FTelnet.Link;
         FContexts.add(s, ctxt.Link);
         ctxt.OnGetNamedContext := doGetNamedContext;
         logt('  .. check DB '+details['database']);

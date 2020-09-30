@@ -1,6 +1,6 @@
 unit FHIR.v2.Engine;
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

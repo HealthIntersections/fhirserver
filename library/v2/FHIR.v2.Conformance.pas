@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 // HCP = HL7 Conformance Profile
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 Interface
 

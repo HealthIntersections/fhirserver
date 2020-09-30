@@ -1,9 +1,11 @@
+unit FHIR.Database.SQLite3.Utilities;
+
 {*
  * SQLite for Delphi and FreePascal/Lazarus
  *
  * This unit contains miscellaneous utility functions
  *
- * Copyright 2010-2013 Yury Plashenkov
+ * Copyright 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)
@@ -27,11 +29,7 @@
  * IN THE SOFTWARE.
  *}
 
-unit FHIR.Database.SQLite3.Utilities;
-
-{$IFDEF FPC}
-  {$MODE DELPHI}
-{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -43,7 +41,7 @@ function FloatToSQLStr(Value: Extended): WideString;
 implementation
 
 uses
-  {$IFDEF MSWINDOWS}Windows,{$ENDIF} SysUtils{$IFDEF FPC}, LazUTF8{$ENDIF};
+  {$IFDEF WINDOWS}Windows,{$ENDIF} SysUtils{$IFDEF FPC}, LazUTF8{$ENDIF};
 
 function StrToUTF8(const S: WideString): AnsiString;
 begin

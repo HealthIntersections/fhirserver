@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -128,13 +128,17 @@ type
     procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
   end;
 
-  TFhirCodeSystemProviderFilterContext = class (TCodeSystemProviderFilterContext, IComparer<TFhirCodeSystemConceptMatch>)
+  TFhirCodeSystemProviderFilterComparer = class (TInterfacedObject, IComparer<TFhirCodeSystemConceptMatch>)
+  public
+    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
+  end;
+
+  TFhirCodeSystemProviderFilterContext = class (TCodeSystemProviderFilterContext)
   private
     ndx : integer;
     concepts : TFslList<TFhirCodeSystemConceptMatch>;
 
     procedure Add(item : TFhirCodeSystemConceptW; rating : double);
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
     procedure sort;
   public
     constructor Create; overload; override;
@@ -289,14 +293,9 @@ begin
   FCodeSystem.id := value;
 end;
 
-{ TFhirCodeSystemProviderFilterContext }
+{ TFhirCodeSystemProviderFilterComparer }
 
-procedure TFhirCodeSystemProviderFilterContext.Add(item: TFhirCodeSystemConceptW; rating : double);
-begin
-  concepts.Add(TFhirCodeSystemConceptMatch.Create(item, rating));
-end;
-
-function TFhirCodeSystemProviderFilterContext.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
+function TFhirCodeSystemProviderFilterComparer.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
 begin
   if right.FRating > left.FRating then
     result := 1
@@ -304,6 +303,13 @@ begin
     result := -1
   else
     result := 0;
+end;
+
+{ TFhirCodeSystemProviderFilterContext }
+
+procedure TFhirCodeSystemProviderFilterContext.Add(item: TFhirCodeSystemConceptW; rating : double);
+begin
+  concepts.Add(TFhirCodeSystemConceptMatch.Create(item, rating));
 end;
 
 constructor TFhirCodeSystemProviderFilterContext.Create;
@@ -320,8 +326,15 @@ begin
 end;
 
 procedure TFhirCodeSystemProviderFilterContext.sort;
+var
+  comp : TFhirCodeSystemProviderFilterComparer;
 begin
-  concepts.sort(self);
+  comp := TFhirCodeSystemProviderFilterComparer.Create;
+  try
+    concepts.sort(comp);
+  finally
+    comp.free;
+  end;
 end;
 
 { TCodeSystemAdornment }

@@ -4,7 +4,7 @@ Unit FHIR.Dicom.JpegLS;
 // A simplified interface to CharLS JPEG-lossless library in C
 //
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

@@ -28,12 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json;
@@ -1169,28 +1169,17 @@ begin
   end;
 end;
 
-
-
 var
   gLoadCount : Integer;
   GLoadInfo : TStringList = nil;
 
-function DllPath : String;
-var
-  TheFileName : array[0..MAX_PATH] of widechar;
+function LoadFunctionCLib(const FceName: string; const ACritical : Boolean = True): Pointer;
 begin
- FillChar(TheFileName, sizeof(TheFileName), #0);
- GetModuleFileName(GetCryptLibHandle, @TheFileName, sizeof(TheFileName));
- result := TheFileName;
-end;
-
-function LoadFunctionCLib(const FceName: {$IFDEF WINCE}TIdUnicodeString{$ELSE}string{$ENDIF}; const ACritical : Boolean = True): Pointer;
-begin
-  Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, {$IFDEF WINCE}PWideChar{$ELSE}PChar{$ENDIF}(FceName));
+  Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, PChar(FceName));
   if (Result = nil) and ACritical then
-    raise ELibraryException.create('Count not load '+FceName+' from '+DllPath)
+    raise ELibraryException.create('Count not load '+FceName+' from '+ParamStr(0))
   else
-    GLoadInfo.add('Count not load '+FceName+' from '+DllPath);
+    GLoadInfo.add('Count not load '+FceName+' from '+ParamStr(0));
 end;
 
 function WhichFailedToLoad2 : String;

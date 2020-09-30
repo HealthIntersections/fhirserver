@@ -28,7 +28,7 @@ unit FHIR.R5.Factory;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r5.inc}
 
 interface

@@ -3,17 +3,19 @@ program FHIRServerFPC;
 {$mode objfpc}{$H+}
 
 uses
-//  FastMM4 in '..\dependencies\FMM\FastMM4.pas',
+  {$IFDEF MSWINDOWS}
+  FastMM4 in '..\dependencies\FMMAVX\FastMM4.pas',
+  FastMM4Messages in '..\dependencies\FMMAVX\FastMM4Messages.pas',
+  {$ENDIF}
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, CustApp,
-//  FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
-  Windows,
   IdSSLOpenSSLHeaders,
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',
@@ -34,7 +36,9 @@ uses
   FHIR.CdsHooks.Utilities in '..\library\cdshooks\FHIR.CdsHooks.Utilities.pas',
   FHIR.Client.Base in '..\library\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\library\client\FHIR.Client.HTTP.pas',
+  {$IFNDEF NO_JS}
   FHIR.Client.Javascript in '..\library\client\FHIR.Client.Javascript.pas',
+  {$ENDIF}
   FHIR.Client.Threaded in '..\library\client\FHIR.Client.Threaded.pas',
   FHIR.Database.Dialects in '..\library\database\FHIR.Database.Dialects.pas',
   FHIR.Database.Logging in '..\library\database\FHIR.Database.Logging.pas',
@@ -47,8 +51,10 @@ uses
   FHIR.Database.SQLite3.Utilities in '..\library\database\FHIR.Database.SQLite3.Utilities.pas',
   FHIR.Database.SQLite3.Wrapper in '..\library\database\FHIR.Database.SQLite3.Wrapper.pas',
   FHIR.Database.Utilities in '..\library\database\FHIR.Database.Utilities.pas',
+  {$IFNDEF NO_JS}
   FHIR.Javascript in '..\library\javascript\FHIR.Javascript.pas',
   FHIR.Javascript.Base in '..\library\javascript\FHIR.Javascript.Base.pas',
+  {$ENDIF}
   FHIR.Loinc.Importer in '..\library\loinc\FHIR.Loinc.Importer.pas',
   FHIR.Loinc.Publisher in '..\library\loinc\FHIR.Loinc.Publisher.pas',
   FHIR.Loinc.Services in '..\library\loinc\FHIR.Loinc.Services.pas',
@@ -115,7 +121,9 @@ uses
   FHIR.R4.ElementModel in '..\library\r4\FHIR.R4.ElementModel.pas',
   FHIR.R4.Factory in '..\library\r4\FHIR.R4.Factory.pas',
   FHIR.R4.IndexInfo in '..\library\r4\FHIR.R4.IndexInfo.pas',
+  {$IFNDEF NO_JS}
   FHIR.R4.Javascript in '..\library\r4\FHIR.R4.Javascript.pas',
+  {$ENDIF}
   FHIR.R4.Json in '..\library\r4\FHIR.R4.Json.pas',
   FHIR.R4.MapUtilities in '..\library\r4\FHIR.R4.MapUtilities.pas',
   FHIR.R4.Narrative in '..\library\r4\FHIR.R4.Narrative.pas',
@@ -149,9 +157,11 @@ uses
   FHIR.Server.Constants in 'FHIR.Server.Constants.pas',
   FHIR.Server.DBInstaller in 'FHIR.Server.DBInstaller.pas',
   FHIR.Server.Database in 'FHIR.Server.Database.pas',
-  FHIR.Server.EventJs in 'FHIR.Server.EventJs.pas',
   FHIR.Server.GraphDefinition in 'FHIR.Server.GraphDefinition.pas',
+  {$IFNDEF NO_JS}
+  FHIR.Server.EventJs in 'FHIR.Server.EventJs.pas',
   FHIR.Server.Javascript in 'FHIR.Server.Javascript.pas',
+  {$ENDIF}
   FHIR.Server.Jwt in 'FHIR.Server.Jwt.pas',
   FHIR.Server.Kernel in 'FHIR.Server.Kernel.pas',
   FHIR.Server.MpiSearch in 'FHIR.Server.MpiSearch.pas',
@@ -178,14 +188,20 @@ uses
   FHIR.Support.Certs in '..\library\support\FHIR.Support.Certs.pas',
   FHIR.Support.Collections in '..\library\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
+  {$IFNDEF NO_JS}
   FHIR.Support.Javascript in '..\library\support\FHIR.Support.Javascript.pas',
+  {$ENDIF}
   FHIR.Support.Json in '..\library\Support\FHIR.Support.Json.pas',
   FHIR.Support.Logging in '..\library\support\FHIR.Support.Logging.pas',
   FHIR.Support.MXml in '..\library\support\FHIR.Support.MXml.pas',
-  FHIR.Support.MsXml in '..\library\support\FHIR.Support.MsXml.pas',
   FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
+  {$IFDEF MSWINDOWS}
+  FHIR.Support.MsXml in '..\library\support\FHIR.Support.MsXml.pas',
   FHIR.Support.Service in '..\library\support\FHIR.Support.Service.pas',
   FHIR.Support.Shell in '..\library\Support\FHIR.Support.Shell.pas',
+  {$ELSE}
+  FHIR.Support.SystemService in '..\library\support\FHIR.Support.SystemService.pas',
+  {$ENDIF}
   FHIR.Support.Signatures in '..\library\Support\FHIR.Support.Signatures.pas',
   FHIR.Support.Stream in '..\library\Support\FHIR.Support.Stream.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
@@ -230,8 +246,10 @@ uses
   FHIR.Server.Tags in 'FHIR.Server.Tags.pas',
   FHIR.Tools.CodeSystemProvider in '..\library\tools\FHIR.Tools.CodeSystemProvider.pas',
   FHIR.Tools.ValueSets in '..\library\tools\FHIR.Tools.ValueSets.pas',
+  {$IFNDEF NO_JS}
   FHIR.R2.Javascript in '..\library\r2\FHIR.R2.Javascript.pas',
   FHIR.R3.Javascript in '..\library\r3\FHIR.R3.Javascript.pas',
+  {$ENDIF}
   FHIR.Server.Context in 'FHIR.Server.Context.pas',
   FHIR.Server.Indexing in 'FHIR.Server.Indexing.pas',
   FHIR.R2.IndexInfo in '..\library\r2\FHIR.R2.IndexInfo.pas',
@@ -264,6 +282,7 @@ uses
   FHIR.Server.SessionMgr in 'FHIR.Server.SessionMgr.pas',
   FHIR.Snomed.Combiner in '..\library\snomed\FHIR.Snomed.Combiner.pas',
   FHIR.Support.Lang in '..\library\support\FHIR.Support.Lang.pas',
+  {$IFDEF MSWINDOWS}
   JclDebug in '..\dependencies\jcl\JclDebug.pas',
   JclBase in '..\dependencies\jcl\JclBase.pas',
   JclResources in '..\dependencies\jcl\JclResources.pas',
@@ -292,6 +311,7 @@ uses
   JclPeImage in '..\dependencies\jcl\JclPeImage.pas',
   JclTD32 in '..\dependencies\jcl\JclTD32.pas',
   JclHookExcept in '..\dependencies\jcl\JclHookExcept.pas',
+  {$ENDIF}
   FHIR.Server.v2Server in 'FHIR.Server.v2Server.pas',
   FHIR.v2.Protocol in '..\library\v2\FHIR.v2.Protocol.pas',
   FHIR.v2.Message in '..\library\v2\FHIR.v2.Message.pas',
@@ -301,12 +321,14 @@ uses
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Base.OIDs in '..\library\base\FHIR.Base.OIDs.pas',
   FHIR.Base.ElementModel in '..\library\base\FHIR.Base.ElementModel.pas',
+  {$IFNDEF NO_JS}
   ChakraDebug in '..\dependencies\chakracore-delphi\ChakraDebug.pas',
   ChakraCoreUtils in '..\dependencies\chakracore-delphi\ChakraCoreUtils.pas',
   ChakraCoreClasses in '..\dependencies\chakracore-delphi\ChakraCoreClasses.pas',
   ChakraCore in '..\dependencies\chakracore-delphi\ChakraCore.pas',
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
+  {$ENDIF}
   MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas',
   FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas',
@@ -320,7 +342,9 @@ uses
   FHIR.R5.Enums in '..\library\r5\FHIR.R5.Enums.pas',
   FHIR.R5.Factory in '..\library\r5\FHIR.R5.Factory.pas',
   FHIR.R5.IndexInfo in '..\library\r5\FHIR.R5.IndexInfo.pas',
+  {$IFNDEF NO_JS}
   FHIR.R5.Javascript in '..\library\r5\FHIR.R5.Javascript.pas',
+  {$ENDIF}
   FHIR.R5.Json in '..\library\r5\FHIR.R5.Json.pas',
   FHIR.R5.PathEngine in '..\library\r5\FHIR.R5.PathEngine.pas',
   FHIR.R5.PathNode in '..\library\r5\FHIR.R5.PathNode.pas',

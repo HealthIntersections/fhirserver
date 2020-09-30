@@ -28,13 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Shell, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.R2.Parser, FHIR.R2.Factory, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.Utilities,
   FHIR.R2.Resources.Base, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other,

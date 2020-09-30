@@ -28,14 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$IFDEF FPC}JwaPsApi, FastMM4, {$ELSE} PsApi, {$ENDIF} {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, FastMM4, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections;
+  FHIR.Support.Osx, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections;
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -122,6 +122,7 @@ function MemoryStatus : String;
 
 
 implementation
+
 
 var
   lastday : integer = 0;
@@ -276,17 +277,17 @@ Begin
     CreateDir(Copy(dir, 1, x - 1));
   Result := ForceFolder(dir);
   If Not Result Then
+    {$IFDEF WINDOWS}
     If (GetLastError = 183) Then
+    {$ELSE}
+    if (DirectoryExists(dir)) then
+    {$ENDIF}
       Result := True; // directory existed. ( but thats O.K.)
 End;
 
 
 Procedure TLogger.CutFile(sName : String);
-{$IFDEF MACOS}
-begin
-  raise ETodo.create('TLogger.CutFile');
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   src, dst: THandle;
   buf: Array [0..65536] Of Byte;
@@ -320,6 +321,10 @@ Begin
   End;
   DeleteFile(PChar(sName + '.tmp'));
 End;
+{$ELSE}
+begin
+  raise ETodo.create('TLogger.CutFile');
+end;
 {$ENDIF}
 
 Procedure TLogger.CycleFile(sName : String);
@@ -406,13 +411,7 @@ end;
 
 
 procedure TLogger.WriteToLog(bytes: TBytes);
-{$IFDEF MACOS}
-begin
-  If length(bytes) = 0 Then
-    Exit;
-  // todo.... raise ETodo.create();
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   sName : string;
   res: Boolean;
@@ -463,6 +462,12 @@ Begin
     FLock.UnLock;
   End;
 End;
+{$ELSE}
+begin
+  If length(bytes) = 0 Then
+    Exit;
+  raise ETodo.create('TLogger.WriteToLog');
+end;
 {$ENDIF}
 
 function memToMb(v : UInt64) : string;
@@ -473,17 +478,15 @@ begin
 end;
 
 function MemoryStatus: String;
+{$IFDEF WINDOWS}
 var
   st: TMemoryManagerState;
   sb: TSmallBlockTypeState;
   v : UInt64;
   hProcess: THandle;
-  {$IFDEF MSWINDOWS}
   pmc: PROCESS_MEMORY_COUNTERS;
-  {$ENDIF}
 begin
   result := '';
-  {$IFDEF MSWINDOWS}
   GetMemoryManagerState(st);
   v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
   for sb in st.SmallBlockTypeStates do
@@ -501,8 +504,13 @@ begin
   finally
     CloseHandle(hProcess);
   end;
-  {$ENDIF}
 end;
+{$ELSE}
+begin
+  raise Exception.create('MemoryStatus');
+end;
+
+{$ENDIF}
 
 
 

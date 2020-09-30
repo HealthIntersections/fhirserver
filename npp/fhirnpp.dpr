@@ -226,7 +226,8 @@ uses
   FHIR.R3.Resources.Clinical in '..\library\r3\FHIR.R3.Resources.Clinical.pas',
   FHIR.R3.Resources.Canonical in '..\library\r3\FHIR.R3.Resources.Canonical.pas',
   FHIR.R3.Resources.Base in '..\library\r3\FHIR.R3.Resources.Base.pas',
-  FHIR.R3.Resources in '..\library\r3\FHIR.R3.Resources.pas';
+  FHIR.R3.Resources in '..\library\r3\FHIR.R3.Resources.pas',
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas';
 
 {$R *.res}
 

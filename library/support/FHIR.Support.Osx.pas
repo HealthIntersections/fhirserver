@@ -27,147 +27,110 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$I fhir.inc}
+
 interface
-
-{
-other code to fix:
- - FHIR.Support.Utilities
- - AdvFiles
-
- GetExtForMimeType
-}
-{$IFDEF MACOS}
-
-uses
-  Posix.Unistd, Posix.Pthread, Posix.Wctype,
-  MacApi.CoreServices, Macapi.Mach, Macapi.Foundation, Macapi.Helpers,
-  Math, SysUtils, System.Character;
-
-const
-  ERROR_SUCCESS = 0;
-  FILE_ATTRIBUTE_NORMAL = 0;
-
-type
-  DWord = UInt32;
-  LargeUInt = UInt64;
-
-  TRTLCriticalSection = class (TObject);
-
-  TSystemTime = record
-  end;
-
-procedure EnterCriticalSection(var cs : TRTLCriticalSection);
-function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
-procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
-procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
-procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
-
-function InterlockedDecrement(var i : integer) :integer;
-function InterlockedIncrement(var i : integer) :integer;
-
-procedure Sleep(iTime : cardinal);
-function GetCurrentThreadID : Cardinal;
-
-procedure QueryPerformanceFrequency(var freq : Int64);
-procedure QueryPerformanceCounter(var count : Int64);
-function GetTickCount : cardinal;
-
-function OSXRemoveAccents(s : String) : String;
-
-function SystemName : String;
-
-{$ENDIF}
+//
+//{
+//other code to fix:
+// - FHIR.Support.Utilities
+// - AdvFiles
+//
+// GetExtForMimeType
+//}
+//{$IFDEF OSX}
+//
+//uses
+//  Posix.Unistd, Posix.Pthread, Posix.Wctype,
+//  MacApi.CoreServices, Macapi.Mach, Macapi.Foundation, Macapi.Helpers,
+//  Math, SysUtils, System.Character;
+//
+//const
+//  ERROR_SUCCESS = 0;
+//  FILE_ATTRIBUTE_NORMAL = 0;
+//
+//type
+//  DWord = UInt32;
+//  LargeUInt = UInt64;
+//
+//  TRTLCriticalSection = class (TObject);
+//
+//  TSystemTime = record
+//  end;
+//
+//procedure EnterCriticalSection(var cs : TRTLCriticalSection);
+//function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
+//procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
+//procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
+//procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
+//
+//function InterlockedDecrement(var i : integer) :integer;
+//function InterlockedIncrement(var i : integer) :integer;
+//
+//procedure Sleep(iTime : cardinal);
+//function GetCurrentThreadID : Cardinal;
+//
+//function SystemName : String;
+//
+//{$ENDIF}
 
 implementation
-
-{$IFDEF MACOS}
-
-procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
-begin
-  cs :=  TRTLCriticalSection.Create;
-end;
-
-procedure EnterCriticalSection(var cs : TRTLCriticalSection);
-begin
-  TMonitor.Enter(cs);
-end;
-
-function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
-begin
-  result := TMonitor.TryEnter(cs);
-end;
-
-procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
-begin
-  TMonitor.Exit(cs);
-end;
-
-procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
-begin
-  cs.Free;
-end;
-
-function InterlockedDecrement(var i : integer) :integer;
-begin
-  AtomicDecrement(i);
-  result := i;
-end;
-
-function InterlockedIncrement(var i : integer) :integer;
-begin
-  AtomicIncrement(i);
-  result := i;
-end;
-
-procedure Sleep(iTime : cardinal);
-begin
-  usleep(iTime * 1000);
-end;
-
-function GetCurrentThreadID : Cardinal;
-begin
-  result := Posix.Pthread.GetCurrentThreadID;
-end;
-
-procedure QueryPerformanceFrequency(var freq : Int64);
-begin
-  freq := 1000000000; // nano seconds
-end;
-
-procedure QueryPerformanceCounter(var count : Int64);
-begin
-  count := AbsoluteToNanoseconds(mach_absolute_time);
-end;
-
-function GetTickCount : cardinal;
-begin
-  result := AbsoluteToNanoseconds(mach_absolute_time) div 1000000;
-end;
-
-function OSXRemoveAccents(s : String) : String;
-var
-  ns,ns2 : NSString;
-  i : integer;
-  uc : Word;
-  c : char;
-begin
-  ns := StrToNSStr(s);
-  ns2 := ns.decomposedStringWithCanonicalMapping;
-  result := '';
-  for i := 0 to ns2.length - 1 do
-  begin
-    uc := ns2.characterAtIndex(i);
-    c := char(uc);
-    if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
-      result := result + c;
-  end;
-end;
-
-function SystemName : String;
-begin
-  result := 'TODO';
-end;
-{$ENDIF}
-
-
+//
+//{$IFDEF OSX}
+//
+//procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
+//begin
+//  cs :=  TRTLCriticalSection.Create;
+//end;
+//
+//procedure EnterCriticalSection(var cs : TRTLCriticalSection);
+//begin
+//  TMonitor.Enter(cs);
+//end;
+//
+//function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
+//begin
+//  result := TMonitor.TryEnter(cs);
+//end;
+//
+//procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
+//begin
+//  TMonitor.Exit(cs);
+//end;
+//
+//procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
+//begin
+//  cs.Free;
+//end;
+//
+//function InterlockedDecrement(var i : integer) :integer;
+//begin
+//  AtomicDecrement(i);
+//  result := i;
+//end;
+//
+//function InterlockedIncrement(var i : integer) :integer;
+//begin
+//  AtomicIncrement(i);
+//  result := i;
+//end;
+//
+//procedure Sleep(iTime : cardinal);
+//begin
+//  usleep(iTime * 1000);
+//end;
+//
+//function GetCurrentThreadID : Cardinal;
+//begin
+//  result := Posix.Pthread.GetCurrentThreadID;
+//end;
+//
+//function SystemName : String;
+//begin
+//  result := 'TODO';
+//end;
+//{$ENDIF}
+//
+//
 end.

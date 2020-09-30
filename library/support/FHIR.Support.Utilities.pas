@@ -1,7 +1,7 @@
 ﻿Unit FHIR.Support.Utilities;
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,14 +28,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
-{$DEFINE UT}
+{$I fhir.inc}
 
 Interface
 
 Uses
-  {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
-  SysUtils, Types, {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, YuStemmer, {$ENDIF}
+  {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
+  {$IFDEF WINDOWS}  Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ELSE} Process, {$ENDIF}
+  SysUtils, Types,
+  {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, YuStemmer, {$ENDIF}
   Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
@@ -802,7 +803,7 @@ type
   End;
 
 Function FileGetModified(Const sFileName : String) : TDateTime; Overload;
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
 procedure FileSetModified(Const sFileName : String; time : TDateTime); Overload;
 {$ENDIF}
 
@@ -856,11 +857,12 @@ Function HashStringToCode64(Const sValue : String) : Int64;
 Function HashIntegerToCode32(Const iValue : Integer) : Integer;
 Function HashInteger64ToCode32(Const iValue : Int64) : Integer;
 
-
+{$IFDEF WINDOWS}
 Function ErrorAsString : String; Overload;
 Function ErrorAsString(iError : Integer) : String; Overload;
 Function ErrorAsMessage(iError : Integer) : String;
 Function ErrorAsNumber : Integer; Overload;
+{$ENDIF}
 
 Function RandomBoolean : Boolean; Overload;
 Function RandomDateTime(Const aLowest, aHighest : TDateTime) : TDateTime; Overload;
@@ -876,8 +878,7 @@ Function RandomAlphabeticCharacter : Char; Overload;
 Type
   TMediaSoundBeepType = (MediaSoundBeepTypeAsterisk, MediaSoundBeepTypeExclamation, MediaSoundBeepTypeHand, MediaSoundBeepTypeQuestion, MediaSoundBeepTypeOk);
 
-  {$IFDEF MSWINDOWS}
-
+{$IFDEF WINDOWS}
 Procedure SoundPlay(Const sFilename : String); Overload;
 Procedure SoundStop(Const sFilename : String); Overload;
 Procedure SoundBeepType(Const aSoundBeepType : TMediaSoundBeepType); Overload;
@@ -892,8 +893,11 @@ Type
   TCurrency = Currency;
   TCurrencyCents = Int64;
   TCurrencyDollars = Int64;
+
  {$IFDEF FPC}
+ {$IFDEF WINDOWS}
  TSystemMemory = Windows.MEMORYSTATUS;
+ {$ENDIF}
  {$ELSE}
 {$IFDEF CPUx86}
   TSystemMemory = Record   // Windows.MEMORYSTATUS
@@ -958,7 +962,7 @@ Function CurrencyApplyPercentages(Const rAmount : TCurrency; Const rPercentageBe
 Function CurrencyTruncateToCents(Const rAmount : TCurrency) : TCurrency;
 Function CurrencyTruncateToDollars(Const rAmount : TCurrency) : TCurrency;
 
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
 
 Function SystemIsWindowsNT : Boolean;
 Function SystemIsWindows2K : Boolean;
@@ -1012,7 +1016,7 @@ Function MonitorInfoFromRect(aRect : TRect): TMonitorInfo;
 {$ENDIF}
 
 type
-  TFileLauncher = class
+  TFileLauncher = class (TObject)
     class procedure Open(const FilePath: string);
   end;
 
@@ -1223,7 +1227,7 @@ type
     class operator Subtract(a: TFslDateTime; b: TFslDateTime) : TDateTime; // date time is duration here
   end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 type
   TTimeZoneCode = (TimeZoneUnknown,
       // proven supported, fixed where windows is wrong.
@@ -1353,7 +1357,7 @@ type
 
 const
   DATEFORMAT_INDICES_SHORT : Array[TDateToken] Of Char = ('D', 'M', 'Y');
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   NAMES_TIMEZONES : TTimeZoneNameArray =
     ('Unknown', 'NewZealand', 'Australia-VIC/NSW/ACT', 'Australia-QLD', 'Australia-TAS', 'Australia-SA', 'Australia-NT', 'Australia-WA',
      'Afghan',
@@ -1542,7 +1546,7 @@ const
 {$ENDIF}
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function UniversalDate : TDateTime; Overload;
 Function UniversalTime : TDateTime; Overload;
 Function UniversalDateTime : TDateTime; Overload;
@@ -1597,7 +1601,9 @@ function DescribePeriodNoMSec(Period: TDateTime): String;
 function TSToDateTime(TS: TTimeStamp): TDateTime;
 function DateTimeToTS(Value : TDateTime): TTimeStamp;
 
-{$IFDEF MSWINDOWS}
+Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
+
+{$IFDEF WINDOWS}
 Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset; Overload;
 Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateTimeOffset) : Boolean; Overload;
 
@@ -1605,7 +1611,6 @@ Function LocalDateTimeOffset : TDateTimeOffset; Overload;
 Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
 Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
 Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
-Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
 
 
 Function FirstOfMonth(Const Value : TDateTime) : TDateTime; Overload;
@@ -1639,6 +1644,7 @@ Function TimeZone : TTimeZoneCode; Overload;
 Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
 Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
 {$ENDIF}
+
 function DateTimeToUnix(ConvDate: TDateTime): Longint;
 function UnixToDateTime(USec: Longint): TDateTime;
   
@@ -1862,10 +1868,8 @@ Function BytesAdd(bytes1, bytes2 : TBytes) : TBytes; Overload;
 Function BytesAdd(bytes : TBytes; byte : TByte) : TBytes; Overload;
 function CompareBytes(bytes1, bytes2 : TBytes) : Integer; Overload;
 function SameBytes(bytes1, bytes2 : TBytes) : Boolean; Overload;
-{$IFDEF UT}
 function CompareBytes(bytes1 : TBytes; bytes2 : AnsiString) : Integer; Overload;
 function SameBytes(bytes1 : TBytes; bytes2 : AnsiString) : Boolean; Overload;
-{$ENDIF}
 Function AnsiStringAsBytes(s : AnsiString) : TBytes;
 Function StringAsBytes(s : String) : TBytes;
 Function BytesAsString(a : TBytes) : String;
@@ -1992,14 +1996,8 @@ Type
 Implementation
 
 Uses
-  {$IFDEF MACOS}
-  FMX.Graphics,
-  {$ELSE}
-  ActiveX, ComObj,
-  {$ENDIF}
-  {$IFDEF FPC}
-  Graphics,
-  {$ENDIF}
+  {$IFDEF WINDOWS} ActiveX, ComObj, {$ENDIF}
+  {$IFDEF FPC} Graphics, {$ENDIF}
   IOUtils, DateUtils;
 
 
@@ -2736,7 +2734,7 @@ begin
   FileAge(sFilename, result, true);
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function ConvertDateTimeToFileTime(const DateTime: TDateTime): TFileTime;
 var
   LFileTime: TFileTime;
@@ -2763,7 +2761,7 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 procedure FileSetModified(Const sFileName : String; time : TDateTime);
 Var
   aHandle : TFileHandle;
@@ -2790,7 +2788,7 @@ Type
 
   PLargeInteger = ^TLargeInteger;
 
-const psc = {$IFDEF MSWINDOWS} '\' {$ELSE} '/' {$ENDIF};
+const psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
 
 
 Function PathFolder(Const sFilename : String) : String;
@@ -2814,7 +2812,7 @@ End;
 
 Function FileDelete(Const sFilename : String) : Boolean;
 Begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   if FileIsReadOnly(sFileName) then
     result := false
   else
@@ -2847,18 +2845,7 @@ End;
 
 
 Function FileSize(Const sFileName : String) : Int64;
-{$IFDEF MACOS}
-var
-  f : TFileStream;
-begin
-  f := TFileStream.create(sFileName, fmOpenRead);
-  try
-    result := f.size;
-  finally
-    f.free;
-  end;
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   pResult : PLargeInteger;
   aHandle : TFileHandle;
@@ -2882,6 +2869,17 @@ Begin
     FileHandleClose(aHandle);
   End;
 End;
+{$ELSE}
+var
+  f : TFileStream;
+begin
+  f := TFileStream.create(sFileName, fmOpenRead);
+  try
+    result := f.size;
+  finally
+    f.free;
+  end;
+end;
 {$ENDIF}
 
 Function FolderExists(Const sFolder : String) : Boolean;
@@ -2950,13 +2948,14 @@ Begin
 End;
 
 Procedure FileHandleClose(Var aFileHandle : TFileHandle);
-{$IFDEF MACOS}
+{$IFDEF WINDOWS}
 begin
+  Windows.CloseHandle(aFileHandle.Value);
+  aFileHandle := FileHandleInvalid;
 end;
 {$ELSE}
 Begin
-  Windows.CloseHandle(aFileHandle.Value);
-  aFileHandle := FileHandleInvalid;
+  // todo...
 End;
 {$ENDIF}
 
@@ -3256,7 +3255,7 @@ End;
 
 
 Var
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   gOSInfo : TOSVersionInfo;
   gSystemInfo : TSystemInfo;
 {$ENDIF}
@@ -3264,7 +3263,7 @@ Var
 
 Function SystemManualTemp : String;
 Begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   result := '/tmp';
   {$ELSE}
   result := 'c:/temp';
@@ -3272,10 +3271,17 @@ Begin
 End;
 
 Function SystemTemp : String;
-  {$IFDEF MACOS}
+{$IFDEF OSX}
 Begin
-  result := UTF8ToString(TNSString.Wrap(NSString(NSTemporaryDirectory)).UTF8String); {todo-osx}
-  {$ELSE}
+  result := SysUtils.GetTempDir(true);
+End;
+{$ENDIF}
+{$IFDEF LINUX}
+Begin
+  result := '/tmp';
+End;
+{$ENDIF}
+{$IFDEF WINDOWS}
 Var
   iLength : Integer;
 Begin
@@ -3290,34 +3296,28 @@ Begin
   End;
 
   SetLength(Result, iLength);
-  {$ENDIF}
 End;
+{$ENDIF}
 
 Function SystemIsWindowsNT : Boolean;
 Begin
-  {$IFDEF MACOS}
+  {$IFDEF WINDOWS}
+  Result := gOSInfo.dwPlatformId >= VER_PLATFORM_WIN32_NT;
   Result := false;
   {$ELSE}
-  Result := gOSInfo.dwPlatformId >= VER_PLATFORM_WIN32_NT;
   {$ENDIF}
 End;
 
 Function SystemIsWindows7 : Boolean;
 Begin
-  {$IFDEF MACOS}
-  Result := false;
-  {$ELSE}
+  {$IFDEF WINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6) And (gOSInfo.dwMinorVersion >= 1);
+  {$ELSE}
+  Result := false;
   {$ENDIF}
 End;
 
-{$IFDEF MACOS}
-Function ProgData : String;
-Begin
-  Result := '/Applications';
-End;
-
-{$ELSE}
+{$IFDEF WINDOWS}
 Function ShellFolder(iID : Integer) : String;
 Var
   sPath : Array[0..2048] Of Char;
@@ -3338,14 +3338,21 @@ Function ProgData : String;
 Begin
   Result := ShellFolder(CSIDL_COMMON_APPDATA);
 End;
+{$ELSE}
+
+Function ProgData : String;
+Begin
+  Result := '/Applications';
+End;
+
 {$ENDIF}
 
 Function UserFolder : String;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Result := ShellFolder(CSIDL_PROFILE);
   {$ELSE}
-  result := IOUtils.TPath.GetHomePath;
+  result := GetEnvironmentVariable('HOME');
   {$ENDIF}
 End;
 
@@ -3434,18 +3441,19 @@ Begin
 End;
 
 
-Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString;
+Function MemoryToString(pData : Pointer; iPosition, iLength : Integer) : AnsiString; overload;
 Begin
   SetString(Result, PAnsiChar(Integer(pData) + iPosition), iLength - iPosition);
 End;
 
 
-Function MemoryToString(pData : Pointer; iLength : Integer) : AnsiString;
+Function MemoryToString(pData : Pointer; iLength : Integer) : AnsiString; overload;
 Begin
   Result := MemoryToString(pData, 0, iLength);
 End;
 
 
+{$IFDEF WINDOWS}
 Function ErrorAsNumber : Integer;
 Begin
   Result := GetLastError;
@@ -3472,13 +3480,8 @@ Begin
   MemoryCreate(sTemp, iSize);
   Try
     // Get the last error number and convert it to text
- {$IFDEF MSWINDOWS}
     If FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM Or FORMAT_MESSAGE_ARGUMENT_ARRAY, Nil, DWORD(iError), LANG_NEUTRAL, sTemp, iSize, Nil) <> 0 Then
       Result := StringTrimWhitespace(Copy(StrPas(sTemp), 1, iSize))
-    Else
- {$ENDIF}
-      Result := 'Error Message missing on OSX';
-
   Finally
     MemoryDestroy(sTemp, iSize);
   End;
@@ -3495,6 +3498,7 @@ Begin
   Else
     Result := ErrorAsString(iError);
 End;
+{$ENDIF}
 
 {$RANGECHECKS OFF}
 {$OVERFLOWCHECKS OFF}
@@ -3583,25 +3587,25 @@ Begin
 End;
 
 
-Function RandomInteger(Const iUpper : Integer) : Integer;
+Function RandomInteger(Const iUpper : Integer) : Integer; overload;
 Begin
   Result := System.Random(iUpper);
 End;
 
 
-Function RandomInteger(Const iLowest, iHighest : Integer) : Integer;
+Function RandomInteger(Const iLowest, iHighest : Integer) : Integer; overload;
 Begin
   Result := System.Random(iHighest - iLowest + 1) + iLowest;
 End;
 
 
-Function RandomReal(Const iUpper : Real) : Real;
+Function RandomReal(Const iUpper : Real) : Real; overload;
 Begin
   Result := iUpper * System.Random;
 End;
 
 
-Function RandomReal(Const iLowest, iHighest : Real) : Real;
+Function RandomReal(Const iLowest, iHighest : Real) : Real; overload;
 Begin
   Result := RandomReal(iHighest - iLowest) + iLowest;
 End;
@@ -3672,7 +3676,7 @@ Begin
 End;
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Procedure SoundPlay(Const sFilename : String);
 Begin
   PlaySound(PChar(sFilename), 0, SND_FILENAME Or SND_ASYNC);
@@ -3739,13 +3743,13 @@ Begin
 End;
 
 
-Function StringToCurrency(Const sValue : String) : TCurrency;
+Function StringToCurrency(Const sValue : String) : TCurrency; overload;
 Begin
   Result := StrToCurr(StringReplace(sValue, CurrencySymbol, ''));
 End;
 
 
-Function StringToCurrency(Const sValue : String; Const rDefault : TCurrency) : TCurrency;
+Function StringToCurrency(Const sValue : String; Const rDefault : TCurrency) : TCurrency; overload;
 Begin
   Try
     Result := StringToCurrency(sValue);
@@ -3886,7 +3890,7 @@ Begin
 End;
 
 
-Function CurrencyCompare(Const rA, rB : TCurrency) : Integer;
+Function CurrencyCompare(Const rA, rB : TCurrency) : Integer; overload;
 Begin
   If rA < rB Then
     Result := -1
@@ -3939,7 +3943,7 @@ Begin
 End;
 
 
-Function CurrencyCompare(Const rA, rB, rThreshold : TCurrency) : Integer;
+Function CurrencyCompare(Const rA, rB, rThreshold : TCurrency) : Integer; overload;
 Begin
   If rA - rThreshold > rB Then
     Result := 1
@@ -3950,7 +3954,7 @@ Begin
 End;
 
 
-Function CurrencyEquals(Const rA, rB, rThreshold : TCurrency) : Boolean;
+Function CurrencyEquals(Const rA, rB, rThreshold : TCurrency) : Boolean; overload;
 Begin
   Result := CurrencyCompare(rA, rB, rThreshold) = 0;
 End;
@@ -3962,7 +3966,7 @@ Begin
 End;
 
 
-Function CurrencyEquals(Const rA, rB : TCurrency) : Boolean;
+Function CurrencyEquals(Const rA, rB : TCurrency) : Boolean; overload;
 Begin
   Result := rA = rB;
 End;
@@ -3970,7 +3974,7 @@ End;
 
 Function SystemIsWindows2K : Boolean;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5){ And (gOSInfo.dwMinorVersion >= 0)};
   {$ELSE}
   result := false;
@@ -3980,7 +3984,7 @@ End;
 
 Function SystemIsWindowsXP : Boolean;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5) And (gOSInfo.dwMinorVersion >= 1);
   {$ELSE}
   result := false;
@@ -3990,7 +3994,7 @@ End;
 
 Function SystemIsWindowsVista : Boolean;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6){ And (gOSInfo.dwMinorVersion >= 0)};
   {$ELSE}
   result := false;
@@ -4000,14 +4004,14 @@ End;
 
 Function SystemIsWin64 : Boolean;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Result := SystemIsWindowsNT And (gSystemInfo.dwAllocationGranularity = 65536);
   {$ELSE}
   result := false;
   {$ENDIF}
 End;
 
-  {$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function SystemArchitecture : String;
 Const
   PROCESSOR_ARCHITECTURE_INTEL = 0;
@@ -4077,7 +4081,7 @@ End;
 
 Function SystemPlatform: String;
 Begin
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Case gOSInfo.dwPlatformId Of
     VER_PLATFORM_WIN32s :
     Begin
@@ -4123,7 +4127,7 @@ Begin
   {$ENDIF}
 End;
 
-  {$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function SystemTimezone : String;
 Begin
   Result := NAMES_TIMEZONES[Timezone];
@@ -4140,7 +4144,7 @@ begin
   end;
   Result := pcLCA;
 end;
-  {$ENDIF}
+{$ENDIF}
 
 Function SystemLanguage : String;
 Begin
@@ -4148,7 +4152,7 @@ Begin
   result := 'en';
   {$ELSE}
   {$IFDEF FPC}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
    Result := GetLocaleInformation(LOCALE_SENGLANGUAGE);
   {$ELSE}
    Result := SysUtils.GetEnvironmentVariable('LANG');
@@ -4159,8 +4163,7 @@ Begin
   {$ENDIF}
 End;
 
-  {$IFDEF MSWINDOWS}
-
+{$IFDEF WINDOWS}
 Function SystemProcessors : Cardinal;
 Begin
   Result := gSystemInfo.dwNumberOfProcessors;
@@ -4173,7 +4176,7 @@ Begin
 End;
 {$ENDIF}
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 {$IFDEF CPUx86}
 Function SystemMemory : TSystemMemory;
 Begin
@@ -4197,7 +4200,7 @@ End;
 {$ENDIF}
 {$ENDIF}
 
-  {$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 Function SystemName : String;
 Var
@@ -4564,15 +4567,23 @@ End;
 {$ENDIF}
 
 class procedure TFileLauncher.Open(const FilePath: string);
+{$IFDEF WINDOWS}
 begin
-{$IFDEF MSWINDOWS}
-ShellExecute(0, 'OPEN', PChar(FilePath), '', '', SW_SHOWNORMAL);
-{$ENDIF MSWINDOWS}
-
-{$IFDEF MACOS}
-_system(PAnsiChar('open '+'"'+AnsiString(FilePath)+'"'));
-{$ENDIF MACOS}
+  ShellExecute(0, 'OPEN', PChar(FilePath), '', '', SW_SHOWNORMAL);
 end;
+{$ELSE}
+var
+  p : TProcess;
+begin
+  p := TProcess.create(nil);
+  try
+    p.Executable := FilePath;
+    p.Execute;
+  finally
+    p.free;
+  end;
+end;
+{$ENDIF}
 
 
 Const
@@ -5798,48 +5809,6 @@ Begin
   If Length(Result) > 1 Then
     Result[1] := Result[1].ToUpper;
 End;
-
-
-{$IFDEF MSWINDOWS}
-
-const
-  NormalizationOther = 0;
-  NormalizationC = 1;
-  NormalizationD = 2;
-  NormalizationKC = 3;
-  NormalizationKD = 4;
-
-
-
-function NormalizeString(NormForm: Integer; lpSrcString: LPCWSTR; cwSrcLength: Integer;
- lpDstString: LPWSTR; cwDstLength: Integer): Integer; stdcall; external 'C:\WINDOWS\system32\normaliz.dll';
-
-function RemoveAccents(const s: String): String;
-var
-  nLength: integer;
-  c: char;
-  temp: string;
-begin
-  nLength := NormalizeString(NormalizationD, PWideChar(s), Length(s), nil, 0);
-  SetLength(temp, nLength);
-  nLength := NormalizeString(NormalizationD, PWideChar(s), Length(s), PWideChar(temp), nLength);
-  SetLength(temp, nLength);
-  result := '';
-  {$IFNDEF FPC}
-  for c in temp do
-    if (c.GetUnicodeCategory <> TUnicodeCategory.ucNonSpacingMark) and (c.GetUnicodeCategory <> TUnicodeCategory.ucCombiningMark) then
-      result := result + c;
-  {$ENDIF}
-end;
-
-{$ENDIF}
-{$IFDEF OSX}
-function RemoveAccents(const s: String): String;
-begin
-  result := OSXRemoveAccents(s);
-end;
-
-{$ENDIF}
 
 // http://stackoverflow.com/questions/6077258/theres-a-uinttostr-in-delphi-to-let-you-display-uint64-values-but-where-is-strt
 function TryStrToUINT64(StrValue:String; var uValue:UInt64 ):Boolean;
@@ -9698,9 +9667,9 @@ Begin
     Result := CheckTimezone(bTimezone, sTimezone, sFormat, sError);
 End;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
-{$ENDIF MSWINDOWS}
+{$ENDIF WINDOWS}
 {$IFDEF POSIX}
 function FileTimeToDateTime(Time: time_t; bTz : boolean): TDateTime;
 {$ENDIF POSIX}
@@ -9724,7 +9693,7 @@ function FileTimeToDateTime(Time: time_t; bTz : boolean): TDateTime;
     end;
   end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 var
   LFileTime: TFileTime;
   SysTime: TSystemTime;
@@ -9739,7 +9708,7 @@ begin
     Result := InternalEncodeDateTime(SysTime.wYear, SysTime.wMonth, SysTime.wDay,
       SysTime.wHour, SysTime.wMinute, SysTime.wSecond, SysTime.wMilliseconds);
 end;
-{$ENDIF MSWINDOWS}
+{$ENDIF WINDOWS}
 {$IFDEF POSIX}
 //var
 //  LDecTime: tm;
@@ -10349,7 +10318,7 @@ Begin
 End;
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 
 Function LocalDateTimeOffset : TDateTimeOffset;
 Begin
@@ -10709,7 +10678,7 @@ Begin
 End;
 {$ENDIF}
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function UniversalDate : TDateTime;
 Begin
   Result := AsDate(UniversalDateTime);
@@ -10913,7 +10882,7 @@ Begin
   Result := DateTimeCompare(aA, aB) = 0;
 End;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function DateTimeOffsetCompare(Const aA, aB : TDateTimeOffset) : Integer; overload;
 Begin
   Result := RealCompare(ToUniversalDatetime(aA), ToUniversalDateTime(aB));
@@ -11075,7 +11044,7 @@ Begin
   Result.Offset := 0;
 End;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 Function ToLocalDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset;
 Begin
   Result.Value := ToDateTime(sValue, sFormat);
@@ -12853,82 +12822,81 @@ begin
   result.SetValue(FloatToStr(value));
 end;
 
-{$IFNDEF UT}
+//{$IFNDEF UT}
+//
+//function TFslBytesBuilder.AsBytes : TBytes;
+//Begin
+//  result := AsString;
+//End;
+//
+//Function BytesContains(bytes : TBytes; value : TByte): Boolean;
+//Begin
+//  result := pos(char(value), bytes) > 0;
+//End;
+//
+//Function BytesAdd(bytes1, bytes2 : TBytes) : TBytes;
+//Begin
+//  result := bytes1 + bytes2;
+//End;
+//
+//Function BytesAdd(bytes : TBytes; byte : TByte) : TBytes;
+//Begin
+//  result := bytes + byte;
+//End;
+//
+//function CompareBytes(bytes1, bytes2 : TBytes) : Integer;
+//Begin
+//  result := CompareStr(bytes1, bytes2);
+//End;
+//
+//function SameBytes(bytes1, bytes2 : TBytes) : Boolean;
+//Begin
+//  result := bytes1 = bytes2;
+//End;
+//
+//Function StringAsBytes(s : AnsiString) : TBytes;
+//Begin
+//  result := s;
+//End;
+//
+//
+//Function BytesAsString(a : TBytes) : AnsiString;
+//Begin
+//  result := a;
+//End;
+//
+//Function BytesAsMime(a : TBytes) : String;
+//var
+//  o : TFslStringBuilder;
+//  i : integer;
+//begin
+//  o := TFslStringBuilder.Create;
+//  try
+//    for i := 1 to length(a) do
+//      if (a[i] >= char(32)) or (a[i] <= char(127)) Then
+//        o.Append(a[i])
+//      else
+//        o.Append('#'+inttostr(ord(a[i])));
+//    result := o.AsString;
+//  Finally
+//    o.Free;
+//  End;
+//End;
+//
+//Function BytesReplace(const a, OldPattern, NewPattern: TBytes): TBytes;
+//begin
+//  result := StringReplace(a, oldPattern, NewPattern, [rfReplaceAll]);
+//End;
+//
+//Function Bytes(a : Array of byte) : TBytes;
+//var
+//  i : integer;
+//Begin
+//  SetLength(result, length(a));
+//  for i := Low(a) to high(a) do
+//    result[i+1] := char(a[i]);
+//End;
 
-function TFslBytesBuilder.AsBytes : TBytes;
-Begin
-  result := AsString;
-End;
-
-Function BytesContains(bytes : TBytes; value : TByte): Boolean;
-Begin
-  result := pos(char(value), bytes) > 0;
-End;
-
-Function BytesAdd(bytes1, bytes2 : TBytes) : TBytes;
-Begin
-  result := bytes1 + bytes2;
-End;
-
-Function BytesAdd(bytes : TBytes; byte : TByte) : TBytes;
-Begin
-  result := bytes + byte;
-End;
-
-function CompareBytes(bytes1, bytes2 : TBytes) : Integer;
-Begin
-  result := CompareStr(bytes1, bytes2);
-End;
-
-function SameBytes(bytes1, bytes2 : TBytes) : Boolean;
-Begin
-  result := bytes1 = bytes2;
-End;
-
-Function StringAsBytes(s : AnsiString) : TBytes;
-Begin
-  result := s;
-End;
-
-
-Function BytesAsString(a : TBytes) : AnsiString;
-Begin
-  result := a;
-End;
-
-Function BytesAsMime(a : TBytes) : String;
-var
-  o : TFslStringBuilder;
-  i : integer;
-begin
-  o := TFslStringBuilder.Create;
-  try
-    for i := 1 to length(a) do
-      if (a[i] >= char(32)) or (a[i] <= char(127)) Then
-        o.Append(a[i])
-      else
-        o.Append('#'+inttostr(ord(a[i])));
-    result := o.AsString;
-  Finally
-    o.Free;
-  End;
-End;
-
-Function BytesReplace(const a, OldPattern, NewPattern: TBytes): TBytes;
-begin
-  result := StringReplace(a, oldPattern, NewPattern, [rfReplaceAll]);
-End;
-
-Function Bytes(a : Array of byte) : TBytes;
-var
-  i : integer;
-Begin
-  SetLength(result, length(a));
-  for i := Low(a) to high(a) do
-    result[i+1] := char(a[i]);
-End;
-
-{$ELSE}
 
   (*
 Procedure TFslBytesBuilder.Clear;
@@ -13276,8 +13244,6 @@ begin
   v := SysUtils.StringReplace(BytesAsString(a), BytesAsString(OldPattern), BytesAsString(NewPattern), [rfReplaceAll]);
   result := StringAsBytes(v);
 end;
-
-{$ENDIF}
 
 Function Fillbytes(b : byte; count : Integer): TBytes;
 Begin
@@ -14587,6 +14553,1072 @@ begin
   {$ENDIF}
 end;
 
+function removeAccent(ch : UnicodeChar) : String;
+begin
+  case ch of
+    //' '
+    #$00A0 : result := ' ';
+
+    //'0'
+    #$07C0 : result := '0';
+
+    //'A'
+    #$24B6 : result := 'A';
+    #$FF21 : result := 'A';
+    #$00C0 : result := 'A';
+    #$00C1 : result := 'A';
+    #$00C2 : result := 'A';
+    #$1EA6 : result := 'A';
+    #$1EA4 : result := 'A';
+    #$1EAA : result := 'A';
+    #$1EA8 : result := 'A';
+    #$00C3 : result := 'A';
+    #$0100 : result := 'A';
+    #$0102 : result := 'A';
+    #$1EB0 : result := 'A';
+    #$1EAE : result := 'A';
+    #$1EB4 : result := 'A';
+    #$1EB2 : result := 'A';
+    #$0226 : result := 'A';
+    #$01E0 : result := 'A';
+    #$00C4 : result := 'A';
+    #$01DE : result := 'A';
+    #$1EA2 : result := 'A';
+    #$00C5 : result := 'A';
+    #$01FA : result := 'A';
+    #$01CD : result := 'A';
+    #$0200 : result := 'A';
+    #$0202 : result := 'A';
+    #$1EA0 : result := 'A';
+    #$1EAC : result := 'A';
+    #$1EB6 : result := 'A';
+    #$1E00 : result := 'A';
+    #$0104 : result := 'A';
+    #$023A : result := 'A';
+    #$2C6F : result := 'A';
+
+    //'AA'
+    #$A732 : result := 'AA';
+
+    //'AE'
+    #$00C6 : result := 'AE';
+    #$01FC : result := 'AE';
+    #$01E2 : result := 'AE';
+
+    //'AO'
+    #$A734 : result := 'AO';
+
+    //'AU'
+    #$A736 : result := 'AU';
+
+    //'AV'
+    #$A738 : result := 'AV';
+    #$A73A : result := 'AV';
+
+    //'AY'
+    #$A73C : result := 'AY';
+
+    //'B'
+    #$24B7 : result := 'B';
+    #$FF22 : result := 'B';
+    #$1E02 : result := 'B';
+    #$1E04 : result := 'B';
+    #$1E06 : result := 'B';
+    #$0243 : result := 'B';
+    #$0181 : result := 'B';
+
+    //'C'
+    #$24b8 : result := 'C';
+    #$ff23 : result := 'C';
+    #$A73E : result := 'C';
+    #$1E08 : result := 'C';
+    #$0106 : result := 'C';
+    #$0043 : result := 'C';
+    #$0108 : result := 'C';
+    #$010A : result := 'C';
+    #$010C : result := 'C';
+    #$00C7 : result := 'C';
+    #$0187 : result := 'C';
+    #$023B : result := 'C';
+
+    //'D'
+    #$24B9 : result := 'D';
+    #$FF24 : result := 'D';
+    #$1E0A : result := 'D';
+    #$010E : result := 'D';
+    #$1E0C : result := 'D';
+    #$1E10 : result := 'D';
+    #$1E12 : result := 'D';
+    #$1E0E : result := 'D';
+    #$0110 : result := 'D';
+    #$018A : result := 'D';
+    #$0189 : result := 'D';
+    #$1D05 : result := 'D';
+    #$A779 : result := 'D';
+
+    //'Dh'
+    #$00D0 : result := 'Dh';
+
+    //'DZ'
+    #$01F1 : result := 'DZ';
+    #$01C4 : result := 'DZ';
+
+    //'Dz'
+    #$01F2 : result := 'Dz';
+    #$01C5 : result := 'Dz';
+
+    //'E'
+    #$025B : result := 'E';
+    #$24BA : result := 'E';
+    #$FF25 : result := 'E';
+    #$00C8 : result := 'E';
+    #$00C9 : result := 'E';
+    #$00CA : result := 'E';
+    #$1EC0 : result := 'E';
+    #$1EBE : result := 'E';
+    #$1EC4 : result := 'E';
+    #$1EC2 : result := 'E';
+    #$1EBC : result := 'E';
+    #$0112 : result := 'E';
+    #$1E14 : result := 'E';
+    #$1E16 : result := 'E';
+    #$0114 : result := 'E';
+    #$0116 : result := 'E';
+    #$00CB : result := 'E';
+    #$1EBA : result := 'E';
+    #$011A : result := 'E';
+    #$0204 : result := 'E';
+    #$0206 : result := 'E';
+    #$1EB8 : result := 'E';
+    #$1EC6 : result := 'E';
+    #$0228 : result := 'E';
+    #$1E1C : result := 'E';
+    #$0118 : result := 'E';
+    #$1E18 : result := 'E';
+    #$1E1A : result := 'E';
+    #$0190 : result := 'E';
+    #$018E : result := 'E';
+    #$1D07 : result := 'E';
+
+    //'F'
+    #$A77C : result := 'F';
+    #$24BB : result := 'F';
+    #$FF26 : result := 'F';
+    #$1E1E : result := 'F';
+    #$0191 : result := 'F';
+    #$A77B : result := 'F';
+
+    //'G'
+    #$24BC : result := 'G';
+    #$FF27 : result := 'G';
+    #$01F4 : result := 'G';
+    #$011C : result := 'G';
+    #$1E20 : result := 'G';
+    #$011E : result := 'G';
+    #$0120 : result := 'G';
+    #$01E6 : result := 'G';
+    #$0122 : result := 'G';
+    #$01E4 : result := 'G';
+    #$0193 : result := 'G';
+    #$A7A0 : result := 'G';
+    #$A77D : result := 'G';
+    #$A77E : result := 'G';
+    #$0262 : result := 'G';
+
+    //'H'
+    #$24BD : result := 'H';
+    #$FF28 : result := 'H';
+    #$0124 : result := 'H';
+    #$1E22 : result := 'H';
+    #$1E26 : result := 'H';
+    #$021E : result := 'H';
+    #$1E24 : result := 'H';
+    #$1E28 : result := 'H';
+    #$1E2A : result := 'H';
+    #$0126 : result := 'H';
+    #$2C67 : result := 'H';
+    #$2C75 : result := 'H';
+    #$A78D : result := 'H';
+
+    //'I'
+    #$24BE : result := 'I';
+    #$FF29 : result := 'I';
+    #$CC : result := 'I';
+    #$CD : result := 'I';
+    #$CE : result := 'I';
+    #$0128 : result := 'I';
+    #$012A : result := 'I';
+    #$012C : result := 'I';
+    #$0130 : result := 'I';
+    #$CF : result := 'I';
+    #$1E2E : result := 'I';
+    #$1EC8 : result := 'I';
+    #$01CF : result := 'I';
+    #$0208 : result := 'I';
+    #$020A : result := 'I';
+    #$1ECA : result := 'I';
+    #$012E : result := 'I';
+    #$1E2C : result := 'I';
+    #$0197 : result := 'I';
+
+    //'J'
+    #$24BF : result := 'J';
+    #$FF2A : result := 'J';
+    #$0134 : result := 'J';
+    #$0248 : result := 'J';
+    #$0237 : result := 'J';
+
+    //'K'
+    #$24C0 : result := 'K';
+    #$FF2B : result := 'K';
+    #$1E30 : result := 'K';
+    #$01E8 : result := 'K';
+    #$1E32 : result := 'K';
+    #$0136 : result := 'K';
+    #$1E34 : result := 'K';
+    #$0198 : result := 'K';
+    #$2C69 : result := 'K';
+    #$A740 : result := 'K';
+    #$A742 : result := 'K';
+    #$A744 : result := 'K';
+    #$A7A2 : result := 'K';
+
+    //'L'
+    #$24C1 : result := 'L';
+    #$FF2C : result := 'L';
+    #$013F : result := 'L';
+    #$0139 : result := 'L';
+    #$013D : result := 'L';
+    #$1E36 : result := 'L';
+    #$1E38 : result := 'L';
+    #$013B : result := 'L';
+    #$1E3C : result := 'L';
+    #$1E3A : result := 'L';
+    #$0141 : result := 'L';
+    #$023D : result := 'L';
+    #$2C62 : result := 'L';
+    #$2C60 : result := 'L';
+    #$A748 : result := 'L';
+    #$A746 : result := 'L';
+    #$A780 : result := 'L';
+
+    //'LJ'
+    #$01C7 : result := 'LJ';
+
+    //'Lj'
+    #$01C8 : result := 'Lj';
+
+    //'M'
+    #$24C2 : result := 'M';
+    #$FF2D : result := 'M';
+    #$1E3E : result := 'M';
+    #$1E40 : result := 'M';
+    #$1E42 : result := 'M';
+    #$2C6E : result := 'M';
+    #$019C : result := 'M';
+    #$03FB : result := 'M';
+
+    //'N'
+    #$A7A4 : result := 'N';
+    #$0220 : result := 'N';
+    #$24C3 : result := 'N';
+    #$FF2E : result := 'N';
+    #$01F8 : result := 'N';
+    #$0143 : result := 'N';
+    #$D1 : result := 'N';
+    #$1E44 : result := 'N';
+    #$0147 : result := 'N';
+    #$1E46 : result := 'N';
+    #$0145 : result := 'N';
+    #$1E4A : result := 'N';
+    #$1E48 : result := 'N';
+    #$019D : result := 'N';
+    #$A790 : result := 'N';
+    #$1D0E : result := 'N';
+
+    //'NJ'
+    #$01CA : result := 'NJ';
+
+    //'Nj'
+    #$01CB : result := 'Nj';
+
+    //'O'
+    #$24C4 : result := 'O';
+    #$FF2F : result := 'O';
+    #$D2 : result := 'O';
+    #$D3 : result := 'O';
+    #$D4 : result := 'O';
+    #$1ED2 : result := 'O';
+    #$1ED0 : result := 'O';
+    #$1ED6 : result := 'O';
+    #$1ED4 : result := 'O';
+    #$D5 : result := 'O';
+    #$1E4C : result := 'O';
+    #$022C : result := 'O';
+    #$1E4E : result := 'O';
+    #$014C : result := 'O';
+    #$1E50 : result := 'O';
+    #$1E52 : result := 'O';
+    #$014E : result := 'O';
+    #$022E : result := 'O';
+    #$0230 : result := 'O';
+    #$D6 : result := 'O';
+    #$022A : result := 'O';
+    #$1ECE : result := 'O';
+    #$0150 : result := 'O';
+    #$01D1 : result := 'O';
+    #$020C : result := 'O';
+    #$020E : result := 'O';
+    #$01A0 : result := 'O';
+    #$1EDC : result := 'O';
+    #$1EDA : result := 'O';
+    #$1EE0 : result := 'O';
+    #$1EDE : result := 'O';
+    #$1EE2 : result := 'O';
+    #$1ECC : result := 'O';
+    #$1ED8 : result := 'O';
+    #$01EA : result := 'O';
+    #$01EC : result := 'O';
+    #$D8 : result := 'O';
+    #$01FE : result := 'O';
+    #$0186 : result := 'O';
+    #$019F : result := 'O';
+    #$A74A : result := 'O';
+    #$A74C : result := 'O';
+
+    //'OE'
+    #$0152 : result := 'OE';
+
+    //'OI'
+    #$01A2 : result := 'OI';
+
+    //'OO'
+    #$A74E : result := 'OO';
+
+    //'OU'
+    #$0222 : result := 'OU';
+
+    //'P'
+    #$24C5 : result := 'P';
+    #$FF30 : result := 'P';
+    #$1E54 : result := 'P';
+    #$1E56 : result := 'P';
+    #$01A4 : result := 'P';
+    #$2C63 : result := 'P';
+    #$A750 : result := 'P';
+    #$A752 : result := 'P';
+    #$A754 : result := 'P';
+
+    //'Q'
+    #$24C6 : result := 'Q';
+    #$FF31 : result := 'Q';
+    #$A756 : result := 'Q';
+    #$A758 : result := 'Q';
+    #$024A : result := 'Q';
+
+    //'R'
+    #$24C7 : result := 'R';
+    #$FF32 : result := 'R';
+    #$0154 : result := 'R';
+    #$1E58 : result := 'R';
+    #$0158 : result := 'R';
+    #$0210 : result := 'R';
+    #$0212 : result := 'R';
+    #$1E5A : result := 'R';
+    #$1E5C : result := 'R';
+    #$0156 : result := 'R';
+    #$1E5E : result := 'R';
+    #$024C : result := 'R';
+    #$2C64 : result := 'R';
+    #$A75A : result := 'R';
+    #$A7A6 : result := 'R';
+    #$A782 : result := 'R';
+
+    //'S'
+    #$24C8 : result := 'S';
+    #$FF33 : result := 'S';
+    #$1E9E : result := 'S';
+    #$015A : result := 'S';
+    #$1E64 : result := 'S';
+    #$015C : result := 'S';
+    #$1E60 : result := 'S';
+    #$0160 : result := 'S';
+    #$1E66 : result := 'S';
+    #$1E62 : result := 'S';
+    #$1E68 : result := 'S';
+    #$0218 : result := 'S';
+    #$015E : result := 'S';
+    #$2C7E : result := 'S';
+    #$A7A8 : result := 'S';
+    #$A784 : result := 'S';
+
+    //'T'
+    #$24C9 : result := 'T';
+    #$FF34 : result := 'T';
+    #$1E6A : result := 'T';
+    #$0164 : result := 'T';
+    #$1E6C : result := 'T';
+    #$021A : result := 'T';
+    #$0162 : result := 'T';
+    #$1E70 : result := 'T';
+    #$1E6E : result := 'T';
+    #$0166 : result := 'T';
+    #$01AC : result := 'T';
+    #$01AE : result := 'T';
+    #$023E : result := 'T';
+    #$A786 : result := 'T';
+
+    //'Th'
+    #$00DE : result := 'Th';
+
+    //'TZ'
+    #$A728 : result := 'TZ';
+
+    //'U'
+    #$24CA : result := 'U';
+    #$FF35 : result := 'U';
+    #$D9 : result := 'U';
+    #$DA : result := 'U';
+    #$DB : result := 'U';
+    #$0168 : result := 'U';
+    #$1E78 : result := 'U';
+    #$016A : result := 'U';
+    #$1E7A : result := 'U';
+    #$016C : result := 'U';
+    #$DC : result := 'U';
+    #$01DB : result := 'U';
+    #$01D7 : result := 'U';
+    #$01D5 : result := 'U';
+    #$01D9 : result := 'U';
+    #$1EE6 : result := 'U';
+    #$016E : result := 'U';
+    #$0170 : result := 'U';
+    #$01D3 : result := 'U';
+    #$0214 : result := 'U';
+    #$0216 : result := 'U';
+    #$01AF : result := 'U';
+    #$1EEA : result := 'U';
+    #$1EE8 : result := 'U';
+    #$1EEE : result := 'U';
+    #$1EEC : result := 'U';
+    #$1EF0 : result := 'U';
+    #$1EE4 : result := 'U';
+    #$1E72 : result := 'U';
+    #$0172 : result := 'U';
+    #$1E76 : result := 'U';
+    #$1E74 : result := 'U';
+    #$0244 : result := 'U';
+
+    //'V'
+    #$24CB : result := 'V';
+    #$FF36 : result := 'V';
+    #$1E7C : result := 'V';
+    #$1E7E : result := 'V';
+    #$01B2 : result := 'V';
+    #$A75E : result := 'V';
+    #$0245 : result := 'V';
+
+    //'VY'
+    #$A760 : result := 'VY';
+
+    //'W'
+    #$24CC : result := 'W';
+    #$FF37 : result := 'W';
+    #$1E80 : result := 'W';
+    #$1E82 : result := 'W';
+    #$0174 : result := 'W';
+    #$1E86 : result := 'W';
+    #$1E84 : result := 'W';
+    #$1E88 : result := 'W';
+    #$2C72 : result := 'W';
+
+    //'X'
+    #$24CD : result := 'X';
+    #$FF38 : result := 'X';
+    #$1E8A : result := 'X';
+    #$1E8C : result := 'X';
+
+    //'Y'
+    #$24CE : result := 'Y';
+    #$FF39 : result := 'Y';
+    #$1EF2 : result := 'Y';
+    #$DD : result := 'Y';
+    #$0176 : result := 'Y';
+    #$1EF8 : result := 'Y';
+    #$0232 : result := 'Y';
+    #$1E8E : result := 'Y';
+    #$0178 : result := 'Y';
+    #$1EF6 : result := 'Y';
+    #$1EF4 : result := 'Y';
+    #$01B3 : result := 'Y';
+    #$024E : result := 'Y';
+    #$1EFE : result := 'Y';
+
+    //'Z'
+    #$24CF : result := 'Z';
+    #$FF3A : result := 'Z';
+    #$0179 : result := 'Z';
+    #$1E90 : result := 'Z';
+    #$017B : result := 'Z';
+    #$017D : result := 'Z';
+    #$1E92 : result := 'Z';
+    #$1E94 : result := 'Z';
+    #$01B5 : result := 'Z';
+    #$0224 : result := 'Z';
+    #$2C7F : result := 'Z';
+    #$2C6B : result := 'Z';
+    #$A762 : result := 'Z';
+
+    //'a'
+    #$24D0 : result := 'a';
+    #$FF41 : result := 'a';
+    #$1E9A : result := 'a';
+    #$00E0 : result := 'a';
+    #$00E1 : result := 'a';
+    #$00E2 : result := 'a';
+    #$1EA7 : result := 'a';
+    #$1EA5 : result := 'a';
+    #$1EAB : result := 'a';
+    #$1EA9 : result := 'a';
+    #$00E3 : result := 'a';
+    #$0101 : result := 'a';
+    #$0103 : result := 'a';
+    #$1EB1 : result := 'a';
+    #$1EAF : result := 'a';
+    #$1EB5 : result := 'a';
+    #$1EB3 : result := 'a';
+    #$0227 : result := 'a';
+    #$01E1 : result := 'a';
+    #$00E4 : result := 'a';
+    #$01DF : result := 'a';
+    #$1EA3 : result := 'a';
+    #$00E5 : result := 'a';
+    #$01FB : result := 'a';
+    #$01CE : result := 'a';
+    #$0201 : result := 'a';
+    #$0203 : result := 'a';
+    #$1EA1 : result := 'a';
+    #$1EAD : result := 'a';
+    #$1EB7 : result := 'a';
+    #$1E01 : result := 'a';
+    #$0105 : result := 'a';
+    #$2C65 : result := 'a';
+    #$0250 : result := 'a';
+    #$0251 : result := 'a';
+
+    //'aa'
+    #$A733 : result := 'aa';
+
+    //'ae'
+    #$00E6 : result := 'ae';
+    #$01FD : result := 'ae';
+    #$01E3 : result := 'ae';
+
+    //'ao'
+    #$A735 : result := 'ao';
+
+    //'au'
+    #$A737 : result := 'au';
+
+    //'av'
+    #$A739 : result := 'av';
+    #$A73B : result := 'av';
+
+    //'ay'
+    #$A73D : result := 'ay';
+
+    //'b'
+    #$24D1 : result := 'b';
+    #$FF42 : result := 'b';
+    #$1E03 : result := 'b';
+    #$1E05 : result := 'b';
+    #$1E07 : result := 'b';
+    #$0180 : result := 'b';
+    #$0183 : result := 'b';
+    #$0253 : result := 'b';
+    #$0182 : result := 'b';
+
+    //'c'
+    #$FF43 : result := 'c';
+    #$24D2 : result := 'c';
+    #$0107 : result := 'c';
+    #$0109 : result := 'c';
+    #$010B : result := 'c';
+    #$010D : result := 'c';
+    #$00E7 : result := 'c';
+    #$1E09 : result := 'c';
+    #$0188 : result := 'c';
+    #$023C : result := 'c';
+    #$A73F : result := 'c';
+    #$2184 : result := 'c';
+
+    //'d'
+    #$24D3 : result := 'd';
+    #$FF44 : result := 'd';
+    #$1E0B : result := 'd';
+    #$010F : result := 'd';
+    #$1E0D : result := 'd';
+    #$1E11 : result := 'd';
+    #$1E13 : result := 'd';
+    #$1E0F : result := 'd';
+    #$0111 : result := 'd';
+    #$018C : result := 'd';
+    #$0256 : result := 'd';
+    #$0257 : result := 'd';
+    #$018B : result := 'd';
+    #$13E7 : result := 'd';
+    #$0501 : result := 'd';
+    #$A7AA : result := 'd';
+
+    //'dh'
+    #$00F0 : result := 'dh';
+
+    //'dz'
+    #$01F3 : result := 'dz';
+    #$01C6 : result := 'dz';
+
+    //'e'
+    #$24D4 : result := 'e';
+    #$FF45 : result := 'e';
+    #$00E8 : result := 'e';
+    #$00E9 : result := 'e';
+    #$00EA : result := 'e';
+    #$1EC1 : result := 'e';
+    #$1EBF : result := 'e';
+    #$1EC5 : result := 'e';
+    #$1EC3 : result := 'e';
+    #$1EBD : result := 'e';
+    #$0113 : result := 'e';
+    #$1E15 : result := 'e';
+    #$1E17 : result := 'e';
+    #$0115 : result := 'e';
+    #$0117 : result := 'e';
+    #$00EB : result := 'e';
+    #$1EBB : result := 'e';
+    #$011B : result := 'e';
+    #$0205 : result := 'e';
+    #$0207 : result := 'e';
+    #$1EB9 : result := 'e';
+    #$1EC7 : result := 'e';
+    #$0229 : result := 'e';
+    #$1E1D : result := 'e';
+    #$0119 : result := 'e';
+    #$1E19 : result := 'e';
+    #$1E1B : result := 'e';
+    #$0247 : result := 'e';
+    #$01DD : result := 'e';
+
+    //'f'
+    #$24D5 : result := 'f';
+    #$FF46 : result := 'f';
+    #$1E1F : result := 'f';
+    #$0192 : result := 'f';
+
+    //'ff'
+    #$FB00 : result := 'ff';
+
+    //'fi'
+    #$FB01 : result := 'fi';
+
+    //'fl'
+    #$FB02 : result := 'fl';
+
+    //'ffi'
+    #$FB03 : result := 'ffi';
+
+    //'ffl'
+    #$FB04 : result := 'ffl';
+
+    //'g'
+    #$24D6 : result := 'g';
+    #$FF47 : result := 'g';
+    #$01F5 : result := 'g';
+    #$011D : result := 'g';
+    #$1E21 : result := 'g';
+    #$011F : result := 'g';
+    #$0121 : result := 'g';
+    #$01E7 : result := 'g';
+    #$0123 : result := 'g';
+    #$01E5 : result := 'g';
+    #$0260 : result := 'g';
+    #$A7A1 : result := 'g';
+    #$A77F : result := 'g';
+    #$1D79 : result := 'g';
+
+    //'h'
+    #$24D7 : result := 'h';
+    #$FF48 : result := 'h';
+    #$0125 : result := 'h';
+    #$1E23 : result := 'h';
+    #$1E27 : result := 'h';
+    #$021F : result := 'h';
+    #$1E25 : result := 'h';
+    #$1E29 : result := 'h';
+    #$1E2B : result := 'h';
+    #$1E96 : result := 'h';
+    #$0127 : result := 'h';
+    #$2C68 : result := 'h';
+    #$2C76 : result := 'h';
+    #$0265 : result := 'h';
+
+    //'hv'
+    #$0195 : result := 'hv';
+
+    //'i'
+    #$24D8 : result := 'i';
+    #$FF49 : result := 'i';
+    #$EC : result := 'i';
+    #$ED : result := 'i';
+    #$EE : result := 'i';
+    #$0129 : result := 'i';
+    #$012B : result := 'i';
+    #$012D : result := 'i';
+    #$EF : result := 'i';
+    #$1E2F : result := 'i';
+    #$1EC9 : result := 'i';
+    #$01D0 : result := 'i';
+    #$0209 : result := 'i';
+    #$020B : result := 'i';
+    #$1ECB : result := 'i';
+    #$012F : result := 'i';
+    #$1E2D : result := 'i';
+    #$0268 : result := 'i';
+    #$0131 : result := 'i';
+
+    //'j'
+    #$24D9 : result := 'j';
+    #$FF4A : result := 'j';
+    #$0135 : result := 'j';
+    #$01F0 : result := 'j';
+    #$0249 : result := 'j';
+
+    //'k'
+    #$24DA : result := 'k';
+    #$FF4B : result := 'k';
+    #$1E31 : result := 'k';
+    #$01E9 : result := 'k';
+    #$1E33 : result := 'k';
+    #$0137 : result := 'k';
+    #$1E35 : result := 'k';
+    #$0199 : result := 'k';
+    #$2C6A : result := 'k';
+    #$A741 : result := 'k';
+    #$A743 : result := 'k';
+    #$A745 : result := 'k';
+    #$A7A3 : result := 'k';
+
+    //'l'
+    #$24DB : result := 'l';
+    #$FF4C : result := 'l';
+    #$0140 : result := 'l';
+    #$013A : result := 'l';
+    #$013E : result := 'l';
+    #$1E37 : result := 'l';
+    #$1E39 : result := 'l';
+    #$013C : result := 'l';
+    #$1E3D : result := 'l';
+    #$1E3B : result := 'l';
+    #$017F : result := 'l';
+    #$0142 : result := 'l';
+    #$019A : result := 'l';
+    #$026B : result := 'l';
+    #$2C61 : result := 'l';
+    #$A749 : result := 'l';
+    #$A781 : result := 'l';
+    #$A747 : result := 'l';
+    #$026D : result := 'l';
+
+    //'lj'
+    #$01C9 : result := 'lj';
+
+    //'m'
+    #$24DC : result := 'm';
+    #$FF4D : result := 'm';
+    #$1E3F : result := 'm';
+    #$1E41 : result := 'm';
+    #$1E43 : result := 'm';
+    #$0271 : result := 'm';
+    #$026F : result := 'm';
+
+    //'n'
+    #$24DD : result := 'n';
+    #$FF4E : result := 'n';
+    #$01F9 : result := 'n';
+    #$0144 : result := 'n';
+    #$F1 : result := 'n';
+    #$1E45 : result := 'n';
+    #$0148 : result := 'n';
+    #$1E47 : result := 'n';
+    #$0146 : result := 'n';
+    #$1E4B : result := 'n';
+    #$1E49 : result := 'n';
+    #$019E : result := 'n';
+    #$0272 : result := 'n';
+    #$0149 : result := 'n';
+    #$A791 : result := 'n';
+    #$A7A5 : result := 'n';
+    #$043B : result := 'n';
+    #$0509 : result := 'n';
+
+    //'nj'
+    #$01CC : result := 'nj';
+
+    //'o'
+    #$24DE : result := 'o';
+    #$FF4F : result := 'o';
+    #$F2 : result := 'o';
+    #$F3 : result := 'o';
+    #$F4 : result := 'o';
+    #$1ED3 : result := 'o';
+    #$1ED1 : result := 'o';
+    #$1ED7 : result := 'o';
+    #$1ED5 : result := 'o';
+    #$F5 : result := 'o';
+    #$1E4D : result := 'o';
+    #$022D : result := 'o';
+    #$1E4F : result := 'o';
+    #$014D : result := 'o';
+    #$1E51 : result := 'o';
+    #$1E53 : result := 'o';
+    #$014F : result := 'o';
+    #$022F : result := 'o';
+    #$0231 : result := 'o';
+    #$F6 : result := 'o';
+    #$022B : result := 'o';
+    #$1ECF : result := 'o';
+    #$0151 : result := 'o';
+    #$01D2 : result := 'o';
+    #$020D : result := 'o';
+    #$020F : result := 'o';
+    #$01A1 : result := 'o';
+    #$1EDD : result := 'o';
+    #$1EDB : result := 'o';
+    #$1EE1 : result := 'o';
+    #$1EDF : result := 'o';
+    #$1EE3 : result := 'o';
+    #$1ECD : result := 'o';
+    #$1ED9 : result := 'o';
+    #$01EB : result := 'o';
+    #$01ED : result := 'o';
+    #$F8 : result := 'o';
+    #$01FF : result := 'o';
+    #$A74B : result := 'o';
+    #$A74D : result := 'o';
+    #$0275 : result := 'o';
+    #$0254 : result := 'o';
+    #$1D11 : result := 'o';
+
+    //'oe'
+    #$0153 : result := 'oe';
+
+    //'oi'
+    #$01A3 : result := 'oi';
+
+    //'oo'
+    #$A74F : result := 'oo';
+
+    //'ou'
+    #$0223 : result := 'ou';
+
+    //'p'
+    #$24DF : result := 'p';
+    #$FF50 : result := 'p';
+    #$1E55 : result := 'p';
+    #$1E57 : result := 'p';
+    #$01A5 : result := 'p';
+    #$1D7D : result := 'p';
+    #$A751 : result := 'p';
+    #$A753 : result := 'p';
+    #$A755 : result := 'p';
+    #$03C1 : result := 'p';
+
+    //'q'
+    #$24E0 : result := 'q';
+    #$FF51 : result := 'q';
+    #$024B : result := 'q';
+    #$A757 : result := 'q';
+    #$A759 : result := 'q';
+
+    //'r'
+    #$24E1 : result := 'r';
+    #$FF52 : result := 'r';
+    #$0155 : result := 'r';
+    #$1E59 : result := 'r';
+    #$0159 : result := 'r';
+    #$0211 : result := 'r';
+    #$0213 : result := 'r';
+    #$1E5B : result := 'r';
+    #$1E5D : result := 'r';
+    #$0157 : result := 'r';
+    #$1E5F : result := 'r';
+    #$024D : result := 'r';
+    #$027D : result := 'r';
+    #$A75B : result := 'r';
+    #$A7A7 : result := 'r';
+    #$A783 : result := 'r';
+
+    //'s'
+    #$24E2 : result := 's';
+    #$FF53 : result := 's';
+    #$015B : result := 's';
+    #$1E65 : result := 's';
+    #$015D : result := 's';
+    #$1E61 : result := 's';
+    #$0161 : result := 's';
+    #$1E67 : result := 's';
+    #$1E63 : result := 's';
+    #$1E69 : result := 's';
+    #$0219 : result := 's';
+    #$015F : result := 's';
+    #$023F : result := 's';
+    #$A7A9 : result := 's';
+    #$A785 : result := 's';
+    #$1E9B : result := 's';
+    #$0282 : result := 's';
+
+    //'ss'
+    #$DF : result := 'ss';
+
+    //'t'
+    #$24E3 : result := 't';
+    #$FF54 : result := 't';
+    #$1E6B : result := 't';
+    #$1E97 : result := 't';
+    #$0165 : result := 't';
+    #$1E6D : result := 't';
+    #$021B : result := 't';
+    #$0163 : result := 't';
+    #$1E71 : result := 't';
+    #$1E6F : result := 't';
+    #$0167 : result := 't';
+    #$01AD : result := 't';
+    #$0288 : result := 't';
+    #$2C66 : result := 't';
+    #$A787 : result := 't';
+
+    //'th'
+    #$00FE : result := 'th';
+
+    //'tz'
+    #$A729 : result := 'tz';
+
+    //'u'
+    #$24E4 : result := 'u';
+    #$FF55 : result := 'u';
+    #$F9 : result := 'u';
+    #$FA : result := 'u';
+    #$FB : result := 'u';
+    #$0169 : result := 'u';
+    #$1E79 : result := 'u';
+    #$016B : result := 'u';
+    #$1E7B : result := 'u';
+    #$016D : result := 'u';
+    #$FC : result := 'u';
+    #$01DC : result := 'u';
+    #$01D8 : result := 'u';
+    #$01D6 : result := 'u';
+    #$01DA : result := 'u';
+    #$1EE7 : result := 'u';
+    #$016F : result := 'u';
+    #$0171 : result := 'u';
+    #$01D4 : result := 'u';
+    #$0215 : result := 'u';
+    #$0217 : result := 'u';
+    #$01B0 : result := 'u';
+    #$1EEB : result := 'u';
+    #$1EE9 : result := 'u';
+    #$1EEF : result := 'u';
+    #$1EED : result := 'u';
+    #$1EF1 : result := 'u';
+    #$1EE5 : result := 'u';
+    #$1E73 : result := 'u';
+    #$0173 : result := 'u';
+    #$1E77 : result := 'u';
+    #$1E75 : result := 'u';
+    #$0289 : result := 'u';
+
+    //'v'
+    #$24E5 : result := 'v';
+    #$FF56 : result := 'v';
+    #$1E7D : result := 'v';
+    #$1E7F : result := 'v';
+    #$028B : result := 'v';
+    #$A75F : result := 'v';
+    #$028C : result := 'v';
+
+    //'vy'
+    #$A761 : result := 'vy';
+
+    //'w'
+    #$24E6 : result := 'w';
+    #$FF57 : result := 'w';
+    #$1E81 : result := 'w';
+    #$1E83 : result := 'w';
+    #$0175 : result := 'w';
+    #$1E87 : result := 'w';
+    #$1E85 : result := 'w';
+    #$1E98 : result := 'w';
+    #$1E89 : result := 'w';
+    #$2C73 : result := 'w';
+
+    //'x'
+    #$24E7 : result := 'x';
+    #$FF58 : result := 'x';
+    #$1E8B : result := 'x';
+    #$1E8D : result := 'x';
+
+    //'y'
+    #$24E8 : result := 'y';
+    #$FF59 : result := 'y';
+    #$1EF3 : result := 'y';
+    #$FD : result := 'y';
+    #$0177 : result := 'y';
+    #$1EF9 : result := 'y';
+    #$0233 : result := 'y';
+    #$1E8F : result := 'y';
+    #$FF : result := 'y';
+    #$1EF7 : result := 'y';
+    #$1E99 : result := 'y';
+    #$1EF5 : result := 'y';
+    #$01B4 : result := 'y';
+    #$024F : result := 'y';
+    #$1EFF : result := 'y';
+
+    //'z'
+    #$24E9 : result := 'z';
+    #$FF5A : result := 'z';
+    #$017A : result := 'z';
+    #$1E91 : result := 'z';
+    #$017C : result := 'z';
+    #$017E : result := 'z';
+    #$1E93 : result := 'z';
+    #$1E95 : result := 'z';
+    #$01B6 : result := 'z';
+    #$0225 : result := 'z';
+    #$0240 : result := 'z';
+    #$2C6C : result := 'z';
+    #$A763 : result := 'z';
+
+  else
+    result := ch;
+  end;
+end;
+
+function RemoveAccents(const s : String): String;
+var
+  ch : UnicodeChar;
+  b : TFslStringBuilder;
+begin
+  b := TFslStringBuilder.create;
+  try
+    for ch in unicodeChars(s) do
+      b.append(removeAccent(ch));
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+
+end;
 
 procedure init;
 begin
@@ -14628,7 +15660,7 @@ begin
   {$IFOPT C+}
   gActiveMemoryTracking := True;
   {$ENDIF}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   FillChar(gSystemInfo, SizeOf(gSystemInfo), 0);
   FillChar(gOSInfo, SizeOf(gOSInfo), 0);
 

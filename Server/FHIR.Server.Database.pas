@@ -1,7 +1,7 @@
 unit FHIR.Server.Database;
 
 {
-  Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+  Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ unit FHIR.Server.Database;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 
 interface
@@ -432,7 +432,7 @@ implementation
 
 uses
   IdMessage, IdSMTP, IdSSLOpenSSL, IdExplicitTLSClientServerBase,
-  FHIR.Support.Service, FHIR.Support.Logging,
+  FHIR.Support.Logging,
   FHIR.Tx.Manager, FHIR.Tx.Operations,
   FHIR.Server.Search;
 
@@ -3164,7 +3164,7 @@ begin
     '<div class="header">'#13#10+
     '  <a href="http://www.hl7.org/fhir" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
     ''#13#10+
-    '  &copy; HL7.org 2011-2013'#13#10+
+    '  &copy; HL7.org 2011+'#13#10+
     '  &nbsp;'#13#10+
     '  '+ServerContext.Globals.OwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
     '  &nbsp;'#13#10+

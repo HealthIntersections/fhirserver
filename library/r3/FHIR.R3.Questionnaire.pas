@@ -29,13 +29,13 @@ unit FHIR.R3.Questionnaire;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Shell, FHIR.Support.Collections, FHIR.Web.Parsers,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
   FHIR.Tx.Service,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.R3.Parser, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Profiles;

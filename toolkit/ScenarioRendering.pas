@@ -32,7 +32,7 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   winapi.shellapi, fmx.platform.win, winapi.windows, jclshell,
   {$ENDIF}
   FHIR.Version.Utilities, FHIR.Base.Objects,FHIR.Version.Resources,
@@ -72,7 +72,7 @@ implementation
 {$R *.fmx}
 
 procedure TESPublishForm.Button10Click(Sender: TObject);
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 var
   SEInfo: TShellExecuteInfo;
   ESPublisherFolder: string;
@@ -83,7 +83,7 @@ var
 begin
 
 //  if edit1.text='' then edit1.Text:=extractfilepath(appDir)+'\Rendering\ExampleScenario';
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   appDir:=GetCurrentDir;
 if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
   SetCurrentDir(ESPublisherFolder+'');
@@ -235,7 +235,7 @@ end;
 
 
 procedure TESPublishForm.RunInMemo(CommandLine: string; Work: string; parameters: string; Memo: TMemo);
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 var
   SA: TSecurityAttributes;
   SI: TStartupInfo;

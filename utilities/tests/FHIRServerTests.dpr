@@ -433,7 +433,8 @@ uses
   FHIR.R5.Resources.Financial in '..\..\library\r5\FHIR.R5.Resources.Financial.pas',
   FHIR.R5.Resources.Clinical in '..\..\library\r5\FHIR.R5.Resources.Clinical.pas',
   MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
-  CommonTestBase in '..\..\..\markdown\tests\CommonTestBase.pas';
+  CommonTestBase in '..\..\..\markdown\tests\CommonTestBase.pas',
+  FHIR.Server.Telnet in '..\..\Server\FHIR.Server.Telnet.pas';
 
 var
   runner : ITestRunner;

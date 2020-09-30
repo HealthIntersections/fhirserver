@@ -29,7 +29,7 @@ unit FHIR.R2.IndexInfo;
   
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r2.inc}
 
 interface

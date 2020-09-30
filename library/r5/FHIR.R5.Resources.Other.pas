@@ -29,7 +29,7 @@
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r5.inc}
 
 interface

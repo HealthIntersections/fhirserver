@@ -6,11 +6,11 @@ Reference Implementation Server + Libraries for the FHIR Specification.
 Basic Information
 -----------------
 
-This is a set of FHIR applications written in Delphi. It is also 
+This is a set of FHIR applications written in Pascal. It is also 
 the home of the pascal reference implementation for FHIR. Included 
 in this project:
-* The Delphi reference implementation for FHIR (/reference-platform)
-* A set of tests for the delphi reference implementation 
+* The Pascal reference implementation for FHIR (/reference-platform)
+* A set of tests for the pascal reference implementation 
 * The FHIR reference server (supports the entire FHIR functionality, along with OAuth, OpenID.Connect, and SCIM)
 * The FHIR toolkit - a set of utilities for developers
 * The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers 
@@ -72,17 +72,21 @@ tests and applications, the following git repositories must be put in these plac
 Compiling 
 ---------
 
-This is pascal code that (in principle) compiles under Delphi XE3+ (any edition, personal will do).
-Note that in practice, various subtle but breaking changes have been introduced to the runtime
-library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary.
+The code compiles under either Delphi (windows 32/64) or Lazarus/FPC (windows 32/64/Linux/OSX).
 
-Support for Free Pascal(/Lazarus) would be good, and is in progress, but depends on future bug
-fixes in free pascal. Contributions are welcome
+Delphi: 
+  The code should in principle compiles under Delphi XE3+ (any edition, personal will do).
+  Note that in practice, various subtle but breaking changes have been introduced to the runtime
+  library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary. 10.3 and 10.4 
+  are btoh expected to work
 
+FPC:
+  The code compiles using FPC 3.3.1 / Lazarus 2.1.0 (or more recent). The code depends on some recent
+  bug fixes so older versions are probably not supported.
+  
 The FhirServer depends on the following other GitHub repositories:
 * https://github.com/grahamegrieve/delphi-markdown
 * https://github.com/VSoftTechnologies/DUnitX
-* + TreeView + SynEdit for the GUI programs
 
 You need to get a copy of these and fix the paths for the markdown processor units in the .dprs.
 You also need to get a copy of the latest version of the Indy components, since the server

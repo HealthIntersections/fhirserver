@@ -49,7 +49,8 @@ uses
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
-  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas';
+  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
+  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas';
 
 {$R *.res}
 

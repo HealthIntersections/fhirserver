@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -3698,7 +3698,9 @@ begin
   begin
     ed := factory.wrapEventDefinition(resource.Link);
     try
+      {$IFNDEF NO_JS}
       ServerContext.EventScriptRegistry.checkResource(ed);
+      {$ENDIF}
     finally
       ed.Free;
     end;
@@ -3873,8 +3875,10 @@ begin
     ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
   else if resource.ResourceType = frtQuestionnaire then
     ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire)
+  {$IFNDEF NO_JS}
   else if resource.ResourceType = frtEventDefinition then
-    ServerContext.EventScriptRegistry.seeResource(Factory.wrapEventDefinition(resource.Link));
+    ServerContext.EventScriptRegistry.seeResource(Factory.wrapEventDefinition(resource.Link)){$ENDIF};
+
 
   if created then
     ServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)

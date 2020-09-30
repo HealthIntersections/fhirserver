@@ -29,13 +29,13 @@ unit FHIR.R3.Utilities;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r3.inc}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
@@ -771,7 +771,7 @@ uses
  {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Registry,
   {$ENDIF}
   FHIR.R3.ElementModel, FHIR.R3.Parser;
@@ -5595,11 +5595,7 @@ Const
     );
 
 Function GetExtForMimeType(mimeType: String): String;
-{$IFDEF MACOS}
-begin
-  raise EFHIRTodo.create('GetExtForMimeType');
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   fReg: TRegistry;
   ts : TStringList;
@@ -5641,11 +5637,15 @@ Begin
   If Result = '' Then
     Result := '.bin';
 End;
+{$ELSE}
+begin
+  raise EFHIRTodo.create('GetExtForMimeType');
+end;
 {$ENDIF}
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
-{$IFDEF MACOS}
+{$IFDEF OSX}
 begin
   raise EFHIRTodo.create('TFHIRAttachmentHelper.asZipPart');
 end;

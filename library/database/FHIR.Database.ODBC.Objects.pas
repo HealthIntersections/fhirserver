@@ -28,9 +28,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
-{$IFNDEF MSWINDOWS}
+{$IFNDEF WINDOWS}
   {$IFNDEF ODBC}
   This non-windows compile includes ODBC, which is statically bound, and an extra install dependency outside windows.
   If you meant to include ODBC in this project, add the ODBC define to the project settings.
@@ -87,7 +87,7 @@ Type
 
 Const
   // on OSX, the iODBC interface is UTF-32 not UTF-16.
-  DefaultStringSize = 255 * {$IFDEF MACOS} 4 {$ELSE} 2 {$ENDIF};
+  DefaultStringSize = 255 * {$IFDEF OSX} 4 {$ELSE} 2 {$ENDIF};
   NullData = '';
 
   DefRaiseSoftErrors = False;
@@ -2161,7 +2161,7 @@ End;
 
 Function MemoryStreamToString(M: TMemoryStream): String;
 Var
-  NewCapacity: {$IFDEF WIN64} {$IFDEF FPC} Int64 {$ELSE} LongInt {$ENDIF} {$ELSE} LongInt {$ENDIF};
+  NewCapacity: {$IFDEF FPC} {$IFDEF CPU64} Int64 {$ELSE} Longint {$ENDIF} {$ELSE} LongInt {$ENDIF};
 Begin
   If (M.Size = 0) Or (M.Memory = Nil) Then
     Result:= ''
@@ -2856,12 +2856,12 @@ End;
 // inserting/skipping the high 16 bits until a bug manifests...
 
 function fromOdbcPChar(p : PChar; length : integer) : String;
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
 var
   i : integer;
   {$ENDIF}
 begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   SetLength(result, length);
   for i := 1 to length do
     result[i] := p[(i-1)*2];
@@ -2871,12 +2871,12 @@ begin
 end;
 
 function fromOdbcPWideChar(p : PWideChar; length : integer) : String;
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
 var
   i : integer;
   {$ENDIF}
 begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   SetLength(result, length);
   for i := 1 to length do
     result[i] := p[(i-1)*2];
@@ -2891,7 +2891,7 @@ begin
     result := nil
   else
   begin
-    {$IFDEF MACOS}
+    {$IFDEF OSX}
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
     {$ELSE}
@@ -2908,7 +2908,7 @@ begin
     result := nil
   else
   begin
-    {$IFDEF MACOS}
+    {$IFDEF OSX}
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
     {$ELSE}
@@ -2921,7 +2921,7 @@ end;
 
 function odbcPWideChar(count : integer) : PWideChar; overload;
 begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   getMem(result, count * 2);
   {$ELSE}
   getMem(result, count * 2);
@@ -2930,7 +2930,7 @@ end;
 
 function odbcPChar(count : integer) : PChar; overload;
 begin
-  {$IFDEF MACOS}
+  {$IFDEF OSX}
   getMem(result, count);
   {$ELSE}
   getMem(result, count);

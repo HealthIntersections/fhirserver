@@ -30,7 +30,7 @@ unit FHIR.R4.Operations;
   POSSIBILITY OF SUCH DAMAGE.
   
 }
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

@@ -1,10 +1,12 @@
+unit FHIR.Database.SQLite3.Objects;
+
 {*
  * SQLite for Delphi and FreePascal/Lazarus
  *
  * This unit contains complete FHIR.Database.SQLite3.Objects API translation
  * Version of SQLite: 3.6.22
  *
- * Copyright 2010-2013 Yury Plashenkov
+ * Copyright 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)
@@ -30,11 +32,7 @@
 
 // modified by Grahame to load dynamically
 
-unit FHIR.Database.SQLite3.Objects;
-
-{$IFDEF FPC}
-  {$MODE DELPHI}
-{$ENDIF}
+{$I fhir.inc}
 
 { $DEFINE SQLITE_DEPRECATED}              // Enable deprecated functions
 { $DEFINE SQLITE_EXPERIMENTAL}            // Enable experimental functions
@@ -58,13 +56,13 @@ type
   TPAnsiCharArray = array[0..MaxInt div SizeOf(PAnsiChar) - 1] of PAnsiChar;
 
 const
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
   sqlite3_lib = 'sqlite3.dll';
 {$ENDIF}
-{$IFDEF UNIX}
+{$IFDEF LINUX}
   sqlite3_lib = 'sqlite3.so';
 {$ENDIF}
-{$IFDEF MACOS}
+{$IFDEF OSX}
   sqlite3_lib = 'libsqlite3.dylib';
 {$ENDIF}
 
@@ -1063,11 +1061,11 @@ procedure loadSQLite;
 implementation
 
 uses
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   Windows,
   {$ENDIF}
-  {$IFDEF MACOS}
-  Macapi.CoreFoundation,
+  {$IFDEF OSX}
+  CoreFoundation,
   {$ENDIF}
   SysUtils;
 

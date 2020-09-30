@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Cache.PackageManager,
@@ -117,7 +117,7 @@ begin
     end);
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF WINDOWS}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 const
   CReadBuffer = 2400;

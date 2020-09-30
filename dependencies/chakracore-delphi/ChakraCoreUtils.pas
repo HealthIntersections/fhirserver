@@ -263,7 +263,7 @@ resourcestring
 
 type
   JsErrorConstructor = function(_message: JsValueRef; out error: JsValueRef): JsErrorCode;
-    {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 { EChakra public }
 

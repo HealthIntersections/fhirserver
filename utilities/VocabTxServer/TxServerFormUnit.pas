@@ -436,7 +436,7 @@ begin
         setAccess(ctxt.ResConfig['ValueSet']);
         setAccess(ctxt.ResConfig['ConceptMap']);
         loadPoC(ctxt.TerminologyServer);
-        FWebServer := TFhirWebServer.create(FSettings.Link, FSettings.ownername);
+        FWebServer := TFhirWebServer.create(FSettings.Link, nil, FSettings.ownername);
         FWebServer.loadConfiguration(FIni);
         FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(path([ExtractFilePath(paramstr(0)), 'web.zip']));
         ctxt.UserProvider := TTerminologyServerUserProvider.Create;

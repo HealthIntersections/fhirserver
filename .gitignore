@@ -235,3 +235,9 @@ System
 /utilities/console/lib/i386-win32
 /utilities/tests/backup
 /utilities/tests/lib/i386-win32
+/dependencies/FMMAVX/backup
+/Server/lib/x86_64-darwin
+/Server/lib/x86_64-linux
+/utilities/console/lib/x86_64-win64
+/utilities/console/lib/x86_64-linux
+/utilities/console/lib/x86_64-darwin

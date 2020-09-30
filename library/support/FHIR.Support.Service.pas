@@ -1,7 +1,7 @@
 unit FHIR.Support.Service;
 
 {
-Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -40,7 +40,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities;
 
 type
-  TSystemService = { Abstract } class (TFslObject)
+  TSystemService = class abstract (TFslObject)
   Private
     FHandle : SERVICE_STATUS_HANDLE;
     FSystemName : String;

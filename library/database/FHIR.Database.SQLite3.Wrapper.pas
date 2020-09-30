@@ -1,9 +1,11 @@
+unit FHIR.Database.SQLite3.Wrapper;
+
 {*
  * SQLite for Delphi and FreePascal/Lazarus
  *
  * This unit contains easy-to-use object wrapper over FHIR.Database.SQLite3.Objects API functions
  *
- * Copyright 2010-2013 Yury Plashenkov
+ * Copyright 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)
@@ -27,11 +29,7 @@
  * IN THE SOFTWARE.
  *}
 
-unit FHIR.Database.SQLite3.Wrapper;
-
-{$IFDEF FPC}
-  {$MODE DELPHI}
-{$ENDIF}
+{$I fhir.inc}
 
 interface
 

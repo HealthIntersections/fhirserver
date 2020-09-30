@@ -59,7 +59,7 @@ implementation
 procedure TProcessingForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
 //  Application.ProcessMessages;
   {$ENDIF}
   try

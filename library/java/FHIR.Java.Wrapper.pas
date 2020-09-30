@@ -1,6 +1,6 @@
 unit FHIR.Java.Wrapper;
 {
-  Copyright (c) 1998-2001 Jonathan Revusky
+  Copyright (c) 1998+ Jonathan Revusky
   All rights reserved.
 
   This software was enhanced and ported to 32 bit and 64 bit and
@@ -33,7 +33,7 @@ unit FHIR.Java.Wrapper;
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 // an object-oriented wrapper around the JNI.
 // The code here (by contrast with JavaRuntime.pas) should be

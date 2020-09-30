@@ -31,7 +31,7 @@ unit FHIR.R5.Enums;
   
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

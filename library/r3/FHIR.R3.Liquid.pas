@@ -29,7 +29,7 @@ unit FHIR.R3.Liquid;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

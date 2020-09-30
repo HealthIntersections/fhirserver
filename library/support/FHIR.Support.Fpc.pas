@@ -46,7 +46,12 @@ type
 
 function unicodeChars(s : String) : TArray<UnicodeChar>;
 
+
 {$IFDEF FPC}
+
+procedure InitializeCriticalSection(out cs : TRTLCriticalSection);
+procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
+function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
 
 type
 
@@ -484,8 +489,23 @@ begin
   result := copy(self, start, $FF);
 end;
 
-{$ENDIF}
+procedure InitializeCriticalSection(out cs : TRTLCriticalSection);
+begin
+  InitCriticalSection(cs);
+end;
 
+procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
+begin
+  DoneCriticalSection(cs);
+end;
+
+function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
+begin
+  result := System.TryEnterCriticalSection(cs) > 0;
+end;
+
+
+{$ENDIF}
 
 end.
 

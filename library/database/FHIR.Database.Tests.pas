@@ -28,7 +28,7 @@ unit FHIR.Database.Tests;
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$DEFINE DIFF}
 
 interface
@@ -96,7 +96,7 @@ var
   md: TFslDBMetaData;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
-{$IFDEF MACOS}
+{$IFDEF OSX}
   b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0))) + 'libcgsqlite3.dylib');
 {$ELSE}
   b := FileToBytes('C:\work\fhirserver\Library\database\FHIR.Database.Tests.pas');

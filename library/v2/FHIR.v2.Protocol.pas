@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 {
 This unit uses indy 10 and implements the HL7 v2 Minimal Lower Layer Protocol.
@@ -41,7 +41,8 @@ so republished here
 interface
 
 Uses
-  Windows, Classes, Contnrs, SyncObjs, SysUtils,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  Classes, Contnrs, SyncObjs, SysUtils,
   IdContext, IdBaseComponent, IdException, IdGlobal, IdStackConsts, IdIOHandlerSocket, IdTCPClient, IdTCPConnection, IdTCPServer;
 
 Const

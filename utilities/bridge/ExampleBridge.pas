@@ -376,7 +376,7 @@ var
 begin
   FData := TExampleServerData.Create('c:\temp');
 
-  FWebServer := TFhirWebServer.create(FSettings.Link, FSystemname);
+  FWebServer := TFhirWebServer.create(FSettings.Link, nil, FSystemname);
   FWebServer.loadConfiguration(FIni);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
   FWebServer.OWinSecurityPlain := true;

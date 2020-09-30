@@ -28,7 +28,7 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
   POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 

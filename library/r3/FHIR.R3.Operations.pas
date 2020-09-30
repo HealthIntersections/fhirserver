@@ -29,7 +29,7 @@ unit FHIR.R3.Operations;
 
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 {$I fhir.r3.inc}
 
 interface

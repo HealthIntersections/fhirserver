@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 
 interface
@@ -258,9 +258,9 @@ end;
 
 function TDigitalSigner.canoncalizationSet(uri : String) : TXmlCanonicalisationMethodSet;
 begin
-  if uri = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' then
+  if uri = 'http://www.w3.org/TR/2001/REC-xml-c14n+0315' then
     result := [xcmCanonicalise]
-  else if uri = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments' then
+  else if uri = 'http://www.w3.org/TR/2001/REC-xml-c14n+0315#WithComments' then
     result := [xcmCanonicalise, xcmComments]
   else
     raise ELibraryException.create('Canonicalization Method '+uri+' is not supported');
@@ -717,7 +717,7 @@ begin
     if canonicalization <> '' then
       si.addElementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm'] := canonicalization
     else
-      si.addElementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+      si.addElementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n+0315';
     si.addElementNS(NS_DS, 'SignatureMethod').attribute['Algorithm'] := signAlgorithmForMethod(method);
     ref := si.addElementNS(NS_DS, 'Reference');
     if (refUrl <> '') then
@@ -774,7 +774,7 @@ begin
     sig := finder(dom).addElementNS(NS_DS, 'Signature');
     sig.attribute['xmlns'] := NS_DS;
     si := sig.addElementNS(NS_DS, 'SignedInfo');
-    si.addElementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+    si.addElementNS(NS_DS, 'CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n+0315';
     si.addElementNS(NS_DS, 'SignatureMethod').attribute['Algorithm'] := signAlgorithmForMethod(method);
     ref := si.addElementNS(NS_DS, 'Reference');
     ref.attribute['URI'] := '';
@@ -853,7 +853,7 @@ begin
   sig := doc.addElementNS(NS_DS, 'Signature');
   sig.attribute['xmlns'] := NS_DS;
   si := sig.AddElement('SignedInfo');
-  si.AddElement('CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+  si.AddElement('CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n+0315';
   si.AddElement('SignatureMethod').attribute['Algorithm'] := signAlgorithmForMethod(method);
   for i := 0 to references.Count - 1 do
   begin

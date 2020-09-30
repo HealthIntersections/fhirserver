@@ -1,7 +1,7 @@
 unit FHIR.Snomed.Services;
 
 {
-Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 // URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
 //  intl: 900000000000207008

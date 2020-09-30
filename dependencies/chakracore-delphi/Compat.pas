@@ -105,7 +105,7 @@ implementation
 
 {$ifdef FPC}
 uses
-  {$ifdef WINDOWS}
+  {$IFDEF MSWINDOWS}
   winpeimagereader,
   {$endif}
   {$ifdef LINUX}
@@ -263,7 +263,7 @@ initialization
 {$endif}
 {$endif}
 {$ifdef FPC}
-  {$ifdef WINDOWS}
+  {$IFDEF MSWINDOWS}
   GetLocaleFormatSettings(1033, DefaultFormatSettings);
   {$endif}
 {$endif}

@@ -52,7 +52,7 @@ uses
   FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Server.Storage, FHIR.Server.Ini, FHIR.Server.Version,
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
-  FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
+  FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource, FHIR.Server.Telnet,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
@@ -248,7 +248,7 @@ var
   s : String;
   details : TFHIRServerIniComplex;
 begin
-  FWebServer := TFhirWebServer.create(FSettings.Link, 'Test-Server');
+  FWebServer := TFhirWebServer.create(FSettings.Link, TFHIRTelnetServer.create(44122, 'test'), 'Test-Server');
   FWebServer.OnRegisterJs := registerJs;
   FWebServer.loadConfiguration(FIni);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));

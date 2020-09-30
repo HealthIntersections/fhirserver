@@ -3,9 +3,10 @@ program FHIRConsole;
 {$mode objfpc}{$H+}
 
 uses
-  FastMM4,
   {$IFDEF UNIX}
   cthreads,
+  {$ELSE}
+  FastMM4,
   {$ENDIF}
   {$IFDEF HASAMIGA}
   athreads,

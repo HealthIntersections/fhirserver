@@ -2,7 +2,7 @@ unit FHIR.R2.Tests.Validator;
 
 
 {
-Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

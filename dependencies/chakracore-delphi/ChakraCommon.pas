@@ -602,7 +602,7 @@ type
   ///     with the allocation. Returning false indicates the allocation request is rejected. The
   ///     return value is ignored for other allocation events.
   /// </returns>
-  JsMemoryAllocationCallback = function(callbackState: Pointer; allocationEvent: JsMemoryEventType; allocationSize: size_t): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsMemoryAllocationCallback = function(callbackState: Pointer; allocationEvent: JsMemoryEventType; allocationSize: size_t): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A callback called before collection.
@@ -611,7 +611,7 @@ type
   ///     Use <c>JsSetBeforeCollectCallback</c> to register this callback.
   /// </remarks>
   /// <param name="callbackState">The state passed to <c>JsSetBeforeCollectCallback</c>.</param>
-  JsBeforeCollectCallback = procedure(callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsBeforeCollectCallback = procedure(callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A callback called before collecting an object.
@@ -621,7 +621,7 @@ type
   /// </remarks>
   /// <param name="ref">The object to be collected.</param>
   /// <param name="callbackState">The state passed to <c>JsSetObjectBeforeCollectCallback</c>.</param>
-  JsObjectBeforeCollectCallback = procedure(ref: JsRef; callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsObjectBeforeCollectCallback = procedure(ref: JsRef; callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A background work item callback.
@@ -631,7 +631,7 @@ type
   ///     invoke the work item callback on the background thread of its choice.
   /// </remarks>
   /// <param name="callbackState">Data argument passed to the thread service.</param>
-  JsBackgroundWorkItemCallback = procedure(callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsBackgroundWorkItemCallback = procedure(callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A thread service callback.
@@ -644,14 +644,14 @@ type
   /// </remarks>
   /// <param name="callback">The callback for the background work item.</param>
   /// <param name="callbackState">The data argument to be passed to the callback.</param>
-  JsThreadServiceCallback = function(callback: JsBackgroundWorkItemCallback; callbackState: Pointer): bool; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsThreadServiceCallback = function(callback: JsBackgroundWorkItemCallback; callbackState: Pointer): bool; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Called by the runtime when it is finished with all resources related to the script execution.
   ///     The caller should free the source if loaded, the byte code, and the context at this time.
   /// </summary>
   /// <param name="sourceContext">The context passed to Js[Parse|Run]SerializedScriptWithCallback</param>
-  JsSerializedScriptUnloadCallback = procedure(sourceContext: JsSourceContext); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsSerializedScriptUnloadCallback = procedure(sourceContext: JsSourceContext); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A finalizer callback.
@@ -659,7 +659,7 @@ type
   /// <param name="data">
   ///     The external data that was passed in when creating the object being finalized.
   /// </param>
-  JsFinalizeCallback = procedure(data: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsFinalizeCallback = procedure(data: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A function callback.
@@ -675,7 +675,7 @@ type
   /// </param>
   /// <returns>The result of the call, if any.</returns>
   JsNativeFunction = function(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word;
-    callbackState: Pointer): JsValueRef; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+    callbackState: Pointer): JsValueRef; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     A promise continuation callback.
@@ -688,7 +688,7 @@ type
   /// </remarks>
   /// <param name="task">The task, represented as a JavaScript function.</param>
   /// <param name="callbackState">The data argument to be passed to the callback.</param>
-  JsPromiseContinuationCallback = procedure(task: JsValueRef; callbackState: Pointer); {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+  JsPromiseContinuationCallback = procedure(task: JsValueRef; callbackState: Pointer); {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new runtime.
@@ -704,7 +704,7 @@ type
   function JsCreateRuntime(
           attributes: JsRuntimeAttributes;
           threadService: JsThreadServiceCallback;
-          out runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Performs a full garbage collection.
@@ -714,7 +714,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsCollectGarbage(
-          runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Disposes a runtime.
@@ -729,7 +729,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsDisposeRuntime(
-          runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the current memory usage for a runtime.
@@ -745,7 +745,7 @@ type
   /// </returns>
   function JsGetRuntimeMemoryUsage(
           runtime: JsRuntimeHandle;
-          out memoryUsage: size_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out memoryUsage: size_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the current memory limit for a runtime.
@@ -763,7 +763,7 @@ type
   /// </returns>
   function JsGetRuntimeMemoryLimit(
           runtime: JsRuntimeHandle;
-          out memoryLimit: size_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out memoryLimit: size_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the current memory limit for a runtime.
@@ -790,7 +790,7 @@ type
   /// </returns>
   function JsSetRuntimeMemoryLimit(
           runtime: JsRuntimeHandle;
-          memoryLimit: size_t): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          memoryLimit: size_t): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets a memory allocation callback for specified runtime
@@ -825,7 +825,7 @@ type
   function JsSetRuntimeMemoryAllocationCallback(
           runtime: JsRuntimeHandle;
           callbackState: Pointer;
-          allocationCallback: JsMemoryAllocationCallback): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          allocationCallback: JsMemoryAllocationCallback): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets a callback function that is called by the runtime before garbage collection.
@@ -851,7 +851,7 @@ type
   function JsSetRuntimeBeforeCollectCallback(
           runtime: JsRuntimeHandle;
           callbackState: Pointer;
-          beforeCollectCallback: JsBeforeCollectCallback): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          beforeCollectCallback: JsBeforeCollectCallback): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Adds a reference to a garbage collected object.
@@ -868,7 +868,7 @@ type
   /// </returns>
   function JsAddRef(
           ref: JsRef;
-          count: PCardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          count: PCardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Releases a reference to a garbage collected object.
@@ -883,7 +883,7 @@ type
   /// </returns>
   function JsRelease(
           ref: JsRef;
-          count: PCardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          count: PCardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets a callback function that is called by the runtime before garbage collection of
@@ -907,7 +907,7 @@ type
   function JsSetObjectBeforeCollectCallback(
           ref: JsRef;
           callbackState: Pointer;
-          objectBeforeCollectCallback: JsObjectBeforeCollectCallback): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          objectBeforeCollectCallback: JsObjectBeforeCollectCallback): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a script context for running scripts.
@@ -923,7 +923,7 @@ type
   /// </returns>
   function JsCreateContext(
           runtime: JsRuntimeHandle;
-          out newContext: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out newContext: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the current script context on the thread.
@@ -935,7 +935,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetCurrentContext(
-          out currentContext: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out currentContext: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the current script context on the thread.
@@ -945,7 +945,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsSetCurrentContext(
-          context: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          context: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the script context that the object belongs to.
@@ -957,7 +957,7 @@ type
   /// </returns>
   function JsGetContextOfObject(
           _object: JsValueRef;
-          out context: JsContextRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out context: JsContextRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the internal data set on JsrtContext.
@@ -969,7 +969,7 @@ type
   /// </returns>
   function JsGetContextData(
           context: JsContextRef;
-          out data: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out data: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the internal data of JsrtContext.
@@ -981,7 +981,7 @@ type
   /// </returns>
   function JsSetContextData(
           context: JsContextRef;
-          data: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          data: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the runtime that the context belongs to.
@@ -993,7 +993,7 @@ type
   /// </returns>
   function JsGetRuntime(
           context: JsContextRef;
-          out runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Tells the runtime to do any idle processing it need to do.
@@ -1021,7 +1021,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsIdle(
-          nextIdleTick: PCardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          nextIdleTick: PCardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the symbol associated with the property ID.
@@ -1038,7 +1038,7 @@ type
   /// </returns>
   function JsGetSymbolFromPropertyId(
           propertyId: JsPropertyIdRef;
-          out symbol: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out symbol: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the type of property
@@ -1055,7 +1055,7 @@ type
   /// </returns>
   function JsGetPropertyIdType(
           propertyId: JsPropertyIdRef;
-          out propertyIdType: JsPropertyIdType): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertyIdType: JsPropertyIdType): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the property ID associated with the symbol.
@@ -1077,7 +1077,7 @@ type
   /// </returns>
   function JsGetPropertyIdFromSymbol(
           symbol: JsValueRef;
-          out propertyId: JsPropertyIdRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertyId: JsPropertyIdRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript symbol.
@@ -1092,7 +1092,7 @@ type
   /// </returns>
   function JsCreateSymbol(
           description: JsValueRef;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the list of all symbol properties on the object.
@@ -1107,7 +1107,7 @@ type
   /// </returns>
   function JsGetOwnPropertySymbols(
           _object: JsValueRef;
-          out propertySymbols: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertySymbols: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the value of <c>undefined</c> in the current script context.
@@ -1120,7 +1120,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetUndefinedValue(
-          out undefinedValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out undefinedValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the value of <c>null</c> in the current script context.
@@ -1133,7 +1133,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetNullValue(
-          out nullValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out nullValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the value of <c>true</c> in the current script context.
@@ -1146,7 +1146,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetTrueValue(
-          out trueValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out trueValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the value of <c>false</c> in the current script context.
@@ -1159,7 +1159,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetFalseValue(
-          out falseValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out falseValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Boolean value from a <c>bool</c> value.
@@ -1174,7 +1174,7 @@ type
   /// </returns>
   function JsBoolToBoolean(
           value: bool;
-          out booleanValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out booleanValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieves the <c>bool</c> value of a Boolean value.
@@ -1186,7 +1186,7 @@ type
   /// </returns>
   function JsBooleanToBool(
           value: JsValueRef;
-          out boolValue: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out boolValue: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Converts the value to Boolean using standard JavaScript semantics.
@@ -1201,7 +1201,7 @@ type
   /// </returns>
   function JsConvertValueToBoolean(
           value: JsValueRef;
-          out booleanValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out booleanValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the JavaScript type of a JsValueRef.
@@ -1213,7 +1213,7 @@ type
   /// </returns>
   function JsGetValueType(
           value: JsValueRef;
-          out _type: JsValueType): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _type: JsValueType): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a number value from a <c>double</c> value.
@@ -1228,7 +1228,7 @@ type
   /// </returns>
   function JsDoubleToNumber(
           doubleValue: Double;
-          out value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a number value from an <c>int</c> value.
@@ -1243,7 +1243,7 @@ type
   /// </returns>
   function JsIntToNumber(
           intValue: Integer;
-          out value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieves the <c>double</c> value of a number value.
@@ -1259,7 +1259,7 @@ type
   /// </returns>
   function JsNumberToDouble(
           value: JsValueRef;
-          out doubleValue: Double): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out doubleValue: Double): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieves the <c>int</c> value of a number value.
@@ -1275,7 +1275,7 @@ type
   /// </returns>
   function JsNumberToInt(
           value: JsValueRef;
-          out intValue: Integer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out intValue: Integer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Converts the value to number using standard JavaScript semantics.
@@ -1290,7 +1290,7 @@ type
   /// </returns>
   function JsConvertValueToNumber(
           value: JsValueRef;
-          out numberValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out numberValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the length of a string value.
@@ -1302,7 +1302,7 @@ type
   /// </returns>
   function JsGetStringLength(
           stringValue: JsValueRef;
-          out length: Integer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out length: Integer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Converts the value to string using standard JavaScript semantics.
@@ -1317,7 +1317,7 @@ type
   /// </returns>
   function JsConvertValueToString(
           value: JsValueRef;
-          out stringValue: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out stringValue: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the global object in the current script context.
@@ -1330,7 +1330,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetGlobalObject(
-          out globalObject: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out globalObject: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new object.
@@ -1343,7 +1343,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsCreateObject(
-          out _object: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _object: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new object that stores some external data.
@@ -1362,7 +1362,7 @@ type
   function JsCreateExternalObject(
           data: Pointer;
           finalizeCallback: JsFinalizeCallback;
-          out _object: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _object: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Converts the value to object using standard JavaScript semantics.
@@ -1377,7 +1377,7 @@ type
   /// </returns>
   function JsConvertValueToObject(
           value: JsValueRef;
-          out _object: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _object: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Returns the prototype of an object.
@@ -1392,7 +1392,7 @@ type
   /// </returns>
   function JsGetPrototype(
           _object: JsValueRef;
-          out prototypeObject: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out prototypeObject: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the prototype of an object.
@@ -1407,7 +1407,7 @@ type
   /// </returns>
   function JsSetPrototype(
           _object: JsValueRef;
-          prototypeObject: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          prototypeObject: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Performs JavaScript "instanceof" operator test.
@@ -1424,7 +1424,7 @@ type
   function JsInstanceOf(
           _object: JsValueRef;
           constr: JsValueRef;
-          out result: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Returns a value that indicates whether an object is extensible or not.
@@ -1439,7 +1439,7 @@ type
   /// </returns>
   function JsGetExtensionAllowed(
           _object: JsValueRef;
-          out value: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Makes an object non-extensible.
@@ -1452,7 +1452,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsPreventExtension(
-          _object: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          _object: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets an object's property.
@@ -1469,7 +1469,7 @@ type
   function JsGetProperty(
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
-          out value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets a property descriptor for an object's own property.
@@ -1486,7 +1486,7 @@ type
   function JsGetOwnPropertyDescriptor(
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
-          out propertyDescriptor: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertyDescriptor: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Gets the list of all properties on the object.
@@ -1501,7 +1501,7 @@ type
   /// </returns>
   function JsGetOwnPropertyNames(
           _object: JsValueRef;
-          out propertyNames: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out propertyNames: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Puts an object's property.
@@ -1520,7 +1520,7 @@ type
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
           value: JsValueRef;
-          useStrictRules: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          useStrictRules: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object has a property.
@@ -1537,7 +1537,7 @@ type
   function JsHasProperty(
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
-          out hasProperty: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out hasProperty: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Deletes an object's property.
@@ -1556,7 +1556,7 @@ type
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
           useStrictRules: bool;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Defines a new object's own property from a property descriptor.
@@ -1575,7 +1575,7 @@ type
           _object: JsValueRef;
           propertyId: JsPropertyIdRef;
           propertyDescriptor: JsValueRef;
-          out result: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Tests whether an object has a value at the specified index.
@@ -1592,7 +1592,7 @@ type
   function JsHasIndexedProperty(
           _object: JsValueRef;
           index: JsValueRef;
-          out result: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieve the value at the specified index of an object.
@@ -1609,7 +1609,7 @@ type
   function JsGetIndexedProperty(
           _object: JsValueRef;
           index: JsValueRef;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Set the value at the specified index of an object.
@@ -1626,7 +1626,7 @@ type
   function JsSetIndexedProperty(
           _object: JsValueRef;
           index: JsValueRef;
-          value: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          value: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Delete the value at the specified index of an object.
@@ -1641,7 +1641,7 @@ type
   /// </returns>
   function JsDeleteIndexedProperty(
           _object: JsValueRef;
-          index: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          index: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object has its indexed properties in external data.
@@ -1653,7 +1653,7 @@ type
   /// </returns>
   function JsHasIndexedPropertiesExternalData(
           _object: JsValueRef;
-          out value: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieves an object's indexed properties external data information.
@@ -1669,7 +1669,7 @@ type
           _object: JsValueRef;
           out data: Pointer;
           out arrayType: JsTypedArrayType;
-          out elementLength: Cardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out elementLength: Cardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets an object's indexed properties to external data. The external data will be used as back
@@ -1689,7 +1689,7 @@ type
           _object: JsValueRef;
           data: Pointer;
           arrayType: JsTypedArrayType;
-          elementLength: Cardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          elementLength: Cardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Compare two JavaScript values for equality.
@@ -1711,7 +1711,7 @@ type
   function JsEquals(
           object1: JsValueRef;
           object2: JsValueRef;
-          out result: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Compare two JavaScript values for strict equality.
@@ -1733,7 +1733,7 @@ type
   function JsStrictEquals(
           object1: JsValueRef;
           object2: JsValueRef;
-          out result: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether an object is an external object.
@@ -1745,7 +1745,7 @@ type
   /// </returns>
   function JsHasExternalData(
           _object: JsValueRef;
-          out value: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out value: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Retrieves the data from an external object.
@@ -1760,7 +1760,7 @@ type
   /// </returns>
   function JsGetExternalData(
           _object: JsValueRef;
-          out externalData: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out externalData: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the external data on an external object.
@@ -1775,7 +1775,7 @@ type
   /// </returns>
   function JsSetExternalData(
           _object: JsValueRef;
-          externalData: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          externalData: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript array object.
@@ -1790,7 +1790,7 @@ type
   /// </returns>
   function JsCreateArray(
           length: Cardinal;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript ArrayBuffer object.
@@ -1807,7 +1807,7 @@ type
   /// </returns>
   function JsCreateArrayBuffer(
           byteLength: Cardinal;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript ArrayBuffer object to access external memory.
@@ -1826,7 +1826,7 @@ type
           byteLength: Cardinal;
           finalizeCallback: JsFinalizeCallback;
           callbackState: Pointer;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript typed array object.
@@ -1863,7 +1863,7 @@ type
           baseArray: JsValueRef;
           byteOffset: Cardinal;
           elementLength: Cardinal;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a Javascript DataView object.
@@ -1888,7 +1888,7 @@ type
           arrayBuffer: JsValueRef;
           byteOffset: Cardinal;
           byteLength: Cardinal;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Obtains frequently used properties of a typed array.
@@ -1906,7 +1906,7 @@ type
           arrayType: PJsTypedArrayType;
           arrayBuffer: PJsValueRef;
           byteOffset: PCardinal;
-          byteLength: PCardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          byteLength: PCardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Obtains the underlying memory storage used by an <c>ArrayBuffer</c>.
@@ -1924,7 +1924,7 @@ type
   function JsGetArrayBufferStorage(
           arrayBuffer: JsValueRef;
           out buffer: ChakraBytePtr;
-          out bufferLength: Cardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out bufferLength: Cardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Obtains the underlying memory storage used by a typed array.
@@ -1948,7 +1948,7 @@ type
           out buffer: ChakraBytePtr;
           out bufferLength: Cardinal;
           out arrayType: JsTypedArrayType;
-          out elementSize: Integer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out elementSize: Integer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Obtains the underlying memory storage used by a DataView.
@@ -1966,7 +1966,7 @@ type
   function JsGetDataViewStorage(
           dataView: JsValueRef;
           out buffer: ChakraBytePtr;
-          out bufferLength: Cardinal): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out bufferLength: Cardinal): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Invokes a function.
@@ -1986,7 +1986,7 @@ type
           _function: JsValueRef;
           arguments: PJsValueRef;
           argumentCount: Word;
-          result: PJsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          result: PJsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Invokes a function as a constructor.
@@ -2005,7 +2005,7 @@ type
           _function: JsValueRef;
           arguments: PJsValueRef;
           argumentCount: Word;
-          out result: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript function.
@@ -2024,7 +2024,7 @@ type
   function JsCreateFunction(
           nativeFunction: JsNativeFunction;
           callbackState: Pointer;
-          out _function: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _function: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript function with name.
@@ -2045,7 +2045,7 @@ type
           name: JsValueRef;
           nativeFunction: JsNativeFunction;
           callbackState: Pointer;
-          out _function: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out _function: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript error object
@@ -2060,7 +2060,7 @@ type
   /// </returns>
   function JsCreateError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript RangeError error object
@@ -2075,7 +2075,7 @@ type
   /// </returns>
   function JsCreateRangeError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript ReferenceError error object
@@ -2090,7 +2090,7 @@ type
   /// </returns>
   function JsCreateReferenceError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript SyntaxError error object
@@ -2105,7 +2105,7 @@ type
   /// </returns>
   function JsCreateSyntaxError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript TypeError error object
@@ -2120,7 +2120,7 @@ type
   /// </returns>
   function JsCreateTypeError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Creates a new JavaScript URIError error object
@@ -2135,7 +2135,7 @@ type
   /// </returns>
   function JsCreateURIError(
           _message: JsValueRef;
-          out error: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out error: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Determines whether the runtime of the current context is in an exception state.
@@ -2163,7 +2163,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsHasException(
-          out hasException: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out hasException: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Returns the exception that caused the runtime of the current context to be in the
@@ -2186,7 +2186,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsGetAndClearException(
-          out exception: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out exception: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets the runtime of the current context to an exception state.
@@ -2207,7 +2207,7 @@ type
   ///     JsNoError if the engine was set into an exception state, a failure code otherwise.
   /// </returns>
   function JsSetException(
-          exception: JsValueRef): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          exception: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Suspends script execution and terminates any running scripts in a runtime.
@@ -2231,7 +2231,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsDisableRuntimeExecution(
-          runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Enables script execution in a runtime.
@@ -2245,7 +2245,7 @@ type
   ///     The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
   /// </returns>
   function JsEnableRuntimeExecution(
-          runtime: JsRuntimeHandle): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          runtime: JsRuntimeHandle): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Returns a value that indicates whether script execution is disabled in the runtime.
@@ -2257,7 +2257,7 @@ type
   /// </returns>
   function JsIsRuntimeExecutionDisabled(
           runtime: JsRuntimeHandle;
-          out isDisabled: bool): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          out isDisabled: bool): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   /// <summary>
   ///     Sets a promise continuation callback function that is called by the context when a task
@@ -2277,11 +2277,11 @@ type
   /// </returns>
   function JsSetPromiseContinuationCallback(
           promiseContinuationCallback: JsPromiseContinuationCallback;
-          callbackState: Pointer): JsErrorCode; {$ifdef WINDOWS}stdcall;{$else}cdecl;{$endif}
+          callbackState: Pointer): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
 implementation
 
-{$ifdef MSWINDOWS}
+{$IFDEF MSWINDOWS}
 const
   chakracore = 'chakracore.dll';
 {$endif}

@@ -28,12 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  Windows, SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,  FHIR.Support.Fpc,
   FHIR.Database.Logging, FHIR.Database.Dialects;
 
@@ -1332,7 +1333,7 @@ begin
     end;
     try
       if FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError then
-        raise EDBException.Create('['+Name+'] FHIR.Database.Manager Wait Failed - ' + ErrorAsString(GetLastError));
+        raise EDBException.Create('['+Name+'] FHIR.Database.Manager Wait Failed' {$IFDEF WINDOWS}+' - '+ ErrorAsString(GetLastError){$ENDIF});
     finally
       FLock.Lock;
       try

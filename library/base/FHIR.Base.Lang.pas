@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -139,11 +139,12 @@ var
   GMessages : TFslMap<TFHIRMessage>;
 
 Function LoadSource : TBytes;
-{$IFDEF MACOS}
+{$IFDEF OSX}
 begin
   result := FHIR.Support.Stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
 end;
-{$ELSE}
+{$ENDIF}
+{$IFDEF WINDOWS}
 var
   LRes : TAfsResourceVolume;
   LHnd : TAfsHandle;
@@ -160,6 +161,11 @@ begin
   finally
     LRes.Free;
   end;
+end;
+{$ENDIF}
+{$IFDEF LINUX}
+begin
+  result := FHIR.Support.Stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
 end;
 {$ENDIF}
 

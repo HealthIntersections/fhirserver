@@ -28,21 +28,34 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  Windows, SysUtils, Classes,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Logging;
 
 type
+  TFHIRTelnetServer = class;
+
+  TTelnetSession = class (TFslObject)
+  private
+    FServer : TFHIRTelnetServer;
+    FId : Integer;
+  public
+    destructor Destroy; override;
+    procedure SendMsg(s : String);
+  end;
+
   TTelnetThreadHelper = class (TFslObject)
   Private
     FContext: TIdContext;
     FNextPing : TDateTime;
     FHasSent : boolean;
+    FEnhanced : boolean;
     procedure execute;
     procedure processCommand(s : String);
     procedure send(s : String);
@@ -53,8 +66,6 @@ type
     function link : TTelnetThreadHelper; overload;
   end;
 
-  TFHIRTelnetServer = class;
-
   TFHIRTelnetServerThread = class (TFslThread)
   private
     FServer : TFHIRTelnetServer;
@@ -62,7 +73,7 @@ type
     Procedure Execute; override;
   end;
 
-  TFHIRTelnetServer = class(TFslObject)
+  TFHIRTelnetServer = class (TFslObject)
   Private
     FServer: TIdTelnetServer;
     FLock : TFslLock;
@@ -71,6 +82,7 @@ type
     FLog : TStringList;
     FWelcomeMsg : String;
     FThread : TFHIRTelnetServerThread;
+    FLastId : integer;
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
     procedure doLog(msg : String);
@@ -78,7 +90,10 @@ type
   Public
     constructor Create(port: Integer; WelcomeMsg : String);
     destructor Destroy; Override;
+    function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
+
+    function makeSession(desc : String) : TTelnetSession;
   end;
 
 implementation
@@ -172,6 +187,31 @@ begin
   end;
 end;
 
+function TFHIRTelnetServer.Link: TFHIRTelnetServer;
+begin
+  result := TFHIRTelnetServer(inherited Link);
+end;
+
+function TFHIRTelnetServer.makeSession(desc: String): TTelnetSession;
+begin
+  result := TTelnetSession.create;
+  try
+    result.FServer := self.link;
+    FLock.Lock;
+    try
+      inc(FLastId);
+      result.FId := FLastId;
+    finally
+      FLock.Unlock;
+    end;
+    doLog('$@session-'+inttostr(result.FId)+': @start|'+inttostr(GetTickCount64)+'|'+desc);
+    result.link;
+  finally
+    result.free;
+  end;
+
+end;
+
 procedure TFHIRTelnetServer.TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
 begin
   If (username = 'console') and (password = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1') and (AThread.Binding.PeerIP = '127.0.0.1') then
@@ -250,7 +290,7 @@ end;
 
 procedure TTelnetThreadHelper.ping;
 begin
-  if now > FNextPing then
+  if (now > FNextPing) then
   begin
     send('$@ping: '+inttostr(threadCount)+' threads, '+MemoryStatus);
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
@@ -259,13 +299,19 @@ end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
 begin
-  send('Unrecognised command '+s);
+  if (s = '@console') then
+    FEnhanced := true
+  else
+    send('Unrecognised command '+s);
 end;
 
 procedure TTelnetThreadHelper.send(s: String);
 begin
-  FContext.Connection.Socket.WriteLn(s);
-  FHasSent := true;
+  if FEnhanced or not s.StartsWith('$@') then
+  begin
+    FContext.Connection.Socket.WriteLn(s);
+    FHasSent := true;
+  end;
 end;
 
 { TFHIRTelnetServerThread }
@@ -281,6 +327,20 @@ begin
     end;
     sleep(50);
   end;
+end;
+
+{ TTelnetSession }
+
+destructor TTelnetSession.Destroy;
+begin
+  FServer.doLog('$@session-'+inttostr(FId)+': @stop|'+inttostr(GetTickCount64));
+  FServer.Free;
+  inherited;
+end;
+
+procedure TTelnetSession.SendMsg(s: String);
+begin
+  FServer.doLog('$@session-'+inttostr(FId)+': @msg|'+s);
 end;
 
 end.
