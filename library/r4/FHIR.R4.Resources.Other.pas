@@ -40,8 +40,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang,
-  FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources.Base, FHIR.R4.Resources.Canonical;
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.R4.Types, FHIR.R4.Resources.Base, FHIR.R4.Resources.Canonical;
 
 Type
 {$IFDEF FHIR_PARAMETERS}

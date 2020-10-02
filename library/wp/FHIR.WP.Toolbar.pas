@@ -1136,7 +1136,7 @@ Begin
       Begin
         For iStyleIndex := 0 To FWordProcessor.WorkingStyles.Count - 1 Do
           If FWordProcessor.WorkingStyles[iStyleIndex].HasParagraphAspect Then
-            FStyleComboBox.Items.Add(FWordProcessor.WorkingStyles[iStyleIndex].Name + ' ¶')
+            FStyleComboBox.Items.Add(FWordProcessor.WorkingStyles[iStyleIndex].Name + ' 6')
           Else
             FStyleComboBox.Items.Add(FWordProcessor.WorkingStyles[iStyleIndex].Name);
       End;
@@ -1532,7 +1532,7 @@ Begin
   If FStyleComboBox.Items.IndexOf(FStyleComboBox.Text) > -1 Then
   Begin
     sStyle := FStyleComboBox.Text;
-    if StringEndsWith(sStyle, ' ¶') Then
+    if StringEndsWith(sStyle, ' 6') Then
       SetLength(sStyle, length(sStyle)-2);
     FWordProcessor.PrimaryRange.Style := sStyle;
     FWordProcessor.SetFocus;

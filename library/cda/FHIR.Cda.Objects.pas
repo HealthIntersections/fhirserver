@@ -2151,7 +2151,7 @@ Type
     Property HasInversionInd : boolean read FHasInversionInd;
     {
        The entryRelationship.contextConductionInd differs from the otherwise common
-       use of this attribute (see CDA Context (§ 4.4 )) in that in all other cases
+       use of this attribute (see CDA Context (' 4.4 )) in that in all other cases
        where this attribute is used, the value is fixed at "true", whereas here the
        value is defaulted to "true", and can be changed to "false" when referencing
        an entry in the same document. Setting the context conduction to false when

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  SysUtils,
+  SysUtils, Generics.Defaults,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Ucum.Handlers, FHIR.Ucum.Base;
 
@@ -745,6 +745,18 @@ begin
   end;
 end;
 
+{ TUcumUnitSorter }
+
+Type
+  TUcumUnitSorter = class (TInterfacedObject, IComparer<TUcumCanonicalUnit>)
+  public
+    function compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} l, r : TUcumCanonicalUnit) : integer;
+  end;
+
+function TUcumUnitSorter.compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} l, r : TUcumCanonicalUnit) : integer;
+begin
+  result := l.Base.Code.compareTo(r.Base.Code);
+end;
 
 { TUcumConverter }
 
@@ -783,12 +795,12 @@ begin
     result.Value := TFslDecimal.Create(1);
     debug(indent, 'canonicalise', term);
     divb := false;
-		t := term;
-		while (t <> nil) do
+    t := term;
+    while (t <> nil) do
     begin
-    	if (t.Component is TUcumTerm) then
+      if (t.Component is TUcumTerm) then
       begin
-    		temp := normalise(indent+'  ', t.Component as TUcumTerm);
+        temp := normalise(indent+'  ', t.Component as TUcumTerm);
         try
           if (divb) then
           begin
@@ -804,18 +816,18 @@ begin
         finally
           temp.Free;
         end;
-    	end
+      end
       else if (t.Component is TUcumFactor) then
       begin
-    		if (divb) then
-    			result.divideValue((t.Component as TUcumFactor).Factor)
-    		else
-    			result.multiplyValue((t.Component as TUcumFactor).Factor);
-    	end
+        if (divb) then
+          result.divideValue((t.Component as TUcumFactor).Factor)
+        else
+          result.multiplyValue((t.Component as TUcumFactor).Factor);
+      end
       else if (t.Component is TUcumSymbol) then
       begin
-    		o := t.Component as TUcumSymbol;
-  			temp := normalise(indent, o);
+        o := t.Component as TUcumSymbol;
+        temp := normalise(indent, o);
         try
           if (divb) then
           begin
@@ -831,45 +843,39 @@ begin
         finally
           temp.Free;
         end;
-    	end;
-			divb := t.Operator = DIVISION;
-			t := t.term;
-		end;
+      end;
+      divb := t.Operator = DIVISION;
+      t := t.term;
+    end;
 
-		debug(indent, 'collate', Result);
+    debug(indent, 'collate', Result);
 
-		for i := result.Units.Count - 1 downto 0 do
+    for i := result.Units.Count - 1 downto 0 do
     begin
-			sf := result.Units[i];
-  		for j := i-1 downto 0 do
+      sf := result.Units[i];
+      for j := i-1 downto 0 do
       begin
-				st := result.Units[j];
-				if (st.Base = sf.Base) then
+        st := result.Units[j];
+        if (st.Base = sf.Base) then
         begin
-					st.exponent := sf.exponent+st.exponent;
-					result.Units.Delete(i);
-					break;
-				end;
-			end;
-		end;
+          st.exponent := sf.exponent+st.exponent;
+          result.Units.Delete(i);
+          break;
+        end;
+      end;
+    end;
 
-		for i := result.Units.Count - 1 downto 0 do
+    for i := result.Units.Count - 1 downto 0 do
     begin
-			sf := result.Units[i];
-			if (sf.exponent = 0) then
-				result.Units.delete(i);
-		end;
+      sf := result.Units[i];
+      if (sf.exponent = 0) then
+      result.Units.delete(i);
+    end;
 
-		debug(indent, 'sort', result);
-    {$IFDEF FPC}
-    raise Exception.create('not done yet');
-    {$ELSE}
-    result.Units.Sort(function (const L, R: TUcumCanonicalUnit): Integer begin
-    	 result := l.Base.Code.compareTo(r.Base.Code);
-      end);
-    {$ENDIF}
-		debug(indent, 'done', result);
-		result.Link;
+    debug(indent, 'sort', result);
+    result.Units.Sort(TUcumUnitSorter.create as TUcumUnitSorter);
+    debug(indent, 'done', result);
+    result.Link;
   finally
     result.Free;
   end;
@@ -877,7 +883,7 @@ end;
 
 Procedure TUcumConverter.debug(indent, state : String; oUnit : TUcumTerm);
 begin
-//		System.out.println(indent+state+": "+new ExpressionComposer().compose(unit));
+//	writeln(indent+state+': '+TUcumExpressionComposer.compose(oUnit));
 end;
 
 Procedure TUcumConverter.debug(indent, state : String; can : TUcumCanonical);
@@ -891,10 +897,10 @@ var
   c : TUcumCanonicalUnit;
   i : integer;
 begin
-   result := TUcumCanonical.Create;
+  result := TUcumCanonical.Create;
   try
     result.Value := TFSLDecimal.create(1);
-  	if (sym.Unit_ is TUcumBaseUnit) then
+    if (sym.Unit_ is TUcumBaseUnit) then
     begin
   		result.Units.add(TUcumCanonicalUnit.create(sym.Unit_.Link as TUcumBaseUnit, sym.exponent));
   	end

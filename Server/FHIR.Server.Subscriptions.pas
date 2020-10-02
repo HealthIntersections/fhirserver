@@ -292,7 +292,6 @@ end;
 destructor TSubscriptionManager.Destroy;
 begin
   wsWakeAll;
-  FSubscriptionTopics.Free;
   FSemaphores.Free;
   FSubscriptionTrackers.Free;
   FSubscriptionTopics.Free;

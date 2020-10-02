@@ -1,4 +1,4 @@
-﻿unit FHIR.Tx.Iso4217;
+unit FHIR.Tx.Iso4217;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

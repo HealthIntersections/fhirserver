@@ -172,7 +172,7 @@ procedure TAreaCodeServices.load;
   end;
 begin
   doload('004', 'Afghanistan', 'AFG', 'country');
-  doload('248', 'Åland Islands', 'ALA', 'country');
+  doload('248', 'Eland Islands', 'ALA', 'country');
   doload('008', 'Albania', 'ALB', 'country');
   doload('012', 'Algeria', 'DZA', 'country');
   doload('016', 'American Samoa', 'ASM', 'country');
@@ -223,10 +223,10 @@ begin
   doload('178', 'Congo', 'COG', 'country');
   doload('184', 'Cook Islands', 'COK', 'country');
   doload('188', 'Costa Rica', 'CRI', 'country');
-  doload('384', 'Côte d''Ivoire', 'CIV', 'country');
+  doload('384', 'Ctte d''Ivoire', 'CIV', 'country');
   doload('191', 'Croatia', 'HRV', 'country');
   doload('192', 'Cuba', 'CUB', 'country');
-  doload('531', 'Curaçao', 'CUW', 'country');
+  doload('531', 'Curagao', 'CUW', 'country');
   doload('196', 'Cyprus', 'CYP', 'country');
   doload('203', 'Czech Republic', 'CZE', 'country');
   doload('408', 'Democratic People''s Republic of Korea', 'PRK', 'country');
@@ -344,11 +344,11 @@ begin
   doload('634', 'Qatar', 'QAT', 'country');
   doload('410', 'Republic of Korea', 'KOR', 'country');
   doload('498', 'Republic of Moldova', 'MDA', 'country');
-  doload('638', 'Réunion', 'REU', 'country');
+  doload('638', 'Riunion', 'REU', 'country');
   doload('642', 'Romania', 'ROU', 'country');
   doload('643', 'Russian Federation', 'RUS', 'country');
   doload('646', 'Rwanda', 'RWA', 'country');
-  doload('652', 'Saint Barthélemy', 'BLM', 'country');
+  doload('652', 'Saint Barthilemy', 'BLM', 'country');
   doload('654', 'Saint Helena', 'SHN', 'country');
   doload('659', 'Saint Kitts and Nevis', 'KNA', 'country');
   doload('662', 'Saint Lucia', 'LCA', 'country');

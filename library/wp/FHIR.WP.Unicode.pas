@@ -1,4 +1,4 @@
-﻿unit FHIR.WP.Unicode;
+o;?unit FHIR.WP.Unicode;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -129,7 +129,8 @@ Type
      Unicode_Block_Playing_Cards, Unicode_Block_Enclosed_Alphanumeric_Supplement, Unicode_Block_Enclosed_Ideographic_Supplement, Unicode_Block_Miscellaneous_Symbols_And_Pictographs, Unicode_Block_Emoticons,
      Unicode_Block_Transport_And_Map_Symbols, Unicode_Block_Alchemical_Symbols, Unicode_Block_CJK_Unified_Ideographs_Extension_B, Unicode_Block_CJK_Unified_Ideographs_Extension_C, Unicode_Block_CJK_Unified_Ideographs_Extension_D,
      Unicode_Block_CJK_Compatibility_Ideographs_Supplement, Unicode_Block_Tags, Unicode_Block_Variation_Selectors_Supplement, Unicode_Block_Supplementary_Private_Use_Area_A, Unicode_Block_Supplementary_Private_Use_Area_B});
-  TUnicodeBlockSet = set of TUnicodeBlock;
+
+  TUnicodeBlockSet = set of TUnicodeBlock;
 
 Const
   UNICODE_BLOCK_NAMES : Array [TUnicodeBlock] of String = (
@@ -226,8 +227,10 @@ Const
     '1F680..1F6FF', '1F700..1F77F', '20000..2A6DF', '2A700..2B73F', '2B740..2B81F',
     '2F800..2FA1F', 'E0000..E007F', 'E0100..E01EF', 'F0000..FFFFF', '100000..10FFFF'});
 
-Function GetBlocksForFont(fontName : String) : TUnicodeBlockSet;
-Function GetCharsForBlock(block : TUnicodeBlock) : TCharArray; overload;
+
+Function GetBlocksForFont(fontName : String) : TUnicodeBlockSet;
+
+Function GetCharsForBlock(block : TUnicodeBlock) : TCharArray; overload;
 Function GetCharsForBlock(block : TUnicodeBlock; fontName : String; filter : String) : TCharArray; overload;
 
 Function GetBlockForChar(ch : Char) : TUnicodeBlock;

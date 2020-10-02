@@ -890,35 +890,35 @@ var
 begin
   for i := 1 to Length(VSQLValue) do
     begin
-    if VSQLValue[i] = #145 then  // we found ‘ (Left Single Quotation Mark)
+    if VSQLValue[i] = #145 then  // we found  (Left Single Quotation Mark)
       begin
       VSQLValue[i] := '''';
       end
-    else if VSQLValue[i] = #146 then // we found ’ (Right Single Quotation Mark)
+    else if VSQLValue[i] = #146 then // we found  (Right Single Quotation Mark)
       begin
       VSQLValue[i] := '''';
       end
-    else if VSQLValue[i] = #147 then // we found “ (Left Double Quotation Mark)
+    else if VSQLValue[i] = #147 then // we found  (Left Double Quotation Mark)
       begin
       VSQLValue[i] := '"';
       end
-    else if VSQLValue[i] = #148 then // we found ” (Right Double Quotation Mark)
+    else if VSQLValue[i] = #148 then // we found  (Right Double Quotation Mark)
       begin
       VSQLValue[i] := '"';
       end
-    else if VSQLValue[i] = #150 then // we found – (En Dash)
+    else if VSQLValue[i] = #150 then // we found  (En Dash)
       begin
       VSQLValue[i] := '-';
       end
-    else if VSQLValue[i] = #151 then // we found — (Em Dash)
+    else if VSQLValue[i] = #151 then // we found  (Em Dash)
       begin
       VSQLValue[i] := '-';
       end
-    else if VSQLValue[i] = #180 then // we found ´ (Acute Accent)
+    else if VSQLValue[i] = #180 then // we found 4 (Acute Accent)
       begin
       VSQLValue[i] := ''''
       end
-    else if VSQLValue[i] = #189 then // we found ½ (Vulgar Fraction One Half)
+    else if VSQLValue[i] = #189 then // we found = (Vulgar Fraction One Half)
       begin
       LTmpStr := Copy(VSQLValue, 1, i - 1);
       LTmpStr1 := LTmpStr;
@@ -932,27 +932,27 @@ begin
       VSQLValue := LTmpStr1;
       Break;
       end
-    else if VSQLValue[i] = #196 then // we found Ä (Latin Capital Letter A with Diaeresis)
+    else if VSQLValue[i] = #196 then // we found D (Latin Capital Letter A with Diaeresis)
       begin
       VSQLValue[i] := 'A';
       end
-    else if VSQLValue[i] = #220 then // we found Ü (Latin Capital Letter U with Diaeresis)
+    else if VSQLValue[i] = #220 then // we found \ (Latin Capital Letter U with Diaeresis)
       begin
       VSQLValue[i] := 'U';
       end
-    else if VSQLValue[i] = #223 then // we found ß (Latin Small Letter Sharp S)
+    else if VSQLValue[i] = #223 then // we found _ (Latin Small Letter Sharp S)
       begin
       VSQLValue[i] := 's';
       end
-    else if VSQLValue[i] = #228 then // we found ä (Latin Small Letter A with Diaeresis)
+    else if VSQLValue[i] = #228 then // we found d (Latin Small Letter A with Diaeresis)
       begin
       VSQLValue[i] := 'a';
       end
-    else if VSQLValue[i] = #246 then // we found ö (Latin Small Letter O with Diaeresis)
+    else if VSQLValue[i] = #246 then // we found v (Latin Small Letter O with Diaeresis)
       begin
       VSQLValue[i] := 'o';
       end
-    else if VSQLValue[i] = #252 then // we found ü (Latin Small Letter U with Diaeresis)
+    else if VSQLValue[i] = #252 then // we found | (Latin Small Letter U with Diaeresis)
       begin
       VSQLValue[i] := 'u'
       end;

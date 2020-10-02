@@ -1,10 +1,10 @@
 object ExceptionHandlerDialog: TExceptionHandlerDialog
   Left = 673
   Top = 441
-  Width = 338
-  Height = 226
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Unhandled Exception'
+  ClientHeight = 187
+  ClientWidth = 322
   Color = clBtnFace
   Font.Charset = OEM_CHARSET
   Font.Color = clWindowText
@@ -33,27 +33,34 @@ object ExceptionHandlerDialog: TExceptionHandlerDialog
     Left = 0
     Top = 36
     Width = 322
-    Height = 116
+    Height = 115
     Align = alClient
     TabOrder = 1
+    DesignSize = (
+      322
+      115)
     object eMessage: TLabel
       Left = 10
       Top = 11
       Width = 293
-      Height = 94
+      Height = 93
       Anchors = [akLeft, akTop, akRight, akBottom]
       AutoSize = False
       Caption = 'eMessage'
       WordWrap = True
+      ExplicitHeight = 94
     end
   end
   object Panel3: TPanel
     Left = 0
-    Top = 152
+    Top = 151
     Width = 322
     Height = 36
     Align = alBottom
     TabOrder = 2
+    DesignSize = (
+      322
+      36)
     object Button1: TButton
       Left = 232
       Top = 7

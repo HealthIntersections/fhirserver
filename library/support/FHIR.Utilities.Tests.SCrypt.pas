@@ -620,12 +620,12 @@ begin
    FillChar(buff[0], Length(buff) , 0);
 	tb(buff[0], Length(buff), '541b3e9d aa09b20b f85fa273 e5cbd3e8 0185aa4e c298e765 db87742b 70138a53');
 
-	//#8) 1000 bytes of 0x41 �A�
+	//#8) 1000 bytes of 0x41 o?=Ao?=
 	SetLength(buff, 1000);
    FillChar(buff[0], Length(buff), $41);
 	tb(buff[0], Length(buff), 'c2e68682 3489ced2 017f6059 b8b23931 8b6364f6 dcd835d0 a519105a 1eadd6e4');
 
-	//#9) 1005 bytes of 0x55 �U�
+	//#9) 1005 bytes of 0x55 o?=Uo?=
 	SetLength(buff, 1005);
    FillChar(buff[0], Length(buff), $55);
 	tb(buff[0], Length(buff), 'f4d62dde c0f3dd90 ea1380fa 16a5ff8d c4c54b21 740650f2 4afc4120 903552b0');
@@ -647,7 +647,7 @@ begin
       FreeMem(data);
    end;
 
-	//#11) 0x20000000 (536,870,912) bytes of 0x5a �Z�
+	//#11) 0x20000000 (536,870,912) bytes of 0x5a o?=Zo?=
 	GetMem(data, $20000000);
 	try
 	   FillChar(data^, $20000000, $5a);
@@ -665,7 +665,7 @@ begin
 		FreeMem(data);
    end;
 
-	//#13) 0x6000003e (1,610,612,798) bytes of 0x42 �B�
+	//#13) 0x6000003e (1,610,612,798) bytes of 0x42 o?=Bo?=
 	GetMem(data, $6000003e);
 	try
 	   FillChar(data^, $6000003e, $420);

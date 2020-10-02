@@ -28,7 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
 {$I fhir.inc}
 
 interface
@@ -168,18 +167,35 @@ begin
 end;
 
 function getParam(name : String; var res : String) : boolean;
+var
+  i : integer;
 begin
   {$IFDEF FPC}
-  raise Exception.create('not implemtnered');
+  result := false;
+  for i := 1 to paramCount - 1 do
+  begin
+    if paramStr(i) = '-'+name then
+    begin
+      res := paramStr(i+1);
+      exit(true);
+    end;
+  end;
   {$ELSE}
   result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
   {$ENDIF}
 end;
 
 function hasParam(name : String) : boolean;
+var
+  i : integer;
 begin
   {$IFDEF FPC}
-  raise Exception.create('not implemtnered');
+  result := false;
+  for i := 1 to paramCount  do
+  begin
+    if paramStr(i) = '-'+name then
+      exit(true);
+  end;
   {$ELSE}
   result := FindCmdLineSwitch(name);
   {$ENDIF}
@@ -221,7 +237,6 @@ begin
       svcName := 'FHIRServer';
     if not getParam('title', dispName) then
       dispName := 'FHIR Server';
-    iniName := iniName.replace('.dstu', '.dev');
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then

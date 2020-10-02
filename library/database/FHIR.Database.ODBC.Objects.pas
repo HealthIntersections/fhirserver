@@ -41,7 +41,7 @@ interface
 
 Uses
   SysUtils, Classes, FHIR.Database.ODBC.Headers,
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Support.Fpc,
   FHIR.Database.Dialects;
 
 const
@@ -2895,6 +2895,7 @@ begin
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
     {$ELSE}
+    raise Exception.Create('This needs debugging');
     getMem(result, (length(s)+1) * 2);
     fillChar(result^, (length(s)+1)*2, 0);
     move(s[1], result^, length(s) * 2);
@@ -2903,18 +2904,22 @@ begin
 end;
 
 function odbcPWideChar(s : String) : PWideChar; overload;
+var
+  u : WideString;
 begin
   if s = '' then
     result := nil
   else
   begin
     {$IFDEF OSX}
+    raise Exception.Create('This needs debugging');
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
     {$ELSE}
-    getMem(result, (length(s)+1) * 2);
-    fillChar(result^, (length(s)+1)*2, 0);
-    move(s[1], result^, length(s) * 2);
+    u := strToWideString(s);
+    getMem(result, (length(u)+1) * 2);
+    fillChar(result^, (length(u)+1)*2, 0);
+    move(u[1], result^, length(u) * 2);
     {$ENDIF}
   end;
 end;

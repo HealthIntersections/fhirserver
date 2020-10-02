@@ -146,7 +146,7 @@ type
 implementation
 
 uses
-  FHIR.R4.Utilities, FHIR.R4.ParserBase, FHIR.R4.Json, FHIR.Base.Utilities;
+  FHIR.R4.Utilities, FHIR.R4.Json, FHIR.Base.Utilities;
 
 { TFHIRWorkerContext }
 

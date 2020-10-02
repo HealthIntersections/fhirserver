@@ -204,12 +204,12 @@ Type
     {
     The value as 'Time',
     A string of characters of the format HHMMSS.FRAC;
-    where HH contains hours (range “00” – “23”),
-    MM contains minutes (range “00” – “59”),
-    '+'SS contains seconds (range “00” –”59”),
+    where HH contains hours (range 00  23),
+    MM contains minutes (range 00  59),
+    '+'SS contains seconds (range 00 59),
     and FRAC contains a fractional part of a second as small as one millionth of a second.
 
-    Example: “183200.00” stands for 6:32 PM.
+    Example: 183200.00 stands for 6:32 PM.
     }
     Property AsTM : TDateTime read GetAsTM write SetAsTM;
 
@@ -219,7 +219,7 @@ Type
     The components of this string, from left to right, are YYYY = Year,
     '+'MM = Month, DD = Day, HH = Hour, MM = Minute, SS = Second, FFFFFF = Fractional Second.
 
-    Example: “20050812183000.00” stands for 6:30 PM, August 12, 2005');
+    Example: 20050812183000.00 stands for 6:30 PM, August 12, 2005');
     }
     Property AsDT : TDateTime read GetAsDT write SetAsDT;
 
@@ -233,7 +233,7 @@ Type
 
     {
     The value as 'Integer String',
-    A string of characters representing an integer. Example: “-1234567”.
+    A string of characters representing an integer. Example: -1234567.
     }
     Property AsIS : AnsiString read GetAsIS write SetAsIS;
 
@@ -284,7 +284,7 @@ Type
 // TODO: Hide as not sure how to convert records into IDL types
     {
     The value as 'Person Name',
-    Person’s name, with a caret character (^) used as a name delimiter
+    Persons name, with a caret character (^) used as a name delimiter
     }
     Property AsPN : TDicomPN read GetAsPN write SetAsPN;
 
@@ -297,7 +297,7 @@ Type
 // TODO: Hide as not sure how to convert TBytes/TWords/TSingles into IDL types
     {
     The value as 'Other Byte String',
-    A string of bytes (“other” means not defined in any other VR).
+    A string of bytes (other means not defined in any other VR).
     }
     Property AsOB : TBytes read GetAsUN write SetAsUN;
 
@@ -1835,7 +1835,7 @@ type
       unambiguous identification of the type of
       implementation that last wrote the file in the
       event of interchange problems
-      Same value as used in Implementation iden­
+      Same value as used in Implementation iden-
       tification Item at association establishment
     }
     Function ImplementationClassUID : String; // (0002,0012)
@@ -1849,7 +1849,7 @@ type
 
     {
       The DICOM AET of the AE that wrote this
-      file’s content (or last updated it). If used, it
+      files content (or last updated it). If used, it
       allows the source of errors to be traced in the
       event of media interchange problems
       Same value as used in Calling AET at association establishment

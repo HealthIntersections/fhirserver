@@ -127,7 +127,7 @@ destructor TFHIRTelnetServer.Destroy;
 begin
   LogEvent := nil;
   try
-    FThread.Close;
+    FThread.closeOut;
     FThread.Free;
     FServer.Active := false;
     FServer.Free;
@@ -318,7 +318,7 @@ end;
 
 procedure TFHIRTelnetServerThread.Execute;
 begin
-  while Active do
+  while Not Terminated do
   begin
     try
       FServer.internalThread;

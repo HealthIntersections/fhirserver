@@ -20,7 +20,6 @@ object TextPresentationDialog: TTextPresentationDialog
     Height = 40
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 259
     DesignSize = (
       635
       40)
@@ -46,7 +45,6 @@ object TextPresentationDialog: TTextPresentationDialog
     BorderWidth = 6
     Caption = 'Panel2'
     TabOrder = 1
-    ExplicitHeight = 259
     object Memo1: TMemo
       Left = 6
       Top = 6
@@ -54,10 +52,6 @@ object TextPresentationDialog: TTextPresentationDialog
       Height = 284
       Align = alClient
       TabOrder = 0
-      ExplicitLeft = 168
-      ExplicitTop = 120
-      ExplicitWidth = 185
-      ExplicitHeight = 89
     end
   end
 end

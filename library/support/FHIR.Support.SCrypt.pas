@@ -1,4 +1,7 @@
-﻿unit FHIR.Support.SCrypt;
+unit FHIR.Support.SCrypt;
+
+{$I fhir.inc}
+
 
 (*
 	Sample Usage
@@ -185,8 +188,6 @@
 		{$DEFINE MSWINDOWS} //Delphi 5 didn't define MSWINDOWS back then. And there was no other platform
 	{$ENDIF}
 {$ENDIF}
-
-{$I fhir.inc}
 
 interface
 
@@ -916,7 +917,7 @@ begin
 
 	SetLength(Y, 128*r);
 
-	//X <- B[2*r-1]
+	//X <-B B[2*r-1]
 	//Copy last 64-byte block into X.
 	Move(B[64*(2*r-1)], X[0], 64);
 
@@ -1336,7 +1337,7 @@ begin
 	SetLength(T, 0); //to shut up the compiler's "Variable 'T' might not have been initialized". It's because secretly a return value is actually a var parameter.
 	while i < ParallelizationFactor do
 	begin
-		//B[i] <- ROMix(B[i])
+		//B[i] <-B ROMix(B[i])
 		blockIndex := i*blockSize;
 		T := Self.ROMix(B[blockIndex], blockSize, CostFactor);
 		Move(T[0], B[blockIndex], blockSize);

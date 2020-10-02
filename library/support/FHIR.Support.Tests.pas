@@ -1,4 +1,4 @@
-﻿unit FHIR.Support.Tests;
+o;?unit FHIR.Support.Tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -3997,8 +3997,9 @@ end;
 procedure TOSXTests.TestRemoveAccents;
 begin
   assertEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
-  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
-  assertEqual('Валерии Николаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
+  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aC!eC)iC-oC3C6uC:C< ACEC	IC
+OCCUCC'));
+  assertEqual('PP0P;P5Q P8P8 PP8P:P>P;P0P5P2P8Q P!PP PPPP', RemoveAccents('PP0P;P5Q P8P9 PP8P:P>P;P0P5P2P8Q P!PP PPPP'));
 end;
 
 procedure TOSXTests.TestTemp;

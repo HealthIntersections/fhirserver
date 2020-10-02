@@ -128,7 +128,7 @@ type
     procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
   end;
 
-  TFhirCodeSystemProviderFilterComparer = class (TInterfacedObject, IComparer<TFhirCodeSystemConceptMatch>)
+  TFhirCodeSystemProviderFilterSorter = class (TInterfacedObject, IComparer<TFhirCodeSystemConceptMatch>)
   public
     function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
   end;
@@ -293,9 +293,9 @@ begin
   FCodeSystem.id := value;
 end;
 
-{ TFhirCodeSystemProviderFilterComparer }
+{ TFhirCodeSystemProviderFilterSorter }
 
-function TFhirCodeSystemProviderFilterComparer.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
+function TFhirCodeSystemProviderFilterSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirCodeSystemConceptMatch): Integer;
 begin
   if right.FRating > left.FRating then
     result := 1
@@ -326,15 +326,8 @@ begin
 end;
 
 procedure TFhirCodeSystemProviderFilterContext.sort;
-var
-  comp : TFhirCodeSystemProviderFilterComparer;
 begin
-  comp := TFhirCodeSystemProviderFilterComparer.Create;
-  try
-    concepts.sort(comp);
-  finally
-    comp.free;
-  end;
+  concepts.sort(TFhirCodeSystemProviderFilterSorter.Create as TFhirCodeSystemProviderFilterSorter);
 end;
 
 { TCodeSystemAdornment }

@@ -1,4 +1,4 @@
-﻿unit FHIR.Base.PathDebugger;
+o;?unit FHIR.Base.PathDebugger;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -621,9 +621,9 @@ begin
     vtExpressions.Invalidate;
     l := trunc(((tc-FStartLast)/FFreq)*1000000);
     if FCurrentIsOp then
-      Log(FCurrent.nodeOpName+' ('+inttostr(l)+'μs)')
+      Log(FCurrent.nodeOpName+' ('+inttostr(l)+'N<s)')
     else
-      Log(FCurrent.summary()+' ('+inttostr(l)+'μs)');
+      Log(FCurrent.summary()+' ('+inttostr(l)+'N<s)');
 
     FMode := emWaiting;
     while FMode = emWaiting do

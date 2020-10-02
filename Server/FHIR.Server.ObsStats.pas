@@ -301,7 +301,6 @@ var
   obs : TObservation;
   ck, u, cu : integer;
   AllSameUnit, AllSameCanonicalUnit : boolean;
-  comp : TObservationStatsComparer;
 begin
   ck := lookupConcept(c);
   if ck = 0 then
@@ -333,12 +332,7 @@ begin
   end;
   if not FValidData.Empty then
   begin
-    comp := TObservationStatsComparer.create;
-    try
-      FValidData.Sort(comp);
-    finally
-      comp.free;
-    end;
+    FValidData.Sort(TObservationStatsComparer.Create as TObservationStatsComparer);
     AllSameUnit := true;
     AllSameCanonicalUnit := true;
     u := FValidData[0].vunit;

@@ -30,7 +30,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
-
 interface
 
 uses

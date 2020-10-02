@@ -135,6 +135,8 @@ Type
 
   TFslThreadDelegate = Procedure Of Object;
 
+  { TFslThread }
+
   TFslThread = Class (TFslObject)
     Private
       FInternal : TThread; // Handle to the Windows thread.
@@ -157,7 +159,10 @@ Type
 
       Procedure Open;
       Procedure Close;
+      Procedure CloseOut;
       Procedure Stop; Virtual;
+
+      function Terminated : boolean;
 
       Procedure Wait;
       Function WaitTimeout(iTimeout : Cardinal) : Boolean;
@@ -548,7 +553,7 @@ type
     constructor Create(thread : TFslThread);
   end;
 
-Constructor TFslThread.Create;
+constructor TFslThread.Create;
 Begin
   Inherited;
 
@@ -556,38 +561,37 @@ Begin
 End;
 
 
-Destructor TFslThread.Destroy;
+destructor TFslThread.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TFslThread.Link: TFslThread;
+function TFslThread.Link: TFslThread;
 Begin
   Result := TFslThread(Inherited Link);
 End;
 
 
-Procedure TFslThread.Execute;
+procedure TFslThread.Execute;
 Begin
   If Assigned(FDelegate) Then
     FDelegate;
 End;
 
 
-Procedure TFslThread.Interrupt;
+procedure TFslThread.Interrupt;
 Begin
 End;
 
 
-Function TFslThread.Running: Boolean;
+function TFslThread.Running: Boolean;
 Begin
   Result := True;
 End;
 
 
-
-Procedure TFslThread.Open;
+procedure TFslThread.Open;
 Begin
   If FActive Then
     RaiseError('Open', 'Thread is already active.');
@@ -600,13 +604,20 @@ Begin
 End;
 
 
-Procedure TFslThread.Close;
+procedure TFslThread.Close;
 Begin
   FInternal.Terminate;
 End;
 
+procedure TFslThread.CloseOut;
+begin
+  Close;
+  while Active do
+    sleep(20);
+end;
 
-Procedure TFslThread.Kill;
+
+procedure TFslThread.Kill;
 Begin
   FInternal.Terminate;
   {$IFDEF WINDOWS}
@@ -619,15 +630,20 @@ Begin
 End;
 
 
-Procedure TFslThread.Stop;
+procedure TFslThread.Stop;
 Begin
   FActive := False;
 
   FInternal.Terminate;
 End;
 
+function TFslThread.Terminated: boolean;
+begin
+  result := FInternal.CheckTerminated;
+end;
 
-Procedure TFslThread.Wait;
+
+procedure TFslThread.Wait;
 Begin
   FInternal.WaitFor;
 End;
@@ -638,13 +654,13 @@ begin
   result := FInternal.WaitFor > 0;// todo
 end;
 
-Procedure TFslThread.ExecuteYield(Const iTimeout: Cardinal);
+procedure TFslThread.ExecuteYield(const iTimeout: Cardinal);
 Begin
   ThreadSleep(iTimeout);
 End;
 
 
-Function TFslThread.Active : Boolean;
+function TFslThread.Active: Boolean;
 Begin
   Result := FActive And Running;
 End;

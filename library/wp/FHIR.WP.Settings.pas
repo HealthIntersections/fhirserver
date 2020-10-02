@@ -232,7 +232,7 @@ Type
       Property Hotspots : TWPHotspotMode Read FHotspots Write SetHotspots;
 
     // misc view properties
-      // If true then Hints (¶ etc) are shown
+      // If true then Hints (6 etc) are shown
       Property EditHints : Boolean Read FEditHints Write SetEditHints;
 
       // if true, then a little hint window comes up whenever the mouse is over a field showing what type of field it is

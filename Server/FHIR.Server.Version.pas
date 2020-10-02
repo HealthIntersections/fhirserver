@@ -55,12 +55,18 @@ const
 //  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
 //  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
 //  ServerDBVersion = 24; // add AsyncTasks.Secure
-//  ServerDBVersion = 26; // add Twilio Proxy
-//  ServerDBVersion = 27; // add Package download count
-//  ServerDBVersion = 28; // add Package token tracking
-//  ServerDBVersion = 29; // add Loaded Package tracking
-//  ServerDBVersion = 30; // add OAuthLogin Launch field
-  ServerDBVersion = 31; // make OAuthLogin.Scope longer (1024)
+
+//  ServerDBVersion = 26; // add Twilio Proxy
+
+//  ServerDBVersion = 27; // add Package download count
+
+//  ServerDBVersion = 28; // add Package token tracking
+
+//  ServerDBVersion = 29; // add Loaded Package tracking
+
+//  ServerDBVersion = 30; // add OAuthLogin Launch field
+
+  ServerDBVersion = 31; // make OAuthLogin.Scope longer (1024)
 
 
 implementation

@@ -24,7 +24,7 @@ object ExceptionHandlerDialog: TExceptionHandlerDialog
     object Label1: TLabel
       Left = 10
       Top = 11
-      Width = 185
+      Width = 92
       Height = 14
       Caption = 'Transformation Fail'
     end
@@ -50,9 +50,6 @@ object ExceptionHandlerDialog: TExceptionHandlerDialog
     Height = 177
     Align = alClient
     TabOrder = 1
-    ExplicitTop = 36
-    ExplicitWidth = 322
-    ExplicitHeight = 115
     DesignSize = (
       863
       177)
@@ -76,8 +73,6 @@ object ExceptionHandlerDialog: TExceptionHandlerDialog
     Height = 36
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 151
-    ExplicitWidth = 322
     DesignSize = (
       863
       36)
@@ -91,7 +86,6 @@ object ExceptionHandlerDialog: TExceptionHandlerDialog
       Default = True
       ModalResult = 1
       TabOrder = 0
-      ExplicitLeft = 232
     end
     object Button2: TButton
       Left = 7

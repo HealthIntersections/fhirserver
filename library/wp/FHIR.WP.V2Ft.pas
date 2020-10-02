@@ -113,7 +113,7 @@ FT codes:
 .sp <number> End current output line and skip <number> vertical spaces. <number> is a positive
 integer or absent. If <number> is absent, skip one space. The horizontal character
 position remains unchanged. Note that only for purposes of compatibility with
-previous versions of HL7, “^\.sp\” is equivalent to “\.br\.”
+previous versions of HL7, ^\.sp\ is equivalent to \.br\.
 .br Begin new output line. Set the horizontal position to the current left margin and
 increment the vertical position by 1.
 .in <number> Indent <number> of spaces, where <number> is a positive or negative integer. This
@@ -566,7 +566,7 @@ Begin
   // .sp <number> End current output line and skip <number> vertical spaces. <number> is a positive
   // integer or absent. If <number> is absent, skip one space. The horizontal character
   // position remains unchanged. Note that only for purposes of compatibility with
-  // previous versions of HL7, “^\.sp\” is equivalent to “\.br\.”
+  // previous versions of HL7, ^\.sp\ is equivalent to \.br\.
 
   // this is not really right, but we have no way to not reset the horizontal position
   CommitWord(oDocument);

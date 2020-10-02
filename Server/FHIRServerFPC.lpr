@@ -6,6 +6,7 @@ uses
   {$IFDEF MSWINDOWS}
   FastMM4 in '..\dependencies\FMMAVX\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMMAVX\FastMM4Messages.pas',
+  Windows,
   {$ENDIF}
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
@@ -444,12 +445,27 @@ begin
   writeln('Usage: ', ExeName, ' -h');
 end;
 
-var
-  Application: TFHIRServer;
 begin
-  Application:=TFHIRServer.Create(nil);
-  Application.Title:='FHIRServer';
-  Application.Run;
-  Application.Free;
+  if (FileExists('c:\temp')) then
+    logfile := 'c:\temp\fhirserver.log'
+  else
+    logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
+  if ParamCount = 0 then
+  begin
+    filelog := true;
+    logt('testing');
+  end;
+  JclStartExceptionTracking;
+  IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
+  try
+    SetConsoleTitle('FHIR Server');
+    ExecuteFhirServer;
+  except
+    on E: Exception do
+    begin
+      Writeln(E.ClassName, ': ', E.Message);
+      sleep(1000);
+    end;
+  end;
 end.
 

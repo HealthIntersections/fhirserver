@@ -278,9 +278,6 @@ end;
 
 function TSnomedExpression.canonical : TSnomedExpression;
 var
-  cs : TSnomedConceptSorter;
-  rs : TSnomedRefinementSorter;
-  rgs : TSnomedRefinementGroupSorter;
   concept : TSnomedConcept;
   refinement : TSnomedRefinement;
   group : TSnomedRefinementGroup;
@@ -306,21 +303,12 @@ begin
       end;
     end;
 
-    cs := TSnomedConceptSorter.Create;
-    rs := TSnomedRefinementSorter.Create;
-    rgs := TSnomedRefinementGroupSorter.Create;
-    try
-      result.concepts.Sort(cs);
-      if HasRefinementGroups then
-      begin
-        for group in result.refinementGroups do
-          group.refinements.Sort(rs);
-        result.refinementGroups.Sort(rgs);
-      end;
-    finally
-      cs.Free;
-      rs.Free;
-      rgs.Free;
+    result.concepts.Sort(TSnomedConceptSorter.Create as TSnomedConceptSorter);
+    if HasRefinementGroups then
+    begin
+      for group in result.refinementGroups do
+        group.refinements.Sort(TSnomedRefinementSorter.Create as TSnomedRefinementSorter);
+      result.refinementGroups.Sort(TSnomedRefinementGroupSorter.Create as TSnomedRefinementGroupSorter);
     end;
 
     result.Link;

@@ -1,4 +1,4 @@
-﻿Unit FHIR.Support.Utilities;
+Unit FHIR.Support.Utilities;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -12055,9 +12055,9 @@ begin
   if IsInfinite then
   begin
     if IsNegative then
-      result := '-∞'
+      result := '-b'
     else
-      result := '∞';
+      result := 'b';
   end
   else if IsUndefined then
     result := '?'
@@ -12085,9 +12085,9 @@ begin
   if IsInfinite then
   begin
     if IsNegative then
-      result := '-∞'
+      result := '-b'
     else
-      result := '∞';
+      result := 'b';
   end
   else if IsUndefined then
     result := '?'
@@ -12182,9 +12182,9 @@ begin
   if IsInfinite then
   begin
     if IsNegative then
-      result := '-∞'
+      result := '-b'
     else
-      result := '∞';
+      result := 'b';
   end
   else if IsUndefined then
     result := '?'

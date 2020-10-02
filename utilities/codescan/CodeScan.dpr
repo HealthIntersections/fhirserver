@@ -81,10 +81,53 @@ begin
   result := (src.IndexOf('Copyright (c)') > 0) or (src.IndexOf('Copyright (C)') > 0);
 end;
 
+procedure fixEolns(filename : String);
+var
+  src : String;
+  b : TStringBuilder;
+  changed : boolean;
+  i : integer;
+  ch : char;
+begin
+  src := FileToString(filename, TEncoding.ASCII);
+  b := TStringBuilder.Create;
+  try
+    i := 1;
+    while (i <= length(src)) do
+    begin
+      ch := src[i];
+      if (ch = #13) then
+      begin
+        b.Append(#13#10);
+        if (i = length(src)) or (src[i+1] <> #10) then
+          changed := true
+        else
+          inc(i);
+      end
+      else if (ch = #10) then
+      begin
+        b.Append(#13#10);
+        changed := true;
+      end
+      else
+      begin
+        b.Append(ch);
+      end;
+      inc(i);
+    end;
+    if (changed) then
+      StringToFile(b.ToString, filename, TEncoding.ASCII);
+  finally
+    b.Free;
+  end;
+
+
+end;
 function scanPascalUnit(filename : String) : boolean;
 var
   u, src, srcns : String;
 begin
+  fixEolns(filename);
   result := true;
   u := PathTitle(filename);
   if isExemptUnit(u) then

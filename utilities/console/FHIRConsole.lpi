@@ -15,13 +15,14 @@
       <Icon Value="0"/>
     </General>
     <MacroValues Count="1">
-      <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+      <Macro3 Name="LCLWidgetType" Value="win32"/>
     </MacroValues>
     <BuildModes>
       <Item Name="Default" Default="True"/>
-      <SharedMatrixOptions Count="2">
+      <SharedMatrixOptions Count="3">
         <Item1 ID="348441424249" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="601568390877" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item2 ID="601568390877" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item3 ID="116515061841" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -92,9 +93,12 @@
     </SearchPaths>
     <CodeGeneration>
       <TargetCPU Value="x86_64"/>
-      <TargetOS Value="darwin"/>
+      <TargetOS Value="win64"/>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

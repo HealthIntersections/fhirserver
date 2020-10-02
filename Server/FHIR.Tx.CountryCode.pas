@@ -178,7 +178,7 @@ begin
   doLoad('AT', 'Austria');
   doLoad('AU', 'Australia');
   doLoad('AW', 'Aruba');
-  doLoad('AX', 'Åland Islands');
+  doLoad('AX', 'Eland Islands');
   doLoad('AZ', 'Azerbaijan');
   doLoad('BA', 'Bosnia and Herzegovina');
   doLoad('BB', 'Barbados');
@@ -189,7 +189,7 @@ begin
   doLoad('BH', 'Bahrain');
   doLoad('BI', 'Burundi');
   doLoad('BJ', 'Benin');
-  doLoad('BL', 'Saint Barthélemy');
+  doLoad('BL', 'Saint Barthilemy');
   doLoad('BM', 'Bermuda');
   doLoad('BN', 'Brunei Darussalam');
   doLoad('BO', 'Bolivia, Plurinational State of');
@@ -207,7 +207,7 @@ begin
   doLoad('CF', 'Central African Republic');
   doLoad('CG', 'Congo');
   doLoad('CH', 'Switzerland');
-  doLoad('CI', 'Côte d''Ivoire');
+  doLoad('CI', 'Ctte d''Ivoire');
   doLoad('CK', 'Cook Islands');
   doLoad('CL', 'Chile');
   doLoad('CM', 'Cameroon');
@@ -216,7 +216,7 @@ begin
   doLoad('CR', 'Costa Rica');
   doLoad('CU', 'Cuba');
   doLoad('CV', 'Cabo Verde');
-  doLoad('CW', 'Curaçao');
+  doLoad('CW', 'Curagao');
   doLoad('CX', 'Christmas Island');
   doLoad('CY', 'Cyprus');
   doLoad('CZ', 'Czechia');
@@ -351,7 +351,7 @@ begin
   doLoad('PW', 'Palau');
   doLoad('PY', 'Paraguay');
   doLoad('QA', 'Qatar');
-  doLoad('RE', 'Réunion');
+  doLoad('RE', 'Riunion');
   doLoad('RO', 'Romania');
   doLoad('RS', 'Serbia');
   doLoad('RU', 'Russian Federation');
@@ -418,7 +418,7 @@ begin
   doLoad('AFG', 'Afghanistan');
   doLoad('AGO', 'Angola');
   doLoad('AIA', 'Anguilla');
-  doLoad('ALA', 'Åland Islands');
+  doLoad('ALA', 'Eland Islands');
   doLoad('ALB', 'Albania');
   doLoad('AND', 'Andorra');
   doLoad('ARE', 'United Arab Emirates');
@@ -441,7 +441,7 @@ begin
   doLoad('BHR', 'Bahrain');
   doLoad('BHS', 'Bahamas');
   doLoad('BIH', 'Bosnia and Herzegovina');
-  doLoad('BLM', 'Saint Barthélemy');
+  doLoad('BLM', 'Saint Barthilemy');
   doLoad('BLR', 'Belarus');
   doLoad('BLZ', 'Belize');
   doLoad('BMU', 'Bermuda');
@@ -458,7 +458,7 @@ begin
   doLoad('CHE', 'Switzerland');
   doLoad('CHL', 'Chile');
   doLoad('CHN', 'China');
-  doLoad('CIV', 'Côte d''Ivoire');
+  doLoad('CIV', 'Ctte d''Ivoire');
   doLoad('CMR', 'Cameroon');
   doLoad('COD', 'Congo, the Democratic Republic of the');
   doLoad('COG', 'Congo');
@@ -468,7 +468,7 @@ begin
   doLoad('CPV', 'Cabo Verde');
   doLoad('CRI', 'Costa Rica');
   doLoad('CUB', 'Cuba');
-  doLoad('CUW', 'Curaçao');
+  doLoad('CUW', 'Curagao');
   doLoad('CXR', 'Christmas Island');
   doLoad('CYM', 'Cayman Islands');
   doLoad('CYP', 'Cyprus');
@@ -601,7 +601,7 @@ begin
   doLoad('PSE', 'Palestine, State of');
   doLoad('PYF', 'French Polynesia');
   doLoad('QAT', 'Qatar');
-  doLoad('REU', 'Réunion');
+  doLoad('REU', 'Riunion');
   doLoad('ROU', 'Romania');
   doLoad('RUS', 'Russian Federation');
   doLoad('RWA', 'Rwanda');
@@ -737,7 +737,7 @@ begin
   doLoad('239', 'South Georgia and the South Sandwich Islands');
   doLoad('242', 'Fiji');
   doLoad('246', 'Finland');
-  doLoad('248', 'Åland Islands');
+  doLoad('248', 'Eland Islands');
   doLoad('250', 'France');
   doLoad('254', 'French Guiana');
   doLoad('258', 'French Polynesia');
@@ -773,7 +773,7 @@ begin
   doLoad('372', 'Ireland');
   doLoad('376', 'Israel');
   doLoad('380', 'Italy');
-  doLoad('384', 'Côte d''Ivoire');
+  doLoad('384', 'Ctte d''Ivoire');
   doLoad('388', 'Jamaica');
   doLoad('392', 'Japan');
   doLoad('398', 'Kazakhstan');
@@ -815,7 +815,7 @@ begin
   doLoad('520', 'Nauru');
   doLoad('524', 'Nepal');
   doLoad('528', 'Netherlands');
-  doLoad('531', 'Curaçao');
+  doLoad('531', 'Curagao');
   doLoad('533', 'Aruba');
   doLoad('534', 'Sint Maarten (Dutch part)');
   doLoad('535', 'Bonaire, Sint Eustatius and Saba');
@@ -846,11 +846,11 @@ begin
   doLoad('626', 'Timor-Leste');
   doLoad('630', 'Puerto Rico');
   doLoad('634', 'Qatar');
-  doLoad('638', 'Réunion');
+  doLoad('638', 'Riunion');
   doLoad('642', 'Romania');
   doLoad('643', 'Russian Federation');
   doLoad('646', 'Rwanda');
-  doLoad('652', 'Saint Barthélemy');
+  doLoad('652', 'Saint Barthilemy');
   doLoad('654', 'Saint Helena, Ascension and Tristan da Cunha');
   doLoad('659', 'Saint Kitts and Nevis');
   doLoad('660', 'Anguilla');

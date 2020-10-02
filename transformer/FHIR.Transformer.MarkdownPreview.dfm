@@ -32,8 +32,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 492
-    ExplicitWidth = 612
     DesignSize = (
       884
       40)
@@ -47,7 +45,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
       Caption = 'Close'
       ModalResult = 8
       TabOrder = 0
-      ExplicitLeft = 552
     end
   end
   object Panel2: TPanel
@@ -58,7 +55,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 496
     object Panel4: TPanel
       Left = 0
       Top = 0
@@ -69,9 +65,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
       BevelOuter = bvNone
       Caption = '     HTML'
       TabOrder = 0
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitWidth = 295
     end
     object Panel7: TPanel
       Left = 0
@@ -83,10 +76,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
       BevelOuter = bvNone
       BorderWidth = 6
       TabOrder = 1
-      ExplicitLeft = 136
-      ExplicitTop = 264
-      ExplicitWidth = 185
-      ExplicitHeight = 41
     end
   end
   object Panel3: TPanel
@@ -97,10 +86,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 472
-    ExplicitTop = 168
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object Panel5: TPanel
       Left = 0
       Top = 0
@@ -111,9 +96,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
       BevelOuter = bvNone
       Caption = '   Rendered'
       TabOrder = 0
-      ExplicitLeft = 2
-      ExplicitTop = 1
-      ExplicitWidth = 310
     end
     object Panel6: TPanel
       Left = 0
@@ -125,10 +107,6 @@ object MarkdownPreviewForm: TMarkdownPreviewForm
       BevelOuter = bvNone
       BorderWidth = 6
       TabOrder = 1
-      ExplicitLeft = 136
-      ExplicitTop = 264
-      ExplicitWidth = 185
-      ExplicitHeight = 41
       object WebBrowser1: TWebBrowser
         Left = 7
         Top = 7

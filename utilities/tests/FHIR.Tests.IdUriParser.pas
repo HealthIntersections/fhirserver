@@ -1,4 +1,4 @@
-﻿unit FHIR.Tests.IdUriParser;
+o;?unit FHIR.Tests.IdUriParser;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -84,7 +84,7 @@ end;
 
 procedure TIdUriParserTests.TestUnicode1;
 begin
-  ok('http://orange.tw/sandbox/ＮＮ/passwd');
+  ok('http://orange.tw/sandbox/o<.o<./passwd');
 end;
 
 procedure TIdUriParserTests.TestUnicode2;

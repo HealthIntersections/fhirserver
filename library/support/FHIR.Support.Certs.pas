@@ -1,4 +1,4 @@
-﻿unit FHIR.Support.Certs;
+unit FHIR.Support.Certs;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

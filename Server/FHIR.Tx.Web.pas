@@ -66,8 +66,6 @@ Type
     FServer : TTerminologyServer;
     FFHIRPath : String;
     FReturnProcessFileEvent : TReturnProcessFileEvent;
-    FCSSorter : TCodeSystemSorter;
-    FVSSorter : TValueSetSorter;
 
     function asJson(r : TFHIRResourceV) : String;
     function asXml(r : TFHIRResourceV) : String;
@@ -170,14 +168,12 @@ begin
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   FServer.webBase := BaseURl;
   FWorker := worker;
-  FVSSorter := TValueSetSorter.Create;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
   FWorker.Free;
   FServer.free;
-  FVSSorter.Free;
   inherited;
 end;
 
@@ -408,6 +404,7 @@ var
   vs: TFhirCodeSystemW;
   vars : TFslMap<TFHIRObject>;
   html : THtmlPublisher;
+  sort : TCodeSystemSorter;
 begin
   result := 'Code System List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
@@ -415,17 +412,18 @@ begin
     list := TFslList<TFHIRCodeSystemW>.create;
     try
       FServer.GetCodeSystemList(list);
+      sort := TCodeSystemSorter.Create;
       if (request.UnparsedParams.EndsWith('=ver')) then
-        FCSSorter.FSortType := byVer
+        sort.FSortType := byVer
       else if (request.UnparsedParams.EndsWith('=name')) then
-        FCSSorter.FSortType := byName
+        sort.FSortType := byName
       else if (request.UnparsedParams.EndsWith('=ctxt')) then
-        FCSSorter.FSortType := byContext
+        sort.FSortType := byContext
       else if (request.UnparsedParams.EndsWith('=pub')) then
-        FCSSorter.FSortType := byPub
+        sort.FSortType := byPub
       else
-        FCSSorter.FSortType := byUrl;
-      list.Sort(FCSSorter);
+        sort.FSortType := byUrl;
+      list.Sort(sort);
 
       html := THtmlPublisher.Create(FWorker.Factory.link);
       try
@@ -613,6 +611,7 @@ var
   vars : TFslMap<TFHIRObject>;
   list : TFslList<TFhirValueSetW>;
   html : THtmlPublisher;
+  sort : TValueSetSorter;
 begin
   result := 'Value Set List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
@@ -620,20 +619,21 @@ begin
     list := TFslList<TFhirValueSetW>.create;
     try
       FServer.GetValueSetList(list);
+      sort := TValueSetSorter.create;
       // determine sort order
       if (request.UnparsedParams.EndsWith('=ver')) then
-        FVSSorter.FSortType := byVer
+        sort.FSortType := byVer
       else if (request.UnparsedParams.EndsWith('=name')) then
-        FVSSorter.FSortType := byName
+        sort.FSortType := byName
       else if (request.UnparsedParams.EndsWith('=ctxt')) then
-        FVSSorter.FSortType := byContext
+        sort.FSortType := byContext
       else if (request.UnparsedParams.EndsWith('=pub')) then
-        FVSSorter.FSortType := byPub
+        sort.FSortType := byPub
       else if (request.UnparsedParams.EndsWith('=src')) then
-        FVSSorter.FSortType := bySource
+        sort.FSortType := bySource
       else
-        FVSSorter.FSortType := byUrl;
-      list.Sort(FVSSorter);
+        sort.FSortType := byUrl;
+      list.Sort(sort);
 
       // build the table
       html := THtmlPublisher.Create(FWorker.Factory.link);
@@ -1303,13 +1303,15 @@ var
   vs: TFhirValueSetW;
   list : TFslList<TFhirValueSetW>;
   s : String;
+  sort : TValueSetSorter;
 begin
   list := TFslList<TFhirValueSetW>.create;
   try
     FServer.GetValueSetList(list);
     // determine sort order
-    FVSSorter.FSortType := byName;
-    list.Sort(FVSSorter);
+    sort := TValueSetSorter.create;
+    sort.FSortType := byName;
+    list.Sort(sort);
     s := '<select name="valueset" size="1">'#13#10;
     for vs in list do
       if (vs.id = id) then

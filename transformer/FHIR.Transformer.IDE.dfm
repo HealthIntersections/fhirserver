@@ -357,11 +357,6 @@ object TransformerForm: TTransformerForm
         Height = 507
         Align = alClient
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
-        Header.Font.Color = clWindowText
-        Header.Font.Height = -11
-        Header.Font.Name = 'Tahoma'
-        Header.Font.Style = []
         Header.MainColumn = -1
         Images = ImageList1
         NodeDataSize = 8
@@ -535,11 +530,6 @@ object TransformerForm: TTransformerForm
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = 0
-              Header.Font.Charset = DEFAULT_CHARSET
-              Header.Font.Color = clWindowText
-              Header.Font.Height = -11
-              Header.Font.Name = 'Tahoma'
-              Header.Font.Style = []
               Header.MainColumn = -1
               TabOrder = 0
               OnAddToSelection = vtVarsAddToSelection
@@ -588,11 +578,6 @@ object TransformerForm: TTransformerForm
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = 2
-              Header.Font.Charset = DEFAULT_CHARSET
-              Header.Font.Color = clWindowText
-              Header.Font.Height = -11
-              Header.Font.Name = 'Tahoma'
-              Header.Font.Style = []
               Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
               TabOrder = 1
               OnColumnResize = vtVarDetailsColumnResize
@@ -603,18 +588,18 @@ object TransformerForm: TTransformerForm
               Columns = <
                 item
                   Position = 0
+                  Text = 'Name'
                   Width = 100
-                  WideText = 'Name'
                 end
                 item
                   Position = 1
+                  Text = 'Type'
                   Width = 100
-                  WideText = 'Type'
                 end
                 item
                   Position = 2
+                  Text = 'Value'
                   Width = 10
-                  WideText = 'Value'
                 end>
             end
           end
@@ -634,11 +619,6 @@ object TransformerForm: TTransformerForm
               Height = 203
               Align = alClient
               Header.AutoSizeIndex = -1
-              Header.Font.Charset = DEFAULT_CHARSET
-              Header.Font.Color = clWindowText
-              Header.Font.Height = -11
-              Header.Font.Name = 'Tahoma'
-              Header.Font.Style = []
               Header.Height = 17
               Header.MainColumn = -1
               Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
@@ -668,10 +648,6 @@ object TransformerForm: TTransformerForm
         object TabSheet3: TTabSheet
           Caption = 'FHIRPath Evaluator'
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Panel2: TPanel
             Left = 0
             Top = 0
@@ -827,10 +803,6 @@ object TransformerForm: TTransformerForm
         object TabSheet1: TTabSheet
           Caption = 'Home'
           ImageIndex = 8
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             757
             249)
@@ -935,11 +907,6 @@ object TransformerForm: TTransformerForm
             Height = 190
             Anchors = [akLeft, akTop, akRight, akBottom]
             Header.AutoSizeIndex = 0
-            Header.Font.Charset = DEFAULT_CHARSET
-            Header.Font.Color = clWindowText
-            Header.Font.Height = -11
-            Header.Font.Name = 'Tahoma'
-            Header.Font.Style = []
             Header.Height = 17
             Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
             TabOrder = 2
@@ -952,18 +919,18 @@ object TransformerForm: TTransformerForm
             Columns = <
               item
                 Position = 0
+                Text = 'Javascript Source'
                 Width = 200
-                WideText = 'Javascript Source'
               end
               item
                 Position = 1
+                Text = 'Source Object'
                 Width = 200
-                WideText = 'Source Object'
               end
               item
                 Position = 2
+                Text = 'Last Outcome'
                 Width = 200
-                WideText = 'Last Outcome'
               end>
           end
           object btnAddConfig: TBitBtn

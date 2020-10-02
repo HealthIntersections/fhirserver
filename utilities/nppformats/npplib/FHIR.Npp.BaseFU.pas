@@ -393,7 +393,7 @@ const
   IDM_FILE_DELETE		     	= (IDM_FILE + 16);
   IDM_FILE_RENAME		     	= (IDM_FILE + 17);
 
- // A mettre à jour si on ajoute nouveau menu item dans le menu "File"
+ // A mettre ` jour si on ajoute nouveau menu item dans le menu "File"
   IDM_FILEMENU_LASTONE = 	IDM_FILE_RENAME;
 
   IDM_EDIT       = (IDM + 2000);

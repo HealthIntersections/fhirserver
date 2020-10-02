@@ -6,7 +6,7 @@
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
     </PropertyGroup>
@@ -93,7 +93,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-cmd exec -ini C:\work\fhirserver\Exec\covid.ini </Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r5 -packages hl7.fhir.r5.core</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>

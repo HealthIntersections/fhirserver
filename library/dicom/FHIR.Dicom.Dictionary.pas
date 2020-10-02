@@ -50,7 +50,7 @@ Type
 
   Published
     {
-    Unique Identifier (UID) – a globally unique “dotted decimal” string that
+    Unique Identifier (UID)  a globally unique dotted decimal string that
     identifies a specific object or a class of objects;
 	an ISO-8824 Object Identifier.
 
@@ -199,7 +199,7 @@ Type
     Property IsLossy: Boolean Read FIsLossy Write FIsLossy;
 
     {
-    True if the byte stream is compressed using the “Deflate” algorithm
+    True if the byte stream is compressed using the Deflate algorithm
     defined in Internet RFC 1951
     }
     Property IsDeflated: Boolean Read FIsDeflated Write FIsDeflated;
@@ -2550,21 +2550,21 @@ const
   bin = true;
   nbin = false;
 begin
-  FVRSet[dvtCS] := TDicomDictionaryVR.Create(dvtCS, 'CS', 16,        nfix,  nrep,  'Code String', 'A string of characters with leading or trailing spaces being nonsignificant. Example: “CD123_4”');
+  FVRSet[dvtCS] := TDicomDictionaryVR.Create(dvtCS, 'CS', 16,        nfix,  nrep,  'Code String', 'A string of characters with leading or trailing spaces being nonsignificant. Example: CD123_4');
   FVRSet[dvtSH] := TDicomDictionaryVR.Create(dvtSH, 'SH', 16,        nfix,  nrep,  'Short String', 'A short character string. Example: telephone numbers, IDs');
-  FVRSet[dvtLO] := TDicomDictionaryVR.Create(dvtLO, 'LO', 64,        nfix,  nrep,  'Long String', 'A character string that may be padded with leading and/or trailing spaces. Example: “Introduction to DICOM”');
+  FVRSet[dvtLO] := TDicomDictionaryVR.Create(dvtLO, 'LO', 64,        nfix,  nrep,  'Long String', 'A character string that may be padded with leading and/or trailing spaces. Example: Introduction to DICOM');
   FVRSet[dvtST] := TDicomDictionaryVR.Create(dvtST, 'ST', 1024,      nfix,  nrep,  'Short Text', 'A character string that may contain one or more paragraphs.');
   FVRSet[dvtLT] := TDicomDictionaryVR.Create(dvtLT, 'LT', 10240,     nfix,  nrep,  'Long Text', 'A character string that may contain one or more paragraphs, the same as LO, but can be much longer.');
   FVRSet[dvtUT] := TDicomDictionaryVR.Create(dvtUT, 'UT', 4294967294,nfix,  nrep,  'Unlimited Text', 'A character string that may contain one or more paragraphs, similar to LT.');
-  FVRSet[dvtAE] := TDicomDictionaryVR.Create(dvtAE, 'AE', 16,        nfix,  rep,   'Application Entity', 'A string of characters that identifies a device name with leading and trailing spaces being nonsignificant. Example: “MyPC01”');
-  FVRSet[dvtPN] := TDicomDictionaryVR.Create(dvtPN, 'PN', 64,        nfix,  rep,   'Person Name', 'Person’s name, with a caret character (^) used as a name delimiter. Examples: “SMITH^JOHN”, “Morrison-Jones^Susan^^^Ph.D,Chief Executive Officer”');
-  FVRSet[dvtUI] := TDicomDictionaryVR.Create(dvtUI, 'UI', 64,        nfix,  rep,   'Unique Identifier (UID)', 'A character string containing a UID that is used to uniquely identify a wide variety of items. Example: “1.2.840.10008.1.1”');
-  FVRSet[dvtDA] := TDicomDictionaryVR.Create(dvtDA, 'DA', 8,         nfix,  rep,   'Date', 'A string of characters of the format YYYYMMDD; where YYYY shall contain year, MM shall contain the month, and DD shall contain the day. Example: “20050822” would represent August 22, 2005.');
-  FVRSet[dvtTM] := TDicomDictionaryVR.Create(dvtTM, 'TM', 16,        nfix,  rep,   'Time', 'A string of characters of the format HHMMSS.FRAC; where HH contains hours (range “00” – “23”), MM contains minutes (range “00” – “59”), '+'SS contains seconds (range “00” –”59”), and FRAC contains a fractional part of a second as small as one millionth of a second. Example: “183200.00” stands for 6:32 PM.');
-  FVRSet[dvtDT] := TDicomDictionaryVR.Create(dvtDT, 'DT', 26,        nfix,  rep,   'Date Time', 'Concatenated datetime string in the format: YYYYMMDDHHMMSS.FFFFFF The components of this string, from left to right, are YYYY = Year, '+'MM = Month, DD = Day, HH = Hour, MM = Minute, SS = Second, FFFFFF = Fractional Second. Example: “20050812183000.00” stands for 6:30 PM, August 12, 2005');
-  FVRSet[dvtAS] := TDicomDictionaryVR.Create(dvtAS, 'AS', 4,         fix,   rep,   'Age String', 'A string of characters with one of the following formats: nnnD, nnnW, nnnM, nnnY; where nnn contains the number of days for D, weeks for W, months for M, or years for Y. Example: “018M” would represent an age of 18 months.');
-  FVRSet[dvtIS] := TDicomDictionaryVR.Create(dvtIS, 'IS', 12,        nfix,  rep,   'Integer String', 'A string of characters representing an integer. Example: “-1234567”.');
-  FVRSet[dvtDS] := TDicomDictionaryVR.Create(dvtDS, 'DS', 16,        nfix,  rep,   'Decimal String', 'A string of characters representing either a fixed point number or a floating point number. Example: “12345.67”, “-5.0e3”');
+  FVRSet[dvtAE] := TDicomDictionaryVR.Create(dvtAE, 'AE', 16,        nfix,  rep,   'Application Entity', 'A string of characters that identifies a device name with leading and trailing spaces being nonsignificant. Example: MyPC01');
+  FVRSet[dvtPN] := TDicomDictionaryVR.Create(dvtPN, 'PN', 64,        nfix,  rep,   'Person Name', 'Persons name, with a caret character (^) used as a name delimiter. Examples: SMITH^JOHN, Morrison-Jones^Susan^^^Ph.D,Chief Executive Officer');
+  FVRSet[dvtUI] := TDicomDictionaryVR.Create(dvtUI, 'UI', 64,        nfix,  rep,   'Unique Identifier (UID)', 'A character string containing a UID that is used to uniquely identify a wide variety of items. Example: 1.2.840.10008.1.1');
+  FVRSet[dvtDA] := TDicomDictionaryVR.Create(dvtDA, 'DA', 8,         nfix,  rep,   'Date', 'A string of characters of the format YYYYMMDD; where YYYY shall contain year, MM shall contain the month, and DD shall contain the day. Example: 20050822 would represent August 22, 2005.');
+  FVRSet[dvtTM] := TDicomDictionaryVR.Create(dvtTM, 'TM', 16,        nfix,  rep,   'Time', 'A string of characters of the format HHMMSS.FRAC; where HH contains hours (range 00  23), MM contains minutes (range 00  59), '+'SS contains seconds (range 00 59), and FRAC contains a fractional part of a second as small as one millionth of a second. Example: 183200.00 stands for 6:32 PM.');
+  FVRSet[dvtDT] := TDicomDictionaryVR.Create(dvtDT, 'DT', 26,        nfix,  rep,   'Date Time', 'Concatenated datetime string in the format: YYYYMMDDHHMMSS.FFFFFF The components of this string, from left to right, are YYYY = Year, '+'MM = Month, DD = Day, HH = Hour, MM = Minute, SS = Second, FFFFFF = Fractional Second. Example: 20050812183000.00 stands for 6:30 PM, August 12, 2005');
+  FVRSet[dvtAS] := TDicomDictionaryVR.Create(dvtAS, 'AS', 4,         fix,   rep,   'Age String', 'A string of characters with one of the following formats: nnnD, nnnW, nnnM, nnnY; where nnn contains the number of days for D, weeks for W, months for M, or years for Y. Example: 018M would represent an age of 18 months.');
+  FVRSet[dvtIS] := TDicomDictionaryVR.Create(dvtIS, 'IS', 12,        nfix,  rep,   'Integer String', 'A string of characters representing an integer. Example: -1234567.');
+  FVRSet[dvtDS] := TDicomDictionaryVR.Create(dvtDS, 'DS', 16,        nfix,  rep,   'Decimal String', 'A string of characters representing either a fixed point number or a floating point number. Example: 12345.67, -5.0e3');
   FVRSet[dvtSS] := TDicomDictionaryVR.Create(dvtSS, 'SS', 2,         fix,   rep,   'Signed Short', 'Signed binary integer 16 bits long.');
   FVRSet[dvtUS] := TDicomDictionaryVR.Create(dvtUS, 'US', 2,         fix,   rep,   'Unsigned Short', 'Unsigned binary integer 16 bits long.');
   FVRSet[dvtSL] := TDicomDictionaryVR.Create(dvtSL, 'SL', 4,         fix,   rep,   'Signed Long', 'Signed binary integer.');
@@ -2572,7 +2572,7 @@ begin
   FVRSet[dvtAT] := TDicomDictionaryVR.Create(dvtAT, 'AT', 4,         fix,   rep,   'Attribute Tag', 'Ordered pair of 16-bit (2-byte) unsigned integers that is the value of a Data Element Tag.');
   FVRSet[dvtFL] := TDicomDictionaryVR.Create(dvtFL, 'FL', 4,         fix,   rep,   'Floating Point Single', 'Single precision binary floating point number.');
   FVRSet[dvtFD] := TDicomDictionaryVR.Create(dvtFD, 'FD', 8,         fix,   rep,   'Floating Point Double', 'Double precision binary floating point number.');
-  FVRSet[dvtOB] := TDicomDictionaryVR.Create(dvtOB, 'OB', 0,         nfix,  nrep,  'Other Byte String', 'A string of bytes (“other” means not defined in any other VR).');
+  FVRSet[dvtOB] := TDicomDictionaryVR.Create(dvtOB, 'OB', 0,         nfix,  nrep,  'Other Byte String', 'A string of bytes (other means not defined in any other VR).');
   FVRSet[dvtOW] := TDicomDictionaryVR.Create(dvtOW, 'OW', 0,         nfix,  nrep,  'Other Word String', 'A string of 16-bit (2-byte) words.');
   FVRSet[dvtOF] := TDicomDictionaryVR.Create(dvtOF, 'OF', 0,         nfix,  nrep,  'Other Float String', 'A string of 32-bit (4-byte) floating point words.');
 //  FVRSet[dvtSQ] := TDicomDictionaryVR.Create(dvtSQ, 'SQ', 0,       nfix,  nrep,  'Sequence of Items', 'Sequence of items.');

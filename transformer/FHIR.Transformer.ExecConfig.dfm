@@ -39,8 +39,6 @@ object TransformerExecConfigForm: TTransformerExecConfigForm
     Height = 40
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 259
-    ExplicitWidth = 635
     DesignSize = (
       704
       40)
@@ -55,7 +53,6 @@ object TransformerExecConfigForm: TTransformerExecConfigForm
       ModalResult = 1
       TabOrder = 0
       OnClick = btnokClick
-      ExplicitLeft = 471
     end
     object btnCancel: TButton
       Left = 621
@@ -67,7 +64,6 @@ object TransformerExecConfigForm: TTransformerExecConfigForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 552
     end
   end
   object cbxScripts: TComboBox
@@ -78,7 +74,6 @@ object TransformerExecConfigForm: TTransformerExecConfigForm
     Style = csDropDownList
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
-    ExplicitWidth = 601
   end
   object cbxFocus: TComboBox
     Left = 96
@@ -88,6 +83,5 @@ object TransformerExecConfigForm: TTransformerExecConfigForm
     Style = csDropDownList
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
-    ExplicitWidth = 601
   end
 end

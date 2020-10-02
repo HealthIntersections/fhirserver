@@ -1,7 +1,7 @@
 unit FHIR.Support.Fpc;
 
 {
-Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -16,7 +16,7 @@ are permitted provided that the following conditions are met:
    endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -28,7 +28,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$mode DELPHI}{$H+}
+{$I fhir.inc}
+
+{$IFDEF FPC}
 {$MODESWITCH ADVANCEDRECORDS}
 {$MODESWITCH TYPEHELPERS}
 {$ENDIF}
@@ -44,7 +46,9 @@ type
   UnicodeChar = char;
 {$ENDIF}
 
+// unicode helpers - make life easier for shared fpc/delphi code
 function unicodeChars(s : String) : TArray<UnicodeChar>;
+function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this does nothing.
 
 
 {$IFDEF FPC}
@@ -180,6 +184,28 @@ begin
   SetLength(result, i);
 end;
 
+function strToWideString(s : String): WideString;
+var
+  i, c, l, cl : integer;
+  ch : UnicodeChar;
+  p: PChar;
+begin
+  l := length(s);
+  SetLength(result, l); // maximum possible length
+  i := 1;
+  c := 1;
+  p := @s[1];
+  while l > 0 do
+  begin
+    ch := UnicodeChar(UTF8CodepointToUnicode(p, cl));
+    result[i] := ch;
+    inc(i);
+    dec(l, cl);
+    inc(p, cl);
+  end;
+  SetLength(result, i);
+end;
+
 {$ELSE}
 
 function unicodeChars(s : String) : TArray<UnicodeChar>;
@@ -191,6 +217,10 @@ begin
     result[i-1] := s[i];
 end;
 
+function strToWideString(s : String): WideString;
+begin
+  result := s;
+end;
 {$ENDIF}
 
 {$IFDEF FPC}

@@ -361,7 +361,7 @@ Type
     procedure Sort(compare: TListCompareFunc); overload;
     {$ENDIF}
     procedure Sort(compare: TListCompareEvent); overload;
-    procedure Sort(const AComparer: IComparer<T>); overload;
+    procedure Sort(AComparer: IComparer<T>); overload;
 
     {$IFNDEF FPC}
     function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
@@ -1861,7 +1861,7 @@ begin
   Sort(FComparer);
 end;
 
-procedure TFslList<T>.Sort(const AComparer: IComparer<T>);
+procedure TFslList<T>.Sort(AComparer: IComparer<T>);
 begin
   If (FCount > 1) Then
     QuickSort(0, FCount - 1, AComparer); // call the quicksort routine

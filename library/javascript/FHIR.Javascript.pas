@@ -861,14 +861,6 @@ begin
   init;
 end;
 
-{$IFNDEF FPC}
-function TJavascript.getPropertyId(name: AnsiString): JsPropertyIdRef;
-begin
-  jsCheck(JsCreatePropertyId(PAnsiChar(name), length(name), result));
-end;
-{$ENDIF}
-
-
 function TJavascript.defineClass(name : String; context : Pointer; factoryName : String; factory : TJsFactoryFunction) : TJavascriptClassDefinition;
 var
   global, f : TJsValue;
@@ -1157,8 +1149,15 @@ begin
 end;
 
 function TJavascript.getPropertyId(name: String): JsPropertyIdRef;
+{$IFNDEF FPC}
 begin
   result := getPropertyId(AnsiString(name));
+end;
+
+function TJavascript.getPropertyId(name: AnsiString): JsPropertyIdRef;
+{$ENDIF}
+begin
+  jsCheck(JsCreatePropertyId(PAnsiChar(name), length(name), result));
 end;
 
 function TJavascript.getPropertyValue(obj: JsValueRef; name: String): JsValueRef;

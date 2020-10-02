@@ -527,7 +527,7 @@ end;
 
 procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
-//    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
+//    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright ) 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
   card.detail := 'Not done yet';
 end;
 

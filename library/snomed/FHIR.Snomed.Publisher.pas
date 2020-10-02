@@ -85,7 +85,7 @@ Implementation
 
 Function Screen(Const s, s2: String):String;
 Begin
-  result := StringReplace(s, 'Â', '');
+  result := StringReplace(s, 'B', '');
   if (s2 <> '') And StringEndsWith(result, s2) Then
     delete(result, length(result) - length(s2) + 1, length(s));
 End;

@@ -121,8 +121,6 @@ function removeCaseAndAccents(s : String) : String;
 
 implementation
 
-{$R FHIRTranslations.res}
-
 uses
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml;
 
@@ -139,35 +137,9 @@ var
   GMessages : TFslMap<TFHIRMessage>;
 
 Function LoadSource : TBytes;
-{$IFDEF OSX}
 begin
   result := FHIR.Support.Stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
 end;
-{$ENDIF}
-{$IFDEF WINDOWS}
-var
-  LRes : TAfsResourceVolume;
-  LHnd : TAfsHandle;
-begin
-  LRes := TAfsResourceVolume.create;
-  try
-    LHnd := LRes.Open(FHIRExeModuleName, 'FHIR_Translations,#10', amRead, asRead);
-    try
-      SetLength(result, LRes.GetSize(LHnd));
-      LRes.Read(LHnd, result[0], length(result));
-    finally
-      LRes.Close(LHnd);
-    end;
-  finally
-    LRes.Free;
-  end;
-end;
-{$ENDIF}
-{$IFDEF LINUX}
-begin
-  result := FHIR.Support.Stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
-end;
-{$ENDIF}
 
 procedure LoadMessages;
 var

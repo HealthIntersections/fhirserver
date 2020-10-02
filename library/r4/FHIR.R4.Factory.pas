@@ -1,6 +1,4 @@
-﻿unit FHIR.R4.Factory;
-
-{$I fhir.r4.inc}
+unit FHIR.R4.Factory;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -31,6 +29,7 @@
 }
 
 {$I fhir.inc}
+{$I fhir.r4.inc}
 
 interface
 

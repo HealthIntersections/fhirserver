@@ -7,8 +7,8 @@ Apps MUST generate an unpredictable state parameter for each user session. An ap
 * support AUD on redirect url
 * add redirect url to token requeest
 * implement refresh_token on server / support in client
-* The authorization server’s response MUST include the HTTP “Cache-Control” response header field with a value of “no-store,” as well as the “Pragma” response header field with a value of “no-cache.”
-* On occasion, an app may receive a FHIR resource that contains a “reference” to a resource hosted on a different resource server. The app SHOULD NOT blindly follow such references and send along its access_token, as the token may be subject to potential theft. The app SHOULD either ignore the reference, or initiate a new request for access to that resource.
+* The authorization servers response MUST include the HTTP Cache-Control response header field with a value of no-store, as well as the Pragma response header field with a value of no-cache.
+* On occasion, an app may receive a FHIR resource that contains a reference to a resource hosted on a different resource server. The app SHOULD NOT blindly follow such references and send along its access_token, as the token may be subject to potential theft. The app SHOULD either ignore the reference, or initiate a new request for access to that resource.
 * http://smarthealthit.org/fhir/scopes/patient/*.read.. openID scopes have a URI prefix of http://openid.net/specs/openid-connect-core-1_0#
 * implement http://hl7.org/fhir/smart-app-launch/conformance/
 

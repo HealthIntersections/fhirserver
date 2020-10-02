@@ -3592,7 +3592,7 @@ begin
     Inbounds := Refs.GetReferences(InboundIndex);
 
     p := resp.addProp('copyright');
-    p.value := factory.makeString('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
+    p.value := factory.makeString('This response content from SNOMED CT, which is copyright ) 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     if hasProp(props, 'inactive', true) then
     begin
       resp.addProp('inactive').value := factory.makeBoolean(not IsActive(TSnomedExpressionContext(ctxt).reference));
