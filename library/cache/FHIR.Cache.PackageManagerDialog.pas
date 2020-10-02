@@ -423,7 +423,7 @@ end;
 
 procedure TPackageCacheForm.sortPackageVersions;
 begin
-  FPackages.Sort(function (const l, r: TNpmPackage): Integer
+  FPackages.SortF(function (const l, r: TNpmPackage): Integer
     begin
       case vtPackages.Header.SortColumn of
         0: result := CompareStr(l.name, r.name);

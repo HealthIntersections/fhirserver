@@ -3332,12 +3332,12 @@ begin
 end;
 
 type
-  TPackageListSorter = class (TFslObject)
+  TPackageListSorter = class (TFslComparer<TFHIRPackageInfo>)
   public
-    function doSort(sender : TObject; const l, r : TFHIRPackageInfo) : integer;
+    function compare(const l, r : TFHIRPackageInfo) : integer; override;
   end;
 
-function TPackageListSorter.doSort(sender : TObject; const l, r : TFHIRPackageInfo) : integer;
+function TPackageListSorter.compare(const l, r : TFHIRPackageInfo) : integer;
 begin
   result := CompareText(l.id, r.id);
 end;
@@ -3351,7 +3351,6 @@ var
   b : TFslStringBuilder;
   lp : TLoadedPackageInformation;
   links : String;
-  sorter : TPackageListSorter;
 begin
   pcm := TFHIRPackageManager.Create(false);
   try
@@ -3365,13 +3364,7 @@ begin
         try
           b.append('<table>'#13#10);
           b.append(' <tr><td><b>Package Id</b></td><td><b>Latest Version</b></td><td><b>Loaded Info</b></td><td><b>Actions</b></td></tr>'#13#10);
-
-          sorter := TPackageListSorter.create;
-          try
-            list.Sort(sorter.doSort);
-          finally
-            sorter.free;
-          end;
+          list.Sort(TPackageListSorter.create);
 
           for i in list do
           begin

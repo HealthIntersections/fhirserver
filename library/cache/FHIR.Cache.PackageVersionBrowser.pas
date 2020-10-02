@@ -136,7 +136,7 @@ end;
 
 procedure TPackageVersionChooserForm.sortPackages;
 begin
-  FList.Sort(function (const l, r: TFHIRPackageInfo): Integer
+  FList.SortF(function (const l, r: TFHIRPackageInfo): Integer
     begin
       case grid.Header.SortColumn of
         0: result := CompareStr(l.Id, r.Id);

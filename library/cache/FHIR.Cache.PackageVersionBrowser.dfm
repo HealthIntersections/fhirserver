@@ -82,11 +82,6 @@ object PackageVersionChooserForm: TPackageVersionChooserForm
       Height = 369
       Align = alClient
       Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
-      Header.Font.Color = clWindowText
-      Header.Font.Height = -11
-      Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
       Header.Height = 17
       Header.Options = [hoColumnResize, hoDrag, hoHotTrack, hoShowSortGlyphs, hoVisible]
       TabOrder = 0
@@ -100,33 +95,33 @@ object PackageVersionChooserForm: TPackageVersionChooserForm
       Columns = <
         item
           Position = 0
+          Text = 'Package Id'
           Width = 120
-          WideText = 'Package Id'
         end
         item
           Position = 1
+          Text = 'Version'
           Width = 60
-          WideText = 'Version'
         end
         item
           Position = 2
+          Text = 'Description'
           Width = 150
-          WideText = 'Description'
         end
         item
           Position = 3
+          Text = 'Canonical'
           Width = 350
-          WideText = 'Canonical'
         end
         item
           Position = 4
+          Text = 'FHIR Version'
           Width = 60
-          WideText = 'FHIR Version'
         end
         item
           Position = 5
+          Text = 'Date'
           Width = 80
-          WideText = 'Date'
         end>
     end
   end

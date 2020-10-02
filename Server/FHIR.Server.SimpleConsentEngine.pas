@@ -62,7 +62,7 @@ type
     FLock : TFslLock;
     FIdMap : TDictionary<String, String>; // records patients for consents, for updates that change patient (rare, but allowed)
     FCache : TFslMap<TFslList<TFhirConsentW>>;
-    function compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFhirConsentW): Integer;
+    function compare(const Left, Right: TFhirConsentW): Integer;
     procedure dropConsentById(patId, consentId : string);
   public
     constructor Create; override;

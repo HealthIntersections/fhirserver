@@ -204,11 +204,6 @@ object PackageCacheForm: TPackageCacheForm
     Height = 508
     Align = alClient
     Header.AutoSizeIndex = 5
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
     Header.Height = 20
     Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     Header.SortColumn = 0
@@ -226,33 +221,33 @@ object PackageCacheForm: TPackageCacheForm
     Columns = <
       item
         Position = 0
+        Text = 'ID'
         Width = 220
-        WideText = 'ID'
       end
       item
         Position = 1
+        Text = 'Version'
         Width = 100
-        WideText = 'Version'
       end
       item
         Position = 2
+        Text = 'FHIR V'
         Width = 100
-        WideText = 'FHIR V'
       end
       item
         Position = 3
+        Text = 'Age'
         Width = 180
-        WideText = 'Age'
       end
       item
         Position = 4
+        Text = 'Size'
         Width = 100
-        WideText = 'Size'
       end
       item
         Position = 5
-        Width = 100
-        WideText = 'Dependencies'
+        Text = 'Dependencies'
+        Width = 104
       end>
   end
   object ImageList1: TImageList

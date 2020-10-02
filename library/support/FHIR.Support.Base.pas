@@ -153,7 +153,7 @@ Type
     // Declared here for ease of implementing interfaces.
     Function _AddRef : Integer; Stdcall;
     Function _Release : Integer; Stdcall;
-    Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
+    Function QueryInterface(const IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
     // May be called from Nil or invalid references (so can't be virtual).
     Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
     Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
@@ -245,6 +245,18 @@ Type
   end;
 {$ENDIF}
 
+  TFslComparer<T : class> = class abstract (TFslObject)
+  protected
+    function compare(const l, r : T) : integer; virtual; abstract;
+  public
+    function link : TFslComparer<T>; overload;
+  end;
+
+  TDefaultComparer<T : class> = class (TFslComparer<T>)
+  protected
+    function compare(const l, r : T) : integer; override;
+  end;
+
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
@@ -268,7 +280,7 @@ Type
   var
     FItems: arrayofT;
     FCount: Integer;
-    FComparer: IComparer<T>;
+    FComparer: TFslComparer<T>;
     FOnNotify: TCollectionNotifyEvent<T>;
     FArrayManager: TArrayManager<T>;
     FEnumFree : boolean;
@@ -285,7 +297,7 @@ Type
     procedure QuickSort(L, R: Integer; compare: TListCompareFunc); overload;
     {$ENDIF}
     procedure QuickSort(L, R: Integer; compare: TListCompareEvent); overload;
-    procedure QuickSort(L, R: Integer; comparer: IComparer<T>); overload;
+    procedure QuickSort(L, R: Integer; comparer: TFslComparer<T>); overload;
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
@@ -293,7 +305,7 @@ Type
 
     constructor Create; Overload; Override;
     constructor Create(capacity : integer); Overload;
-    constructor Create(const AComparer: IComparer<T>); overload;
+    constructor Create(const AComparer: TFslComparer<T>); overload;
     constructor Create(const Collection: TEnumerable<T>); overload;
     destructor Destroy; override;
 
@@ -358,20 +370,16 @@ Type
     procedure Sort; overload;
 
     {$IFNDEF FPC}
-    procedure Sort(compare: TListCompareFunc); overload;
+    procedure SortF(compare: TListCompareFunc); overload;
     {$ENDIF}
-    procedure Sort(compare: TListCompareEvent); overload;
-    procedure Sort(AComparer: IComparer<T>); overload;
+    procedure SortE(compare: TListCompareEvent); overload;
+    procedure Sort(comparer: TFslComparer<T>); overload;
 
-    {$IFNDEF FPC}
-    function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
-    function BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean; overload;
-    {$ENDIF}
 
     {$IFNDEF FPC}
     function matches(other : TFslList<T>; ordered : boolean; criteria : TListCompareFunc) : boolean; overload;
     {$ENDIF}
-    function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean; overload;
+    function matches(other : TFslList<T>; ordered : boolean; criteria : TFslComparer<T>) : boolean; overload;
     function matches(other : TFslList<T>; ordered : boolean; criteria : TListCompareEvent) : boolean; overload;
 
     procedure TrimExcess;
@@ -415,6 +423,8 @@ Type
     constructor Create(const AKey: String; const AValue: T);
   end;
 
+  { TFslMap }
+
   TFslMap<T : TFslObject> = class(TEnumerable<TFslPair<T>>)
   private
     type
@@ -454,6 +464,9 @@ Type
     procedure SetHasDefault(const Value: Boolean);
   protected
     function DoGetEnumerator: TEnumerator<TFslPair<T>>; override;
+    {$IFDEF FPC}
+    function GetPtrEnumerator: TEnumerator<PT>; override;
+    {$ENDIF}
     procedure KeyNotify(const Key: String; Action: TCollectionNotification); virtual;
     procedure ValueNotify(const Value: T; Action: TCollectionNotification); virtual;
   public
@@ -524,12 +537,17 @@ Type
         function MoveNext: Boolean;
       end;
 
+      { TValueCollection }
+
       TValueCollection = class(TEnumerable<T>)
       private
         FMap: TFslMap<T>;
         function GetCount: Integer;
       protected
         function DoGetEnumerator: TEnumerator<T>; override;
+        {$IFDEF FPC}
+        function GetPtrEnumerator: TEnumerator<PT>; override;
+        {$ENDIF}
       public
         constructor Create(const AMap: TFslMap<T>);
         function GetEnumerator: TValueEnumerator; reintroduce;
@@ -537,11 +555,16 @@ Type
         property Count: Integer read GetCount;
       end;
 
+      { TKeyCollection }
+
       TKeyCollection = class(TEnumerable<String>)
       private
         FMap: TFslMap<T>;
         function GetCount: Integer;
       protected
+        {$IFDEF FPC}
+        function GetPtrEnumerator: TEnumerator<PT>; override;
+        {$ENDIF}
         function DoGetEnumerator: TEnumerator<String>; override;
       public
         constructor Create(const AMap: TFslMap<T>);
@@ -875,7 +898,7 @@ Begin
   End;
 End;
 
-Function TFslObject.QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID: TGUID; Out Obj): HResult; stdcall;
+Function TFslObject.QueryInterface(const IID: TGUID; Out Obj): HResult; stdcall;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
 //  SUPPORT_INTERFACE : Array[Boolean] Of HResult = (Longint($80004002), 0);
@@ -1092,7 +1115,7 @@ begin
   end;
 end;
 
-procedure TFslList<T>.QuickSort(L, R: Integer; comparer: IComparer<T>);
+procedure TFslList<T>.QuickSort(L, R: Integer; comparer: TFslComparer<T>);
 Var
   I, J, K : Integer;
   v : T;
@@ -1187,7 +1210,7 @@ Begin
   Until I >= R;
 End;
 
-procedure TFslList<T>.Sort(compare: TListCompareFunc);
+procedure TFslList<T>.SortF(compare: TListCompareFunc);
 begin
   If (FCount > 1) Then
     QuickSort(0, FCount - 1, compare);              // call the quicksort routine
@@ -1241,7 +1264,7 @@ Begin
   Until I >= R;
 End;
 
-procedure TFslList<T>.Sort(compare: TListCompareEvent);
+procedure TFslList<T>.SortE(compare: TListCompareEvent);
 begin
   If (FCount > 1) Then
     QuickSort(0, FCount - 1, compare);              // call the quicksort routine
@@ -1324,29 +1347,31 @@ end;
 
 constructor TFslList<T>.Create;
 begin
-  Create(TComparer<T>.Default);
+  inherited Create;
+  FComparer := TDefaultComparer<T>.create;
+  FArrayManager := TMoveArrayManager<T>.Create;
 end;
 
-constructor TFslList<T>.Create(const AComparer: IComparer<T>);
+constructor TFslList<T>.Create(const AComparer: TFslComparer<T>);
 begin
   inherited Create;
   FArrayManager := TMoveArrayManager<T>.Create;
   FComparer := AComparer;
-  if FComparer = nil then
-    FComparer := TComparer<T>.Default;
 end;
 
 constructor TFslList<T>.Create(const Collection: TEnumerable<T>);
 begin
   inherited Create;
+  FComparer := TDefaultComparer<T>.create;
   FArrayManager := TMoveArrayManager<T>.Create;
-  FComparer := TComparer<T>.Default;
   InsertRange(0, Collection);
 end;
 
 constructor TFslList<T>.Create(capacity: integer);
 begin
-  Create(TComparer<T>.Default);
+  inherited Create;
+  FComparer := TDefaultComparer<T>.create;
+  FArrayManager := TMoveArrayManager<T>.Create;
   self.Capacity := capacity;
 end;
 
@@ -1356,6 +1381,7 @@ begin
 // Is the sequence below ok?
   Clear;
   FArrayManager.Free;
+  FComparer.Free;
   inherited;
 end;
 
@@ -1405,18 +1431,6 @@ procedure TFslList<T>.AddRange(const Collection: TEnumerable<T>);
 begin
   InsertRange(Count, Collection);
 end;
-
-{$IFNDEF FPC}
-function TFslList<T>.BinarySearch(const Item: T; out Index: Integer): Boolean;
-begin
-  Result := TArray.BinarySearch<T>(FItems, Item, Index, FComparer, 0, Count);
-end;
-
-function TFslList<T>.BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean;
-begin
-  Result := TArray.BinarySearch<T>(FItems, Item, Index, AComparer, 0, Count);
-end;
-{$ENDIF}
 
 procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
@@ -1718,7 +1732,7 @@ begin
   result := TFslList<T>(inherited Link);
 end;
 
-function TFslList<T>.matches(other: TFslList<T>; ordered: boolean; criteria: IComparer<T>): boolean;
+function TFslList<T>.matches(other: TFslList<T>; ordered: boolean; criteria: TFslComparer<T>): boolean;
 var
   i, j : integer;
   ok : boolean;
@@ -1858,13 +1872,17 @@ end;
 
 procedure TFslList<T>.Sort;
 begin
-  Sort(FComparer);
+  Sort(FComparer.Link);
 end;
 
-procedure TFslList<T>.Sort(AComparer: IComparer<T>);
+procedure TFslList<T>.Sort(comparer: TFslComparer<T>);
 begin
-  If (FCount > 1) Then
-    QuickSort(0, FCount - 1, AComparer); // call the quicksort routine
+  try
+    If (FCount > 1) Then
+      QuickSort(0, FCount - 1, comparer); // call the quicksort routine
+  finally
+    comparer.Free;
+  end;
 end;
 
 // no ownership on the array - it cannot be kept alive after the list is freed
@@ -2301,6 +2319,13 @@ begin
   Result := GetEnumerator;
 end;
 
+{$IFDEF FPC}
+function TFslMap<T>.GetPtrEnumerator: TEnumerator<PT>;
+begin
+  result := nil;
+end;
+{$ENDIF}
+
 procedure TFslMap<T>.DoSetValue(Index: Integer; const Value: T);
 var
   oldValue: T;
@@ -2517,6 +2542,13 @@ begin
   Result := GetEnumerator;
 end;
 
+{$IFDEF FPC}
+function TFslMap<T>.TValueCollection.GetPtrEnumerator: TEnumerator<PT>;
+begin
+  result := nil;
+end;
+{$ENDIF}
+
 function TFslMap<T>.TValueCollection.GetCount: Integer;
 begin
   Result := FMap.Count;
@@ -2550,6 +2582,13 @@ function TFslMap<T>.TKeyCollection.GetCount: Integer;
 begin
   Result := FMap.Count;
 end;
+
+{$IFDEF FPC}
+function TFslMap<T>.TKeyCollection.GetPtrEnumerator: TEnumerator<PT>;
+begin
+  result := nil;
+end;
+{$ENDIF}
 
 function TFslMap<T>.TKeyCollection.GetEnumerator: TKeyEnumerator;
 begin
@@ -2871,6 +2910,29 @@ begin
   Inherited Create(msg);
   FLine := Line;
   FCol := Col;
+end;
+
+{ TDefaultComparer<T> }
+
+function TDefaultComparer<T>.compare(const l, r: T): integer;
+var
+  li, ri : NativeUInt;
+begin
+  li := NativeUInt(l);
+  ri := NativeUInt(r);
+  if (li = ri) then
+    result := 0
+  else if (li < ri) then
+    result := -1
+  else
+    result := 1;
+end;
+
+{ TFslComparer<T> }
+
+function TFslComparer<T>.link: TFslComparer<T>;
+begin
+  result  := TFslComparer<T>(inherited link);
 end;
 
 Initialization

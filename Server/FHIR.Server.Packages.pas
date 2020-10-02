@@ -150,15 +150,23 @@ begin
 end;
 
 type
-  TFHIRPackageServerSorter = class (TFslObject)
+  TFHIRPackageServerSorter = class (TFslComparer<TJsonObject>)
   private
     sort : TMatchTableSort;
     factor : integer;
   public
-    function doSort(sender : TObject; const l, r : TJsonObject) : integer;
+    constructor Create(sort : TMatchTableSort; factor : integer);
+    function compare(const l, r : TJsonObject) : integer; override;
   end;
 
-function TFHIRPackageServerSorter.doSort(sender : TObject; const l, r : TJsonObject) : integer;
+constructor TFHIRPackageServerSorter.Create(sort: TMatchTableSort; factor: integer);
+begin
+  inherited create;
+  self.sort := sort;
+  self.factor := factor;
+end;
+
+function TFHIRPackageServerSorter.compare(const l, r : TJsonObject) : integer;
 begin
   case sort of
     mtsId : result := CompareText(l['name'], r['name']) * factor;
@@ -183,14 +191,10 @@ begin
     ss := '&sort='
   else
     ss := '?sort=';
-  sorter := TFHIRPackageServerSorter.create;
-  try
-    sorter.sort := sort;
-    if rev then sorter.factor := -1 else sorter.factor := 1;
-    list.sort(sorter.doSort);
-  finally
-    sorter.free;
-  end;
+  if rev then
+    list.sort(TFHIRPackageServerSorter.create(sort, -1))
+  else
+    list.sort(TFHIRPackageServerSorter.create(sort, 1));
   b := TFslStringBuilder.Create;
   try
     b.Append('<table class="grid pck-matches">'#13#10);

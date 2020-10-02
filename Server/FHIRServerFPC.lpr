@@ -455,10 +455,14 @@ begin
     filelog := true;
     logt('testing');
   end;
+  {$IFDEF WINDOWS}
   JclStartExceptionTracking;
+  {$ENDIF}
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
+    {$IFDEF WINDOWS}
     SetConsoleTitle('FHIR Server');
+    {$ENDIF}
     ExecuteFhirServer;
   except
     on E: Exception do

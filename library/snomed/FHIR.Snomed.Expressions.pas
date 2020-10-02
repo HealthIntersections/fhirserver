@@ -148,17 +148,17 @@ Type
     function canonical : TSnomedRefinementGroup;
   end;
 
-  TSnomedConceptSorter = class (TInterfacedObject, IComparer<TSnomedConcept>)
+  TSnomedConceptSorter = class (TFslComparer<TSnomedConcept>)
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedConcept) : Integer;
+    function Compare(const left, right : TSnomedConcept) : Integer; override;
   end;
-  TSnomedRefinementSorter = class (TInterfacedObject, IComparer<TSnomedRefinement>)
+  TSnomedRefinementSorter = class (TFslComparer<TSnomedRefinement>)
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinement) : Integer;
+    function Compare(const left, right : TSnomedRefinement) : Integer; override;
   end;
-  TSnomedRefinementGroupSorter = class (TInterfacedObject, IComparer<TSnomedRefinementGroup>)
+  TSnomedRefinementGroupSorter = class (TFslComparer<TSnomedRefinementGroup>)
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right : TSnomedRefinementGroup) : Integer;
+    function Compare(const left, right : TSnomedRefinementGroup) : Integer; override;
   end;
 
   TSnomedExpressionParser = class (TFslObject)
@@ -303,12 +303,12 @@ begin
       end;
     end;
 
-    result.concepts.Sort(TSnomedConceptSorter.Create as TSnomedConceptSorter);
+    result.concepts.Sort(TSnomedConceptSorter.Create);
     if HasRefinementGroups then
     begin
       for group in result.refinementGroups do
-        group.refinements.Sort(TSnomedRefinementSorter.Create as TSnomedRefinementSorter);
-      result.refinementGroups.Sort(TSnomedRefinementGroupSorter.Create as TSnomedRefinementGroupSorter);
+        group.refinements.Sort(TSnomedRefinementSorter.Create);
+      result.refinementGroups.Sort(TSnomedRefinementGroupSorter.Create);
     end;
 
     result.Link;
@@ -638,21 +638,21 @@ end;
 
 { TSnomedConceptSorter }
 
-function TSnomedConceptSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedConcept): Integer;
+function TSnomedConceptSorter.Compare(const left, right: TSnomedConcept): Integer;
 begin
   result := left.compare(right);
 end;
 
 { TSnomedRefinementSorter }
 
-function TSnomedRefinementSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedRefinement): Integer;
+function TSnomedRefinementSorter.Compare(const left, right: TSnomedRefinement): Integer;
 begin
   result := left.compare(right);
 end;
 
 { TSnomedRefinementGroupSorter }
 
-function TSnomedRefinementGroupSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} left, right: TSnomedRefinementGroup): Integer;
+function TSnomedRefinementGroupSorter.Compare(const left, right: TSnomedRefinementGroup): Integer;
 begin
   result := left.compare(right);
 end;

@@ -71,9 +71,9 @@ Type
     function v(mode : TObservationStatsMode): Double;
   end;
 
-  TObservationStatsComparer = class (TInterfacedObject, IComparer<TObservation>)
+  TObservationStatsComparer = class (TFslComparer<TObservation>)
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
+    function Compare(const Left, Right: TObservation): Integer; override;
   end;
 
   TObservationStatsEvaluator = class (TFslObject)
@@ -195,7 +195,7 @@ implementation
 
 { TObservationStatsComparer }
 
-function TObservationStatsComparer.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TObservation): Integer;
+function TObservationStatsComparer.Compare(const Left, Right: TObservation): Integer;
 begin
   if (left = nil) or (right = nil) then
     exit(0);
@@ -332,7 +332,7 @@ begin
   end;
   if not FValidData.Empty then
   begin
-    FValidData.Sort(TObservationStatsComparer.Create as TObservationStatsComparer);
+    FValidData.Sort(TObservationStatsComparer.Create);
     AllSameUnit := true;
     AllSameCanonicalUnit := true;
     u := FValidData[0].vunit;

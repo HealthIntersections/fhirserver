@@ -748,12 +748,12 @@ end;
 { TUcumUnitSorter }
 
 Type
-  TUcumUnitSorter = class (TInterfacedObject, IComparer<TUcumCanonicalUnit>)
+  TUcumUnitSorter = class (TFslComparer<TUcumCanonicalUnit>)
   public
-    function compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} l, r : TUcumCanonicalUnit) : integer;
+    function compare(const l, r : TUcumCanonicalUnit) : integer; override;
   end;
 
-function TUcumUnitSorter.compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} l, r : TUcumCanonicalUnit) : integer;
+function TUcumUnitSorter.compare(const l, r : TUcumCanonicalUnit) : integer;
 begin
   result := l.Base.Code.compareTo(r.Base.Code);
 end;
@@ -873,7 +873,7 @@ begin
     end;
 
     debug(indent, 'sort', result);
-    result.Units.Sort(TUcumUnitSorter.create as TUcumUnitSorter);
+    result.Units.Sort(TUcumUnitSorter.create);
     debug(indent, 'done', result);
     result.Link;
   finally

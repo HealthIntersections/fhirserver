@@ -46,18 +46,18 @@ Type
 
   TSorterType = (byUrl, byVer, byName, byContext, byPub, bySource);
 
-  TCodeSystemSorter = class (TInterfacedObject, IComparer<TFHIRCodeSystemW>)
+  TCodeSystemSorter = class (TFslComparer<TFHIRCodeSystemW>)
   private
     FSortType : TSorterType;
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRCodeSystemW): Integer;
+    function Compare(const Left, Right: TFHIRCodeSystemW): Integer; override;
   end;
 
-  TValueSetSorter = class (TInterfacedObject, IComparer<TFHIRValueSetW>)
+  TValueSetSorter = class (TFslComparer<TFHIRValueSetW>)
   private
     FSortType : TSorterType;
   public
-    function Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRValueSetW): Integer;
+    function Compare(const Left, Right: TFHIRValueSetW): Integer; override;
   end;
 
   TTerminologyWebServer = class (TFslObject)
@@ -1390,7 +1390,7 @@ end;
 
 { TCodeSystemSorter }
 
-function TCodeSystemSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRCodeSystemW): Integer;
+function TCodeSystemSorter.Compare(const Left, Right: TFHIRCodeSystemW): Integer;
 begin
   case FSortType of
     byUrl: result := CompareStr(left.url, right.url);
@@ -1405,7 +1405,7 @@ end;
 
 { TValueSetSorter }
 
-function TValueSetSorter.Compare({$IFDEF FPC}constref{$ELSE}const{$ENDIF} Left, Right: TFHIRValueSetW): Integer;
+function TValueSetSorter.Compare(const Left, Right: TFHIRValueSetW): Integer;
 begin
   case FSortType of
     byUrl: result := CompareStr(left.url, right.url);

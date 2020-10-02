@@ -759,12 +759,12 @@ begin
 end;
 
 type
-  TLanguageSpecComparer = class (TFslObject)
+  TLanguageSpecComparer = class (TFslComparer<TLanguageSpec>)
   public
-    function Compare(sender : TObject; const l, r: TLanguageSpec): Integer;
+    function Compare(const l, r: TLanguageSpec): Integer; override;
   end;
 
-function TLanguageSpecComparer.Compare(sender : TObject; const l, r : TLanguageSpec) : integer;
+function TLanguageSpecComparer.Compare(const l, r : TLanguageSpec) : integer;
 begin
   if l.FValue > r.FValue then
     result := 1
@@ -782,7 +782,6 @@ var
   i : integer;
   s, l, r : String;
   d : double;
-  c : TLanguageSpecComparer;
 begin
   FSource := hdr;
   list := TFslList<TLanguageSpec>.create;
@@ -799,12 +798,7 @@ begin
     end;
     if (list.count > 1) then
     begin
-      c := TLanguageSpecComparer.create;
-      try
-        list.Sort(c.Compare);
-      finally
-        c.free;
-      end;
+      list.Sort(TLanguageSpecComparer.create);
     end;
     SetLength(FCodes, list.Count);
     for i := 0 to list.Count - 1 do

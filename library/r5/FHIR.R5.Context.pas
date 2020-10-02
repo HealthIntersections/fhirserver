@@ -417,9 +417,9 @@ begin
     begin
       // sort by version as much as we are able
       {$IFDEF FPC}
-      rl.sort(sort);
+      rl.sortE(sort);
       {$ELSE}
-      rl.sort(function (const L, R: T): Integer
+      rl.sortF(function (const L, R: T): Integer
         var v1, v2, mm1, mm2 : string;
         begin
           v1 := l.version;
