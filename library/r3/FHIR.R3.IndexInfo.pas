@@ -30,7 +30,7 @@ unit FHIR.R3.IndexInfo;
 }
 
 {$I fhir.inc}
-{$I fhir.r3.inc}
+{$I FHIR.R3.inc}
 
 interface
 
