@@ -5595,11 +5595,7 @@ Const
     );
 
 Function GetExtForMimeType(mimeType: String): String;
-{$IFDEF MACOS}
-begin
-  raise EFHIRTodo.create('GetExtForMimeType');
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   fReg: TRegistry;
   ts : TStringList;
@@ -5641,15 +5637,15 @@ Begin
   If Result = '' Then
     Result := '.bin';
 End;
+{$ELSE}
+begin
+  raise EFHIRTodo.create('GetExtForMimeType');
+end;
 {$ENDIF}
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
-{$IFDEF MACOS}
-begin
-  raise EFHIRTodo.create('TFHIRAttachmentHelper.asZipPart');
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 var
   fetcher : TInternetFetcher;
 begin
@@ -5682,6 +5678,10 @@ begin
   finally
     result.Free;
   end;
+end;
+{$ELSE}
+begin
+  raise EFHIRTodo.create('TFHIRAttachmentHelper.asZipPart');
 end;
 {$ENDIF}
 

@@ -5627,11 +5627,7 @@ Const
     );
 
 Function GetExtForMimeType(mimeType: String): String;
-{$IFDEF MACOS}
-begin
-  raise EFHIRTodo.create('GetExtForMimeType');
-end;
-{$ELSE}
+{$IFDEF WINDOWS}
 Var
   fReg: TRegistry;
   ts : TStringList;
@@ -5673,6 +5669,10 @@ Begin
   If Result = '' Then
     Result := '.bin';
 End;
+{$ELSE}
+begin
+  raise EFHIRTodo.create('GetExtForMimeType');
+end;
 {$ENDIF}
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
