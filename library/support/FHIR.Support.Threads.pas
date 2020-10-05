@@ -614,6 +614,8 @@ begin
   Close;
   while Active do
     sleep(20);
+  FInternal.Free;
+  FInternal := nil;
 end;
 
 

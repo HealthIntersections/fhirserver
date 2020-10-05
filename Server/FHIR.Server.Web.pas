@@ -550,7 +550,7 @@ Type
     destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerIniFile);
 
-    Procedure Start(active: boolean);
+    Procedure Start(active, threads: boolean);
     Procedure Stop;
 
     Property SourceProvider: TFHIRWebServerSourceProvider read FSourceProvider write SetSourceProvider;
@@ -4485,7 +4485,7 @@ begin
       exit(t);
 end;
 
-Procedure TFhirWebServer.Start(active: boolean);
+Procedure TFhirWebServer.Start(active, threads: boolean);
 Begin
   {$IFDEF WINDOWS}
   if FTwilioDB <> '' then
@@ -4506,7 +4506,7 @@ Begin
   FStartTime := GetTickCount;
   StartServer(active);
 
-  if (active) then
+  if (active and threads) then
   begin
     FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
     FSubscriptionThread := TFhirServerSubscriptionThread.Create(self);
