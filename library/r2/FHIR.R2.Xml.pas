@@ -30,7 +30,7 @@ unit FHIR.R2.Xml;
 }
 
 {$I fhir.inc}
-{$I fhir.r2.inc}
+{$I FHIR.R2.inc}
 
 interface
 

@@ -29,7 +29,7 @@ unit FHIR.R5.Factory;
 }
 
 {$I fhir.inc}
-{$I fhir.r5.inc}
+{$I FHIR.R5.inc}
 
 interface
 

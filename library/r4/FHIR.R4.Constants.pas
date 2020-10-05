@@ -30,7 +30,7 @@ unit FHIR.R4.Constants;
 }
 
 {$I fhir.inc}
-{$I fhir.r4.inc}
+{$I FHIR.R4.inc}
 
 interface
 

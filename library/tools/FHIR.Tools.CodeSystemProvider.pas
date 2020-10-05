@@ -1226,7 +1226,7 @@ begin
   begin
     if (r.version <> '') then
     begin
-      FMap.add(r.url+'|'+r.version, r.link);
+      FMap.addorSetValue(r.url+'|'+r.version, r.link);
     end;
     updateList(r.url, r.version);
   end;
@@ -1402,17 +1402,22 @@ begin
   res := FMap[id];
   if (res <> nil) then
   begin
-    FList.remove(res);
-    FMap.remove(id);
-    FMap.remove(res.url);
-    if (res.version <> '') then
-    begin
-      FMap.remove(res.url+'|'+res.version);
-      mm := TFHIRVersions.getMajMin(res.version);
-      if (mm <> '') then
-        FMap.remove(res.url+'|'+mm);
+    res.link;
+    try
+      FList.remove(res);
+      FMap.remove(id);
+      FMap.remove(res.url);
+      if (res.version <> '') then
+      begin
+        FMap.remove(res.url+'|'+res.version);
+        mm := TFHIRVersions.getMajMin(res.version);
+        if (mm <> '') then
+          FMap.remove(res.url+'|'+mm);
+      end;
+      updateList(res.url, res.version);
+    finally
+      res.free;
     end;
-    updateList(res.url, res.version);
   end;
 end;
 

@@ -941,7 +941,7 @@ begin
     end
     else
     begin
-      FCodeSystems.see(cse.Link);
+      FCodeSystems.see(cse);
       if cs.valueSet <> '' then
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
       if (FDB <> nil) then // don't build stems in this case

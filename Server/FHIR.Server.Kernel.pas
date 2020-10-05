@@ -62,7 +62,7 @@ Uses
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions, {$IFNDEF FPC} FHIR.Server.Manager, {$ENDIF} FHIR.Server.Ini,
-  FHIR.Server.Version, FHIR.Server.Telnet;
+  FHIR.Server.Version, FHIR.Server.Telnet, FHIR.Server.TxKernel;
 
 Type
   TKernelServerFactory = class (TFHIRServerFactory)
@@ -112,7 +112,6 @@ Type
     FContexts : TFslMap<TFHIRServerContext>;
     FTelnet : TFHIRTelnetServer;
 
-    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
     function doGetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
     Procedure checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure ConnectToDatabases();
@@ -219,6 +218,7 @@ var
   smode, plist : String;
   mode : TFHIRInstallerSecurityMode;
   logMsg : String;
+  tx : TTerminologyServerKernel;
 begin
   //AllocConsole;
   try
@@ -240,10 +240,10 @@ begin
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
-      logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (+stack dumps)'
+      logMsg := 'FHIR Server '+SERVER_VERSION+'. Using ini file '+iniName+' (+stack dumps)'
     else
     {$ENDIF}
-      logMsg := 'FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName;
+      logMsg := 'FHIR Server '+SERVER_VERSION+'. Using ini file '+iniName;
     if filelog then
       logMsg := logMsg + 'Log File = '+logfile;
     logt(logMsg);
@@ -278,6 +278,26 @@ begin
                 FreeAndNil(ServerManagerForm);
               end;
               {$ENDIF}
+            end
+            else if cmd = 'tx' then
+            begin
+              // - vX - version to use
+              tx := TTerminologyServerKernel.Create(iniName);
+              try
+                if (getParam('utg', fn)) then
+                  tx.UTGFolder := fn;
+                if (getParam('', plist)) then
+                  tx.packages.CommaText := plist;
+                tx.Start;
+                System.writeln('Server has started. Press enter to finish');
+                readln;
+                System.writeln('Stopping');
+                tx.Stop;
+                System.writeln('Cleaning up');
+              finally
+                tx.free;
+              end;
+              System.writeln('Done');
             end
             else if cmd = 'mount' then
             begin
@@ -556,33 +576,6 @@ procedure TFHIRService.dump;
 begin
   inherited;
   logt(KDBManagers.Dump);
-end;
-
-function TFHIRService.connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
-var
-  dbn, ddr : String;
-begin
-  dbn := details['database'];
-  ddr := details['driver'];
-  if details['type'] = 'mssql' then
-  begin
-    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    if ddr = '' then
-      ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
-  end
-  else if details['type'] = 'mysql' then
-  begin
-    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
-  end
-  else if details['type'] = 'SQLite' then
-  begin
-    logt('Connect to '+s+' ('+details['type']+':'+dbn+')');
-    result := TFslDBSQLiteManager.create(s, dbn, false);
-  end
-  else
-    raise ELibraryException.Create('Unknown database type '+s);
 end;
 
 Procedure TFHIRService.ConnectToDatabases();
@@ -1014,7 +1007,7 @@ begin
     logt('Starting TPackageUpdaterThread (db = '+FIni.web['package-server']+')');
     FPackageUpdater := TPackageUpdaterThread.Create(FWebServer, FWebServer.PackageServer.DB.Link);
   end;
-  FWebServer.Start(not FNotServing);
+  FWebServer.Start(not FNotServing, true);
 end;
 
 function TFHIRService.InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;

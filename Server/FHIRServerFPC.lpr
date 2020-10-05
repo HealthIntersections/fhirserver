@@ -386,64 +386,7 @@ uses
   FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas',
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
-  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
-
-type
-
-  { TFHIRServer }
-
-  TFHIRServer = class(TCustomApplication)
-  protected
-    procedure DoRun; override;
-  public
-    constructor Create(TheOwner: TComponent); override;
-    destructor Destroy; override;
-    procedure WriteHelp; virtual;
-  end;
-
-{ TFHIRServer }
-
-procedure TFHIRServer.DoRun;
-var
-  ErrorMsg: String;
-begin
-  // quick check parameters
-  ErrorMsg:=CheckOptions('h', 'help');
-  if ErrorMsg<>'' then begin
-    ShowException(Exception.Create(ErrorMsg));
-    Terminate;
-    Exit;
-  end;
-
-  // parse parameters
-  if HasOption('h', 'help') then begin
-    WriteHelp;
-    Terminate;
-    Exit;
-  end;
-
-  { add your program here }
-
-  // stop program loop
-  Terminate;
-end;
-
-constructor TFHIRServer.Create(TheOwner: TComponent);
-begin
-  inherited Create(TheOwner);
-  StopOnException:=True;
-end;
-
-destructor TFHIRServer.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TFHIRServer.WriteHelp;
-begin
-  { add your help code here }
-  writeln('Usage: ', ExeName, ' -h');
-end;
+  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas', FHIR.Server.TxKernel;
 
 begin
   if (FileExists('c:\temp')) then
