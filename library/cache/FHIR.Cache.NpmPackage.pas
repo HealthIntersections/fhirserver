@@ -152,10 +152,14 @@ Type
 
     function list(folder : String) : TArray<String>;
     function listResources(types : TArray<String>) : TArray<String>;
-    function load(folder, name : String) : TStream;
+    function load(name : String) : TStream; overload;
+    function load(folder, name : String) : TStream; overload;
+    function loadBytes(name : String) : TBytes; overload;
+    function loadBytes(folder, name : String) : TBytes; overload;
     function loadResource(resType, id : String) : TStream;
     function loadExampleResource(resType, id : String) : TStream;
-    function hasFile(folder, name : String) : boolean;
+    function hasFile(name : String) : boolean; overload;
+    function hasFile(folder, name : String) : boolean; overload;
     property info : TJsonObject read FNpm;
 
     property folders : TFslMap<TNpmPackageFolder> read FFolders;
@@ -706,6 +710,14 @@ begin
   result := (f <> nil) and f.hasFile(name);
 end;
 
+function TNpmPackage.hasFile(name: String): boolean;
+var
+  f : TNpmPackageFolder;
+begin
+  f := findFolder('package');
+  result := (f <> nil) and f.hasFile(name);
+end;
+
 function TNpmPackage.isCore: boolean;
 begin
   result := StringArrayExistsInsensitive(['hl7.fhir.core', 'hl7.fhir.r2.core','hl7.fhir.r2b.core','hl7.fhir.r3.core',
@@ -771,8 +783,38 @@ var
 begin
   f := findFolder(folder);
   result := nil;
-  if (f <> nil) and f.hasFile(name) then 
+  if (f <> nil) and f.hasFile(name) then
     result := TBytesStream.create(f.fetchFile(name));
+end;
+
+function TNpmPackage.load(name: String): TStream;
+var
+  f : TNpmPackageFolder;
+begin
+  f := findFolder('package');
+  result := nil;
+  if (f <> nil) and f.hasFile(name) then
+    result := TBytesStream.create(f.fetchFile(name));
+end;
+
+function TNpmPackage.loadBytes(folder, name: String): TBytes;
+var
+  f : TNpmPackageFolder;
+begin
+  f := findFolder(folder);
+  result := nil;
+  if (f <> nil) and f.hasFile(name) then
+    result := f.fetchFile(name);
+end;
+
+function TNpmPackage.loadBytes(name: String): TBytes;
+var
+  f : TNpmPackageFolder;
+begin
+  f := findFolder('package');
+  result := nil;
+  if (f <> nil) and f.hasFile(name) then
+    result := f.fetchFile(name);
 end;
 
 function TNpmPackage.loadExampleResource(resType, id: String): TStream;
@@ -815,6 +857,7 @@ procedure TNpmPackage.loadFiles(path: String; exemptions: TArray<String>);
 var
   f, d, ij : String;
   folder : TNpmPackageFolder;
+  json : TJsonObject;
 begin
   FNpm := TJsonParser.parseFile(filePath([path, 'package', 'package.json']));
   for f in TDirectory.getDirectories(path) do
@@ -829,7 +872,12 @@ begin
     if FileExists(ij) then
     begin
       try
-        folder.readIndex(TJsonParser.parseFile(ij));
+        json := TJsonParser.parseFile(ij);
+        try
+          folder.readIndex(json);
+        finally
+          json.free;
+        end;
       except 
         on e : Exception do
           raise EFHIRException.create('Error parsing '+ij+': '+e.Message);
@@ -858,6 +906,7 @@ procedure TNpmPackage.loadSubFolders(path, dir: String);
 var
   f, d, ij : String;
   folder : TNpmPackageFolder;
+  json : TJsonObject;
 begin
   for f in TDirectory.getDirectories(dir) do
   begin
@@ -871,7 +920,12 @@ begin
     if FileExists(ij) then
     begin
       try
-        folder.readIndex(TJsonParser.parseFile(ij));
+        json := TJsonParser.parseFile(ij);
+        try
+          folder.readIndex(json);
+        finally
+          json.free;
+        end;
       except
         on e : Exception do
           raise EFHIRException.create('Error parsing '+ij+': '+e.Message);

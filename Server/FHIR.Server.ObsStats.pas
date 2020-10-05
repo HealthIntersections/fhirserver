@@ -73,7 +73,7 @@ Type
 
   TObservationStatsComparer = class (TFslComparer<TObservation>)
   public
-    function Compare(const Left, Right: TObservation): Integer; override;
+    function compare(const Left, Right: TObservation): Integer; override;
   end;
 
   TObservationStatsEvaluator = class (TFslObject)

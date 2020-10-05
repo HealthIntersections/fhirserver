@@ -47,8 +47,14 @@ var
   logevent : TLogEvent;
   log_as_starting : boolean;
 
+
 procedure logt(s : String);
 procedure logtn(s : String);
+
+procedure logts(s : String);
+procedure logtd(s : String);
+procedure logtf(s : String);
+
 Function DescribeSize(b, min: Cardinal): String;
 
 
@@ -140,6 +146,73 @@ begin
     log.Policy.FullPolicy := lfpChop;
     log.Policy.MaximumSize := 10240;
   end;
+end;
+
+var
+  clog : String = '';
+
+procedure logts(s : String);
+var
+  today : integer;
+  delta : String;
+begin
+  checklog;
+  if starttime = 0 then
+    starttime := now;
+  today := trunc(now);
+  if today <> lastday then
+  begin
+    if filelog then
+      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
+    if consolelog then
+    begin
+      try
+        System.Writeln(s);
+      except
+        consolelog := false;
+      end;
+    end;
+    lastDay := today;
+  end;
+
+  clog := s;
+
+  delta := '';
+  if log_as_starting then
+    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
+  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
+  if consolelog then
+    try
+      System.Write(s);
+    except
+      consolelog := false;
+    end;
+end;
+
+procedure logtd(s : String);
+begin
+  clog := clog+s;
+  if consolelog then
+    System.Write(s);
+end;
+
+procedure logtf(s : String);
+var
+  today : integer;
+  delta : String;
+begin
+  if consolelog then
+    System.Writeln(s);
+
+  s := clog + s;
+  delta := '';
+  if log_as_starting then
+    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
+  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
+  if filelog then
+    log.WriteToLog(s+#13#10);
+  if (assigned(logEvent)) then
+    logEvent(s);
 end;
 
 procedure logt(s : String);

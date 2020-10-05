@@ -36,7 +36,8 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads, FHIR.Web.Parsers,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Threads, FHIR.Web.Parsers,
+  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Server.Ini, FHIR.Server.Session;
 
@@ -158,6 +159,8 @@ type
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
+
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
 
 implementation
 
@@ -362,6 +365,34 @@ begin
     FLock.Unlock;
   end;
 end;
+
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
+var
+  dbn, ddr : String;
+begin
+  dbn := details['database'];
+  ddr := details['driver'];
+  if details['type'] = 'mssql' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    if ddr = '' then
+      ddr := 'SQL Server Native Client 11.0';
+    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+  end
+  else if details['type'] = 'mysql' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+  end
+  else if details['type'] = 'SQLite' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+':'+dbn+')');
+    result := TFslDBSQLiteManager.create(s, dbn, false);
+  end
+  else
+    raise ELibraryException.Create('Unknown database type '+s);
+end;
+
 
 end.
 

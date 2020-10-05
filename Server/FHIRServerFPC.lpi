@@ -153,7 +153,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="376">
+    <Units Count="377">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1668,6 +1668,11 @@
         <Filename Value="..\library\support\FHIR.Support.SystemService.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit375>
+      <Unit376>
+        <Filename Value="fhir.server.txkernel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Server.TxKernel"/>
+      </Unit376>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
