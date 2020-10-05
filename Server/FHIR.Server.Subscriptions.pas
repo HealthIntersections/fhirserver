@@ -51,7 +51,7 @@ uses
   FHIR.Web.Parsers,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Json,
-  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
+  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPOP3, IdMessageParts,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
   FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Base.Parser, FHIR.Support.Logging;
 

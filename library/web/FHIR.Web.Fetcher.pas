@@ -89,7 +89,7 @@ Type
 Implementation
 
 Uses
-  IdURi,
+  IdURI,
   IdFTP,
   IdHTTP,
   IdSSLOpenSSL;
