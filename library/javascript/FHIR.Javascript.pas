@@ -920,7 +920,7 @@ end;
 
 function TJavascript.execute(script: String; scriptName : String): JsValueRef;
 begin
-  jsCheck(JsRunScript(PChar(script), 0, '', result));
+  result := JsRunScript(script, scriptName);
 end;
 
 function TJavascript.execute(script : String; scriptName, funcName: String; params: Array of TJsValue): JsValueRef;
@@ -1067,10 +1067,15 @@ begin
 end;
 
 function TJavascript.compile(script, scriptName: String): JsValueRef;
+const
+  ParseScriptAttributes: array[Boolean] of JsParseScriptAttributes = ([], [JsParseScriptAttributeLibraryCode]);
 var
   res : JsErrorCode;
+  ss, sn : JsValueRef;
 begin
-  res := JsParseScript(PChar(script), 0, '', result);
+  ss := StringToJsString(script);
+  sn := StringToJsString(scriptName);
+  res := JsParse(ss, 0, sn, ParseScriptAttributes[false], result);
   jsCheck(res);
 end;
 
