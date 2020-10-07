@@ -494,10 +494,12 @@ begin
   FBlockQueue:= TQueue.Create;
 end;
 
-constructor TSemaphore.Create(SemaphoreAttributes: Pointer; AInitialCount,
-  AMaximumCount: Integer; const Name: string);
+constructor TSemaphore.Create(SemaphoreAttributes: Pointer; AInitialCount, AMaximumCount: Integer; const Name: string);
 begin
   fMaxPermits:= AMaximumCount;
+  fPermits := MaxPermits;
+  InitCriticalSection(fLock);
+  FBlockQueue:= TQueue.Create;
 end;
 
 destructor TSemaphore.Destroy;

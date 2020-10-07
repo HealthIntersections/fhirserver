@@ -1174,9 +1174,13 @@ end;
 
 procedure TFHIRService.StopRestServer;
 begin
-  FPackageUpdater.Terminate;
-  FWebServer.Stop;
-  FWebServer.free;
+  if FPackageUpdater <> nil then
+    FPackageUpdater.Terminate;
+  if FWebServer <> nil then
+  begin
+    FWebServer.Stop;
+    FWebServer.free;
+  end;
 end;
 
 procedure TFHIRService.identifyValueSets(db : TFslDBManager);

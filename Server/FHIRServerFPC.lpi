@@ -70,7 +70,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+            <Filename Value="..\Exec\64\FHIRServer"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>

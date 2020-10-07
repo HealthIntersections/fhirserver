@@ -536,10 +536,52 @@ Begin
   End;
 End;
 {$ELSE}
+var
+  f : File;
+  size: Cardinal;
+  sName : string;
+  fs : TFileStream;
+  exists : boolean;
 begin
-  If length(bytes) = 0 Then
-    Exit;
-  raise ETodo.create('TLogger.WriteToLog');
+  FLock.Lock;
+  Try
+    If length(bytes) = 0 Then
+      Exit;
+    sName := ProcessFileName;
+    exists := FileExists(sName);
+
+    If exists and (FPolicy.MaximumSize > 0) Then
+    Begin
+      AssignFile(f, sName);
+      reset(f);
+      size := FileSize(f);
+      If (size > FPolicy.MaximumSize) Then
+        Begin
+        Close(f);
+        Case FPolicy.FullPolicy Of
+          lfpWipe : DeleteFile(sName);
+          lfpChop : CutFile(sName);
+          lfpCycle : CycleFile(sName);
+        Else
+          Exit; // lfpStop
+        End;
+        if FPolicy.FullPolicy <> lfpChop then
+          exists := false;
+      end;
+    End;
+    if exists then
+      fs := TFileStream.create(sname, fmOpenWrite)
+    else
+      fs := TFileStream.create(sname, fmCreate);
+    try
+      fs.seek(fs.Size, soBeginning);
+      fs.Write(bytes[0], length(bytes));
+    finally
+      fs.free;
+    end;
+  Finally
+    FLock.UnLock;
+  End;
 end;
 {$ENDIF}
 

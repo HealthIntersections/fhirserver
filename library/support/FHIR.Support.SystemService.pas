@@ -152,10 +152,7 @@ begin
   except
     on e:exception do
     begin
-      logt('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
-      if DebugMode then
-        write('press Enter to close');
-      Readln;
+      logt('Exception ['+e.classname+'] in Service Execution: '+#13#10+e.message);
     end
   end;
 end;
