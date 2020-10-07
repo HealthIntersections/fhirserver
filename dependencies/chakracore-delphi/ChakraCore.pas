@@ -1220,12 +1220,6 @@ type
     parserState: JsValueRef;
     out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
-  function JsRunScript(
-          script: PChar;
-          sourceContext: JsSourceContext;
-          sourceUrl: PChar;
-          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
-
   function JsPointerToString(
     const stringValue: PChar;
     stringLength: size_t;
@@ -1238,12 +1232,21 @@ type
     var stringLength: size_t
   ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
+  {$IFNDEF LINUX}
+  // these are omitted on linux.
+  function JsRunScript(
+          script: PChar;
+          sourceContext: JsSourceContext;
+          sourceUrl: PChar;
+          out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
+
   function JsParseScript(
     const script: PChar;
     sourceContext: JsSourceContext;
     const sourceUrl: PChar;
     var result: JsValueRef
   ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
+  {$ENDIF}
 
 implementation
 
@@ -1310,10 +1313,12 @@ const
   function JsSerializeParserState; external _chakracore;
   function JsRunScriptWithParserState; external _chakracore;
 
-  function JsRunScript; external _chakracore;
   function JsStringToPointer; external _chakracore;
   function JsPointerToString; external _chakracore;
+  {$IFNDEF LINUX}
+  function JsRunScript; external _chakracore;
   function JsParseScript; external _chakracore;
+  {$ENDIF}
 
 initialization
   SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
