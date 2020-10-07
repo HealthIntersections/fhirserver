@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-{$I fhir.r5.inc}
+{$I FHIR.R5.inc}
 
 uses
   FHIR.Base.Common,

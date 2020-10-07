@@ -1,6 +1,6 @@
 ﻿unit FHIR.R4.Resources.Financial;
 
-{$I fhir.r4.inc}
+{$I FHIR.R4.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

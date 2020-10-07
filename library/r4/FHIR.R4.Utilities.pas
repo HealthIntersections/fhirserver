@@ -1,6 +1,6 @@
 unit FHIR.R4.Utilities;
 
-{$I fhir.r4.inc}
+{$I FHIR.R4.inc}
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -30,12 +30,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections, ZLib,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
@@ -835,7 +835,7 @@ uses
  {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
-  {$IFDEF WINDOWS}
+  {$IFDEF MSWINDOWS}
   Registry,
   {$ENDIF}
   FHIR.R4.ElementModel, FHIR.R4.Parser;
@@ -5676,7 +5676,7 @@ end;
 {$ENDIF}
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
-{$IFDEF OSX}
+{$IFDEF MACOS}
 begin
   raise EFHIRTodo.create('TFHIRAttachmentHelper.asZipPart');
 end;
