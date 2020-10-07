@@ -49,13 +49,15 @@ uses
 
 const
 {$IFDEF WINDOWS}
-  odbcdll = 'odbc32.dll';
+ odbcdll = 'odbc32.dll';
 {$ENDIF}
 {$IFDEF OSX}
-  odbcdll = '/usr/lib/libiodbc.dylib';
+ odbcdll = '/usr/lib/libiodbc.dylib';
 {$ENDIF}
 {$IFDEF LINUX}
-  odbcdll = '/usr/lib/libiodbc.dylib';
+  // sudo apt install unixodbc
+  // sudo apt install unixodbc-dev
+  odbcdll = 'libodbc.'+sharedsuffix;
 {$ENDIF}
 
   ODBCVER = $0380;

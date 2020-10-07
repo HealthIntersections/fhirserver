@@ -22,6 +22,9 @@
     <BuildModes Count="4">
       <Item1 Name="Win32" Default="True"/>
       <Item2 Name="Win64">
+        <MacroValues Count="1">
+          <Macro3 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -60,6 +63,9 @@
         </CompilerOptions>
       </Item2>
       <Item3 Name="Linux">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="gtk2"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -98,6 +104,9 @@
         </CompilerOptions>
       </Item3>
       <Item4 Name="OSX">
+        <MacroValues Count="1">
+          <Macro1 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -136,9 +145,9 @@
         </CompilerOptions>
       </Item4>
       <SharedMatrixOptions Count="3">
-        <Item1 ID="678426317693" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
-        <Item2 ID="714078438566" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item3 ID="047760613800" Modes="Win32" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item2 ID="714078438566" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item3 ID="047760613800" Modes="Win32,Win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>

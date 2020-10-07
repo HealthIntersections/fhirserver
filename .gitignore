@@ -242,3 +242,5 @@ System
 /utilities/console/lib/x86_64-linux
 /utilities/console/lib/x86_64-darwin
 /Server/FHIRServerFPC.lps
+
+*.lps

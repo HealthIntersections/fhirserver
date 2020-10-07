@@ -9,7 +9,7 @@ uses
   Windows,
   {$ENDIF}
   {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
+  cmem, cthreads,
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, CustApp,
   IdSSLOpenSSLHeaders,
