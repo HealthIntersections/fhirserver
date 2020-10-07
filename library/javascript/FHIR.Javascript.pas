@@ -920,7 +920,7 @@ end;
 
 function TJavascript.execute(script: String; scriptName : String): JsValueRef;
 begin
-  result := JsRunScript(script, scriptName);
+  result := ChakraCoreUtils.JsRunScript(script, scriptName);
 end;
 
 function TJavascript.execute(script : String; scriptName, funcName: String; params: Array of TJsValue): JsValueRef;

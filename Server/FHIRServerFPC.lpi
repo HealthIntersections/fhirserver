@@ -1669,9 +1669,8 @@
         <IsPartOfProject Value="True"/>
       </Unit375>
       <Unit376>
-        <Filename Value="fhir.server.txkernel.pas"/>
+        <Filename Value="FHIR.Server.TxKernel.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Server.TxKernel"/>
       </Unit376>
     </Units>
   </ProjectOptions>

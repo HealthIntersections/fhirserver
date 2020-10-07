@@ -1081,8 +1081,10 @@ function SQLBindParam(StatementHandle: SQLHSTMT; ParameterNumber: SQLUSMALLINT;
 function SQLCancel(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCancel}
 
+{$IFDEF LINUX}
 function SQLCancelHandle(HandleType: SQLSMALLINT; InputHandle: SQLHANDLE): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCancelHandle}
+{$ENDIF}
 
 function SQLCloseCursor(StatementHandle: SQLHSTMT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLCloseCursor}
@@ -4371,6 +4373,7 @@ const
   TRACE_VERSION = 1000;        // Version of trace API
   {$EXTERNALSYM TRACE_VERSION}
 
+{$IFDEF LINUX}
 // open a trace log file
 function TraceOpenLogFile(szFileName: PWideChar; var lpwszOutputMsg; cbOutputMsg: LongWord): RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM TraceOpenLogFile}
@@ -4391,6 +4394,7 @@ const
 
 function TraceVSControl(Param: LongWord): RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM TraceVSControl}
+{$ENDIF}
 
 // Functions for setting the connection pooling failure detection code */
 // The "TryWait" value is the time (in seconds) that the DM will wait  */
@@ -4399,6 +4403,7 @@ function TraceVSControl(Param: LongWord): RETCODE {$IFDEF WINDOWS}stdcall{$ELSE}
 // interval, connection requests will get "The server appears to be    */
 // dead" error returns.                                                */
 
+{$IFNDEF LINUX}
 {$IFDEF WINDOWS}
 function ODBCSetTryWaitValue(dwValue: LongWord): BOOL {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In seconds
 {$EXTERNALSYM ODBCSetTryWaitValue}
@@ -4408,6 +4413,7 @@ function ODBCSetTryWaitValue(dwValue: LongWord): LongBool {$IFDEF WINDOWS}stdcal
 {$ENDIF}
 function ODBCGetTryWaitValue: LongWord {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF}; // In Milliseconds(!)
 {$EXTERNALSYM ODBCGetTryWaitValue}
+{$ENDIF}
 
 const
 // the flags in ODBC_VS_ARGS
@@ -4451,6 +4457,7 @@ function SQLSetStmtAttrW(hstmt: SQLHSTMT; fAttribute: SQLINTEGER; rgbValue: SQLP
                          cbValueMax: SQLINTEGER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLSetStmtAttrW}
 
+{$IFDEF LINUX}
 function SQLGetStmtOptionA(hstmt: SQLHSTMT; fOption: SQLUSMALLINT; pvParam: SQLPOINTER): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLGetStmtOptionA}
 
@@ -4461,6 +4468,7 @@ function SQLDescribeParamA(hstmt: SQLHSTMT; ipar: SQLUSMALLINT; var pfSqlType: S
                            var pcbParamDef: SQLUINTEGER; var pibScale: SQLSMALLINT;
                            var pfNullable: SQLSMALLINT): SQLRETURN {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$EXTERNALSYM SQLDescribeParamA}
+{$ENDIF}
 
 implementation
 
@@ -4527,7 +4535,9 @@ function SQLAllocStmt; external odbcdll name {$IFDEF OSX}'_SQLAllocStmt'{$ELSE}'
 function SQLBindCol; external odbcdll name {$IFDEF OSX}'_SQLBindCol'{$ELSE}'SQLBindCol'{$ENDIF};
 function SQLBindParam; external odbcdll name {$IFDEF OSX}'_SQLBindParam'{$ELSE}'SQLBindParam'{$ENDIF};
 function SQLCancel; external odbcdll name {$IFDEF OSX}'_SQLCancel'{$ELSE}'SQLCancel'{$ENDIF};
+{$IFDEF LINUX}
 function SQLCancelHandle; external odbcdll name {$IFDEF OSX}'_SQLCancelHandle'{$ELSE}'SQLCancelHandle'{$ENDIF};
+{$ENDIF}
 function SQLCloseCursor; external odbcdll name {$IFDEF OSX}'_SQLCloseCursor'{$ELSE}'SQLCloseCursor'{$ENDIF};
 function SQLColAttribute; external odbcdll name {$IFDEF OSX}'_SQLColAttributeW'{$ELSE}'SQLColAttributeW'{$ENDIF};
 function SQLColAttributeA; external odbcdll name {$IFDEF OSX}'_SQLColAttributeA'{$ELSE}'SQLColAttributeA'{$ENDIF};
@@ -4670,19 +4680,23 @@ function SQLBindParameter; external odbcdll name {$IFDEF OSX}'_SQLBindParameter'
 function SQLAllocHandleStd; external odbcdll name 'SQLAllocHandleStd';
 {$ENDIF}
 
+{$IFDEF LINUX}
 function TraceOpenLogFile; external odbcdll name {$IFDEF OSX}'_TraceOpenLogFile'{$ELSE}'TraceOpenLogFile'{$ENDIF};
 function TraceCloseLogFile; external odbcdll name {$IFDEF OSX}'_TraceCloseLogFile'{$ELSE}'TraceCloseLogFile'{$ENDIF};
 procedure TraceReturn; external odbcdll name {$IFDEF OSX}'_TraceReturn'{$ELSE}'TraceReturn'{$ENDIF};
 function TraceVersion; external odbcdll name {$IFDEF OSX}'_TraceVersion'{$ELSE}'TraceVersion'{$ENDIF};
 
 function TraceVSControl; external odbcdll name {$IFDEF OSX}'_TraceVSControl'{$ELSE}'TraceVSControl'{$ENDIF};
+{$ENDIF}
 
+{$IFNDEF LINUX}
 {$IFDEF WINDOWS}
 function ODBCSetTryWaitValue; external odbcdll name 'ODBCSetTryWaitValue';
 {$ELSE}
-function ODBCSetTryWaitValue; external odbcdll name '_ODBCSetTryWaitValue';
+// function ODBCSetTryWaitValue; external odbcdll name '_ODBCSetTryWaitValue';
 {$ENDIF}
 function ODBCGetTryWaitValue; external odbcdll name {$IFDEF OSX}'_ODBCGetTryWaitValue'{$ELSE}'ODBCGetTryWaitValue'{$ENDIF};
+{$ENDIF}
 
 function SQLColAttributes; external odbcdll name {$IFDEF OSX}'_SQLColAttributesW'{$ELSE}'SQLColAttributesW'{$ENDIF};
 function SQLColAttributesA; external odbcdll name {$IFDEF OSX}'_SQLColAttributesA'{$ELSE}'SQLColAttributesA'{$ENDIF};
@@ -4690,9 +4704,11 @@ function SQLColAttributesW; external odbcdll name {$IFDEF OSX}'_SQLColAttributes
 function SQLSetDescFieldW; external odbcdll name {$IFDEF OSX}'_SQLSetDescFieldW'{$ELSE}'SQLSetDescFieldW'{$ENDIF};
 function SQLSetStmtAttrW; external odbcdll name {$IFDEF OSX}'_SQLSetStmtAttrW'{$ELSE}'SQLSetStmtAttrW'{$ENDIF};
 
+{$IFDEF LINUX}
 function SQLGetStmtOptionA; external odbcdll name {$IFDEF OSX}'_SQLGetStmtOptionA'{$ELSE}'SQLGetStmtOptionA'{$ENDIF};
 function SQLSetStmtOptionA; external odbcdll name {$IFDEF OSX}'_SQLSetStmtOptionA'{$ELSE}'SQLSetStmtOptionA'{$ENDIF};
 function SQLDescribeParamA; external odbcdll name {$IFDEF OSX}'_SQLDescribeParamA'{$ELSE}'SQLDescribeParamA'{$ENDIF};
+{$ENDIF}
 
 end.
 

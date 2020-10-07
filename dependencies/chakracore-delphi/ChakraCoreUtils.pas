@@ -164,10 +164,8 @@ function JsDefineProperty(const PropName: UTF8String; Configurable, Enumerable: 
 function JsDefineProperty(const PropName: UnicodeString; Configurable, Enumerable: Boolean;
   GetAccessor, SetAccessor: JsValueRef; Scope: JsValueRef = nil; UseStrictRules: Boolean = True): Boolean; overload;
 
-function JsRunScript(const Script, Name: UTF8String; SourceContext: NativeUInt = 0;
-  IsLibraryCode: Boolean = False): JsValueRef; overload;
-function JsRunScript(const Script, Name: UnicodeString; SourceContext: NativeUInt = 0;
-  IsLibraryCode: Boolean = False): JsValueRef; overload;
+function JsRunScript(const Script, Name: UTF8String; SourceContext: NativeUInt = 0; IsLibraryCode: Boolean = False): JsValueRef; overload;
+function JsRunScript(const Script, Name: UnicodeString; SourceContext: NativeUInt = 0; IsLibraryCode: Boolean = False): JsValueRef; overload;
 function JsCreateFunction(Callback: JsNativeFunction; CallbackState: Pointer; const Name: UTF8String = ''): JsValueRef;
   overload;
 function JsCreateFunction(Callback: JsNativeFunction; CallbackState: Pointer;
