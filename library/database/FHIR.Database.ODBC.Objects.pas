@@ -3892,7 +3892,12 @@ Begin
         End;
 
       If (FCols^.FSql = SQL_CHAR) Or (FCols^.FSql = SQL_VARCHAR) Then
-        FreeMem(FCols^.FValue, (FCols^.FColumnSize+1))
+      begin
+        if (FCols^.FColumnSize = 0) then
+          FreeMem(FCols^.FValue, (DefaultStringSize+1))
+        else
+          FreeMem(FCols^.FValue, (FCols^.FColumnSize+1))
+      end
       Else If (FCols^.FSql = SQL_BINARY) Or (FCols^.FSql = SQL_VARBINARY) Then
         FreeMem(FCols^.FValue, FCols^.FColumnSize)
       Else
