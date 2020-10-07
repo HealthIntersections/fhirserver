@@ -271,6 +271,7 @@ type
     function supportsType(name : String; interaction : TFHIRInteraction) : boolean; override;
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); override;
     procedure listSearchParams(name : String; list : TFslList<TFHIRSearchParamDefinitionW>); override;
+    procedure addInstantiates(url : String); override;
   end;
 
   TFhirElementDefinition4 = class (TFhirElementDefinitionW)
@@ -1199,6 +1200,11 @@ end;
 
 
 { TFHIRCapabilityStatement4 }
+
+procedure TFHIRCapabilityStatement4.addInstantiates(url: String);
+begin
+  statement.instantiatesList.Append.value := url;
+end;
 
 procedure TFHIRCapabilityStatement4.addOperation(name, url: String);
 var

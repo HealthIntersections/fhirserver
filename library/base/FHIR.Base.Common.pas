@@ -481,6 +481,7 @@ type
     function supportsType(name : String; interaction : TFHIRInteraction) : boolean; virtual; abstract;
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); virtual; abstract;
     procedure listSearchParams(name : String; list : TFslList<TFHIRSearchParamDefinitionW>); virtual; abstract;
+    procedure addInstantiates(url : String); virtual; abstract;
   end;
 
   TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)

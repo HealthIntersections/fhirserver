@@ -850,6 +850,8 @@ begin
         end;
         html.append('</ul>'#13#10);
 
+        if ServerContext.ResConfig['CodeSystem'].Supported and ServerContext.ResConfig['CodeSystem'].Supported then
+          oConf.addInstantiates('http://hl7.org/fhir/CapabilityStatement/terminology-server');
 
         html.append('</div>'#13#10);
         // operations
