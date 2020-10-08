@@ -1015,7 +1015,7 @@ var
   db : TFslDBManager;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
-  salt, un, pw, em, sql, dr : String;
+  salt, un, pw, em, sql, dr, msg : String;
   conn : TFslDBConnection;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
@@ -1074,7 +1074,8 @@ begin
   else
     db := connectToDatabase(result, FIni.databases[result]);
   try
-    logt('mount endpoint '+result+' on '+db.DBDetails);
+    msg := 'mount endpoint '+result+' on '+db.DBDetails;
+    logt(msg);
     scim := TSCIMServer.Create(db.Link, salt, FIni.web['host'], FIni.admin['default-rights'], true);
     try
       conn := db.GetConnection('setup');
