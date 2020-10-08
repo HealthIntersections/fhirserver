@@ -44,10 +44,6 @@ uses
   IdSSLOpenSSLHeaders,
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
-  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
-  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
-  MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
-  MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',
   FHIR.Base.Factory in '..\library\base\FHIR.Base.Factory.pas',
   FHIR.Base.Lang in '..\library\base\FHIR.Base.Lang.pas',
@@ -359,7 +355,6 @@ uses
   ChakraCommon in '..\dependencies\chakracore-delphi\ChakraCommon.pas',
   Compat in '..\dependencies\chakracore-delphi\Compat.pas',
   {$ENDIF}
-  MarkdownHTMLEntities in '..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Server.ConsentEngine in 'FHIR.Server.ConsentEngine.pas',
   FHIR.Tx.NDC in 'FHIR.Tx.NDC.pas',
   FHIR.Cache.NpmPackage in '..\library\cache\FHIR.Cache.NpmPackage.pas',
