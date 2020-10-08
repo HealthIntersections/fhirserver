@@ -4489,7 +4489,7 @@ Procedure TFhirWebServer.Start(active, threads: boolean);
 Begin
   {$IFDEF WINDOWS}
   if FTwilioDB <> '' then
-    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
+    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
   {$ENDIF}
 
   logt('Start Web Server:');

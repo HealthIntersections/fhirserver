@@ -57,7 +57,7 @@ uses
 type
   TMainWindowForm = class;
 
-  TAllergiesComparer = class (TFslObject, IComparer<TFhirAllergyIntolerance>)
+  TAllergiesComparer = class (TFslComparer<TFhirAllergyIntolerance>)
   private
     FColumn: integer;
     FDesc : boolean;
@@ -66,7 +66,7 @@ type
     function Compare(const Left, Right: TFhirAllergyIntolerance): Integer;
   end;
 
-  TMedicationsComparer = class (TFslObject, IComparer<TFHIRResource>)
+  TMedicationsComparer = class (TFslComparer<TFHIRResource>)
   private
     FColumn: integer;
     FDesc : boolean;
@@ -463,7 +463,7 @@ begin
       if msg <> '' then
         lblAllergiesMessage.Caption := lblAllergiesMessage.Caption +'. '+msg;
       lblAllergiesMessage.hint := lblAllergiesMessage.Caption;
-      FAllergies.Sort(FAllergiesComparer);
+      FAllergies.Sort(FAllergiesComparer.link);
     finally
       bnd.Free;
     end;
@@ -535,7 +535,7 @@ begin
     if msg <> '' then
       lblMedicationsMessage.Caption := lblAllergiesMessage.Caption +'. '+msg;
     lblMedicationsMessage.hint := lblMedicationsMessage.Caption;
-    FMedications.Sort(FMedicationsComparer);
+    FMedications.Sort(FMedicationsComparer.link);
   finally
     params.Free;
   end;

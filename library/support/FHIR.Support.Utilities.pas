@@ -36,7 +36,7 @@ Uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
   {$IFDEF WINDOWS}  Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ELSE} Process, {$ENDIF}
   SysUtils, Types,
-  {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, YuStemmer, {$ENDIF}
+  {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, {$ENDIF}
   Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
   FHIR.Support.Fpc, FHIR.Support.Base;
 
@@ -574,10 +574,7 @@ type
 
   TFslWordStemmer = class (TFslObject)
   private
-    {$IFDEF FPC}
-    {$ELSE}
-    FStem : TYuStemmer;
-    {$ENDIF}
+    // FStem : TYuStemmer;
   public
     constructor Create(lang : String);
     destructor Destroy; override;
@@ -14529,28 +14526,20 @@ end;
 
 constructor TFslWordStemmer.create(lang: String);
 begin
-  {$IFDEF FPC}
-  {$ELSE}
-  FStem := GetStemmer(lang);
-  {$ENDIF}
+  inherited create;
+//  FStem := GetStemmer(lang);
 end;
 
 destructor TFslWordStemmer.Destroy;
 begin
-  {$IFDEF FPC}
-  {$ELSE}
-  FStem.Free;
-  {$ENDIF}
+//  FStem.Free;
   inherited;
 end;
 
 function TFslWordStemmer.stem(word: String): String;
 begin
-  {$IFDEF FPC}
   result := EncodeNYSIIS(word); // temporary hack
-  {$ELSE}
-  result := FStem.Stem(word);
-  {$ENDIF}
+  // result := FStem.Stem(word);
 end;
 
 function removeAccent(ch : UnicodeChar) : String;

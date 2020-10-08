@@ -214,7 +214,7 @@ implementation
 {$R *.dfm}
 
 Uses
-  FHIR.Database.Manager, FHIR.Database.ODBC,
+  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
   FHIR.Snomed.Importer, FHIR.Snomed.Combiner, FHIR.Snomed.Services,
   FHIR.Loinc.Importer, FHIR.Tx.RxNorm,
   FHIR.Tx.NDC;
@@ -642,6 +642,14 @@ begin
     edtLoincSource.text := dlgSource.filename;
 end;
 
+function dbtype(i : integer) : TFslDBPlatform;
+begin
+  if (i = 1) then
+    result := kdbMySQL
+  else
+    result := kdbSqlServer;
+end;
+
 procedure TServerManagerForm.btnNDCClick(Sender: TObject);
 var
   start : TDateTime;
@@ -671,7 +679,7 @@ begin
 
       ndc := TNDCImporter.create(fd.FileName);
       try
-        ndc.Database := TFslDBOdbcManager.create('ndc', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+        ndc.Database := TFslDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
         wantStop := false;
         btnUMLSStop.Visible := true;
         cursor := crHourGlass;
@@ -817,7 +825,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TFslDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFslDBOdbcManager.create('umls', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;

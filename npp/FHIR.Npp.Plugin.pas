@@ -351,9 +351,9 @@ begin
 
   errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
-  errors.Sort(errorSorter);
+  errors.Sort(errorSorter.link);
   matches := TFslList<TFHIRAnnotation>.create;
-  matches.Sort(errorSorter);
+  matches.Sort(errorSorter.link);
 
   self.PluginName := '&FHIR';
   i := 0;

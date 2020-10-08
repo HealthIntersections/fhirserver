@@ -66,13 +66,17 @@ type
     property resource : TFhirObservation read FResource write SetResource;
   end;
 
-  TObservationGraphRetrievalTask = class (TBackgroundTaskEngine, IComparer<TFHIRObsNode>)
+  TObservationGraphRetrievalComparer = class (TFslComparer<TFHIRObsNode>)
+  public
+    function Compare(const Left, Right: TFHIRObsNode): Integer;
+  end;
+
+  TObservationGraphRetrievalTask = class (TBackgroundTaskEngine)
   private
     FClient : TFHIRClient;
     function details : TObservationGraphingContext;
     procedure clientProgress(client : TObject; details : String; pct : integer; done : boolean);
     function processObs(obs : TFhirObservation) : TFHIRObsNode;
-    function Compare(const Left, Right: TFHIRObsNode): Integer;
   public
     function name: string; override;
     procedure execute; override;
@@ -288,6 +292,7 @@ var
   proc  : TFslList<TFHIRObsNode>;
   be : TFhirBundleEntry;
   node : TFHIRObsNode;
+  comp : TObservationGraphRetrievalComparer;
 begin
   if (FClient = nil) or (FClient.address <> details.address) then
   begin
@@ -312,7 +317,7 @@ begin
             if node <> nil then
               proc.Add(node);
           end;
-        proc.Sort(self);
+        proc.Sort(TObservationGraphRetrievalComparer.create);
 
         Response := proc.link;
       finally
@@ -385,7 +390,9 @@ begin
   end;
 end;
 
-function TObservationGraphRetrievalTask.Compare(const Left, Right: TFHIRObsNode): Integer;
+{ TObservationGraphRetrievalComparer }
+
+function TObservationGraphRetrievalComparer.Compare(const Left, Right: TFHIRObsNode): Integer;
 begin
   if left.FTime > right.time then
     result := -1

@@ -56,7 +56,7 @@ type
     property line : integer read FLine write FLine;
   end;
 
-  TFHIRAnnotationComparer = class (TFslObject, IComparer<TFHIRAnnotation>)
+  TFHIRAnnotationComparer = class (TFslComparer<TFHIRAnnotation>)
   public
     function Compare(const Left, Right: TFHIRAnnotation): Integer;
   end;

@@ -225,7 +225,11 @@ uses
   FHIR.R4.Resources.Clinical in '..\..\library\r4\FHIR.R4.Resources.Clinical.pas',
   FHIR.R4.Resources.Canonical in '..\..\library\r4\FHIR.R4.Resources.Canonical.pas',
   MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
-  FHIR.Server.Telnet in '..\..\Server\FHIR.Server.Telnet.pas';
+  FHIR.Server.Telnet in '..\..\Server\FHIR.Server.Telnet.pas',
+  FHIR.Database.SQLite in '..\..\library\database\FHIR.Database.SQLite.pas',
+  FHIR.Database.SQLite3.Utilities in '..\..\library\database\FHIR.Database.SQLite3.Utilities.pas',
+  FHIR.Database.SQLite3.Objects in '..\..\library\database\FHIR.Database.SQLite3.Objects.pas',
+  FHIR.Database.SQLite3.Wrapper in '..\..\library\database\FHIR.Database.SQLite3.Wrapper.pas';
 
 {$R *.res}
 

@@ -41,7 +41,7 @@ uses
   FHIR.Tx.Manager,
   FHIR.Server.Security, FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Support.Logging,
   VocabPocServerCore, vpocversion,
-  FHIR.Tx.Server, FHIR.Server.WebSource, FHIR.Server.Ini;
+  FHIR.Tx.Server, FHIR.Server.WebSource, FHIR.Server.Ini, FMX.Memo.Types;
 
 const
   MIN_WIDTH = 400;
@@ -444,7 +444,7 @@ begin
 //        FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
         FWebServer.IsTerminologyServerOnly := true;
         FWebServer.registerEndPoint('R4', '/R4', ctxt.Link, FIni);
-        FWebServer.Start(true);
+        FWebServer.Start(true, true);
 
       finally
         ctxt.free;

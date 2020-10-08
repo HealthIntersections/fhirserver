@@ -394,7 +394,7 @@ begin
   finally
     store.Free;
   end;
-  FWebServer.Start(true);
+  FWebServer.Start(true, true);
 end;
 
 procedure TExampleFhirServer.Stop;
