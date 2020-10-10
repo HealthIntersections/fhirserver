@@ -68,7 +68,6 @@ Type
     FTransactions: boolean;
     FBases: TStringList;
     FSupportSystemHistory: boolean;
-    FTxPath : String;
     FFactory : TFHIRFactory;
     FServerFactory : TFHIRServerFactory;
 
@@ -116,7 +115,7 @@ Type
     procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
-    constructor Create(conn : TFslDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    constructor Create(conn : TFslDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
@@ -147,7 +146,7 @@ Begin
 End;
 
 
-constructor TFHIRDatabaseInstaller.create(conn: TFslDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+constructor TFHIRDatabaseInstaller.create(conn: TFslDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 begin
   inherited Create;
   FFactory := factory;
@@ -157,7 +156,6 @@ begin
   FTransactions := true;
   FSupportSystemHistory := true;
   FConn := conn;
-  FTxPath := txpath;
 end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceSessions;

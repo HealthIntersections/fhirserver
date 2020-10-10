@@ -880,7 +880,7 @@ end;
 //  if (result = nil) then
 //    result := context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/'+type_.code);
 //  if (result = nil) then
-//    logt('XX: failed to find profile for type: ' + type_.code); // debug GJM
+//    Logging.log('XX: failed to find profile for type: ' + type_.code); // debug GJM
 //end;
 //
 //function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;

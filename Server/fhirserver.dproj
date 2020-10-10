@@ -110,7 +110,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r2 -packages hl7.fhir.r2.core</Debugger_RunParams>
+        <Debugger_RunParams>-gui -cmd console -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -135,7 +135,6 @@
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <Debugger_CWD>C:\work\fhirserver\Exec</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
-        <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -553,6 +552,15 @@
         <DCCReference Include="..\library\r5\FHIR.R5.Resources.Other.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <DCCReference Include="FHIR.Server.Telnet.pas"/>
+        <DCCReference Include="FHIR.Server.Kernel.Base.pas"/>
+        <DCCReference Include="FHIR.Server.Kernel.General.pas"/>
+        <DCCReference Include="FHIR.Server.Kernel.Bridge.pas"/>
+        <DCCReference Include="FHIR.Server.Kernel.Tx.pas"/>
+        <DCCReference Include="FHIR.Server.Gui.Vcl.pas">
+            <Form>ServerGUI</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

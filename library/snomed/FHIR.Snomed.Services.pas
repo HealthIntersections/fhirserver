@@ -1397,8 +1397,11 @@ var
   oread : TReader;
   s : TArray<String>;
   function readBytes : TBytes;
+  var
+    i : integer;
   begin
-    SetLength(result, oRead.ReadInteger);
+    i := oRead.ReadInteger;
+    SetLength(result, i);
     oread.Read(result[0], length(result));
   end;
 begin

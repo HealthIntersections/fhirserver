@@ -1062,7 +1062,7 @@ begin
 
   // first, update value set member information
   CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Updating ValueSet Members';
-  if (prog) then logtn('Updating ValueSet Members');
+  if (prog) then Logging.start('Updating ValueSet Members');
   conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
   conn1.Prepare;
   conn1.Execute;
@@ -1071,20 +1071,20 @@ begin
   while conn1.FetchNext do
   begin
     inc(i);
-    if (prog and (i mod 10 = 0)) then Write('.');
+    if (prog and (i mod 10 = 0)) then Logging.continue('.');
     CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
     processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
     if finish < now then
       break;
   end;
   conn1.Terminate;
-  if (prog) then Writeln;
+  if (prog) then Logging.Finish;
   if finish < now then
     exit;
 
 
   // second, for each concept that needs indexing, check it's value set information
-  if (prog) then logtn('Indexing Concepts');
+  if (prog) then logging.start('Indexing Concepts');
   CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Indexing Concepts';
   conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
   conn1.Prepare;
@@ -1093,19 +1093,19 @@ begin
   while conn1.FetchNext do
   begin
     inc(i);
-    if (prog and (i mod 10 = 0)) then Write('.');
+    if (prog and (i mod 10 = 0)) then Logging.continue('.');
     CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
     processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
     if finish < now then
       break;
   end;
   conn1.Terminate;
-  if (prog) then Writeln;
+  if (prog) then Logging.finish;
   if finish < now then
     exit;
 
   // last, for each entry in the closure entry table that needs closureing, do it
-  if (prog) then logtn('Generating Closures');
+  if (prog) then Logging.start('Generating Closures');
   CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Generating Closures';
   conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
      'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
@@ -1114,18 +1114,18 @@ begin
   while conn1.FetchNext do
   begin
     inc(i);
-    if (prog and (i mod 100 = 0)) then Write('.');
+    if (prog and (i mod 100 = 0)) then logging.continue('.');
     CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
     FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
     if finish < now then
       break;
   end;
   conn1.Terminate;
-  if (prog) then Writeln;
+  if (prog) then Logging.finish;
   if finish < now then
     exit;
 
-  if (prog) then logt('Done');
+  if (prog) then Logging.log('Done');
   CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: ';
 end;
 

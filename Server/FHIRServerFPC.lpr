@@ -40,7 +40,8 @@ uses
   {$IFDEF LINUX}
   cthreads, cmem,
   {$ENDIF}
-  Classes, SysUtils, CustApp,
+  Classes, SysUtils,
+  Interfaces,
   IdSSLOpenSSLHeaders,
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
@@ -410,33 +411,9 @@ uses
   FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas',
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
-  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas', FHIR.Server.TxKernel;
+  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 
 begin
-  if (FileExists('c:\temp')) then
-    logfile := 'c:\temp\fhirserver.log'
-  else
-    logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
-  if ParamCount = 0 then
-  begin
-    filelog := true;
-    logt('testing');
-  end;
-  {$IFDEF WINDOWS}
-  JclStartExceptionTracking;
-  {$ENDIF}
-  IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
-  try
-    {$IFDEF WINDOWS}
-    SetConsoleTitle('FHIR Server');
-    {$ENDIF}
-    ExecuteFhirServer;
-  except
-    on E: Exception do
-    begin
-      Writeln(E.ClassName, ': ', E.Message);
-      sleep(1000);
-    end;
-  end;
+  ExecuteFhirServer;
 end.
 

@@ -206,7 +206,7 @@ var
   key, last, lastDesc : integer;
   db : TFslDBConnection;
 begin
-  logt('Inport UNII from '+filename);
+  Logging.log('Inport UNII from '+filename);
   db := dbm.GetConnection('unii');
   try
     last := 0;

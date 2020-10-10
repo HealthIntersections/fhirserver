@@ -166,7 +166,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="377">
+    <Units Count="378">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1685,13 +1685,21 @@
         <Filename Value="FHIR.Server.TxKernel.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit376>
+      <Unit377>
+        <Filename Value="fhir.server.gui.lcl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServerGUI"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FHIR.Server.Gui.Lcl"/>
+      </Unit377>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+      <Filename Value="C:\work\fhirserver\Exec\32\FHIRServerFPC"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
@@ -1724,7 +1732,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="5">
+    <Exceptions Count="6">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -1740,6 +1748,9 @@
       <Item5>
         <Name Value="EIdHTTPProtocolException"/>
       </Item5>
+      <Item6>
+        <Name Value="EInOutError"/>
+      </Item6>
     </Exceptions>
   </Debugging>
 </CONFIG>

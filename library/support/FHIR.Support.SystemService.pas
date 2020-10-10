@@ -152,7 +152,7 @@ begin
   except
     on e:exception do
     begin
-      logt('Exception ['+e.classname+'] in Service Execution: '+#13#10+e.message);
+      Logging.log('Exception ['+e.classname+'] in Service Execution: '+#13#10+e.message);
     end
   end;
 end;

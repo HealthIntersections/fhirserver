@@ -457,30 +457,16 @@ uses
   FHIR.R5.Resources.Medications in '..\library\r5\FHIR.R5.Resources.Medications.pas',
   FHIR.R5.Resources.Other in '..\library\r5\FHIR.R5.Resources.Other.pas',
   MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
-  FHIR.Server.Telnet in 'FHIR.Server.Telnet.pas';
+  FHIR.Server.Telnet in 'FHIR.Server.Telnet.pas',
+  FHIR.Server.Kernel.Base in 'FHIR.Server.Kernel.Base.pas',
+  FHIR.Server.Kernel.General in 'FHIR.Server.Kernel.General.pas',
+  FHIR.Server.Kernel.Bridge in 'FHIR.Server.Kernel.Bridge.pas',
+  FHIR.Server.Kernel.Tx in 'FHIR.Server.Kernel.Tx.pas',
+  FHIR.Server.Gui.Vcl in 'FHIR.Server.Gui.Vcl.pas' {ServerGUI},
+  FHIR.Server.Gui.Controller in 'FHIR.Server.Gui.Controller.pas';
 
 begin
-  if (FileExists('c:\temp')) then
-    logfile := 'c:\temp\fhirserver.log'
-  else
-    logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
-  if ParamCount = 0 then
-  begin
-    filelog := true;
-    logt('testing');
-  end;
-  JclStartExceptionTracking;
-  IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
-  try
-    SetConsoleTitle('FHIR Server R4');
-    ExecuteFhirServer;
-  except
-    on E: Exception do
-    begin
-      Writeln(E.ClassName, ': ', E.Message);
-      sleep(1000);
-    end;
-  end;
+  ExecuteFhirServer;
 end.
 
 

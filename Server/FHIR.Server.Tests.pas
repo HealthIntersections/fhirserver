@@ -336,7 +336,7 @@ begin
   except
     on e: Exception do
     begin
-      logt(e.Message);
+      Logging.log(e.Message);
       ExitCode := 1;
     end;
   end;

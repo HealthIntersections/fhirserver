@@ -4695,7 +4695,7 @@ function TraceVSControl; external odbcdll name {$IFDEF OSX}'_TraceVSControl'{$EL
 {$IFDEF WINDOWS}
 function ODBCSetTryWaitValue; external odbcdll name 'ODBCSetTryWaitValue';
 {$ELSE}
-// function ODBCSetTryWaitValue; external odbcdll name '_ODBCSetTryWaitValue';
+function ODBCSetTryWaitValue; external odbcdll name '_ODBCSetTryWaitValue';
 {$ENDIF}
 function ODBCGetTryWaitValue; external odbcdll name {$IFDEF OSX}'_ODBCGetTryWaitValue'{$ELSE}'ODBCGetTryWaitValue'{$ENDIF};
 {$ENDIF}

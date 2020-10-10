@@ -4081,7 +4081,7 @@ begin
   finally
     b.Free;
   end;
-//  logt(doc.documentElement.namespaceURI + ', ' + doc.documentElement.nodeName);
+//  Logging.log(doc.documentElement.namespaceURI + ', ' + doc.documentElement.nodeName);
 
   v := CreateOLEObject('MSXML2.FreeThreadedDOMDocument.6.0');
   src := IUnknown(TVarData(v).VDispatch) as IXMLDOMDocument2;
@@ -4492,16 +4492,16 @@ Begin
     FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
   {$ENDIF}
 
-  logt('Start Web Server:');
+  Logging.log('Start Web Server:');
   if (FActualPort = 0) then
-    logt('  http: not active')
+    Logging.log('  http: not active')
   else
-    logt('  http: listen on ' + inttostr(FActualPort));
+    Logging.log('  http: listen on ' + inttostr(FActualPort));
 
   if (FActualSSLPort = 0) then
-    logt('  https: not active')
+    Logging.log('  https: not active')
   else
-    logt('  https: listen on ' + inttostr(FActualSSLPort));
+    Logging.log('  https: listen on ' + inttostr(FActualSSLPort));
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
@@ -4830,7 +4830,7 @@ begin
       end;
       logResponse(id, response);
       t := GetTickCount - t;
-      logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' http: '+request.RawHTTPCommand+': '+summ);
       response.CloseConnection := not PLAIN_KEEP_ALIVE;
     finally
       InterlockedDecrement(GCounterWebRequests);
@@ -4918,11 +4918,11 @@ begin
 
       logResponse(id, response);
       t := GetTickCount - t;
-      logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
-      logt(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
+      Logging.log(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+Logging.MemoryStatus);
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
       {$IFNDEF OSX}
   //    if GService <> nil then
-  //      logt(GService.ThreadStatus);
+  //      Logging.log(GService.ThreadStatus);
       {$ENDIF}
       response.CloseConnection := not SECURE_KEEP_ALIVE;
     finally
@@ -5435,7 +5435,7 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Maintenance Thread');
-  logt('Starting TFhirServerMaintenanceThread');
+  Logging.log('Starting TFhirServerMaintenanceThread');
   try
     FServer.FSettings.MaintenanceThreadStatus := 'starting';
 {$IFDEF WINDOWS}
@@ -5523,9 +5523,9 @@ begin
 {$IFDEF WINDOWS}
     CoUninitialize;
 {$ENDIF}
-    logt('Ending TFhirServerMaintenanceThread');
+    Logging.log('Ending TFhirServerMaintenanceThread');
   except
-    logt('Failing TFhirServerMaintenanceThread');
+    Logging.log('Failing TFhirServerMaintenanceThread');
   end;
   SetThreadName('');
 end;
@@ -5549,7 +5549,7 @@ begin
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  logt('Starting TFhirServerSubscriptionThread');
+  Logging.log('Starting TFhirServerSubscriptionThread');
   try
     FServer.Settings.SubscriptionThreadStatus := 'starting';
     repeat
@@ -5570,9 +5570,9 @@ begin
       FServer.FSubscriptionThread := nil;
     except
     end;
-    logt('Ending TFhirServerSubscriptionThread');
+    Logging.log('Ending TFhirServerSubscriptionThread');
   except
-    logt('Failing TFhirServerSubscriptionThread');
+    Logging.log('Failing TFhirServerSubscriptionThread');
   end;
   {$IFNDEF NO_JS}
   GJsHost.Free;
@@ -5600,7 +5600,7 @@ begin
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  logt('Starting TFhirServerEmailThread');
+  Logging.log('Starting TFhirServerEmailThread');
   try
     FServer.Settings.EmailThreadStatus := 'starting';
     repeat
@@ -5626,9 +5626,9 @@ begin
       FServer.FEmailThread := nil;
     except
     end;
-    logt('Ending TFhirServerEmailThread');
+    Logging.log('Ending TFhirServerEmailThread');
   except
-    logt('Failing TFhirServerEmailThread');
+    Logging.log('Failing TFhirServerEmailThread');
   end;
   {$IFNDEF NO_JS}
   GJsHost.Free;
@@ -5810,7 +5810,7 @@ begin
       else
         cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
       status(atsProcessing, 'Processing');
-      logt('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
+      Logging.log('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
       op := FServer.Context.Storage.createOperationContext(request.lang);
       try
         op.OnPopulateConformance := FServer.PopulateConformance;
@@ -5832,14 +5832,14 @@ begin
       saveOutcome(response);
       status(atsComplete, 'Complete');
       t := GetTickCount - t;
-      logt('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms');
+      Logging.log('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms');
     finally
       response.Free;
     end;
   except
     on e : exception do
     begin
-      logt('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms: '+e.Message);
+      Logging.log('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms: '+e.Message);
       status(atsError, e.Message);
     end;
   end;
@@ -5974,7 +5974,7 @@ begin
       except
         on e : exception do
         begin
-          logt('Exception updating packages: '+e.Message);
+          Logging.log('Exception updating packages: '+e.Message);
         end;
       end;
     finally
@@ -6404,7 +6404,7 @@ begin
       msg.Recipients.Add.Address := dest;
       msg.From.Text := FServer.settings.SMTPSender;
       msg.Body.Text := body;
-      logt('Send '+msg.MsgId+' to '+dest);
+      Logging.log('Send '+msg.MsgId+' to '+dest);
       sender.Send(msg);
     Finally
       msg.Free;

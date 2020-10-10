@@ -179,7 +179,7 @@ begin
     FErrors := FErrors + msg+' (from '+source+')'+#13#10;
     FFeedErrors := FFeedErrors + msg+' (from '+source+')'+#13#10;
   end;
-  logt(msg);
+  Logging.log(msg);
 end;
 
 procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
@@ -265,7 +265,7 @@ begin
       Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
     end;
   end;
-  log('Finish Package Scan - '+DescribeSize(FTotalBytes, 0), '', false);
+  log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
 end;
 
 procedure TPackageUpdater.updateTheFeed(url, source, email: String; pr : TPackageRestrictions);

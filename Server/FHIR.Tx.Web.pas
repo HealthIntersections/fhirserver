@@ -166,7 +166,8 @@ begin
   FServer := server;
   FFHIRPath := FHIRPathEngine;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
-  FServer.webBase := BaseURl;
+  if (server <> nil) then
+    FServer.webBase := BaseURl;
   FWorker := worker;
 end;
 
@@ -824,7 +825,7 @@ end;
 //  ts : TStringList;
 //  i: Integer;}
 //begin
-//{  logt('Tx: CS By Name '+Id);
+//{  Logging.log('Tx: CS By Name '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
@@ -854,7 +855,7 @@ end;
 //  ts : TStringList;
 //  i: Integer; }
 //begin
-//{  logt('Tx: CS By URL '+Id);
+//{  Logging.log('Tx: CS By URL '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
@@ -885,7 +886,7 @@ end;
 //  i: Integer;
 //  }
 //begin
-//{  logt('Tx: VS By Name '+Id);
+//{  Logging.log('Tx: VS By Name '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetValueSetList;
 //  try
@@ -917,7 +918,7 @@ end;
 ////  xml : TFHIRXmlComposer;
 ////  s : TStringStream;
 //begin
-//{  logt('Tx: VS By URL '+Id);
+//{  Logging.log('Tx: VS By URL '+Id);
 //  html.Header('Terminology Server');
 //  html.Heading(2, 'Value Sets (By URL)');
 //  if (id <> '') then

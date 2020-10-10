@@ -381,7 +381,7 @@ begin
     end;
   except
     on e : Exception do
-      logt('Exception checking email: '+e.message);
+      Logging.log('Exception checking email: '+e.message);
   end;
   FLastPopCheck := now;
 end;
@@ -766,7 +766,7 @@ begin
       finally
         comp.Free;
       end;
-      logt('Send '+msg.MsgId+' to '+dest);
+      Logging.log('Send '+msg.MsgId+' to '+dest);
 //      msg.SaveToFile('c:\temp\out.msg');
       sender.Send(msg);
     Finally
@@ -972,7 +972,7 @@ begin
       finally
         m.Free;
       end;
-      logt('Send response for '+id+' as '+msg.MsgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
+      Logging.log('Send response for '+id+' as '+msg.MsgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
       sender.Send(msg);
     Finally
       msg.Free;
@@ -1019,7 +1019,7 @@ begin
       EmptyQueue := true;
   except
     on e:exception do
-      logt('Error handling subscriptions: '+e.Message);
+      Logging.log('Error handling subscriptions: '+e.Message);
   end;
 end;
 
@@ -1093,7 +1093,7 @@ begin
       end;
     end
     else
-      logt('email from '+msg.Sender.Text+' could not be processed');
+      Logging.log('email from '+msg.Sender.Text+' could not be processed');
   end
   else if (ct[0] = 'multipart/report;') and (ct[1] = 'report-type=disposition-notification') then
   begin
@@ -1120,7 +1120,7 @@ begin
       end;
     end
     else
-      logt('email from '+msg.Sender.Text+' could not be processed');
+      Logging.log('email from '+msg.Sender.Text+' could not be processed');
   end
   else if ct[0] = 'multipart/mixed' then // direct message
   begin
@@ -1148,12 +1148,12 @@ begin
       begin
         if msg.Sender <> nil then
           sendDirectResponse(id, msg.sender.Address, e.Message, false);
-        logt('processing incoming direct message from '+msg.sender.Address+' failed: '+e.Message);
+        Logging.log('processing incoming direct message from '+msg.sender.Address+' failed: '+e.Message);
       end;
     end;
   end
   else
-    logt('email from '+msg.Sender.Text+' could not be understood');
+    Logging.log('email from '+msg.Sender.Text+' could not be understood');
 end;
 
 function TSubscriptionManager.ProcessNotification(conn : TFslDBConnection): Boolean;
@@ -1241,14 +1241,14 @@ end;
 procedure TSubscriptionManager.processReportDeliveryMessage(id, txt: String; details: TStringList);
 begin
   if details.Values['Action'].Trim = 'failed' then
-    logt('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
+    Logging.log('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
 end;
 
 procedure TSubscriptionManager.processReportDeliveryNotification(id, txt: String; details: TStringList);
 begin
   if id = '' then
     id := details.Values['Original-Message-ID'];
-  logt('Direct Message '+id+' notice: '+details.Values['Disposition'].Trim);
+  Logging.log('Direct Message '+id+' notice: '+details.Values['Disposition'].Trim);
 end;
 
 function TSubscriptionManager.ProcessSubscription(conn: TFslDBConnection): Boolean;

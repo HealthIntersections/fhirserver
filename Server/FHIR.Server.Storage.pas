@@ -519,7 +519,7 @@ begin
   if assigned(FCallback) then
     FCallback(i, s)
   else
-    logt(inttostr(i)+' : '+s);
+    Logging.log(inttostr(i)+' : '+s);
 end;
 
 

@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPCD} odbcsqldyn {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
+  SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPC} odbcsqldyn {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
   FHIR.Support.Base, FHIR.Support.Utilities,  
   FHIR.Database.Dialects, FHIR.Database.Manager,
   FHIR.Database.ODBC.Objects;

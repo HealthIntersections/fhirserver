@@ -43,6 +43,7 @@ Type
 
   TDirectory = record
     class function GetFiles(const Path: string): TStringDynArray; overload; inline; static;
+    class function GetFiles(const Path, Mask: string): TStringDynArray; overload; inline; static;
     class function getDirectories(const Path: string): TStringDynArray; overload; inline; static;
   end;
 
@@ -58,6 +59,27 @@ begin
   ts := TStringList.create;
   try
     if FindFirst(FHIR.Support.Utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if SearchRec.Attr and SysUtils.faDirectory = 0 then
+          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
+
+class function TDirectory.GetFiles(const Path, Mask: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(FHIR.Support.Utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then

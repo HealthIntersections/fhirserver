@@ -692,7 +692,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
     begin
       stems(c).parent := parent;
       if map.ContainsKey(c.code) then
-        logt('Duplicate code '+c.code+' in '+cs.url)
+        Logging.log('Duplicate code '+c.code+' in '+cs.url)
       else
         map.Add(c.code, c.Link);
       processConcepts(c, c.conceptList, map);
@@ -1811,7 +1811,7 @@ var
 //  def : boolean;
   icdX: TICD10Provider;
 begin
-  logt('Load Common Terminologies');
+  Logging.log('Load Common Terminologies');
 
   add(TACIRServices.Create).free;
   add(TAreaCodeServices.Create).free;
@@ -1828,7 +1828,7 @@ begin
     begin
       if details['type'] = 'icd10' then
       begin
-        logt('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+details['source']);
         icdX := TICD10Provider.Create(true, details['source']);
         try
           add(icdX);
@@ -1839,7 +1839,7 @@ begin
       end
       else if details['type'] = 'snomed' then
       begin
-        logt('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+details['source']);
         sn := TSnomedServices.Create;
         try
           sn.Load(details['source'], details['default'] = 'true');
@@ -1855,45 +1855,45 @@ begin
       end
       else if details['type'] = 'loinc' then
       begin
-        logt('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+details['source']);
         Loinc := TLoincServices.Create;
         add(Loinc);
         Loinc.Load(details['source']);
       end
       else if details['type'] = 'ucum' then
       begin
-        logt('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+details['source']);
         Ucum := TUcumServices.Create;
         Ucum.Import(details['source']);
       end
       else if details['type'] = 'rxnorm' then
       begin
-        logt('load '+s+' from '+details['database']);
+        Logging.log('load '+s+' from '+details['database']);
         RxNorm := TRxNormServices.create(databases[details['database']].link)
       end
       else if details['type'] = 'ndc' then
       begin
-        logt('load '+s+' from '+details['database']);
+        Logging.log('load '+s+' from '+details['database']);
         NDC := TNDCServices.create(databases[details['database']].link, details['version'])
       end
       else if details['type'] = 'ndfrt' then
       begin
-        logt('load '+s+' from '+details['database']);
+        Logging.log('load '+s+' from '+details['database']);
         NDFRT := TNDFRTServices.create(databases[details['database']].link)
       end
       else if details['type'] = 'mcimeta' then
       begin
-        logt('load '+s+' from '+details['database']);
+        Logging.log('load '+s+' from '+details['database']);
         NciMeta := TNciMetaServices.Create(databases[details['database']].link)
       end
       else if details['type'] = 'unii' then
       begin
-        logt('load '+s+' from '+details['database']);
+        Logging.log('load '+s+' from '+details['database']);
         Unii := TUniiServices.Create(databases[details['database']].link)
       end
       else if details['type'] = 'lang' then
       begin
-        logt('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+details['source']);
         add(TIETFLanguageCodeServices.Create(details['source'])).free;
       end
       else
