@@ -118,7 +118,7 @@ type
     function GetDriver: String; Override;
     procedure init; override;
   public
-    constructor Create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
+    constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
     property Driver : String read FDriver;
@@ -803,7 +803,7 @@ end;
 
 { TFslDBOdbcManager }
 
-constructor TFslDBOdbcManager.create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFslDBOdbcManager.create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   inherited create(Aname, AMaxConnCount);
   FAttributes := TStringList.create;
@@ -812,7 +812,7 @@ begin
   FDatabase := ADatabase;
   FUsername := AUsername;
   FPassword := APassword;
-  FPlatform := RecogniseDriver(ADriver);
+  FPlatform := platform;
   FTimeout := ATimeout;
 
   if (FPlatform = kdbAccess) or ((FPlatform = kdbUnknown) and (pos('excel', lowercase(ADriver))> 0)) then

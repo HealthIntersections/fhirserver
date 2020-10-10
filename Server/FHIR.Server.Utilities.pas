@@ -375,12 +375,12 @@ begin
     Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
     Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin

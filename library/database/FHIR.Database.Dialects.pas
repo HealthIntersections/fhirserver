@@ -129,6 +129,10 @@ begin
     begin
     Result := kdbSQLServer;
     end
+  else if ADriverDesc = 'odbc driver 17 for sql server' then
+    begin
+    Result := kdbSQLServer;
+    end
   else if ADriverDesc = 'faircom 32bit odbc driver' then
     begin
     Result := kdbCtree

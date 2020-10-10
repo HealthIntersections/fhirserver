@@ -1,0 +1,6 @@
+Deployment notes
+
+In the same folder as the server executable, there should also be:
+
+translations.xml - from the FHIR project
+
