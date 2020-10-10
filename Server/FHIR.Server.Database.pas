@@ -3603,9 +3603,9 @@ var
   context : TOperationContext;
 begin
   if (entry.requestMethod <> '') then
-    logt(inttostr(i)+': '+entry.requestMethod+' '+id.summary)
+    Logging.log(inttostr(i)+': '+entry.requestMethod+' '+id.summary)
   else
-    logt(inttostr(i)+': '+id.summary);
+    Logging.log(inttostr(i)+': '+id.summary);
 
   request.Id := id.id;
   if entry.resource <> nil then
@@ -5370,7 +5370,7 @@ begin
   ServerContext.SubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   ServerContext.SubscriptionManager.OnGetSessionEvent := ServerContext.SessionManager.GetSessionByKey;
 
-  logt('  .. keys');
+  Logging.log('  .. keys');
 
   implGuides := TFslStringSet.create;
   try
@@ -5393,7 +5393,7 @@ begin
       FLastClientKey := conn.CountSQL('select max(ClientKey) from ClientRegistrations');
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
-      logt('  .. valuesets');
+      Logging.log('  .. valuesets');
       Conn.SQL := 'Select ValueSetKey, URL from ValueSets';
       Conn.Prepare;
       conn.Execute;
@@ -5402,7 +5402,7 @@ begin
           FRegisteredValueSets.Add(Conn.ColStringByName['URL'], Conn.ColStringByName['ValueSetKey']);
       conn.terminate;
 
-      logt('  .. tags');
+      Logging.log('  .. tags');
       conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
       conn.Prepare;
       conn.Execute;
@@ -5412,7 +5412,7 @@ begin
       end;
       conn.terminate;
 
-      logt('  .. spaces');
+      Logging.log('  .. spaces');
 
       LoadSpaces(conn);
       conn.SQL := 'Select * from Config';
@@ -5442,7 +5442,7 @@ begin
           raise EFHIRException.create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
 
       conn.terminate;
-      logt('  .. resources');
+      Logging.log('  .. resources');
 
       conn.SQL := 'Select * from Types';
       conn.Prepare;
@@ -5479,7 +5479,7 @@ begin
         cfg.storedResourceId := conn.ColIntegerByName['LastId'];
       end;
       conn.terminate;
-      logt('  .. rkeys');
+      Logging.log('  .. rkeys');
       if conn.Owner.Platform = kdbMySQL then
         conn.SQL := 'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS SIGNED) ELSE 0 END) as MaxId from Ids group by ResourceTypeKey'
       else if conn.Owner.Platform = kdbSQLite then
@@ -5499,14 +5499,14 @@ begin
       end;
       conn.terminate;
 
-      logt('  .. reconcile');
+      Logging.log('  .. reconcile');
       ServerContext.TagManager.crosslink;
       ServerContext.Indexes.ReconcileIndexes(conn);
 
       if ServerContext.TerminologyServer <> nil then
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
-        logt('  .. Load Package '+ServerContext.Factory.corePackage+'#' + ServerContext.Factory.versionString);
+        Logging.log('  .. Load Package '+ServerContext.Factory.corePackage+'#' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
         li := TPackageLoadingInformation.create(ServerContext.Factory.versionString);
         try
@@ -5526,20 +5526,20 @@ begin
         end;
         if ServerContext.Globals.forLoad then
         begin
-//          logt('Load Custom Resources');
+//          Logging.log('Load Custom Resources');
 //          LoadCustomResources(implGuides);
-          logt('  .. Load Stored Resources');
+          Logging.log('  .. Load Stored Resources');
           LoadExistingResources(conn);
           if (false) then
           begin
-            logt('  .. Check Definitions');
+            Logging.log('  .. Check Definitions');
             checkDefinitions();
           end;
         end;
-        logt('  .. Process Loaded Resources');
+        Logging.log('  .. Process Loaded Resources');
         ProcessLoadedResources;
 
-        logt('  .. Load Subscription Queue');
+        Logging.log('  .. Load Subscription Queue');
         ServerContext.SubscriptionManager.LoadQueue(conn);
       end;
       conn.Release;
@@ -6357,10 +6357,10 @@ begin
       ServerContext.Validator.validate(ctxt, bufXml, ffXml);
       ServerContext.Validator.validate(ctxt, bufJson, ffJson);
       if (ctxt.Issues.Count = 0) then
-        logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')
+        Logging.log(inttostr(i)+': '+rtype+'/'+id+': passed validation')
       else
       begin
-        logt(inttostr(i)+': '+rtype+'/'+id+': failed validation');
+        Logging.log(inttostr(i)+': '+rtype+'/'+id+': failed validation');
         b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
         for iss in ctxt.Issues do
           if (iss.severity in [isFatal, isError]) then
@@ -6373,7 +6373,7 @@ begin
     on e:exception do
     begin
       recordStack(e);
-      logt(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
+      Logging.log(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
       b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : exception validating: '+e.message+#13#10);
     end;
   end;
@@ -7373,7 +7373,7 @@ begin
             on e : Exception do
             begin
               // log this, and keep trying
-              logt('Error loading '+conn.ColStringByName['ResourceKey']+' ('+conn.ColStringByName['ResourceName']+'/'+conn.ColStringByName['Id']+': '+e.Message);
+              Logging.log('Error loading '+conn.ColStringByName['ResourceKey']+' ('+conn.ColStringByName['ResourceName']+'/'+conn.ColStringByName['Id']+': '+e.Message);
             end;
           end;
         finally

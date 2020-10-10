@@ -60,18 +60,19 @@ type
     procedure CommandSend;
     procedure CommandStatus;
   Protected
-    function CanInstall : boolean; Virtual;
-    function CanStart : boolean; Virtual;
-    procedure postStart; Virtual;
-    procedure DoStop; Virtual;
-    procedure DoRemove; Virtual;
-
     procedure dump; virtual;
 
     procedure DoReceiveMessage(AMsg : Integer); virtual;
     function CheckClose(var s: String): Boolean; Virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
+
+    function CanInstall : boolean; Virtual;
+    function CanStart : boolean; Virtual;
+    procedure postStart; Virtual;
+    procedure DoStop; Virtual;
+    procedure DoRemove; Virtual;
+
     procedure ConsoleExecute;
     procedure ServiceExecute;
     Procedure ContainedStart;
@@ -295,14 +296,14 @@ end;
 procedure TSystemService.dump;
 begin
   {$IFNDEF FPC}
-  logt(ThreadStatus);
+  Logging.log(ThreadStatus);
   {$ENDIF}
-  logt(DumpLocks);
+  Logging.log(DumpLocks);
 end;
 
 function DebugCtrlC(dwCtrlType : DWORD) :BOOL;
 begin
-  logt('Ctrl-C');
+  Logging.log('Ctrl-C');
   result := true;
   SetConsoleCtrlHandler(@DebugCtrlC, false);
   GService.dump;
@@ -322,7 +323,7 @@ begin
   InternalExecute;
   if FTellUser and (FStopReason <> '') then
     begin
-    logt('stop because '+FStopReason);
+    Logging.log('stop because '+FStopReason);
     write('press Enter to close');
     readln;
     end;
@@ -427,7 +428,7 @@ begin
       begin
       if FDebugMode then
         begin
-        logt('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
+        Logging.log('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
         if DebugMode then
           write('press Enter to close');
         Readln;
@@ -558,7 +559,7 @@ begin
     on e:exception do
       begin
       LCanRun := false;
-      logt('Exception in Service Execution: '+e.message+' ['+e.classname+']');
+      Logging.log('Exception in Service Execution: '+e.message+' ['+e.classname+']');
       write('press Enter to close');
       Readln;
       end;
@@ -579,9 +580,9 @@ var
 begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
-  logt('Install Service '+FDisplayName);
-  logt('================'+StringPadRight('', '=', length(FDisplayName)));
-  logt('');
+  Logging.log('Install Service '+FDisplayName);
+  Logging.log('================'+StringPadRight('', '=', length(FDisplayName)));
+  Logging.log('');
   if CanInstall then
     begin
     Write('Registering Service '+FDisplayName+'...   ');
@@ -591,7 +592,7 @@ begin
     finally
       LSvcMan.free;
     end;
-    logt('Done');
+    Logging.log('Done');
     end;
 end;
 
@@ -616,7 +617,7 @@ begin
   finally
     LSvcMan.free;
   end;
-  logt('Done');
+  Logging.log('Done');
 end;
 
 procedure TSystemService.CommandSend;
@@ -649,7 +650,7 @@ begin
   finally
     LSvcMan.free;
   end;
-  logt('Done');
+  Logging.log('Done');
 end;
 
 procedure TSystemService.CommandStart;
@@ -668,7 +669,7 @@ begin
     try
       if LSvc.ServiceIsRunning then
         begin
-        logt('   Service is not stopped');
+        Logging.log('   Service is not stopped');
         write('press Enter to close');
         readln;
         end
@@ -683,11 +684,11 @@ begin
         until (LSvc.ServiceIsRunning) or (i = 20);
         if LSvc.ServiceIsRunning then
           begin
-          logt('   Done');
+          Logging.log('   Done');
           end
         else
           begin
-          logt('   Service could not be started');
+          Logging.log('   Service could not be started');
           write('press Enter to close');
           readln;
           end;
@@ -708,20 +709,20 @@ var
 begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
-  logt('Status for Service '+FDisplayName);
-  logt('==================='+StringPadRight('', '=', length(FDisplayName)));
-  logt('');
+  Logging.log('Status for Service '+FDisplayName);
+  Logging.log('==================='+StringPadRight('', '=', length(FDisplayName)));
+  Logging.log('');
   LSvcMan := TServiceManagerHandle.create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
       if LSvc.ServiceIsRunning then
         begin
-        logt('Service is running');
+        Logging.log('Service is running');
         end
       else
        begin
-       logt('Service is not running');
+       Logging.log('Service is not running');
        end;
     finally
       LSvc.free;
@@ -730,7 +731,7 @@ begin
     LSvcMan.free;
   end;
   writeln;
-  logt('Press Enter to close');
+  Logging.log('Press Enter to close');
   readln;
 end;
 
@@ -750,7 +751,7 @@ begin
     try
       if not LSvc.ServiceIsRunning then
         begin
-        logt('   Service is already stopped');
+        Logging.log('   Service is already stopped');
         write('press Enter to close');
         readln;
         end
@@ -765,11 +766,11 @@ begin
         until (not LSvc.ServiceIsRunning) or (i = 20);
         if not LSvc.ServiceIsRunning then
           begin
-          logt('   Done');
+          Logging.log('   Done');
           end
         else
           begin
-          logt('   Service could not be stopped');
+          Logging.log('   Service could not be stopped');
           write('press Enter to close');
           readln;
           end;

@@ -40,23 +40,6 @@ uses
 Type
   TLogEvent = procedure (msg : String) of object;
 
-var
-  filelog : boolean = false;
-  consolelog : boolean = false;
-  logfile : String = '';
-  logevent : TLogEvent;
-  log_as_starting : boolean;
-
-
-procedure logt(s : String);
-procedure logtn(s : String);
-
-procedure logts(s : String);
-procedure logtd(s : String);
-procedure logtf(s : String);
-
-Function DescribeSize(b, min: Cardinal): String;
-
 
 Type
   TLogFullPolicy = (lfpStop, lfpWipe, lfpChop, lfpCycle);
@@ -106,6 +89,8 @@ Type
     FLock : TFslLock;
     FFilename : String;
     FPolicy : TLoggerPolicy;
+    FStream : TFileStream;
+    FOpenName : String;
 
     Function ProcessFileName : String;
 
@@ -124,29 +109,488 @@ Type
     Property Policy : TLoggerPolicy read FPolicy;
   End;
 
-function MemoryStatus : String;
+  TLogListener = class (TFslObject)
+  public
+    function link : TLogListener; overload;
+
+    procedure newDay(const s : String); virtual;
+    procedure log(const s : String); virtual;
+    procedure closing; virtual;
+  end;
+
+  TLogging = class (TFslObject)
+  private
+    FLogToConsole : boolean;
+    FFileLogger : TLogger;
+    FListeners : TFslList<TLogListener>;
+    FStarting: boolean;
+    FStartTime : TDateTime;
+    FLastday : integer;
+
+    procedure checkDay;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property Starting : boolean read FStarting write FStarting;
+    property LogToConsole : boolean read FLogToConsole write FLogToConsole;
+
+    property FileLog : TLogger read FFileLogger;
+
+    procedure logToFile(filename : String);
+    procedure addListener(listener : TLogListener);
+    procedure removeListener(listener : TLogListener);
+
+    procedure Log(s : String);
+
+    Function DescribeSize(b, min: Cardinal): String;
+    function MemoryStatus : String;
+  end;
+
+var
+  Logging : TLogging;
 
 
 implementation
 
+{ TLoggingPolicy }
 
+constructor TLoggerPolicy.Create;
+begin
+  inherited;
+  FFullPolicy := lfpChop;
+end;
+
+function TLoggerPolicy.ClonePolicy: TLoggerPolicy;
+begin
+  Result := TLoggerPolicy.Create;
+  Result.FClear := FClear;
+  Result.FAllowExceptions := FAllowExceptions;
+  Result.FMaximumSize := FMaximumSize;
+  Result.FChopAmount := FChopAmount;
+  Result.FDescription := FDescription;
+  Result.FHeader := FHeader;
+  Result.FFullPolicy := FFullPolicy;
+end;
+
+{ TLogger }
+
+Constructor TLogger.Create(filename : String);
+Begin
+  Inherited Create;
+  FLock := TFslLock.Create('Log '+filename);
+  FPolicy := TLoggerPolicy.Create;
+  FFilename := filename;
+  FStream := nil;
+  FOpenName := '';
+End;
+
+Destructor TLogger.Destroy;
+Begin
+  FStream.Free;
+  FPolicy.Free;
+  FLock.Free;
+  Inherited;
+End;
+
+procedure TLogger.clear;
+begin
+  DeleteFile(FFilename);
+end;
+
+Procedure TLogger.WriteToLog(s: String);
+Begin
+  If s = '' Then
+    Exit;
+  WriteToLog(TEncoding.UTF8.GetBytes(s));
+End;
+
+Function last(Const s: String; c: Char): Cardinal;
+Var
+  i: Word;
+Begin
+  i := Length(s);
+  Result := 0;
+  While (i > 0) Do
+    Begin
+    If s[i] = c Then
+      Begin
+      Result := i;
+      Exit;
+      End;
+    Dec(i);
+    End;
+End;
+
+Function CreateDir(dir: String): Boolean;
+Var
+  x: Integer;
+Begin
+  x := last(dir, '\');
+  If x > 1 Then
+    CreateDir(Copy(dir, 1, x - 1));
+  Result := ForceFolder(dir);
+  If Not Result Then
+    {$IFDEF WINDOWS}
+    If (GetLastError = 183) Then
+    {$ELSE}
+    if (DirectoryExists(dir)) then
+    {$ENDIF}
+      Result := True; // directory existed. ( but thats O.K.)
+End;
+
+
+Procedure TLogger.CutFile(sName : String);
 var
-  lastday : integer = 0;
-  starttime : TDateTime = 0;
+  src, dst : TFileStream;
+  cs : integer;
+Begin
+  if FPolicy.ChopAmount <> 0 then
+    cs := FPolicy.ChopAmount
+  else
+    cs := FPolicy.FMaximumSize div 5;
+
+  DeleteFile(PChar(sName + '.tmp'));
+  RenameFile(PChar(sName), PChar(sName + '.tmp'));
+
+  src := TFileStream.Create(sName + '.tmp', fmopenRead + fmShareDenyWrite);
+  try
+    dst := TFileStream.Create(sName, fmCreate);
+    try
+      src.Position := cs;
+      dst.CopyFrom(src, src.Size - cs);
+    finally
+      dst.Free;
+    end;
+  finally
+    src.Free;
+  end;
+  DeleteFile(PChar(sName + '.tmp'));
+end;
+
+Procedure TLogger.CycleFile(sName : String);
+Var
+  LNewName : String;
+  i : Integer;
+Begin
+  i := 0;
+  Repeat
+    LNewName := PathFolder(sName)+PathTitle(sName)+StringPadLeft(IntegerToString(i), '0', 4)+PathExtension(sName);
+    Inc(i);
+  Until Not FileExists(LNewName);
+  RenameFile(sName, LNewName);
+End;
+
+function TLogger.Description: String;
+begin
+  Result := FFilename;
+end;
+
+function TLogger.ProcessFileName: String;
+var
+  i, j : integer;
+  s : String;
+  aNow : TDateTime;
+begin
+  aNow := Now;
+  Result := FFilename;
+  i := pos('$', result);
+  While i > 0 Do
+  Begin
+    s := copy(result, i + 1, $FF);
+    j := pos(')', s);
+    if j <= 3 Then
+      raise EIOException.create('Syntax Error in File name '+FFilename+' (unterminated command)');
+    s := copy(s, 1, j-1);
+    if (s[1] = 'd') or (s[1] = 'D') or (s[1] = 't') or (s[1] = 'T') Then
+      result := copy(result, 1, i-1) + FormatDateTime(copy(s, 3, $FF), aNow)+ copy(result, i+j+1, $FF)
+    Else
+      raise EIOException.create('Syntax Error in File name '+FFilename+' (unknown command '+s[1]+')');
+    i := pos('$', result);
+  End;
+end;
+
+procedure TLogger.WriteToLog(bytes: TBytes);
+var
+  size: Cardinal;
+  sName : string;
+  exists : boolean;
+begin
+  If length(bytes) = 0 Then
+    Exit;
+  FLock.Lock;
+  Try
+    sName := ProcessFileName;
+    size := 0;
+    if (FOpenName = '') then
+    begin
+      exists := FileExists(sName);
+    end
+    else if FOpenName <> sName then
+    begin
+      FStream.Free;
+      FStream := nil;
+      FOpenName := '';
+      exists := FileExists(sName);
+    end
+    else
+    begin
+      size := FStream.Size;
+      exists := true;
+    end;
+
+    If exists and (FPolicy.MaximumSize > 0) Then
+    Begin
+      if size = 0 then
+        size := FileSize(sName);
+
+      If (size > FPolicy.MaximumSize) Then
+      Begin
+        if FStream <> nil then
+        begin
+          FStream.Free;
+          FStream := nil;
+        end;
+
+        Case FPolicy.FullPolicy Of
+          lfpWipe : DeleteFile(sName);
+          lfpChop : CutFile(sName);
+          lfpCycle : CycleFile(sName);
+        Else
+          Exit; // lfpStop
+        End;
+        if FPolicy.FullPolicy <> lfpChop then
+          exists := false;
+      end;
+    End;
+    if (FStream = nil) then
+    begin
+      if exists then
+      begin
+        FStream := TFileStream.create(sname, fmOpenWrite + fmShareDenyWrite);
+        FStream.seek(FStream.size, soBeginning);
+      end
+      else
+        FStream := TFileStream.create(sname, fmCreate);
+      FOpenName := sName;
+    end;
+    FStream.Write(bytes[0], length(bytes));
+  Finally
+    FLock.UnLock;
+  End;
+end;
+
+{ TLogListener }
+
+function TLogListener.link: TLogListener;
+begin
+  result := TLogListener(inherited link);
+end;
+
+procedure TLogListener.closing;
+begin
+end;
+
+procedure TLogListener.log(const s: String);
+begin
+end;
+
+procedure TLogListener.newDay(const s: String);
+begin
+end;
+
+{ TLogging }
+
+constructor TLogging.Create;
+begin
+  inherited;
+  FListeners := TFslList<TLogListener>.create;
+  FStarting := true;
+  FStartTime := now;
+  FLastDay := 0;
+end;
+
+destructor TLogging.Destroy;
+begin
+  FFileLogger.Free;
+  FListeners.Free;
+  inherited;
+end;
+
+procedure TLogging.addListener(listener: TLogListener);
+begin
+  FListeners.Add(listener.Link)
+end;
+
+procedure TLogging.removeListener(listener: TLogListener);
+begin
+  FListeners.Remove(listener);
+end;
+
+procedure TLogging.logToFile(filename : String);
+begin
+  FFileLogger := TLogger.Create(filename);
+end;
+
+Function TLogging.DescribeSize(b, min: Cardinal): String;
+Begin
+  If b = $FFFFFFFF Then
+    Result := '??'
+  Else If (min <> 0) And (b = min) Then
+    Result := '0'
+  Else If b = 0 Then
+    Result := '0'
+  Else If b < 1024 Then
+    Result := IntToStr(b) + 'b'
+  Else If b < 1024 * 1024 Then
+    Result := IntToStr(b Div 1024) + 'kb'
+  Else If b < 1204 * 1024 * 1024 Then
+    Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
+  Else
+    Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
+End;
+
+
+function memToMb(v : UInt64) : string;
+begin
+  v := v div 1024;
+  v := v div 1024;
+  result := inttostr(v)+'MB';
+end;
+
+function TLogging.MemoryStatus : String;
+{$IFDEF WINDOWS}
+var
+  st: TMemoryManagerState;
+  sb: TSmallBlockTypeState;
+  v : UInt64;
+  hProcess: THandle;
+  pmc: PROCESS_MEMORY_COUNTERS;
+begin
+  result := '';
+  GetMemoryManagerState(st);
+  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
+  for sb in st.SmallBlockTypeStates do
+    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
+  if v > 16000 then
+    result := ' '+memToMb(v);
+
+  hProcess := GetCurrentProcess;
+  try
+    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
+      if result = '' then
+        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
+      else
+        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+  finally
+    CloseHandle(hProcess);
+  end;
+end;
+{$ELSE}
+begin
+  raise Exception.create('MemoryStatus');
+end;
+{$ENDIF}
+
+procedure TLogging.checkDay;
+var
+  today : integer;
+  s : String;
+  listener : TLogListener;
+begin
+  today := trunc(now);
+  if today <> FLastday then
+  begin
+    s := FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------';
+    if FFileLogger <> nil then
+      FFileLogger.WriteToLog(s+#13#10);
+    if FLogToConsole then
+    begin
+      try
+        System.Writeln(s);
+      except
+        FLogToConsole := false;
+      end;
+    end;
+    for listener in FListeners do
+    begin
+      try
+        listener.log(s);
+      except
+      end;
+    end;
+    FLastDay := today;
+  end;
+end;
+
+procedure TLogging.Log(s : String);
+var
+  listener : TLogListener;
+begin
+  checkDay;
+  if FStarting then
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+  else
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
+  if FFileLogger <> nil then
+    FFileLogger.WriteToLog(s+#13#10);
+  if FLogToConsole then
+  begin
+    try
+      System.Writeln(s);
+    except
+      FLogToConsole := false;
+    end;
+  end;
+  for listener in FListeners do
+  begin
+    try
+      listener.log(s);
+    except
+    end;
+  end;
+end;
+
+
+Initialization
+  Logging := TLogging.create;
+Finalization
+  Logging.Free;
+end.
+(*
+
+//var
+//  filelog : boolean = false;
+//  consolelog : boolean = false;
+//  logfile : String = '';
+//  logevent : TLogEvent;
+//  log_as_starting : boolean;
+//
+//
+//procedure Logging.log(s : String);
+//procedure logtn(s : String);
+//
+//procedure logts(s : String);
+//procedure logtd(s : String);
+//procedure logtf(s : String);
+var
   log : TLogger;
 
 procedure checklog;
 begin
   if (log = nil) and (logfile <> '') then
   begin
-    DeleteFile(logfile);
+//    DeleteFile(logfile);
     log := TLogger.Create(logfile);
     log.Policy.Description := 'FHIRServer Start Log';
     log.Policy.AllowExceptions := false;
     log.Policy.FullPolicy := lfpChop;
-    log.Policy.MaximumSize := 10240;
+    log.Policy.MaximumSize := 1024 * 1024;
   end;
 end;
+
+
+
 
 var
   clog : String = '';
@@ -215,45 +659,7 @@ begin
     logEvent(s);
 end;
 
-procedure logt(s : String);
-var
-  today : integer;
-  delta : String;
-begin
-  checklog;
-  if starttime = 0 then
-    starttime := now;
-  today := trunc(now);
-  if today <> lastday then
-  begin
-    if filelog then
-      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
-    if consolelog then
-    begin
-      try
-        System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
-      except
-        consolelog := false;
-      end;
-    end;
-    lastDay := today;
-  end;
-
-  delta := '';
-  if log_as_starting then
-    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
-  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
-  if filelog then
-    log.WriteToLog(s+#13#10);
-  if consolelog then
-    try
-      System.Writeln(s);
-    except
-      consolelog := false;
-    end;
-  if (assigned(logEvent)) then
-    logEvent(s);
-end;
+procedure Logging.log(s : String);
 
 procedure logtn(s : String);
 var
@@ -294,344 +700,9 @@ begin
     logEvent(s);
 end;
 
-{ TLogger }
-
-procedure TLogger.clear;
-begin
-  DeleteFile(FFilename);
-end;
-
-Constructor TLogger.Create(filename : String);
-Begin
-  Inherited Create;
-  FLock := TFslLock.Create('Log '+filename);
-  FPolicy := TLoggerPolicy.Create;
-  FFilename := filename;
-End;
-
-Destructor TLogger.Destroy;
-Begin
-  FPolicy.Free;
-  FLock.Free;
-  Inherited;
-End;
-
-Procedure TLogger.WriteToLog(s: String);
-Begin
-  If s = '' Then
-    Exit;
-  WriteToLog(TEncoding.UTF8.GetBytes(s));
-End;
-
-
-Function last(Const s: String; c: Char): Cardinal;
-Var
-  i: Word;
-Begin
-  i := Length(s);
-  Result := 0;
-  While (i > 0) Do
-    Begin
-    If s[i] = c Then
-      Begin
-      Result := i;
-      Exit;
-      End;
-    Dec(i);
-    End;
-End;
-
-Function CreateDir(dir: String): Boolean;
-Var
-  x: Integer;
-Begin
-  x := last(dir, '\');
-  If x > 1 Then
-    CreateDir(Copy(dir, 1, x - 1));
-  Result := ForceFolder(dir);
-  If Not Result Then
-    {$IFDEF WINDOWS}
-    If (GetLastError = 183) Then
-    {$ELSE}
-    if (DirectoryExists(dir)) then
-    {$ENDIF}
-      Result := True; // directory existed. ( but thats O.K.)
-End;
-
-
-Procedure TLogger.CutFile(sName : String);
-{$IFDEF WINDOWS}
-Var
-  src, dst: THandle;
-  buf: Array [0..65536] Of Byte;
-  readbytes, writebytes: Cardinal;
-Begin
-  DeleteFile(PChar(sName + '.tmp'));
-  RenameFile(PChar(sName), PChar(sName + '.tmp'));
-  src := CreateFile(PChar(sName + '.tmp'), GENERIC_READ, FILE_SHARE_READ, Nil, OPEN_EXISTING, 0, 0);
-  Try
-    dst := CreateFile(PChar(sName), GENERIC_WRITE, 0, Nil, CREATE_ALWAYS, 0, 0);
-    Try
-      SetFilePointer(src, FPolicy.ChopAmount, Nil, FILE_BEGIN);
-      Repeat
-        ReadFile(src, buf, 65536, readbytes, Nil);
-        WriteFile(dst, buf, readbytes, writebytes, Nil);
-        If writebytes <> readbytes Then
-          Begin
-          If FPolicy.AllowExceptions Then
-            Try
-              raise EIOException.create('error chopping file');
-            Except
-              End;
-          readbytes := 0;
-          End;
-      Until ReadBytes = 0;
-    Finally
-      CloseHandle(dst);
-    End;
-  Finally
-    CloseHandle(src);
-  End;
-  DeleteFile(PChar(sName + '.tmp'));
-End;
-{$ELSE}
-begin
-  raise ETodo.create('TLogger.CutFile');
-end;
-{$ENDIF}
-
-Procedure TLogger.CycleFile(sName : String);
-Var
-  LNewName : String;
-  i : Integer;
-Begin
-  i := 0;
-  Repeat
-    LNewName := PathFolder(sName)+PathTitle(sName)+StringPadLeft(IntegerToString(i), '0', 4)+PathExtension(sName);
-    Inc(i);
-  Until Not FileExists(LNewName);
-  RenameFile(sName, LNewName);
-End;
-
 Function DescribeSize(b, min: Cardinal): String;
-Begin
-  If b = $FFFFFFFF Then
-    Result := '??'
-  Else If (min <> 0) And (b = min) Then
-    Result := '0'
-  Else If b = 0 Then
-    Result := '0'
-  Else If b < 1024 Then
-    Result := IntToStr(b) + 'b'
-  Else If b < 1024 * 1024 Then
-    Result := IntToStr(b Div 1024) + 'kb'
-  Else If b < 1204 * 1024 * 1024 Then
-    Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
-  Else
-    Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
-End;
-
-
-function TLogger.Description: String;
-begin
-  Result := FFilename;
-end;
-
-{ TLoggingPolicy }
-
-function TLoggerPolicy.ClonePolicy: TLoggerPolicy;
-begin
-  Result := TLoggerPolicy.Create;
-  Result.FClear := FClear;
-  Result.FAllowExceptions := FAllowExceptions;
-  Result.FMaximumSize := FMaximumSize;
-  Result.FChopAmount := FChopAmount;
-  Result.FDescription := FDescription;
-  Result.FHeader := FHeader;
-  Result.FFullPolicy := FFullPolicy;
-end;
-
-constructor TLoggerPolicy.Create;
-begin
-  inherited;
-  FFullPolicy := lfpChop;
-end;
-
-
-function TLogger.ProcessFileName: String;
-var
-  i, j : integer;
-  s : String;
-  aNow : TDateTime;
-begin
-  aNow := Now;
-  Result := FFilename;
-  i := pos('$', result);
-  While i > 0 Do
-  Begin
-    s := copy(result, i + 1, $FF);
-    j := pos(')', s);
-    if j <= 3 Then
-      raise EIOException.create('Syntax Error in File name '+FFilename+' (unterminated command)');
-    s := copy(s, 1, j-1);
-    if (s[1] = 'd') or (s[1] = 'D') or (s[1] = 't') or (s[1] = 'T') Then
-      result := copy(result, 1, i-1) + FormatDateTime(copy(s, 3, $FF), aNow)+ copy(result, i+j+1, $FF)
-    Else
-      raise EIOException.create('Syntax Error in File name '+FFilename+' (unknown command '+s[1]+')');
-    i := pos('$', result);
-  End;
-end;
-
-
-procedure TLogger.WriteToLog(bytes: TBytes);
-{$IFDEF WINDOWS}
-Var
-  sName : string;
-  res: Boolean;
-  done: Cardinal;
-  d: Integer;
-  f: HFile;
-  FileSize: Cardinal;
-Begin
-  FLock.Lock;
-  Try
-    sName := ProcessFileName;
-
-    f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
-    If f = INVALID_HANDLE_VALUE Then
-      If FPolicy.AllowExceptions Then
-        raise EIOException.create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
-      Else
-        Exit;
-    If FPolicy.MaximumSize > 0 Then
-      Begin
-      FileSize := windows.GetFileSize(F, Nil);
-      If (FileSize > FPolicy.MaximumSize) Then
-        Begin
-        CloseHandle(f);
-        Case FPolicy.FullPolicy Of
-          lfpWipe : DeleteFile(sName);
-          lfpChop : CutFile(sName);
-          lfpCycle : CycleFile(sName);
-        Else
-          Exit; // lfpStop
-        End;
-        f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
-        If f = INVALID_HANDLE_VALUE Then
-          If FPolicy.AllowExceptions Then
-            raise EIOException.create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
-          Else
-            Exit;
-        End;
-      End;
-
-    SetFilePointer(f, 0, Nil, FILE_END);
-    res := WriteFile(f, bytes[0], Length(bytes), done, Nil);
-    CloseHandle(f);
-    d := Done; // suppress warning
-    If FPolicy.AllowExceptions And Not res Or (d <> Length(bytes)) Then
-      raise EIOException.create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
-  Finally
-    FLock.UnLock;
-  End;
-End;
-{$ELSE}
-var
-  f : File;
-  size: Cardinal;
-  sName : string;
-  fs : TFileStream;
-  exists : boolean;
-begin
-  FLock.Lock;
-  Try
-    If length(bytes) = 0 Then
-      Exit;
-    sName := ProcessFileName;
-    exists := FileExists(sName);
-
-    If exists and (FPolicy.MaximumSize > 0) Then
-    Begin
-      AssignFile(f, sName);
-      reset(f);
-      size := FileSize(f);
-      If (size > FPolicy.MaximumSize) Then
-        Begin
-        Close(f);
-        Case FPolicy.FullPolicy Of
-          lfpWipe : DeleteFile(sName);
-          lfpChop : CutFile(sName);
-          lfpCycle : CycleFile(sName);
-        Else
-          Exit; // lfpStop
-        End;
-        if FPolicy.FullPolicy <> lfpChop then
-          exists := false;
-      end;
-    End;
-    if exists then
-      fs := TFileStream.create(sname, fmOpenWrite)
-    else
-      fs := TFileStream.create(sname, fmCreate);
-    try
-      fs.seek(fs.Size, soBeginning);
-      fs.Write(bytes[0], length(bytes));
-    finally
-      fs.free;
-    end;
-  Finally
-    FLock.UnLock;
-  End;
-end;
-{$ENDIF}
-
-function memToMb(v : UInt64) : string;
-begin
-  v := v div 1024;
-  v := v div 1024;
-  result := inttostr(v)+'MB';
-end;
 
 function MemoryStatus: String;
-{$IFDEF WINDOWS}
-var
-  st: TMemoryManagerState;
-  sb: TSmallBlockTypeState;
-  v : UInt64;
-  hProcess: THandle;
-  pmc: PROCESS_MEMORY_COUNTERS;
-begin
-  result := '';
-  GetMemoryManagerState(st);
-  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
-  for sb in st.SmallBlockTypeStates do
-    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-  if v > 16000 then
-    result := ' '+memToMb(v);
-
-  hProcess := GetCurrentProcess;
-  try
-    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
-      if result = '' then
-        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
-      else
-        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
-  finally
-    CloseHandle(hProcess);
-  end;
-end;
-{$ELSE}
-begin
-  raise Exception.create('MemoryStatus');
-end;
 
 {$ENDIF}
-
-
-
-Initialization
-  log_as_starting := true;
-Finalization
-  if log <> nil then
-    log.Free;
-end.
+*)

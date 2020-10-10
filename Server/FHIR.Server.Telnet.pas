@@ -73,7 +73,7 @@ type
     Procedure Execute; override;
   end;
 
-  TFHIRTelnetServer = class (TFslObject)
+  TFHIRTelnetServer = class (TLogListener)
   Private
     FServer: TIdTelnetServer;
     FLock : TFslLock;
@@ -85,13 +85,13 @@ type
     FLastId : integer;
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
-    procedure doLog(msg : String);
     procedure internalThread;
   Public
     constructor Create(port: Integer; WelcomeMsg : String);
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
+    procedure Log(const msg : String); override;
 
     function makeSession(desc : String) : TTelnetSession;
   end;
@@ -119,13 +119,13 @@ begin
   FThread := TFHIRTelnetServerThread.Create;
   FThread.FServer := self;
   FThread.Open;
-  logevent := DoLog;
+  Logging.addListener(self);
   sleep(500); // allow console to connect early
 end;
 
 destructor TFHIRTelnetServer.Destroy;
 begin
-  LogEvent := nil;
+  Logging.removeListener(self);
   try
     FThread.closeOut;
     FThread.Free;
@@ -140,7 +140,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRTelnetServer.doLog(msg: String);
+procedure TFHIRTelnetServer.Log(const msg: String);
 begin
   FLock.Lock;
   try
@@ -204,7 +204,7 @@ begin
     finally
       FLock.Unlock;
     end;
-    doLog('$@session-'+inttostr(result.FId)+': @start|'+inttostr(GetTickCount64)+'|'+desc);
+    Log('$@session-'+inttostr(result.FId)+': @start|'+inttostr(GetTickCount64)+'|'+desc);
     result.link;
   finally
     result.free;
@@ -292,7 +292,7 @@ procedure TTelnetThreadHelper.ping;
 begin
   if (now > FNextPing) then
   begin
-    send('$@ping: '+inttostr(threadCount)+' threads, '+MemoryStatus);
+    send('$@ping: '+inttostr(threadCount)+' threads, '+Logging.MemoryStatus);
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
@@ -333,14 +333,14 @@ end;
 
 destructor TTelnetSession.Destroy;
 begin
-  FServer.doLog('$@session-'+inttostr(FId)+': @stop|'+inttostr(GetTickCount64));
+  FServer.log('$@session-'+inttostr(FId)+': @stop|'+inttostr(GetTickCount64));
   FServer.Free;
   inherited;
 end;
 
 procedure TTelnetSession.SendMsg(s: String);
 begin
-  FServer.doLog('$@session-'+inttostr(FId)+': @msg|'+s);
+  FServer.Log('$@session-'+inttostr(FId)+': @msg|'+s);
 end;
 
 end.

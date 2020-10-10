@@ -1992,6 +1992,9 @@ Type
   End;
 
 
+function hasCommandLineParam(name : String) : boolean;
+function getCommandLineParam(name : String; var res : String) : boolean;
+function commandLineAsString : String;
 
 Implementation
 
@@ -15706,6 +15709,57 @@ end;
 function clength(b : TBytes) : cardinal;
 begin
   result := cardinal(length(b));
+end;
+
+function getCommandLineParam(name : String; var res : String) : boolean;
+var
+  i : integer;
+begin
+  {$IFDEF FPC}
+  result := false;
+  for i := 1 to paramCount - 1 do
+  begin
+    if paramStr(i) = '-'+name then
+    begin
+      res := paramStr(i+1);
+      exit(true);
+    end;
+  end;
+  {$ELSE}
+  result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
+  {$ENDIF}
+end;
+
+function hasCommandLineParam(name : String) : boolean;
+var
+  i : integer;
+begin
+  {$IFDEF FPC}
+  result := false;
+  for i := 1 to paramCount  do
+  begin
+    if paramStr(i) = '-'+name then
+      exit(true);
+  end;
+  {$ELSE}
+  result := FindCmdLineSwitch(name);
+  {$ENDIF}
+end;
+
+function commandLineAsString : String;
+var
+  i : integer;
+  s : String;
+begin
+  result := ParamStr(0);
+  for i := 1 to ParamCount do
+  begin
+    s := paramstr(i);
+    if (s.Contains(' ')) then
+      result := result + ' "'+s+'"'
+    else
+      result := result + ' '+s;
+  end
 end;
 
 Initialization

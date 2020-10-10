@@ -179,7 +179,7 @@ begin
     FErrors := FErrors + msg+' (from '+source+')'+#13#10;
     FFeedErrors := FFeedErrors + msg+' (from '+source+')'+#13#10;
   end;
-  logt(msg);
+  Logging.log(msg);
 end;
 
 procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);

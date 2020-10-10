@@ -1125,7 +1125,7 @@ begin
   if finish < now then
     exit;
 
-  if (prog) then logt('Done');
+  if (prog) then Logging.log('Done');
   CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: ';
 end;
 

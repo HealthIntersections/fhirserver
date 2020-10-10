@@ -839,7 +839,7 @@ begin
   end
   else
   begin
-    logt('Auth: '+request.Document);
+    Logging.log('Auth: '+request.Document);
     try
       // cors
       response.CustomHeaders.add('Access-Control-Allow-Origin: *');
@@ -894,7 +894,7 @@ begin
       end;
       on e : Exception do
       begin
-        logt('Auth Exception: '+e.Message);
+        Logging.log('Auth Exception: '+e.Message);
         recordStack(e);
         raise;
       end;
@@ -1300,7 +1300,7 @@ begin
     except
       on e : Exception do
       begin
-        logt('Error in OAuth Token call: '+e.Message+' (params = '+params.Source+')');
+        Logging.log('Error in OAuth Token call: '+e.Message+' (params = '+params.Source+')');
         response.ResponseNo := 400;
         json := TJsonWriterDirect.create;
         try

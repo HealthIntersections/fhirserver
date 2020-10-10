@@ -62,11 +62,15 @@ type
     function GetFileName : String;
     function getAdminValue(name: String): String;
     function getWebValue(name: String): String;
+    function getServiceValue(name: String): String;
+    function getKernelValue(name: String): String;
     function GetRunNumber: integer;
     procedure SetRunNumber(const Value: integer);
     procedure readSection(name : String; map : TFslMap<TFHIRServerIniComplex>);
     procedure SetAdminValue(name: String; const Value: String);
     procedure SetWebValue(name: String; const Value: String);
+    procedure SetServiceValue(name: String; const Value: String);
+    procedure SetKernelValue(name: String; const Value: String);
   public
     constructor Create(const FileName: string);
     destructor Destroy; override;
@@ -77,6 +81,8 @@ type
 
     property web[name : String] : String read getWebValue write SetWebValue;
     property admin[name : String] : String  read getAdminValue write SetAdminValue;
+    property service[name : String] : String  read getServiceValue write SetServiceValue;
+    property kernel[name : String] : String  read getKernelValue write SetKernelValue;
     property terminologies : TFslMap<TFHIRServerIniComplex> read FTerminologies;
     property databases : TFslMap<TFHIRServerIniComplex> read FDatabases;
     property endpoints : TFslMap<TFHIRServerIniComplex> read FEndPoints;
@@ -130,9 +136,19 @@ begin
   result := FIni.FileName;
 end;
 
+function TFHIRServerIniFile.getKernelValue(name: String): String;
+begin
+  result := FIni.ReadString('kernel', name, '');
+end;
+
 function TFHIRServerIniFile.GetRunNumber: integer;
 begin
   result := FIni.ReadInteger('server', 'run-number', 0);
+end;
+
+function TFHIRServerIniFile.getServiceValue(name: String): String;
+begin
+  result := FIni.ReadString('service', name, '');
 end;
 
 function TFHIRServerIniFile.getWebValue(name: String): String;
@@ -198,9 +214,19 @@ begin
   FIni.writeString('admin', name, value);
 end;
 
+procedure TFHIRServerIniFile.SetKernelValue(name: String; const Value: String);
+begin
+  FIni.writeString('kernel', name, value);
+end;
+
 procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
 begin
   FIni.writeInteger('server', 'run-number', value);
+end;
+
+procedure TFHIRServerIniFile.SetServiceValue(name: String; const Value: String);
+begin
+  FIni.writeString('service', name, value);
 end;
 
 procedure TFHIRServerIniFile.SetWebValue(name: String; const Value: String);

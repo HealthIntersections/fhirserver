@@ -138,7 +138,7 @@ object TxServerForm: TTxServerForm
   end
   object MainMenu1: TMainMenu
     Left = 16
-    Top = 160
+    Top = 216
     object mnuFile: TMenuItem
       Text = '&File'
       object mnuExit: TMenuItem
@@ -186,21 +186,21 @@ object TxServerForm: TTxServerForm
           00000000000000D205401453697A652E506C6174666F726D44656661756C7408
           0C5374726F6B652E436F6C6F72070F636C614461726B736561677265656E0000}
       end>
-    Left = 56
-    Top = 160
+    Left = 72
+    Top = 216
   end
   object odSnomed: TOpenDialog
     DefaultExt = 'cache'
     Filter = 'Snomed Files (*.cache)|*.cache|All Files|*.*'
     Options = [ofFileMustExist, ofEnableSizing]
     Title = 'Choose Snomed Folder'
-    Left = 96
-    Top = 160
+    Left = 128
+    Top = 216
   end
   object tmrStatus: TTimer
     Interval = 50
     OnTimer = tmrStatusTimer
-    Left = 144
-    Top = 160
+    Left = 256
+    Top = 232
   end
 end

@@ -49,6 +49,8 @@ type
     function versionString : String; override;
     function versionName : String; override;
     function corePackage : String; override;
+    function txPackage : String; override;
+    function txSupportPackage : String; override;
     function specUrl : String; override;
     function description : String; override;
     function resourceNames : TArray<String>; override;
@@ -467,6 +469,17 @@ end;
 function TFHIRFactoryR2.specUrl: String;
 begin
   result := 'http://build.fhir.org';
+end;
+
+function TFHIRFactoryR2.txPackage: String;
+begin
+  result := '';
+end;
+
+function TFHIRFactoryR2.txSupportPackage: String;
+begin
+  result := 'fhir.tx.support.r2';
+
 end;
 
 function TFHIRFactoryR2.version: TFHIRVersion;
