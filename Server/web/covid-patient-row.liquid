@@ -1,8 +1,0 @@
-<tr>
- <td><a href="covid-patient.html?patient={{Patient.id}}">{{Patient.name[0].family.forHtml().upper()}}, {{Patient.name[0].given[0].forHtml()}}</a></td>
- <td>{{Patient.gender.forHtml()}}</td>
- <td>{{Patient.birthDate.forHtml()}}</td>
- <td>{{Patient.telecom.where(use='mobile').value.forHtml()}}</td>
- <td>{{Patient.telecom.where(system='email').value.forHtml()}}</td>
- <td>{{Patient.address[0].line[0].forHtml()}}</td>
-</tr>

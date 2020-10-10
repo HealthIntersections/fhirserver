@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xml:lang="en" lang="en">
+<head>
+    <title>Coverage Entry: FHIR Server [%id%] Version [%ver%]</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="http://hl7.org/fhir" name="author"/>
+  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <link rel="stylesheet" href="/fhir.css"/>
+
+
+    <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>
+
+    <!-- Project extras -->
+  <link rel="stylesheet" href="/assets/css/project.css"/>
+  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- [if lt IE 9]>
+  <script src="/assets/js/html5shiv.js"></script>
+  <script src="/assets/js/respond.min.js"></script>
+  <![endif] -->
+
+    <!-- Favicons -->
+  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>
+  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>
+  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>
+  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>
+  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>
+<script type="text/javascript" src="/js/json2.js"></script>
+<script type="text/javascript" src="/js/statuspage.js"></script>
+<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="stylesheet" href="/css/jquery.ui.all.css">
+<script src="/js/jquery-1.6.2.js"></script>
+<script src="/js/jquery.ui.core.js"></script>
+<script src="/js/jquery.ui.widget.js"></script>
+<script src="/js/jquery.ui.mouse.js"></script>
+<script src="/js/jquery.ui.resizable.js"></script>
+<script src="/js/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="/js/jtip.js"></script>
+<script type="text/javascript" src="/js/jcookie.js"></script>
+<script type="text/javascript" src="/js/hl7connect.js"></script>
+<script type="text/javascript" src="/js/fhir-gw.js"></script>
+</head>
+
+<body>
+
+	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->
+		<div id="stripe"> </div>
+		<div class="container">  <!-- container -->
+		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->
+  <a href="http://www.hl7.org/fhir" style="color: gold" title="Fast Healthcare Interoperability Resources - Home Page"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>
+
+  &copy; HL7.org
+  &nbsp;|&nbsp;
+  <a href="/" style="color: gold">Server Home</a>   &nbsp;|&nbsp;
+  <a href="http://www.healthintersections.com.au" style="color: gold">[%id%]</a> FHIR Server
+  &nbsp;|&nbsp;
+  <a href="[%specurl%]" style="color: gold">FHIR Version [%ver%]</a>
+  &nbsp;[%logout%]
+		</div>  <!-- /container -->
+		</div>  <!-- /container -->
+</div>
+
+	<!-- /segment-breadcrumb -->
+
+	<div id="segment-content" class="segment">  <!-- segment-content -->
+	<div class="container">  <!-- container -->
+            <div class="row">
+            	<div class="inner-wrapper">
+ <div class="col-9">
+
+  <h2>Coverage Entry</h2>
+
+<form action="/create-coverage.phs" method="POST">
+<input type="hidden" name="handler" value="coverage"/>
+
+<table class="grid">
+ <tr><td><b>Your details</b></td><td></td></tr>
+ <tr><td>Name:</td><td><input name="provenance.name" type="text"/></td></tr>
+ <tr><td>Country:</td><td><input name="provenance.country" type="text"/></td></tr>
+</table>
+
+<p>
+Note: all the rest of the fields are optional
+</p>
+
+<table class="grid">
+ <tr><td><b>Field</b></td><td><b>Value(s)</b></td><td><b>Documentation</b></td></tr>
+ <tr><td>identifier #1</td><td>System: <input type="text" name="id.system.1"/><br/>
+                               Value: <input type="text" name="id.value.1"/><br/>
+                               Type: <select name="id.type.1"><option value=""></option><option value="DL">Driver's license number</option><option value="PPN">Passport number</option><option value="BRN">Breed Registry Number</option><option value="MR">Medical record number</option><option value="MCN">Microchip Number</option><option value="EN">Employer number</option><option value="TAX">Tax ID number</option><option value="NIIP">National Insurance Payor Identifier (Payor)</option><option value="PRN">Provider number</option><option value="MD">Medical License number</option><option value="DR">Donor Registration Number</option><option value="ACSN">Accession ID</option><option value="UDI">Universal Device Identifier</option><option value="SNO">Serial Number</option><option value="SB">Social Beneficiary Identifier</option><option value="PLAC">Placer Identifier</option><option value="FILL">Filler Identifier</option></select></td><td>The main (and possibly only) identifier for the coverage - often referred to as a Member Id, Certificate number, Personal Health Number or Case ID. May be constructed as the concatination of the Coverage.SubscriberID and the Coverage.dependant</td></tr>
+ <tr><td>identifier #2</td><td>System: <input type="text" name="id.system.2"/><br/>
+                               Value: <input type="text" name="id.value.2"/><br/>
+                               Type: <select name="id.type.2"><option value=""></option><option value="DL">Driver's license number</option><option value="PPN">Passport number</option><option value="BRN">Breed Registry Number</option><option value="MR">Medical record number</option><option value="MCN">Microchip Number</option><option value="EN">Employer number</option><option value="TAX">Tax ID number</option><option value="NIIP">National Insurance Payor Identifier (Payor)</option><option value="PRN">Provider number</option><option value="MD">Medical License number</option><option value="DR">Donor Registration Number</option><option value="ACSN">Accession ID</option><option value="UDI">Universal Device Identifier</option><option value="SNO">Serial Number</option><option value="SB">Social Beneficiary Identifier</option><option value="PLAC">Placer Identifier</option><option value="FILL">Filler Identifier</option></select></td><td>(repeat as needed)</td></tr>
+ <tr><td>identifier #3</td><td>System: <input type="text" name="id.system.3"/><br/>
+                               Value: <input type="text" name="id.value.3"/><br/>
+                               Type: <select name="id.type.3"><option value=""></option><option value="DL">Driver's license number</option><option value="PPN">Passport number</option><option value="BRN">Breed Registry Number</option><option value="MR">Medical record number</option><option value="MCN">Microchip Number</option><option value="EN">Employer number</option><option value="TAX">Tax ID number</option><option value="NIIP">National Insurance Payor Identifier (Payor)</option><option value="PRN">Provider number</option><option value="MD">Medical License number</option><option value="DR">Donor Registration Number</option><option value="ACSN">Accession ID</option><option value="UDI">Universal Device Identifier</option><option value="SNO">Serial Number</option><option value="SB">Social Beneficiary Identifier</option><option value="PLAC">Placer Identifier</option><option value="FILL">Filler Identifier</option></select></td><td></td></tr>
+
+ <tr><td>status</td><td><select name="status"><option>draft</option><option selected>active</option><option>cancelled</option><option>entered-in-error</option></select></td><td>The status of the resource instance.</td></tr>
+
+ <tr><td>type</td><td><select name="type"><option value=""></option>
+    <option value="pay">Pay</option>
+    <option value="EHCPOL">extended healthcare</option>
+    <option value="HSAPOL">health spending account</option>
+    <option value="AUTOPOL">automobile</option>
+    <option value="COL">collision coverage policy</option>
+    <option value="UNINSMOT">uninsured motorist policy</option>
+    <option value="PUBLICPOL">public healthcare</option>
+    <option value="DENTPRG">dental program</option>
+    <option value="DISEASEPRG">public health program</option>
+    <option value="CANPRG">women's cancer detection program</option>
+    <option value="ENDRENAL">end renal program</option>
+    <option value="HIVAIDS">HIV-AIDS program</option>
+    <option value="MANDPOL">mandatory health program</option>
+    <option value="MENTPRG">mental health program</option>
+    <option value="SAFNET">safety net clinic program</option>
+    <option value="SUBPRG">substance use program</option>
+    <option value="SUBSIDIZ">subsidized health program</option>
+    <option value="SUBSIDMC">subsidized managed care program</option>
+    <option value="SUBSUPP">subsidized supplemental health program</option>
+    <option value="WCBPOL">worker's compensation</option>
+    <option value="_ActInsuranceTypeCode">ActInsuranceTypeCode</option>
+    <option value="_ActHealthInsuranceTypeCode">ActHealthInsuranceTypeCode</option>
+    <option value="DENTAL">dental care policy</option>
+    <option value="DISEASE">disease specific policy</option>
+    <option value="DRUGPOL">drug policy</option>
+    <option value="HIP">health insurance plan policy</option>
+    <option value="LTC">long term care policy</option>
+    <option value="MCPOL">managed care policy</option>
+    <option value="POS">point of service policy</option>
+    <option value="HMO">health maintenance organization policy</option>
+    <option value="PPO">preferred provider organization policy</option>
+    <option value="MENTPOL">mental health policy</option>
+    <option value="SUBPOL">substance use policy</option>
+    <option value="VISPOL">vision care policy</option>
+    <option value="DIS">disability insurance policy</option>
+    <option value="EWB">employee welfare benefit plan policy</option>
+    <option value="FLEXP">flexible benefit plan policy</option>
+    <option value="LIFE">life insurance policy</option>
+    <option value="ANNU">annuity policy</option>
+    <option value="TLIFE">term life insurance policy</option>
+    <option value="ULIFE">universal life insurance policy</option>
+    <option value="PNC">property and casualty insurance policy</option>
+    <option value="REI">reinsurance policy</option>
+    <option value="SURPL">surplus line insurance policy</option>
+    <option value="UMBRL">umbrella liability insurance policy</option>
+    <option value="_ActProgramTypeCode">ActProgramTypeCode</option>
+    <option value="CHAR">charity program</option>
+    <option value="CRIME">crime victim program</option>
+    <option value="EAP">employee assistance program</option>
+    <option value="GOVEMP">government employee health program</option>
+    <option value="HIRISK">high risk pool program</option>
+    <option value="IND">indigenous peoples health program</option>
+    <option value="MILITARY">military health program</option>
+    <option value="RETIRE">retiree health program</option>
+    <option value="SOCIAL">social service program</option>
+    <option value="VET">veteran health program</option>
+ </select></td><td>The type of coverage: social program, medical plan, accident coverage (workers compensation, auto), group health or payment by an individual or organization</td></tr>
+ <tr><td>Policy Holder</td><td><select name="policy"><option value=""></option>[%options-reference Patient|RelatedPerson|Organization%]</select></td><td>The party who 'owns' the insurance policy, may be an individual, corporation or the subscriber's employer.</td></tr>
+ <tr><td>Subscriber</td><td><select name="subscriber"><option value=""></option>[%options-reference Patient|RelatedPerson%]</select></td><td>The party who has signed-up for or 'owns' the contractual relationship to the policy or to whom the benefit of the policy for services rendered to them or their family is due</td></tr>
+ <tr><td>SubscriberId</td><td><input type="text" name="subscriberId"></input></td><td>The insurer assigned ID for the Subscriber.</td></tr>
+ <tr><td>Beneficiary</td><td><select name="beneficiary"><option value=""></option>[%options-reference Patient%]</select></td><td>The party who benefits from the insurance coverage., the patient when services are provided.</td></tr>
+
+ <tr><td>Relationship</td><td><select name="relationship"><option value=""></option><option value="child">Child</option><option value="parent">Parent</option><option value="spouse">Spouse</option><option value="common">Common Law Spouse</option><option value="other">Other</option><option value="self">Self</option></select></td><td>The relationship of beneficiary (patient) to the subscriber</td></tr>
+
+ <tr><td>Period</td><td>Start: <input type="text" name="start"/><br/> End: <input type="text" name="end"/></td><td>Time period during which the coverage is in force. A missing start date indicates the start date isn't known, a missing end date means the coverage is continuing to be in force (use XML format YYYY-MM-DD)</td></tr>
+ <tr><td>Payor</td><td><select name="payor"><option value=""></option>[%options-reference Organization|Patient|RelatedPerson%]</select></td><td>The program or plan underwriter or payor including both insurance and non-insurance agreements, such as patient-pay agreements. May provide multiple identifiers such as insurance company identifier or business identifier (BIN number).</td></tr>
+
+ <tr><td><b>Classifiers</b></td><td>code + a short description for each</td><td>A suite of underwrite specific classifiers, for example may be used to identify a class of coverage or employer group, Policy, Plan</td></tr>
+ <tr><td>Group</td><td>Code: <input type="text" name="group.code"/><br/>Display: <input type="text" name="group.display"/></td><td>Identifies a style or collective of coverage issued by the underwriter, for example may be used to identify an employer group. May also be referred to as a Policy or Group ID</td></tr>
+ <tr><td>Sub-Group</td><td>Code: <input type="text" name="subgroup.code"/><br/>Display: <input type="text" name="subgroup.display"/></td><td>Identifies a style or collective of coverage issued by the underwriter, for example may be used to identify a subset of an employer group</td></tr>
+ <tr><td>Plan</td><td>Code: <input type="text" name="plan.code"/><br/>Display: <input type="text" name="plan.display"/></td><td>Identifies a style or collective of coverage issued by the underwriter, for example may be used to identify a collection of benefits provided to employees. May be referred to as a Section or Division ID</td></tr>
+ <tr><td>Sub-Plan</td><td>Code: <input type="text" name="subplan.code"/><br/>Display: <input type="text" name="subplan.display"/></td><td>Identifies a sub-style or sub-collective of coverage issued by the underwriter, for example may be used to identify a subset of a collection of benefits provided to employees</td></tr>
+ <tr><td>Class</td><td>Code: <input type="text" name="class.code"/><br/>Display: <input type="text" name="class.display"/></td><td>Identifies a style or collective of coverage issues by the underwriter, for example may be used to identify a class of coverage such as a level of deductables or co-payment</td></tr>
+ <tr><td>Sub-Class</td><td>Code: <input type="text" name="subclass.code"/><br/>Display: <input type="text" name="subclass.display"/></td><td>Identifies a sub-style or sub-collective of coverage issues by the underwriter, for example may be used to identify a subclass of coverage such as a sub-level of deductables or co-payment</td></tr>
+
+ <tr><td colspan="3"><b>Additional Information</b></td></tr>
+ <tr><td>dependent</td><td><input type="text" name="dependent"/></td><td>A unique identifier for a dependent under the coverage</td></tr>
+ <tr><td>sequence</td><td><input type="text" name="sequence"/></td><td>An optional counter for a particular instance of the identified coverage which increments upon each renewal</td></tr>
+ <tr><td>order</td><td><input type="text" name="order"/></td><td>The order of applicability of this coverage relative to other coverages which are currently inforce. Note, there may be gaps in the numbering and this does not imply primary, secondard etc. as the specific positioning of coverages depends upon the episode of care</td></tr>
+ <tr><td>network</td><td><input type="text" name="network"/></td><td>The insurer-specific identifier for the insurer-defined network of providers to which the beneficiary may seek treatment which will be covered at the 'in-network' rate, otherwise 'out of network' terms and conditions apply</td></tr>
+
+ <tr><td colspan="3"><b>Defined Extensions</b></td></tr>
+ <tr><td>Rx BIN number: <input type="hidden" name="ext.a.name" value="http://hl7.org/fhir/StructureDefinition/coverage-rxbin"/></td><td>Value: <input type="text" name="ext.a.value"/> Type: string</td></td><td></tr>
+ <tr><td>Rx PCB number: <input type="hidden" name="ext.b.name" value="http://hl7.org/fhir/StructureDefinition/coverage-rxpcn"/></td><td>Value: <input type="text" name="ext.b.value"/> Type: string</td></td><td></tr>
+ <tr><td>Rx Group Code: <input type="hidden" name="ext.c.name" value="http://hl7.org/fhir/StructureDefinition/coverage-rxgroup"/></td><td>Value: <input type="text" name="ext.c.value"/> Type: string</td></td><td></tr>
+ <tr><td>Rx Member Id: <input type="hidden" name="ext.d.name" value="http://hl7.org/fhir/StructureDefinition/coverage-rxid"/></td><td>Value: <input type="text" name="ext.d.value"/> Type: string</td></td><td></tr>
+ <tr><td>Special Use Flag: <input type="hidden" name="ext.e.name" value="http://hl7.org/fhir/StructureDefinition/coverage-usedependentcodes"/></td><td>Value: <input type="text" name="ext.e.value"/> Type: code (pharma or non-pharma)</td></td><td></tr>
+ <tr><td colspan="3"><b>Other Extensions</b></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.1.name"/> </br>Value: <input type="text" name="ext.1.value"/> Type: <select name="ext.1.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td></td><td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.2.name"/><br/>Value: <input type="text" name="ext.2.value"/> Type: <select name="ext.2.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.3.name"/><br/>Value: <input type="text" name="ext.3.value"/> Type: <select name="ext.3.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.4.name"/><br/>Value: <input type="text" name="ext.4.value"/> Type: <select name="ext.4.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.5.name"/><br/>Value: <input type="text" name="ext.5.value"/> Type: <select name="ext.5.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.6.name"/><br/>Value: <input type="text" name="ext.6.value"/> Type: <select name="ext.6.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.7.name"/><br/>Value: <input type="text" name="ext.7.value"/> Type: <select name="ext.7.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.8.name"/><br/>Value: <input type="text" name="ext.8.value"/> Type: <select name="ext.8.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.9.name"/><br/>Value: <input type="text" name="ext.9.value"/> Type: <select name="ext.9.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.10.name"/><br/>Value: <input type="text" name="ext.10.value"/> Type: <select name="ext.10.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.11.name"/><br/>Value: <input type="text" name="ext.11.value"/> Type: <select name="ext.11.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+ <tr><td>Extension</td><td>URL: <input size="40" type="text" name="ext.12.name"/><br/>Value: <input type="text" name="ext.12.value"/> Type: <select name="ext.12.type"><option>string</option><option>integer</option><option>decimal</option><option>boolean</option><option>Coding/CodeableConcept</option><option>Quantity</option><option>Identifier</option><option>Reference</option><option>Period</option><option>Range</option></select></td><td></td></tr>
+</table>
+
+<p>You can invent extension URLs to suit - just make them descriptive enough</p>
+<input type="submit" value="Submit"/>
+
+</form>  
+
+  
+</div>
+
+				</div>  <!-- /inner-wrapper -->
+            </div>  <!-- /row -->
+        </div>  <!-- /container -->
+    </div>  <!-- /segment-content -->
+
+
+	<div id="segment-footer" class="segment">  <!-- segment-footer -->
+		<div class="container">  <!-- container -->
+			<div class="inner-wrapper">
+				<p>
+        <a href="/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; This server based on version <a href="[%specurl%]" style="color: gold">[%ver%]</a>
+        </span>
+        </p>
+			</div>  <!-- /inner-wrapper -->
+		</div>  <!-- /container -->
+	</div>  <!-- /segment-footer -->
+
+
+	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->
+		<div class="container">  <!-- container -->
+		</div>  <!-- /container -->
+	</div>  <!-- /segment-post-footer -->
+
+
+
+
+
+      <!-- JS and analytics only. -->
+      <!-- Bootstrap core JavaScript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+<script src="/assets/js/jquery.js"/>
+<script src="/dist/js/bootstrap.min.js"/>
+<script src="/assets/js/respond.min.js"/>
+
+<script src="/assets/js/fhir.js"/>
+
+  <!-- Analytics Below
+================================================== -->
+
+
+
+</body>
+
+</html>

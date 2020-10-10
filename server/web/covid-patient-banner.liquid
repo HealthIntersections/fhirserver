@@ -1,0 +1,8 @@
+<table class="grid">
+<tr>
+ <td><b>{{Patient.name[0].forHtml().upper()}}</b></td>
+ <td>{{Patient.gender.forHtml()}}</td>
+ <td>{{Patient.birthDate.forHtml()}}</td>
+ <td>{{Patient.telecom.where(use='mobile').value.forHtml()}}</td>
+ <td>{{Patient.telecom.where(system='email').value.forHtml()}}</td>
+</tr></table>
