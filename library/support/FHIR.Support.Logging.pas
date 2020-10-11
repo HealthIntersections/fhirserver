@@ -111,12 +111,17 @@ Type
   End;
 
   TLogListener = class (TFslObject)
-  public
-    function link : TLogListener; overload;
-
+  protected
     procedure newDay(const s : String); virtual;
     procedure log(const s : String); virtual;
     procedure closing; virtual;
+
+    function transient : boolean; virtual;
+    procedure logStart(s : String); virtual;
+    procedure logContinue(s : String); virtual;
+    procedure logFinish(s : String); virtual;
+  public
+    function link : TLogListener; overload;
   end;
 
   TLogging = class (TFslObject)
@@ -130,6 +135,7 @@ Type
     FWorkingLine : String;
 
     procedure checkDay;
+    procedure close;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -404,6 +410,23 @@ procedure TLogListener.newDay(const s: String);
 begin
 end;
 
+function TLogListener.transient: boolean;
+begin
+  result := false;
+end;
+
+procedure TLogListener.logStart(s: String);
+begin
+end;
+
+procedure TLogListener.logContinue(s: String);
+begin
+end;
+
+procedure TLogListener.logFinish(s: String);
+begin
+end;
+
 { TLogging }
 
 constructor TLogging.Create;
@@ -417,6 +440,7 @@ end;
 
 destructor TLogging.Destroy;
 begin
+  close;
   FFileLogger.Free;
   FListeners.Free;
   inherited;
@@ -520,12 +544,26 @@ begin
     for listener in FListeners do
     begin
       try
-        listener.log(s);
+        listener.newDay(s);
       except
       end;
     end;
     FLastDay := today;
   end;
+end;
+
+procedure TLogging.close;
+var
+  listener : TLogListener;
+begin
+  for listener in FListeners do
+  begin
+    try
+      listener.closing;
+    except
+    end;
+  end;
+
 end;
 
 procedure TLogging.Log(s : String);
@@ -560,6 +598,7 @@ procedure TLogging.start(s : String);
 var
   today : integer;
   delta : String;
+  listener : TLogListener;
 begin
   checkDay;
   FWorkingLine := s;
@@ -576,35 +615,57 @@ begin
       FLogToConsole := false;
     end;
   end;
+  for listener in FListeners do
+  begin
+    try
+      if listener.transient then
+        listener.logStart(s);
+    except
+    end;
+  end;
 end;
 
 procedure TLogging.continue(s : String);
+var
+  listener : TLogListener;
 begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
     System.Write(s);
+  for listener in FListeners do
+  begin
+    try
+      if listener.transient then
+        listener.logContinue(s);
+    except
+    end;
+  end;
 end;
 
 procedure TLogging.finish(s : String = '');
 var
   listener : TLogListener;
+  msg : String;
 begin
   if FLogToConsole then
     System.Writeln(s);
 
-  s := FWorkingLine + s;
+  msg := FWorkingLine + s;
   FWorkingLine := '';
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
   else
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+s;
 
   if FFileLogger <> nil then
     FFileLogger.WriteToLog(s+#13#10);
   for listener in FListeners do
   begin
     try
-      listener.log(s);
+      if listener.transient then
+        listener.logFinish(s)
+      else
+        listener.log(msg);
     except
     end;
   end;

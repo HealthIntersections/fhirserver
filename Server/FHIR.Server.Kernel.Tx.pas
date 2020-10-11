@@ -45,13 +45,17 @@ uses
   FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator, FHIR.R5.Validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
 
-  FHIR.Tools.Indexing,
+  FHIR.Tools.Indexing, FHIR.Tools.Search,
   FHIR.Database.Manager,
   FHIR.Base.Scim,
   FHIR.Tx.Manager, FHIR.Tx.Server,
-  FHIR.Server.Storage, FHIR.Server.Context, FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Ini,
+  FHIR.Server.Storage, FHIR.Server.Context, FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Ini, FHIR.Server.BundleBuilder,
   FHIR.Server.Indexing, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Web,
   FHIR.Server.Kernel.Base;
+
+const
+  TX_SEARCH_PAGE_DEFAULT = 10;
+  TX_SEARCH_PAGE_LIMIT = 20;
 
 type
   TTerminologyServerFactory = class (TFHIRServerFactory)
@@ -71,20 +75,32 @@ type
 
   TTerminologyServerData = class (TFslObject)
   private
-    FCodeSystems : TFslMap<TFHIRCodeSystemW>;
-    FValueSets : TFslMap<TFHIRValueSetW>;
-    FNamingSystems : TFslMap<TFHIRNamingSystemW>;
-    FConceptMaps : TFslMap<TFHIRConceptMapW>;
+    FCodeSystems : TFslMap<TFHIRMetadataResourceW>;
+    FValueSets : TFslMap<TFHIRMetadataResourceW>;
+    FNamingSystems : TFslMap<TFHIRMetadataResourceW>;
+    FConceptMaps : TFslMap<TFHIRMetadataResourceW>;
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TTerminologyServerData; overload;
+    property CodeSystems : TFslMap<TFHIRMetadataResourceW> read FCodeSystems;
+    property ValueSets : TFslMap<TFHIRMetadataResourceW> read FValueSets;
+    property NamingSystems : TFslMap<TFHIRMetadataResourceW> read FNamingSystems;
+    property ConceptMaps : TFslMap<TFHIRMetadataResourceW> read FConceptMaps;
   end;
+
+  TTerminologyFhirServerStorage = class;
 
   TTerminologyServerOperationEngine = class (TFHIROperationEngine)
   private
     FData : TTerminologyServerData;
 
+    function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
+    function matches(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
+    function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
+    function Repository : TTerminologyFhirServerStorage;
   protected
+    function context : TFHIRServerContext;
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
@@ -94,7 +110,8 @@ type
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
   public
-    constructor Create(Data : TTerminologyServerData; const lang : THTTPLanguages);
+    constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
+    destructor Destroy; override;
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -252,10 +269,14 @@ end;
 constructor TTerminologyServerData.Create;
 begin
   inherited create;
-  FCodeSystems := TFslMap<TFHIRCodeSystemW>.create('FHIR Tx Kernel');
-  FValueSets := TFslMap<TFHIRValueSetW>.create('FHIR Tx Kernel');
-  FNamingSystems := TFslMap<TFHIRNamingSystemW>.create('FHIR Tx Kernel');
-  FConceptMaps := TFslMap<TFHIRConceptMapW>.create('FHIR Tx Kernel');
+  FCodeSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FCodeSystems.defaultValue := nil;
+  FValueSets := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FValueSets.defaultValue := nil;
+  FNamingSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FNamingSystems.defaultValue := nil;
+  FConceptMaps := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FConceptMaps.defaultValue := nil;
 end;
 
 destructor TTerminologyServerData.Destroy;
@@ -268,27 +289,76 @@ begin
   inherited;
 end;
 
+function TTerminologyServerData.link: TTerminologyServerData;
+begin
+  result := TTerminologyServerData(inherited link);
+end;
+
 { TTerminologyServerOperationEngine }
 
-constructor TTerminologyServerOperationEngine.Create(Data : TTerminologyServerData; const lang : THTTPLanguages);
+constructor TTerminologyServerOperationEngine.Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
 begin
-  inherited Create(nil, lang);
+  inherited Create(Storage, ServerContext, lang);
   FData := data;
+end;
+
+destructor TTerminologyServerOperationEngine.Destroy;
+begin
+  FData.Free;
+  inherited;
 end;
 
 procedure TTerminologyServerOperationEngine.StartTransaction;
 begin
-  raise ENotImplemented.Create('Transactions are not implemented in this server');
+  // Transactions are not implemented in this server
 end;
 
 procedure TTerminologyServerOperationEngine.CommitTransaction;
 begin
-  raise ENotImplemented.Create('Transactions are not implemented in this server');
+  // Transactions are not implemented in this server
+end;
+
+function TTerminologyServerOperationEngine.compareDate(base, min, max: TFslDateTime; value: String; prefix: TFHIRSearchParamPrefix): boolean;
+var
+  v, vmin, vmax : TFslDateTime;
+begin
+  v := TFslDateTime.fromXML(value);
+  vmin := v.Min;
+  vmax := v.Max;
+  result := false;
+  case prefix of
+    sppNull: result := v.equal(base);
+    sppNotEqual: result := not v.Equal(base);
+    sppGreaterThan: result := max.after(vmax, false);
+    sppLessThan: result := min.before(vmin, false);
+    sppGreaterOrEquals: result := not min.before(vmin, false);
+    sppLesserOrEquals: result := not max.after(vmax, false);
+    sppStartsAfter: result := min.after(vmax, false);
+    sppEndsBefore: result := max.before(vmin, false);
+    sppAproximately:
+      begin
+        min := base.lessPrecision.Min;
+        max := base.lessPrecision.Max;
+        vmin := v.lessPrecision.Min;
+        vmax := v.lessPrecision.Max;
+        result := min.between(vmin, vmax, true) or max.between(vmin, vmax, true);
+      end;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.context: TFHIRServerContext;
+begin
+  result := (FServerContext as TFHIRServerContext);
+end;
+
+function TTerminologyServerOperationEngine.Repository: TTerminologyFhirServerStorage;
+begin
+  result := FStorage as TTerminologyFhirServerStorage;
 end;
 
 procedure TTerminologyServerOperationEngine.RollbackTransaction;
 begin
-  raise ENotImplemented.Create('Transactions are not implemented in this server');
+  // Transactions are not implemented in this server
 end;
 
 function TTerminologyServerOperationEngine.patientIds(request: TFHIRRequest; res: TFHIRResourceV): TArray<String>;
@@ -298,6 +368,7 @@ end;
 
 procedure TTerminologyServerOperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
 begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 function TTerminologyServerOperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
@@ -321,14 +392,244 @@ begin
 end;
 
 function TTerminologyServerOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
+var
+  res : TFHIRMetadataResourceW;
 begin
-  raise ETodo.Create('Not done yet');
+  result := false;
+  if request.ResourceName = 'CodeSystem' then
+    res := FData.CodeSystems[request.Id]
+  else if request.ResourceName = 'ValueSet' then
+    res := FData.ValueSets[request.Id]
+  else if request.ResourceName = 'NamingSystem' then
+    res := FData.NamingSystems[request.Id]
+  else if request.ResourceName = 'ConceptMap' then
+    res := FData.ConceptMaps[request.Id]
+  else
+    res := nil;
+
+  try
+    if res <> nil then
+    begin
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+      response.Resource := res.Resource.link;
+      result := true;
+    end
+    else
+    begin
+      response.HTTPCode := 404;
+      response.Message := 'Not Found';
+      response.Resource := factory.BuildOperationOutcome(lang, 'not found', itUnknown);
+    end;
+  finally
+    res.Free;
+  end;
 end;
 
-procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest;response: TFHIRResponse);
+function hasScope(request : TFHIRRequest; name : String) : boolean;
 begin
-  raise ETodo.Create('Not done yet');
+  result := (request.ResourceName = name) or ((request.ResourceName = '') and request.Parameters['_type'].Contains(name));
 end;
+
+procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
+var
+  search : TFslList<TSearchParameter>;
+  sp : TSearchParameter;
+  l, list, filtered : TFslList<TFHIRMetadataResourceW>;
+  res : TFhirMetadataResourceW;
+  bundle : TFHIRBundleBuilder;
+  op : TFHIROperationOutcomeW;
+  base : String;
+  isMatch : boolean;
+  i, t, offset, count : integer;
+  be : TFhirBundleEntryW;
+begin
+  offset := 0;
+  count := 50;
+  for i := 0 to request.Parameters.Count - 1 do
+    if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
+      offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
+    else if request.Parameters.Name[i] = '_count' then
+      count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
+  if (count < 2) then
+    count := TX_SEARCH_PAGE_DEFAULT
+  else if (Count > TX_SEARCH_PAGE_LIMIT) then
+    count := TX_SEARCH_PAGE_LIMIT;
+  if offset < 0 then
+    offset := 0;
+
+  if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
+    BuildSearchForm(request, response)
+  else
+  begin
+    TypeNotFound(request, response);
+    search := TSearchParser.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
+    try
+      base := TSearchParser.buildUrl(search);
+      response.OnCreateBuilder(request, response, btSearchset, bundle);
+      op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+      try
+        bundle.setLastUpdated(TFslDateTime.makeUTC);
+        bundle.addLink('self', base);
+        bundle.setId(FhirGUIDToString(CreateGUID));
+
+        list := TFslList<TFHIRMetadataResourceW>.create;
+        try
+          if (hasScope(request, 'CodeSystem')) then
+            FData.CodeSystems.listAll(list);
+          if (hasScope(request, 'ValueSet')) then
+            FData.ValueSets.listAll(list);
+          if (hasScope(request, 'ConceptMap')) then
+            FData.ConceptMaps.listAll(list);
+          if (hasScope(request, 'NamingSystem')) then
+            FData.NamingSystems.listAll(list);
+
+          filtered := TFslList<TFHIRMetadataResourceW>.create;
+          try
+            for res in list do
+            begin
+              isMatch := true;
+              for sp in search do
+                if isMatch and not matches(res.Resource, sp) then
+                  isMatch := false;
+              if isMatch then
+              filtered.add(res.link);
+            end;
+
+            if (offset > 0) or (Count < filtered.count) then
+            begin
+              bundle.addLink('first', base+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              if offset - count >= 0 then
+                bundle.addLink('previous', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              if offset + count < list.count then
+                bundle.addLink('next', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              if count < list.count then
+                bundle.addLink('last', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((filtered.count div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            end;
+
+            i := 0;
+            t := 0;
+            for res in filtered do
+            begin
+              inc(i);
+              if (i > offset) then
+              begin
+                be := bundle.makeEntry;
+                be.Url := res.url;
+                be.resource := res.Resource.Link;
+                inc(t);
+                if (t = count) then
+                  break;
+              end;
+            end;
+          finally
+            filtered.free;
+          end;
+        finally
+          list.Free;
+        end;
+        response.HTTPCode := 200;
+        response.Message := 'OK';
+        response.Body := '';
+        response.resource := bundle.getBundle.Link;
+      finally
+        bundle.Free;
+      end;
+    finally
+      search.free;
+    end;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.matches(resource: TFhirResourceV; sp: TSearchParameter): boolean;
+var
+  selection : TFHIRSelectionList;
+  so : TFHIRSelection;
+  parser : TFHIRPathEngineV;
+begin
+  if sp.index.expression = nil then
+  begin
+    parser := factory.makePathEngine(context.ValidatorContext.link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.Link));
+    try
+      sp.index.expression := parser.parseV(sp.index.Path);
+    finally
+      parser.Free;
+    end;
+  end;
+
+  selection := FEngine.evaluate(resource, resource, resource, sp.index.expression);
+  try
+    if sp.modifier = spmMissing then
+    begin
+      if sp.value = 'true' then
+        result := selection.Empty
+      else if sp.value = 'false' then
+        result := not selection.Empty
+      else
+        raise EFHIRException.create('Error Processing search parameter (:missing, value = '+sp.value+')');
+    end
+    else if selection.Empty then
+      result := false
+    else
+    begin
+      result := false;
+      for so in selection do
+        result := result or matchesObject(so.value, sp);
+    end;
+  finally
+    selection.Free;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  date : TFslDateTime;
+begin
+  result := false;
+  case sp.index.SearchType of
+    sptNull: raise EFHIRException.create('param.type = null');
+    sptNumber: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObject');
+//      if obj.isPrimitive then
+//        result := compareNumber(obj.primitiveValue, sp.value, sp.prefix)
+//      else
+//        result := false;
+    sptDate:
+      begin
+      date := obj.dateValue;
+      if date.notNull then
+        result := compareDate(date, date.Min, date.Max, sp.value, sp.prefix)
+      else
+        result := false;
+      end;
+    sptString:
+      if not obj.isPrimitive then
+        result := false
+      else if sp.modifier = spmNull then
+        result := RemoveAccents(obj.primitiveValue.ToLower).StartsWith(RemoveAccents(sp.value.ToLower))
+      else if sp.modifier = spmContains then
+        result := RemoveAccents(obj.primitiveValue.ToLower).contains(RemoveAccents(sp.value.ToLower))
+      else if sp.modifier = spmExact then
+        result := obj.primitiveValue = sp.value
+      else if sp.modifier = spmExact then
+        raise EFHIRException.create('Modifier is not supported');
+    sptToken: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectA');
+    sptReference: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectB');
+    sptComposite: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectC');
+    sptQuantity: raise EFHIRTodo.create('TTerminologyServerOperationEngine.matchesObjectD');
+    sptUri:
+      if not obj.isPrimitive then
+        result := false
+      else if sp.modifier = spmNull then
+        result := obj.primitiveValue = sp.value
+      else if sp.modifier = spmAbove then
+        result := sp.value.StartsWith(obj.primitiveValue)
+      else if sp.modifier = spmBelow then
+        result := obj.primitiveValue.StartsWith(sp.value)
+      else if sp.modifier = spmExact then
+        raise EFHIRException.create('Modifier is not supported');
+  end;
+end;
+
 
 procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; httpCode: Integer; name, message: String; patients: TArray<String>);
 begin
@@ -386,7 +687,7 @@ end;
 
 function TTerminologyFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
-  result := TTerminologyServerOperationEngine.create(FData, lang);
+  result := TTerminologyServerOperationEngine.create(self.link, FServerContext.Link, lang, FData.link);
 end;
 
 function TTerminologyFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
@@ -692,7 +993,7 @@ begin
     for s in packages do
       store.loadPackage(factory, s);
 
-    WebServer.registerEndPoint('r4', 'path', store.FServerContext.Link, ini);
+    WebServer.registerEndPoint('r4', path, store.FServerContext.Link, ini);
     FStores.Add(code, store.link);
   finally
     store.Free;

@@ -86,12 +86,13 @@ type
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
     procedure internalThread;
+  protected
+    procedure log(const msg : String); override;
   Public
     constructor Create(port: Integer; WelcomeMsg : String);
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
-    procedure Log(const msg : String); override;
 
     function makeSession(desc : String) : TTelnetSession;
   end;

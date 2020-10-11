@@ -57,6 +57,7 @@ type
     procedure addEntry(entry : TFhirBundleEntryW; first : boolean); virtual; abstract;
     function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; virtual; abstract;
     function getBundle : TFHIRResourceV; virtual; abstract;
+    function makeEntry : TFhirBundleEntryW; virtual;
   end;
 
   TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
@@ -109,6 +110,11 @@ end;
 procedure TFHIRBundleBuilder.tag(n, v: String);
 begin
   FBundle.Tags[n] := v;
+end;
+
+function TFHIRBundleBuilder.makeEntry: TFhirBundleEntryW;
+begin
+  result := Ffactory.wrapBundleEntry(Ffactory.makeByName('Bundle.entry'));
 end;
 
 { TFHIRBundleBuilderSimple }

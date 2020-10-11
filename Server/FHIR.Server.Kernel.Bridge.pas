@@ -105,6 +105,8 @@ Type
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
+  TExampleFhirServerStorage = class;
+
   TExampleServerData = class (TFslObject)
   private
     FLock : TFslLock;
@@ -138,7 +140,7 @@ Type
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
-    constructor Create(Data : TExampleServerData; const lang : THTTPLanguages);
+    constructor Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Data : TExampleServerData; const lang : THTTPLanguages);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -151,11 +153,13 @@ Type
   TExampleFhirServerStorage = class (TFHIRStorageService)
   private
     FData : TExampleServerData;
+    FServerContext : TFHIRServerContext; // not linked
   protected
     function GetTotalResourceCount: integer; override;
   public
     constructor Create(factory : TFHIRFactory); override;
     destructor Destroy; override;
+    function Link : TExampleFhirServerStorage; overload;
 
     // no OAuth Support
 
@@ -348,9 +352,9 @@ end;
 
 { TExampleFHIROperationEngine }
 
-constructor TExampleFHIROperationEngine.create(Data: TExampleServerData; const lang : THTTPLanguages);
+constructor TExampleFHIROperationEngine.create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Data: TExampleServerData; const lang : THTTPLanguages);
 begin
-  inherited Create(nil, lang);
+  inherited Create(storage, serverContext, lang);
   FData := data;
 end;
 
@@ -629,7 +633,7 @@ end;
 
 function TExampleFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
-  result := TExampleFHIROperationEngine.create(FData, lang);
+  result := TExampleFHIROperationEngine.create(self.Link, FServerContext.link, FData, lang);
 end;
 
 
@@ -668,6 +672,11 @@ begin
   result := 1;
 end;
 
+
+function TExampleFhirServerStorage.Link: TExampleFhirServerStorage;
+begin
+  result := TExampleFhirServerStorage(inherited link);
+end;
 
 function TExampleFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
 begin
@@ -862,6 +871,7 @@ begin
     store.FData := FData.link;
     ctxt := TFHIRServerContext.Create(store.Link, TExampleServerFactory.create);
     try
+      store.FServerContext := ctxt;
       ctxt.Globals := Settings.Link;
       ctxt.userProvider := TExampleFHIRUserProvider.Create;
       WebServer.registerEndPoint('example', ini.kernel['path'], ctxt.Link, Ini);

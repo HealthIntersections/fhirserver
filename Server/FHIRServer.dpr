@@ -463,7 +463,8 @@ uses
   FHIR.Server.Kernel.Bridge in 'FHIR.Server.Kernel.Bridge.pas',
   FHIR.Server.Kernel.Tx in 'FHIR.Server.Kernel.Tx.pas',
   FHIR.Server.Gui.Vcl in 'FHIR.Server.Gui.Vcl.pas' {ServerGUI},
-  FHIR.Server.Gui.Controller in 'FHIR.Server.Gui.Controller.pas';
+  FHIR.Server.Gui.Controller in 'FHIR.Server.Gui.Controller.pas',
+  FHIR.Tools.Search in '..\library\tools\FHIR.Tools.Search.pas';
 
 begin
   ExecuteFhirServer;

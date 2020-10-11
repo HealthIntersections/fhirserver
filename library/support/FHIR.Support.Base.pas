@@ -329,7 +329,7 @@ Type
     procedure InsertRange(Index: Integer; const Collection: IEnumerable<T>); overload;
     procedure InsertRange(Index: Integer; const Collection: TEnumerable<T>); overload;
 
-    procedure AddAll(list : TFslList<T>);
+    procedure AddAll(list : TFslList<T>); overload;
 
     procedure Pack; overload;
 
@@ -488,6 +488,7 @@ Type
     function ToArray: TArray<TFslPair<T>>; override; final;
 
     procedure addAll(other : TFslMap<T>);
+    procedure listAll(other : TFslList<T>);
     property Items[const Key: String]: T read GetItem write SetItem; default;
     property Count: Integer read FCount;
     property IsEmpty : Boolean read GetEmpty;
@@ -2110,6 +2111,14 @@ begin
 
   If Assigned(Self) Then
     InterlockedIncrement(FFslObjectReferenceCount);
+end;
+
+procedure TFslMap<T>.listAll(other: TFslList<T>);
+var
+  item: T;
+begin
+  for item in Values do
+    other.Add(T(TFslObject(item).link));
 end;
 
 procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);

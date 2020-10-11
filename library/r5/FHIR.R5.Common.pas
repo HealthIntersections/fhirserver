@@ -243,7 +243,7 @@ type
     procedure software(name, version, release : String); override;
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
-    procedure standardServer(ts, ws, pv, cv, iv : String); override;
+    procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
     procedure addOperation(name, url : String); override;
 
@@ -846,6 +846,24 @@ type
   end;
 
   TFHIRNamingSystem5 = class (TFHIRNamingSystemW)
+  private
+    function nm : TFHIRNamingSystem;
+  protected
+    function getDate: TFslDateTime; override;
+    function getDescription: String; override;
+    function getName: String; override;
+    function getStatus: TPublicationStatus; override;
+    function getURL: String; override;
+    procedure setDate(Value: TFslDateTime); override;
+    procedure setDescription(Value: String); override;
+    procedure setName(Value: String); override;
+    procedure setStatus(Value: TPublicationStatus); override;
+    procedure setUrl(Value: String); override;
+    function getContext: String; override;
+    function getPublisher: String; override;
+    procedure setPublisher(Value: String); override;
+    function getVersion: String; override;
+    procedure setVersion(Value: String); override;
   public
     function getUri : String; override;
     function hasOid(oid : String) : boolean; override;
@@ -1459,29 +1477,34 @@ begin
 end;
 
 
-procedure TFHIRCapabilityStatement5.standardServer(ts, ws, pv, cv, iv: String);
+procedure TFHIRCapabilityStatement5.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
 var
   ext : TFhirExtension;
 begin
   if statement.restList.isEmpty then
     statement.restList.append.mode := RestfulCapabilityModeServer;
-  statement.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', ws);
-  statement.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
-  statement.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
-  statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
+  if (ws <> '') then
+    statement.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', ws);
+  if transactions then
+    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
+  if search then
+    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
+  if history then
+    statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
   statement.text := TFhirNarrative.create;
   statement.text.status := NarrativeStatusGenerated;
   statement.instantiatesList.AddItem(TFHIRCanonical.Create('http://hl7.org/fhir/Conformance/terminology-server'));
-  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Fetch Patient Alerts');
-  ext.addExtension('activity', pv);
-  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
-  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Get Terminology Information');
-  ext.addExtension('activity', cv);
-  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Get identifier Information');
-  ext.addExtension('activity', iv);
+  // commented out until we sort out cds-hooks
+//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+//  ext.addExtension('name', 'Fetch Patient Alerts');
+//  ext.addExtension('activity', pv);
+//  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
+//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+//  ext.addExtension('name', 'Get Terminology Information');
+//  ext.addExtension('activity', cv);
+//  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+//  ext.addExtension('name', 'Get identifier Information');
+//  ext.addExtension('activity', iv);
 end;
 
 function TFHIRCapabilityStatement5.statement: TFhirCapabilityStatement;
@@ -4577,14 +4600,94 @@ end;
 
 { TFHIRNamingSystem5 }
 
+function TFHIRNamingSystem5.getContext: String;
+begin
+  result := '';
+end;
+
+function TFHIRNamingSystem5.getDate: TFslDateTime;
+begin
+  result := nm.date;
+end;
+
+function TFHIRNamingSystem5.getDescription: String;
+begin
+  result := nm.description;
+end;
+
+function TFHIRNamingSystem5.getName: String;
+begin
+  result := nm.name;
+end;
+
+function TFHIRNamingSystem5.getPublisher: String;
+begin
+  result := nm.publisher;
+end;
+
+function TFHIRNamingSystem5.getStatus: TPublicationStatus;
+begin
+  result := MAP_TPublicationStatusR[nm.status];
+end;
+
 function TFHIRNamingSystem5.getUri: String;
 begin
-  result := (resource as TFHIRNamingSystem).getUri;
+  result := nm.getUri;
+end;
+
+function TFHIRNamingSystem5.getURL: String;
+begin
+  result := '';
+end;
+
+function TFHIRNamingSystem5.getVersion: String;
+begin
+  result := '';
 end;
 
 function TFHIRNamingSystem5.hasOid(oid: String): boolean;
 begin
-  result := (resource as TFHIRNamingSystem).hasOid(oid);
+  result := nm.hasOid(oid);
+end;
+
+function TFHIRNamingSystem5.nm: TFHIRNamingSystem;
+begin
+  result := (resource as TFHIRNamingSystem);
+end;
+
+procedure TFHIRNamingSystem5.setDate(Value: TFslDateTime);
+begin
+  nm.date := value;
+end;
+
+procedure TFHIRNamingSystem5.setDescription(Value: String);
+begin
+  nm.description := value;
+end;
+
+procedure TFHIRNamingSystem5.setName(Value: String);
+begin
+  nm.name := value;
+end;
+
+procedure TFHIRNamingSystem5.setPublisher(Value: String);
+begin
+  nm.publisher := value;
+end;
+
+procedure TFHIRNamingSystem5.setStatus(Value: TPublicationStatus);
+begin
+  nm.status := MAP_TPublicationStatus[value];
+end;
+
+procedure TFHIRNamingSystem5.setUrl(Value: String);
+begin
+  // nothing
+end;
+
+procedure TFHIRNamingSystem5.setVersion(Value: String);
+begin
+  // nothing
 end;
 
 { TFHIRStructureMap5 }

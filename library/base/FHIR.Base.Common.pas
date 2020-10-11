@@ -474,7 +474,7 @@ type
     procedure software(name, version, release : String); virtual; abstract;
     procedure impl(url, desc : String); virtual; abstract;
     procedure fmt(mt : String); virtual; abstract;
-    procedure standardServer(ts, ws, pv, cv, iv : String); virtual; abstract;
+    procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); virtual; abstract;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; virtual; abstract;
     procedure addOperation(name, url : String); virtual; abstract;
 
@@ -951,35 +951,10 @@ type
     function target : String; virtual; abstract;
   end;
 
-  TFhirConceptMapW = class (TFHIRXVersionResourceWrapper)
-  protected
-    function getDate: TFslDateTime; virtual; abstract;
-    function getDescription: String; virtual; abstract;
-    function getName: String; virtual; abstract;
-    function getStatus: TPublicationStatus; virtual; abstract;
-    function getURL: String; virtual; abstract;
-    procedure setDate(Value: TFslDateTime); virtual; abstract;
-    procedure setDescription(Value: String); virtual; abstract;
-    procedure setName(Value: String); virtual; abstract;
-    procedure setStatus(Value: TPublicationStatus); virtual; abstract;
-    procedure setUrl(Value: String); virtual; abstract;
-    function getContext: String; virtual; abstract;
-    function getPublisher: String; virtual; abstract;
-    procedure setPublisher(Value: String); virtual; abstract;
-  protected
-    function getVersion: String; virtual; abstract;
-    procedure setVersion(Value: String); virtual; abstract;
+  TFhirConceptMapW = class (TFHIRMetadataResourceW)
   public
     function link : TFhirConceptMapW; overload;
 
-    property url : String read getURL write SetUrl;
-    property name : String read GetName write SetName;
-    property version : String read GetVersion write SetVersion;
-    property status : TPublicationStatus read GetStatus write SetStatus;
-    property description : String read GetDescription write SetDescription;
-    property date : TFslDateTime read GetDate write SetDate;
-    property context : String read getContext;
-    property publisher : String read GetPublisher write SetPublisher;
     function sourceDesc : String; virtual; abstract;
     function targetDesc : String; virtual; abstract;
 
@@ -1000,7 +975,7 @@ type
     function link : TFhirQuestionnaireW; overload;
   end;
 
-  TFHIRNamingSystemW = class (TFHIRXVersionResourceWrapper)
+  TFHIRNamingSystemW = class (TFHIRMetadataResourceW)
   public
     function link : TFHIRNamingSystemW; overload;
     function getUri : String; virtual; abstract;

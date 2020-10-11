@@ -72,6 +72,7 @@ type
     { Private declarations }
     FIni : TFHIRServerIniFile;
     FServer : TFHIRServerController;
+    FCount : integer;
     procedure serverStatusChange(Sender: TObject);
     procedure log(msg : String);
   public
@@ -106,7 +107,10 @@ procedure TServerGUI.log(msg: String);
 var
    s : String;
 begin
-  mLog.lines.add(msg);
+  if (msg.StartsWith('~')) then
+    mLog.lines[mLog.Lines.Count-1] := mLog.lines[mLog.Lines.Count-1]+msg.Substring(1)
+  else
+    mLog.lines.add(msg);
   s := mlog.text;
   mLog.selStart := s.Length - msg.length;
 end;
@@ -154,29 +158,35 @@ end;
 
 procedure TServerGUI.serverStatusChange(Sender: TObject);
 begin
-  btnBrowser.Enabled := false;
   case FServer.Status of
     ssStarting :
       begin
       btnStatus.Enabled := false;
-      btnStatus.Caption := 'Starting...';
+      lblStatus.Caption := 'Starting...';
+      btnBrowser.Enabled := false;
       end;
     ssRunning :
       begin
       btnStatus.Enabled := true;
       btnStatus.Caption := 'Stop';
       btnBrowser.Enabled := true;
+      if FServer.Stats <> nil then
+        lblStatus.Caption := 'Running. '+FServer.Stats.Present
+      else
+        lblStatus.Caption := 'Running. ??';
       end;
     ssStopping :
       begin
       btnStatus.Enabled := false;
-      btnStatus.Caption := 'Stopping...';
-
+      lblStatus.Caption := 'Stopping...';
+      btnBrowser.Enabled := false;
       end;
     ssNotRunning :
       begin
       btnStatus.Enabled := true;
-      btnStatus.Caption := 'Start';
+      lblStatus.Caption := 'Start';
+      lblStatus.Caption := 'Not Running';
+      btnBrowser.Enabled := false;
       end;
   end;
 end;
@@ -184,6 +194,12 @@ end;
 procedure TServerGUI.Timer1Timer(Sender: TObject);
 begin
   FServer.Ping;
+  inc(fCount);
+  if (Fcount = 10) then
+  begin
+    FCount := 0;
+    serverStatusChange(self);
+  end;
 end;
 
 end.

@@ -40,7 +40,7 @@ uses
   FHIR.R4.Factory,
   FHIR.Database.Manager, FHIR.Database.SQLite,
   FHIR.Scim.Server,
-  FHIR.Server.Ini, FHIR.Server.Kernel.Tx, FHIR.Server.DBInstaller;
+  FHIR.Server.Ini, FHIR.Server.Web, FHIR.Server.Kernel.Tx, FHIR.Server.DBInstaller;
 
 type
   TFHIRServerStatus = (ssNotRunning, ssStarting, ssRunning, ssStopping);
@@ -69,10 +69,17 @@ type
     FOnLog: TLogEvent;
     FMessagesIn : TStringList;
     FMessages : TStringList;
+    FHitCount: integer;
+    FStats : TFHIRWebServerStats;
 
     procedure setStatus(st : TFHIRServerStatus);
-    procedure log(const msg : String); override;
     procedure makeDB;
+  protected
+    procedure log(const msg : String); override;
+    function transient : boolean; override;
+    procedure logStart(s : String); override;
+    procedure logContinue(s : String); override;
+    procedure logFinish(s : String); override;
   public
     constructor Create(ini : TFHIRServerIniFile);
     destructor Destroy; override;
@@ -82,6 +89,7 @@ type
 
     property Status : TFHIRServerStatus read FStatus;
     property Address : String read FAddress;
+    property Stats : TFHIRWebServerStats read FStats;
 
     procedure Initialise;
     procedure Ping; // give controller access to the primary thread
@@ -94,6 +102,7 @@ type
 implementation
 
 { TFHIRServerController }
+
 
 constructor TFHIRServerController.Create(ini: TFHIRServerIniFile);
 begin
@@ -120,6 +129,26 @@ end;
 procedure TFHIRServerController.Initialise;
 begin
   OnStatusChange(self);
+end;
+
+function TFHIRServerController.transient: boolean;
+begin
+  result := true;
+end;
+
+procedure TFHIRServerController.logStart(s: String);
+begin
+  log(s);
+end;
+
+procedure TFHIRServerController.logContinue(s: String);
+begin
+  log('~'+s);
+end;
+
+procedure TFHIRServerController.logFinish(s: String);
+begin
+  log('~'+s);
 end;
 
 procedure TFHIRServerController.log(const msg : String);
@@ -205,7 +234,7 @@ end;
 function makeR4 : TFHIRServerIniComplex;
 begin
   result := TFHIRServerIniComplex.Create('r4');
-  result.value['path'] := 'r4';
+  result.value['path'] := '/r4';
   result.value['version'] := 'r4';
   result.value['database'] := 'utg';
 end;
@@ -308,7 +337,7 @@ end;
 
 procedure TFHIRServerController.Stop;
 begin
-
+  FThread.FStopped := true;
 end;
 
 { TFHIRServerControllerThread }
@@ -322,8 +351,10 @@ end;
 procedure TFHIRServerControllerThread.execute;
 var
   svc : TFHIRServiceTxServer;
+  s : String;
 begin
   FStopped := false;
+  s := 'Starting';
   FController.setStatus(ssStarting);
   try
     try
@@ -333,17 +364,27 @@ begin
         if svc.CanStart then
         begin
           svc.postStart;
+          FController.FStats := svc.WebServer.Stats.link;
           FController.setStatus(ssRunning);
           while not FStopped do
           begin
-            Sleep(50);
+            sleep(50);
           end;
         end;
+        s := 'Stopping';
+        Logging.log('Stopping');
+        FController.FStats.Free;
+        FController.FStats := nil;
         FController.setStatus(ssStopping);
       finally
         svc.Free;
       end;
+      Logging.log('Stopped');
     except
+      on e : exception do
+      begin
+        Logging.log('Exception '+s+': '+e.message);
+      end;
     end;
   finally
     FController.setStatus(ssNotRunning);
