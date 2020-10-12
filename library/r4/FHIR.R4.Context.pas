@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
+  FHIR.Npm.Package, FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base;
 

@@ -38,7 +38,7 @@ uses
   FHIR.Ucum.Services, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Base.Utilities,
   {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}
-  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage,
+  FHIR.Npm.Cache, FHIR.Npm.Package,
 
   FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
   FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo, FHIR.R5.IndexInfo,

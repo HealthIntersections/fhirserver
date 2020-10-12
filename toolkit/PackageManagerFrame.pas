@@ -38,7 +38,7 @@ uses
   FMX.Memo, FMX.TreeView,
   BaseFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager, PackageEditorFrame;
+  FHIR.Npm.Package, FHIR.Npm.Cache, PackageEditorFrame;
 
 const
   PCMode_User = true;

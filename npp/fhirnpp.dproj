@@ -265,10 +265,10 @@
         <DCCReference Include="..\library\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\library\r3\FHIR.R3.Common.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Common.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas">
             <Form>PackageCacheForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
         <DCCReference Include="..\library\r2\FHIR.R2.Factory.pas"/>
         <DCCReference Include="..\library\r2\FHIR.R2.Types.pas"/>
         <DCCReference Include="..\library\r2\FHIR.R2.Base.pas"/>
@@ -311,12 +311,10 @@
             <Form>SaveOnServerDialog</Form>
         </DCCReference>
         <DCCReference Include="FHIR.Npp.Context.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Browser.pas">
             <Form>PackageFinderForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\FHIR.Tx.Service.pas"/>
-        <DCCReference Include="..\dependencies\Stem\YuStemmer.pas"/>
-        <DCCReference Include="..\dependencies\Stem\DISystemCompat.pas"/>
         <DCCReference Include="..\library\r3\FHIR.R3.Operations.pas"/>
         <DCCReference Include="..\library\r3\FHIR.R3.OpBase.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Operations.pas"/>
@@ -345,23 +343,19 @@
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.ClientDialog.pas">
             <Form>RegisterClientForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
             <Form>TextPresentationDialog</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
             <Form>WorkingForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageVersionBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Canonical.pas"/>

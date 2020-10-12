@@ -33,9 +33,9 @@ interface
 
 uses
   Winapi.Windows, Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls, Registry,
   Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.Utilities, Inifiles, FHIR.Support.Shell,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry, FHIR.Cache.PackageManagerDialog;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, FHIR.Npm.Manager;
 
 type
   TServerManagerForm = class(TForm)

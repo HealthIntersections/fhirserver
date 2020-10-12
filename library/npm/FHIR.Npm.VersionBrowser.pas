@@ -1,4 +1,4 @@
-unit FHIR.Cache.PackageVersionBrowser;
+unit FHIR.Npm.VersionBrowser;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,7 +36,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   VirtualTrees,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Fetcher, FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager, FHIR.Cache.PackageClient, Vcl.ComCtrls, FHIR.Ui.WorkerTask;
+  FHIR.Npm.Cache, FHIR.Npm.Client, Vcl.ComCtrls, FHIR.Ui.WorkerTask;
 
 type
   TPackageVersionChooserForm = class({$IFDEF NPPUNICODE} TNppForm {$ELSE} TForm {$ENDIF})

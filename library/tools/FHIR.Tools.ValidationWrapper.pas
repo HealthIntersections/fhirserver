@@ -34,7 +34,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Lang;
 
 type

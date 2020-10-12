@@ -37,7 +37,7 @@ uses
   Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage,
   FHIR.Npp.Base, FHIR.Npp.Form,
   FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager, FHIR.Cache.PackageManagerDialog,
+  FHIR.Npm.Cache, FHIR.Npm.Manager,
   FHIR.Npp.Context;
 
 type

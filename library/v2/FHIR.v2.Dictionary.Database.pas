@@ -1409,7 +1409,7 @@ procedure THL7V2AccessDictionary.SetFileName(const Value: String);
 begin
   Close;
   FFileName := Value;
-  FManager := TFslDBOdbcManager.Create('HL7dict', 1, 0, 'Microsoft Access Driver (*.mdb, *.accdb)', '', FFileName, '', '');
+  FManager := TFslDBOdbcManager.Create('HL7dict', kdbAccess, 1, 0, 'Microsoft Access Driver (*.mdb, *.accdb)', '', FFileName, '', '');
   FStmt := Fmanager.GetConnection('HL7 Dictionary');
   LookupDBVersion;
   FStmtInUse := False;

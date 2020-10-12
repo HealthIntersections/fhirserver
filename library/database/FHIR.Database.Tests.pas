@@ -249,7 +249,7 @@ procedure TFslDBTests.TestMSSQL;
 var
   db: TFslDBManager;
 begin
-  db := TFslDBOdbcManager.create('test', 8, 200, 'SQL Server', '(local)', 'test', '', '');
+  db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, 'SQL Server', '(local)', 'test', '', '');
   try
     test(db);
   finally
@@ -261,7 +261,7 @@ procedure TFslDBTests.TestMySQL;
 var
   db: TFslDBManager;
 begin
-  db := TFslDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
+  db := TFslDBOdbcManager.create('test', kdbMySql, 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
   try
     test(db);
   finally

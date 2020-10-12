@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Version.Parser,
   FHIR.Support.Tests,

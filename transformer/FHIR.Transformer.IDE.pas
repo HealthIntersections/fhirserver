@@ -56,7 +56,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Comparisons, FHIR.Support.MXml, FHIR.Support.Shell, FHIR.Support.Threads,
   FHIR.Ui.ListSelector,
   FHIR.Javascript,
-  FHIR.Cache.PackageManagerDialog,
+  FHIR.Npm.Manager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.PathEngine, FHIR.Base.PathDebugger,
   FHIR.v2.Message,
   FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.MapUtilities, FHIR.R4.ElementModel, FHIR.R4.Json, FHIR.R4.XML, FHIR.R4.Factory, FHIR.R4.PathEngine, FHIR.R4.Utilities,

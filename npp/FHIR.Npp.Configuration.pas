@@ -36,7 +36,7 @@ uses
   Vcl.Dialogs, FHIR.Npp.Base, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   VirtualTrees, Vcl.ComCtrls, FHIR.Smart.Utilities, FHIR.Client.ServerDialog,
   FHIR.Support.Base, FHIR.Base.Objects, FHIR.Base.Factory,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Npp.Context, FHIR.Npp.Form;
 
 type
@@ -130,7 +130,7 @@ uses
   FHIR.R4.Constants,
   FHIR.Npp.Plugin,
   FHIR.Npp.Visualiser,
-  FHIR.Npp.Toolbox, FHIR.Cache.PackageManagerDialog;
+  FHIR.Npp.Toolbox, FHIR.Npm.Manager;
 
 procedure TSettingForm.btnEditAsTextClick(Sender: TObject);
 begin

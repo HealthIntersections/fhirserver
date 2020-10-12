@@ -43,7 +43,7 @@ uses
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Ucum.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base, FHIR.Base.PathEngine,
+  FHIR.Base.Factory, FHIR.Npm.Cache, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base, FHIR.Base.PathEngine,
 
   FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
   FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Resources.Base,
@@ -183,7 +183,7 @@ begin
         ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
         if (ver <> ServerDBVersion) then
         begin
-          dbi := TFHIRDatabaseInstaller.create(conn, '', factory.link, serverfactory.link);
+          dbi := TFHIRDatabaseInstaller.create(conn, factory.link, serverfactory.link);
           try
             dbi.upgrade(ver);
           finally
@@ -214,11 +214,11 @@ begin
   begin
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin
@@ -290,7 +290,7 @@ begin
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
-  FWebServer.Start(true);
+  FWebServer.Start(true, true);
 end;
 
 procedure TFullServerTests.LoadTerminologies;

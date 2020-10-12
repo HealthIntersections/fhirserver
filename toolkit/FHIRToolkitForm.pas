@@ -52,7 +52,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Web.Fetcher,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
-  FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
+  FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Npm.Cache,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, NamingSystemEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}

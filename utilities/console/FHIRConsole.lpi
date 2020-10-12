@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="12"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="-1"/>
       <Title Value="FHIRConsole"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -17,8 +18,8 @@
     <MacroValues Count="1">
       <Macro3 Name="LCLWidgetType" Value="win32"/>
     </MacroValues>
-    <BuildModes>
-      <Item Name="Default" Default="True"/>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
       <SharedMatrixOptions Count="3">
         <Item1 ID="348441424249" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item2 ID="601568390877" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
@@ -31,53 +32,27 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
+      <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages>
-      <Item>
+    <RequiredPackages Count="1">
+      <Item1>
         <PackageName Value="LCL"/>
-      </Item>
+      </Item1>
     </RequiredPackages>
-    <Units>
-      <Unit>
-        <Filename Value="FHIRConsole.lpr"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
+    <Units Count="2">
+      <Unit0>
         <Filename Value="consoleform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConsoleForm"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\dependencies\Indy10\Protocols\IdTelnet.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\dependencies\Indy10\System\IdAssemblyInfo.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\dependencies\Indy10\Core\IdAssignedNumbers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\library\support\FHIR.Support.Threads.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\dependencies\FMM\FastMM4.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
+      </Unit0>
+      <Unit1>
         <Filename Value="frmserverconnection.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="ServerConnectionForm"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="frmServerConnection"/>
-      </Unit>
+      </Unit1>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -106,23 +81,4 @@
       </Options>
     </Linking>
   </CompilerOptions>
-  <Debugging>
-    <Exceptions>
-      <Item>
-        <Name Value="EAbort"/>
-      </Item>
-      <Item>
-        <Name Value="ECodetoolError"/>
-      </Item>
-      <Item>
-        <Name Value="EFOpenError"/>
-      </Item>
-      <Item>
-        <Name Value="EIdConnClosedGracefully"/>
-      </Item>
-      <Item>
-        <Name Value="EIdSocketError"/>
-      </Item>
-    </Exceptions>
-  </Debugging>
 </CONFIG>

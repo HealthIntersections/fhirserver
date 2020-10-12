@@ -1,4 +1,4 @@
-unit FHIR.Cache.PackageUpdater;
+unit FHIR.Npm.Spider;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Logging,
   FHIR.Web.Fetcher,
   FHIR.Database.Manager,
-  FHIR.Cache.NpmPackage;
+  FHIR.Npm.Package;
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';

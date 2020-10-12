@@ -38,7 +38,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Web.Parsers,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.ElementModel,
   FHIR.Client.Base;
 

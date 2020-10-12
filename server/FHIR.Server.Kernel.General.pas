@@ -40,7 +40,7 @@ Uses
   FHIR.Ucum.Services, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Common,
   {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
 
   FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
   FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context, FHIR.R5.Context,

@@ -121,13 +121,8 @@
         <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Browser.pas">
             <Form>PackageFinderForm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
-            <Form>PackageCacheForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Documents.pas"/>
@@ -229,20 +224,16 @@
         <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="FHIR.Transformer.SettingsDialog.pas">
             <Form>TransformerOptionsForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\base\FHIR.Base.PathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
             <Form>WorkingForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Transformer.FileChangedDlg.pas">
             <Form>FileChangedForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Transformer.Editor.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
@@ -261,28 +252,27 @@
         <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="FHIR.Transformer.MarkdownPreview.pas">
             <Form>MarkdownPreviewForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\conversion\FHIR.Conversion.Engine.pas"/>
         <DCCReference Include="FHIR.Transformer.ExecConfig.pas">
             <Form>TransformerExecConfigForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\r4\FHIR.R4.Javascript.pas"/>
         <DCCReference Include="..\library\v2\FHIR.v2.Javascript.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Javascript.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
             <Form>TextPresentationDialog</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageVersionBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
-            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas">
+            <Form>PackageVersionChooserForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Base.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Admin.pas"/>
@@ -318,10 +308,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -331,10 +321,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

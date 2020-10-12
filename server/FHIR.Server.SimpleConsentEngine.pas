@@ -211,7 +211,7 @@ begin
       FIdMap.AddOrSetValue(consent.Resource.id, id);
       if not FCache.TryGetValue(id, list) then
       begin
-        list := TFslList<TFhirConsentW>.create(self);
+        list := TFslList<TFhirConsentW>.create();
         FCache.add(id, list);
       end;
       list.RemoveAll(

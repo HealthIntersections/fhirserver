@@ -197,14 +197,18 @@ uses
   FHIR.Server.ConsentEngine in '..\..\server\FHIR.Server.ConsentEngine.pas',
   FHIR.Tx.NDC in '..\..\server\FHIR.Tx.NDC.pas',
   FHIR.Server.UsageStats in '..\..\server\FHIR.Server.UsageStats.pas',
-  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
-  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
-  FHIR.Cache.PackageUpdater in '..\..\library\cache\FHIR.Cache.PackageUpdater.pas',
+  FHIR.Npm.Cache in '..\..\library
+pm\FHIR.Npm.Cache.pas',
+  FHIR.Npm.Package in '..\..\library
+pm\FHIR.Npm.Package.pas',
+  FHIR.Npm.Spider in '..\..\library
+pm\FHIR.Npm.Spider.pas',
   FHIR.Database.ODBC in '..\..\library\database\FHIR.Database.ODBC.pas',
   FHIR.Database.ODBC.Objects in '..\..\library\database\FHIR.Database.ODBC.Objects.pas',
   FHIR.Database.ODBC.Headers in '..\..\library\database\FHIR.Database.ODBC.Headers.pas',
   FHIR.Server.Twilio in '..\..\server\FHIR.Server.Twilio.pas',
-  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas',
+  FHIR.Npm.Client in '..\..\library
+pm\FHIR.Npm.Client.pas',
   FHIR.Server.WebBase in '..\..\server\FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in '..\..\server\FHIR.Server.ClientCacheManager.pas',
   FHIR.Tx.HGVS in '..\..\server\FHIR.Tx.HGVS.pas',

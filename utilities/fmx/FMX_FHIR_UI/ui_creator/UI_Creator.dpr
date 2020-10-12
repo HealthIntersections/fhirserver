@@ -70,7 +70,8 @@ uses
   FHIR.R4.Narrative in '..\..\..\..\r4\FHIR.R4.Narrative.pas',
   FHIR.R4.Validator in '..\..\..\..\r4\FHIR.R4.Validator.pas',
   FHIR.Client.Async in '..\..\..\..\client\FHIR.Client.Async.pas',
-  FHIR.Cache.PackageManager in '..\..\..\..\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Npm.Cache in '..\..\..\..
+pm\FHIR.Npm.Cache.pas',
   FHIR.Support.Shell in '..\..\..\..\support\FHIR.Support.Shell.pas',
   FHIR.Tools.ValidationWrapper in '..\..\..\..\tools\FHIR.Tools.ValidationWrapper.pas',
   Unit1 in 'Unit1.pas' {Form1},

@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Factory,
   FHIR.Smart.Utilities, FHIR.Client.Registry;
 

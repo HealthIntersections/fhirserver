@@ -1,4 +1,4 @@
-unit FHIR.Cache.NpmPackage;
+unit FHIR.Npm.Package;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

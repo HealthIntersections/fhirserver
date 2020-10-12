@@ -703,7 +703,7 @@ begin
   FServer.ServeUnknownCertificate := true;
   FStore.FServer := FServer;
   FStore.FEndpoint := FEndpoint;
-  FServer.Start(true);
+  FServer.Start(true, true);
 
   FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(false), false);
   FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(false), true);
@@ -802,7 +802,7 @@ begin
   FServer.ServeMissingCertificate := false;
   FServer.ServeUnknownCertificate := true;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -829,7 +829,7 @@ begin
   FServer.ServeMissingCertificate := false;
   FServer.ServeUnknownCertificate := false;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -859,7 +859,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := false;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
@@ -890,7 +890,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
@@ -916,7 +916,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -942,7 +942,7 @@ begin
   FServer.ServeMissingCertificate := true;
   FServer.ServeUnknownCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\local.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -972,7 +972,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -999,7 +999,7 @@ begin
   FServer.ServeMissingCertificate := false;
   FServer.ServeUnknownCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\local.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -1028,7 +1028,7 @@ begin
   FStore.reset;
   FServer.Stop;
   FServer.ServeMissingCertificate := false;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
@@ -1059,7 +1059,7 @@ begin
   FStore.reset;
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
-  FServer.Start(true);
+  FServer.Start(true, true);
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
   FClientSSL.smartToken := TClientAccessToken.create;
@@ -1088,7 +1088,7 @@ begin
   FStore.reset;
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := TClientAccessToken.create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
@@ -1136,7 +1136,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
@@ -1165,7 +1165,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
@@ -1210,7 +1210,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
-  FServer.Start(true);
+  FServer.Start(true, true);
   FClientSSL.smartToken := nil;
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';

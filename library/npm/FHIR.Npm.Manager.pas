@@ -1,4 +1,4 @@
-unit FHIR.Cache.PackageManagerDialog;
+unit FHIR.Npm.Manager;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -38,7 +38,7 @@ uses
   FHIR.Web.Fetcher,
   System.ImageList, Vcl.ImgList, Vcl.Menus,
   FHIR.Ui.TextPresentation,
-  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage, FHIR.Ui.WorkerTask,
+  FHIR.Npm.Cache, FHIR.Npm.Package, FHIR.Ui.WorkerTask,
   Vcl.ComCtrls;
 
 const
@@ -154,7 +154,7 @@ implementation
 
 {$R *.dfm}
 
-uses FHIR.Cache.PackageBrowser;
+uses FHIR.Npm.Browser;
 
 procedure TPackageCacheForm.btnCancelClick(Sender: TObject);
 begin

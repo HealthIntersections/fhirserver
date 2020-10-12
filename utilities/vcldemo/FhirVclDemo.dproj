@@ -214,9 +214,9 @@
         <DCCReference Include="..\..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.ElementModel.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
-        <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\..\library\cache\FHIR.Cache.NpmPackage.pas"/>
-        <DCCReference Include="..\..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\..\library\npm\FHIR.Npm.Cache.pas"/>
+        <DCCReference Include="..\..\library\npm\FHIR.Npm.Package.pas"/>
+        <DCCReference Include="..\..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="..\..\library\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Other.pas"/>
         <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Clinical.pas"/>

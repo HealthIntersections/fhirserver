@@ -36,7 +36,7 @@ uses
   BaseFrame, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.ComboEdit, FMX.Layouts,
   FMX.ListBox, FMX.Controls.Presentation, FMX.Platform,
   FHIR.Support.Utilities, FHIR.Tools.ValidationWrapper,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager, FMX.Menus, FHIR.Base.Lang;
+  FHIR.Npm.Package, FHIR.Npm.Cache, FMX.Menus, FHIR.Base.Lang;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug

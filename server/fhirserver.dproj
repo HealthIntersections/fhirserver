@@ -180,7 +180,7 @@
         <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
         <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Client.pas"/>
         <DCCReference Include="FHIR.CdsHooks.Server.pas"/>
         <DCCReference Include="FHIR.CdsHooks.Service.pas"/>
@@ -401,9 +401,6 @@
         <DCCReference Include="FHIR.Server.Manager.pas">
             <Form>ServerManagerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
-            <Form>PackageCacheForm</Form>
-        </DCCReference>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Actions.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Classes.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.ClipBoard.pas"/>
@@ -415,7 +412,7 @@
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibility.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTHeaderPopup.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Browser.pas">
             <Form>PackageFinderForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\snomed\FHIR.Snomed.Combiner.pas"/>
@@ -469,9 +466,8 @@
         <DCCReference Include="FHIR.Tx.NDC.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
             <Form>TextPresentationDialog</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
         <DCCReference Include="FHIR.Server.IndexingR5.pas"/>
         <DCCReference Include="FHIR.Server.OperationsR5.pas"/>
         <DCCReference Include="FHIR.Server.SubscriptionsR5.pas"/>
@@ -507,9 +503,9 @@
         <DCCReference Include="..\library\r5\FHIR.R5.Narrative2.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.GraphDefinition.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.MapUtilities.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageUpdater.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Spider.pas"/>
         <DCCReference Include="FHIR.Server.Packages.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="Modules\FHIR.Server.Covid.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Liquid.pas"/>
         <DCCReference Include="FHIR.Server.Twilio.pas"/>
@@ -517,11 +513,9 @@
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
             <Form>WorkingForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageVersionBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Server.WebBase.pas"/>
         <DCCReference Include="FHIR.Server.ClientCacheManager.pas"/>
@@ -558,9 +552,9 @@
         <DCCReference Include="FHIR.Server.Kernel.Tx.pas"/>
         <DCCReference Include="FHIR.Server.Gui.Vcl.pas">
             <Form>ServerGUI</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

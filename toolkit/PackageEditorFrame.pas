@@ -38,7 +38,7 @@ uses
   BaseFrame,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
-  FHIR.Cache.PackageManager, FHIR.Cache.NpmPackage;
+  FHIR.Npm.Cache, FHIR.Npm.Package;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug

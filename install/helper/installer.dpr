@@ -46,7 +46,8 @@ uses
   FHIR.Support.Threads in '..\..\library\support\FHIR.Support.Threads.pas',
   FHIR.Database.Settings in '..\..\library\database\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\library\database\FHIR.Database.Logging.pas',
-  FHIR.Cache.PackageManager in '..\..\library\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Npm.Cache in '..\..\library
+pm\FHIR.Npm.Cache.pas',
   FHIR.Support.Json in '..\..\library\support\FHIR.Support.Json.pas',
   FHIR.Support.Collections in '..\..\library\support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\..\library\support\FHIR.Support.Stream.pas',
@@ -58,8 +59,10 @@ uses
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Base.Utilities in '..\..\library\base\FHIR.Base.Utilities.pas',
   FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas',
-  FHIR.Cache.NpmPackage in '..\..\library\cache\FHIR.Cache.NpmPackage.pas',
-  FHIR.Cache.PackageClient in '..\..\library\cache\FHIR.Cache.PackageClient.pas';
+  FHIR.Npm.Package in '..\..\library
+pm\FHIR.Npm.Package.pas',
+  FHIR.Npm.Client in '..\..\library
+pm\FHIR.Npm.Client.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin

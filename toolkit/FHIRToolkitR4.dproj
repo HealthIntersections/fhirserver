@@ -364,7 +364,7 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Narrative.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Validator.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.Async.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
         <DCCReference Include="TransformationFrame.pas">
             <Form>TransformationEngineFrame</Form>
             <DesignClass>TFrame</DesignClass>
@@ -448,13 +448,12 @@
             <Form>PackageEditorFrame</Form>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
         <DCCReference Include="NamingSystemEditor.pas">
             <Form>NamingSystemEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Base.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Admin.pas"/>

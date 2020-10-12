@@ -35,7 +35,7 @@ uses
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
   FHIR.Support.Base, FHIR.Support.Threads,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 

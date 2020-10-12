@@ -39,7 +39,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Version.Parser,
   FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Context, FHIR.R5.Profiles, FHIR.R5.PathEngine,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Support.Json, DUnitX.TestFramework;
 
 Type

@@ -1,4 +1,4 @@
-unit FHIR.Cache.PackageManager;
+unit FHIR.Npm.Cache;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
   FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Fpc,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageClient,
+  FHIR.Npm.Package, FHIR.Npm.Client,
   FHIR.Base.Utilities;
 
 type

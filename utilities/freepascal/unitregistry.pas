@@ -57,7 +57,7 @@ uses
   FHIR.Base.Lang,  FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Smart.Utilities, FHIR.Client.Base, FHIR.Tx.Service,
 
   // FHIR.Cache
-  FHIR.Cache.PackageManager, FHIR.Cache.PackageClient, FHIR.Cache.NpmPackage,
+  FHIR.Npm.Cache, FHIR.Npm.Client, FHIR.Npm.Package,
 
   // UCUM
   FHIR.Ucum.Search, FHIR.Ucum.Services, FHIR.Ucum.Validators, FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers, FHIR.Ucum.IFace,

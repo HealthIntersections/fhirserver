@@ -9,12 +9,6 @@
         <Projects Include="utilities\tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utilities\bridge\ExampleBridgeServer.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="utilities\VocabTxServer\VocabTxServer.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -41,32 +35,14 @@
     <Target Name="FHIRServerTests:Make">
         <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ExampleBridgeServer">
-        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj"/>
-    </Target>
-    <Target Name="ExampleBridgeServer:Clean">
-        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ExampleBridgeServer:Make">
-        <MSBuild Projects="utilities\bridge\ExampleBridgeServer.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="VocabTxServer">
-        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj"/>
-    </Target>
-    <Target Name="VocabTxServer:Clean">
-        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="VocabTxServer:Make">
-        <MSBuild Projects="utilities\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver;FHIRServerTests;ExampleBridgeServer;VocabTxServer"/>
+        <CallTarget Targets="fhirserver;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean;ExampleBridgeServer:Clean;VocabTxServer:Clean"/>
+        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make;ExampleBridgeServer:Make;VocabTxServer:Make"/>
+        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

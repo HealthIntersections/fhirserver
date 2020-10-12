@@ -89,7 +89,7 @@ Uses
   {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
   FHIR.Client.HTTP,
-  FHIR.Cache.PackageUpdater, FHIR.Cache.PackageClient, FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
+  FHIR.Npm.Spider, FHIR.Npm.Client, FHIR.Npm.Package, FHIR.Npm.Cache,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
   {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}

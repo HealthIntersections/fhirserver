@@ -87,7 +87,8 @@ uses
   fhir.support.fpc in '..\support\fhir.support.fpc.pas',
   FHIR.Support.Osx in '..\support\FHIR.Support.Osx.pas',
   FHIR.Base.Utilities in '..\base\FHIR.Base.Utilities.pas',
-  FHIR.Cache.PackageManager in '..\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Npm.Cache in '..
+pm\FHIR.Npm.Cache.pas',
   FHIR.Smart.Utilities in '..\client\FHIR.Smart.Utilities.pas';
 
 (*

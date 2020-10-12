@@ -36,7 +36,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   FHIR.Npp.Form,
   FHIR.Support.Base,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageManager,
+  FHIR.Npm.Package, FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common,
   FHIR.Npp.Context;
 

@@ -38,7 +38,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Web.Parsers,
   FHIR.Database.Manager,
-  FHIR.Cache.NpmPackage, FHIR.Cache.PackageUpdater,
+  FHIR.Npm.Package, FHIR.Npm.Spider,
   FHIR.Base.Objects, FHIR.Support.Stream,
   FHIR.R4.Types, // choice of R4 is totally arbitrary
   FHIR.Server.WebBase, FHIR.Server.Session;

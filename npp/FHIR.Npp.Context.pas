@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Utilities,
   FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Client.Base, FHIR.Base.Common;

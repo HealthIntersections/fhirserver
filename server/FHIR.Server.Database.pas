@@ -39,7 +39,7 @@ uses
   FHIR.Support.Certs, FHIR.Support.Collections, FHIR.Support.Json,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Web.Parsers, FHIR.Web.GraphQL,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.CdsHooks.Utilities,
   FHIR.Base.Validator, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Narrative,
   FHIR.Client.Base,

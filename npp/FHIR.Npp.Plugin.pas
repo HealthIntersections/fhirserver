@@ -75,7 +75,7 @@ uses
   FHIR.Npp.Settings, FHIR.Npp.Validator, FHIR.Base.Xhtml,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Npp.Version, FHIR.Npp.Utilities,
   FHIR.Npp.Toolbox, FHIR.Npp.About, FHIR.Npp.Configuration, FHIR.Npp.Make, FHIR.Npp.Fetch, PathDialogForms, ValidationOutcomes, FHIR.Npp.CodeGen,
-  FHIR.Cache.PackageManagerDialog, FHIR.Cache.PackageManager,
+  FHIR.Npm.Manager, FHIR.Npm.Cache,
   FHIR.Npp.Visualiser, FHIR.Base.PathDebugger, FHIR.Npp.Welcome, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm, FHIR.Npp.SaveAs;
 
 const
