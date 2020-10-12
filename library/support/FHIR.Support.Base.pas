@@ -315,9 +315,12 @@ Type
     function link : TFslList<T>; overload;
     function forEnum : TFslList<T>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
 
+    {$IFNDEF FPC}
+    // something about this makes FPC blow up in a different unit
     // if B is a subclass of A, TFslList<B> is not a subclass of TFslList<A>. These 2 routines help deal with this
     function asBase : TFslList<TFslObject>;
     procedure copyList(list : TFslList<TFslObject>);
+    {$ENDIF}
 
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
@@ -1440,6 +1443,7 @@ begin
   InsertRange(Count, Collection);
 end;
 
+{$IFNDEF FPC}
 function TFslList<T>.asBase: TFslList<TFslObject>;
 var
   item : T;
@@ -1452,6 +1456,7 @@ begin
     result.free;
   end;
 end;
+{$ENDIF}
 
 procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
@@ -1692,6 +1697,7 @@ begin
       exit(true);
 end;
 
+{$IFNDEF FPC}
 procedure TFslList<T>.copyList(list: TFslList<TFslObject>);
 var
   item : TFslObject;
@@ -1699,6 +1705,7 @@ begin
   for item in list do
     add(item.link as T);
 end;
+{$ENDIF}
 
 function TFslList<T>.Expand: TFslList<T>;
 begin
