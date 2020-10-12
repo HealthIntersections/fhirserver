@@ -714,7 +714,7 @@ type
   private
     FLock : TFslLock;
     FHooks : TFslList<TFslDBHook>;
-    FList : TFslList<TFslDBManager>;
+    FList : TList<TFslDBManager>; // this can't own because then entries are never freed
     procedure AddConnMan(AConnMan : TFslDBManager);
     procedure RemoveConnMan(AConnMan : TFslDBManager);
     function GetConnMan(i : Integer):TFslDBManager;
@@ -737,7 +737,7 @@ type
 }
 function DescribeType(AColType: TFslDBColumnType): String;
 
-function KDBManagers : TFslDBManagerList;
+function DBManagers : TFslDBManagerList;
 
 implementation
 
@@ -1243,7 +1243,6 @@ end;
 function TFslDBConnection.ExistsByKey(const sTableName, sKeyField: String; ikey: Integer): Boolean;
 begin
   result := CountSQL('Select '+sKeyField+' from '+sTableName+' where '+sKeyField+' = '+inttostr(iKey)) > 0;
-
 end;
 
 procedure TFslDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TFslDateTime);
@@ -1296,11 +1295,9 @@ end;
 
 destructor TFslDBManager.Destroy;
 begin
-
   FClosing := true;
   if GManagers <> nil then
     GManagers.RemoveConnMan(self);
-
 
   FAvail.free;
   FInUse.free;
@@ -1571,7 +1568,7 @@ begin
 end;
 
 
-function KDBManagers : TFslDBManagerList;
+function DBManagers : TFslDBManagerList;
 begin
   result := GManagers;
 end;
@@ -1676,7 +1673,7 @@ begin
   inherited create;
   FLock := TFslLock.create;
   FHooks := TFslList<TFslDBHook>.create;
-  FList := TFslList<TFslDBManager>.create;
+  FList := TList<TFslDBManager>.create;
 end;
 
 destructor TFslDBManagerList.destroy;

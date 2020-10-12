@@ -188,8 +188,8 @@ begin
   Logging.log('Web source from '+Ini.web['folder']);
   if FolderExists('c:\work\fhirserver\server\web') then
     FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhiserver\server\web')
-  else if FileExists('fhirserver.web') then
-    FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(ProcessPath(ExtractFilePath(Ini.FileName), Ini.web['folder']))
+  else if FileExists(partnerFile('fhirserver.web')) then
+    FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(partnerFile('fhirserver.web'))
   else
     raise Exception.Create('Unable to find web source');
 

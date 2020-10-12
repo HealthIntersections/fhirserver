@@ -41,7 +41,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
-  MarkdownHtmlEntities;
+  MarkdownHTMLEntities;
 
 const
   DEF_BUF_SIZE = 128;

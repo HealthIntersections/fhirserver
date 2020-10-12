@@ -620,6 +620,7 @@ Function SystemManualTemp : String;
 Function ProgData : String;
 Function UserFolder : String;
 function tempFileName(prefix : String): String;
+function partnerFile(name : String) : String;
 
 
 Type
@@ -3573,6 +3574,14 @@ End;
 function tempFileName(prefix : String): String;
 begin
   result := Path([SystemTemp, prefix+'-'+NewGuidId+'.tmp']);
+end;
+
+function partnerFile(name: String): String;
+var
+  s : String;
+begin
+  s := ExtractFilePath(Paramstr(0));
+  result := path([s, name]);
 end;
 
 

@@ -121,7 +121,9 @@ begin
     if ParamCount > 0 then
       Logging.LogToConsole := true;
 
+    {$IFDEF WINDOWS}
     SetConsoleTitle('FHIR Server R4');
+    {$ENDIF}
     Logging.log(commandLineAsString);
 
     if not getCommandLineParam('name', svcName) then
@@ -184,7 +186,9 @@ var
   ini : TFHIRServerIniFile;
   iniName : String;
 begin
+  {$IFDEF WINDOWS}
   JclStartExceptionTracking;
+  {$ENDIF}
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
     {$IFDEF WINDOWS}

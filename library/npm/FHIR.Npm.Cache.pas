@@ -144,6 +144,8 @@ const
   CACHE_VERSION = 3;
 
 
+var
+  MustBeUserMode : boolean = false;
 
 implementation
 
@@ -186,11 +188,18 @@ constructor TFHIRPackageManager.Create(user : boolean);
 begin
   inherited Create;
   FCache := TFslMap<TNpmPackage>.create('Npm Package manager');
-  FUser := user;
-  if user then
+  FUser := user or MustBeUserMode;
+  {$IFDEF WINDOWS}
+  if FUser then
     FFolder := path([UserFolder, '.fhir', 'packages'])
   else
     FFolder := path([ProgData, '.fhir', 'packages']);
+  {$ELSE}
+  if FUser then
+    FFolder := '~/.fhir/packages'
+  else
+    FFolder := '/var/lib/.fhir/packages';
+  {$ENDIF}
   ForceFolder(FFolder);
   FIni := TIniFile.create(Path([FFolder, 'packages.ini']));
   if FIni.ReadInteger('cache', 'version', 0) <> CACHE_VERSION then

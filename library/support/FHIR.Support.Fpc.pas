@@ -46,6 +46,10 @@ type
   UnicodeChar = char;
 {$ENDIF}
 
+{$IFDEF WINDOWS}
+  TLibHandle = THandle;
+{$ENDIF}
+
 // unicode helpers - make life easier for shared fpc/delphi code
 function unicodeChars(s : String) : TArray<UnicodeChar>;
 function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this does nothing.
