@@ -34,8 +34,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  StdCtrls, Buttons,
-  FHIR.Support.Utilities, FHIR.Support.Shell,
+  StdCtrls, Buttons, lclintf,
+  FHIR.Support.Utilities,
   FHIR.Server.Ini, FHIR.Server.Gui.Controller;
 
 type
@@ -142,7 +142,7 @@ end;
 
 procedure TServerGUI.btnBrowserClick(Sender: TObject);
 begin
-  ExecuteURL(FServer.Address);
+  OpenURL(FServer.Address);
 end;
 
 procedure TServerGUI.btnStatusClick(Sender: TObject);

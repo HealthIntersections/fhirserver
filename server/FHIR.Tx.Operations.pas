@@ -261,6 +261,9 @@ begin
                     vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters['version'], false, needSecure));
               end;
             end;
+            if vs = nil then
+            raise ETerminologyError.create('Unable to find value set for URL "'+url+'"');
+
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;

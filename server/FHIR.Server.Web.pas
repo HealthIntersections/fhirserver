@@ -5266,7 +5266,7 @@ var
 begin
   vars := TFslMap<TFHIRObject>.Create('dx.vars');
   try
-    vars.Add('status.db', TFHIRSystemString.Create(FormatTextToHTML(KDBManagers.dump)));
+    vars.Add('status.db', TFHIRSystemString.Create(FormatTextToHTML(DBManagers.dump)));
     vars.Add('live.connections', TFHIRSystemString.Create(inttostr(GCounterWebConnections)));
     vars.Add('live.requests', TFHIRSystemString.Create(inttostr(GCounterWebRequests)));
     vars.Add('live.requests.kernel', TFHIRSystemString.Create(inttostr(GCounterFHIRRequests)));

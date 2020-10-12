@@ -50,6 +50,8 @@ unit FHIR.Database.SQLite3.Objects;
 
 interface
 
+uses
+  FHIR.Support.Fpc;
 
 type
   PPAnsiCharArray = ^TPAnsiCharArray;
@@ -60,7 +62,7 @@ const
   sqlite3_lib = 'sqlite3.dll';
 {$ENDIF}
 {$IFDEF LINUX}
-  sqlite3_lib = 'sqlite3.so';
+  sqlite3_lib = 'libsqlite3.so';
 {$ENDIF}
 {$IFDEF OSX}
   sqlite3_lib = 'libsqlite3.dylib';
@@ -1071,7 +1073,7 @@ uses
 
 procedure loadSQLite;
 var
-  lib : THandle;
+  lib : TLibHandle;
 begin
   lib := loadLibrary(sqlite3_lib);
   if lib = 0 then

@@ -189,16 +189,14 @@ unit FHIR.Support.SCrypt;
 	{$ENDIF}
 {$ENDIF}
 
+{$R-}
+
 interface
 
 uses
   SysUtils, Classes, Types, Generics.Collections,
   FHIR.Support.Base;
 
-{$IFNDEF UNICODE}
-type
-	UnicodeString = WideString;
-{$ENDIF}
 
 {$IFDEF COMPILER_7} //Delphi 7
 type
@@ -241,13 +239,13 @@ type
 
 	IPBKDF2Algorithm = interface(IInterface)
 		['{93BB60D0-2C87-46CB-8A2A-A711F0BBEF0D}']
-		function GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
+		function GetBytes(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
 
 	TScrypt = class(TObject)
 	protected
 		procedure BurnBytes(var data: TBytes);
-		class function StringToUtf8(const Source: UnicodeString): TBytes;
+		class function StringToUtf8(const Source: String): TBytes;
 
 		class function Base64Encode(const data: array of Byte): string;
 		class function Base64Decode(const s: string): TBytes;
@@ -257,14 +255,14 @@ type
 
 		class procedure XorBlockInPlace(var A; const B; Length: Integer);
 
-		function PBKDF2(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
+		function PBKDF2(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 
 		procedure Salsa20InPlace(var Input); //four round version of Salsa20, termed Salsa20/8
 		function BlockMix(const B: array of Byte): TBytes; //mixes r 128-byte blocks
 		function ROMix(const B; BlockSize, CostFactor: Cardinal): TBytes;
 
-		function GenerateScryptSalt(const Passphrase: UnicodeString; const Salt: array of Byte; const CostFactor, BlockSizeFactor, ParallelizationFactor: Integer): TBytes;
-		function DeriveBytes(const Passphrase: UnicodeString; const Salt: array of Byte; const CostFactor, BlockSizeFactor, ParallelizationFactor: Integer; DesiredBytes: Integer): TBytes;
+		function GenerateScryptSalt(const Passphrase: String; const Salt: array of Byte; const CostFactor, BlockSizeFactor, ParallelizationFactor: Integer): TBytes;
+		function DeriveBytes(const Passphrase: String; const Salt: array of Byte; const CostFactor, BlockSizeFactor, ParallelizationFactor: Integer; DesiredBytes: Integer): TBytes;
 
 		procedure GetDefaultParameters(out CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal);
 		function TryParseHashString(HashString: string; out CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal; out Salt: TBytes; out Data: TBytes): Boolean;
@@ -273,10 +271,10 @@ type
 		constructor Create;
 
 		//Get a number of bytes using the default Cost and Parallelization factors
-		class function GetBytes(const Passphrase: UnicodeString; const Salt: UnicodeString; nDesiredBytes: Integer): TBytes; overload;
+		class function GetBytes(const Passphrase: String; const Salt: String; nDesiredBytes: Integer): TBytes; overload;
 
 		//Get a number of bytes, specifying the desired cost and parallelization factor
-		class function GetBytes(const Passphrase: UnicodeString; const Salt: UnicodeString; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal; DesiredBytes: Integer): TBytes; overload;
+		class function GetBytes(const Passphrase: String; const Salt: String; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal; DesiredBytes: Integer): TBytes; overload;
 
 		{
 			Scrypt is not meant for password storage; it is meant for key generation.
@@ -284,9 +282,9 @@ type
 			Unlike Bcrypt, there is no standard representation for passwords hashed with Scrypt.
 			So we can make one, and provide the function to validate it
 		}
-		class function HashPassword(const Passphrase: UnicodeString): string; overload;
-		class function HashPassword(const Passphrase: UnicodeString; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal): string; overload;
-		class function CheckPassword(const Passphrase: UnicodeString; ExpectedHashString: string; out PasswordRehashNeeded: Boolean): Boolean;
+		class function HashPassword(const Passphrase: String): string; overload;
+		class function HashPassword(const Passphrase: String; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal): string; overload;
+		class function CheckPassword(const Passphrase: String; ExpectedHashString: string; out PasswordRehashNeeded: Boolean): Boolean;
 
 		{
 			Let people have access to our hash functions. They've been tested and verified, and they work well.
@@ -405,8 +403,8 @@ type
 
 const
 	// Microsoft built-in providers. (OpenAlgorithmProvider.pszImplementation)
-	MS_PRIMITIVE_PROVIDER: UnicodeString = 'Microsoft Primitive Provider';
-	MS_PLATFORM_CRYPTO_PROVIDER: UnicodeString = 'Microsoft Platform Crypto Provider'; //i.e. TPM
+	MS_PRIMITIVE_PROVIDER: String = 'Microsoft Primitive Provider';
+	MS_PLATFORM_CRYPTO_PROVIDER: String = 'Microsoft Platform Crypto Provider'; //i.e. TPM
 
 	// OpenAlgorithmProvider.AlgorithmID
 	BCRYPT_SHA256_ALGORITHM = 'SHA256';
@@ -415,7 +413,7 @@ const
 	BCRYPT_ALG_HANDLE_HMAC_FLAG = $00000008;
 
 	// BCryptGetProperty property name
-	BCRYPT_OBJECT_LENGTH: UnicodeString = 'ObjectLength';
+	BCRYPT_OBJECT_LENGTH: String = 'ObjectLength';
 
 var
 	_BCryptInitialized: Boolean = False;
@@ -619,7 +617,7 @@ type
 		procedure HashCore(Hash: BCRYPT_HASH_HANDLE; const Data; DataLen: Integer);
 		function HashFinal(Hash: BCRYPT_HASH_HANDLE): TBytes;
 	public
-		constructor Create(const AlgorithmID: UnicodeString; const Provider: PWideChar; HmacMode: Boolean);
+		constructor Create(const AlgorithmID: String; const Provider: PWideChar; HmacMode: Boolean);
 		destructor Destroy; override;
 
 		class function IsAvailable: Boolean;
@@ -680,7 +678,7 @@ type
 		FHMAC: IHmacAlgorithm;
 	public
 		constructor Create(HMAC: IHmacAlgorithm);
-		function GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
+		function GetBytes(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
 
   {$IFDEF WINDOWS}
@@ -688,15 +686,15 @@ type
 	private
 		FAlgorithm: BCRYPT_ALG_HANDLE;
 	public
-		constructor Create(const AlgorithmID: UnicodeString; const Provider: PWideChar);
+		constructor Create(const AlgorithmID: String; const Provider: PWideChar);
 
-		function GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
+		function GetBytes(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
   {$ENDIF}
 
 { TScrypt }
 
-class function TScrypt.GetBytes(const Passphrase, Salt: UnicodeString; nDesiredBytes: Integer): TBytes;
+class function TScrypt.GetBytes(const Passphrase, Salt: String; nDesiredBytes: Integer): TBytes;
 var
 	scrypt: TScrypt;
 	saltUtf8: TBytes;
@@ -721,8 +719,8 @@ const
 	r = 8;
 	p = 1;
 var
-	t1, t2, freq: Int64;
-	duration: Real;
+	t1, t2: UInt64;
+	duration: Int64;
 	testCostFactor: Cardinal;
 begin
 	{
@@ -739,15 +737,13 @@ begin
 	ParallelizationFactor := 1;
 
 	//Benchmark the current computer, and see if it could be faster than 250ms to compute a hash
-  {$IFDEF WINDOWS}
-	testCostFactor := 11;
-	QueryPerformanceCounter(t1);
-	TScrypt.HashPassword('Benchmark', testCostFactor, 8, 1);
-	QueryPerformanceCounter(t2);
-	if not QueryPerformanceFrequency({var}freq) then Exit;
-  {$ENDIF}
 
-	duration := (t2-t1)/freq*1000;
+	testCostFactor := 11;
+	t1 := GetTickCount64;
+	TScrypt.HashPassword('Benchmark', testCostFactor, 8, 1);
+	t2 := GetTickCount64;
+
+	duration := (t2-t1);
 
 	//Each single increase in CostFactor will double the execution time.
 	//We don't want the execution time to exceed 500ms
@@ -987,7 +983,7 @@ begin
 	SetLength(data, 0);
 end;
 
-class function TScrypt.CheckPassword(const Passphrase: UnicodeString; ExpectedHashString: string; out PasswordRehashNeeded: Boolean): Boolean;
+class function TScrypt.CheckPassword(const Passphrase: String; ExpectedHashString: string; out PasswordRehashNeeded: Boolean): Boolean;
 var
 	scrypt: TScrypt;
 	costFactor, blockSizeFactor, parallelizationFactor: Cardinal;
@@ -1058,7 +1054,7 @@ begin
 	end;
 end;
 
-function TScrypt.DeriveBytes(const Passphrase: UnicodeString; const Salt: array of Byte; const CostFactor,
+function TScrypt.DeriveBytes(const Passphrase: String; const Salt: array of Byte; const CostFactor,
 		BlockSizeFactor, ParallelizationFactor: Integer; DesiredBytes: Integer): TBytes;
 var
 	saltEx: TBytes;
@@ -1307,7 +1303,7 @@ begin
 	Result := salt;
 end;
 
-function TScrypt.GenerateScryptSalt(const Passphrase: UnicodeString; const Salt: array of Byte; const CostFactor,
+function TScrypt.GenerateScryptSalt(const Passphrase: String; const Salt: array of Byte; const CostFactor,
   BlockSizeFactor, ParallelizationFactor: Integer): TBytes;
 var
 	B: TBytes;
@@ -1347,7 +1343,7 @@ begin
 	Result := B;
 end;
 
-class function TScrypt.GetBytes(const Passphrase, Salt: UnicodeString; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal; DesiredBytes: Integer): TBytes;
+class function TScrypt.GetBytes(const Passphrase, Salt: String; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal; DesiredBytes: Integer): TBytes;
 var
 	saltUtf8: TBytes;
 	scrypt: TScrypt;
@@ -1368,7 +1364,7 @@ begin
 	end;
 end;
 
-class function TScrypt.HashPassword(const Passphrase: UnicodeString): string;
+class function TScrypt.HashPassword(const Passphrase: String): string;
 var
 	costFactor: Cardinal;
 	blockSizeFactor: Cardinal;
@@ -1411,7 +1407,7 @@ begin
 	end;
 end;
 
-class function TScrypt.HashPassword(const Passphrase: UnicodeString; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal): string;
+class function TScrypt.HashPassword(const Passphrase: String; CostFactor, BlockSizeFactor, ParallelizationFactor: Cardinal): string;
 var
 	scrypt: TScrypt;
 	salt, derivedBytes: TBytes;
@@ -1601,7 +1597,7 @@ begin
 	Result := Hash.Finalize;
 end;*)
 
-function TScrypt.PBKDF2(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
+function TScrypt.PBKDF2(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 var
 	rfc: IPBKDF2Algorithm;
 begin
@@ -1854,7 +1850,7 @@ begin
 end;
 {$OVERFLOWCHECKS ON}
 
-class function TScrypt.StringToUtf8(const Source: UnicodeString): TBytes;
+class function TScrypt.StringToUtf8(const Source: String): TBytes;
 begin
 {
 	For scrypt passwords we will use UTF-8 encoding.
@@ -2694,8 +2690,8 @@ const
 	advapi32 = 'advapi32.dll';
 const
 	PROV_RSA_AES = 24; //Provider type; from WinCrypt.h
-	MS_ENH_RSA_AES_PROV_W: UnicodeString = 'Microsoft Enhanced RSA and AES Cryptographic Provider'; //Provider name
-	MS_ENH_RSA_AES_PROV_XP_W: UnicodeString = 'Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)'; //Provider name
+	MS_ENH_RSA_AES_PROV_W: String = 'Microsoft Enhanced RSA and AES Cryptographic Provider'; //Provider name
+	MS_ENH_RSA_AES_PROV_XP_W: String = 'Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)'; //Provider name
 	// dwFlags definitions for CryptAcquireContext
 	CRYPT_VERIFYCONTEXT = $F0000000;
 
@@ -2767,13 +2763,13 @@ end;
 
 constructor TCspHash.Create(AlgorithmID: Cardinal; BlockSize: Integer);
 var
-	providerName: UnicodeString;
+	providerName: String;
 	provider: HCRYPTPROV;
 	le: DWORD;
 const
 	PROV_RSA_AES = 24; //Provider type; from WinCrypt.h
-//	MS_ENH_RSA_AES_PROV_W: UnicodeString = 'Microsoft Enhanced RSA and AES Cryptographic Provider'; //Provider name
-//	MS_ENH_RSA_AES_PROV_XP_W: UnicodeString = 'Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)'; //Provider name
+//	MS_ENH_RSA_AES_PROV_W: String = 'Microsoft Enhanced RSA and AES Cryptographic Provider'; //Provider name
+//	MS_ENH_RSA_AES_PROV_XP_W: String = 'Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)'; //Provider name
 
 begin
 	inherited Create;
@@ -2922,7 +2918,7 @@ begin
 	end;
 end;
 
-constructor TCngHash.Create(const AlgorithmID: UnicodeString; const Provider: PWideChar; HmacMode: Boolean);
+constructor TCngHash.Create(const AlgorithmID: String; const Provider: PWideChar; HmacMode: Boolean);
 var
 	nts: NTSTATUS;
 	algorithm: BCRYPT_ALG_HANDLE;
@@ -3241,7 +3237,7 @@ begin
 	FHMAC := HMAC;
 end;
 
-function TRfc2898DeriveBytes.GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer;
+function TRfc2898DeriveBytes.GetBytes(const Password: String; const Salt; const SaltLength: Integer;
   IterationCount, DesiredBytes: Integer): TBytes;
 var
 	Ti: TBytes;
@@ -3338,7 +3334,7 @@ end;
 
 { TBCryptDeriveKeyPBKDF2 }
 
-constructor TBCryptDeriveKeyPBKDF2.Create(const AlgorithmID: UnicodeString; const Provider: PWideChar);
+constructor TBCryptDeriveKeyPBKDF2.Create(const AlgorithmID: String; const Provider: PWideChar);
 var
 	hr: NTSTATUS;
 	alg: BCRYPT_ALG_HANDLE;
@@ -3351,7 +3347,7 @@ begin
 	FAlgorithm := alg;
 end;
 
-function TBCryptDeriveKeyPBKDF2.GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer;
+function TBCryptDeriveKeyPBKDF2.GetBytes(const Password: String; const Salt; const SaltLength: Integer;
 		IterationCount, DesiredBytes: Integer): TBytes;
 var
 	utf8Password: TBytes;

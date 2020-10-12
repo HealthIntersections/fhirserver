@@ -33,10 +33,11 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows,
   SysUtils, Classes,
+  IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Threads,
   FHIR.Base.Objects,
+  FHIR.Cache.PackageManager,
   FHIR.R4.Factory,
   FHIR.Database.Manager, FHIR.Database.SQLite,
   FHIR.Scim.Server,
@@ -114,6 +115,7 @@ begin
   FMessages := TStringList.create;
   Logging.addListener(self);
   Logging.LogToConsole := false;
+  MustBeUserMode := true;
 end;
 
 destructor TFHIRServerController.Destroy;
@@ -388,6 +390,7 @@ begin
         Logging.log('Exception '+s+': '+e.message);
       end;
     end;
+    Logging.log('ssl: '+WhichFailedToLoad);
   finally
     FController.setStatus(ssNotRunning);
   end;

@@ -110,6 +110,8 @@ type
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
+
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   public
     constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
     destructor Destroy; override;
@@ -387,12 +389,41 @@ end;
 
 function TTerminologyServerOperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResourceV;
 begin
-  raise ETodo.Create('Not done yet');
+  needSecure := false;
+  if aType = 'CodeSystem' then
+    result := FData.CodeSystems[id].Resource.Link
+  else if aType = 'ValueSet' then
+    result := FData.ValueSets[id].Resource.Link
+  else if aType = 'NamingSystem' then
+    result := FData.NamingSystems[id].Resource.Link
+  else if aType = 'ConceptMap' then
+    result := FData.ConceptMaps[id].Resource.Link
+  else
+    result := nil;
 end;
 
 function TTerminologyServerOperationEngine.getResourceByUrl(aType, url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResourceV;
+var
+  res : TFHIRMetadataResourceW;
 begin
-  raise ETodo.Create('Not done yet');
+  result := nil;
+  needSecure := false;
+  if (aType = '') or (aType = 'CodeSystem') then
+    for res in FData.CodeSystems.Values do
+      if res.url = url then
+        exit(res.Resource.link);
+  if (aType = '') or (aType = 'ConceptMap') then
+    for res in FData.ConceptMaps.Values do
+      if res.url = url then
+        exit(res.Resource.link);
+  if (aType = '') or (aType = 'NamingSystem') then
+    for res in FData.NamingSystems.Values do
+      if res.url = url then
+        exit(res.Resource.link);
+  if (aType = '') or (aType = 'ValueSet') then
+    for res in FData.ValueSets.Values do
+      if res.url = url then
+        exit(res.Resource.link);
 end;
 
 function TTerminologyServerOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
@@ -552,6 +583,22 @@ begin
       search.free;
     end;
   end;
+end;
+
+function TTerminologyServerOperationEngine.FindResource(aType, sId: String; options: TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments: TFslList<TFHIRCompartmentId>): boolean;
+begin
+  resourceKey := 0;
+  versionKey := 0;
+  if aType = 'CodeSystem' then
+    result := FData.CodeSystems.ContainsKey(sId)
+  else if aType = 'ConceptMap' then
+    result := FData.ConceptMaps.ContainsKey(sId)
+  else if aType = 'NamingSystem' then
+    result := FData.NamingSystems.ContainsKey(sId)
+  else if aType = 'ValueSet' then
+    result := FData.ValueSets.ContainsKey(sId)
+  else
+    result := false;
 end;
 
 function TTerminologyServerOperationEngine.matches(resource: TFhirResourceV; sp: TSearchParameter): boolean;
@@ -1101,7 +1148,7 @@ begin
       list := TStringList.create;
       try
         list.CommaText := ini.kernel['packages-'+details['version']];
-        registerEndPoint(s, details['path'], Databases[details['database']].Link, factory, list, ini.kernel['utg-folder']);
+        registerEndPoint(s, details['path'], Databases[details['database']], factory, list, ini.kernel['utg-folder']);
       finally
         list.Free;
       end;
