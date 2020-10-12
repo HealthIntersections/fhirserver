@@ -1595,6 +1595,7 @@ Function DateTimeMax(Const aA, aB : TDateTime) : TDateTime; Overload;
 Function DateTimeMin(Const aA, aB : TDateTime) : TDateTime; Overload;
 function DescribePeriod(Period: TDateTime): String;
 function DescribePeriodNoMSec(Period: TDateTime): String;
+function DescribePeriodMS(ms : integer): String;
 function TSToDateTime(TS: TTimeStamp): TDateTime;
 function DateTimeToTS(Value : TDateTime): TTimeStamp;
 
@@ -9385,6 +9386,11 @@ begin
     Result := IntToStr(trunc(Period / (MINUTE_LENGTH * 60))) + 'hr'
   else
     Result := IntToStr(trunc(Period)) + ' days';
+end;
+
+function DescribePeriodMS(ms : integer): String;
+begin
+  result := DescribePeriodNoMSec(ms * DATETIME_MILLISECOND_ONE);
 end;
 
 function sameInstant(t1, t2 : TDateTime) : boolean;

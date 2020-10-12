@@ -255,7 +255,7 @@ end;
 
 function TTestStorageService.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
-  result := TTestFHIROperationEngine.create(FContext.Link, lang);
+  result := TTestFHIROperationEngine.create(self, FContext.Link, lang);
   TTestFHIROperationEngine(result).FIsReadAllowed := true;
   TTestFHIROperationEngine(result).FStorage := self;
 end;

@@ -37,7 +37,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.FileCtrl, Vcl.Menus, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ExtCtrls,
   FHIR.Support.Utilities, FHIR.Support.Shell,
-  FHIR.Server.Ini, FHIR.Server.Gui.Controller;
+  FHIR.Server.Ini, FHIR.Server.Constants, FHIR.Server.Gui.Controller;
 
 type
   TServerGUI = class(TForm)
@@ -52,7 +52,7 @@ type
     Label2: TLabel;
     edtFolder: TEdit;
     edtPort: TEdit;
-    BitBtn1: TBitBtn;
+    btnFolder: TBitBtn;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     Exit1: TMenuItem;
@@ -60,7 +60,7 @@ type
     Contents1: TMenuItem;
     About1: TMenuItem;
     Timer1: TTimer;
-    procedure BitBtn1Click(Sender: TObject);
+    procedure btnFolderClick(Sender: TObject);
     procedure btnStatusClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -68,10 +68,15 @@ type
     procedure edtPortChange(Sender: TObject);
     procedure btnBrowserClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure Exit1Click(Sender: TObject);
+    procedure About1Click(Sender: TObject);
   private
     { Private declarations }
     FIni : TFHIRServerIniFile;
     FServer : TFHIRServerController;
+    FCount : integer;
+    FWantStop : boolean;
     procedure serverStatusChange(Sender: TObject);
     procedure log(msg : String);
   public
@@ -85,6 +90,18 @@ implementation
 
 {$R *.dfm}
 
+procedure TServerGUI.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  if FServer.Status = ssNotRunning then
+    CanClose := true
+  else
+  begin
+    CanClose := false;
+    FServer.Stop;
+    FWantStop := true;
+  end;
+end;
+
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
   Fini := TFHIRServerIniFile.Create(Path([ExtractFilePath(paramstr(0)), 'fhir-server-gui.ini']));
@@ -94,6 +111,7 @@ begin
   FServer.Initialise;
   edtFolder.Text := FIni.kernel['utg-folder'];
   edtPort.Text := Fini.web['http'];
+  FWantStop := false;
 end;
 
 procedure TServerGUI.FormDestroy(Sender: TObject);
@@ -106,12 +124,15 @@ procedure TServerGUI.log(msg: String);
 var
    s : String;
 begin
-  mLog.lines.add(msg);
+  if (msg.StartsWith('~')) then
+    mLog.lines[mLog.Lines.Count-1] := mLog.lines[mLog.Lines.Count-1]+msg.Substring(1)
+  else
+    mLog.lines.add(msg);
   s := mlog.text;
   mLog.selStart := s.Length - msg.length;
 end;
 
-procedure TServerGUI.BitBtn1Click(Sender: TObject);
+procedure TServerGUI.btnFolderClick(Sender: TObject);
 var
   s : String;
 begin
@@ -131,6 +152,20 @@ end;
 procedure TServerGUI.edtPortChange(Sender: TObject);
 begin
   Fini.web['http'] := edtPort.Text;
+end;
+
+procedure TServerGUI.Exit1Click(Sender: TObject);
+var
+  cc : boolean;
+begin
+  FormCloseQuery(self, cc);
+  if (cc) then
+    close;
+end;
+
+procedure TServerGUI.About1Click(Sender: TObject);
+begin
+  ShowMessage('FHIR Terminology Server v'+SERVER_VERSION);
 end;
 
 procedure TServerGUI.btnBrowserClick(Sender: TObject);
@@ -154,29 +189,56 @@ end;
 
 procedure TServerGUI.serverStatusChange(Sender: TObject);
 begin
-  btnBrowser.Enabled := false;
   case FServer.Status of
     ssStarting :
       begin
       btnStatus.Enabled := false;
-      btnStatus.Caption := 'Starting...';
+      lblStatus.Caption := 'Starting...';
+      btnBrowser.Enabled := false;
+      edtFolder.Enabled := false;
+      edtPort.Enabled := false;
+      btnFolder.enabled := false;
+      mLog.Color := clWhite;
       end;
     ssRunning :
       begin
       btnStatus.Enabled := true;
       btnStatus.Caption := 'Stop';
       btnBrowser.Enabled := true;
+      if FServer.Stats <> nil then
+        lblStatus.Caption := 'Running. '+FServer.Stats.Present
+      else
+        lblStatus.Caption := 'Running. ??';
+      edtFolder.Enabled := false;
+      edtPort.Enabled := false;
+      btnFolder.enabled := false;
+      mLog.Color := clWhite;
       end;
     ssStopping :
       begin
       btnStatus.Enabled := false;
-      btnStatus.Caption := 'Stopping...';
-
+      lblStatus.Caption := 'Stopping...';
+      btnBrowser.Enabled := false;
+      edtFolder.Enabled := false;
+      edtPort.Enabled := false;
+      btnFolder.enabled := false;
+      mLog.Color := clWhite;
       end;
     ssNotRunning :
       begin
       btnStatus.Enabled := true;
       btnStatus.Caption := 'Start';
+      lblStatus.Caption := 'Not Running';
+      btnBrowser.Enabled := false;
+      edtFolder.Enabled := true;
+      edtPort.Enabled := true;
+      btnFolder.enabled := true;
+      edtFolder.Enabled := false;
+      edtPort.Enabled := false;
+      btnFolder.enabled := false;
+      mLog.Color := ColourCompose($f2, $f2, $f2, 0);
+      if (FWantStop) then
+        close;
       end;
   end;
 end;
@@ -184,6 +246,12 @@ end;
 procedure TServerGUI.Timer1Timer(Sender: TObject);
 begin
   FServer.Ping;
+  inc(fCount);
+  if (Fcount = 10) then
+  begin
+    FCount := 0;
+    serverStatusChange(self);
+  end;
 end;
 
 end.

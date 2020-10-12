@@ -35,7 +35,7 @@ Interface
 Uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}    // Interlocked* API and HResult
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Types, RTLConsts, Generics.Collections, Generics.Defaults;
+  SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections;
 
 const
   {$IFDEF FPC}
@@ -258,6 +258,9 @@ Type
   end;
 
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
+
+  { TFslList }
+
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
@@ -309,8 +312,15 @@ Type
     constructor Create(const Collection: TEnumerable<T>); overload;
     destructor Destroy; override;
 
-    function link : TFslList<t>; overload;
-    function forEnum : TFslList<t>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
+    function link : TFslList<T>; overload;
+    function forEnum : TFslList<T>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
+
+    {$IFNDEF FPC}
+    // something about this makes FPC blow up in a different unit
+    // if B is a subclass of A, TFslList<B> is not a subclass of TFslList<A>. These 2 routines help deal with this
+    function asBase : TFslList<TFslObject>;
+    procedure copyList(list : TFslList<TFslObject>);
+    {$ENDIF}
 
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
@@ -329,7 +339,7 @@ Type
     procedure InsertRange(Index: Integer; const Collection: IEnumerable<T>); overload;
     procedure InsertRange(Index: Integer; const Collection: TEnumerable<T>); overload;
 
-    procedure AddAll(list : TFslList<T>);
+    procedure AddAll(list : TFslList<T>); overload;
 
     procedure Pack; overload;
 
@@ -488,6 +498,7 @@ Type
     function ToArray: TArray<TFslPair<T>>; override; final;
 
     procedure addAll(other : TFslMap<T>);
+    procedure listAll(other : TFslList<T>);
     property Items[const Key: String]: T read GetItem write SetItem; default;
     property Count: Integer read FCount;
     property IsEmpty : Boolean read GetEmpty;
@@ -1217,7 +1228,7 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareEvent);
+procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareEvent);
 Var
   I, J, K : Integer;
   v : T;
@@ -1431,6 +1442,21 @@ procedure TFslList<T>.AddRange(const Collection: TEnumerable<T>);
 begin
   InsertRange(Count, Collection);
 end;
+
+{$IFNDEF FPC}
+function TFslList<T>.asBase: TFslList<TFslObject>;
+var
+  item : T;
+begin
+  result := TFslList<TFslObject>.create;
+  try
+    for item in self do
+      result.add(TFslObject(item).link);
+  finally
+    result.free;
+  end;
+end;
+{$ENDIF}
 
 procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
@@ -1670,6 +1696,16 @@ begin
     if (match(self, i)) then
       exit(true);
 end;
+
+{$IFNDEF FPC}
+procedure TFslList<T>.copyList(list: TFslList<TFslObject>);
+var
+  item : TFslObject;
+begin
+  for item in list do
+    add(item.link as T);
+end;
+{$ENDIF}
 
 function TFslList<T>.Expand: TFslList<T>;
 begin
@@ -2110,6 +2146,14 @@ begin
 
   If Assigned(Self) Then
     InterlockedIncrement(FFslObjectReferenceCount);
+end;
+
+procedure TFslMap<T>.listAll(other: TFslList<T>);
+var
+  item: T;
+begin
+  for item in Values do
+    other.Add(T(TFslObject(item).link));
 end;
 
 procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);

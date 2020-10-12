@@ -504,6 +504,7 @@
         <DCCReference Include="..\library\r5\FHIR.R5.GraphDefinition.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.MapUtilities.pas"/>
         <DCCReference Include="..\library\npm\FHIR.Npm.Spider.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas"/>
         <DCCReference Include="FHIR.Server.Packages.pas"/>
         <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="Modules\FHIR.Server.Covid.pas"/>
@@ -554,7 +555,8 @@
             <Form>ServerGUI</Form>
         </DCCReference>
         <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas"/>
+        <DCCReference Include="..\library\tools\FHIR.Tools.Search.pas"/>
+        <DCCReference Include="FHIR.Server.Operations.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

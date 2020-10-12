@@ -1,4 +1,4 @@
-Unit FHIR.Server.Web;
+  Unit FHIR.Server.Web;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -439,6 +439,38 @@ Type
     Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; mode : TOperationMode; callback: TInstallerCallback); overload;
   end;
 
+  TFHIRWebServerStats = class (TFslObject)
+  private
+    FLock : TFslLock;
+    FRestCount: integer;
+    FRestTime: integer;
+    FStartTime: cardinal;
+    FTotalCount: integer;
+    FTotalTime: integer;
+
+    function GetRestCount: integer;
+    function GetRestTime: integer;
+    function GetTotalCount: integer;
+    function GetTotalTime: integer;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TFHIRWebServerStats; overload;
+
+    property StartTime : cardinal read FStartTime;
+    property TotalCount : integer read GetTotalCount;
+    property TotalTime : integer read GetTotalTime;
+    property RestCount : integer read GetRestCount;
+    property RestTime : integer read GetRestTime;
+
+    procedure restStart;
+    procedure totalStart;
+    procedure restFinish(ms : integer);
+    procedure totalFinish(ms : integer);
+
+    function Present : string;
+  end;
+
   TFhirWebServer = Class(TFslObject)
   Private
     FSettings : TFHIRServerSettings;
@@ -483,11 +515,7 @@ Type
     FPlainServer: TIdHTTPServer;
     FSSLServer: TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
-    FTotalCount: cardinal;
-    FRestCount: cardinal;
-    FStartTime: cardinal;
-    FTotalTime: cardinal;
-    FRestTime: cardinal;
+    FStats : TFHIRWebServerStats;
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
     FMaintenanceThread: TFhirServerMaintenanceThread;
@@ -569,6 +597,7 @@ Type
     property ServeUnverifiedJWT: boolean read FServeUnverifiedJWT write FServeUnverifiedJWT;
     property JWTAuthorities: TFslStringDictionary read FJWTAuthorities;
     property settings : TFHIRServerSettings read FSettings;
+    Property Stats : TFHIRWebServerStats read FStats;
     {$IFNDEF FHIR3}
     property PackageServer : TFHIRPackageServer read FPackageServer;
     {$ENDIF}
@@ -1031,7 +1060,7 @@ end;
 
 procedure TFhirWebServerEndPoint.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
 begin
-  if (FAuthServer <> nil) {and secure} then
+  if (FAuthServer <> nil) and (FWebServer.FActualSSLPort <> 0) then
     conf.addSmartExtensions(
       UrlPath([baseUrl, FAuthServer.AuthPath]),
       UrlPath([baseUrl, FAuthServer.TokenPath]),
@@ -2845,16 +2874,11 @@ var
   t: cardinal;
   us, cs: String;
 begin
-  FWebServer.FLock.Lock;
-  try
-    inc(FWebServer.FRestCount);
-  finally
-    FWebServer.FLock.Unlock;
-  end;
+  FWebServer.Fstats.restStart;
+  t := GetTickCount;
   if request.internalRequestId = '' then
     request.internalRequestId := FContext.Globals.nextRequestId;
 
-  t := GetTickCount;
   op := FContext.Storage.createOperationContext(request.lang);
   try
     op.OnPopulateConformance := PopulateConformance;
@@ -2867,14 +2891,7 @@ begin
       raise;
     end;
   end;
-  t := GetTickCount - t;
-  FWebServer.FLock.Lock;
-  try
-    inc(FWebServer.FRestCount);
-    inc(FWebServer.FRestTime, t);
-  finally
-    FWebServer.FLock.Unlock;
-  end;
+  FWebServer.FStats.restFinish(GetTickCount - t);
   if request.Session = nil then // during OAuth only
     us := 'user=(in-oauth)'
   else
@@ -4243,6 +4260,7 @@ Begin
   Inherited Create;
   FTelnet := telnet;
   FLock := TFslLock.Create('fhir-rest');
+  FStats := TFHIRWebServerStats.create;
   FThreads := TList<TAsyncTaskThread>.create;
   FEndPoints := TFslList<TFhirWebServerEndpoint>.create;
   FCertificateIdList := TStringList.Create;
@@ -4276,6 +4294,7 @@ Begin
   FPatientViewServers.Free;
   FClients.Free;
   FThreads.Free;
+  FStats.Free;
   FLock.Free;
   FCertificateIdList.Free;
   FSourceProvider.Free;
@@ -4503,7 +4522,7 @@ Begin
   else
     Logging.log('  https: listen on ' + inttostr(FActualSSLPort));
   FActive := active;
-  FStartTime := GetTickCount;
+  FStats.FStartTime := GetTickCount;
   StartServer(active);
 
   if (active and threads) then
@@ -5096,7 +5115,7 @@ begin
   try
     ci.Activity := request.Command + ' ' + request.Document + '?' + request.UnparsedParams;
     ci.Count := ci.Count + 1;
-    inc(FTotalCount);
+    FStats.totalStart;
     ci.FStart := GetTickCount;
   finally
     FLock.Unlock;
@@ -5112,7 +5131,7 @@ begin
   FLock.Lock;
   try
     ci.Activity := '';
-    inc(FTotalTime, GetTickCount - ci.FStart);
+    FStats.totalFinish(GetTickCount - ci.FStart);
     ci.FStart := 0;
   finally
     FLock.Unlock;
@@ -5262,12 +5281,12 @@ begin
       vars.Add('status.'+ep.Code+'.cdsclient', TFHIRSystemString.Create(inttostr(ep.FPatientHooks.Count)));
     end;
     vars.Add('status.web', TFHIRSystemString.Create(WebDump));
-    vars.Add('status.web-total-count', TFHIRSystemString.Create(inttostr(FTotalCount)));
-    vars.Add('status.web-rest-count', TFHIRSystemString.Create(inttostr(FRestCount)));
-    vars.Add('status.web-total-time', TFHIRSystemString.Create(inttostr(FTotalTime)));
-    vars.Add('status.web-rest-time', TFHIRSystemString.Create(inttostr(FRestTime)));
-    vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount - FStartTime) * DATETIME_MILLISECOND_ONE)));
-    vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount - FStartTime)));
+    vars.Add('status.web-total-count', TFHIRSystemString.Create(inttostr(FStats.TotalCount)));
+    vars.Add('status.web-rest-count', TFHIRSystemString.Create(inttostr(FStats.RestCount)));
+    vars.Add('status.web-total-time', TFHIRSystemString.Create(inttostr(FStats.TotalTime)));
+    vars.Add('status.web-rest-time', TFHIRSystemString.Create(inttostr(FStats.RestTime)));
+    vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount - FStats.StartTime) * DATETIME_MILLISECOND_ONE)));
+    vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount - FStats.StartTime)));
     ReturnProcessedFile(request, response, 'Diagnostics', FSourceProvider.AltFile('/diagnostics.html', ''), false, vars);
   finally
     vars.Free;
@@ -6673,6 +6692,128 @@ end;
 function TCachedHTTPResponse.Link: TCachedHTTPResponse;
 begin
   result := TCachedHTTPResponse(inherited Link);
+end;
+
+{ TFHIRWebServerStats }
+
+constructor TFHIRWebServerStats.Create;
+begin
+  inherited;
+  FLock := TFslLock.create;
+  FRestCount := 0;
+  FRestTime := 0;
+  FStartTime := 0;
+  FTotalCount := 0;
+  FTotalTime := 0;
+end;
+
+destructor TFHIRWebServerStats.Destroy;
+begin
+  FLock.free;
+  inherited Destroy;
+end;
+
+function TFHIRWebServerStats.GetRestCount: integer;
+begin
+  FLock.Lock;
+  try
+    result := FRestCount;
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+function TFHIRWebServerStats.GetRestTime: integer;
+begin
+  FLock.Lock;
+  try
+    result := FRestTime;
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+function TFHIRWebServerStats.GetTotalCount: integer;
+begin
+  FLock.Lock;
+  try
+    result := FTotalCount;
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+function TFHIRWebServerStats.GetTotalTime: integer;
+begin
+  FLock.Lock;
+  try
+    result := FTotalTime;
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+function TFHIRWebServerStats.link: TFHIRWebServerStats;
+begin
+  result := TFHIRWebServerStats(inherited link);
+end;
+
+function TFHIRWebServerStats.Present: string;
+var
+  rt, rc : integer;
+begin
+  FLock.Lock;
+  try
+    rt := FRestTime;
+    rc := FRestCount;
+  finally
+    Flock.Unlock;
+  end;
+  result := 'Up '+DescribePeriodMS(GetTickCount - FStartTime);
+  if rc > 0 then
+    result := result + '. '+inttostr(rc) + ' Ops at '+FloatToStrF(rt / rc, ffFixed, 1, 0)+' ms/hit'
+  else
+    result := result + '. 0 Ops at 0 ms/hit';
+end;
+
+procedure TFHIRWebServerStats.restStart;
+begin
+  FLock.Lock;
+  try
+    inc(FRestCount, 1);
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+procedure TFHIRWebServerStats.totalStart;
+begin
+  FLock.Lock;
+  try
+    inc(FTotalCount, 1);
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+procedure TFHIRWebServerStats.restFinish(ms: integer);
+begin
+  FLock.Lock;
+  try
+    inc(FRestTime, ms);
+  finally
+    Flock.Unlock;
+  end;
+end;
+
+procedure TFHIRWebServerStats.totalFinish(ms: integer);
+begin
+  FLock.Lock;
+  try
+    inc(FTotalTime, ms);
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 Initialization

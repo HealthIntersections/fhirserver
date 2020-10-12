@@ -6393,8 +6393,8 @@ type
     FFileTimeMin: TDateTime;
     FFileTimeMax: TDateTime;
     {$ELSE ~RTL220_UP}
-    FFileTimeMin: Integer;
-    FFileTimeMax: Integer;
+    FFileTimeMin: Int64;
+    FFileTimeMax: Int64;
     {$ENDIF ~RTL220_UP}
     FSynchronizationMode: TFileEnumeratorSyncMode;
     FIncludeSubDirectories: Boolean;
@@ -6428,8 +6428,8 @@ type
     property FileTimeMin: TDateTime read FFileTimeMin write FFileTimeMin;
     property FileTimeMax: TDateTime read FFileTimeMax write FFileTimeMax;
     {$ELSE ~RTL220_UP}
-    property FileTimeMin: Integer read FFileTimeMin write FFileTimeMin;
-    property FileTimeMax: Integer read FFileTimeMax write FFileTimeMax;
+    property FileTimeMin: Int64 read FFileTimeMin write FFileTimeMin;
+    property FileTimeMax: Int64 read FFileTimeMax write FFileTimeMax;
     {$ENDIF ~RTL220_UP}
     property Directories: TStrings read GetDirectories write SetDirectories;
     property IncludeSubDirectories: Boolean

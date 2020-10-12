@@ -419,6 +419,7 @@ uses
   FHIR.R5.GraphDefinition in '..\library\r5\FHIR.R5.GraphDefinition.pas',
   FHIR.R5.MapUtilities in '..\library\r5\FHIR.R5.MapUtilities.pas',
   FHIR.Npm.Spider in '..\library\npm\FHIR.Npm.Spider.pas',
+  FHIR.Npm.Manager in '..\library\npm\FHIR.Npm.Manager.pas',
   FHIR.Server.Packages in 'FHIR.Server.Packages.pas',
   FHIR.Npm.Client in '..\library\npm\FHIR.Npm.Client.pas',
   FHIR.Server.Covid in 'Modules\FHIR.Server.Covid.pas',
@@ -463,7 +464,8 @@ uses
   FHIR.Server.Kernel.Tx in 'FHIR.Server.Kernel.Tx.pas',
   FHIR.Server.Gui.Vcl in 'FHIR.Server.Gui.Vcl.pas' {ServerGUI},
   FHIR.Server.Gui.Controller in 'FHIR.Server.Gui.Controller.pas',
-  FHIR.Npm.Manager in '..\library\npm\FHIR.Npm.Manager.pas';
+  FHIR.Tools.Search in '..\library\tools\FHIR.Tools.Search.pas',
+  FHIR.Server.Operations in 'FHIR.Server.Operations.pas';
 
 begin
   ExecuteFhirServer;

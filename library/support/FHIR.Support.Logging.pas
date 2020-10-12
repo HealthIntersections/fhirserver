@@ -111,12 +111,17 @@ Type
   End;
 
   TLogListener = class (TFslObject)
-  public
-    function link : TLogListener; overload;
-
+  protected
     procedure newDay(const s : String); virtual;
     procedure log(const s : String); virtual;
     procedure closing; virtual;
+
+    function transient : boolean; virtual;
+    procedure logStart(s : String); virtual;
+    procedure logContinue(s : String); virtual;
+    procedure logFinish(s : String); virtual;
+  public
+    function link : TLogListener; overload;
   end;
 
   TLogging = class (TFslObject)
@@ -130,6 +135,7 @@ Type
     FWorkingLine : String;
 
     procedure checkDay;
+    procedure close;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -404,6 +410,23 @@ procedure TLogListener.newDay(const s: String);
 begin
 end;
 
+function TLogListener.transient: boolean;
+begin
+  result := false;
+end;
+
+procedure TLogListener.logStart(s: String);
+begin
+end;
+
+procedure TLogListener.logContinue(s: String);
+begin
+end;
+
+procedure TLogListener.logFinish(s: String);
+begin
+end;
+
 { TLogging }
 
 constructor TLogging.Create;
@@ -417,6 +440,7 @@ end;
 
 destructor TLogging.Destroy;
 begin
+  close;
   FFileLogger.Free;
   FListeners.Free;
   inherited;
@@ -520,12 +544,26 @@ begin
     for listener in FListeners do
     begin
       try
-        listener.log(s);
+        listener.newDay(s);
       except
       end;
     end;
     FLastDay := today;
   end;
+end;
+
+procedure TLogging.close;
+var
+  listener : TLogListener;
+begin
+  for listener in FListeners do
+  begin
+    try
+      listener.closing;
+    except
+    end;
+  end;
+
 end;
 
 procedure TLogging.Log(s : String);
@@ -560,6 +598,7 @@ procedure TLogging.start(s : String);
 var
   today : integer;
   delta : String;
+  listener : TLogListener;
 begin
   checkDay;
   FWorkingLine := s;
@@ -576,35 +615,57 @@ begin
       FLogToConsole := false;
     end;
   end;
+  for listener in FListeners do
+  begin
+    try
+      if listener.transient then
+        listener.logStart(s);
+    except
+    end;
+  end;
 end;
 
 procedure TLogging.continue(s : String);
+var
+  listener : TLogListener;
 begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
     System.Write(s);
+  for listener in FListeners do
+  begin
+    try
+      if listener.transient then
+        listener.logContinue(s);
+    except
+    end;
+  end;
 end;
 
 procedure TLogging.finish(s : String = '');
 var
   listener : TLogListener;
+  msg : String;
 begin
   if FLogToConsole then
     System.Writeln(s);
 
-  s := FWorkingLine + s;
+  msg := FWorkingLine + s;
   FWorkingLine := '';
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
   else
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+s;
 
   if FFileLogger <> nil then
     FFileLogger.WriteToLog(s+#13#10);
   for listener in FListeners do
   begin
     try
-      listener.log(s);
+      if listener.transient then
+        listener.logFinish(s)
+      else
+        listener.log(msg);
     except
     end;
   end;
@@ -615,152 +676,4 @@ Initialization
 Finalization
   Logging.Free;
 end.
-(*
 
-//var
-//  filelog : boolean = false;
-//  consolelog : boolean = false;
-//  logfile : String = '';
-//  logevent : TLogEvent;
-//  log_as_starting : boolean;
-//
-//
-//procedure Logging.log(s : String);
-//procedure logtn(s : String);
-//
-//procedure logts(s : String);
-//procedure logtd(s : String);
-//procedure logtf(s : String);
-var
-  log : TLogger;
-
-procedure checklog;
-begin
-  if (log = nil) and (logfile <> '') then
-  begin
-//    DeleteFile(logfile);
-    log := TLogger.Create(logfile);
-    log.Policy.Description := 'FHIRServer Start Log';
-    log.Policy.AllowExceptions := false;
-    log.Policy.FullPolicy := lfpChop;
-    log.Policy.MaximumSize := 1024 * 1024;
-  end;
-end;
-
-
-
-
-var
-  clog : String = '';
-
-procedure logts(s : String);
-var
-  today : integer;
-  delta : String;
-begin
-  checklog;
-  if starttime = 0 then
-    starttime := now;
-  today := trunc(now);
-  if today <> lastday then
-  begin
-    if filelog then
-      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
-    if consolelog then
-    begin
-      try
-        System.Writeln(s);
-      except
-        consolelog := false;
-      end;
-    end;
-    lastDay := today;
-  end;
-
-  clog := s;
-
-  delta := '';
-  if log_as_starting then
-    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
-  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
-  if consolelog then
-    try
-      System.Write(s);
-    except
-      consolelog := false;
-    end;
-end;
-
-procedure logtd(s : String);
-begin
-  clog := clog+s;
-  if consolelog then
-    System.Write(s);
-end;
-
-procedure logtf(s : String);
-var
-  today : integer;
-  delta : String;
-begin
-  if consolelog then
-    System.Writeln(s);
-
-  s := clog + s;
-  delta := '';
-  if log_as_starting then
-    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
-  s := FormatDateTime('hh:nn:ss', now)+ ' '+delta+s;
-  if filelog then
-    log.WriteToLog(s+#13#10);
-  if (assigned(logEvent)) then
-    logEvent(s);
-end;
-
-procedure Logging.log(s : String);
-
-procedure logtn(s : String);
-var
-  today : integer;
-  delta : String;
-begin
-  checklog;
-  if starttime = 0 then
-    starttime := now;
-  today := trunc(now);
-  if today <> lastday then
-  begin
-    if filelog then
-      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
-    if consolelog then
-    begin
-      try
-        System.Write(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
-      except
-        consolelog := false;
-      end;
-    end;
-    lastDay := today;
-  end;
-
-  delta := '';
-  if log_as_starting then
-    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
-  if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s+#13#10);
-  if consolelog then
-    try
-      System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s);
-    except
-      consolelog := false;
-    end;
-  if (assigned(logEvent)) then
-    logEvent(s);
-end;
-
-Function DescribeSize(b, min: Cardinal): String;
-
-function MemoryStatus: String;
-
-{$ENDIF}
-*)

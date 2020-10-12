@@ -42,6 +42,7 @@ uses
   FHIR.R3.PathNode, FHIR.R3.Common, FHIR.R3.Questionnaire, FHIR.R3.Validator, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Narrative,
   FHIR.Tools.CodeGen, FHIR.Tools.DiffEngine,
   FHIR.Tx.Operations, FHIR.Ucum.Services,
+  FHIR.Server.Operations,
   FHIR.Server.Session, FHIR.Server.Tags, FHIR.Server.Storage, FHIR.Server.Database, FHIR.Server.ObsStats, FHIR.Server.Search,
   FHIR.Server.BundleBuilder, FHIR.Server.ValidatorR3, FHIR.Server.Security, FHIR.Server.Subscriptions;
 
@@ -116,17 +117,6 @@ type
   end;
 
   TFhirQuestionnaireGenerationOperation = class (TFhirNativeOperationR3)
-  protected
-    function isWrite : boolean; override;
-    function owningResource : String; override;
-  public
-    function Name : String; override;
-    function Types : TArray<String>; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
-  end;
-
-  TFhirVersionsOperation = class (TFhirNativeOperationR3)
   protected
     function isWrite : boolean; override;
     function owningResource : String; override;
@@ -2517,62 +2507,6 @@ end;
 function TFhirConvertOperation.Types: TArray<String>;
 begin
   result := [''] + FFactory.ResourceNames;
-end;
-
-{ TFhirVersionsOperation }
-
-function TFhirVersionsOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
-begin
-  result := nil;
-end;
-
-function TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
-var
-  p : TFhirParameters;
-begin
-  result := '??';
-  try
-    p := TFhirParameters.Create;
-    try
-      p.AddParameter('version', FHIR_GENERATED_VERSION_BASE);
-      p.AddParameter('default', FHIR_GENERATED_VERSION_BASE);
-      response.HTTPCode := 200;
-      response.Message := 'OK';
-      response.Body := '';
-      response.LastModifiedDate := now;
-      response.Resource := p.Link;
-    finally
-      p.Free;
-    end;
-    manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message, []);
-  except
-    on e: exception do
-    begin
-      manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message, []);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
-function TFhirVersionsOperation.isWrite: boolean;
-begin
-  result := false;
-end;
-
-function TFhirVersionsOperation.Name: String;
-begin
-  result := 'versions';
-end;
-
-function TFhirVersionsOperation.owningResource: String;
-begin
-  result := '';
-end;
-
-function TFhirVersionsOperation.Types: TArray<String>;
-begin
-  result := [''];
 end;
 
 { TFhirObservationStatsOperation }

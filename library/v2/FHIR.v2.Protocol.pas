@@ -1277,7 +1277,7 @@ end;
 Procedure Tv2ProtocolClientThread.Execute;
 Var
   LRecTime: TDateTime;
-  d : Cardinal;
+  d : integer;
 Begin
   Try
     FClient := TIdTCPClient.Create(Nil);
@@ -1313,7 +1313,7 @@ Begin
 
         if FOwner.FKeepAlive Then
         Begin
-          d := $FFFFFFFF;
+          d := -1;
           FCLient.Socket.Binding.SetSockOpt(Id_SOL_SOCKET, Id_SO_KEEPALIVE, d);
         End;
 

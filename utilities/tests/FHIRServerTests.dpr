@@ -434,7 +434,8 @@ uses
   FHIR.R5.Resources.Clinical in '..\..\library\r5\FHIR.R5.Resources.Clinical.pas',
   MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
   CommonTestBase in '..\..\..\markdown\tests\CommonTestBase.pas',
-  FHIR.Server.Telnet in '..\..\server\FHIR.Server.Telnet.pas';
+  FHIR.Server.Telnet in '..\..\server\FHIR.Server.Telnet.pas',
+  FHIR.Server.Operations in '..\..\Server\FHIR.Server.Operations.pas';
 
 var
   runner : ITestRunner;

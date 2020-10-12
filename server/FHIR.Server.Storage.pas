@@ -194,12 +194,13 @@ type
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
     FLang : THTTPLanguages;
-    function factory : TFHIRFactory;
     function GetClientCacheManager: TClientCacheManager;
   protected
     FServerContext : TFslObject;
     FOperations : TFslList<TFhirOperation>;
     FEngine : TFHIRPathEngineV;
+    FStorage : TFHIRStorageService;
+    function factory : TFHIRFactory;
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual; abstract;
 
     procedure StartTransaction; virtual; abstract;
@@ -225,7 +226,7 @@ type
     function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
-    constructor Create(ServerContext : TFslObject; const lang : THTTPLanguages);
+    constructor Create(Storage : TFHIRStorageService; ServerContext : TFslObject; const lang : THTTPLanguages);
     destructor Destroy; override;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -251,6 +252,7 @@ type
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
+    property Operations : TFslList<TFhirOperation> read FOperations;
     function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
   end;
 
@@ -298,6 +300,10 @@ type
   protected
     FFactory : TFHIRFactory;
     function GetTotalResourceCount: integer; virtual; abstract;
+    function SupportsSubscriptions : boolean; virtual;
+    function SupportsTransactions : boolean; virtual;
+    function SupportsSearch : boolean; virtual;
+    function SupportsHistory : boolean; virtual;
   public
     constructor Create(factory : TFHIRFactory); virtual;
     destructor Destroy; override;
@@ -473,6 +479,26 @@ begin
   raise EFHIRException.create('This server does not support Async tasks');
 end;
 
+function TFHIRStorageService.SupportsHistory: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRStorageService.SupportsSearch: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRStorageService.SupportsSubscriptions: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRStorageService.SupportsTransactions: boolean;
+begin
+  result := false;
+end;
+
 procedure TFHIRStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
 begin
   raise EFHIRException.create('This server does not support Async tasks');
@@ -525,12 +551,13 @@ end;
 
 { TFHIROperationEngine }
 
-constructor TFHIROperationEngine.create(ServerContext : TFslObject; const lang : THTTPLanguages);
+constructor TFHIROperationEngine.create(Storage : TFHIRStorageService; ServerContext : TFslObject; const lang : THTTPLanguages);
 begin
   inherited create;
   FServerContext := ServerContext;
   FLang := lang;
   FOperations := TFslList<TFhirOperation>.create;
+  FStorage := Storage;
 end;
 
 function TFHIROperationEngine.createClient(const lang : THTTPLanguages; session: TFHIRSession): TFHIRClientV;
@@ -551,6 +578,8 @@ end;
 
 destructor TFHIROperationEngine.Destroy;
 begin
+  FEngine.Free;
+  FStorage.Free;
   FOperations.Free;
   inherited;
 end;
@@ -726,7 +755,12 @@ begin
       end;
 
       oConf.fhirVersion := factory.versionString;
-      oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets', TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView);
+      if FStorage.SupportsSubscriptions then
+        oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets',
+          TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView, FStorage.SupportsTransactions, FStorage.SupportsSearch, FStorage.SupportsHistory)
+      else
+        oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', '',
+          TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView, FStorage.SupportsTransactions, FStorage.SupportsSearch, FStorage.SupportsHistory);
 
       html := TFslStringBuilder.Create;
       try
@@ -748,7 +782,7 @@ begin
                 res.profile := request.baseUrl+'StructureDefinition/'+lowercase(a);
                 if (a <> 'MessageHeader') and (a <> 'Parameters') Then
                 begin
-                  if request.canRead(a)  then
+                  if request.canRead(a) then
                   begin
                     html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
                     res.addInteraction('read');

@@ -242,6 +242,7 @@ uses
   FHIR.Tools.DiffEngine in '..\library\tools\FHIR.Tools.DiffEngine.pas',
   FHIR.Tools.GraphQL in '..\library\tools\FHIR.Tools.GraphQL.pas',
   FHIR.Tools.Indexing in '..\library\tools\FHIR.Tools.Indexing.pas',
+  FHIR.Tools.Search in '..\library\tools\FHIR.Tools.Search.pas',
   FHIR.Tx.ACIR in 'FHIR.Tx.ACIR.pas',
   FHIR.Tx.CountryCode in 'FHIR.Tx.CountryCode.pas',
   FHIR.Tx.Iso4217 in 'FHIR.Tx.Iso4217.pas',

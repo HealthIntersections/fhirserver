@@ -30,7 +30,6 @@ unit FHIR.Server.Database;
 
 {$I fhir.inc}
 
-
 interface
 
 uses
@@ -153,7 +152,6 @@ type
 
   TFHIRNativeOperationEngine = class (TFHIROperationEngine)
   private
-    FRepository : TFHIRNativeStorageService;
     FIndexer : TFHIRIndexManager;
     FTestServer : Boolean;
     FConnection : TFslDBConnection;
@@ -190,7 +188,7 @@ type
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
     function resolveReferenceForIndexing(sender : TFhirIndexManager; appInfo : TFslObject; url : String) : TFHIRResourceV;
-    
+
   protected
     function factory : TFHIRFactory;
     function resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url : String) : String;
@@ -228,7 +226,7 @@ type
     function Link : TFHIRNativeOperationEngine; overload;
 
     Property Connection : TFslDBConnection read FConnection;
-    Property Repository : TFHIRNativeStorageService read FRepository;
+    function Repository : TFHIRNativeStorageService;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
@@ -339,6 +337,10 @@ type
     FLock: TFslLock;
     function GetTotalResourceCount: integer; override;
     procedure checkDefinitions; virtual; abstract;
+    function SupportsSubscriptions : boolean; override;
+    function SupportsTransactions : boolean; override;
+    function SupportsSearch : boolean; override;
+    function SupportsHistory : boolean; override;
   public
     constructor Create(DB: TFslDBManager; factory : TFHIRFactory); reintroduce;
     destructor Destroy; Override;
@@ -459,8 +461,7 @@ end;
 
 constructor TFHIRNativeOperationEngine.Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFslDBConnection);
 begin
-  inherited Create(ServerContext, lang);
-  FRepository := repository;
+  inherited Create(repository, ServerContext, lang);
   FConnection := Connection;
 
   registerOperations;
@@ -505,7 +506,7 @@ begin
       try
         for q in list do
           list2.add(q.resource.link);
-        FRepository.ServerContext.TerminologyServer.declareCodeSystems(list2);
+        Repository.ServerContext.TerminologyServer.declareCodeSystems(list2);
       finally
         list2.Free;
       end;
@@ -522,7 +523,6 @@ begin
 /// Just checking: The Create method adds a bunch of Operations, and I'm not sure they are destroyed. To be checked.
 ///    Possibly also related with TFslObject and TFslList  - as noted in FHIR.Server.Indexing.pas
   FIndexer.Free;
-  FRepository.Free;
   inherited;
 end;
 
@@ -581,7 +581,7 @@ begin
   type_ := FConnection.colStringByName['ResourceName'];
   if (FConnection.ColIntegerByName['Status'] = 2) then
   begin
-    result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
+    result := bundle.makeEntry;
     try
       addRequest(result);
       result.Url := AppendForwardSlash(base)+type_+'/'+sId;
@@ -802,7 +802,7 @@ begin
           if ok then
           begin
             checkProposedContent(request.Session, request, request.Resource, tags);
-            FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+            Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
             {$IFNDEF FPC}
             GJsHost.checkChanges(ttDataAdded, request.Session,
               function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
@@ -811,9 +811,9 @@ begin
             {$ENDIF}
             result := sId;
             request.id := sId;
-            key := FRepository.NextVersionKey;
+            key := Repository.NextVersionKey;
             for i := 0 to tags.count - 1 do
-              FRepository.RegisterTag(tags[i], FConnection);
+              Repository.RegisterTag(tags[i], FConnection);
 
             FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
                     'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
@@ -856,7 +856,7 @@ begin
             finally
               comps.free
             end;
-            FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
+            Repository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
             if request.resourceName = 'Patient' then
               FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
             response.HTTPCode := 201;
@@ -948,7 +948,7 @@ begin
     if ok then
     begin
       tnow := TFslDateTime.makeUTC;
-      key := FRepository.NextVersionKey;
+      key := Repository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
       tags := TFHIRTagList.create(factory.link);
@@ -968,7 +968,7 @@ begin
         tags.writeTags(meta);
 
         checkProposedDeletion(request.session, request, request.Resource, tags);
-        FRepository.checkDropResource(request.session, request, request.Resource, tags);
+        Repository.checkDropResource(request.session, request, request.Resource, tags);
         {$IFNDEF FPC}
         GJsHost.checkChanges(ttDataRemoved, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
@@ -977,7 +977,7 @@ begin
         {$ENDIF}
 
         for i := 0 to tags.count - 1 do
-          FRepository.RegisterTag(tags[i], FConnection);
+          Repository.RegisterTag(tags[i], FConnection);
 
         FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, ForTesting, Tags) values '+
                                                              '(:k,:rk, :sd, :td, :v, :f, 2, :s, 0, 0, :t)';
@@ -1004,7 +1004,7 @@ begin
         CommitTags(tags, key);
         FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
         CreateIndexer;
-        FRepository.DropResource(ResourceKey, key, versionKey, request.Id, request.ResourceName, FIndexer, FConnection);
+        Repository.DropResource(ResourceKey, key, versionKey, request.Id, request.ResourceName, FIndexer, FConnection);
         response.HTTPCode := 204;
         response.Message := GetFhirMessage('MSG_DELETED_DONE', lang);
         if request.resource <> nil then
@@ -1160,7 +1160,7 @@ var
 begin
   // todo: restrict to readable resources
   id := FhirGUIDToString(CreateGuid); // this the id of the search
-  searchKey := inttostr(FRepository.NextSearchKey);
+  searchKey := inttostr(Repository.NextSearchKey);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary) values ('+searchKey+', '''+id+''', 0, 2, '+DBGetDate(FConnection.Owner.Platform)+', '+booleanToSQl(false)+')');
 
   cmp := buildCompartmentsSQL(ServerContext.ResConfig, request.compartment, request.SessionCompartments);
@@ -1206,7 +1206,7 @@ begin
           lt := '';
           for rn in ServerContext.ValidatorContext.allResourceNames do
             if request.canRead(rn) then
-              lt := lt+','+inttostr(FRepository.ResourceTypeKeyForName(rn));
+              lt := lt+','+inttostr(Repository.ResourceTypeKeyForName(rn));
           FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
             'from Versions, Ids, Sessions '+
             'where Versions.ResourceKey = Ids.ResourceKey '+cmp+' and Versions.SessionKey = Sessions.SessionKey and Ids.ResourceTypeKey in ('+lt.Substring(1)+')';
@@ -1597,7 +1597,7 @@ var
   id : string;
 begin
   id := FhirGUIDToString(CreateGuid);
-  result := inttostr(FRepository.NextSearchKey);
+  result := inttostr(Repository.NextSearchKey);
   if params.has('_query') and (params['_query'] <> '') then
   begin
     if (params['_query'] = 'mpi') and (aType = 'Patient') then
@@ -2103,7 +2103,7 @@ begin
 
     if ok then
     begin
-      key := FRepository.NextVersionKey;
+      key := Repository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
       if  (request.IfMatch <> '') or  ServerContext.ResConfig[request.ResourceName].versionUpdates then
@@ -2133,7 +2133,7 @@ begin
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
 
           checkProposedContent(request.session, request, request.Resource, tags);
-          FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           {$IFNDEF FPC}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
@@ -2142,7 +2142,7 @@ begin
           {$ENDIF}
 
           for i := 0 to tags.count - 1 do
-            FRepository.RegisterTag(tags[i], FConnection);
+            Repository.RegisterTag(tags[i], FConnection);
 
           FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
 
@@ -2182,7 +2182,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
+          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if ((request.ResourceName = 'AuditEvent') and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
@@ -2281,7 +2281,7 @@ begin
 
     if ok then
     begin
-      key := FRepository.NextVersionKey;
+      key := Repository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
       if  (request.IfMatch <> '') or  ServerContext.ResConfig[request.ResourceName].versionUpdates then
@@ -2424,7 +2424,7 @@ begin
           CheckNotSubsetted(meta, 'Patching Resource');
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request.session, request, request.resource, tags);
-          FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           {$IFNDEF FPC}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
@@ -2433,7 +2433,7 @@ begin
           {$ENDIF}
 
           for i := 0 to tags.count - 1 do
-            FRepository.RegisterTag(tags[i], FConnection);
+            Repository.RegisterTag(tags[i], FConnection);
           FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
 
           FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
@@ -2469,7 +2469,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
+          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
 
           if (response.Resource <> nil) and (response.Resource.fhirType = 'Bundle') then
           begin
@@ -2721,7 +2721,7 @@ begin
   result := iType > 0;
   if result then
   begin
-    resourceKey := FRepository.NextResourceKeySetId(FConnection, aType, id);
+    resourceKey := Repository.NextResourceKeySetId(FConnection, aType, id);
 
     FConnection.SQL := 'Select ResourceKey from Ids where ResourceTypeKey = :r and Id = :i';
     FConnection.Prepare;
@@ -2770,11 +2770,11 @@ begin
     if guid then
     begin
       id := FhirGUIDToString(CreateGUID);
-      key := FRepository.NextResourceKeySetId(FConnection, aType, id);
+      key := Repository.NextResourceKeySetId(FConnection, aType, id);
     end
     else
     begin
-      key := FRepository.NextResourceKeyGetId(FConnection, aType, id);
+      key := Repository.NextResourceKeyGetId(FConnection, aType, id);
       FConnection.ExecSQL('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(iType), 1);
     end;
     FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
@@ -3099,7 +3099,7 @@ begin
     FIndexer.Ucum := ServerContext.TerminologyServer.CommonTerminologies.Ucum.link;
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Globals.Bases;
-    FIndexer.KeyEvent := FRepository.GetNextKey;
+    FIndexer.KeyEvent := Repository.GetNextKey;
     FIndexer.OnResolveReference := resolveReferenceForIndexing;
     FIndexer.Engine := ServerContext.ServerFactory.makeEngine(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(FIndexer.Ucum.link));
     FIndexer.Engine.OnResolveReference := FIndexer.doResolve;
@@ -3295,7 +3295,7 @@ procedure TFHIRNativeOperationEngine.SaveProvenance(session: TFhirSession; prv: 
 begin
   prv.id := '';
 
-  FRepository.QueueResource(session, prv.Resource.link);
+  Repository.QueueResource(session, prv.Resource.link);
 end;
 
 function TFHIRNativeOperationEngine.scanId(request : TFHIRRequest; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
@@ -4152,13 +4152,13 @@ end;
 //          profile := GetProfileByURL('http://hl7.org/fhir/StructureDefinition/'+Codes_TFHIRResourceType[source.ResourceType], id);
 //          try
 //            fid := baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-//            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+//            questionnaire := Repository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
 //            try
 //              builder := TQuestionnaireBuilder.Create;
 //              try
-//                builder.Profiles := FRepository.Profiles.link;
-//                builder.OnExpand := FRepository.ExpandVS;
-//                builder.OnLookupCode := FRepository.LookupCode;
+//                builder.Profiles := Repository.Profiles.link;
+//                builder.OnExpand := Repository.ExpandVS;
+//                builder.OnLookupCode := Repository.LookupCode;
 //                builder.onLookupReference := LookupReference;
 //                builder.Context := request.Link;
 //                builder.QuestionnaireId := fid;
@@ -4169,7 +4169,7 @@ end;
 //                  builder.PrebuiltQuestionnaire := questionnaire.Link;
 //                builder.build;
 //                if questionnaire = nil then
-//                  FRepository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, builder.Questionnaire, builder.Dependencies);
+//                  Repository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, builder.Questionnaire, builder.Dependencies);
 //                response.HTTPCode := 200;
 //                response.Message := 'OK';
 //                response.Body := '';
@@ -4240,7 +4240,7 @@ end;
 //  end
 //  else if params.has('identifier') then
 //  begin
-//    if not FRepository.TerminologyServer.isKnownValueSet(params['identifier'], result) then
+//    if not Repository.TerminologyServer.isKnownValueSet(params['identifier'], result) then
 //      result := GetValueSetByIdentity(params['identifier'], params.getvar('version'));
 //    cacheId := result.url;
 //    used := used+'&identifier='+params['identifier']
@@ -4285,7 +4285,7 @@ end;
 //          if id <> '' then
 //          begin
 //            fid := baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-//            questionnaire := FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+//            questionnaire := Repository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
 //          end
 //          else
 //          begin
@@ -4299,15 +4299,15 @@ end;
 //              builder := TQuestionnaireBuilder.Create;
 //              try
 //                builder.Profile := profile.link;
-//                builder.OnExpand := FRepository.ExpandVS;
-//                builder.onLookupCode := FRepository.LookupCode;
+//                builder.OnExpand := Repository.ExpandVS;
+//                builder.onLookupCode := Repository.LookupCode;
 //                builder.Context := request.Link;
 //                builder.onLookupReference := LookupReference;
 //                builder.QuestionnaireId := fid;
 //                builder.build;
 //                questionnaire := builder.questionnaire.Link;
 //                if id <> '' then
-//                  FRepository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
+//                  Repository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
 //              finally
 //                builder.Free;
 //              end;
@@ -4466,7 +4466,7 @@ var
   p : TGraphQLArgument;
 begin
   request := TFHIRRequest(appInfo);
-  rk := FRepository.ResourceTypeKeyForName(requestType);
+  rk := Repository.ResourceTypeKeyForName(requestType);
   sql := 'Select Ids.ResourceKey, JsonContent from Ids, Versions where Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Ids.ResourceTypeKey = '+inttostr(rk)+' ';
   if not params.Empty then
   begin
@@ -4936,6 +4936,11 @@ begin
 end;
 
 
+function TFHIRNativeOperationEngine.Repository: TFHIRNativeStorageService;
+begin
+  result := FStorage as TFHIRNativeStorageService;
+end;
+
 function TFHIRNativeOperationEngine.resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url: String): String;
 var
   s : String;
@@ -5019,7 +5024,7 @@ begin
   result := nil;
   conn := FConnection;
   if conn.Prepared then
-    conn := FRepository.DB.GetConnection('Indexing Lookup');
+    conn := Repository.DB.GetConnection('Indexing Lookup');
   try
     if FindResourceConn(conn, p[0], p[1], [], resourceKey, versionKey, nil, nil, nil) then
     begin
@@ -5744,6 +5749,11 @@ begin
   end;
 end;
 
+function TFHIRNativeStorageService.SupportsSubscriptions: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSetW;
 var
   profile : TFHIRExpansionParams;
@@ -6431,6 +6441,21 @@ begin
   finally
     b.Free;
   end;
+end;
+
+function TFHIRNativeStorageService.SupportsHistory: boolean;
+begin
+  result := true;
+end;
+
+function TFHIRNativeStorageService.SupportsSearch: boolean;
+begin
+  result := true;
+end;
+
+function TFHIRNativeStorageService.SupportsTransactions: boolean;
+begin
+  result := true;
 end;
 
 procedure TFHIRNativeStorageService.Sweep;
