@@ -714,7 +714,7 @@ type
   private
     FLock : TFslLock;
     FHooks : TFslList<TFslDBHook>;
-    FList : TList<TFslDBManager>;
+    FList : TFslList<TFslDBManager>;
     procedure AddConnMan(AConnMan : TFslDBManager);
     procedure RemoveConnMan(AConnMan : TFslDBManager);
     function GetConnMan(i : Integer):TFslDBManager;
@@ -1676,7 +1676,7 @@ begin
   inherited create;
   FLock := TFslLock.create;
   FHooks := TFslList<TFslDBHook>.create;
-  FList := TList<TFslDBManager>.create;
+  FList := TFslList<TFslDBManager>.create;
 end;
 
 destructor TFslDBManagerList.destroy;

@@ -183,7 +183,7 @@ begin
         ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
         if (ver <> ServerDBVersion) then
         begin
-          dbi := TFHIRDatabaseInstaller.create(conn, '', factory.link, serverfactory.link);
+          dbi := TFHIRDatabaseInstaller.create(conn, factory.link, serverfactory.link);
           try
             dbi.upgrade(ver);
           finally
@@ -214,11 +214,11 @@ begin
   begin
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
-    result := TFslDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFslDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin
@@ -290,7 +290,7 @@ begin
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
-  FWebServer.Start(true);
+  FWebServer.Start(true, true);
 end;
 
 procedure TFullServerTests.LoadTerminologies;

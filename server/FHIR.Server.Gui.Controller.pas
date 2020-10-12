@@ -243,7 +243,7 @@ function makeUtgDB : TFHIRServerIniComplex;
 begin
   result := TFHIRServerIniComplex.Create('sqlite');
   result.value['type'] := 'sqlite';
-  result.value['database'] := localFile('fhirserver.db');
+  result.value['database'] := localFile('fhir-server-gui.db');
 end;
 
 procedure TFHIRServerController.makeDB;
@@ -264,7 +264,7 @@ begin
   pw := 'xx';
   em := 'none@nowhere.org';
 
-  db := TFslDBSQLiteManager.create('db', localFile('fhirserver.db'), true);
+  db := TFslDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
   try
     Logging.log('Ínstall database');
     scim := TSCIMServer.Create(db.Link, salt, 'localhost', dr, true);
@@ -323,7 +323,7 @@ begin
   Fini.admin['email'] := 'grahame@hl7.org';
   Fini.web['clients'] := IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini';
 
-  if not FileExists(localFile('fhirserver.db')) then
+  if not FileExists(localFile('fhir-server-gui.db')) then
     makeDB;
 end;
 
@@ -376,6 +376,8 @@ begin
         FController.FStats.Free;
         FController.FStats := nil;
         FController.setStatus(ssStopping);
+        svc.Stop('User Command');
+        svc.DoStop;
       finally
         svc.Free;
       end;

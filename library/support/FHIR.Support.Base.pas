@@ -315,6 +315,10 @@ Type
     function link : TFslList<T>; overload;
     function forEnum : TFslList<T>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
 
+    // if B is a subclass of A, TFslList<B> is not a subclass of TFslList<A>. These 2 routines help deal with this
+    function asBase : TFslList<TFslObject>;
+    procedure copyList(list : TFslList<TFslObject>);
+
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
     class procedure Error(Msg: PResStringRec; Data: NativeInt); overload;
@@ -1436,6 +1440,19 @@ begin
   InsertRange(Count, Collection);
 end;
 
+function TFslList<T>.asBase: TFslList<TFslObject>;
+var
+  item : T;
+begin
+  result := TFslList<TFslObject>.create;
+  try
+    for item in self do
+      result.add(TFslObject(item).link);
+  finally
+    result.free;
+  end;
+end;
+
 procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
   if (Index < 0) or (Index > Count) then
@@ -1673,6 +1690,14 @@ begin
   for i in self do
     if (match(self, i)) then
       exit(true);
+end;
+
+procedure TFslList<T>.copyList(list: TFslList<TFslObject>);
+var
+  item : TFslObject;
+begin
+  for item in list do
+    add(item.link as T);
 end;
 
 function TFslList<T>.Expand: TFslList<T>;

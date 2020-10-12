@@ -252,6 +252,7 @@ type
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
+    property Operations : TFslList<TFhirOperation> read FOperations;
     function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
   end;
 
@@ -577,6 +578,7 @@ end;
 
 destructor TFHIROperationEngine.Destroy;
 begin
+  FEngine.Free;
   FStorage.Free;
   FOperations.Free;
   inherited;
@@ -780,7 +782,7 @@ begin
                 res.profile := request.baseUrl+'StructureDefinition/'+lowercase(a);
                 if (a <> 'MessageHeader') and (a <> 'Parameters') Then
                 begin
-                  if request.canRead(a)  then
+                  if request.canRead(a) then
                   begin
                     html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
                     res.addInteraction('read');

@@ -112,7 +112,7 @@
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
         <Debugger_RunParams>-gui -cmd console -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
-        <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
@@ -135,6 +135,7 @@
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <Debugger_CWD>C:\work\fhirserver\Exec</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -562,6 +563,7 @@
         </DCCReference>
         <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.Search.pas"/>
+        <DCCReference Include="FHIR.Server.Operations.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -623,7 +625,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\Exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -635,7 +637,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.rsm</RemoteName>
                         <Overwrite>true</Overwrite>

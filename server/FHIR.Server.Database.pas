@@ -30,7 +30,6 @@ unit FHIR.Server.Database;
 
 {$I fhir.inc}
 
-
 interface
 
 uses

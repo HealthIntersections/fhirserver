@@ -57,12 +57,17 @@ uses
   FHIR.Server.ConsentEngine, FHIR.Server.Session;
 
 type
-  TConsentCache = class (TFslObject, IComparer<TFhirConsentW>)
+  TConsentComparer = class (TFslComparer<TFhirConsentW>)
+  private
+  public
+    function compare(const Left, Right: TFhirConsentW): Integer; override;
+  end;
+
+  TConsentCache = class (TFslObject)
   private
     FLock : TFslLock;
     FIdMap : TDictionary<String, String>; // records patients for consents, for updates that change patient (rare, but allowed)
     FCache : TFslMap<TFslList<TFhirConsentW>>;
-    function compare(const Left, Right: TFhirConsentW): Integer;
     procedure dropConsentById(patId, consentId : string);
   public
     constructor Create; override;
@@ -211,7 +216,7 @@ begin
       FIdMap.AddOrSetValue(consent.Resource.id, id);
       if not FCache.TryGetValue(id, list) then
       begin
-        list := TFslList<TFhirConsentW>.create(self);
+        list := TFslList<TFhirConsentW>.create();
         FCache.add(id, list);
       end;
       list.RemoveAll(
@@ -224,11 +229,6 @@ begin
       FLock.Unlock;
     end;
   end;
-end;
-
-function TConsentCache.Compare(const Left, Right: TFhirConsentW): Integer;
-begin
-  result := right.dateTime.compare(left.dateTime); // order reversal - because order in descending order
 end;
 
 function TConsentCache.getConsents(patientId: String): TFslList<TFhirConsentW>;
@@ -249,5 +249,11 @@ begin
     result.Free;
   end;
 end;
+
+function TConsentComparer.Compare(const Left, Right: TFhirConsentW): Integer;
+begin
+  result := right.dateTime.compare(left.dateTime); // order reversal - because order in descending order
+end;
+
 
 end.

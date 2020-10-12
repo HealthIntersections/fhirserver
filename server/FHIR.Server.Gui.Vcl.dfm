@@ -12,6 +12,7 @@ object ServerGUI: TServerGUI
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -32,6 +33,7 @@ object ServerGUI: TServerGUI
       Height = 295
       Align = alClient
       TabOrder = 0
+      ExplicitTop = 6
     end
   end
   object Panel3: TPanel
@@ -78,7 +80,7 @@ object ServerGUI: TServerGUI
       Text = 'edtPort'
       OnChange = edtPortChange
     end
-    object BitBtn1: TBitBtn
+    object btnFolder: TBitBtn
       Left = 808
       Top = 1
       Width = 35
@@ -86,7 +88,7 @@ object ServerGUI: TServerGUI
       Anchors = [akTop, akRight]
       Caption = '...'
       TabOrder = 2
-      OnClick = BitBtn1Click
+      OnClick = btnFolderClick
     end
   end
   object Panel1: TPanel
@@ -134,6 +136,7 @@ object ServerGUI: TServerGUI
       Caption = '&File'
       object Exit1: TMenuItem
         Caption = 'E&xit'
+        OnClick = Exit1Click
       end
     end
     object Help1: TMenuItem
@@ -143,6 +146,7 @@ object ServerGUI: TServerGUI
       end
       object About1: TMenuItem
         Caption = '&About...'
+        OnClick = About1Click
       end
     end
   end

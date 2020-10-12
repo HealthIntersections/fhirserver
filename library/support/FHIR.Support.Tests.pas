@@ -775,14 +775,14 @@ begin
   list := TFslList<TFslTestObject>.Create;
   try
     list.Add(TFslTestObject.Create('a'));
-    list.Sort(doSort);
+    list.SortE(doSort);
     assertTrue(list.Count = 1);
     assertTrue(list[0].value = 'a');
     list.Insert(0, TFslTestObject.Create('b'));
     assertTrue(list.Count = 2);
     assertTrue(list[0].value = 'b');
     assertTrue(list[1].value = 'a');
-    list.Sort(doSort);
+    list.SortE(doSort);
     assertTrue(list.Count = 2);
     assertTrue(list[0].value = 'a');
     assertTrue(list[1].value = 'b');
@@ -791,7 +791,7 @@ begin
     assertTrue(list[0].value = 'a');
     assertTrue(list[1].value = 'c');
     assertTrue(list[2].value = 'b');
-    list.Sort(doSort);
+    list.SortE(doSort);
     assertTrue(list.Count = 3);
     assertTrue(list[0].value = 'c');
     assertTrue(list[1].value = 'b');
@@ -3997,8 +3997,7 @@ end;
 procedure TOSXTests.TestRemoveAccents;
 begin
   assertEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
-  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aC!eC)iC-oC3C6uC:C< ACEC	IC
-OCCUCC'));
+  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aC!eC)iC-oC3C6uC:C< ACEC	IC OCCUCC'));
   assertEqual('PP0P;P5Q P8P8 PP8P:P>P;P0P5P2P8Q P!PP PPPP', RemoveAccents('PP0P;P5Q P8P9 PP8P:P>P;P0P5P2P8Q P!PP PPPP'));
 end;
 

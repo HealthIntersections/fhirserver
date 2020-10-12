@@ -444,7 +444,7 @@ Type
     FLock : TFslLock;
     FRestCount: integer;
     FRestTime: integer;
-    FStartTime: integer;
+    FStartTime: cardinal;
     FTotalCount: integer;
     FTotalTime: integer;
 
@@ -457,7 +457,7 @@ Type
     destructor Destroy; override;
     function link : TFHIRWebServerStats; overload;
 
-    property StartTime : integer read FStartTime;
+    property StartTime : cardinal read FStartTime;
     property TotalCount : integer read GetTotalCount;
     property TotalTime : integer read GetTotalTime;
     property RestCount : integer read GetRestCount;
