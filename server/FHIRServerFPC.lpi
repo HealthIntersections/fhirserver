@@ -165,7 +165,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="378">
+    <Units Count="379">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1691,6 +1691,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit377>
+      <Unit378>
+        <Filename Value="..\library\tools\FHIR.Tools.Search.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit378>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1704,7 +1708,19 @@
       <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
     <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <VerifyObjMethodCallValidity Value="True"/>
       <TargetCPU Value="i386"/>
       <TargetOS Value="win32"/>
       <Optimizations>
@@ -1715,6 +1731,8 @@
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
+        <UseHeaptrc Value="True"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>

@@ -457,11 +457,18 @@ begin
 end;
 
 procedure TV2Cell.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+var
+  p : TFHIRProperty;
+  v : TFslObject;
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Content>{$ENDIF}(self, 'content', 'Content', true, TV2Content, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FContentList)));
-  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Cell>{$ENDIF}(self, 'component', 'Cell', true, TV2Cell, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FComponentList)));
+  p := TFHIRProperty.create(self, 'content', 'Content', true, TV2Content);
+  for v in FContentList do
+    p.Values.add(v.link);
+  p := TFHIRProperty.create(self, 'component', 'Cell', true, TV2Cell);
+  for v in FComponentList do
+    p.Values.add(v.link);
 end;
 
 procedure TV2Cell.SetText(const Value: String);
@@ -528,10 +535,15 @@ begin
 end;
 
 procedure TV2Field.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+var
+  p : TFHIRProperty;
+  v : TFslObject;
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Cell>{$ENDIF}(self, 'element', 'Cell', true, TV2Cell, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FElementList)));
+  p := TFHIRProperty.create(self, 'element', 'Cell', true, TV2Cell);
+  for v in FElementList do
+    p.Values.add(v.link);
 end;
 
 { TV2Segment }
@@ -601,10 +613,15 @@ begin
 end;
 
 procedure TV2Segment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+var
+  p : TFHIRProperty;
+  v : TFslObject;
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Field>{$ENDIF}(self, 'field', 'Field', true, TV2Field, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FFieldList)));
+  p := TFHIRProperty.create(self, 'field', 'Field', true, TV2Field);
+  for v in FFieldList do
+    p.Values.add(v.link);
 end;
 
 { TV2Message }
@@ -655,10 +672,15 @@ begin
 end;
 
 procedure TV2Message.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+var
+  p : TFHIRProperty;
+  v : TFslObject;
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create{$IFNDEF FPC}<TV2Segment>{$ENDIF}(self, 'segment', 'Segment', true, TV2Segment, {$IFDEF FPC}TFslList<TFslObject>{$ENDIF}(FSegmentList)));
+  p := TFHIRProperty.create(self, 'segment', 'Segment', true, TV2Segment);
+  for v in FSegmentList do
+    p.Values.add(v.link);
 end;
 
 { TV2Parser }

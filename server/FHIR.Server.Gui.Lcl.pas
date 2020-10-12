@@ -173,7 +173,10 @@ begin
       btnStatus.Enabled := true;
       btnStatus.Caption := 'Stop';
       btnBrowser.Enabled := true;
-      lblStatus.Caption := 'Running. '+inttostr(FServer.hitcount)+ ' '+StringPlural('request', FServer.hitcount);
+      if FServer.Stats <> nil then
+        lblStatus.Caption := 'Running. '+FServer.Stats.Present
+      else
+        lblStatus.Caption := 'Running. ??';
       end;
     ssStopping :
       begin

@@ -112,7 +112,7 @@ Type
     function count: integer;
   end;
 
-  TFhirProfileUsage = class
+  TFhirProfileUsage = class (TFslObject)
   private
     FChecked : boolean;
     Fprofile : TFhirStructureDefinition;

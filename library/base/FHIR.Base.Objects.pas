@@ -232,6 +232,7 @@ type
     destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
+
     class function create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty; Overload;
 
     {$IFNDEF FPC}

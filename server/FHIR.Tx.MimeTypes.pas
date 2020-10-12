@@ -154,7 +154,7 @@ end;
 
 function TMimeTypeCodeServices.Code(context : TCodeSystemProviderContext) : string;
 begin
-  result := TMimeContentType(context).source;
+  result := TMTCodeSystemProviderContext(context).mt.source;
 end;
 
 function TMimeTypeCodeServices.Definition(context: TCodeSystemProviderContext): string;

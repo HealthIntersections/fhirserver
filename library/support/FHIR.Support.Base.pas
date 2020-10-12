@@ -35,7 +35,7 @@ Interface
 Uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}    // Interlocked* API and HResult
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Types, RTLConsts, Generics.Collections, Generics.Defaults;
+  SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections;
 
 const
   {$IFDEF FPC}
@@ -258,6 +258,9 @@ Type
   end;
 
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
+
+  { TFslList }
+
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
@@ -309,8 +312,8 @@ Type
     constructor Create(const Collection: TEnumerable<T>); overload;
     destructor Destroy; override;
 
-    function link : TFslList<t>; overload;
-    function forEnum : TFslList<t>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
+    function link : TFslList<T>; overload;
+    function forEnum : TFslList<T>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
 
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
@@ -1218,7 +1221,7 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareEvent);
+procedure TFslList<T>.QuickSort(L, R: Integer; compare: TListCompareEvent);
 Var
   I, J, K : Integer;
   v : T;

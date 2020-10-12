@@ -2509,7 +2509,7 @@ begin
   begin
     index('Medication', key, 0, resource.product.form, CODES_TSearchParamsMedication[spMedication_form]);
     for i := 0 to resource.product.ingredientList.count - 1 do
-      index('Medication', key, 0, TFhirCodeableConcept(resource.product.ingredientList[i].item), CODES_TSearchParamsMedication[spMedication_Ingredient])
+      index(context, 'Medication', key, 0, resource.product.ingredientList[i].item, CODES_TSearchParamsMedication[spMedication_Ingredient])
   end;
 end;
 

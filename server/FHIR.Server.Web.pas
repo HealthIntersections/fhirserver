@@ -441,6 +441,7 @@ Type
 
   TFHIRWebServerStats = class (TFslObject)
   private
+    FLock : TFslLock;
     FRestCount: integer;
     FRestTime: integer;
     FStartTime: integer;
@@ -453,6 +454,7 @@ Type
     function GetTotalTime: integer;
   public
     constructor Create; override;
+    destructor Destroy; override;
     function link : TFHIRWebServerStats; overload;
 
     property StartTime : integer read FStartTime;
@@ -6697,6 +6699,7 @@ end;
 constructor TFHIRWebServerStats.Create;
 begin
   inherited;
+  FLock := TFslLock.create;
   FRestCount := 0;
   FRestTime := 0;
   FStartTime := 0;
@@ -6704,24 +6707,50 @@ begin
   FTotalTime := 0;
 end;
 
+destructor TFHIRWebServerStats.Destroy;
+begin
+  FLock.free;
+  inherited Destroy;
+end;
+
 function TFHIRWebServerStats.GetRestCount: integer;
 begin
-  result := InterlockedCompareExchange(FRestCount, 0, 0);
+  FLock.Lock;
+  try
+    result := FRestCount;
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 function TFHIRWebServerStats.GetRestTime: integer;
 begin
-  result := InterlockedCompareExchange(FRestTime, 0, 0);
+  FLock.Lock;
+  try
+    result := FRestTime;
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 function TFHIRWebServerStats.GetTotalCount: integer;
 begin
-  result := InterlockedCompareExchange(FTotalCount, 0, 0);
+  FLock.Lock;
+  try
+    result := FTotalCount;
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 function TFHIRWebServerStats.GetTotalTime: integer;
 begin
-  result := InterlockedCompareExchange(FTotalTime, 0, 0);
+  FLock.Lock;
+  try
+    result := FTotalTime;
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 function TFHIRWebServerStats.link: TFHIRWebServerStats;
@@ -6731,39 +6760,60 @@ end;
 
 function TFHIRWebServerStats.Present: string;
 var
-  t : integer;
+  rt, rc : integer;
 begin
-  result := 'Up '+DescribePeriodMS(GettickCount - FStartTime);
-  t := TotalCount;
-  if t > 0 then
-    result := result + '. '+inttostr(t) + ' hits at '+FloatToStrF(TotalTime / t, ffFixed, 0, 1)+' ms/hit'
+  FLock.Lock;
+  try
+    rt := FRestTime;
+    rc := FRestCount;
+  finally
+    Flock.Unlock;
+  end;
+  result := 'Up '+DescribePeriodMS(GetTickCount - FStartTime);
+  if rc > 0 then
+    result := result + '. '+inttostr(rc) + ' Ops at '+FloatToStrF(rt / rc, ffFixed, 1, 0)+' ms/hit'
   else
-    result := result + '. 0 hits at 0 ms/hit';
-  t := RestCount;
-  if t > 0 then
-    result := result + '. '+inttostr(t) + ' FHIR calls at '+FloatToStrF(RestTime / t, ffFixed, 0, 1)+' ms/hit'
-  else
-    result := result + '. 0 FHIR calls at 0 ms/hit';
+    result := result + '. 0 Ops at 0 ms/hit';
 end;
 
 procedure TFHIRWebServerStats.restStart;
 begin
-  InterlockedAdd(FRestCount, 1);
+  FLock.Lock;
+  try
+    inc(FRestCount, 1);
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 procedure TFHIRWebServerStats.totalStart;
 begin
-  InterlockedAdd(FTotalCount, 1);
+  FLock.Lock;
+  try
+    inc(FTotalCount, 1);
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 procedure TFHIRWebServerStats.restFinish(ms: integer);
 begin
-  InterlockedAdd(FRestTime, ms);
+  FLock.Lock;
+  try
+    inc(FRestTime, ms);
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 procedure TFHIRWebServerStats.totalFinish(ms: integer);
 begin
-  InterlockedAdd(FTotalTime, ms);
+  FLock.Lock;
+  try
+    inc(FTotalTime, ms);
+  finally
+    Flock.Unlock;
+  end;
 end;
 
 Initialization

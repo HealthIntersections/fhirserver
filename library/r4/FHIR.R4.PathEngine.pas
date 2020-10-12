@@ -4863,6 +4863,8 @@ var
   item : TFHIRSelection;
   work : TFHIRSelectionList;
   couldHaveBeen, done : boolean;
+  plist : TFslList<TFHIRPathExpressionNodeV>;
+  p : TFHIRPathExpressionNodeV;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -4874,14 +4876,21 @@ begin
       if ext.functionApplies(context, focus, exp.name) then
       begin
         done := true;
-        for item in focus do
-        begin
-          work := ext.execute(context, item.value, exp.name, TFslList<TFHIRPathExpressionNodeV>(exp.Parameters), self);
-          try
-            result.addAll(work);
-          finally
-            work.Free;
+        plist := TFslList<TFHIRPathExpressionNodeV>.create;
+        try
+          for p in exp.parameters do
+            plist.add(p.link);
+          for item in focus do
+          begin
+            work := ext.execute(context, item.value, exp.name, plist, self);
+            try
+              result.addAll(work);
+            finally
+              work.Free;
+            end;
           end;
+        finally
+          plist.free;
         end;
         break;
       end;
