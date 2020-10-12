@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Menus, ActnList, StdActns, IniFiles, Math,
+  ExtCtrls, Menus, ActnList, StdActns, Interfaces, IniFiles, Math,
   IdTelnet, IdGlobal,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Logging;
 
@@ -78,9 +78,9 @@ type
     function report : String;
   end;
 
-  { TForm1 }
+  { TMainConsoleForm }
 
-  TForm1 = class(TForm)
+  TMainConsoleForm = class(TForm)
     FileNewAction: TAction;
     ActionList1: TActionList;
     EditCopy1: TEditCopy;
@@ -209,7 +209,7 @@ type
   end;
 
 var
-  Form1: TForm1;
+  MainConsoleForm: TMainConsoleForm;
 
 implementation
 
@@ -305,19 +305,19 @@ begin
   while Active do
   begin
     try
-      Form1.Connect;
+      MainConsoleForm.Connect;
     except
     end;
     sleep(50);
   end;
-  Form1.FThread := nil;
+  MainConsoleForm.FThread := nil;
   free;
 end;
 
 
-{ TForm1 }
+{ TMainConsoleForm }
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMainConsoleForm.FormCreate(Sender: TObject);
 begin
   FIni := TIniFile.create('FHIRConsole.ini');
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
@@ -339,7 +339,7 @@ begin
   FThread.Open;
 end;
 
-procedure TForm1.FormDestroy(Sender: TObject);
+procedure TMainConsoleForm.FormDestroy(Sender: TObject);
 begin
   FThread.Stop;
   while assigned(FThread) do
@@ -353,7 +353,7 @@ begin
   FIni.Free;
 end;
 
-procedure TForm1.edtFilterChange(Sender: TObject);
+procedure TMainConsoleForm.edtFilterChange(Sender: TObject);
 var
   s : String;
 begin
@@ -371,7 +371,7 @@ begin
   mConsole.SelStart := mConsole.Lines.Text.Length-1;
 end;
 
-procedure TForm1.Timer1Timer(Sender: TObject);
+procedure TMainConsoleForm.Timer1Timer(Sender: TObject);
 var
   ts, tsl, tsd : TStringList;
   s, ss, rs : String;
@@ -488,15 +488,15 @@ begin
     sBar.Panels[4].Text := 'Server: '+ss;
   end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
-  sBar.Panels[3].Text := MemoryStatus;
+  sBar.Panels[3].Text := Logging.MemoryStatus;
 end;
 
-procedure TForm1.ToolButton1Click(Sender: TObject);
+procedure TMainConsoleForm.ToolButton1Click(Sender: TObject);
 begin
   mConsole.lines.clear;
 end;
 
-procedure TForm1.ToolButton3Click(Sender: TObject);
+procedure TMainConsoleForm.ToolButton3Click(Sender: TObject);
 begin
   ServerConnectionForm.edtServer.Text := FAddress;
   ServerConnectionForm.edtPassword.Text := FPassword;
@@ -515,7 +515,7 @@ begin
   end;
 end;
 
-procedure TForm1.recordSessionLength(start, length: int64);
+procedure TMainConsoleForm.recordSessionLength(start, length: int64);
 begin
   FStatistics.recordSession(start, length);
 end;
@@ -536,7 +536,7 @@ begin
   end;
 end;
 
-procedure TForm1.processIncomingLine(line : String);
+procedure TMainConsoleForm.processIncomingLine(line : String);
 var
   reply : String;
 begin
@@ -583,12 +583,12 @@ begin
     FTelnet.SendString(reply+#10);
 end;
 
-function TForm1.passesFilter(line: String): boolean;
+function TMainConsoleForm.passesFilter(line: String): boolean;
 begin
   result := (FFilter = '') or line.ToLower.Contains(FFilter);
 end;
 
-procedure TForm1.handleSession(line: String);
+procedure TMainConsoleForm.handleSession(line: String);
 var
   id, cmd, t, msg : String;
   session : TServerSession;
@@ -621,7 +621,7 @@ begin
   end;
 end;
 
-function TForm1.handleCommand(line: String): boolean;
+function TMainConsoleForm.handleCommand(line: String): boolean;
 begin
   result := false;
   if (line.startsWith('$@')) then
@@ -649,7 +649,7 @@ begin
   end;
 end;
 
-procedure TForm1.Connect;
+procedure TMainConsoleForm.Connect;
 begin
   if FStatus = csDiconnected then
   begin
@@ -658,7 +658,7 @@ begin
   end;
 end;
 
-procedure TForm1.DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
+procedure TMainConsoleForm.DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
 var
   s : String;
   ts : TStringList;
@@ -674,7 +674,7 @@ begin
   end;
 end;
 
-procedure TForm1.DoConnected(Sender: TObject);
+procedure TMainConsoleForm.DoConnected(Sender: TObject);
 begin
   FLock.Lock;
   try

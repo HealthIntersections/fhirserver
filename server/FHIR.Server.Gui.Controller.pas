@@ -37,7 +37,7 @@ uses
   IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Threads,
   FHIR.Base.Objects,
-  FHIR.Cache.PackageManager,
+  FHIR.Npm.Cache,
   FHIR.R4.Factory,
   FHIR.Database.Manager, FHIR.Database.SQLite,
   FHIR.Scim.Server,

@@ -47,6 +47,7 @@ type
 {$ENDIF}
 
 {$IFDEF WINDOWS}
+type
   TLibHandle = THandle;
 {$ENDIF}
 

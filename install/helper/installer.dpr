@@ -46,8 +46,7 @@ uses
   FHIR.Support.Threads in '..\..\library\support\FHIR.Support.Threads.pas',
   FHIR.Database.Settings in '..\..\library\database\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\library\database\FHIR.Database.Logging.pas',
-  FHIR.Npm.Cache in '..\..\library
-pm\FHIR.Npm.Cache.pas',
+  FHIR.Npm.Cache in '..\..\library\npm\FHIR.Npm.Cache.pas',
   FHIR.Support.Json in '..\..\library\support\FHIR.Support.Json.pas',
   FHIR.Support.Collections in '..\..\library\support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\..\library\support\FHIR.Support.Stream.pas',
@@ -59,10 +58,8 @@ pm\FHIR.Npm.Cache.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   FHIR.Base.Utilities in '..\..\library\base\FHIR.Base.Utilities.pas',
   FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas',
-  FHIR.Npm.Package in '..\..\library
-pm\FHIR.Npm.Package.pas',
-  FHIR.Npm.Client in '..\..\library
-pm\FHIR.Npm.Client.pas';
+  FHIR.Npm.Package in '..\..\library\npm\FHIR.Npm.Package.pas',
+  FHIR.Npm.Client in '..\..\library\npm\FHIR.Npm.Client.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
@@ -279,7 +276,7 @@ var
 begin
   state := 1;
   try
-    conn := TFslDBOdbcManager.Create('config', 1, 0, dbDriver, server, database, username, password);
+    conn := TFslDBOdbcManager.Create('config', RecogniseDriver(DBDriver), 1, 0, dbDriver, server, database, username, password);
     try
       db := conn.GetConnection('test');
       try
@@ -510,7 +507,7 @@ begin
       try
         listPackages(PACKAGE_SERVER_PRIMARY, packages);
         listPackages(PACKAGE_SERVER_BACKUP, packages);
-        packages.Sort(function (const l, r : TFHIRPackageInfo) : Integer
+        packages.SortF(function (const l, r : TFHIRPackageInfo) : Integer
           begin
             result := CompareText(l.id, r.id);
           end);
