@@ -34,7 +34,7 @@ interface
 
 uses
   {$IFNDEF FPC}
-  FastMM4,
+//  FastMM4,
   {$ENDIF}
   Windows, {$IFDEF FPC} JwaWinSvc, {$ELSE}WinSvc, PSApi, TlHelp32, {$ENDIF} SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities;

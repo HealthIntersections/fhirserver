@@ -414,7 +414,10 @@ uses
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
   FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 
+{$R *.res}
+
 begin
+  isMultiThread := true;
   ExecuteFhirServer;
 end.
 

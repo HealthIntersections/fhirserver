@@ -1300,6 +1300,7 @@ Function TMXmlParser.xmlToText(s: String): String;
 Var
   i, j : integer;
   v : String;
+  w : WideChar;
 begin
   b.Clear;
   i := 1;
@@ -1317,7 +1318,7 @@ begin
       If v[1] = '#' Then
       begin
 //        rule(IsHexString(v.Substring(1)), 'Illegal Entity in "'+s+'"');
-        b.Append(chr(StrToInt(v.Substring(1))));
+        b.Append(wideCharToString(StrToInt(v.Substring(1))));
       end
       else If v = 'quot' Then
         b.Append('"')

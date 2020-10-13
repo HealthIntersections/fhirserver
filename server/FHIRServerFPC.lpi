@@ -15,6 +15,7 @@
       <Title Value="FHIRServer"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <Icon Value="0"/>
     </General>
     <MacroValues Count="1">
       <Macro3 Name="LCLWidgetType" Value="win32"/>
@@ -35,7 +36,19 @@
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
             <Optimizations>
@@ -167,7 +180,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="355">
+    <Units Count="353">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1560,44 +1573,36 @@
         <IsPartOfProject Value="True"/>
       </Unit345>
       <Unit346>
-        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
+        <Filename Value="..\library\support\FHIR.Support.SystemService.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit346>
       <Unit347>
-        <Filename Value="..\dependencies\FMMAVX\FastMM4Messages.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit347>
-      <Unit348>
-        <Filename Value="..\library\support\FHIR.Support.SystemService.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit348>
-      <Unit349>
         <Filename Value="FHIR.Server.Gui.Lcl.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ServerGUI"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit347>
+      <Unit348>
+        <Filename Value="..\library\npm\FHIR.Npm.Cache.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit348>
+      <Unit349>
+        <Filename Value="..\library\npm\FHIR.Npm.Client.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit349>
       <Unit350>
-        <Filename Value="..\library\npm\FHIR.Npm.Cache.pas"/>
+        <Filename Value="..\library\npm\FHIR.Npm.Package.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit350>
       <Unit351>
-        <Filename Value="..\library\npm\FHIR.Npm.Client.pas"/>
+        <Filename Value="..\library\npm\FHIR.Npm.Spider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit351>
       <Unit352>
-        <Filename Value="..\library\npm\FHIR.Npm.Package.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit352>
-      <Unit353>
-        <Filename Value="..\library\npm\FHIR.Npm.Spider.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit353>
-      <Unit354>
         <Filename Value="..\library\tools\FHIR.Tools.Search.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit354>
+      </Unit352>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1637,7 +1642,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="7">
+    <Exceptions Count="10">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -1659,6 +1664,15 @@
       <Item7>
         <Name Value="EOSError"/>
       </Item7>
+      <Item8>
+        <Name Value="EIdSocketError"/>
+      </Item8>
+      <Item9>
+        <Name Value="EIdConnClosedGracefully"/>
+      </Item9>
+      <Item10>
+        <Name Value="EIdCouldNotBindSocket"/>
+      </Item10>
     </Exceptions>
   </Debugging>
 </CONFIG>
