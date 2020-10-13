@@ -34,6 +34,8 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
+            <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -48,13 +50,11 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
-            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
             <Optimizations>
-              <OptimizationLevel Value="4"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -169,18 +169,15 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="indylaz"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item1>
       <Item2>
-        <PackageName Value="MarkdownEngine"/>
-      </Item2>
-      <Item3>
         <PackageName Value="LCL"/>
-      </Item3>
+      </Item2>
     </RequiredPackages>
-    <Units Count="353">
+    <Units Count="355">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1603,6 +1600,14 @@
         <Filename Value="..\library\tools\FHIR.Tools.Search.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit352>
+      <Unit353>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit353>
+      <Unit354>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4Messages.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit354>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

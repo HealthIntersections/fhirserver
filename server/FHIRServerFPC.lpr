@@ -42,7 +42,6 @@ uses
   {$ENDIF}
   Classes, SysUtils,
   Interfaces,
-  indylaz,
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',

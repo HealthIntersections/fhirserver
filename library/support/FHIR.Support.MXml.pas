@@ -1318,7 +1318,8 @@ begin
       If v[1] = '#' Then
       begin
 //        rule(IsHexString(v.Substring(1)), 'Illegal Entity in "'+s+'"');
-        b.Append(wideCharToString(StrToInt(v.Substring(1))));
+        w := wideChar(StrToInt(v.Substring(1)));
+        b.Append(UnicodeString(w));
       end
       else If v = 'quot' Then
         b.Append('"')
