@@ -54,8 +54,6 @@ type
 // unicode helpers - make life easier for shared fpc/delphi code
 function unicodeChars(s : String) : TArray<UnicodeChar>;
 function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this does nothing.
-function wideCharToString(ch : integer) : String; overload;
-function wideCharToString(ch : UnicodeChar) : String; overload;
 
 {$IFDEF FPC}
 
