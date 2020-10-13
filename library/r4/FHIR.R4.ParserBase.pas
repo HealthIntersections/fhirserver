@@ -144,7 +144,6 @@ end;
 procedure TFHIRXmlComposerBase4.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
 begin
   ComposeResource(xml, resource as TFhirResource);
-
 end;
 
 { TFHIRJsonParserBase4 }

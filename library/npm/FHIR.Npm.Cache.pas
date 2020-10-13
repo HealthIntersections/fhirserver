@@ -571,11 +571,19 @@ function TFHIRPackageManager.loadPackage(id : String) : TNpmPackage;
 var
   ver : String;
 begin
-  autoInstallPackage(id, '');
-  if not packageExists(id, '') then
-    raise EIOException.create('Unable to load package '+id+' as it couldn''t be found');
-  ver := latestPackageVersion(id);
-  result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+  if id.contains('#') then
+  begin
+    StringSplit(id, '#', id, ver);
+    result := loadPackage(id, ver);
+  end
+  else
+  begin
+    autoInstallPackage(id, '');
+    if not packageExists(id, '') then
+      raise EIOException.create('Unable to load package '+id+' as it couldn''t be found');
+    ver := latestPackageVersion(id);
+    result := loadPackageFromCache(Path([FFolder, id+'#'+ver]));
+  end;
 end;
 
 function TFHIRPackageManager.loadPackage(id, ver : String) : TNpmPackage;

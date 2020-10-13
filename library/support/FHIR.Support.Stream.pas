@@ -335,6 +335,8 @@ type
 
     Public
       constructor Create; Override;
+      constructor Create(cnt : TBytes); Overload;
+
       destructor Destroy; Override;
 
       Function Clone : TFslMemoryStream;
@@ -2511,6 +2513,14 @@ Begin
   Result := TFslMemoryStream(Inherited Clone);
 End;  
 
+
+constructor TFslMemoryStream.Create(cnt: TBytes);
+begin
+  Create;
+  Buffer.AsBytes := cnt;
+  Size := Buffer.Size;
+  Position := 0;
+end;
 
 Function TFslMemoryStream.Link : TFslMemoryStream;
 Begin 

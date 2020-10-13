@@ -1189,6 +1189,7 @@ begin
   FSubId := '';
   FCommandType := fcmdUnknown;
   FResourceName := '';
+  FResource.Free;
   FResource := nil;
   FUrl := '';
   FParams.Free;

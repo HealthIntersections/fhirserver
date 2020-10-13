@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IOUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Ucum.Services, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Base.Utilities,
   {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}
@@ -110,6 +110,7 @@ type
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
 
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   public
@@ -130,16 +131,19 @@ type
     FCache : TFHIRPackageManager;
     FServerContext : TFHIRServerContext; // free from owner
     function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
-    procedure loadResource(res: TFHIRResourceV);
+    procedure loadResource(res: TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+    procedure loadBytes(factory: TFHIRFactory; name: String; cnt: TBytes);
+    procedure loadFromZip(factory: TFHIRFactory; cnt: TBytes);
   protected
     function GetTotalResourceCount: integer; override;
+    function SupportsTransactions : boolean; override;
   public
     constructor Create(factory : TFHIRFactory); Override;
     destructor Destroy; override;
+
     function link : TTerminologyFhirServerStorage; overload;
 
     // no OAuth Support
-
     // server total counts:
     procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); override;
 
@@ -175,8 +179,8 @@ type
     procedure FinishRecording(); override;
 
     procedure loadUTGFolder(factory : TFHIRFactory; folder : String);
-    procedure loadPackage(factory : TFHIRFactory; pid : String);
-
+    procedure loadPackage(factory : TFHIRFactory; pid : String; ignoreEmptyCodeSystems : boolean);
+    procedure loadFile(factory : TFHIRFactory; name : String);
   end;
 
   TTerminologyFHIRUserProvider = class (TFHIRUserProvider)
@@ -194,7 +198,7 @@ type
     FStores : TFslMap<TTerminologyFhirServerStorage>;
 
     procedure configureResource(cfg : TFHIRResourceConfig);
-    procedure registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; packages : TStringList; UTGFolder : String);
+    procedure registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
   protected
     function setup : boolean; override;
     procedure closeDown; override;
@@ -585,6 +589,88 @@ begin
   end;
 end;
 
+procedure TTerminologyServerOperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  req, resp : TFHIRBundleW;
+  src, dest : TFHIRBundleEntryW;
+  url : String;
+  dummy : integer;
+begin
+  // since we're not making any changes, this is pretty straight forward
+  try
+    if check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
+    begin
+      req := factory.wrapBundle(request.resource.Link);
+      resp := factory.wrapBundle(factory.makeResource('Bundle'));
+      try
+        resp.type_ := btBatchResponse;
+        resp.id := NewGuidId;
+        for src in req.entries.forEnum do
+        begin
+          dest := resp.addEntry;
+          try
+            try
+              if (resp.type_ = btBatch) and (src.requestMethod = '') then
+                raise EFHIRException.create('No request details');
+              if (src.requestMethod = '') then
+              begin
+                src.requestMethod := 'GET';
+                src.requestUrl := src.resource.fhirType+'/'+src.resource.id;
+              end;
+              request.reset;
+              url := request.preAnalyse(src.requestUrl);
+              request.analyse(src.requestMethod, url, dummy, nil);
+              request.IfNoneMatch := src.requestifNoneMatch;
+              if src.requestIfModifiedSince.notNull then
+                request.IfModifiedSince := src.requestIfModifiedSince.UTC.DateTime;
+              request.IfMatch := src.requestIfMatch;
+              request.IfNoneExist := src.requestIfNoneExist;
+              request.resource := src.resource.link;
+              Execute(context, request, response);
+              dest.responseStatus := inttostr(response.HTTPCode);
+              dest.responseLocation := response.Location;
+              dest.responseEtag := 'W/'+response.versionId;
+              dest.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
+              dest.resource := response.resource.link;
+            except
+              on e : ERestfulException do
+              begin
+                if req.type_ = btTransaction then
+                  raise;
+                dest.responseStatus := inttostr(e.Status);
+                dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+              end;
+              on e : Exception do
+              begin
+                if req.type_ = btTransaction then
+                  raise;
+                dest.responseStatus := '500';
+                dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+              end;
+            end;
+          finally
+            dest.free;
+          end;
+        end;
+        response.HTTPCode := 200;
+        response.Message := 'OK';
+        response.resource := resp.Resource.Link;
+      finally
+        req.free;
+        resp.free;
+      end;
+    end;
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
+  except
+    on e: exception do
+    begin
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message, []);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
 function TTerminologyServerOperationEngine.FindResource(aType, sId: String; options: TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments: TFslList<TFHIRCompartmentId>): boolean;
 begin
   resourceKey := 0;
@@ -804,13 +890,23 @@ begin
   result := TTerminologyFhirServerStorage(inherited link);
 end;
 
-procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceV);
+procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+var
+  cs : TFhirCodeSystemW;
 begin
   if res.fhirType = 'CodeSystem' then
   begin
-    res.id := inttostr(FData.FCodeSystems.Count+1);
-    FData.FCodeSystems.Add(res.id, factory.wrapCodeSystem(res.link));
-    FServerContext.ValidatorContext.seeResource(res);
+    cs := factory.wrapCodeSystem(res.link);
+    try
+      if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
+      begin
+        res.id := inttostr(FData.FCodeSystems.Count+1);
+        FData.FCodeSystems.Add(res.id, cs.link);
+        FServerContext.ValidatorContext.seeResource(res);
+      end;
+    finally
+      cs.Free;
+    end;
   end
   else if res.fhirType = 'ConceptMap' then
   begin
@@ -832,7 +928,7 @@ begin
   end;
 end;
 
-procedure TTerminologyFhirServerStorage.loadPackage(factory : TFHIRFactory; pid: String);
+procedure TTerminologyFhirServerStorage.loadPackage(factory : TFHIRFactory; pid: String; ignoreEmptyCodeSystems : boolean);
 var
   npm : TNpmPackage;
   s : String;
@@ -857,7 +953,7 @@ begin
           Logging.continue('.');
         res := p.parseResource(npm.loadBytes(s));
         try
-          loadResource(res);
+          loadResource(res, ignoreEmptyCodeSystems);
         finally
           res.Free;
         end;
@@ -876,6 +972,74 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+procedure TTerminologyFhirServerStorage.loadFromZip(factory: TFHIRFactory; cnt : TBytes);
+var
+  zip : TFslZipReader;
+  i : integer;
+begin
+  zip := TFslZipReader.Create;
+  try
+    zip.Stream := TFslMemoryStream.create(cnt);
+    zip.ReadZip;
+    for i := 0 to zip.Parts.Count - 1 do
+    begin
+      Logging.continue('.');
+      loadBytes(factory, zip.Parts[i].Name, zip.Parts[i].AsBytes);
+    end;
+  finally
+    zip.Free;
+  end;
+end;
+
+procedure TTerminologyFhirServerStorage.loadBytes(factory: TFHIRFactory; name: String; cnt : TBytes);
+var
+  fmt : TFHIRFormat;
+  p : TFHIRParser;
+  res : TFHIRResourceV;
+begin
+  if name.EndsWith('.zip') then
+    loadFromZip(factory, cnt)
+  else
+  begin
+    if name.EndsWith('.json') then
+      fmt := ffJson
+    else if name.EndsWith('.xml') then
+      fmt := ffXml
+    else
+      fmt := DetectFormat(cnt);
+
+    if fmt = ffUnspecified then
+      raise EFslException.Create('Resource in "'+name+'" could not be parsed (format unrecognised)');
+    p := factory.makeParser(FServerContext.ValidatorContext.Link, fmt, THTTPLanguages.Create('en'));
+    try
+      res := p.parseResource(cnt);
+      try
+        loadResource(res, false);
+      finally
+        res.Free;
+      end;
+    finally
+      p.Free;
+    end;
+  end;
+end;
+
+procedure TTerminologyFhirServerStorage.loadFile(factory: TFHIRFactory; name: String);
+var
+  fmt : TFHIRFormat;
+  p : TFHIRParser;
+  cnt : TBytes;
+  res : TFHIRResourceV;
+begin
+  if (not FileExists(name)) then
+    raise EFslException.Create('Resource in "'+name+'" could not be parsed (not found)');
+
+  Logging.start('Load File '+name);
+  cnt := FileToBytes(name);
+  loadBytes(factory, name, cnt);
+  Logging.finish(' - done');
+end;
+
 function TTerminologyFhirServerStorage.loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
 var
   filename : String;
@@ -887,7 +1051,7 @@ var
     inc(result);
     res := p.parseResource(FileToBytes(fn));
     try
-      loadResource(res);
+      loadResource(res, true);
     finally
       res.Free;
     end;
@@ -984,6 +1148,11 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+function TTerminologyFhirServerStorage.SupportsTransactions: boolean;
+begin
+  result := true;
+end;
+
 procedure TTerminologyFhirServerStorage.Sweep;
 begin
   raise EFslException.Create('Not Implemented');
@@ -1077,15 +1246,15 @@ begin
   result := inherited setup;
 end;
 
-procedure TFHIRServiceTxServer.registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; packages : TStringList; UTGFolder : String);
+procedure TFHIRServiceTxServer.registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
 var
   s : String;
   store : TTerminologyFhirServerStorage;
 begin
   if UTGFolder <> '' then
-    Logging.log('Load Terminology EndPoint for '+factory.versionString+'. UTG = "'+UTGFolder+'", Packages = '+packages.CommaText)
+    Logging.log('Load Terminology EndPoint for '+factory.versionString+'. UTG = "'+UTGFolder+'"')
   else
-    Logging.log('Load Terminology EndPoint for '+factory.versionString+'. Packages = '+packages.CommaText);
+    Logging.log('Load Terminology EndPoint for '+factory.versionString+'');
 
   store := TTerminologyFhirServerStorage.Create(factory.link);
   try
@@ -1098,14 +1267,16 @@ begin
     configureResource(store.FServerContext.ResConfig['NamingSystem']);
     configureResource(store.FServerContext.ResConfig['ConceptMap']);
 
-    store.loadPackage(factory, factory.corePackage);
+    store.loadPackage(factory, factory.corePackage, false);
     if UTGFolder <> '' then
       store.loadUTGFolder(factory, UTGFolder)
     else
-      store.loadPackage(factory, factory.txPackage);
-    store.loadPackage(factory, factory.txSupportPackage);
-    for s in packages do
-      store.loadPackage(factory, s);
+      store.loadPackage(factory, factory.txPackage, true);
+    store.loadPackage(factory, factory.txSupportPackage, false);
+    for s in listP do
+      store.loadPackage(factory, s, false);
+    for s in listF do
+      store.loadFile(factory, s);
 
     WebServer.registerEndPoint('r4', path, store.FServerContext.Link, ini);
     FStores.Add(code, store.link);
@@ -1119,7 +1290,8 @@ var
   s : String;
   details : TFHIRServerIniComplex;
   factory : TFHIRFactory;
-  list : TStringList;
+  listF : TStringList;
+  listP : TStringList;
 begin
   for s in Ini.endpoints.sortedKeys do
   begin
@@ -1145,12 +1317,15 @@ begin
     else
       raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
     try
-      list := TStringList.create;
+      listF := TStringList.create;
+      listP := TStringList.create;
       try
-        list.CommaText := ini.kernel['packages-'+details['version']];
-        registerEndPoint(s, details['path'], Databases[details['database']], factory, list, ini.kernel['utg-folder']);
+        listF.CommaText := ini.kernel[details['version']+'-files'];
+        listP.CommaText := ini.kernel[details['version']+'-packages'];
+        registerEndPoint(s, details['path'], Databases[details['database']], factory, listF, listP, ini.kernel['utg-folder']);
       finally
-        list.Free;
+        listF.Free;
+        listP.Free;
       end;
     finally
       factory.Free;
