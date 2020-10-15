@@ -39,10 +39,10 @@ Uses
 
   FHIR.Support.Base, FHIR.Support.Utilities,
 
-  {$IFDEF FPC} FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
+  {$IFDEF FPC} odbcsqldyn, FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
 
   FHIR.Server.Constants, FHIR.Server.Ini, FHIR.Server.Utilities, FHIR.Server.Javascript,
-  FHIR.Server.Kernel.Base, FHIR.Server.Kernel.General, FHIR.Server.Kernel.Tx, FHIR.Server.Kernel.Bridge;
+  FHIR.Server.Kernel.Base, FHIR.Server.Kernel.General, FHIR.Server.Kernel.Tx, FHIR.Server.Kernel.Bridge, FHIR.Server.Kernel.Testing;
 
 procedure ExecuteFhirServer; overload;
 
@@ -74,17 +74,17 @@ begin
   mode := ini.kernel['mode'];
   if mode = 'bridge' then
   begin
-    Logging.log('Run Bridge Mode Server');
+    Logging.log('Mode: Bridge Server');
     result := TFHIRServiceBridgeServer.Create(ASystemName, ADisplayName, Welcome, ini)
   end
   else if mode = 'tx' then
   begin
-    Logging.log('Run Terminology Server');
+    Logging.log('Mode: Terminology Server');
     result := TFHIRServiceTxServer.Create(ASystemName, ADisplayName, Welcome, ini)
   end
   else if (mode = 'general') or (mode = '') then
   begin
-    Logging.log('Run General purpose Server');
+    Logging.log('Mode: General purpose Server');
     result := TFHIRServiceGeneral.Create(ASystemName, ADisplayName, Welcome, ini)
   end
   else
@@ -104,8 +104,12 @@ begin
   if getCommandLineParam('log', fn) then
     Logging.logToFile(fn);
 
-  // if we're running the gui, go do that
-  if (hasCommandLineParam('gui') or hasCommandLineParam('manager')) then
+  // if we're running the test or gui, go do that
+  if (hasCommandLineParam('tests') or hasCommandLineParam('-tests')) then
+    RunTests(ini)
+  else if (hasCommandLineParam('testinsight')) then
+    RunTestInsight(ini)
+  else if (hasCommandLineParam('gui') or hasCommandLineParam('manager')) then
     RunGui(ini)
   else
   begin
@@ -163,8 +167,14 @@ begin
       begin
         if (cmd = 'exec') or (cmd = 'console') then
           svc.ConsoleExecute
+        else if (cmd = 'tests') then
+          runTests(ini)
         else if not svc.command(cmd) then
           raise EFslException.Create('Unknown command '+cmd);
+      end
+      else if (isTestInsight) then
+      begin
+        RunTestInsight(ini);
       end
       else
       begin

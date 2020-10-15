@@ -571,16 +571,16 @@ Begin
 //      iDesc := 0;
 //      iId := 0;
 
-      iTerm := StrToUInt64(ascopy(s, iStart, iConcept - iStart));
+      iTerm := StrToUInt64(memU8toString(s, iStart, iConcept - iStart));
       oConcept := TConcept.Create;
       FConcepts.Add(oConcept);
       oConcept.Identity := iTerm;
 
-      oConcept.FDate := readDate(ascopy(s, iConcept+1, iDate - iConcept -1));
-      if ascopy(s, iDate+1, iStatus - iDate -1) <> '1' then
+      oConcept.FDate := readDate(memU8toString(s, iConcept+1, iDate - iConcept -1));
+      if memU8toString(s, iDate+1, iStatus - iDate -1) <> '1' then
         oConcept.Flag := 1;
-      oConcept.FModuleId := StrToUInt64(ascopy(s, iStatus+1, iModule - iStatus-1));
-      oConcept.FStatus := StrToUInt64(ascopy(s, iModule+1, iCursor - iModule-1));
+      oConcept.FModuleId := StrToUInt64(memU8toString(s, iStatus+1, iModule - iStatus-1));
+      oConcept.FStatus := StrToUInt64(memU8toString(s, iModule+1, iCursor - iModule-1));
       if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
         oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
       oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
@@ -742,30 +742,30 @@ begin
       iTerm := Next(9);
       iCaps := Next(13);
 
-      iDescId := StrToUInt64(ascopy(s, iStart, (iId - iStart)));
+      iDescId := StrToUInt64(memU8toString(s, iStart, (iId - iStart)));
 
-      cid := StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1));
+      cid := StrToUInt64(memU8toString(s, iConceptStart+1, (iConcept - iConceptStart)-1));
       oConcept := GetConcept(cid, iConceptIndex);
       if oConcept = nil then
         raise ETerminologySetup.create('unable to find Concept '+IntToStr(cid)+' in desc file (descid = '+inttostr(iDescId)+')');
 
-      ascopy(s, iType+1, (iTerm - iType) - 1);
-      if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
-        raise ETerminologySetup.create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
-      lang := readLang(ascopy(s, iConcept+1, (iLang - iConcept) - 1));
-      iKind := StrtoUInt64(ascopy(s, iLang+1, (iType - iLang) - 1));
+      memU8toString(s, iType+1, (iTerm - iType) - 1);
+      if not FConcept.FindConcept(StrtoUInt64(memU8toString(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
+        raise ETerminologySetup.create('Unable to find desc module '+memU8toString(s, iStatus+1, (iModuleId - iStatus) - 1));
+      lang := readLang(memU8toString(s, iConcept+1, (iLang - iConcept) - 1));
+      iKind := StrtoUInt64(memU8toString(s, iLang+1, (iType - iLang) - 1));
       if not FConcept.FindConcept(iKind, kind) then
-        raise ETerminologySetup.create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
+        raise ETerminologySetup.create('Unable to find desc type '+memU8toString(s, iLang+1, (iType - iLang) - 1));
 
-      date := ReadDate(ascopy(s, iId+1, (iDate - iId) - 1));
-      iSt := strtoint(ascopy(s, iDate+1, (iStatus - iDate) -1)); // we'll have to go update it later based on caps and type
+      date := ReadDate(memU8toString(s, iId+1, (iDate - iId) - 1));
+      iSt := strtoint(memU8toString(s, iDate+1, (iStatus - iDate) -1)); // we'll have to go update it later based on caps and type
       active := iSt = 1;
 
-      ucaps := StrtoUInt64(ascopy(s, iTerm+1, (iCaps - iTerm) - 1));
+      ucaps := StrtoUInt64(memU8toString(s, iTerm+1, (iCaps - iTerm) - 1));
       if not FConcept.FindConcept(ucaps, caps) then
-        raise ETerminologySetup.create('Unable to find caps type '+ascopy(s, iLang+1, (iType - iLang) - 1));
+        raise ETerminologySetup.create('Unable to find caps type '+memU8toString(s, iLang+1, (iType - iLang) - 1));
 
-      sDesc := utfcopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
+      sDesc := memU8toString(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, active, iKind = RF2_MAGIC_FSN);
 
       SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
@@ -889,7 +889,7 @@ var
     sId : String;
     iDummy : Integer;
   Begin
-    sId := ascopy(s, iStart+1, iEnd - iStart-1);
+    sId := memU8toString(s, iStart+1, iEnd - iStart-1);
     result := GetConcept(StrToUInt64(sId), iDummy);
     if result = nil Then
       raise ETerminologySetup.create('Unable to resolve the term reference '+sId+' in the relationships file at position '+inttostr(iStart)+' on line '+inttostr(line));
@@ -921,13 +921,13 @@ Begin
       iCursor := Next(13);  // modifierId
       iRef := iCursor;
 
-      iRel := StrToUInt64(ascopy(s, iStart, iRelid - iStart));
-      date := ReadDate(ascopy(s, iRelId+1, (iDate - iRelId) - 1));
-      active := ascopy(s, iDate+1, iStatus - iDate-1) = '1';
+      iRel := StrToUInt64(memU8toString(s, iStart, iRelid - iStart));
+      date := ReadDate(memU8toString(s, iRelId+1, (iDate - iRelId) - 1));
+      active := memU8toString(s, iDate+1, iStatus - iDate-1) = '1';
       module := GetConceptLocal(iStatus, iModuleId).Index;
       oSource := GetConceptLocal(iModuleId, iC1Id);
       oTarget := GetConceptLocal(iC1Id, iC2Id);
-      group := StrToInt(ascopy(s, iC2Id+1, iGroup - iC2Id-1));
+      group := StrToInt(memU8toString(s, iC2Id+1, iGroup - iC2Id-1));
       oRelType := GetConceptLocal(iGroup, iRTId);
       kind := GetConceptLocal(iRTId, iCtype);
       modifier := GetConceptLocal(iCtype, iRef).Index;
@@ -1831,7 +1831,7 @@ begin
   iCursor := 0;
   // figure out what kind of reference set this is
   iCursor := Next(13)+1;
-  sActive := ascopy(s, 0, iCursor);
+  sActive := memU8toString(s, 0, iCursor);
   if sActive.contains('map') then
     exit;
   SetLength(offsets, length(types));
@@ -1865,15 +1865,15 @@ begin
           iCursor := iRefComp;
       end;
 
-      sId := ascopy(s, iId+1, iDate - (iId + 1));
+      sId := memU8toString(s, iId+1, iDate - (iId + 1));
       if (sId = '') then
         break;
 
-      sModule := ascopy(s, iActive+1, iModule - (iActive + 1));
-      sDate:= ascopy(s, iDate+1, iTime - (iDate + 1));
-      sActive := ascopy(s, iTime+1, iActive - (iTime + 1));
-      sRefSetId := ascopy(s, iModule+1, iRefSetId - (iModule + 1));
-      sRefComp := ascopy(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
+      sModule := memU8toString(s, iActive+1, iModule - (iActive + 1));
+      sDate:= memU8toString(s, iDate+1, iTime - (iDate + 1));
+      sActive := memU8toString(s, iTime+1, iActive - (iTime + 1));
+      sRefSetId := memU8toString(s, iModule+1, iRefSetId - (iModule + 1));
+      sRefComp := memU8toString(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
 
 
       if not FConcept.FindConcept(StrToUInt64(sModule), iMod) then
@@ -1881,9 +1881,9 @@ begin
       for I := 0 to length(types) - 1 do
       begin
         if (i = 0) then
-          sVals[i] := ascopy(s, iRefComp+1, integer(offsets[i]) - (iRefComp + 1))
+          sVals[i] := memU8toString(s, iRefComp+1, integer(offsets[i]) - (iRefComp + 1))
         else
-          sVals[i] := ascopy(s, offsets[i-1]+1, offsets[i] - (offsets[i-1] + 1));
+          sVals[i] := memU8toString(s, offsets[i-1]+1, offsets[i] - (offsets[i-1] + 1));
         case types[i] of
           99 {c} :
             begin

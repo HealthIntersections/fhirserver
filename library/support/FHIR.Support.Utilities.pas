@@ -13415,12 +13415,16 @@ procedure TFslBytesBuilder.AddString(val: String);
 Var
   s : TBytes;
 Begin
+  {$IFDEF FPC}
+  raise Exception.Create('Not Done Yet');
+  {$ELSE}
   if val.length > 0 then
   begin
     SetLength(s, val.Length*2);
     move(val[1], s[0], val.Length*2);
     Append(s);
   end;
+  {$ENDIF}
 end;
 
 procedure TFslBytesBuilder.AddUInt64(val: UInt64);
@@ -15606,6 +15610,7 @@ begin
     #$2C6C : result := 'z';
     #$A763 : result := 'z';
 
+    #$0439 : result := #$0438;
   else
     result := ch;
   end;

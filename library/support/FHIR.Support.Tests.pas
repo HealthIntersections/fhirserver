@@ -1,4 +1,4 @@
-unit FHIR.Support.Tests;
+﻿unit FHIR.Support.Tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -30,8 +30,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
-{$DEFINE DIFF}
-
 interface
 
 Uses
@@ -61,10 +59,6 @@ type
   {$M+}
   TFslTestCase = class {$IFDEF FPC} (TTestCase) {$ENDIF}
   protected
-    {$IFDEF FPC}
-    FName : String;
-    function GetTestName: string; override;
-    {$ENDIF}
     procedure assertPass;
     procedure assertFail(message : String);
     procedure assertTrue(test : boolean; message : String); overload;
@@ -74,6 +68,15 @@ type
     procedure assertEqual(left, right : String; message : String); overload;
     procedure assertEqual(left, right : String); overload;
     procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+  public
+  end;
+
+  TFslTestSuite = class (TFslTestCase)
+  protected
+    {$IFDEF FPC}
+    FName : String;
+    function GetTestName: string; override;
+    {$ENDIF}
   public
     {$IFDEF FPC}
     constructor Create(name : String);
@@ -85,11 +88,12 @@ type
     {$ENDIF}
   end;
 
-var
-  FHIR_TEST_CASE_ROOT : String = 'C:\work\org.hl7.fhir\fhir-test-cases';  // lots of the tests depend on content found in the FHIR publication
+function ownTestFile(parts : array of String) : String;
+function fhirTestFile(parts : array of String) : String;
 
-function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String; overload;
-function FHIR_TESTING_FILE(folder, filename : String) : String; overload;
+//    FHIR_TEST_CASE_ROOT : String = 'C:\work\org.hl7.fhir\fhir-test-cases';  // lots of the tests depend on content found in the FHIR publication
+//function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String; overload;
+//function FHIR_TESTING_FILE(folder, filename : String) : String; overload;
 
 Type
   TFslTestString = class (TFslObject)
@@ -136,15 +140,15 @@ Type
   public
   end;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
 
   { TFslCollectionsTests }
 
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TFslCollectionsTests = class (TFslTestCase)
   private
     list : TFslTestObjectList;
     procedure executeFail();
-  public
+  published
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAdd;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAddFail;
   end;
@@ -154,7 +158,7 @@ type
   TOSXTests = class (TFslTestCase)
   private
     procedure test60sec;
-  public
+  published
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestAdvObject;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionSimple;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionThreaded;
@@ -162,7 +166,7 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestKCriticalSectionSimple;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTemp;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TesTFslDateTime;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslDateTime;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestAdvFile;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestRemoveAccents;
   end;
@@ -199,29 +203,41 @@ Type
   End;
 
 Type
-  {$IFNDEF FPC}
+  {$IFDEF FPC}
+  TXmlParserTests = class(TTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
-  {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXmlParserTests = Class (TFslTestCase)
+  [TextFixture]
+  {$ENDIF}
+  TXmlParserTest = Class (TFslTestSuite)
   Published
     {$IFNDEF FPC}[XmlParserTestCase]{$ENDIF}
     procedure ParserTest(Name : String);
   End;
 
-  {$IFNDEF FPC}
+  {$IFDEF FPC}
+  TXmlUtilsTests = class(TTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   XPathParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
-  {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXmlUtilsTests = Class (TFslTestCase)
+  [TextFixture]
+  {$ENDIF}
+  TXmlUtilsTest = Class (TFslTestSuite)
   Private
   Published
     {$IFNDEF FPC}[TestCase]{$ENDIF}
@@ -743,6 +759,38 @@ Type
 
 implementation
 
+const psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
+
+function testFile(root : String; parts : array of String) : String;
+var
+  part : String;
+  s : String;
+begin
+  result := root;
+  for part in parts do
+  begin
+    s := part.Replace('/', psc).Replace('\', psc);
+    if result = '' then
+      result := s
+    else if not result.EndsWith(psc) and not s.startsWith(psc) then
+      result := result + psc + s
+    else if not result.EndsWith(psc) or not s.startsWith(psc) then
+      result := result + s
+    else
+      result := result + s.substring(1);
+  end;
+end;
+
+function ownTestFile(parts : array of String) : String;
+begin
+  result := testFile('c:/work/fhirserver', parts);
+end;
+
+function fhirTestFile(parts : array of String) : String;
+begin
+  result := testFile('c:/work/org.hl7.fhir/fhir-test-cases', parts);
+end;
+
 { TFslGenericsTests }
 
 {$HINTS OFF}
@@ -793,9 +841,9 @@ begin
     assertTrue(list[2].value = 'b');
     list.SortE(doSort);
     assertTrue(list.Count = 3);
-    assertTrue(list[0].value = 'c');
+    assertTrue(list[0].value = 'a');
     assertTrue(list[1].value = 'b');
-    assertTrue(list[2].value = 'a');
+    assertTrue(list[2].value = 'c');
   finally
     list.Free;
   end;
@@ -921,7 +969,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'xml-patch-tests.xml'), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
   try
     test := tests.document.first;
     i := 0;
@@ -991,7 +1039,7 @@ end;
 
 procedure TXmlPatchTests.setup;
 begin
-  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'xml-patch-tests.xml'), [xpResolveNamespaces, xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
@@ -1001,9 +1049,9 @@ begin
   tests.Free;
 end;
 
-{ TXmlParserTests }
+{ TXmlParserTest }
 
-procedure TXmlParserTests.ParserTest(Name: String);
+procedure TXmlParserTest.ParserTest(Name: String);
 var
   xml : TMXmlElement;
 begin
@@ -1015,7 +1063,24 @@ begin
   end;
 end;
 
-{$IFNDEF FPC}
+{$IFDEF FPC}
+{ TXmlParserTests }
+
+constructor TXmlParserTests.Create;
+var
+  sl : TStringlist;
+  sr : TSearchRec;
+  s : String;
+  i : integer;
+begin
+  inherited Create;
+  if FindFirst(ownTestFile(['resources', 'testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
+  repeat
+    AddTest(TXmlParserTest.Create(sr.Name));
+  until FindNext(SR) <> 0;
+end;
+
+{$ELSE}
 
 { XmlParserTestCaseAttribute }
 
@@ -1044,7 +1109,34 @@ begin
     sl.Free;
   end;
 end;
+{$ENDIF}
 
+{$IFDEF FPC}
+{ TXmlUtilsTests }
+
+constructor TXmlUtilsTests.Create;
+var
+  tests : TMXmlDocument;
+  path : TMXmlElement;
+  i : integer;
+begin
+  inherited Create;
+  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  try
+    i := 0;
+    path := tests.document.first;
+    while path <> nil do
+    begin
+      AddTest(TXmlUtilsTest.create(inttostr(i)));
+      inc(i);
+      path := path.next;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+
+{$ELSE}
 { XPathParserTestCaseAttribute }
 
 function XPathParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -1070,7 +1162,6 @@ begin
     tests.Free;
   end;
 end;
-
 {$ENDIF}
 
 { TXPathTests }
@@ -1960,7 +2051,7 @@ var
   s : String;
   ttl : TTurtleDocument;
 begin
-  s := fileToString(FHIR_TESTING_FILE('turtle', filename), TEncoding.UTF8);
+  s := fileToString(fhirTestFile(['turtle', filename]), TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);
     try
@@ -3997,8 +4088,8 @@ end;
 procedure TOSXTests.TestRemoveAccents;
 begin
   assertEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
-  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aC!eC)iC-oC3C6uC:C< ACEC	IC OCCUCC'));
-  assertEqual('PP0P;P5Q P8P8 PP8P:P>P;P0P5P2P8Q P!PP PPPP', RemoveAccents('PP0P;P5Q P8P9 PP8P:P>P;P0P5P2P8Q P!PP PPPP'));
+  assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
+  assertEqual('Ваnерии Никоnаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
 end;
 
 procedure TOSXTests.TestTemp;
@@ -4006,7 +4097,7 @@ begin
   assertTrue(SystemTemp <> '');
 end;
 
-procedure TOSXTests.TesTFslDateTime;
+procedure TOSXTests.TestFslDateTime;
 var
   d1, d2 : TFslDateTime;
   dt1, dt2 : Double;
@@ -4031,7 +4122,7 @@ begin
 
   // Date Time conversion
   assertTrue(TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456.000');
-  assertWillRaise(test60Sec, Exception, '');
+  assertWillRaise(test60Sec, EConvertError, '');
   dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
   dt2 := TFslDateTime.fromHL7('20130405123456').DateTime;
   assertTrue(dt1 = dt2);
@@ -4317,7 +4408,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', 'observation-decimal.json'), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(fhirTestFile(['r4', 'examples', 'observation-decimal.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4379,7 +4470,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', 'account-example.json'), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(fhirTestFile(['r4', 'examples', 'account-example.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4599,16 +4690,6 @@ end;
 //end;
   *)
 
-function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String;
-begin
-  result := Path([FHIR_TEST_CASE_ROOT, 'r'+inttostr(ver), folder, filename]);
-end;
-
-function FHIR_TESTING_FILE(folder, filename : String) : String;
-begin
-  result := Path([FHIR_TEST_CASE_ROOT, folder, filename]);
-end;
-
 { TFslTestObjectList }
 
 function TFslTestObjectList.itemClass: TFslObjectClass;
@@ -4653,9 +4734,9 @@ begin
   self.value := value;
 end;
 
-{ TXmlUtilsTests }
+{ TXmlUtilsTest }
 
-procedure TXmlUtilsTests.TestNoDense;
+procedure TXmlUtilsTest.TestNoDense;
 var
   x : TMXmlDocument;
   src, output, tgt : String;
@@ -4672,7 +4753,7 @@ begin
   assertEqual(output, tgt);
 end;
 
-procedure TXmlUtilsTests.TestNoPretty;
+procedure TXmlUtilsTest.TestNoPretty;
 var
   x : TMXmlDocument;
   src, output, tgt : String;
@@ -4689,7 +4770,7 @@ begin
   assertEqual(output, tgt);
 end;
 
-procedure TXmlUtilsTests.TestPretty;
+procedure TXmlUtilsTest.TestPretty;
 var
   x : TMXmlDocument;
   src, output, tgt : String;
@@ -4706,7 +4787,7 @@ begin
   assertEqual(output, tgt);
 end;
 
-procedure TXmlUtilsTests.TestUnPretty;
+procedure TXmlUtilsTest.TestUnPretty;
 var
   x : TMXmlDocument;
   src, output, tgt : String;
@@ -4737,30 +4818,6 @@ begin
 end;
 
 { TFslTestCase }
-
-{$IFDEF FPC}
-constructor TFslTestCase.Create(name : String);
-begin
-  inherited CreateWith('Test', name);
-  FName := name;
-end;
-
-function TFslTestCase.GetTestName: string;
-begin
-  Result := FName;
-end;
-
-procedure TFslTestCase.Test;
-begin
-  TestCase(FName);
-end;
-
-{$ENDIF}
-
-procedure TFslTestCase.TestCase(name: String);
-begin
-  // nothing - override this
-end;
 
 procedure TFslTestCase.assertPass;
 begin
@@ -4843,14 +4900,46 @@ begin
   {$ENDIF}
 end;
 
+{ TFslTestSuite }
+
+{$IFDEF FPC}
+constructor TFslTestSuite.Create(name : String);
+begin
+  inherited CreateWith('Test', name);
+  FName := name;
+end;
+
+function TFslTestSuite.GetTestName: string;
+begin
+  Result := FName;
+end;
+
+procedure TFslTestSuite.Test;
+begin
+  TestCase(FName);
+end;
+
+{$ENDIF}
+
+procedure TFslTestSuite.TestCase(name: String);
+begin
+  // nothing - override this
+end;
+
 initialization
   {$IFDEF FPC}
+  RegisterTest('Generics Tests', TFslGenericsTests);
+  RegisterTest('Collection Tests', TFslCollectionsTests);
+  RegisterTest('XPlatform Tests', TOSXTests);
+  RegisterTest('Decimal Tests', TDecimalTests);
+  RegisterTest('XML Tests', TXmlParserTests.create);
+  RegisterTest('XML Utility Tests', TXmlUtilsTests.create);
   {$ELSE}
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
   TDUnitX.RegisterTestFixture(TOSXTests);
-  TDUnitX.RegisterTestFixture(TXmlParserTests);
-  TDUnitX.RegisterTestFixture(TXmlUtilsTests);
+  TDUnitX.RegisterTestFixture(TXmlParserTest);
+  TDUnitX.RegisterTestFixture(TXmlUtilsTest);
   TDUnitX.RegisterTestFixture(TXPathParserTests);
   TDUnitX.RegisterTestFixture(TXPathEngineTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);

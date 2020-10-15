@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$DEFINE UNICODE}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
@@ -283,8 +283,8 @@ begin
   if not result and showdiff then
   begin
     showdiff := false;
-    x1 := FileToString(filename1 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
-    x2 := FileToString(filename2 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
+    x1 := FileToString(filename1, TEncoding.UTF8);
+    x2 := FileToString(filename2, TEncoding.UTF8);
     x1 := MakeXmlPretty(x1);
     x2 := MakeXmlPretty(x2);
     x1 := x1.Replace('&#39;', '''').Replace('&quot;', '"');
@@ -292,8 +292,8 @@ begin
 
     f1 := MakeTempFilename +'-source.xml';
     f2 := MakeTempFilename +'-dest.xml';
-    StringToFile(x1, f1{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
-    StringToFile(x2, f2{$IFDEF UNICODE}, TEncoding.UTF8{$ENDIF});
+    StringToFile(x1, f1, TEncoding.UTF8);
+    StringToFile(x2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
   end;

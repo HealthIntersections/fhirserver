@@ -411,6 +411,9 @@ uses
   FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas',
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas',
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
+  FHIR.Support.Tests in '..\library\support\FHIR.Support.Tests.pas',
+  FHIR.Support.Fpc.ConsoleTester in '..\library\support\FHIR.Support.Fpc.ConsoleTester.pas',
+  FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 
 {$R *.res}

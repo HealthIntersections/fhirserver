@@ -210,15 +210,6 @@ begin
   SetLength(result, i);
 end;
 
-function wideCharToString(ch: WideChar): String;
-begin
-  result := '';
-end;
-
-function wideCharToString(ch: integer): String;
-begin
-  result := '';
-end;
 
 {$ELSE}
 

@@ -1317,7 +1317,6 @@ begin
       v := Copy(s, j, i-j);
       If v[1] = '#' Then
       begin
-//        rule(IsHexString(v.Substring(1)), 'Illegal Entity in "'+s+'"');
         w := wideChar(StrToInt(v.Substring(1)));
         b.Append(UnicodeString(w));
       end

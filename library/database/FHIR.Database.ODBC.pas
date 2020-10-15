@@ -805,6 +805,10 @@ end;
 
 constructor TFslDBOdbcManager.create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
+  {$IFDEF FPC}
+  if @SQLAllocHandle = nil then
+    InitialiseODBC;
+  {$ENDIF}
   inherited create(Aname, AMaxConnCount);
   FAttributes := TStringList.create;
   FDriver := ADriver;

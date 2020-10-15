@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Test</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -57,6 +57,17 @@
         <Cfg_2>true</Cfg_2>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Test' or '$(Cfg_3)'!=''">
+        <Cfg_3>true</Cfg_3>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_3)'=='true') or '$(Cfg_3_Win64)'!=''">
+        <Cfg_3_Win64>true</Cfg_3_Win64>
+        <CfgParent>Cfg_3</CfgParent>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
@@ -69,6 +80,7 @@
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -110,7 +122,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd console -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core</Debugger_RunParams>
+        <Debugger_RunParams>-testinsight -cmd tests -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core -mdroot c:\work\markdown</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -161,6 +173,15 @@
         <Debugger_RunParams>-tests -ini C:\work\fhirserver\Exec\fhir.local.ini</Debugger_RunParams>
         <DCC_Optimize>false</DCC_Optimize>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
+        <Debugger_RunParams>-testinsight -ini C:\work\fhirserver\Exec\fhir.dev.local.ini  -mdroot c:\work\markdown</Debugger_RunParams>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <Manifest_File>(None)</Manifest_File>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
+        <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
@@ -181,7 +202,7 @@
         <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
         <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Client.pas"/>
         <DCCReference Include="FHIR.CdsHooks.Server.pas"/>
         <DCCReference Include="FHIR.CdsHooks.Service.pas"/>
@@ -402,9 +423,6 @@
         <DCCReference Include="FHIR.Server.Manager.pas">
             <Form>ServerManagerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageManagerDialog.pas">
-            <Form>PackageCacheForm</Form>
-        </DCCReference>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Actions.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Classes.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.ClipBoard.pas"/>
@@ -416,7 +434,7 @@
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibility.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTHeaderPopup.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.Browser.pas">
             <Form>PackageFinderForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\snomed\FHIR.Snomed.Combiner.pas"/>
@@ -472,7 +490,7 @@
             <Form>TextPresentationDialog</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.NpmPackage.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
         <DCCReference Include="FHIR.Server.IndexingR5.pas"/>
         <DCCReference Include="FHIR.Server.OperationsR5.pas"/>
         <DCCReference Include="FHIR.Server.SubscriptionsR5.pas"/>
@@ -508,9 +526,10 @@
         <DCCReference Include="..\library\r5\FHIR.R5.Narrative2.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.GraphDefinition.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.MapUtilities.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageUpdater.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Spider.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Manager.pas"/>
         <DCCReference Include="FHIR.Server.Packages.pas"/>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageClient.pas"/>
+        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
         <DCCReference Include="Modules\FHIR.Server.Covid.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Liquid.pas"/>
         <DCCReference Include="FHIR.Server.Twilio.pas"/>
@@ -520,9 +539,8 @@
             <Form>WorkingForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\library\cache\FHIR.Cache.PackageVersionBrowser.pas">
+        <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Server.WebBase.pas"/>
         <DCCReference Include="FHIR.Server.ClientCacheManager.pas"/>
@@ -564,15 +582,25 @@
         <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.Search.pas"/>
         <DCCReference Include="FHIR.Server.Operations.pas"/>
+        <DCCReference Include="FHIR.Server.TestRegistry.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.Tests.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.Comparisons.pas"/>
+        <DCCReference Include="..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
+        <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
+        <DCCReference Include="..\..\markdown\tests\CommonTestBase.pas"/>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
-        <BuildConfiguration Include="Base">
-            <Key>Base</Key>
-        </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Test">
+            <Key>Cfg_3</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

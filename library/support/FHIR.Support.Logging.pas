@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, FastMM4, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, {FastMM4,} {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Osx, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections;
 
@@ -488,38 +488,41 @@ begin
 end;
 
 function TLogging.MemoryStatus : String;
-{$IFDEF WINDOWS}
-var
-  st: TMemoryManagerState;
-  sb: TSmallBlockTypeState;
-  v : UInt64;
-  hProcess: THandle;
-  pmc: PROCESS_MEMORY_COUNTERS;
+//{$IFDEF WINDOWS}
+//var
+//  st: TMemoryManagerState;
+//  sb: TSmallBlockTypeState;
+//  v : UInt64;
+//  hProcess: THandle;
+//  pmc: PROCESS_MEMORY_COUNTERS;
+//begin
+//  result := '';
+//  GetMemoryManagerState(st);
+//  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
+//  for sb in st.SmallBlockTypeStates do
+//    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
+//  if v > 16000 then
+//    result := ' '+memToMb(v);
+//
+//  hProcess := GetCurrentProcess;
+//  try
+//    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
+//      if result = '' then
+//        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
+//      else
+//        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+//  finally
+//    CloseHandle(hProcess);
+//  end;
+//end;
+//{$ELSE}
+//begin
+//  raise Exception.create('MemoryStatus');
+//end;
+//{$ENDIF}
 begin
-  result := '';
-  GetMemoryManagerState(st);
-  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
-  for sb in st.SmallBlockTypeStates do
-    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-  if v > 16000 then
-    result := ' '+memToMb(v);
-
-  hProcess := GetCurrentProcess;
-  try
-    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
-      if result = '' then
-        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
-      else
-        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
-  finally
-    CloseHandle(hProcess);
-  end;
+  result := 'to do';
 end;
-{$ELSE}
-begin
-  raise Exception.create('MemoryStatus');
-end;
-{$ENDIF}
 
 procedure TLogging.checkDay;
 var

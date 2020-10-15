@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, {$IFDEF FPC} odbcsql {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
+  SysUtils, Classes, {$IFDEF FPC} odbcsqldyn {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
   FHIR.Support.Utilities, FHIR.Support.Fpc,
   FHIR.Database.Dialects;
 
@@ -56,6 +56,9 @@ const
   SQL_PC_NON_PSEUDO = 1; {$EXTERNALSYM SQL_PC_NON_PSEUDO}
   SQL_PC_PSEUDO = 2;     {$EXTERNALSYM SQL_PC_PSEUDO}
   SQL_ALL_TABLE_TYPES = '%'; {$EXTERNALSYM SQL_ALL_TABLE_TYPES}
+{$ELSE}
+type
+  PtrUInt = SQLUInteger;
 {$ENDIF}
 
 Type
@@ -2824,10 +2827,6 @@ Begin
   Inherited Message:= AMessage;
 End;
 
-// MACOS:
-//  We will pretend that UTF-32 is simply a matter of
-// inserting/skipping the high 16 bits until a bug manifests...
-
 function fromOdbcPChar(p : PChar; length : integer) : String;
   {$IFDEF OSX}
 var
@@ -2849,6 +2848,11 @@ begin
     result := nil
   else
   begin
+    {$IFDEF FPC}
+    getMem(result, (length(s)+1));
+    fillChar(result^, (length(s)+1), 0);
+    move(s[1], result^, length(s));
+    {$ELSE}
     {$IFDEF OSX}
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
@@ -2856,6 +2860,7 @@ begin
     getMem(result, (length(s)+1) * 2);
     fillChar(result^, (length(s)+1)*2, 0);
     move(s[1], result^, length(s) * 2);
+    {$ENDIF}
     {$ENDIF}
   end;
 end;
@@ -4367,12 +4372,14 @@ End;
 Function TOdbcStatement.GetQueryTimeOut: SQLUINTEGER;
 var
   len : integer;
+  res : PtrUInt;
 Begin
   Init;
 
-  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, @Result, SizeOf(Result), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, @res, SizeOf(res), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
+  result := res;
 End;
 
 Procedure TOdbcStatement.SetQueryTimeOut(AQueryTimeOut: SQLUINTEGER);
@@ -4396,12 +4403,14 @@ End;
 Function TOdbcStatement.GetMaxRows: SQLUINTEGER;
 var
   len : integer;
+  res : PtrUInt;
 Begin
   Init;
 
-  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, @Result, SizeOf(Result), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, @Res, SizeOf(Res), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
+  result := res;
 End;
 
 Procedure TOdbcStatement.SetMaxRows(AMaxRows: SQLUINTEGER);
@@ -4415,7 +4424,7 @@ End;
 
 Procedure TOdbcStatement.SetConcurrencyType(AConcurrencyType: SQLUINTEGER);
 Var
-  LConcurrencyType: SQLUINTEGER;
+  LConcurrencyType: PtrUInt;
   len : integer;
 Begin
   Log(1, 'TOdbcStatement.SetConcurrencyType');
@@ -4429,7 +4438,7 @@ Begin
     FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, @LConcurrencyType, SizeOf(LConcurrencyType), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LConcurrencyType <> FConcurrencyType) Then
     Begin
-      FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, Pointer(FConcurrencyType), SizeOf(FConcurrencyType));
+      FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, pointer(FConcurrencyType), SizeOf(FConcurrencyType));
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
@@ -4438,7 +4447,7 @@ End;
 
 Procedure TOdbcStatement.SetCursorType(ACursorType: SQLUINTEGER);
 Var
-  LCursorType: SQLUINTEGER;
+  LCursorType: PtrUInt;
 
   Procedure GetCursorAttr;
   Begin

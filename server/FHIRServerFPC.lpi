@@ -52,13 +52,11 @@
             </Checks>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
-            <Optimizations>
-              <OptimizationLevel Value="0"/>
-            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <UseValgrind Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
@@ -169,15 +167,21 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="2">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="MarkdownTests"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item2>
+      <Item3>
+        <PackageName Value="MarkdownEngine"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="355">
+    <Units Count="358">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1608,13 +1612,26 @@
         <Filename Value="..\dependencies\FMMAVX\FastMM4Messages.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit354>
+      <Unit355>
+        <Filename Value="..\library\support\FHIR.Support.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit355>
+      <Unit356>
+        <Filename Value="..\library\support\FHIR.Support.Comparisons.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit356>
+      <Unit357>
+        <Filename Value="..\library\support\fhir.support.fpc.consoletester.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Support.Fpc.ConsoleTester"/>
+      </Unit357>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="C:\work\fhirserver\Exec\32\FHIRServerFPC"/>
+      <Filename Value="C:\work\fhirserver\exec\32\FHIRServerFPC.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>

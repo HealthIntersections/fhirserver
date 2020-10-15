@@ -735,6 +735,9 @@ function genCheckDigit(s : String): char;
 
 Implementation
 
+uses
+  FHIR.LOINC.Services;
+
 { TCardinalArray }
 
 function mergeCardinals(c1, c2 : Cardinal) : TCardinalArray; overload;
@@ -775,10 +778,9 @@ begin
   if (iIndex > FLength) then
     Raise ETerminologySetup.Create('Wrong length index getting snomed name');
   Move(FMaster[iIndex], i, 2);
-  SetLength(Result, i);
-  if (Byte(FMaster[iIndex]) + iIndex > FLength) then
+  if (iIndex + 2 + (i * 2) > FLength) then
     Raise ETerminologySetup.Create('Wrong length index getting snomed name (2)');
-  Move(FMaster[iIndex+2], result[1], Length(Result)*2);
+  result := memU16ToString(FMaster, iIndex+2, i);
 end;
 
 procedure TSnomedStrings.Reopen;

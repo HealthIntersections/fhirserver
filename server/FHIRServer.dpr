@@ -465,7 +465,13 @@ uses
   FHIR.Server.Gui.Vcl in 'FHIR.Server.Gui.Vcl.pas' {ServerGUI},
   FHIR.Server.Gui.Controller in 'FHIR.Server.Gui.Controller.pas',
   FHIR.Tools.Search in '..\library\tools\FHIR.Tools.Search.pas',
-  FHIR.Server.Operations in 'FHIR.Server.Operations.pas';
+  FHIR.Server.Operations in 'FHIR.Server.Operations.pas',
+  FHIR.Server.TestRegistry in 'FHIR.Server.TestRegistry.pas',
+  FHIR.Support.Tests in '..\library\support\FHIR.Support.Tests.pas',
+  FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
+  MarkdownCommonMarkTests in '..\..\markdown\tests\MarkdownCommonMarkTests.pas',
+  MarkdownDaringFireballTests in '..\..\markdown\tests\MarkdownDaringFireballTests.pas',
+  CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas';
 
 begin
   ExecuteFhirServer;

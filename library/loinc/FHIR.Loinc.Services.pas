@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, IOUtils,
+  SysUtils, Classes, Generics.Collections, IOUtils, {$IFDEF FPC} LazUTF8, {$ENDIF}
   RegularExpressions,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Web.Parsers,
@@ -462,31 +462,76 @@ Type
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
-function ascopy(s : TBytes; start, len : integer) : String;
-function utfcopy(s : TBytes; start, length : integer) : String;
+//function utfcopy(s : TBytes; start, length : integer) : String;
 function nolang : TLangArray;
 
+function memU8toString(bytes : TBytes; index, chars : integer) : String;
+function memU16ToString(const bytes : TBytes; index : cardinal; chars : word) : String;
+
 Implementation
+
+// the bytes contain UTF16
+function memU16ToString(const bytes : TBytes; index : cardinal; chars : word) : String;
+{$IFDEF FPC}
+var
+  u : UnicodeString;
+{$ENDIF}
+begin
+  if chars = 0 then
+    exit('');
+  if (length(bytes) < index + chars*2) then
+    raise ETerminologyError.create('Read off end of file: '+inttostr(length(bytes))+' / '+inttostr(index)+':'+inttostr(chars*2));
+  {$IFDEF FPC}
+  setLength(u, chars);
+  Move(bytes[index], u[1], chars*2);
+  result := UTF16ToUTF8(u);
+  {$ELSE}
+  setLength(result, chars);
+  Move(bytes[index], result[1], chars*2);
+  {$ENDIF}
+end;
+
+// the bytes contain UTF8
+function memU8toString(bytes : TBytes; index, chars : integer) : String;
+{$IFNDEF FPC}
+var
+  a : AnsiString;
+{$ENDIF}
+begin
+  if chars = 0 then
+    exit('');
+  if (length(bytes) < index + chars) then
+    raise ETerminologyError.create('Read off end of file: '+inttostr(length(bytes))+' / '+inttostr(index)+':'+inttostr(chars));
+  {$IFDEF FPC}
+  setLength(result, chars);
+  Move(bytes[index], result[1], chars);
+  {$ELSE}
+  result := TEncoding.UTF8.GetString(bytes, index, chars);
+//  setLength(a, chars);
+//  Move(bytes[index], a[1], chars);
+//  result := String(a);
+  {$ENDIF}
+end;
 
 { TLoincStrings }
 
 function TLoincStrings.GetEntry(iIndex: Cardinal; var lang : byte): String;
+var
+  l : word;
 begin
-  if iIndex = 0 Then
+  result := '';
+  if iIndex > 0 Then
   begin
-    result := '';
-    exit;
-  end;
-
-  if (iIndex > FLength) then
-    Raise ETerminologyError.Create('Wrong length index getting LOINC name');
-  SetLength(Result, Word(FMaster[iIndex]));
-  if (iIndex + 3 + clength(result) > FLength) then
-    raise ETerminologyError.create('Wrong length index getting LOINC name (2)');
-  if Length(result) > 0 Then
-  begin
-    Move(FMaster[iIndex+2], lang, 1);
-    Move(FMaster[iIndex+3], result[1], Length(Result)*2);
+    if (iIndex > FLength) then
+      Raise ETerminologyError.Create('Wrong length index getting LOINC name');
+    l := Word(FMaster[iIndex]);
+    if (iIndex + 3 + (l * 2) > FLength) then
+      raise ETerminologyError.create('Wrong length index getting LOINC name (2)');
+    if l > 0 Then
+    begin
+      lang := FMaster[iIndex+2];
+      result := memU16ToString(FMaster, iIndex+3, l);
+    end;
   end;
 end;
 
@@ -519,26 +564,6 @@ end;
 
 { TLOINCReferences }
 
-{Function TLOINCReferences.GetWords(iIndex: Cardinal) : TWordArray;
-var
-  i : integer;
-  lw : Cardinal;
-begin
-  if (iIndex > FLength) then
-    raise ETerminologyError.create('Wrong length index getting LOINC list');
-  if Byte(FMaster[iIndex]) <> 0 Then
-    raise ETerminologyError.create('not a word list');
-  inc(iIndex);
-  move(FMaster[iIndex], lw, 4);
-  SetLength(Result, lw);
-  inc(iIndex, 4);
-  for i := 0 to Length(result)-1 Do
-  Begin
-    move(FMaster[iIndex], result[i], 2);
-    inc(iIndex, 2);
-  End;
-end;
-}
 Function TLOINCReferences.GetCardinals(iIndex: Cardinal) : TCardinalArray;
 var
   i : integer;
@@ -770,7 +795,7 @@ begin
     while L <= H do
     begin
       I := (L + H) shr 1;
-      sF := asCopy(FMaster, i*FReclength, FCodeLength);
+      sF := memU8toString(FMaster, i*FReclength, FCodeLength);
       C := CompareStr(sF, s);
       if C < 0 then L := I + 1 else
       begin
@@ -806,7 +831,7 @@ Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; langs : TLangArray; va
 Begin
   if iIndex > FLength div FRecLength - 1 Then
     raise ETerminologyError.create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
-  sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength));
+  sCode := trim(memU8toString(FMaster, iIndex*FRecLength, FCodeLength));
 {0}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Description], iDescription, 4);
 {4}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_OtherNames], iOtherNames, 4);
 {8}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Component], iComponent, 4);
@@ -2570,24 +2595,6 @@ begin
   Move(FMaster[(iIndex*32)+28], stems, 4);
 end;
 
-function ascopy(s : TBytes; start, len : integer) : String;
-var
-  res : AnsiString;
-begin
-  if len = 0 then
-    exit('');
-
-  SetLength(res, len);
-  if (length(s) < start + len) then
-    raise ETerminologyError.create('Read off end of file: '+inttostr(length(s))+' / '+inttostr(start)+':'+inttostr(len));
-  move(s[start], res[1], len);
-  result := String(res);
-end;
-
-function utfcopy(s : TBytes; start, length : integer) : String;
-begin
-  result := TEncoding.UTF8.GetString(s, start, length);
-end;
 
 
 { TLOINCAnswersList }
@@ -2707,10 +2714,9 @@ procedure TLoincLanguages.GetEntry(iIndex: byte; var lang, country: String);
 var
   s : String;
 begin
-  if ((iIndex +1) * 10 > FLength) then
+  if ((iIndex +1 ) * 10 > FLength) then
     raise ETerminologyError.create('Wrong length index getting LOINC language code');
-  SetLength(s, 5);
-  Move(FMaster[iIndex*10], s[1], 10);
+  s := memU16ToString(FMaster, iIndex*10, 5);
   StringSplit(s, '-', lang, country);
 end;
 
