@@ -584,6 +584,7 @@
         <DCCReference Include="FHIR.Server.Operations.pas"/>
         <DCCReference Include="FHIR.Server.TestRegistry.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Tests.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.Testing.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Comparisons.pas"/>
         <DCCReference Include="..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>

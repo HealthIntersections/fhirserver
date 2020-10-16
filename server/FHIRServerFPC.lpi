@@ -44,12 +44,14 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
             <Checks>
               <IOChecks Value="True"/>
               <RangeChecks Value="True"/>
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
           </CodeGeneration>
@@ -181,7 +183,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="363">
+    <Units Count="364">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1644,6 +1646,10 @@
         <Filename Value="..\library\database\FHIR.Database.Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit362>
+      <Unit363>
+        <Filename Value="..\library\support\FHIR.Support.Testing.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit363>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

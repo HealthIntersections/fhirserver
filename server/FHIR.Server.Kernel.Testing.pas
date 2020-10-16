@@ -61,7 +61,7 @@ end;
 
 procedure runTestInsight;
 begin
-  setupTesting;
+  FHIR.Server.TestRegistry.registerTests;
   {$IFDEF FPC}
   raise Exception.create('This is not supported in FPC');
   {$ELSE}
@@ -124,7 +124,7 @@ end;
 
 procedure runTests(ini : TFHIRServerIniFile);
 begin
-  setupTesting;
+  FHIR.Server.TestRegistry.registerTests;
   if hasCommandLineParam('gui') then
     RunTestGui(ini)
   else

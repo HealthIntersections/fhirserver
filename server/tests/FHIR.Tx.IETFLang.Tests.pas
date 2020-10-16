@@ -34,7 +34,7 @@ interface
 
 uses
   Windows, Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Tests,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Tx.Lang;
 
@@ -53,6 +53,8 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestSimple;
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestWrong;
   end;
+
+procedure registerTests;
 
 implementation
 
@@ -88,7 +90,7 @@ end;
 
 procedure TIETFLangTests.Setup;
 begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString(ownTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
+  FDefinitions := TIETFLanguageDefinitions.create(FileToString(serverTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
 end;
 
 procedure TIETFLangTests.TearDown;
@@ -110,10 +112,14 @@ begin
   fail('en-AUA');
 end;
 
-initialization
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
+begin
 {$IFDEF FPC}
   RegisterTest('Lang Tests', TIETFLangTests);
 {$ELSE}
   TDUnitX.RegisterTestFixture(TIETFLangTests);
 {$ENDIF}
+end;
+
 end.

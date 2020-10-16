@@ -34,83 +34,11 @@ interface
 
 Uses
   Windows, SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
-  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Support.Certs, FHIR.Support.Comparisons, FHIR.Web.Parsers;
-
-// *** General Testing Infrastructure ******************************************
-
-type
-  {$IFNDEF FPC}
-  TRunMethod = TTestMethod;
-  {$ENDIF}
-  TFslTestThread = class;
-
-  {
-    TFslTestCase
-
-    Base test case for all tests.
-
-    For DUnitX, this doesn't do much directly, but it does define common assertions mechanism for FPCUnit and DUnitX.
-
-    For FPC, it also makes it easy to register tests with alternative names
-
-  }
-  {$M+}
-  TFslTestCase = class {$IFDEF FPC} (TTestCase) {$ENDIF}
-  protected
-    procedure assertPass;
-    procedure assertFail(message : String);
-    procedure assertTrue(test : boolean; message : String); overload;
-    procedure assertTrue(test : boolean); overload;
-    procedure assertFalse(test : boolean; message : String); overload;
-    procedure assertFalse(test : boolean); overload;
-    procedure assertEqual(left, right : String; message : String); overload;
-    procedure assertEqual(left, right : String); overload;
-    procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
-    procedure thread(proc : TRunMethod);
-  public
-    {$IFNDEF FPC}
-    procedure setup; virtual;
-    procedure tearDown; virtual;
-    {$ENDIF}
-  end;
-
-  TFslTestSuite = class (TFslTestCase)
-  protected
-    {$IFDEF FPC}
-    FName : String;
-    function GetTestName: string; override;
-    {$ENDIF}
-  public
-    {$IFDEF FPC}
-    constructor Create(name : String);
-    {$ENDIF}
-    procedure TestCase(name : String); virtual;
-  published
-    {$IFDEF FPC}
-    procedure Test;
-    {$ENDIF}
-  end;
-
-  TFslTestThread = class (TThread)
-  private
-    FProc : TRunMethod;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(proc : TRunMethod);
-  end;
-
-
-function ownTestFile(parts : array of String) : String;
-function fhirTestFile(parts : array of String) : String;
-
-//    FHIR_TEST_CASE_ROOT : String = 'C:\work\org.hl7.fhir\fhir-test-cases';  // lots of the tests depend on content found in the FHIR publication
-//function FHIR_TESTING_FILE(ver : integer; folder, filename : String) : String; overload;
-//function FHIR_TESTING_FILE(folder, filename : String) : String; overload;
 
 Type
   TFslTestString = class (TFslObject)
@@ -799,39 +727,9 @@ Type
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testBase;
   End;
 
+procedure registerTests;
+
 implementation
-
-const psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
-
-function testFile(root : String; parts : array of String) : String;
-var
-  part : String;
-  s : String;
-begin
-  result := root;
-  for part in parts do
-  begin
-    s := part.Replace('/', psc).Replace('\', psc);
-    if result = '' then
-      result := s
-    else if not result.EndsWith(psc) and not s.startsWith(psc) then
-      result := result + psc + s
-    else if not result.EndsWith(psc) or not s.startsWith(psc) then
-      result := result + s
-    else
-      result := result + s.substring(1);
-  end;
-end;
-
-function ownTestFile(parts : array of String) : String;
-begin
-  result := testFile('c:/work/fhirserver', parts);
-end;
-
-function fhirTestFile(parts : array of String) : String;
-begin
-  result := testFile('c:/work/org.hl7.fhir/fhir-test-cases', parts);
-end;
 
 {$IFDEF FPC}
 { TFslRegexTests }
@@ -1152,7 +1050,7 @@ var
   i : integer;
 begin
   inherited Create;
-  if FindFirst(ownTestFile(['resources', 'testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
+  if FindFirst(serverTestFile(['resources', 'testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
   repeat
     AddTest(TXmlParserTest.Create(sr.Name));
   until FindNext(SR) <> 0;
@@ -1199,7 +1097,7 @@ var
   i : integer;
 begin
   inherited Create;
-  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1343,7 +1241,7 @@ var
   i : integer;
 begin
   inherited create;
-  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1368,7 +1266,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -4632,7 +4530,7 @@ var
   s : string;
 begin
   inherited create;
-  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     i := 0;
     for test in tests do
@@ -4658,7 +4556,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     SetLength(result, tests.Count);
     i := 0;
@@ -4715,7 +4613,7 @@ end;
 
 procedure TJsonPatchTest.setup;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   engine := TJsonPatchEngine.Create;
 end;
 
@@ -4982,147 +4880,9 @@ begin
   assertTrue(not lang.matches('eng'));
 end;
 
-{ TFslTestCase }
-
-procedure TFslTestCase.assertPass;
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
 begin
-  {$IFDEF FPC}
-  // nothing
-  {$ELSE}
-  Assert.Pass;
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertFail(message: String);
-begin
-  {$IFDEF FPC}
-  TAssert.Fail(message);
-  {$ELSE}
-  Assert.Fail(message);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertTrue(test: boolean; message: String);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertTrue(message, test);
-  {$ELSE}
-  Assert.IsTrue(test, message);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertTrue(test: boolean);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertTrue(test);
-  {$ELSE}
-  Assert.IsTrue(test);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertFalse(test: boolean; message: String);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertFalse(message, test);
-  {$ELSE}
-  Assert.IsFalse(test, message);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertFalse(test: boolean);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertFalse(test);
-  {$ELSE}
-  Assert.IsFalse(test);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertEqual(left, right, message: String);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertEquals(message, left, right);
-  {$ELSE}
-  Assert.AreEqual(left, right, message);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertEqual(left, right: String);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertEquals(left, right);
-  {$ELSE}
-  Assert.AreEqual(left, right);
-  {$ENDIF}
-end;
-
-procedure TFslTestCase.assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
-begin
-  {$IFDEF FPC}
-  TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
-  {$ELSE}
-  Assert.WillRaise(AMethod, AExceptionClass, AExceptionMessage);
-  {$ENDIF}
-end;
-
-{$IFNDEF FPC}
-procedure TFslTestCase.setup;
-begin
-
-end;
-
-procedure TFslTestCase.tearDown;
-begin
-
-end;
-{$ENDIF}
-
-procedure TFslTestCase.thread(proc: TRunMethod);
-begin
-  TFSLTestThread.Create(proc);
-end;
-
-{ TFslTestSuite }
-
-{$IFDEF FPC}
-constructor TFslTestSuite.Create(name : String);
-begin
-  inherited CreateWith('Test', name);
-  FName := name;
-end;
-
-function TFslTestSuite.GetTestName: string;
-begin
-  Result := FName;
-end;
-
-procedure TFslTestSuite.Test;
-begin
-  TestCase(FName);
-end;
-
-{$ENDIF}
-
-procedure TFslTestSuite.TestCase(name: String);
-begin
-  // nothing - override this
-end;
-
-{ TFslTestThread }
-
-constructor TFslTestThread.Create(proc: TRunMethod);
-begin
-  FProc := proc;
-  FreeOnTerminate := true;
-  inherited Create(false);
-end;
-
-procedure TFslTestThread.execute;
-begin
-  Fproc;
-end;
-
-initialization
   {$IFDEF FPC}
   RegisterTest('Generics Tests', TFslGenericsTests);
   RegisterTest('Collection Tests', TFslCollectionsTests);
@@ -5155,6 +4915,8 @@ initialization
   TDUnitX.RegisterTestFixture(TLangParserTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
   {$ENDIF}
+end;
+
 end.
 
 

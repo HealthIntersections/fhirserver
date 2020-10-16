@@ -34,7 +34,7 @@ interface
 
 uses
   Windows, Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Tests,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdUri;
 
 
@@ -50,7 +50,7 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestUnicode2;
   end;
 
-
+procedure registerTests;
 
 implementation
 
@@ -88,10 +88,14 @@ begin
   ok('http://orange.tw/sandbox/%EF%BC%AE%EF%BC%AE/passwd');
 end;
 
-initialization
+procedure registerTests;
+// don't use initialization - give other code time to set up directories etc
+begin
 {$IFDEF FPC}
   RegisterTest('IdUri Test', TIdUriParserTests);
 {$ELSE}
   TDUnitX.RegisterTestFixture(TIdUriParserTests);
 {$ENDIF}
+end;
+
 end.

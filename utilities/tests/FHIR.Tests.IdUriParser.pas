@@ -52,6 +52,8 @@ type
 {$ENDIF}
 
 
+procedure registerTests;
+
 implementation
 
 {$IFNDEF FPC}
@@ -92,7 +94,11 @@ begin
   ok('http://orange.tw/sandbox/%EF%BC%AE%EF%BC%AE/passwd');
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TIdUriParserTests);
 {$ENDIF}
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
+begin
+  TDUnitX.RegisterTestFixture(TIdUriParserTests);
+end;
+
 end.

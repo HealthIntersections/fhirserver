@@ -468,6 +468,7 @@ uses
   FHIR.Server.Operations in 'FHIR.Server.Operations.pas',
   FHIR.Server.TestRegistry in 'FHIR.Server.TestRegistry.pas',
   FHIR.Support.Tests in '..\library\support\FHIR.Support.Tests.pas',
+  FHIR.Support.Testing in '..\library\support\FHIR.Support.Testing.pas',
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   MarkdownCommonMarkTests in '..\..\markdown\tests\MarkdownCommonMarkTests.pas',
   MarkdownDaringFireballTests in '..\..\markdown\tests\MarkdownDaringFireballTests.pas',
