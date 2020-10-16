@@ -35,7 +35,8 @@ interface
 Uses
   SysUtils,
   IdGlobalProtocols,
-  FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.Stream, FHIR.Support.Shell;
+  FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.Stream
+  {$IFDEF WINDOWS}, FHIR.Support.Shell{$ENDIF};
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
 function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : boolean;
@@ -295,7 +296,11 @@ begin
     StringToFile(x1, f1, TEncoding.UTF8);
     StringToFile(x2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
+    {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+    {$ELSE}
+    raise Exception.create('to do');
+    {$ENDIF}
   end;
 end;
 
@@ -414,7 +419,11 @@ begin
       StringToFile(TJsonWriter.writeObjectStr(j1, true), f1, TEncoding.UTF8);
       StringToFile(TJsonWriter.writeObjectStr(j2, true), f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
+      {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+      {$ELSE}
+      raise Exception.create('to do');
+      {$ENDIF}
     finally
       j2.Free;
       j1.Free;
@@ -529,7 +538,11 @@ begin
 //          TRDFGenerator.saveToFile(t1, f1);
 //          TRDFGenerator.saveToFile(t2, f2);
           cmd := f1+' '+f2;
+          {$IFDEF WINDOWS}
           ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+          {$ELSE}
+          raise Exception.create('to do');
+          {$ENDIF}
         end;
       finally
         t2.free;
@@ -546,7 +559,11 @@ begin
       StringToFile(src1, f1, TEncoding.UTF8);
       StringToFile(src2, f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
+      {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+      {$ELSE}
+      raise Exception.create('to do');
+      {$ENDIF}
     end;
   end;
 end;
@@ -581,7 +598,11 @@ begin
     StringToFile(src1, f1, TEncoding.UTF8);
     StringToFile(src2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
+    {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+    {$ELSE}
+    raise Exception.create('to do');
+    {$ENDIF}
   end;
 end;
 

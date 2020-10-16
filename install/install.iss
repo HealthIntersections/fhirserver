@@ -102,48 +102,42 @@ Name: r4; Description: "Configure R4"
 Name: r5; Description: "Configure R5"
 
 [Files]
-; installer support
-Source: "C:\work\fhirserver\exec\32\installer.dll";               Flags: dontcopy;
+; 1. 64bit Application executables & Dlls
+Source: "C:\work\fhirserver\exec\64\FHIRServer.exe";                          DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
+;Source: "C:\work\fhirserver\exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\pack\64\FastMM_FullDebugMode64.dll";         DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "C:\work\fhirserver\exec\pack\64\ChakraCore.dll";                     DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\pack\64\sqlite3.dll";                        DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\64\ssleay32.dll";                            DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\64\libeay32.dll";                            DestDir: "{app}";    Flags: ignoreversion; Check: Is64BitInstallMode
 
-; root documentation files
-Source: "C:\work\fhirserver\license";                                        DestDir: "{app}";   Flags: ignoreversion; DestName: "license.txt";
-Source: "C:\work\fhirserver\readme.md";                                      DestDir: "{app}";   Flags: ignoreversion; DestName: "readme.txt";
-Source: "C:\work\fhirserver\install\readme.rtf";                             DestDir: "{app}";   Flags: ignoreversion; DestName: "documentation.rtf";
-Source: "C:\work\fhirserver\install\LOINC_short_license.txt";                DestDir: "{app}";   Flags: ignoreversion;
+; 2. 32 Application executables & Dlls
+Source: "C:\work\fhirserver\exec\32\FHIRServer.exe";                          DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
+;Source: "C:\work\fhirserver\exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\pack\32\FastMM_FullDebugMode.dll";           DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode 
+Source: "C:\work\fhirserver\exec\pack\32\ChakraCore.dll";                     DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\pack\32\sqlite3.dll";                        DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\32\ssleay32.dll";                            DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "C:\work\fhirserver\exec\32\libeay32.dll";                            DestDir: "{app}";    Flags: ignoreversion; Check: not Is64BitInstallMode
 
-; Executable files
-Source: "C:\work\fhirserver\Exec\64\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-;Source: "C:\work\fhirserver\Exec\64\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\FastMM_FullDebugMode64.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode 
-Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\FHIRServer.exe";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-;Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\FastMM_FullDebugMode.dll";               DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "C:\work\fhirserver\Exec\32\ChakraCore.dll";                         DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\sqlite3.dll";                            DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
+; 3. Data Files
+Source: "C:\work\fhirserver\exec\pack\fhirserver.ini";                        DestDir: "{app}";    Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
+Source: "C:\work\fhirserver\exec\pack\fhirserver.web";                        DestDir: "{app}";    Flags: ignoreversion recursesubdirs
+Source: "C:\work\fhirserver\exec\pack\ucum-essence.xml";                      DestDir: "{app}";    Flags: ignoreversion recursesubdirs
+Source: "C:\work\fhirserver\exec\pack\lang.txt";                              DestDir: "{app}";    Flags: ignoreversion recursesubdirs
 
-Source: "C:\work\fhirserver\Exec\fhir.ini";                                  DestDir: "{app}";   Flags: ignoreversion onlyifdoesntexist; DestName: "fhirserver.ini"; Permissions: users-full
+; 4. Documentation
+Source: "C:\work\fhirserver\license";                                         DestDir: "{app}";    Flags: ignoreversion; DestName: "license.txt";
+Source: "C:\work\fhirserver\readme.md";                                       DestDir: "{app}";    Flags: ignoreversion; DestName: "readme.txt";
+Source: "C:\work\fhirserver\install\readme.rtf";                              DestDir: "{app}";    Flags: ignoreversion; DestName: "documentation.rtf";
 
-; Web resources
-Source: "C:\work\fhirserver\server\web\*.*";                                        DestDir: {app}\web; Flags: ignoreversion recursesubdirs
+; 5. installer Help
+Source: "C:\work\fhirserver\exec\32\installer.dll";                           Flags: dontcopy;
 
-; Package Management
-Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-
-; Terminology resources
-Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\work\fhirserver\Exec\lang.txt";                           DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc-2.65.cache";                  DestDir: "{commonappdata}\FHIRServer"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\work\fhirserver\Exec\64\ssleay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\64\libeay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\ssleay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "C:\work\fhirserver\Exec\32\libeay32.dll";  DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 
 [INI]
-Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "folder";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
 
 [Icons]
