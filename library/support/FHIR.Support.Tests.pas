@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
@@ -801,6 +801,15 @@ Type
   TLangParserTests = Class (TFslTestCase)
   Published
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testBase;
+  End;
+
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TTarGZParserTests = Class (TFslTestCase)
+  private
+    function load(filename : String) : TFslList<TFslNameBuffer>;
+  Published
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testPackage;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testTzData;
   End;
 
 implementation
@@ -5126,6 +5135,82 @@ begin
   Fproc;
 end;
 
+{ TTarGZParserTests }
+
+function TTarGZParserTests.load(filename : String) : TFslList<TFslNameBuffer>;
+var
+  z : TZDecompressionStream;
+  tar : TTarArchive;
+  entry : TTarDirRec;
+  bi : TBytesStream;
+  item : TFslNameBuffer;
+  stream : TFileStream;
+begin
+  result := TFslList<TFslNameBuffer>.create;
+  try
+    stream := TFileStream.Create(filename, fmOpenRead);
+    try
+      z := TZDecompressionStream.Create(stream, 15+16);
+      try
+        tar := TTarArchive.Create(z);
+        try
+          tar.Reset;
+          while tar.FindNext(entry) do
+          begin
+            item := TFslNameBuffer.Create;
+            try
+              item.Name := String(entry.Name);
+              bi := TBytesStream.Create;
+              try
+                tar.ReadFile(bi);
+                item.AsBytes := copy(bi.Bytes, 0, bi.size);
+              finally
+                bi.free;
+              end;
+              result.Add(item.link)
+            finally
+              item.Free;
+            end;
+          end;
+        finally
+          tar.free;
+        end;
+      finally
+        z.free;
+      end;
+    finally
+      stream.Free;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TTarGZParserTests.testPackage;
+var
+  tgz : TFslList<TFslNameBuffer>;
+begin
+  tgz := load(ownTestFile(['resources', 'testcases', 'tgz', 'package.tgz']));
+  try
+    assertTrue(tgz.Count = 11);
+  finally
+    tgz.Free;
+  end;
+end;
+
+procedure TTarGZParserTests.testTzData;
+var
+  tgz : TFslList<TFslNameBuffer>;
+begin
+  tgz := load('tzdata.tar.gz');
+  try
+    assertTrue(tgz.Count = 30);
+  finally
+    tgz.Free;
+  end;
+end;
+
 initialization
   {$IFDEF FPC}
   RegisterTest('Generics Tests', TFslGenericsTests);
@@ -5142,6 +5227,7 @@ initialization
   RegisterTest('Turtle Tests', TTurtleTests);
   RegisterTest('Language Parser Tests', TLangParserTests);
   RegisterTest('Regex Test', TFslRegexTests);
+  RegisterTest('.tar.gz Tests', TTarGZParserTests);
   {$ELSE}
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
@@ -5157,6 +5243,7 @@ initialization
   TDUnitX.RegisterTestFixture(TTurtleTests);
   TDUnitX.RegisterTestFixture(TDecimalTests);
   TDUnitX.RegisterTestFixture(TLangParserTests);
+  TDUnitX.RegisterTestFixture(TTarGZParserTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
   {$ENDIF}
 end.
