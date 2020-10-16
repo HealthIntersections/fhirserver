@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Test</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -145,7 +145,7 @@
         <DCC_USE_BEFORE_DEF>error</DCC_USE_BEFORE_DEF>
         <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
-        <Debugger_CWD>C:\work\fhirserver\Exec</Debugger_CWD>
+        <Debugger_CWD>C:\work\fhirserver\exec\64</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
