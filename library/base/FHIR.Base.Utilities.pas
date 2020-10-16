@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, {$IFNDEF FPC} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
+  SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Fpc,
   FHIR.Web.Parsers, FHIR.Web.Fetcher,
   FHIR.Base.Objects, FHIR.Base.Lang;
@@ -306,7 +306,11 @@ end;
 
 function ZCompressBytes(const s: TBytes): TBytes;
 begin
+  {$IFDEF FPC}
+  raise ETodo.create('Not done yet');
+  {$ELSE}
   ZCompress(s, result);
+  {$ENDIF}
 end;
 
 function TryZDecompressBytes(const s: TBytes): TBytes;
@@ -319,27 +323,28 @@ begin
 end;
 
 function ZDecompressBytes(const s: TBytes): TBytes;
-  {$IFNDEF WIN64}
+{$IFDEF FPC}
+begin
+  raise ETodo.create('Not done yet');
+end;
+
+{$ELSE}
+{$IFNDEF WIN64}
 var
   buffer: Pointer;
   size  : Integer;
-  {$ENDIF}
+{$ENDIF}
 begin
   {$IFDEF WIN64}
   ZDecompress(s, result);
   {$ELSE}
-  {$IFDEF FPC}
-  ZDecompress(s, result);
-  {$ELSE}
   ZDecompress(@s[0],Length(s),buffer,size);
-
   SetLength(result,size);
   Move(buffer^,result[0],size);
-
   FreeMem(buffer);
   {$ENDIF}
-  {$ENDIF}
 end;
+{$ENDIF}
 
 
 function isVersionUrl(url, t : String) : boolean;

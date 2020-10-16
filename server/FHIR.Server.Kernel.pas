@@ -37,9 +37,9 @@ Uses
   SysUtils, StrUtils, Classes, IniFiles, Forms,
   IdSSLOpenSSLHeaders,
 
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
 
-  {$IFDEF FPC} odbcsqldyn, FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
+  {$IFDEF FPC} {odbcsqldyn, }FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
 
   FHIR.Server.Constants, FHIR.Server.Ini, FHIR.Server.Utilities, FHIR.Server.Javascript,
   FHIR.Server.Kernel.Base, FHIR.Server.Kernel.General, FHIR.Server.Kernel.Tx, FHIR.Server.Kernel.Bridge, FHIR.Server.Kernel.Testing;
@@ -201,6 +201,9 @@ begin
   {$ENDIF}
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
+    {$IFDEF FPC}
+    initialiseTZData(partnerFile('tzdata.tar.gz'));
+    {$ENDIF}
     {$IFDEF WINDOWS}
     CoInitialize(nil);
     {$ENDIF}

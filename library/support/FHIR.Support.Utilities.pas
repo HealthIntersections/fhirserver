@@ -1653,6 +1653,7 @@ Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneI
 Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
 {$ENDIF}
 
+function TimeZoneIANAName : String;
 function DateTimeToUnix(ConvDate: TDateTime): Longint;
 function UnixToDateTime(USec: Longint): TDateTime;
   
@@ -11237,6 +11238,817 @@ function UnixToDateTime(USec: Longint): TDateTime;
 begin
   Result := (Usec / 86400) + UnixStartDate;
 end;
+
+function getIanaNameForWindowsTimezone(zone : String; country : String) : String;
+begin
+  // source : https://github.com/unicode-org/cldr/blob/master/common/supplemental/windowsZones.xml
+  // Copyright © 1991-2013 Unicode, Inc.
+  // version 2020a
+  if country = '' then
+    country := '001'; // default;
+
+			//UTC-12:00) International Date Line West
+	if (zone = 'Dateline Standard Time') and (country ='001') then exit('Etc/GMT+12');
+	if (zone = 'Dateline Standard Time') and (country ='ZZ') then exit('Etc/GMT+12');
+
+			//UTC-11:00) Coordinated Universal Time-11
+	if (zone = 'UTC-11') and (country ='001') then exit('Etc/GMT+11');
+	if (zone = 'UTC-11') and (country ='AS') then exit('Pacific/Pago_Pago');
+	if (zone = 'UTC-11') and (country ='NU') then exit('Pacific/Niue');
+	if (zone = 'UTC-11') and (country ='UM') then exit('Pacific/Midway');
+	if (zone = 'UTC-11') and (country ='ZZ') then exit('Etc/GMT+11');
+
+			//UTC-10:00) Aleutian Islands
+	if (zone = 'Aleutian Standard Time') and (country ='001') then exit('America/Adak');
+	if (zone = 'Aleutian Standard Time') and (country ='US') then exit('America/Adak');
+
+			//UTC-10:00) Hawaii
+	if (zone = 'Hawaiian Standard Time') and (country ='001') then exit('Pacific/Honolulu');
+	if (zone = 'Hawaiian Standard Time') and (country ='CK') then exit('Pacific/Rarotonga');
+	if (zone = 'Hawaiian Standard Time') and (country ='PF') then exit('Pacific/Tahiti');
+	if (zone = 'Hawaiian Standard Time') and (country ='UM') then exit('Pacific/Johnston');
+	if (zone = 'Hawaiian Standard Time') and (country ='US') then exit('Pacific/Honolulu');
+	if (zone = 'Hawaiian Standard Time') and (country ='ZZ') then exit('Etc/GMT+10');
+
+			//UTC-09:30) Marquesas Islands
+	if (zone = 'Marquesas Standard Time') and (country ='001') then exit('Pacific/Marquesas');
+	if (zone = 'Marquesas Standard Time') and (country ='PF') then exit('Pacific/Marquesas');
+
+			//UTC-09:00) Alaska
+	if (zone = 'Alaskan Standard Time') and (country ='001') then exit('America/Anchorage');
+	if (zone = 'Alaskan Standard Time') and (country ='US') then exit('America/Anchorage'); // America/Juneau America/Metlakatla America/Nome America/Sitka America/Yakutat');
+
+			//UTC-09:00) Coordinated Universal Time-09
+	if (zone = 'UTC-09') and (country ='001') then exit('Etc/GMT+9');
+	if (zone = 'UTC-09') and (country ='PF') then exit('Pacific/Gambier');
+	if (zone = 'UTC-09') and (country ='ZZ') then exit('Etc/GMT+9');
+
+			//UTC-08:00) Baja California
+	if (zone = 'Pacific Standard Time (Mexico)') and (country ='001') then exit('America/Tijuana');
+	if (zone = 'Pacific Standard Time (Mexico)') and (country ='MX') then exit('America/Tijuana'); // America/Santa_Isabel');
+
+			//UTC-08:00) Coordinated Universal Time-08
+	if (zone = 'UTC-08') and (country ='001') then exit('Etc/GMT+8');
+	if (zone = 'UTC-08') and (country ='PN') then exit('Pacific/Pitcairn');
+	if (zone = 'UTC-08') and (country ='ZZ') then exit('Etc/GMT+8');
+
+			//UTC-08:00) Pacific Time (US & Canada)
+	if (zone = 'Pacific Standard Time') and (country ='001') then exit('America/Los_Angeles');
+	if (zone = 'Pacific Standard Time') and (country ='CA') then exit('America/Vancouver');
+	if (zone = 'Pacific Standard Time') and (country ='US') then exit('America/Los_Angeles');
+	if (zone = 'Pacific Standard Time') and (country ='ZZ') then exit('PST8PDT');
+
+			//UTC-07:00) Arizona
+	if (zone = 'US Mountain Standard Time') and (country ='001') then exit('America/Phoenix');
+	if (zone = 'US Mountain Standard Time') and (country ='CA') then exit('America/Whitehorse'); // America/Creston America/Dawson America/Dawson_Creek America/Fort_Nelson');
+	if (zone = 'US Mountain Standard Time') and (country ='MX') then exit('America/Hermosillo');
+	if (zone = 'US Mountain Standard Time') and (country ='US') then exit('America/Phoenix');
+	if (zone = 'US Mountain Standard Time') and (country ='ZZ') then exit('Etc/GMT+7');
+
+			//UTC-07:00) Chihuahua, La Paz, Mazatlan
+	if (zone = 'Mountain Standard Time (Mexico)') and (country ='001') then exit('America/Chihuahua');
+	if (zone = 'Mountain Standard Time (Mexico)') and (country ='MX') then exit('America/Chihuahua'); // America/Mazatlan');
+
+			//UTC-07:00) Mountain Time (US & Canada)
+	if (zone = 'Mountain Standard Time') and (country ='001') then exit('America/Denver');
+	if (zone = 'Mountain Standard Time') and (country ='CA') then exit('America/Edmonton'); // America/Cambridge_Bay America/Inuvik America/Yellowknife');
+	if (zone = 'Mountain Standard Time') and (country ='MX') then exit('America/Ojinaga');
+	if (zone = 'Mountain Standard Time') and (country ='US') then exit('America/Denver'); // America/Boise');
+	if (zone = 'Mountain Standard Time') and (country ='ZZ') then exit('MST7MDT');
+
+			//UTC-06:00) Central America
+	if (zone = 'Central America Standard Time') and (country ='001') then exit('America/Guatemala');
+	if (zone = 'Central America Standard Time') and (country ='BZ') then exit('America/Belize');
+	if (zone = 'Central America Standard Time') and (country ='CR') then exit('America/Costa_Rica');
+	if (zone = 'Central America Standard Time') and (country ='EC') then exit('Pacific/Galapagos');
+	if (zone = 'Central America Standard Time') and (country ='GT') then exit('America/Guatemala');
+	if (zone = 'Central America Standard Time') and (country ='HN') then exit('America/Tegucigalpa');
+	if (zone = 'Central America Standard Time') and (country ='NI') then exit('America/Managua');
+	if (zone = 'Central America Standard Time') and (country ='SV') then exit('America/El_Salvador');
+	if (zone = 'Central America Standard Time') and (country ='ZZ') then exit('Etc/GMT+6');
+
+			//UTC-06:00) Central Time (US & Canada)
+	if (zone = 'Central Standard Time') and (country ='001') then exit('America/Chicago');
+	if (zone = 'Central Standard Time') and (country ='CA') then exit('America/Winnipeg'); // America/Rainy_River America/Rankin_Inlet America/Resolute');
+	if (zone = 'Central Standard Time') and (country ='MX') then exit('America/Matamoros');
+	if (zone = 'Central Standard Time') and (country ='US') then exit('America/Chicago'); // America/Indiana/Knox America/Indiana/Tell_City America/Menominee America/North_Dakota/Beulah America/North_Dakota/Center America/North_Dakota/New_Salem');
+	if (zone = 'Central Standard Time') and (country ='ZZ') then exit('CST6CDT');
+
+			//UTC-06:00) Easter Island
+	if (zone = 'Easter Island Standard Time') and (country ='001') then exit('Pacific/Easter');
+	if (zone = 'Easter Island Standard Time') and (country ='CL') then exit('Pacific/Easter');
+
+			//UTC-06:00) Guadalajara, Mexico City, Monterrey
+	if (zone = 'Central Standard Time (Mexico)') and (country ='001') then exit('America/Mexico_City');
+	if (zone = 'Central Standard Time (Mexico)') and (country ='MX') then exit('America/Mexico_City America/Bahia_Banderas America/Merida America/Monterrey');
+
+			//UTC-06:00) Saskatchewan
+	if (zone = 'Canada Central Standard Time') and (country ='001') then exit('America/Regina');
+	if (zone = 'Canada Central Standard Time') and (country ='CA') then exit('America/Regina America/Swift_Current');
+
+			//UTC-05:00) Bogota, Lima, Quito, Rio Branco
+	if (zone = 'SA Pacific Standard Time') and (country ='001') then exit('America/Bogota');
+	if (zone = 'SA Pacific Standard Time') and (country ='BR') then exit('America/Rio_Branco America/Eirunepe');
+	if (zone = 'SA Pacific Standard Time') and (country ='CA') then exit('America/Coral_Harbour');
+	if (zone = 'SA Pacific Standard Time') and (country ='CO') then exit('America/Bogota');
+	if (zone = 'SA Pacific Standard Time') and (country ='EC') then exit('America/Guayaquil');
+	if (zone = 'SA Pacific Standard Time') and (country ='JM') then exit('America/Jamaica');
+	if (zone = 'SA Pacific Standard Time') and (country ='KY') then exit('America/Cayman');
+	if (zone = 'SA Pacific Standard Time') and (country ='PA') then exit('America/Panama');
+	if (zone = 'SA Pacific Standard Time') and (country ='PE') then exit('America/Lima');
+	if (zone = 'SA Pacific Standard Time') and (country ='ZZ') then exit('Etc/GMT+5');
+
+			//UTC-05:00) Chetumal
+	if (zone = 'Eastern Standard Time (Mexico)') and (country ='001') then exit('America/Cancun');
+	if (zone = 'Eastern Standard Time (Mexico)') and (country ='MX') then exit('America/Cancun');
+
+			//UTC-05:00) Eastern Time (US & Canada)
+	if (zone = 'Eastern Standard Time') and (country ='001') then exit('America/New_York');
+	if (zone = 'Eastern Standard Time') and (country ='BS') then exit('America/Nassau');
+	if (zone = 'Eastern Standard Time') and (country ='CA') then exit('America/Toronto'); // America/Iqaluit America/Montreal America/Nipigon America/Pangnirtung America/Thunder_Bay');
+	if (zone = 'Eastern Standard Time') and (country ='US') then exit('America/New_York'); // America/Detroit America/Indiana/Petersburg America/Indiana/Vincennes America/Indiana/Winamac America/Kentucky/Monticello America/Louisville');
+	if (zone = 'Eastern Standard Time') and (country ='ZZ') then exit('EST5EDT');
+
+			//UTC-05:00) Haiti
+	if (zone = 'Haiti Standard Time') and (country ='001') then exit('America/Port-au-Prince');
+	if (zone = 'Haiti Standard Time') and (country ='HT') then exit('America/Port-au-Prince');
+
+			//UTC-05:00) Havana
+	if (zone = 'Cuba Standard Time') and (country ='001') then exit('America/Havana');
+	if (zone = 'Cuba Standard Time') and (country ='CU') then exit('America/Havana');
+
+			//UTC-05:00) Indiana (East)
+	if (zone = 'US Eastern Standard Time') and (country ='001') then exit('America/Indianapolis');
+	if (zone = 'US Eastern Standard Time') and (country ='US') then exit('America/Indianapolis'); // America/Indiana/Marengo America/Indiana/Vevay');
+
+			//UTC-05:00) Turks and Caicos
+	if (zone = 'Turks And Caicos Standard Time') and (country ='001') then exit('America/Grand_Turk');
+	if (zone = 'Turks And Caicos Standard Time') and (country ='TC') then exit('America/Grand_Turk');
+
+			//UTC-04:00) Asuncion
+	if (zone = 'Paraguay Standard Time') and (country ='001') then exit('America/Asuncion');
+	if (zone = 'Paraguay Standard Time') and (country ='PY') then exit('America/Asuncion');
+
+			//UTC-04:00) Atlantic Time (Canada)
+	if (zone = 'Atlantic Standard Time') and (country ='001') then exit('America/Halifax');
+	if (zone = 'Atlantic Standard Time') and (country ='BM') then exit('Atlantic/Bermuda');
+	if (zone = 'Atlantic Standard Time') and (country ='CA') then exit('America/Halifax'); // America/Glace_Bay America/Goose_Bay America/Moncton');
+	if (zone = 'Atlantic Standard Time') and (country ='GL') then exit('America/Thule');
+
+			//UTC-04:00) Caracas
+	if (zone = 'Venezuela Standard Time') and (country ='001') then exit('America/Caracas');
+	if (zone = 'Venezuela Standard Time') and (country ='VE') then exit('America/Caracas');
+
+			//UTC-04:00) Cuiaba
+	if (zone = 'Central Brazilian Standard Time') and (country ='001') then exit('America/Cuiaba');
+	if (zone = 'Central Brazilian Standard Time') and (country ='BR') then exit('America/Cuiaba'); // America/Campo_Grande');
+
+			//UTC-04:00) Georgetown, La Paz, Manaus, San Juan
+	if (zone = 'SA Western Standard Time') and (country ='001') then exit('America/La_Paz');
+	if (zone = 'SA Western Standard Time') and (country ='AG') then exit('America/Antigua');
+	if (zone = 'SA Western Standard Time') and (country ='AI') then exit('America/Anguilla');
+	if (zone = 'SA Western Standard Time') and (country ='AW') then exit('America/Aruba');
+	if (zone = 'SA Western Standard Time') and (country ='BB') then exit('America/Barbados');
+	if (zone = 'SA Western Standard Time') and (country ='BL') then exit('America/St_Barthelemy');
+	if (zone = 'SA Western Standard Time') and (country ='BO') then exit('America/La_Paz');
+	if (zone = 'SA Western Standard Time') and (country ='BQ') then exit('America/Kralendijk');
+	if (zone = 'SA Western Standard Time') and (country ='BR') then exit('America/Manaus'); // America/Boa_Vista America/Porto_Velho');
+	if (zone = 'SA Western Standard Time') and (country ='CA') then exit('America/Blanc-Sablon');
+	if (zone = 'SA Western Standard Time') and (country ='CW') then exit('America/Curacao');
+	if (zone = 'SA Western Standard Time') and (country ='DM') then exit('America/Dominica');
+	if (zone = 'SA Western Standard Time') and (country ='DO') then exit('America/Santo_Domingo');
+	if (zone = 'SA Western Standard Time') and (country ='GD') then exit('America/Grenada');
+	if (zone = 'SA Western Standard Time') and (country ='GP') then exit('America/Guadeloupe');
+	if (zone = 'SA Western Standard Time') and (country ='GY') then exit('America/Guyana');
+	if (zone = 'SA Western Standard Time') and (country ='KN') then exit('America/St_Kitts');
+	if (zone = 'SA Western Standard Time') and (country ='LC') then exit('America/St_Lucia');
+	if (zone = 'SA Western Standard Time') and (country ='MF') then exit('America/Marigot');
+	if (zone = 'SA Western Standard Time') and (country ='MQ') then exit('America/Martinique');
+	if (zone = 'SA Western Standard Time') and (country ='MS') then exit('America/Montserrat');
+	if (zone = 'SA Western Standard Time') and (country ='PR') then exit('America/Puerto_Rico');
+	if (zone = 'SA Western Standard Time') and (country ='SX') then exit('America/Lower_Princes');
+	if (zone = 'SA Western Standard Time') and (country ='TT') then exit('America/Port_of_Spain');
+	if (zone = 'SA Western Standard Time') and (country ='VC') then exit('America/St_Vincent');
+	if (zone = 'SA Western Standard Time') and (country ='VG') then exit('America/Tortola');
+	if (zone = 'SA Western Standard Time') and (country ='VI') then exit('America/St_Thomas');
+	if (zone = 'SA Western Standard Time') and (country ='ZZ') then exit('Etc/GMT+4');
+
+			//UTC-04:00) Santiago
+	if (zone = 'Pacific SA Standard Time') and (country ='001') then exit('America/Santiago');
+	if (zone = 'Pacific SA Standard Time') and (country ='CL') then exit('America/Santiago');
+
+			//UTC-03:30) Newfoundland
+	if (zone = 'Newfoundland Standard Time') and (country ='001') then exit('America/St_Johns');
+	if (zone = 'Newfoundland Standard Time') and (country ='CA') then exit('America/St_Johns');
+
+			//UTC-03:00) Araguaina
+	if (zone = 'Tocantins Standard Time') and (country ='001') then exit('America/Araguaina');
+	if (zone = 'Tocantins Standard Time') and (country ='BR') then exit('America/Araguaina');
+
+			//UTC-03:00) Brasilia
+	if (zone = 'E. South America Standard Time') and (country ='001') then exit('America/Sao_Paulo');
+	if (zone = 'E. South America Standard Time') and (country ='BR') then exit('America/Sao_Paulo');
+
+			//UTC-03:00) Cayenne, Fortaleza
+	if (zone = 'SA Eastern Standard Time') and (country ='001') then exit('America/Cayenne');
+	if (zone = 'SA Eastern Standard Time') and (country ='AQ') then exit('Antarctica/Rothera'); // Antarctica/Palmer');
+	if (zone = 'SA Eastern Standard Time') and (country ='BR') then exit('America/Fortaleza'); // America/Belem America/Maceio America/Recife America/Santarem');
+	if (zone = 'SA Eastern Standard Time') and (country ='FK') then exit('Atlantic/Stanley');
+	if (zone = 'SA Eastern Standard Time') and (country ='GF') then exit('America/Cayenne');
+	if (zone = 'SA Eastern Standard Time') and (country ='SR') then exit('America/Paramaribo');
+	if (zone = 'SA Eastern Standard Time') and (country ='ZZ') then exit('Etc/GMT+3');
+
+			//UTC-03:00) City of Buenos Aires
+	if (zone = 'Argentina Standard Time') and (country ='001') then exit('America/Buenos_Aires');
+	if (zone = 'Argentina Standard Time') and (country ='AR') then exit('America/Buenos_Aires'); // America/Argentina/La_Rioja America/Argentina/Rio_Gallegos America/Argentina/Salta America/Argentina/San_Juan America/Argentina/San_Luis America/Argentina/Tucuman America/Argentina/Ushuaia America/Catamarca America/Cordoba America/Jujuy America/Mendoza');
+
+			//UTC-03:00) Greenland
+	if (zone = 'Greenland Standard Time') and (country ='001') then exit('America/Godthab');
+	if (zone = 'Greenland Standard Time') and (country ='GL') then exit('America/Godthab');
+
+			//UTC-03:00) Montevideo
+	if (zone = 'Montevideo Standard Time') and (country ='001') then exit('America/Montevideo');
+	if (zone = 'Montevideo Standard Time') and (country ='UY') then exit('America/Montevideo');
+
+			//UTC-03:00) Punta Arenas
+	if (zone = 'Magallanes Standard Time') and (country ='001') then exit('America/Punta_Arenas');
+	if (zone = 'Magallanes Standard Time') and (country ='CL') then exit('America/Punta_Arenas');
+
+			//UTC-03:00) Saint Pierre and Miquelon
+	if (zone = 'Saint Pierre Standard Time') and (country ='001') then exit('America/Miquelon');
+	if (zone = 'Saint Pierre Standard Time') and (country ='PM') then exit('America/Miquelon');
+
+			//UTC-03:00) Salvador
+	if (zone = 'Bahia Standard Time') and (country ='001') then exit('America/Bahia');
+	if (zone = 'Bahia Standard Time') and (country ='BR') then exit('America/Bahia');
+
+			//UTC-02:00) Coordinated Universal Time-02
+	if (zone = 'UTC-02') and (country ='001') then exit('Etc/GMT+2');
+	if (zone = 'UTC-02') and (country ='BR') then exit('America/Noronha');
+	if (zone = 'UTC-02') and (country ='GS') then exit('Atlantic/South_Georgia');
+	if (zone = 'UTC-02') and (country ='ZZ') then exit('Etc/GMT+2');
+
+			//UTC-01:00) Azores
+	if (zone = 'Azores Standard Time') and (country ='001') then exit('Atlantic/Azores');
+	if (zone = 'Azores Standard Time') and (country ='GL') then exit('America/Scoresbysund');
+	if (zone = 'Azores Standard Time') and (country ='PT') then exit('Atlantic/Azores');
+
+			//UTC-01:00) Cabo Verde Is.
+	if (zone = 'Cape Verde Standard Time') and (country ='001') then exit('Atlantic/Cape_Verde');
+	if (zone = 'Cape Verde Standard Time') and (country ='CV') then exit('Atlantic/Cape_Verde');
+	if (zone = 'Cape Verde Standard Time') and (country ='ZZ') then exit('Etc/GMT+1');
+
+			//UTC) Coordinated Universal Time
+	if (zone = 'UTC') and (country ='001') then exit('Etc/GMT');
+	if (zone = 'UTC') and (country ='GL') then exit('America/Danmarkshavn');
+	if (zone = 'UTC') and (country ='ZZ') then exit('Etc/GMT Etc/UTC');
+
+			//UTC+00:00) Dublin, Edinburgh, Lisbon, London
+	if (zone = 'GMT Standard Time') and (country ='001') then exit('Europe/London');
+	if (zone = 'GMT Standard Time') and (country ='ES') then exit('Atlantic/Canary');
+	if (zone = 'GMT Standard Time') and (country ='FO') then exit('Atlantic/Faeroe');
+	if (zone = 'GMT Standard Time') and (country ='GB') then exit('Europe/London');
+	if (zone = 'GMT Standard Time') and (country ='GG') then exit('Europe/Guernsey');
+	if (zone = 'GMT Standard Time') and (country ='IE') then exit('Europe/Dublin');
+	if (zone = 'GMT Standard Time') and (country ='IM') then exit('Europe/Isle_of_Man');
+	if (zone = 'GMT Standard Time') and (country ='JE') then exit('Europe/Jersey');
+	if (zone = 'GMT Standard Time') and (country ='PT') then exit('Europe/Lisbon Atlantic/Madeira');
+
+			//UTC+00:00) Monrovia, Reykjavik
+	if (zone = 'Greenwich Standard Time') and (country ='001') then exit('Atlantic/Reykjavik');
+	if (zone = 'Greenwich Standard Time') and (country ='BF') then exit('Africa/Ouagadougou');
+	if (zone = 'Greenwich Standard Time') and (country ='CI') then exit('Africa/Abidjan');
+	if (zone = 'Greenwich Standard Time') and (country ='GH') then exit('Africa/Accra');
+	if (zone = 'Greenwich Standard Time') and (country ='GM') then exit('Africa/Banjul');
+	if (zone = 'Greenwich Standard Time') and (country ='GN') then exit('Africa/Conakry');
+	if (zone = 'Greenwich Standard Time') and (country ='GW') then exit('Africa/Bissau');
+	if (zone = 'Greenwich Standard Time') and (country ='IS') then exit('Atlantic/Reykjavik');
+	if (zone = 'Greenwich Standard Time') and (country ='LR') then exit('Africa/Monrovia');
+	if (zone = 'Greenwich Standard Time') and (country ='ML') then exit('Africa/Bamako');
+	if (zone = 'Greenwich Standard Time') and (country ='MR') then exit('Africa/Nouakchott');
+	if (zone = 'Greenwich Standard Time') and (country ='SH') then exit('Atlantic/St_Helena');
+	if (zone = 'Greenwich Standard Time') and (country ='SL') then exit('Africa/Freetown');
+	if (zone = 'Greenwich Standard Time') and (country ='SN') then exit('Africa/Dakar');
+	if (zone = 'Greenwich Standard Time') and (country ='TG') then exit('Africa/Lome');
+
+			//UTC+00:00) Sao Tome
+	if (zone = 'Sao Tome Standard Time') and (country ='001') then exit('Africa/Sao_Tome');
+	if (zone = 'Sao Tome Standard Time') and (country ='ST') then exit('Africa/Sao_Tome');
+
+			//UTC+01:00) Casablanca
+	if (zone = 'Morocco Standard Time') and (country ='001') then exit('Africa/Casablanca');
+	if (zone = 'Morocco Standard Time') and (country ='EH') then exit('Africa/El_Aaiun');
+	if (zone = 'Morocco Standard Time') and (country ='MA') then exit('Africa/Casablanca');
+
+			//UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna
+	if (zone = 'W. Europe Standard Time') and (country ='001') then exit('Europe/Berlin');
+	if (zone = 'W. Europe Standard Time') and (country ='AD') then exit('Europe/Andorra');
+	if (zone = 'W. Europe Standard Time') and (country ='AT') then exit('Europe/Vienna');
+	if (zone = 'W. Europe Standard Time') and (country ='CH') then exit('Europe/Zurich');
+	if (zone = 'W. Europe Standard Time') and (country ='DE') then exit('Europe/Berlin Europe/Busingen');
+	if (zone = 'W. Europe Standard Time') and (country ='GI') then exit('Europe/Gibraltar');
+	if (zone = 'W. Europe Standard Time') and (country ='IT') then exit('Europe/Rome');
+	if (zone = 'W. Europe Standard Time') and (country ='LI') then exit('Europe/Vaduz');
+	if (zone = 'W. Europe Standard Time') and (country ='LU') then exit('Europe/Luxembourg');
+	if (zone = 'W. Europe Standard Time') and (country ='MC') then exit('Europe/Monaco');
+	if (zone = 'W. Europe Standard Time') and (country ='MT') then exit('Europe/Malta');
+	if (zone = 'W. Europe Standard Time') and (country ='NL') then exit('Europe/Amsterdam');
+	if (zone = 'W. Europe Standard Time') and (country ='NO') then exit('Europe/Oslo');
+	if (zone = 'W. Europe Standard Time') and (country ='SE') then exit('Europe/Stockholm');
+	if (zone = 'W. Europe Standard Time') and (country ='SJ') then exit('Arctic/Longyearbyen');
+	if (zone = 'W. Europe Standard Time') and (country ='SM') then exit('Europe/San_Marino');
+	if (zone = 'W. Europe Standard Time') and (country ='VA') then exit('Europe/Vatican');
+
+			//UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague
+	if (zone = 'Central Europe Standard Time') and (country ='001') then exit('Europe/Budapest');
+	if (zone = 'Central Europe Standard Time') and (country ='AL') then exit('Europe/Tirane');
+	if (zone = 'Central Europe Standard Time') and (country ='CZ') then exit('Europe/Prague');
+	if (zone = 'Central Europe Standard Time') and (country ='HU') then exit('Europe/Budapest');
+	if (zone = 'Central Europe Standard Time') and (country ='ME') then exit('Europe/Podgorica');
+	if (zone = 'Central Europe Standard Time') and (country ='RS') then exit('Europe/Belgrade');
+	if (zone = 'Central Europe Standard Time') and (country ='SI') then exit('Europe/Ljubljana');
+	if (zone = 'Central Europe Standard Time') and (country ='SK') then exit('Europe/Bratislava');
+
+			//UTC+01:00) Brussels, Copenhagen, Madrid, Paris
+	if (zone = 'Romance Standard Time') and (country ='001') then exit('Europe/Paris');
+	if (zone = 'Romance Standard Time') and (country ='BE') then exit('Europe/Brussels');
+	if (zone = 'Romance Standard Time') and (country ='DK') then exit('Europe/Copenhagen');
+	if (zone = 'Romance Standard Time') and (country ='ES') then exit('Europe/Madrid Africa/Ceuta');
+	if (zone = 'Romance Standard Time') and (country ='FR') then exit('Europe/Paris');
+
+			//UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb
+	if (zone = 'Central European Standard Time') and (country ='001') then exit('Europe/Warsaw');
+	if (zone = 'Central European Standard Time') and (country ='BA') then exit('Europe/Sarajevo');
+	if (zone = 'Central European Standard Time') and (country ='HR') then exit('Europe/Zagreb');
+	if (zone = 'Central European Standard Time') and (country ='MK') then exit('Europe/Skopje');
+	if (zone = 'Central European Standard Time') and (country ='PL') then exit('Europe/Warsaw');
+
+			//UTC+01:00) West Central Africa
+	if (zone = 'W. Central Africa Standard Time') and (country ='001') then exit('Africa/Lagos');
+	if (zone = 'W. Central Africa Standard Time') and (country ='AO') then exit('Africa/Luanda');
+	if (zone = 'W. Central Africa Standard Time') and (country ='BJ') then exit('Africa/Porto-Novo');
+	if (zone = 'W. Central Africa Standard Time') and (country ='CD') then exit('Africa/Kinshasa');
+	if (zone = 'W. Central Africa Standard Time') and (country ='CF') then exit('Africa/Bangui');
+	if (zone = 'W. Central Africa Standard Time') and (country ='CG') then exit('Africa/Brazzaville');
+	if (zone = 'W. Central Africa Standard Time') and (country ='CM') then exit('Africa/Douala');
+	if (zone = 'W. Central Africa Standard Time') and (country ='DZ') then exit('Africa/Algiers');
+	if (zone = 'W. Central Africa Standard Time') and (country ='GA') then exit('Africa/Libreville');
+	if (zone = 'W. Central Africa Standard Time') and (country ='GQ') then exit('Africa/Malabo');
+	if (zone = 'W. Central Africa Standard Time') and (country ='NE') then exit('Africa/Niamey');
+	if (zone = 'W. Central Africa Standard Time') and (country ='NG') then exit('Africa/Lagos');
+	if (zone = 'W. Central Africa Standard Time') and (country ='TD') then exit('Africa/Ndjamena');
+	if (zone = 'W. Central Africa Standard Time') and (country ='TN') then exit('Africa/Tunis');
+	if (zone = 'W. Central Africa Standard Time') and (country ='ZZ') then exit('Etc/GMT-1');
+
+			//UTC+02:00) Amman
+	if (zone = 'Jordan Standard Time') and (country ='001') then exit('Asia/Amman');
+	if (zone = 'Jordan Standard Time') and (country ='JO') then exit('Asia/Amman');
+
+			//UTC+02:00) Athens, Bucharest
+	if (zone = 'GTB Standard Time') and (country ='001') then exit('Europe/Bucharest');
+	if (zone = 'GTB Standard Time') and (country ='CY') then exit('Asia/Nicosia'); // Asia/Famagusta');
+	if (zone = 'GTB Standard Time') and (country ='GR') then exit('Europe/Athens');
+	if (zone = 'GTB Standard Time') and (country ='RO') then exit('Europe/Bucharest');
+
+			//UTC+02:00) Beirut
+	if (zone = 'Middle East Standard Time') and (country ='001') then exit('Asia/Beirut');
+	if (zone = 'Middle East Standard Time') and (country ='LB') then exit('Asia/Beirut');
+
+			//UTC+02:00) Cairo
+	if (zone = 'Egypt Standard Time') and (country ='001') then exit('Africa/Cairo');
+	if (zone = 'Egypt Standard Time') and (country ='EG') then exit('Africa/Cairo');
+
+			//UTC+02:00) Chisinau
+	if (zone = 'E. Europe Standard Time') and (country ='001') then exit('Europe/Chisinau');
+	if (zone = 'E. Europe Standard Time') and (country ='MD') then exit('Europe/Chisinau');
+
+			//UTC+02:00) Damascus
+	if (zone = 'Syria Standard Time') and (country ='001') then exit('Asia/Damascus');
+	if (zone = 'Syria Standard Time') and (country ='SY') then exit('Asia/Damascus');
+
+			//UTC+02:00) Gaza, Hebron
+	if (zone = 'West Bank Standard Time') and (country ='001') then exit('Asia/Hebron');
+	if (zone = 'West Bank Standard Time') and (country ='PS') then exit('Asia/Hebron Asia/Gaza');
+
+			//UTC+02:00) Harare, Pretoria
+	if (zone = 'South Africa Standard Time') and (country ='001') then exit('Africa/Johannesburg');
+	if (zone = 'South Africa Standard Time') and (country ='BI') then exit('Africa/Bujumbura');
+	if (zone = 'South Africa Standard Time') and (country ='BW') then exit('Africa/Gaborone');
+	if (zone = 'South Africa Standard Time') and (country ='CD') then exit('Africa/Lubumbashi');
+	if (zone = 'South Africa Standard Time') and (country ='LS') then exit('Africa/Maseru');
+	if (zone = 'South Africa Standard Time') and (country ='MW') then exit('Africa/Blantyre');
+	if (zone = 'South Africa Standard Time') and (country ='MZ') then exit('Africa/Maputo');
+	if (zone = 'South Africa Standard Time') and (country ='RW') then exit('Africa/Kigali');
+	if (zone = 'South Africa Standard Time') and (country ='SZ') then exit('Africa/Mbabane');
+	if (zone = 'South Africa Standard Time') and (country ='ZA') then exit('Africa/Johannesburg');
+	if (zone = 'South Africa Standard Time') and (country ='ZM') then exit('Africa/Lusaka');
+	if (zone = 'South Africa Standard Time') and (country ='ZW') then exit('Africa/Harare');
+	if (zone = 'South Africa Standard Time') and (country ='ZZ') then exit('Etc/GMT-2');
+
+			//UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius
+	if (zone = 'FLE Standard Time') and (country ='001') then exit('Europe/Kiev');
+	if (zone = 'FLE Standard Time') and (country ='AX') then exit('Europe/Mariehamn');
+	if (zone = 'FLE Standard Time') and (country ='BG') then exit('Europe/Sofia');
+	if (zone = 'FLE Standard Time') and (country ='EE') then exit('Europe/Tallinn');
+	if (zone = 'FLE Standard Time') and (country ='FI') then exit('Europe/Helsinki');
+	if (zone = 'FLE Standard Time') and (country ='LT') then exit('Europe/Vilnius');
+	if (zone = 'FLE Standard Time') and (country ='LV') then exit('Europe/Riga');
+	if (zone = 'FLE Standard Time') and (country ='UA') then exit('Europe/Kiev'); // Europe/Uzhgorod Europe/Zaporozhye');
+
+			//UTC+02:00) Jerusalem
+	if (zone = 'Israel Standard Time') and (country ='001') then exit('Asia/Jerusalem');
+	if (zone = 'Israel Standard Time') and (country ='IL') then exit('Asia/Jerusalem');
+
+			//UTC+02:00) Kaliningrad
+	if (zone = 'Kaliningrad Standard Time') and (country ='001') then exit('Europe/Kaliningrad');
+	if (zone = 'Kaliningrad Standard Time') and (country ='RU') then exit('Europe/Kaliningrad');
+
+			//UTC+02:00) Khartoum
+	if (zone = 'Sudan Standard Time') and (country ='001') then exit('Africa/Khartoum');
+	if (zone = 'Sudan Standard Time') and (country ='SD') then exit('Africa/Khartoum');
+
+			//UTC+02:00) Tripoli
+	if (zone = 'Libya Standard Time') and (country ='001') then exit('Africa/Tripoli');
+	if (zone = 'Libya Standard Time') and (country ='LY') then exit('Africa/Tripoli');
+
+			//UTC+02:00) Windhoek
+	if (zone = 'Namibia Standard Time') and (country ='001') then exit('Africa/Windhoek');
+	if (zone = 'Namibia Standard Time') and (country ='NA') then exit('Africa/Windhoek');
+
+			//UTC+03:00) Baghdad
+	if (zone = 'Arabic Standard Time') and (country ='001') then exit('Asia/Baghdad');
+	if (zone = 'Arabic Standard Time') and (country ='IQ') then exit('Asia/Baghdad');
+
+			//UTC+03:00) Istanbul
+	if (zone = 'Turkey Standard Time') and (country ='001') then exit('Europe/Istanbul');
+	if (zone = 'Turkey Standard Time') and (country ='TR') then exit('Europe/Istanbul');
+
+			//UTC+03:00) Kuwait, Riyadh
+	if (zone = 'Arab Standard Time') and (country ='001') then exit('Asia/Riyadh');
+	if (zone = 'Arab Standard Time') and (country ='BH') then exit('Asia/Bahrain');
+	if (zone = 'Arab Standard Time') and (country ='KW') then exit('Asia/Kuwait');
+	if (zone = 'Arab Standard Time') and (country ='QA') then exit('Asia/Qatar');
+	if (zone = 'Arab Standard Time') and (country ='SA') then exit('Asia/Riyadh');
+	if (zone = 'Arab Standard Time') and (country ='YE') then exit('Asia/Aden');
+
+			//UTC+03:00) Minsk
+	if (zone = 'Belarus Standard Time') and (country ='001') then exit('Europe/Minsk');
+	if (zone = 'Belarus Standard Time') and (country ='BY') then exit('Europe/Minsk');
+
+			//UTC+03:00) Moscow, St. Petersburg
+	if (zone = 'Russian Standard Time') and (country ='001') then exit('Europe/Moscow');
+	if (zone = 'Russian Standard Time') and (country ='RU') then exit('Europe/Moscow Europe/Kirov');
+	if (zone = 'Russian Standard Time') and (country ='UA') then exit('Europe/Simferopol');
+
+			//UTC+03:00) Nairobi
+	if (zone = 'E. Africa Standard Time') and (country ='001') then exit('Africa/Nairobi');
+	if (zone = 'E. Africa Standard Time') and (country ='AQ') then exit('Antarctica/Syowa');
+	if (zone = 'E. Africa Standard Time') and (country ='DJ') then exit('Africa/Djibouti');
+	if (zone = 'E. Africa Standard Time') and (country ='ER') then exit('Africa/Asmera');
+	if (zone = 'E. Africa Standard Time') and (country ='ET') then exit('Africa/Addis_Ababa');
+	if (zone = 'E. Africa Standard Time') and (country ='KE') then exit('Africa/Nairobi');
+	if (zone = 'E. Africa Standard Time') and (country ='KM') then exit('Indian/Comoro');
+	if (zone = 'E. Africa Standard Time') and (country ='MG') then exit('Indian/Antananarivo');
+	if (zone = 'E. Africa Standard Time') and (country ='SO') then exit('Africa/Mogadishu');
+	if (zone = 'E. Africa Standard Time') and (country ='SS') then exit('Africa/Juba');
+	if (zone = 'E. Africa Standard Time') and (country ='TZ') then exit('Africa/Dar_es_Salaam');
+	if (zone = 'E. Africa Standard Time') and (country ='UG') then exit('Africa/Kampala');
+	if (zone = 'E. Africa Standard Time') and (country ='YT') then exit('Indian/Mayotte');
+	if (zone = 'E. Africa Standard Time') and (country ='ZZ') then exit('Etc/GMT-3');
+
+			//UTC+03:30) Tehran
+	if (zone = 'Iran Standard Time') and (country ='001') then exit('Asia/Tehran');
+	if (zone = 'Iran Standard Time') and (country ='IR') then exit('Asia/Tehran');
+
+			//UTC+04:00) Abu Dhabi, Muscat
+	if (zone = 'Arabian Standard Time') and (country ='001') then exit('Asia/Dubai');
+	if (zone = 'Arabian Standard Time') and (country ='AE') then exit('Asia/Dubai');
+	if (zone = 'Arabian Standard Time') and (country ='OM') then exit('Asia/Muscat');
+	if (zone = 'Arabian Standard Time') and (country ='ZZ') then exit('Etc/GMT-4');
+
+			//UTC+04:00) Astrakhan, Ulyanovsk
+	if (zone = 'Astrakhan Standard Time') and (country ='001') then exit('Europe/Astrakhan');
+	if (zone = 'Astrakhan Standard Time') and (country ='RU') then exit('Europe/Astrakhan'); // Europe/Ulyanovsk');
+
+			//UTC+04:00) Baku
+	if (zone = 'Azerbaijan Standard Time') and (country ='001') then exit('Asia/Baku');
+	if (zone = 'Azerbaijan Standard Time') and (country ='AZ') then exit('Asia/Baku');
+
+			//UTC+04:00) Izhevsk, Samara
+	if (zone = 'Russia Time Zone 3') and (country ='001') then exit('Europe/Samara');
+	if (zone = 'Russia Time Zone 3') and (country ='RU') then exit('Europe/Samara');
+
+			//UTC+04:00) Port Louis
+	if (zone = 'Mauritius Standard Time') and (country ='001') then exit('Indian/Mauritius');
+	if (zone = 'Mauritius Standard Time') and (country ='MU') then exit('Indian/Mauritius');
+	if (zone = 'Mauritius Standard Time') and (country ='RE') then exit('Indian/Reunion');
+	if (zone = 'Mauritius Standard Time') and (country ='SC') then exit('Indian/Mahe');
+
+			//UTC+04:00) Saratov
+	if (zone = 'Saratov Standard Time') and (country ='001') then exit('Europe/Saratov');
+	if (zone = 'Saratov Standard Time') and (country ='RU') then exit('Europe/Saratov');
+
+			//UTC+04:00) Tbilisi
+	if (zone = 'Georgian Standard Time') and (country ='001') then exit('Asia/Tbilisi');
+	if (zone = 'Georgian Standard Time') and (country ='GE') then exit('Asia/Tbilisi');
+
+			//UTC+04:00) Volgograd
+	if (zone = 'Volgograd Standard Time') and (country ='001') then exit('Europe/Volgograd');
+	if (zone = 'Volgograd Standard Time') and (country ='RU') then exit('Europe/Volgograd');
+
+			//UTC+04:00) Yerevan
+	if (zone = 'Caucasus Standard Time') and (country ='001') then exit('Asia/Yerevan');
+	if (zone = 'Caucasus Standard Time') and (country ='AM') then exit('Asia/Yerevan');
+
+			//UTC+04:30) Kabul
+	if (zone = 'Afghanistan Standard Time') and (country ='001') then exit('Asia/Kabul');
+	if (zone = 'Afghanistan Standard Time') and (country ='AF') then exit('Asia/Kabul');
+
+			//UTC+05:00) Ashgabat, Tashkent
+	if (zone = 'West Asia Standard Time') and (country ='001') then exit('Asia/Tashkent');
+	if (zone = 'West Asia Standard Time') and (country ='AQ') then exit('Antarctica/Mawson');
+	if (zone = 'West Asia Standard Time') and (country ='KZ') then exit('Asia/Oral Asia/Aqtau'); // Asia/Aqtobe Asia/Atyrau');
+	if (zone = 'West Asia Standard Time') and (country ='MV') then exit('Indian/Maldives');
+	if (zone = 'West Asia Standard Time') and (country ='TF') then exit('Indian/Kerguelen');
+	if (zone = 'West Asia Standard Time') and (country ='TJ') then exit('Asia/Dushanbe');
+	if (zone = 'West Asia Standard Time') and (country ='TM') then exit('Asia/Ashgabat');
+	if (zone = 'West Asia Standard Time') and (country ='UZ') then exit('Asia/Tashkent'); // Asia/Samarkand');
+	if (zone = 'West Asia Standard Time') and (country ='ZZ') then exit('Etc/GMT-5');
+
+			//UTC+05:00) Ekaterinburg
+	if (zone = 'Ekaterinburg Standard Time') and (country ='001') then exit('Asia/Yekaterinburg');
+	if (zone = 'Ekaterinburg Standard Time') and (country ='RU') then exit('Asia/Yekaterinburg');
+
+			//UTC+05:00) Islamabad, Karachi
+	if (zone = 'Pakistan Standard Time') and (country ='001') then exit('Asia/Karachi');
+	if (zone = 'Pakistan Standard Time') and (country ='PK') then exit('Asia/Karachi');
+
+			//UTC+05:00) Qyzylorda
+	if (zone = 'Qyzylorda Standard Time') and (country ='001') then exit('Asia/Qyzylorda');
+	if (zone = 'Qyzylorda Standard Time') and (country ='KZ') then exit('Asia/Qyzylorda');
+
+			//UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi
+	if (zone = 'India Standard Time') and (country ='001') then exit('Asia/Calcutta');
+	if (zone = 'India Standard Time') and (country ='IN') then exit('Asia/Calcutta');
+
+			//UTC+05:30) Sri Jayawardenepura
+	if (zone = 'Sri Lanka Standard Time') and (country ='001') then exit('Asia/Colombo');
+	if (zone = 'Sri Lanka Standard Time') and (country ='LK') then exit('Asia/Colombo');
+
+			//UTC+05:45) Kathmandu
+	if (zone = 'Nepal Standard Time') and (country ='001') then exit('Asia/Katmandu');
+	if (zone = 'Nepal Standard Time') and (country ='NP') then exit('Asia/Katmandu');
+
+			//UTC+06:00) Astana
+	if (zone = 'Central Asia Standard Time') and (country ='001') then exit('Asia/Almaty');
+	if (zone = 'Central Asia Standard Time') and (country ='AQ') then exit('Antarctica/Vostok');
+	if (zone = 'Central Asia Standard Time') and (country ='CN') then exit('Asia/Urumqi');
+	if (zone = 'Central Asia Standard Time') and (country ='IO') then exit('Indian/Chagos');
+	if (zone = 'Central Asia Standard Time') and (country ='KG') then exit('Asia/Bishkek');
+	if (zone = 'Central Asia Standard Time') and (country ='KZ') then exit('Asia/Almaty Asia/Qostanay');
+	if (zone = 'Central Asia Standard Time') and (country ='ZZ') then exit('Etc/GMT-6');
+
+			//UTC+06:00) Dhaka
+	if (zone = 'Bangladesh Standard Time') and (country ='001') then exit('Asia/Dhaka');
+	if (zone = 'Bangladesh Standard Time') and (country ='BD') then exit('Asia/Dhaka');
+	if (zone = 'Bangladesh Standard Time') and (country ='BT') then exit('Asia/Thimphu');
+
+			//UTC+06:00) Omsk
+	if (zone = 'Omsk Standard Time') and (country ='001') then exit('Asia/Omsk');
+	if (zone = 'Omsk Standard Time') and (country ='RU') then exit('Asia/Omsk');
+
+			//UTC+06:30) Yangon (Rangoon)
+	if (zone = 'Myanmar Standard Time') and (country ='001') then exit('Asia/Rangoon');
+	if (zone = 'Myanmar Standard Time') and (country ='CC') then exit('Indian/Cocos');
+	if (zone = 'Myanmar Standard Time') and (country ='MM') then exit('Asia/Rangoon');
+
+			//UTC+07:00) Bangkok, Hanoi, Jakarta
+	if (zone = 'SE Asia Standard Time') and (country ='001') then exit('Asia/Bangkok');
+	if (zone = 'SE Asia Standard Time') and (country ='AQ') then exit('Antarctica/Davis');
+	if (zone = 'SE Asia Standard Time') and (country ='CX') then exit('Indian/Christmas');
+	if (zone = 'SE Asia Standard Time') and (country ='ID') then exit('Asia/Jakarta'); // Asia/Pontianak');
+	if (zone = 'SE Asia Standard Time') and (country ='KH') then exit('Asia/Phnom_Penh');
+	if (zone = 'SE Asia Standard Time') and (country ='LA') then exit('Asia/Vientiane');
+	if (zone = 'SE Asia Standard Time') and (country ='TH') then exit('Asia/Bangkok');
+	if (zone = 'SE Asia Standard Time') and (country ='VN') then exit('Asia/Saigon');
+	if (zone = 'SE Asia Standard Time') and (country ='ZZ') then exit('Etc/GMT-7');
+
+			//UTC+07:00) Barnaul, Gorno-Altaysk
+	if (zone = 'Altai Standard Time') and (country ='001') then exit('Asia/Barnaul');
+	if (zone = 'Altai Standard Time') and (country ='RU') then exit('Asia/Barnaul');
+
+			//UTC+07:00) Hovd
+	if (zone = 'W. Mongolia Standard Time') and (country ='001') then exit('Asia/Hovd');
+	if (zone = 'W. Mongolia Standard Time') and (country ='MN') then exit('Asia/Hovd');
+
+			//UTC+07:00) Krasnoyarsk
+	if (zone = 'North Asia Standard Time') and (country ='001') then exit('Asia/Krasnoyarsk');
+	if (zone = 'North Asia Standard Time') and (country ='RU') then exit('Asia/Krasnoyarsk'); // Asia/Novokuznetsk');
+
+			//UTC+07:00) Novosibirsk
+	if (zone = 'N. Central Asia Standard Time') and (country ='001') then exit('Asia/Novosibirsk');
+	if (zone = 'N. Central Asia Standard Time') and (country ='RU') then exit('Asia/Novosibirsk');
+
+			//UTC+07:00) Tomsk
+	if (zone = 'Tomsk Standard Time') and (country ='001') then exit('Asia/Tomsk');
+	if (zone = 'Tomsk Standard Time') and (country ='RU') then exit('Asia/Tomsk');
+
+			//UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi
+	if (zone = 'China Standard Time') and (country ='001') then exit('Asia/Shanghai');
+	if (zone = 'China Standard Time') and (country ='CN') then exit('Asia/Shanghai');
+	if (zone = 'China Standard Time') and (country ='HK') then exit('Asia/Hong_Kong');
+	if (zone = 'China Standard Time') and (country ='MO') then exit('Asia/Macau');
+
+			//UTC+08:00) Irkutsk
+	if (zone = 'North Asia East Standard Time') and (country ='001') then exit('Asia/Irkutsk');
+	if (zone = 'North Asia East Standard Time') and (country ='RU') then exit('Asia/Irkutsk');
+
+			//UTC+08:00) Kuala Lumpur, Singapore
+	if (zone = 'Singapore Standard Time') and (country ='001') then exit('Asia/Singapore');
+	if (zone = 'Singapore Standard Time') and (country ='BN') then exit('Asia/Brunei');
+	if (zone = 'Singapore Standard Time') and (country ='ID') then exit('Asia/Makassar');
+	if (zone = 'Singapore Standard Time') and (country ='MY') then exit('Asia/Kuala_Lumpur'); // Asia/Kuching');
+	if (zone = 'Singapore Standard Time') and (country ='PH') then exit('Asia/Manila');
+	if (zone = 'Singapore Standard Time') and (country ='SG') then exit('Asia/Singapore');
+	if (zone = 'Singapore Standard Time') and (country ='ZZ') then exit('Etc/GMT-8');
+
+			//UTC+08:00) Perth
+	if (zone = 'W. Australia Standard Time') and (country ='001') then exit('Australia/Perth');
+	if (zone = 'W. Australia Standard Time') and (country ='AU') then exit('Australia/Perth');
+
+			//UTC+08:00) Taipei
+	if (zone = 'Taipei Standard Time') and (country ='001') then exit('Asia/Taipei');
+	if (zone = 'Taipei Standard Time') and (country ='TW') then exit('Asia/Taipei');
+
+			//UTC+08:00) Ulaanbaatar
+	if (zone = 'Ulaanbaatar Standard Time') and (country ='001') then exit('Asia/Ulaanbaatar');
+	if (zone = 'Ulaanbaatar Standard Time') and (country ='MN') then exit('Asia/Ulaanbaatar'); // Asia/Choibalsan');
+
+			//UTC+08:45) Eucla
+	if (zone = 'Aus Central W. Standard Time') and (country ='001') then exit('Australia/Eucla');
+	if (zone = 'Aus Central W. Standard Time') and (country ='AU') then exit('Australia/Eucla');
+
+			//UTC+09:00) Chita
+	if (zone = 'Transbaikal Standard Time') and (country ='001') then exit('Asia/Chita');
+	if (zone = 'Transbaikal Standard Time') and (country ='RU') then exit('Asia/Chita');
+
+			//UTC+09:00) Osaka, Sapporo, Tokyo
+	if (zone = 'Tokyo Standard Time') and (country ='001') then exit('Asia/Tokyo');
+	if (zone = 'Tokyo Standard Time') and (country ='ID') then exit('Asia/Jayapura');
+	if (zone = 'Tokyo Standard Time') and (country ='JP') then exit('Asia/Tokyo');
+	if (zone = 'Tokyo Standard Time') and (country ='PW') then exit('Pacific/Palau');
+	if (zone = 'Tokyo Standard Time') and (country ='TL') then exit('Asia/Dili');
+	if (zone = 'Tokyo Standard Time') and (country ='ZZ') then exit('Etc/GMT-9');
+
+			//UTC+09:00) Pyongyang
+	if (zone = 'North Korea Standard Time') and (country ='001') then exit('Asia/Pyongyang');
+	if (zone = 'North Korea Standard Time') and (country ='KP') then exit('Asia/Pyongyang');
+
+			//UTC+09:00) Seoul
+	if (zone = 'Korea Standard Time') and (country ='001') then exit('Asia/Seoul');
+	if (zone = 'Korea Standard Time') and (country ='KR') then exit('Asia/Seoul');
+
+			//UTC+09:00) Yakutsk
+	if (zone = 'Yakutsk Standard Time') and (country ='001') then exit('Asia/Yakutsk');
+	if (zone = 'Yakutsk Standard Time') and (country ='RU') then exit('Asia/Yakutsk'); // Asia/Khandyga');
+
+			//UTC+09:30) Adelaide
+	if (zone = 'Cen. Australia Standard Time') and (country ='001') then exit('Australia/Adelaide');
+	if (zone = 'Cen. Australia Standard Time') and (country ='AU') then exit('Australia/Adelaide'); // Australia/Broken_Hill');
+
+			//UTC+09:30) Darwin
+	if (zone = 'AUS Central Standard Time') and (country ='001') then exit('Australia/Darwin');
+	if (zone = 'AUS Central Standard Time') and (country ='AU') then exit('Australia/Darwin');
+
+			//UTC+10:00) Brisbane
+	if (zone = 'E. Australia Standard Time') and (country ='001') then exit('Australia/Brisbane');
+	if (zone = 'E. Australia Standard Time') and (country ='AU') then exit('Australia/Brisbane'); // Australia/Lindeman');
+
+			//UTC+10:00) Canberra, Melbourne, Sydney
+	if (zone = 'AUS Eastern Standard Time') and (country ='001') then exit('Australia/Sydney');
+	if (zone = 'AUS Eastern Standard Time') and (country ='AU') then exit('Australia/Sydney'); // Australia/Melbourne');
+
+			//UTC+10:00) Guam, Port Moresby
+	if (zone = 'West Pacific Standard Time') and (country ='001') then exit('Pacific/Port_Moresby');
+	if (zone = 'West Pacific Standard Time') and (country ='AQ') then exit('Antarctica/DumontDUrville');
+	if (zone = 'West Pacific Standard Time') and (country ='FM') then exit('Pacific/Truk');
+	if (zone = 'West Pacific Standard Time') and (country ='GU') then exit('Pacific/Guam');
+	if (zone = 'West Pacific Standard Time') and (country ='MP') then exit('Pacific/Saipan');
+	if (zone = 'West Pacific Standard Time') and (country ='PG') then exit('Pacific/Port_Moresby');
+	if (zone = 'West Pacific Standard Time') and (country ='ZZ') then exit('Etc/GMT-10');
+
+			//UTC+10:00) Hobart
+	if (zone = 'Tasmania Standard Time') and (country ='001') then exit('Australia/Hobart');
+	if (zone = 'Tasmania Standard Time') and (country ='AU') then exit('Australia/Hobart'); // Australia/Currie Antarctica/Macquarie');
+
+			//UTC+10:00) Vladivostok
+	if (zone = 'Vladivostok Standard Time') and (country ='001') then exit('Asia/Vladivostok');
+	if (zone = 'Vladivostok Standard Time') and (country ='RU') then exit('Asia/Vladivostok'); // Asia/Ust-Nera');
+
+			//UTC+10:30) Lord Howe Island
+	if (zone = 'Lord Howe Standard Time') and (country ='001') then exit('Australia/Lord_Howe');
+	if (zone = 'Lord Howe Standard Time') and (country ='AU') then exit('Australia/Lord_Howe');
+
+			//UTC+11:00) Bougainville Island
+	if (zone = 'Bougainville Standard Time') and (country ='001') then exit('Pacific/Bougainville');
+	if (zone = 'Bougainville Standard Time') and (country ='PG') then exit('Pacific/Bougainville');
+
+			//UTC+11:00) Chokurdakh
+	if (zone = 'Russia Time Zone 10') and (country ='001') then exit('Asia/Srednekolymsk');
+	if (zone = 'Russia Time Zone 10') and (country ='RU') then exit('Asia/Srednekolymsk');
+
+			//UTC+11:00) Magadan
+	if (zone = 'Magadan Standard Time') and (country ='001') then exit('Asia/Magadan');
+	if (zone = 'Magadan Standard Time') and (country ='RU') then exit('Asia/Magadan');
+
+			//UTC+11:00) Norfolk Island
+	if (zone = 'Norfolk Standard Time') and (country ='001') then exit('Pacific/Norfolk');
+	if (zone = 'Norfolk Standard Time') and (country ='NF') then exit('Pacific/Norfolk');
+
+			//UTC+11:00) Sakhalin
+	if (zone = 'Sakhalin Standard Time') and (country ='001') then exit('Asia/Sakhalin');
+	if (zone = 'Sakhalin Standard Time') and (country ='RU') then exit('Asia/Sakhalin');
+
+			//UTC+11:00) Solomon Is., New Caledonia
+	if (zone = 'Central Pacific Standard Time') and (country ='001') then exit('Pacific/Guadalcanal');
+	if (zone = 'Central Pacific Standard Time') and (country ='AQ') then exit('Antarctica/Casey');
+	if (zone = 'Central Pacific Standard Time') and (country ='FM') then exit('Pacific/Ponape Pacific/Kosrae');
+	if (zone = 'Central Pacific Standard Time') and (country ='NC') then exit('Pacific/Noumea');
+	if (zone = 'Central Pacific Standard Time') and (country ='SB') then exit('Pacific/Guadalcanal');
+	if (zone = 'Central Pacific Standard Time') and (country ='VU') then exit('Pacific/Efate');
+	if (zone = 'Central Pacific Standard Time') and (country ='ZZ') then exit('Etc/GMT-11');
+
+			//UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky
+	if (zone = 'Russia Time Zone 11') and (country ='001') then exit('Asia/Kamchatka');
+	if (zone = 'Russia Time Zone 11') and (country ='RU') then exit('Asia/Kamchatka'); // Asia/Anadyr');
+
+			//UTC+12:00) Auckland, Wellington
+	if (zone = 'New Zealand Standard Time') and (country ='001') then exit('Pacific/Auckland');
+	if (zone = 'New Zealand Standard Time') and (country ='AQ') then exit('Antarctica/McMurdo');
+	if (zone = 'New Zealand Standard Time') and (country ='NZ') then exit('Pacific/Auckland');
+
+			//UTC+12:00) Coordinated Universal Time+12
+	if (zone = 'UTC+12') and (country ='001') then exit('Etc/GMT-12');
+	if (zone = 'UTC+12') and (country ='KI') then exit('Pacific/Tarawa');
+	if (zone = 'UTC+12') and (country ='MH') then exit('Pacific/Majuro'); // Pacific/Kwajalein');
+	if (zone = 'UTC+12') and (country ='NR') then exit('Pacific/Nauru');
+	if (zone = 'UTC+12') and (country ='TV') then exit('Pacific/Funafuti');
+	if (zone = 'UTC+12') and (country ='UM') then exit('Pacific/Wake');
+	if (zone = 'UTC+12') and (country ='WF') then exit('Pacific/Wallis');
+	if (zone = 'UTC+12') and (country ='ZZ') then exit('Etc/GMT-12');
+
+			//UTC+12:00) Fiji
+	if (zone = 'Fiji Standard Time') and (country ='001') then exit('Pacific/Fiji');
+	if (zone = 'Fiji Standard Time') and (country ='FJ') then exit('Pacific/Fiji');
+
+			//UTC+12:45) Chatham Islands
+	if (zone = 'Chatham Islands Standard Time') and (country ='001') then exit('Pacific/Chatham');
+	if (zone = 'Chatham Islands Standard Time') and (country ='NZ') then exit('Pacific/Chatham');
+
+			//UTC+13:00) Coordinated Universal Time+13
+	if (zone = 'UTC+13') and (country ='001') then exit('Etc/GMT-13');
+	if (zone = 'UTC+13') and (country ='KI') then exit('Pacific/Enderbury');
+	if (zone = 'UTC+13') and (country ='TK') then exit('Pacific/Fakaofo');
+	if (zone = 'UTC+13') and (country ='ZZ') then exit('Etc/GMT-13');
+
+			//UTC+13:00) Nuku'alofa
+	if (zone = 'Tonga Standard Time') and (country ='001') then exit('Pacific/Tongatapu');
+	if (zone = 'Tonga Standard Time') and (country ='TO') then exit('Pacific/Tongatapu');
+
+			//UTC+13:00) Samoa
+	if (zone = 'Samoa Standard Time') and (country ='001') then exit('Pacific/Apia');
+	if (zone = 'Samoa Standard Time') and (country ='WS') then exit('Pacific/Apia');
+
+			//UTC+14:00) Kiritimati Island
+	if (zone = 'Line Islands Standard Time') and (country ='001') then exit('Pacific/Kiritimati');
+	if (zone = 'Line Islands Standard Time') and (country ='KI') then exit('Pacific/Kiritimati');
+	if (zone = 'Line Islands Standard Time') and (country ='ZZ') then exit('Etc/GMT-14');
+
+  result := '';
+end;
+
+function TimeZoneIANAName : String;
+{$IFDEF WINDOWS}
+var
+  en : LangID;
+  tzi : TIME_ZONE_INFORMATION;
+begin
+  en := MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+  SetThreadUILanguage(en);
+  GetTimeZoneInformation(tzi);
+  result := getIanaNameForWindowsTimezone(tzi.StandardName, '');
+end;
+{$ENDIF}
+{$IFDEF OSX}
+begin
+  result := '';
+end;
+{$ENDIF}
+{$IFDEF LINUX}
+begin
+  result := '';
+end;
+{$ENDIF}
 
 class operator TFslDateTime.equal(a, b: TFslDateTime): Boolean;
 begin

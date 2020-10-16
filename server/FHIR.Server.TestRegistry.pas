@@ -56,19 +56,35 @@ FHIR.Tests.SmartLogin
 FHIR.XVersion.Tests
 FHIR.v2.Tests
 FHIR.R4.Tests.Context
-
 *)
 
 uses
+  CommonTestBase, FHIR.Support.Testing,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
   FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests;
 
-procedure setupTesting;
+procedure registerTests;
 
 implementation
 
-procedure setupTesting;
+procedure registerTests;
 begin
+  // before we register the tests, we have to set up the locations of 3 folders:
+  // * the markdown github repo location (local root)
+  // * the official tests github repo (local root)
+  // * the github repo for the server (local root)
+  // the tests don't clone these repos - this must be done first
+
+  MDTestRoot := 'c:\work\markdown';
+  ServerTestsRoot := 'c:\work\fhirserver';
+  FHIRTestsRoot := 'c:\work\org.hl7.fhir\fhir-test-cases';
+
+  MarkdownDaringFireballTests.registerTests;
+  MarkdownCommonMarkTests.registerTests;
+  FHIR.Support.Tests.registerTests;
+  FHIR.Tx.IETFLang.Tests.registerTests;
+  FHIR.Tests.IdUriParser.registerTests;
+  FHIR.Database.Tests.registerTests;
 end;
 
 end.

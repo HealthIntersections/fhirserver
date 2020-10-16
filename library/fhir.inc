@@ -6,6 +6,8 @@
 
 {$IFDEF FPC}
   {$MODE DELPHI}
+  {$MODESWITCH ADVANCEDRECORDS}
+  {$MODESWITCH TYPEHELPERS}
   {$IFDEF LINUX}
     {$IFNDEF CPU64}
     Linux only compiles for 64bit

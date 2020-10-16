@@ -35,7 +35,7 @@ interface
 
 Uses
   Windows, Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Tests,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
 
   FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
@@ -55,6 +55,8 @@ Type
     // {[TestCase] }procedure TestMySQLMaria;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSQLite;
   End;
+
+procedure registerTests;
 
 implementation
 
@@ -529,10 +531,14 @@ end;
 // end;
 //
 
-initialization
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
+begin
 {$IFDEF FPC}
   RegisterTest('DB Tests', TFslDBTests);
 {$ELSE}
   TDUnitX.RegisterTestFixture(TFslDBTests);
 {$ENDIF}
+end;
+
 end.

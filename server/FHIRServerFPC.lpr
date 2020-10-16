@@ -415,6 +415,7 @@ uses
   FHIR.Server.Kernel.Testing in 'FHIR.Server.Kernel.Testing.pas',
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
   FHIR.Support.Tests in '..\library\support\FHIR.Support.Tests.pas',
+  FHIR.Support.Testing in '..\library\support\FHIR.Support.Testing.pas',
   FHIR.Support.Fpc.ConsoleTester in '..\library\support\FHIR.Support.Fpc.ConsoleTester.pas',
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
