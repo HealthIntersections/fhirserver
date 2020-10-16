@@ -33,7 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, Forms,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils, Classes, Forms,
   {$IFNDEF FPC}
   TestInsight.DUnitX, DUnitX.Loggers.Console, DUnitX.Loggers.GUI.VCL, DUnitX.Loggers.Xml.NUnit, DUnitX.TestFramework,
   {$ENDIF}
@@ -71,7 +72,9 @@ end;
 
 procedure RunTestGui(ini : TFHIRServerIniFile);
 begin
-  // FreeConsole;
+  {$IFDEF WINDOWS}
+  FreeConsole;
+  {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;
   Application.CreateForm(TGuiTestRunner, TestRunner);

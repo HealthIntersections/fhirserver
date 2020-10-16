@@ -33,11 +33,15 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
-  FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
+  FHIR.Support.Xml, FHIR.Support.MXml,
+  {$IFNDEF FPC}
+  FHIR.Support.MsXml,
+  {$ENDIF}
+  FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Support.Certs, FHIR.Support.Comparisons, FHIR.Web.Parsers;
 
 // *** General Testing Infrastructure ******************************************

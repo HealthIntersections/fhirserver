@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
-  MarkDownProcessor,
+  MarkdownProcessor,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Smart.Utilities,
   FHIR.Client.base, FHIR.Client.HTTP,
