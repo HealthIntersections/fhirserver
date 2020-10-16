@@ -1019,9 +1019,12 @@ end;
 
 procedure TFslDBConnection.Terminate;
 begin
-  FPrepared := false;
-  FTerminated := true;
-  TerminateV;
+  if not FTerminated then
+  begin
+    FPrepared := false;
+    FTerminated := true;
+    TerminateV;
+  end;
 end;
 
 procedure TFslDBConnection.StartTransact;
@@ -1277,7 +1280,7 @@ begin
 
   FLock := TFslLock.create;
   FDBLogger := TFslDBLogger.create;
-  FSemaphore := TSemaphore.Create(nil, 0, 4{ $FFFF}, '');
+  FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
 
   FConnections := TFslList<TFslDBConnection>.create;

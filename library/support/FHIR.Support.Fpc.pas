@@ -63,6 +63,14 @@ function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
 
 type
 
+  { TSemaphore }
+
+  TSemaphore = class (TEventObject)
+  public
+    constructor create(attr: PSecurityAttributes; AInitialCount, AMaximumCount: Integer; const Name: string);
+    procedure Release; override;
+  end;
+
   { TCharHelper }
 
   TCharHelper = type helper for char
@@ -96,33 +104,6 @@ type
     function ToUniversalTime(const ADateTime: TDateTime; const ForceDaylight: Boolean = False): TDateTime; inline;
     class property Local: TTimeZone read FLocal;
   end;
-
-//  TWaitResult = (wrSignaled, wrTimeout, wrAbandoned, wrError, wrIOCompletion);
-
-  { TSemaphore }
-
-  TSemaphore = class
-  private
-    fMaxPermits: Cardinal;
-    fPermits: Cardinal;
-    fLock: TRTLCriticalSection;
-    FBlockQueue: Contnrs.TQueue;
-    function GetWaitCount: Cardinal;
-  public
-    constructor Create(MaxPermits: Cardinal); overload;
-    constructor Create(SemaphoreAttributes: Pointer; AInitialCount, AMaximumCount: Integer; const Name: string); overload;
-    destructor Destroy; override;
-
-    procedure Wait;
-    function WaitFor(timeout : integer) : TWaitResult;
-    procedure Post;
-    procedure Release;
-    function Used: Boolean;
-    property WaitCount: Cardinal read GetWaitCount;
-    property Permits: Cardinal read fPermits;
-    property MaxPermits: Cardinal read fMaxPermits;
-  end;
-
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
@@ -235,6 +216,17 @@ begin
   result := FileUtil.DeleteDirectory(DirectoryName, OnlyChildren);
 end;
 
+{ TSemaphore }
+
+constructor TSemaphore.create(attr: PSecurityAttributes; AInitialCount, AMaximumCount: Integer; const Name: string);
+begin
+  inherited Create(attr, false, false, name);
+end;
+
+procedure TSemaphore.Release;
+begin
+  setEvent();
+end;
 
 { TZDecompressionStream }
 
@@ -245,21 +237,19 @@ end;
 
 { TTimeZone }
 
-function TTimeZone.GetUtcOffset(const ADateTime: TDateTime;
-  const ForceDaylight: Boolean): TTimeSpan;
+function TTimeZone.GetUtcOffset(const ADateTime: TDateTime; const ForceDaylight: Boolean): TTimeSpan;
 begin
-
+  // todo: use PascalTZ
 end;
 
 function TTimeZone.ToLocalTime(const ADateTime: TDateTime): TDateTime;
 begin
-
+  // todo: use PascalTZ
 end;
 
-function TTimeZone.ToUniversalTime(const ADateTime: TDateTime;
-  const ForceDaylight: Boolean): TDateTime;
+function TTimeZone.ToUniversalTime(const ADateTime: TDateTime; const ForceDaylight: Boolean): TDateTime;
 begin
-
+  // todo: use PascalTZ
 end;
 
 { TCharHelper }
@@ -409,110 +399,19 @@ begin
 end;
 
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
-begin
-  if readOnly then
-    FileSetAttr(FileName, FileGetAttr(Filename) and faReadOnly)
-  else
-    FileSetAttr(FileName, FileGetAttr(Filename) and not faReadOnly);
-end;
-
-{ TSemaphore }
-
-function TSemaphore.GetWaitCount: Cardinal;
-begin
-  EnterCriticalSection(fLock);
-  try
-    Result:= FBlockQueue.Count;
-  finally
-    LeaveCriticalSection(fLock);
-  end;
-end;
-
-procedure TSemaphore.Wait;
 var
-  aWait: Boolean;
-  aEvent: PRTLEvent;
+  i : integer;
 begin
-  //writeln('Sem:');
-  //writeln('  locking...');
-  EnterCriticalSection(fLock);
-  try
-    //writeln('  locked');
-    if (fPermits > 0) then begin
-      Dec(fPermits);
-      aWait:= False;
-    end else begin
-      aEvent:= RTLEventCreate;
-      FBlockQueue.Push(aEvent);
-      aWait:= True;
-    end;
-  finally
-    LeaveCriticalSection(fLock);
-  end;
-  if aWait then begin
-    //writeln('  waiting...');
-    RTLeventWaitFor(aEvent);
-    RTLEventDestroy(aEvent);
-  end;
-  //writeln('  aquired');
+  i := FileGetAttr(Filename);
+  if readOnly then
+    i := FileSetAttr(FileName, i or faReadOnly)
+  else
+    i := FileSetAttr(FileName, i and not faReadOnly);
+  if i <> 0 then
+    RaiseLastOSError(i);
+  i := FileGetAttr(Filename);
 end;
 
-function TSemaphore.WaitFor(timeout: integer) : TWaitResult;
-begin
-  wait;
-  result := wrSignaled;
-end;
-
-procedure TSemaphore.Post;
-begin
-  EnterCriticalSection(fLock);
-  try
-    if FBlockQueue.Count > 0 then
-      RTLEventSetEvent(PRTLEvent(FBlockQueue.Pop))
-    else
-      Inc(fPermits);
-  finally
-    LeaveCriticalSection(fLock);
-  end;
-end;
-
-procedure TSemaphore.Release;
-begin
-  Post;
-end;
-
-function TSemaphore.Used: Boolean;
-begin
-  EnterCriticalSection(fLock);
-  try
-    Result := fPermits < fMaxPermits;
-  finally
-    LeaveCriticalSection(fLock);
-  end;
-end;
-
-constructor TSemaphore.Create(MaxPermits: Cardinal);
-begin
-  fMaxPermits := MaxPermits;
-  fPermits := MaxPermits;
-  InitCriticalSection(fLock);
-  FBlockQueue:= TQueue.Create;
-end;
-
-constructor TSemaphore.Create(SemaphoreAttributes: Pointer; AInitialCount, AMaximumCount: Integer; const Name: string);
-begin
-  fMaxPermits:= AMaximumCount;
-  fPermits := MaxPermits;
-  InitCriticalSection(fLock);
-  FBlockQueue:= TQueue.Create;
-end;
-
-destructor TSemaphore.Destroy;
-begin
-  DoneCriticalSection(fLock);
-  FBlockQueue.Free;
-  inherited Destroy;
-end;
 
 { TShortStringHelper }
 

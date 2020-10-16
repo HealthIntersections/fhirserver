@@ -225,3 +225,4 @@ web/QuestionnaireToHTML.xslt
 /exec/64
 /exec/*.ini
 /exec/pack/loinc-2.65.cache
+/server/tests/backup

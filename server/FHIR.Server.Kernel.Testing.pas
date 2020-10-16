@@ -71,7 +71,7 @@ end;
 
 procedure RunTestGui(ini : TFHIRServerIniFile);
 begin
-  FreeConsole;
+  // FreeConsole;
   {$IFDEF FPC}
   Application.Initialize;
   Application.CreateForm(TGuiTestRunner, TestRunner);

@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Test</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -588,6 +588,9 @@
         <DCCReference Include="..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\CommonTestBase.pas"/>
+        <DCCReference Include="tests\FHIR.Tx.IETFLang.Tests.pas"/>
+        <DCCReference Include="..\utilities\tests\FHIR.Tests.IdUriParser.pas"/>
+        <DCCReference Include="..\library\database\FHIR.Database.Tests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

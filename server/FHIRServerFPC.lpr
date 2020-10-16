@@ -410,10 +410,15 @@ uses
   FHIR.R4.Liquid in '..\library\r4\FHIR.R4.Liquid.pas',
   FHIR.Server.Twilio in 'FHIR.Server.Twilio.pas',
   FHIR.Server.WebBase in 'FHIR.Server.WebBase.pas',
+  FHIR.Server.TestRegistry in 'FHIR.Server.TestRegistry.pas',
+  FHIR.Server.Kernel.Testing in 'FHIR.Server.Kernel.Testing.pas',
   FHIR.Server.ClientCacheManager in 'FHIR.Server.ClientCacheManager.pas',
   FHIR.Support.Tests in '..\library\support\FHIR.Support.Tests.pas',
   FHIR.Support.Fpc.ConsoleTester in '..\library\support\FHIR.Support.Fpc.ConsoleTester.pas',
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
+  FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
+  FHIR.Tests.IdUriParser in 'tests\FHIR.Tests.IdUriParser.pas',
+  FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
   FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 
 {$R *.res}

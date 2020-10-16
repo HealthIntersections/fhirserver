@@ -181,7 +181,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="358">
+    <Units Count="363">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1621,10 +1621,29 @@
         <IsPartOfProject Value="True"/>
       </Unit356>
       <Unit357>
-        <Filename Value="..\library\support\fhir.support.fpc.consoletester.pas"/>
+        <Filename Value="..\library\support\FHIR.Support.Fpc.ConsoleTester.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Support.Fpc.ConsoleTester"/>
       </Unit357>
+      <Unit358>
+        <Filename Value="FHIR.Server.Kernel.Testing.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit358>
+      <Unit359>
+        <Filename Value="FHIR.Server.TestRegistry.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit359>
+      <Unit360>
+        <Filename Value="tests\FHIR.Tx.IETFLang.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit360>
+      <Unit361>
+        <Filename Value="tests\FHIR.Tests.IdUriParser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit361>
+      <Unit362>
+        <Filename Value="..\library\database\FHIR.Database.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit362>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1664,7 +1683,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="10">
+    <Exceptions Count="16">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -1695,6 +1714,24 @@
       <Item10>
         <Name Value="EIdCouldNotBindSocket"/>
       </Item10>
+      <Item11>
+        <Name Value="EXmlException"/>
+      </Item11>
+      <Item12>
+        <Name Value="ERdfException"/>
+      </Item12>
+      <Item13>
+        <Name Value="EAssertionFailedError"/>
+      </Item13>
+      <Item14>
+        <Name Value="ERegExpr"/>
+      </Item14>
+      <Item15>
+        <Name Value="EWebException"/>
+      </Item15>
+      <Item16>
+        <Name Value="EConvertError"/>
+      </Item16>
     </Exceptions>
   </Debugging>
 </CONFIG>

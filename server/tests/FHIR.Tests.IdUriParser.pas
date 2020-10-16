@@ -1,7 +1,7 @@
-unit RegularExpressions;
+unit FHIR.Tests.IdUriParser;
 
 {
-Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -16,7 +16,7 @@ are permitted provided that the following conditions are met:
    endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -28,54 +28,70 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, RegExpr;
+  Windows, Sysutils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Tests,
+  IdUri;
+
 
 type
-  TRegExOption = (roNone, roIgnoreCase, roMultiLine, roExplicitCapture,
-    roCompiled, roSingleLine, roIgnorePatternSpace, roNotEmpty);
-  TRegExOptions = set of TRegExOption;
-
-  { TRegEx }
-
-  TRegEx = class (Regexpr.TRegExpr)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TIdUriParserTests = Class (TFslTestCase)
   private
-  public
-    constructor Create(const Pattern: string; Options: TRegExOptions); overload;
-    function IsMatch(const Input: string): Boolean; overload;
-
-    class function isMatch(const input, pattern: string): Boolean; overload;
+    procedure ok(uri : String);
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestOK;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestFail;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestUnicode1;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestUnicode2;
   end;
+
+
 
 implementation
 
-{ TRegEx }
+{ TIdUriParserTests }
 
-constructor TRegEx.Create(const Pattern: string; Options: TRegExOptions);
-begin
-  inherited Create(pattern);
-end;
-
-function TRegEx.IsMatch(const Input: string): Boolean;
-begin
-  result := Exec(input);
-end;
-
-class function TRegEx.isMatch(const input, pattern : string): Boolean;
+procedure TIdUriParserTests.ok(uri: String);
 var
-  this : TRegEx;
+  o : TIdUri;
 begin
-  this := TRegEx.create(pattern);
+  o := TIdUri.create(uri);
   try
-    result := this.isMatch(input);
+    assertTrue(o <> nil);
   finally
-    this.free;
+    o.free;
   end;
 end;
 
-end.
+procedure TIdUriParserTests.TestFail;
+begin
+  ok('http://foo@127.0.0.1 @google.com/');
+end;
 
+procedure TIdUriParserTests.TestOK;
+begin
+  ok('http://test.fhir.org/r3');
+end;
+
+procedure TIdUriParserTests.TestUnicode1;
+begin
+  ok('http://orange.tw/sandbox/o<.o<./passwd');
+end;
+
+procedure TIdUriParserTests.TestUnicode2;
+begin
+  ok('http://orange.tw/sandbox/%EF%BC%AE%EF%BC%AE/passwd');
+end;
+
+initialization
+{$IFDEF FPC}
+  RegisterTest('IdUri Test', TIdUriParserTests);
+{$ELSE}
+  TDUnitX.RegisterTestFixture(TIdUriParserTests);
+{$ENDIF}
+end.

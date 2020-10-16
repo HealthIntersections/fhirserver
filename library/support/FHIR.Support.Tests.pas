@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  Windows, SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml, FHIR.Support.Json, FHIR.Support.Turtle,
@@ -46,6 +46,8 @@ type
   {$IFNDEF FPC}
   TRunMethod = TTestMethod;
   {$ENDIF}
+  TFslTestThread = class;
+
   {
     TFslTestCase
 
@@ -68,7 +70,12 @@ type
     procedure assertEqual(left, right : String; message : String); overload;
     procedure assertEqual(left, right : String); overload;
     procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+    procedure thread(proc : TRunMethod);
   public
+    {$IFNDEF FPC}
+    procedure setup; virtual;
+    procedure tearDown; virtual;
+    {$ENDIF}
   end;
 
   TFslTestSuite = class (TFslTestCase)
@@ -87,6 +94,16 @@ type
     procedure Test;
     {$ENDIF}
   end;
+
+  TFslTestThread = class (TThread)
+  private
+    FProc : TRunMethod;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(proc : TRunMethod);
+  end;
+
 
 function ownTestFile(parts : array of String) : String;
 function fhirTestFile(parts : array of String) : String;
@@ -140,9 +157,6 @@ Type
   public
   end;
 
-
-  { TFslCollectionsTests }
-
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TFslCollectionsTests = class (TFslTestCase)
   private
@@ -153,7 +167,16 @@ Type
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAddFail;
   end;
 
-type
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+
+  {$IFDEF FPC}
+  TFslRegexTests = class (TFslTestCase)
+  private
+  published
+    procedure testRegex;
+  end;
+  {$ENDIF}
+
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TOSXTests = class (TFslTestCase)
   private
@@ -167,7 +190,7 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTemp;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslDateTime;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestAdvFile;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslFile;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestRemoveAccents;
   end;
 
@@ -214,7 +237,6 @@ Type
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
-
   [TextFixture]
   {$ENDIF}
   TXmlParserTest = Class (TFslTestSuite)
@@ -223,8 +245,18 @@ Type
     procedure ParserTest(Name : String);
   End;
 
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TXmlUtilsTest = Class (TFslTestCase)
+  Published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestUnPretty;
+    procedure TestPretty;
+    procedure TestNoPretty;
+    procedure TestNoDense;
+  End;
+
   {$IFDEF FPC}
-  TXmlUtilsTests = class(TTestSuite)
+  TXPathParserTests = class(TTestSuite)
   private
   public
     constructor Create; override;
@@ -235,33 +267,29 @@ Type
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
+
   [TextFixture]
   {$ENDIF}
-  TXmlUtilsTest = Class (TFslTestSuite)
-  Private
-  Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
-    procedure TestUnPretty;
-    procedure TestPretty;
-    procedure TestNoPretty;
-    procedure TestNoDense;
-  End;
-
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXPathParserTests = Class (TFslTestCase)
+  TXPathParserTest = Class (TFslTestSuite)
   Private
     tests : TMXmlDocument;
     functionNames : TStringList;
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
+  public
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
   Published
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
-
     {$IFNDEF FPC}[XPathParserTestCase]{$ENDIF}
     procedure PathTest(Name : String);
   End;
 
-  {$IFNDEF FPC}
+  {$IFDEF FPC}
+  TXPathEngineTests = class(TTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   XPathEngineTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
@@ -269,24 +297,33 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXPathEngineTests = Class (TFslTestCase)
+  TXPathEngineTest = Class (TFslTestSuite)
   Private
     tests : TMXmlDocument;
+    {$IFNDEF FPC}
     mstests : IXMLDOMDocument2;
+    function findSampleMs(id : String) : IXMLDOMElement;
+    procedure runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+    {$ENDIF}
     function findTestCase(name : String) : TMXmlElement;
     function findSample(id : String) : TMXmlElement;
-    function findSampleMs(id : String) : IXMLDOMElement;
     procedure runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
-    procedure runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+  public
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
   Published
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
     {$IFNDEF FPC}[XPathEngineTestCase]{$ENDIF}
     procedure PathTest(Name : String);
   End;
 
-  {$IFNDEF FPC}
+  {$IFDEF FPC}
+  TXmlPatchTests = class(TTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   XmlPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
@@ -294,16 +331,17 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXmlPatchTests = Class (TFslTestCase)
+  TXmlPatchTest = Class (TFslTestSuite)
   Private
     tests : TMXmlDocument;
     engine : TXmlPatchEngine;
     // here for FPC to make the exception procedure event.
     test, target, patch, error, patched : TMXmlElement;
     procedure doExecute;
+  public
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
   Published
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
     {$IFNDEF FPC}[XmlPatchTestCase]{$ENDIF}
     procedure PatchTest(Name : String);
@@ -320,7 +358,13 @@ Type
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDecimal;
   End;
 
-  {$IFNDEF FPC}
+  {$IFDEF FPC}
+  TJsonPatchTests = class(TTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   JsonPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
@@ -328,18 +372,16 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
-
-  { TJsonPatchTests }
-
-  TJsonPatchTests = Class (TFslTestCase)
+  TJsonPatchTest = Class (TFslTestSuite)
   Private
     tests : TJsonArray;
     test : TJsonObject;
     engine : TJsonPatchEngine;
     procedure execute;
+  public
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
+    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
   Published
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown;
 
     {$IFNDEF FPC}[JsonPatchTestCase]{$ENDIF}
     procedure PatchTest(Name : String);
@@ -348,9 +390,9 @@ Type
 Type
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TJWTTests = Class (TFslTestCase)
-  Private
+  public
+    {$IFNDEF FPC}[SetUp]{$ENDIF} procedure Setup; override;
   Published
-    {$IFNDEF FPC}[SetUp]{$ENDIF} procedure Setup;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestPacking;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestUnpacking;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCert;
@@ -791,6 +833,22 @@ begin
   result := testFile('c:/work/org.hl7.fhir/fhir-test-cases', parts);
 end;
 
+{$IFDEF FPC}
+{ TFslRegexTests }
+
+procedure TFslRegexTests.testRegex;
+var
+  this : TRegExpr;
+begin
+  this := TRegExpr.create('(([a-z])+:)*((%[0-9a-fA-F]{2})|[&''\\(\\)*+,;:@_~?!$\\/\\-\\#.\\=a-zA-Z0-9])+');
+  try
+    assertTrue(this.Exec('http://a.example/p'));
+  finally
+    this.free;
+  end;
+end;
+{$ENDIF}
+
 { TFslGenericsTests }
 
 {$HINTS OFF}
@@ -958,7 +1016,27 @@ end;
 
 { TXmlTests }
 
-{$IFNDEF FPC}
+{$IFDEF FPC}
+constructor TXmlPatchTests.Create;
+var
+  tests : TMXmlDocument;
+  test : TMXmlElement;
+begin
+  inherited create;
+  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
+  try
+    test := tests.document.first;
+    while test <> nil do
+    begin
+      if test.Name = 'case' then
+        AddTest(TXmlPatchTest.create(test.attribute['name']));
+      test := test.Next;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+{$ELSE}
 
 { XmlPatchTestCaseAttribute }
 
@@ -993,14 +1071,14 @@ end;
 
 {$ENDIF}
 
-{ TXmlPatchTests }
+{ TXmlPatchTest }
 
-procedure TXmlPatchTests.doExecute();
+procedure TXmlPatchTest.doExecute();
 begin
   engine.execute(tests, target, patch);
 end;
 
-procedure TXmlPatchTests.PatchTest(Name: String);
+procedure TXmlPatchTest.PatchTest(Name: String);
 var
   s : String;
   ok : boolean;
@@ -1037,13 +1115,13 @@ begin
   end;
 end;
 
-procedure TXmlPatchTests.setup;
+procedure TXmlPatchTest.setup;
 begin
   tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
-procedure TXmlPatchTests.teardown;
+procedure TXmlPatchTest.teardown;
 begin
   engine.Free;
   tests.Free;
@@ -1112,9 +1190,9 @@ end;
 {$ENDIF}
 
 {$IFDEF FPC}
-{ TXmlUtilsTests }
+{ TXPathParserTests }
 
-constructor TXmlUtilsTests.Create;
+constructor TXPathParserTests.Create;
 var
   tests : TMXmlDocument;
   path : TMXmlElement;
@@ -1127,7 +1205,7 @@ begin
     path := tests.document.first;
     while path <> nil do
     begin
-      AddTest(TXmlUtilsTest.create(inttostr(i)));
+      AddTest(TXPathParserTest.create(inttostr(i)));
       inc(i);
       path := path.next;
     end;
@@ -1209,7 +1287,7 @@ begin
 end;
 }
 
-procedure TXPathParserTests.collectFunctionNames(xp: TMXPathExpressionNode);
+procedure TXPathParserTest.collectFunctionNames(xp: TMXPathExpressionNode);
 var
   node : TMXPathExpressionNode;
 begin
@@ -1229,7 +1307,7 @@ begin
   collectFunctionNames(xp.NextOp);
 end;
 
-procedure TXPathParserTests.PathTest(Name: String);
+procedure TXPathParserTest.PathTest(Name: String);
 var
   test : TMXmlElement;
   xp : TMXPathExpressionNode;
@@ -1244,19 +1322,43 @@ begin
   end;
 end;
 
-procedure TXPathParserTests.setup;
+procedure TXPathParserTest.setup;
 begin
   tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   functionNames := TStringList.Create;
 end;
 
-procedure TXPathParserTests.teardown;
+procedure TXPathParserTest.teardown;
 begin
   functionNames.Free;
   tests.Free;
 end;
 
-{$IFNDEF FPC}
+{$IFDEF FPC}
+
+constructor TXPathEngineTests.Create;
+var
+  tests : TMXmlDocument;
+  tcase : TMXmlElement;
+  i : integer;
+begin
+  inherited create;
+  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  try
+    i := 0;
+    tcase := tests.document.firstElement;
+    while tcase <> nil do
+    begin
+      if tcase.Name = 'case' then
+        addTest(TXPathEngineTest.create(tcase.attribute['name']));
+      tcase := tcase.nextElement;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+
+{$ELSE}
 
 { XPathEngineTestCaseAttribute }
 
@@ -1266,7 +1368,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(ownTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1289,9 +1391,9 @@ end;
 
 {$ENDIF}
 
-{ TXPathEngineTests }
+{ TXPathEngineTest }
 
-function TXPathEngineTests.findSample(id: String): TMXmlElement;
+function TXPathEngineTest.findSample(id: String): TMXmlElement;
 var
   sample : TMXmlElement;
 begin
@@ -1308,7 +1410,8 @@ begin
   result := nil;
 end;
 
-function TXPathEngineTests.findSampleMs(id: String): IXMLDOMElement;
+{$IFNDEF FPC}
+function TXPathEngineTest.findSampleMs(id: String): IXMLDOMElement;
 var
   sample : IXMLDOMElement;
 begin
@@ -1325,92 +1428,7 @@ begin
   result := nil;
 end;
 
-function TXPathEngineTests.findTestCase(name: String): TMXmlElement;
-var
-  tcase : TMXmlElement;
-  i : integer;
-begin
-  i := 0;
-  tcase := tests.document.firstElement;
-  while tcase <> nil do
-  begin
-    if tcase.Name = 'case' then
-    begin
-      if (inttostr(i) = Name) then
-        exit(tcase);
-      inc(i);
-    end;
-    tcase := tcase.next;
-  end;
-  result := nil;
-end;
-
-procedure TXPathEngineTests.runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
-var
-  focus, outcome : TMXmlElement;
-  nodes : TFslList<TMXmlNode>;
-  node : TMXmlNode;
-  i : integer;
-begin
-  focus := findSample(test.attribute['id']).firstElement;
-  nodes := tests.select(test.element('xpath').attribute['value'], focus);
-  try
-  if test.element('outcomes').hasAttribute['count'] then
-    assertTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
-  else
-  begin
-    assertTrue(outcomes.Count = nodes.Count, 'Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.Count));
-    for i := 0 to outcomes.Count - 1 do
-    begin
-      node := nodes[i];
-      outcome := outcomes[i];
-      if outcome.attribute['type'] = 'string' then
-      begin
-        assertTrue(node is TMXmlString, 'Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
-        assertTrue(TMXmlString(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
-      end
-      else if outcome.attribute['type'] = 'number' then
-      begin
-        assertTrue(node is TMXmlNumber, 'Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
-        assertTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
-      end
-      else if outcome.attribute['type'] = 'boolean' then
-      begin
-        assertTrue(node is TMXmlBoolean, 'Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
-        assertTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
-      end
-      else if outcome.attribute['type'] = 'attribute' then
-      begin
-        assertTrue(node is TMXmlAttribute, 'Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+node.ClassName.substring(5));
-        assertTrue(TMXmlAttribute(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlAttribute(node).LocalName);
-        assertTrue(TMXmlAttribute(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlAttribute(node).value);
-      end
-      else if outcome.attribute['type'] = 'element' then
-      begin
-        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntElement), 'Node '+inttostr(i)+' has the wrong type (expected element, found '+node.ClassName.substring(5));
-        assertTrue(TMXmlElement(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlElement(node).LocalName);
-        assertTrue(TMXmlElement(node).NamespaceURI = outcome.attribute['namespace'], 'Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+TMXmlElement(node).NamespaceURI);
-      end
-      else if outcome.attribute['type'] = 'text' then
-      begin
-        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntText), 'Node '+inttostr(i)+' has the wrong type (expected text, found '+node.ClassName.substring(5));
-
-      end
-      else if outcome.attribute['type'] = 'comment' then
-      begin
-        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
-
-      end
-      else
-        raise ETestCase.create('Error Message');
-    end;
-  end;
-  finally
-    nodes.Free;
-  end;
-end;
-
-procedure TXPathEngineTests.runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+procedure TXPathEngineTest.runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
 var
   focus : IXMLDOMElement;
   outcome: TMXmlElement;
@@ -1482,7 +1500,94 @@ begin
   end;
 end;
 
-procedure TXPathEngineTests.PathTest(Name: String);
+{$ENDIF}
+
+function TXPathEngineTest.findTestCase(name: String): TMXmlElement;
+var
+  tcase : TMXmlElement;
+  i : integer;
+begin
+  i := 0;
+  tcase := tests.document.firstElement;
+  while tcase <> nil do
+  begin
+    if tcase.Name = 'case' then
+    begin
+      if (inttostr(i) = Name) then
+        exit(tcase);
+      inc(i);
+    end;
+    tcase := tcase.next;
+  end;
+  result := nil;
+end;
+
+procedure TXPathEngineTest.runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+var
+  focus, outcome : TMXmlElement;
+  nodes : TFslList<TMXmlNode>;
+  node : TMXmlNode;
+  i : integer;
+begin
+  focus := findSample(test.attribute['id']).firstElement;
+  nodes := tests.select(test.element('xpath').attribute['value'], focus);
+  try
+  if test.element('outcomes').hasAttribute['count'] then
+    assertTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
+  else
+  begin
+    assertTrue(outcomes.Count = nodes.Count, 'Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.Count));
+    for i := 0 to outcomes.Count - 1 do
+    begin
+      node := nodes[i];
+      outcome := outcomes[i];
+      if outcome.attribute['type'] = 'string' then
+      begin
+        assertTrue(node is TMXmlString, 'Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlString(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
+      end
+      else if outcome.attribute['type'] = 'number' then
+      begin
+        assertTrue(node is TMXmlNumber, 'Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
+      end
+      else if outcome.attribute['type'] = 'boolean' then
+      begin
+        assertTrue(node is TMXmlBoolean, 'Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
+      end
+      else if outcome.attribute['type'] = 'attribute' then
+      begin
+        assertTrue(node is TMXmlAttribute, 'Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlAttribute(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlAttribute(node).LocalName);
+        assertTrue(TMXmlAttribute(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlAttribute(node).value);
+      end
+      else if outcome.attribute['type'] = 'element' then
+      begin
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntElement), 'Node '+inttostr(i)+' has the wrong type (expected element, found '+node.ClassName.substring(5));
+        assertTrue(TMXmlElement(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlElement(node).LocalName);
+        assertTrue(TMXmlElement(node).NamespaceURI = outcome.attribute['namespace'], 'Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+TMXmlElement(node).NamespaceURI);
+      end
+      else if outcome.attribute['type'] = 'text' then
+      begin
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntText), 'Node '+inttostr(i)+' has the wrong type (expected text, found '+node.ClassName.substring(5));
+
+      end
+      else if outcome.attribute['type'] = 'comment' then
+      begin
+        assertTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
+
+      end
+      else
+        raise ETestCase.create('Error Message');
+    end;
+  end;
+  finally
+    nodes.Free;
+  end;
+end;
+
+procedure TXPathEngineTest.PathTest(Name: String);
 var
   test : TMXmlElement;
   outcomes : TFslList<TMXmlElement>;
@@ -1490,23 +1595,27 @@ begin
   test := findTestCase(name);
   outcomes := tests.selectElements('node', test.element('outcomes'));
   try
+    {$IFNDEF FPC}
     runMsTest(test, outcomes);
+    {$ENDIF}
     runTest(test, outcomes);
   finally
     outcomes.Free;
   end;
 end;
 
-procedure TXPathEngineTests.setup;
+procedure TXPathEngineTest.setup;
 begin
   tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml', [xpResolveNamespaces]);
   tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
+  {$IFNDEF FPC}
   mstests := TMsXmlParser.Parse('C:\work\fhirserver\utilities\tests\xml\xpath-tests.xml');
   mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
+  {$ENDIF}
 end;
 
-procedure TXPathEngineTests.teardown;
+procedure TXPathEngineTest.teardown;
 begin
   tests.Free;
 end;
@@ -2061,7 +2170,10 @@ begin
       ttl.Free;
     end;
   except
-    assertTrue(not ok);
+    on e : Exception do
+    begin
+      assertTrue(not ok, 'Unexpected Exception: '+e.message);
+    end;
   end;
 end;
 
@@ -3936,7 +4048,7 @@ begin
   TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
 end;
 
-procedure TOSXTests.TestAdvFile;
+procedure TOSXTests.TestFslFile;
 var
   filename : String;
   f : TFslFile;
@@ -4202,22 +4314,28 @@ begin
   try
     thread := TTestSemaphoreThread.Create(false);
     try
+    writeln('start');
       thread.FreeOnTerminate := true;
       while (globalInt = 0) do
-        sleep(10);
+        sleep(100);
       assertTrue(globalInt = 1, '1');
+      writeln('release');
       sem.Release;
-      sleep(10);
+      sleep(500);
       assertTrue(globalInt = 2, '2');
+      writeln('release');
       sem.Release;
-      sleep(10);
+      sleep(500);
       assertTrue(globalInt = 3, '3');
-      sleep(900);
-      assertTrue(globalInt = 4, '4');
+      sleep(500);
+      assertTrue(globalInt = 3, '4');
     finally
+      writeln('terminate');
       thread.Terminate;
+      sem.release;
     end;
-    sleep(900);
+    sleep(500);
+    writeln('check');
     assertTrue(globalInt = 100, '100');
   finally
     sem.Free;
@@ -4231,8 +4349,29 @@ begin
   inc(globalInt);
   while not Terminated do
   begin
-    sem.WaitFor(500);
-    inc(globalInt);
+    writeln('wait');
+    case sem.WaitFor(10000) of
+      wrSignaled:
+        begin
+          writeln('inc global int');
+          inc(globalInt);
+        end;
+      wrTimeout:
+        begin
+          writeln('timeout');
+          raise exception.create('timeout');
+        end;
+      wrAbandoned :
+        begin
+          writeln('abandoned');
+          raise exception.create('abandoned');
+        end;
+      wrError :
+        begin
+          writeln('error');
+          raise exception.create('error');
+        end;
+    end;
   end;
   globalInt := 100;
 end;
@@ -4483,7 +4622,33 @@ begin
   end;
 end;
 
-{$IFNDEF FPC}
+{$IFDEF FPC}
+
+constructor TJsonPatchTests.Create;
+var
+  tests : TJsonArray;
+  test : TJsonNode;
+  i : integer;
+  s : string;
+begin
+  inherited create;
+  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  try
+    i := 0;
+    for test in tests do
+    begin
+      s := (test as TJsonObject)['comment'];
+      s := s.Substring(0, s.IndexOf(' '));
+      AddTest(TJsonPatchTest.create(s));
+      inc(i);
+    end;
+  finally
+    tests.free;
+  end;
+end;
+
+{$ELSE}
+
 { JsonPatchTestCaseAttribute }
 
 function JsonPatchTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -4493,7 +4658,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes('C:\work\fhirserver\utilities\tests\json-patch-tests.json')) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     SetLength(result, tests.Count);
     i := 0;
@@ -4512,14 +4677,14 @@ begin
 end;
 {$ENDIF}
 
-{ TJsonPatchTests }
+{ TJsonPatchTest }
 
-procedure TJsonPatchTests.execute;
+procedure TJsonPatchTest.execute;
 begin
   engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
 end;
 
-procedure TJsonPatchTests.PatchTest(Name: String);
+procedure TJsonPatchTest.PatchTest(Name: String);
 var
   t : TJsonNode;
   outcome : TJsonObject;
@@ -4548,13 +4713,13 @@ begin
   end;
 end;
 
-procedure TJsonPatchTests.setup;
+procedure TJsonPatchTest.setup;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes('C:\work\fhirserver\utilities\tests\json-patch-tests.json')) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(ownTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   engine := TJsonPatchEngine.Create;
 end;
 
-procedure TJsonPatchTests.teardown;
+procedure TJsonPatchTest.teardown;
 begin
   engine.Free;
   tests.Free;
@@ -4900,6 +5065,23 @@ begin
   {$ENDIF}
 end;
 
+{$IFNDEF FPC}
+procedure TFslTestCase.setup;
+begin
+
+end;
+
+procedure TFslTestCase.tearDown;
+begin
+
+end;
+{$ENDIF}
+
+procedure TFslTestCase.thread(proc: TRunMethod);
+begin
+  TFSLTestThread.Create(proc);
+end;
+
 { TFslTestSuite }
 
 {$IFDEF FPC}
@@ -4926,6 +5108,20 @@ begin
   // nothing - override this
 end;
 
+{ TFslTestThread }
+
+constructor TFslTestThread.Create(proc: TRunMethod);
+begin
+  FProc := proc;
+  FreeOnTerminate := true;
+  inherited Create(false);
+end;
+
+procedure TFslTestThread.execute;
+begin
+  Fproc;
+end;
+
 initialization
   {$IFDEF FPC}
   RegisterTest('Generics Tests', TFslGenericsTests);
@@ -4933,18 +5129,26 @@ initialization
   RegisterTest('XPlatform Tests', TOSXTests);
   RegisterTest('Decimal Tests', TDecimalTests);
   RegisterTest('XML Tests', TXmlParserTests.create);
-  RegisterTest('XML Utility Tests', TXmlUtilsTests.create);
+  RegisterTest('XML Utility Tests', TXmlUtilsTest);
+  RegisterTest('XPath Tests', TXPathParserTests.create);
+  RegisterTest('XPath Engine Tests', TXPathEngineTests.create);
+  RegisterTest('XML Patch Tests', TXmlPatchTests.create);
+  RegisterTest('Json Tests', TJsonTests);
+  RegisterTest('JWT Tests', TJWTTests);
+  RegisterTest('Turtle Tests', TTurtleTests);
+  RegisterTest('Language Parser Tests', TLangParserTests);
+  RegisterTest('Regex Test', TFslRegexTests);
   {$ELSE}
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
   TDUnitX.RegisterTestFixture(TOSXTests);
   TDUnitX.RegisterTestFixture(TXmlParserTest);
   TDUnitX.RegisterTestFixture(TXmlUtilsTest);
-  TDUnitX.RegisterTestFixture(TXPathParserTests);
-  TDUnitX.RegisterTestFixture(TXPathEngineTests);
-  TDUnitX.RegisterTestFixture(TXmlPatchTests);
+  TDUnitX.RegisterTestFixture(TXPathParserTest);
+  TDUnitX.RegisterTestFixture(TXPathEngineTest);
+  TDUnitX.RegisterTestFixture(TXmlPatchTest);
   TDUnitX.RegisterTestFixture(TJsonTests);
-  TDUnitX.RegisterTestFixture(TJsonPatchTests);
+  TDUnitX.RegisterTestFixture(TJsonPatchTest);
   TDUnitX.RegisterTestFixture(TJWTTests);
   TDUnitX.RegisterTestFixture(TTurtleTests);
   TDUnitX.RegisterTestFixture(TDecimalTests);

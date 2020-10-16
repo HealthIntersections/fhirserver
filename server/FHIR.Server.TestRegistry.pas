@@ -32,9 +32,36 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+(*
+
+FHIR.Ucum.Tests
+FHIR.Tests.Snomed
+FHIR.Cql.Tests
+
+FHIR.Javascript.Tests
+FHIR.R4.Tests.Client
+FHIR.R4.Tests.Liquid
+FHIR.R4.Tests.Maps
+FHIR.R4.Tests.Parser
+FHIR.R4.Tests.PathEngine
+FHIR.R4.Tests.Utilities
+FHIR.R4.Tests.Validator
+FHIR.R4.Tests.Worker
+FHIR.Tools.GraphQL.Tests
+FHIR.Tests.FullServer
+FHIR.Tests.GraphDefinition
+FHIR.Tests.RestFulServer
+FHIR.Tests.SearchSyntax
+FHIR.Tests.SmartLogin
+FHIR.XVersion.Tests
+FHIR.v2.Tests
+FHIR.R4.Tests.Context
+
+*)
+
 uses
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests;
+  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests;
 
 procedure setupTesting;
 

@@ -34,30 +34,29 @@ unit FHIR.Database.Tests;
 interface
 
 Uses
-  SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  Windows, Sysutils,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Tests,
+
   FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
-  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper,
-  FHIR.R4.Tests.Worker;
+  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
-{$IFNDEF FPC}
 Type
-
-  [TextFixture]
-  TFslDBTests = Class (TTestObject4)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TFslDBTests = Class (TFslTestCase)
   private
+    conn4: TFslDBConnection;
+    procedure TestThread;
     procedure test(manager: TFslDBManager);
   Published
-    [TestCase] procedure TestSemaphore;
-    [TestCase] procedure TestMSSQL;
-    [TestCase] procedure TestMySQL;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestMSSQL;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestMySQL;
     // {[TestCase] }procedure TestMySQLMaria;
-    [TestCase] procedure TestSQLite;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSQLite;
   End;
-{$ENDIF}
+
 implementation
-{$IFNDEF FPC}
 
 const
   Name_405 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh';
@@ -125,13 +124,13 @@ begin
     try
       md := conn.FetchMetaData;
       try
-        Assert.IsTrue(md.HasTable('TestTable'))
+        assertTrue(md.HasTable('TestTable'))
       finally
         md.Free;
       end;
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
+      assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
-      conn.ExecSQL('Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', '''', 2, ' + IntToStr(i64) + ', 3.2, ' +
+       conn.ExecSQL('Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', '''', 2, ' + IntToStr(i64) + ', 3.2, ' +
         DBGetDate(manager.platform) + ')');
       conn.sql := 'Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant, Content) values (:k, :n, :bs, :i, :bi, :d, :ts, :c)';
       conn.Prepare;
@@ -146,34 +145,35 @@ begin
       conn.Execute;
       conn.Terminate;
 
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1, 'dbt.1');
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0, 'dbt.2');
+      assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1, 'dbt.1');
+      assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0, 'dbt.2');
 
       conn.sql := 'Select * from TestTable';
       conn.Prepare;
       conn.Execute;
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.3');
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'a name', 'dbt.4');
-      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = '', 'dbt.5');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 2, 'dbt.6');
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.7');
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2), 'dbt.8');
-      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < now, 'dbt.9');
-      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > now - DATETIME_MINUTE_ONE, 'dbt.10');
+      assertTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.3');
+      assertTrue(conn.ColStringByName['Name'] = 'a name', 'dbt.4');
+      assertTrue(conn.ColBlobAsStringByName['BigString'] = '', 'dbt.5');
+      assertTrue(conn.ColIntegerByName['Number'] = 2, 'dbt.6');
+      assertTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.7');
+      assertTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2), 'dbt.8');
+      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < now, 'dbt.9');
+      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > now - DATETIME_MINUTE_ONE,
+        'dbt.10: '+TSToString(conn.ColTimestampByName['Instant'])+' vs '+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss.zzz', now - DATETIME_MINUTE_ONE));
       od := conn.ColDateTimeExByName['Instant'];
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.11');
-      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.12');
+      assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.11');
+      assertTrue(conn.ColNullByName['Content'], 'dbt.12');
 
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.13');
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 2', 'dbt.14');
-      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = Name_405, 'dbt.15');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.16');
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.17');
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4), 'dbt.18');
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].equal(d, dtpSec), 'dbt.19');
-      Assert.IsTrue(BlobIsSame(conn.ColBlobByName['Content'], b), 'dbt.20');
+      assertTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.13');
+      assertTrue(conn.ColStringByName['Name'] = 'Name 2', 'dbt.14');
+      assertTrue(conn.ColBlobAsStringByName['BigString'] = Name_405, 'dbt.15');
+      assertTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.16');
+      assertTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.17');
+      assertTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4), 'dbt.18');
+      assertTrue(conn.ColDateTimeExByName['Instant'].equal(d, dtpSec), 'dbt.19');
+      assertTrue(BlobIsSame(conn.ColBlobByName['Content'], b), 'dbt.20');
       conn.Terminate;
 
       sleep(1000);
@@ -196,24 +196,24 @@ begin
       conn.Prepare;
       conn.Execute;
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.21');
-      Assert.IsTrue(conn.ColStringByName['Name'] = '3rd Name', 'dbt.22');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.23');
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.24');
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.1), 'dbt.25');
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].after(od, false), 'dbt.26');
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.27');
-      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.28');
+      assertTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.21');
+      assertTrue(conn.ColStringByName['Name'] = '3rd Name', 'dbt.22');
+      assertTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.23');
+      assertTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.24');
+      assertTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.1), 'dbt.25');
+      assertTrue(conn.ColDateTimeExByName['Instant'].after(od, false), 'dbt.26');
+      assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.27');
+      assertTrue(conn.ColNullByName['Content'], 'dbt.28');
 
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.29');
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 4', 'dbt.30');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = -4, 'dbt.31');
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.32');
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.01), 'dbt.33');
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].equal(od), 'dbt.34');
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.35');
-      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.36');
+      assertTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.29');
+      assertTrue(conn.ColStringByName['Name'] = 'Name 4', 'dbt.30');
+      assertTrue(conn.ColIntegerByName['Number'] = -4, 'dbt.31');
+      assertTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.32');
+      assertTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.01), 'dbt.33');
+      assertTrue(conn.ColDateTimeExByName['Instant'].equal(od), 'dbt.34');
+      assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.35');
+      assertTrue(conn.ColNullByName['Content'], 'dbt.36');
       conn.Terminate;
 
       conn.ExecSQL('Delete from TestTable where TestKey = 1');
@@ -223,14 +223,15 @@ begin
       conn.Execute;
       conn.Terminate;
 
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.37');
+      assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.37');
 
     finally
+      conn.terminate;
       conn.DropTable('TestTable');
     end;
     md := conn.FetchMetaData;
     try
-      Assert.Isfalse(md.HasTable('TestTable'), 'dbt.38')
+      assertFalse(md.HasTable('TestTable'), 'dbt.38')
     finally
       md.Free;
     end;
@@ -239,7 +240,7 @@ begin
   except
     on e: Exception do
     begin
-      Assert.IsTrue(false, e.message);
+      assertTrue(false, e.message);
       conn.Error(e);
     end;
   end;
@@ -261,7 +262,7 @@ procedure TFslDBTests.TestMySQL;
 var
   db: TFslDBManager;
 begin
-  db := TFslDBOdbcManager.create('test', kdbMySql, 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'utest', 'test', 'test');
+  db := TFslDBOdbcManager.create('test', kdbMySql, 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'test', 'test', 'test');
   try
     test(db);
   finally
@@ -413,36 +414,42 @@ end;
 
 // end;
 //
+
+procedure TFslDBTests.TestThread;
+begin
+  sleep(500);
+  conn4.Release;
+end;
+
 procedure TFslDBTests.TestSemaphore;
 var
   db: TFslDBManager;
   conn1: TFslDBConnection;
   conn2: TFslDBConnection;
   conn3: TFslDBConnection;
-  conn4: TFslDBConnection;
   conn5: TFslDBConnection;
 begin
   DeleteFile('c:\temp\sql.db');
   db := TFslDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
   try
-    Assert.IsTrue(db.CurrConnCount = 0);
+    assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
     try
-      Assert.IsTrue(db.CurrConnCount = 1);
+      assertTrue(db.CurrConnCount = 1);
       conn2 := db.GetConnection('test2');
       try
-        Assert.IsTrue(db.CurrConnCount = 2);
+        assertTrue(db.CurrConnCount = 2);
         conn3 := db.GetConnection('test3');
         try
-          Assert.IsTrue(db.CurrConnCount = 3);
-          Assert.IsTrue(db.CurrUseCount = 3);
+          assertTrue(db.CurrConnCount = 3);
+          assertTrue(db.CurrUseCount = 3);
           conn4 := db.GetConnection('test4');
           try
             try
               db.GetConnection('test');
-              Assert.IsTrue(false);
+              assertTrue(false);
             except
-              Assert.IsTrue(true);
+              assertTrue(true);
             end;
             conn4.Release;
           except
@@ -453,11 +460,11 @@ begin
             end;
           end;
           conn4 := db.GetConnection('test4');
-          thread(procedure begin sleep(500); conn4.Release; end);
+          thread(testThread);
           conn5 := db.GetConnection('test');
           try
-            Assert.IsTrue(db.CurrConnCount = 4);
-            Assert.IsTrue(db.CurrUseCount = 4);
+            assertTrue(db.CurrConnCount = 4);
+            assertTrue(db.CurrUseCount = 4);
             conn5.Release;
           except
             on e: Exception do
@@ -490,7 +497,7 @@ begin
         raise;
       end;
     end;
-    Assert.IsTrue(db.CurrConnCount = 4);
+    assertTrue(db.CurrConnCount = 4);
   finally
     db.Free;
   end;
@@ -523,7 +530,9 @@ end;
 //
 
 initialization
-
-TDUnitX.RegisterTestFixture(TFslDBTests);
+{$IFDEF FPC}
+  RegisterTest('DB Tests', TFslDBTests);
+{$ELSE}
+  TDUnitX.RegisterTestFixture(TFslDBTests);
 {$ENDIF}
 end.

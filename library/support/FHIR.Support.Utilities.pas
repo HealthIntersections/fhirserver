@@ -33,12 +33,20 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
-  {$IFDEF WINDOWS}  Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ELSE} Process, {$ENDIF}
+  {$IFDEF WINDOWS}
+  Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon,
+  {$ELSE}
+  Process,
+  {$ENDIF}
+
+  {$IFDEF FPC}
+  base64,
+  {$ELSE}
+  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts,
+  {$ENDIF}
   SysUtils, Types,
-  {$IFNDEF FPC}System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, {$ENDIF}
   Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
-  FHIR.Support.Fpc, FHIR.Support.Base;
+  FHIR.Support.Osx, FHIR.Support.Fpc, FHIR.Support.Base;
 
 
 Function IntegerCompare(Const iA, iB : Byte) : Integer; Overload;
@@ -1598,6 +1606,7 @@ function DescribePeriod(Period: TDateTime): String;
 function DescribePeriodNoMSec(Period: TDateTime): String;
 function DescribePeriodMS(ms : integer): String;
 function TSToDateTime(TS: TTimeStamp): TDateTime;
+function TSToString(TS: TTimeStamp): String;
 function DateTimeToTS(Value : TDateTime): TTimeStamp;
 
 Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
@@ -2814,7 +2823,7 @@ End;
 
 Function FileDelete(Const sFilename : String) : Boolean;
 Begin
-  {$IFDEF OSX}
+  {$IFDEF FPC}
   if FileIsReadOnly(sFileName) then
     result := false
   else
@@ -9343,6 +9352,12 @@ begin
     Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, Minute, Second, Fraction div 1000000);
 end;
 
+function TSToString(TS: TTimeStamp): String;
+begin
+  with TS do
+    Result := inttostr(Year)+'-'+StringPadLeft(inttostr(Month), '0', 2)+'-'+StringPadLeft(inttostr(Day), '0', 2)+'T'+StringPadLeft(inttostr(Hour), '0', 2)+':'+StringPadLeft(inttostr(Minute), '0', 2)+':'+StringPadLeft(inttostr(Second), '0', 2)+':'+inttostr(Fraction div 1000000);
+end;
+
 function DateTimeToTS(Value : TDateTime): TTimeStamp;
 var
   DTYear, DTMonth, DTDay, DTHour, DTMinute, DTSecond, DTFraction: Word;
@@ -13588,8 +13603,27 @@ end;
 
 
 function EncodeBase64(const value : TBytes): AnsiString;
+{$IFDEF FPC}
+var
+  ss : TStringStream;
+  es : TBase64EncodingStream;
+{$ENDIF}
 begin
+  if Length(value)=0 then
+    Exit('');
   {$IFDEF FPC}
+  ss := TStringStream.Create('');
+  try
+    es := TBase64EncodingStream.create(ss);
+    try
+      es.Write(value[0],Length(value));
+    finally
+      es.Free;
+    end;
+    result := ss.DataString;
+  finally
+    ss.free;
+  end;
   {$ELSE}
   result := EncdDecd.EncodeBase64(@value[0], length(value));
   {$ENDIF}
@@ -13603,11 +13637,44 @@ end;
 {$ENDIF}
 
 Function DecodeBase64(Const value : String) : TBytes; Overload;
+{$IFDEF FPC}
+var
+  s : String;
+  ss : TStringStream;
+  ds : TBase64DecodingStream;
+  b : TBytesStream;
+{$ENDIF}
 begin
-  {$IFDEF FPC}
-  {$ELSE}
+  if (value = '') then
+  begin
+    setLength(result, 0);
+    exit;
+  end;
+
+{$IFDEF FPC}
+  s := value;
+  while Length(s) mod 4 > 0 do
+    s := s + '=';
+  ss := TStringStream.Create(s);
+  try
+    b := TBytesStream.Create();
+    try
+      ds := TBase64DecodingStream.Create(ss, bdmMIME);
+      try
+        b.CopyFrom(ds,ds.Size);
+        Result := copy(b.Bytes, 0, b.Size);
+      finally
+        ds.Free;
+      end;
+    finally
+      b.Free;
+    end;
+  finally
+    ss.Free;
+  end;
+{$ELSE}
   result := EncdDecd.DecodeBase64(AnsiString(value));
-  {$ENDIF}
+{$ENDIF}
 end;
 
 

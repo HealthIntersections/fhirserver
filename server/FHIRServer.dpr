@@ -471,7 +471,10 @@ uses
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   MarkdownCommonMarkTests in '..\..\markdown\tests\MarkdownCommonMarkTests.pas',
   MarkdownDaringFireballTests in '..\..\markdown\tests\MarkdownDaringFireballTests.pas',
-  CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas';
+  CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas',
+  FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
+  FHIR.Tests.IdUriParser in '..\utilities\tests\FHIR.Tests.IdUriParser.pas',
+  FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas';
 
 begin
   ExecuteFhirServer;

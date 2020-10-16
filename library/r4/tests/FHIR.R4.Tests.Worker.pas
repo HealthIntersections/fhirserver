@@ -71,22 +71,6 @@ Type
   end;
 
 
-  TTestObjectThread4 = class (TThread)
-  private
-    FProc : TThreadProcedure;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(proc : TThreadProcedure);
-  end;
-
-  TTestObject4 = class (TObject)
-  private
-  protected
-    procedure thread(proc : TThreadProcedure);
-  public
-  end;
-
 {$ENDIF}
 
 implementation

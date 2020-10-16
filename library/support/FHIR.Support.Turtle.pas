@@ -369,7 +369,7 @@ end;
 procedure TTurtleURL.setUri(value: String);
 begin
   if (not TRegEx.isMatch(value, IRI_URL)) then
-    raise ERdfException.create('Illegal URI '+uri);
+    raise ERdfException.create('Illegal URI '+value);
   FUri := value;
 end;
 

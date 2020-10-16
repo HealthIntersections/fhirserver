@@ -80,7 +80,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, ActiveX, {$IFDEF UNICODE}Vcl.OLEServer{$ELSE} OLEServer{$ENDIF} {$IFNDEF VER130}, Variants {$ENDIF},
+  Windows, ActiveX, {$IFDEF UNICODE}Vcl.OLEServer{$ELSE} OLEServer {$ENDIF} {$IFNDEF VER130}, Variants {$ENDIF},
   SysUtils, Classes, ComObj, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml;
 
@@ -15264,6 +15264,7 @@ Procedure DetermineMsXmlProgId;
     ClassID: TCLSID;
     iTest : IDispatch;
     Res : HResult;
+    s : String;
   Begin
     Result := false;
     if Succeeded(CLSIDFromProgID(PWideChar(String('MSXML2.DOMDocument'+sId)), ClassID)) Then
