@@ -1,0 +1,9 @@
+{
+  "type" : "FHIR Custom Resource Directory",
+  "prefixes" : [
+  "test"
+  ],
+  "names" : [
+    "ClinicalDocument"
+  ]
+}
