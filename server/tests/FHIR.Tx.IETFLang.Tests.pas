@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Sysutils,
+  Sysutils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Tx.Lang;

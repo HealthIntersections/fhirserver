@@ -5705,7 +5705,7 @@ end;
 {$IFDEF LINUX}
 var
   TimeVal  : TTimeVal;
-  TimeZone : TTimeZone;
+  TimeZone : baseunix.TTimeZone;
 begin
   Result := 0.0;
   if SearchRec.Attr and faDirectory = 0 then

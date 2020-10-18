@@ -33,7 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF WINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities;
