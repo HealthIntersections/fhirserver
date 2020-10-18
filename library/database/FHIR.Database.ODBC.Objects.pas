@@ -65,7 +65,7 @@ const
   SQL_ALL_TABLE_TYPES = '%';
 {$ELSE}
 type
-  PtrUInt = SQLUInteger;
+  PtrUInt = NativeUInt; // SQLUInteger;
 {$ENDIF}
 
 Type
@@ -3050,8 +3050,12 @@ Begin
   Begin
     { Free Handle }
     FRetCode:= SQLFreeHandle(SQL_HANDLE_ENV, FHenv);
-    If Not FError.Success(FRetCode) Then
-      FError.RaiseError(Self, FRetCode);
+    try
+      If Not FError.Success(FRetCode) Then
+        FError.RaiseError(Self, FRetCode);
+    except
+      // cause at this point, we really don't want to know about it
+    end;
     FHenv := Nil;
 
     { Set Active Field }
