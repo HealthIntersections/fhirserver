@@ -88,7 +88,19 @@
             <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
             <Optimizations>
@@ -1706,24 +1718,31 @@
     <Exceptions Count="16">
       <Item1>
         <Name Value="EAbort"/>
+        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>
+        <Enabled Value="False"/>
       </Item2>
       <Item3>
         <Name Value="EFOpenError"/>
+        <Enabled Value="False"/>
       </Item3>
       <Item4>
         <Name Value="Exception"/>
+        <Enabled Value="False"/>
       </Item4>
       <Item5>
         <Name Value="EIdHTTPProtocolException"/>
+        <Enabled Value="False"/>
       </Item5>
       <Item6>
         <Name Value="EInOutError"/>
+        <Enabled Value="False"/>
       </Item6>
       <Item7>
         <Name Value="EOSError"/>
+        <Enabled Value="False"/>
       </Item7>
       <Item8>
         <Name Value="EIdSocketError"/>
@@ -1736,21 +1755,27 @@
       </Item10>
       <Item11>
         <Name Value="EXmlException"/>
+        <Enabled Value="False"/>
       </Item11>
       <Item12>
         <Name Value="ERdfException"/>
+        <Enabled Value="False"/>
       </Item12>
       <Item13>
         <Name Value="EAssertionFailedError"/>
+        <Enabled Value="False"/>
       </Item13>
       <Item14>
         <Name Value="ERegExpr"/>
+        <Enabled Value="False"/>
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
+        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
+        <Enabled Value="False"/>
       </Item16>
     </Exceptions>
   </Debugging>
