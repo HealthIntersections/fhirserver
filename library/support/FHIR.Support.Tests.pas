@@ -742,8 +742,9 @@ Type
   End;
   
 procedure registerTests;
-
+  
 implementation
+
 
 {$IFDEF FPC}
 { TFslRegexTests }

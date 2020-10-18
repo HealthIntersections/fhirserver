@@ -94,7 +94,7 @@ function base64AsString(value: TBytes): String;
 var
   s : String;
 begin
-  s := EncodeBase64(value);
+  s := String(EncodeBase64(value));
   result := s.replace(#13#10, '');
 end;
 

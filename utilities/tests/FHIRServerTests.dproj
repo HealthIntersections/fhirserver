@@ -636,6 +636,7 @@
         <DCCReference Include="..\..\server\FHIR.Server.Telnet.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Operations.pas"/>
         <DCCReference Include="..\..\server\FHIR.Server.Kernel.Testing.pas"/>
+        <DCCReference Include="..\..\library\support\FHIR.Support.Testing.pas"/>
         <None Include="FHIRServerTests.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -661,12 +662,6 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\Exec\64\FHIRServerTests.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServerTests.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>

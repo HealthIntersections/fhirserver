@@ -436,7 +436,8 @@ uses
   CommonTestBase in '..\..\..\markdown\tests\CommonTestBase.pas',
   FHIR.Server.Telnet in '..\..\server\FHIR.Server.Telnet.pas',
   FHIR.Server.Operations in '..\..\Server\FHIR.Server.Operations.pas',
-  FHIR.Server.Kernel.Testing in '..\..\server\FHIR.Server.Kernel.Testing.pas';
+  FHIR.Server.Kernel.Testing in '..\..\server\FHIR.Server.Kernel.Testing.pas',
+  FHIR.Support.Testing in '..\..\library\support\FHIR.Support.Testing.pas';
 
 var
   runner : ITestRunner;
