@@ -34,60 +34,83 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml,
   FHIR.Ucum.Services;
 
-{$IFNDEF FPC}
 type
+  {$IFDEF FPC}
+  TUcumTests = class(TTestSuite)
+  public
+    constructor Create; override;
+  end;
+  {$ELSE}
   UcumTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TUcumTests = class (TObject)
+  {$ENDIF}
+  TUcumTest = class (TFslTestSuite)
   private
-    procedure findTest(id : String; var foundGroup, foundTest : TMXmlElement);
+    procedure findTest(name : String; var foundGroup, foundTest : TMXmlElement);
 
     procedure TestValidation(test : TMXmlElement);
     procedure TestDisplayNameGeneration(test : TMXmlElement);
     procedure TestConversion(test : TMXmlElement);
     procedure TestMultiplication(test : TMXmlElement);
   public
-    [Setup] procedure Setup;
-    [TearDown] procedure TearDown;
-
-    [UcumTestCase]
-    procedure TestCase(id : String);
+    {$IFNDEF FPC}[Setup]{$ENDIF}
+    procedure Setup; override;
+    {$IFNDEF FPC}[TearDown]{$ENDIF}
+    procedure TearDown; override;
+  published
+    {$IFNDEF FPC}[UcumTestCase]{$ENDIF}
+    procedure TestCase(name : String); override;
   end;
 
-  [TextFixture]
-  TUcumSpecialTests = class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TUcumSpecialTests = class (TFslTestCase)
   private
   public
-    [Setup] procedure Setup;
-
-    [TestCase]
+    {$IFNDEF FPC}[Setup]{$ENDIF}
+    procedure Setup; override;
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestIssue10;
   end;
 
-{$ENDIF}
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 var
-  tests : TMXmlElement;
+  testList : TMXmlElement;
   svc : TUcumServices;
 
 procedure LoadTests;
 begin
-  if tests = nil then
-    tests := TMXmlParser.ParseFile('C:\work\fhirserver\utilities\tests\ucum-tests.xml', [xpDropWhitespace]);
+  if testList = nil then
+    testList := TMXmlParser.ParseFile(serverTestFile(['testcases', 'ucum', 'ucum-tests.xml']), [xpDropWhitespace]);
 end;
 
+{$IFDEF FPC}
+{ TUcumTests }
 
+constructor TUcumTests.Create;
+var
+  group, test : TMXmlElement;
+begin
+  inherited Create;
+  LoadTests;
+  for group in testList.document.Children do
+    for test in group.Children do
+      if (test.Name = 'case') and (test.attribute['id'] <> '') then
+        AddTest(TUcumTest.create(group.Name+'-'+test.attribute['id']));
+end;
+
+{$ELSE}
 { UcumTestCaseAttribute }
 
 function UcumTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -98,13 +121,13 @@ begin
   LoadTests;
 
   i := 0;
-  for group in tests.document.Children do
+  for group in testList.document.Children do
     for test in group.Children do
       if (test.Name = 'case') and (test.attribute['id'] <> '') then
         inc(i);
   setLength(result, i);
   i := 0;
-  for group in tests.document.Children do
+  for group in testList.document.Children do
     for test in group.Children do
       if (test.Name = 'case') and (test.attribute['id'] <> '') then
       begin
@@ -114,10 +137,11 @@ begin
         inc(i);
       end;
 end;
+{$ENDIF}
 
-{ TUcumTests }
+{ TUcumTest }
 
-procedure TUcumTests.findTest(id: String; var foundGroup, foundTest: TMXmlElement);
+procedure TUcumTest.findTest(name: String; var foundGroup, foundTest: TMXmlElement);
 var
   group, test : TMXmlElement;
 begin
@@ -125,31 +149,35 @@ begin
   foundGroup := nil;
   foundTest := nil;
 
-  for group in tests.document.Children do
+  for group in testList.document.Children do
     for test in group.Children do
-      if (test.Name = 'case') and (test.attribute['id'] = id) then
+      {$IFDEF FPC}
+      if (test.Name = 'case') and  (group.name+'-'+test.attribute['id'] = name) then
+      {$ELSE}
+      if (test.Name = 'case') and (test.attribute['id'] = name) then
+      {$ENDIF}
       begin
         foundGroup := Group;
         foundTest := test;
         exit;
       end;
-  raise ELibraryException.Create('nout found id = '+id);
+  raise ELibraryException.Create('nout found id = '+name);
 end;
 
-procedure TUcumTests.Setup;
+procedure TUcumTest.Setup;
 begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create;
-    svc.Import('C:\work\fhirserver\utilities\tests\ucum-essence.xml');
+    svc.Import(serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
   end;
 end;
 
-procedure TUcumTests.TearDown;
+procedure TUcumTest.TearDown;
 begin
 end;
 
-procedure TUcumTests.TestCase(id: String);
+procedure TUcumTest.TestCase(name: String);
 var
   group, test : TMXmlElement;
 begin
@@ -162,7 +190,7 @@ begin
   end;
 
   {$ENDIF}
-  findTest(id, group, test);
+  findTest(name, group, test);
   if group.name = 'validation' then
     TestValidation(test)
   else if group.name = 'displayNameGeneration' then
@@ -175,7 +203,7 @@ begin
     raise ETerminologyError.Create('unknown group '+group.Name);
 end;
 
-procedure TUcumTests.TestValidation(test : TMXmlElement);
+procedure TUcumTest.TestValidation(test : TMXmlElement);
 var
   units : String;
   valid : boolean;
@@ -187,22 +215,22 @@ begin
 
   res := svc.validate(units);
   if valid then
-    Assert.IsEmpty(res, 'Unit "'+units+'" should be valid, but had error: '+res)
+    assertTrue(res = '', 'Unit "'+units+'" should be valid, but had error: '+res)
   else
-    Assert.IsNotEmpty(res, 'Unit "'+units+'" should be invalid, but no error');
+    AssertTrue(res <> '', 'Unit "'+units+'" should be invalid, but no error');
 end;
 
-procedure TUcumTests.TestDisplayNameGeneration(test : TMXmlElement);
+procedure TUcumTest.TestDisplayNameGeneration(test : TMXmlElement);
 var
   units, display, res : String;
 begin
   units := test.attribute['unit'];
   display := test.attribute['display'];
   res := svc.analyse(units);
-  Assert.AreEqual(display, res, 'Display name should have been "'+display+'" but was "'+res+'"');
+  assertEqual(display, res, 'Display name should have been "'+display+'" but was "'+res+'"');
 end;
 
-procedure TUcumTests.TestConversion(test : TMXmlElement);
+procedure TUcumTest.TestConversion(test : TMXmlElement);
 var
   value, srcUnit, dstUnit, outcome : String;
   d : TFslDecimal;
@@ -214,10 +242,10 @@ begin
 
   d := svc.convert(TFslDecimal.ValueOf(value), srcUnit, dstUnit);
 
-  Assert.IsTrue(d.Compares(TFslDecimal.ValueOf(outcome)) = 0, 'Value does not match. expected '+outcome+' but got '+d.AsString);
+  assertTrue(d.Compares(TFslDecimal.ValueOf(outcome)) = 0, 'Value does not match. expected '+outcome+' but got '+d.AsString);
 end;
 
-procedure TUcumTests.TestMultiplication(test : TMXmlElement);
+procedure TUcumTest.TestMultiplication(test : TMXmlElement);
 var
   id, v1, u1, v2, u2, vRes, uRes : String;
   o1, o2, o3 : TUcumPair;
@@ -236,7 +264,7 @@ begin
     try
 	    o3 := svc.multiply(o1, o2);
       try
-        Assert.IsTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
+        assertTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
       finally
         o3.Free;
       end;
@@ -255,7 +283,7 @@ begin
   if (svc = nil) then
   begin
     svc := TUcumServices.Create;
-    svc.Import('C:\work\fhirserver\utilities\tests\ucum-essence.xml');
+    svc.Import(serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
   end;
 end;
 
@@ -271,15 +299,24 @@ begin
     d := TFslDecimal.Create(f);
     o := svc.convert(d, 'kg', '[lb_av]');
     e := f * 2.2046226218487758072297380134503;
-    Assert.IsTrue(Abs(o.AsDouble - e) < 0.001, 'Expected '+FloatToStr(e)+', but got '+o.AsDecimal);
+    assertTrue(Abs(o.AsDouble - e) < 0.001, 'Expected '+FloatToStr(e)+', but got '+o.AsDecimal);
   end;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TUcumTests);
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
+begin
+  {$IFDEF FPC}
+  RegisterTest('UCUM testList', TUcumTests.create);
+  RegisterTest('UCUM Special Test', TUcumSpecialTests);
+  {$ELSE}
+  TDUnitX.RegisterTestFixture(TUcumTest);
   TDUnitX.RegisterTestFixture(TUcumSpecialTests);
+  {$ENDIF}
+end;
+
+initialization
 finalization
-  tests.Free;
+  testList.Free;
   svc.Free;
-{$ENDIF}
 end.

@@ -72,6 +72,7 @@ uses
   FHIR.Database.ODBC in '..\library\database\FHIR.Database.ODBC.pas',
   FHIR.Database.ODBC.Headers in '..\library\database\FHIR.Database.ODBC.Headers.pas',
   FHIR.Database.ODBC.Objects in '..\library\database\FHIR.Database.ODBC.Objects.pas',
+  fpcodbc in '..\library\database\fpcodbc.pas',
   FHIR.Database.SQLite in '..\library\database\FHIR.Database.SQLite.pas',
   FHIR.Database.SQLite3.Objects in '..\library\database\FHIR.Database.SQLite3.Objects.pas',
   FHIR.Database.SQLite3.Utilities in '..\library\database\FHIR.Database.SQLite3.Utilities.pas',
@@ -420,6 +421,7 @@ uses
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
   FHIR.Tests.IdUriParser in 'tests\FHIR.Tests.IdUriParser.pas',
+  FHIR.Ucum.Tests in '..\library\ucum\FHIR.Ucum.Tests.pas',
   FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
   FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
 

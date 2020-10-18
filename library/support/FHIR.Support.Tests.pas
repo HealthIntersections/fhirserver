@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
@@ -110,7 +110,7 @@ Type
   {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TOSXTests = class (TFslTestCase)
+  TXPlatformTests = class (TFslTestCase)
   private
     procedure test60sec;
   published
@@ -124,6 +124,7 @@ Type
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslDateTime;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslFile;
     {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestRemoveAccents;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTimeZoneName;
   end;
 
 Type
@@ -731,6 +732,15 @@ Type
     {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testBase;
   End;
 
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TTarGZParserTests = Class (TFslTestCase)
+  private
+    function load(filename : String) : TFslList<TFslNameBuffer>;
+  Published
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testPackage;
+    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testTzData;
+  End;
+  
 procedure registerTests;
 
 implementation
@@ -1054,7 +1064,7 @@ var
   i : integer;
 begin
   inherited Create;
-  if FindFirst(serverTestFile(['resources', 'testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
+  if FindFirst(serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
   repeat
     AddTest(TXmlParserTest.Create(sr.Name));
   until FindNext(SR) <> 0;
@@ -1101,7 +1111,7 @@ var
   i : integer;
 begin
   inherited Create;
-  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1245,7 +1255,7 @@ var
   i : integer;
 begin
   inherited create;
-  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1270,7 +1280,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['resources', 'testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -3945,12 +3955,12 @@ var
 Const
   TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
 
-procedure TOSXTests.test60sec;
+procedure TXPlatformTests.test60sec;
 begin
   TFslDateTime.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
 end;
 
-procedure TOSXTests.TestFslFile;
+procedure TXPlatformTests.TestFslFile;
 var
   filename : String;
   f : TFslFile;
@@ -3987,7 +3997,7 @@ begin
   assertFalse(FileExists(filename));
 end;
 
-procedure TOSXTests.TestAdvObject;
+procedure TXPlatformTests.TestAdvObject;
 var
   obj : TFslObject;
 begin
@@ -4003,7 +4013,7 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestCriticalSectionSimple;
+procedure TXPlatformTests.TestCriticalSectionSimple;
 begin
   InitializeCriticalSection(cs);
   try
@@ -4018,7 +4028,7 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestKCriticalSectionSimple;
+procedure TXPlatformTests.TestKCriticalSectionSimple;
 begin
   kcs := TFslLock.Create('test');
   try
@@ -4049,7 +4059,7 @@ type
     procedure Execute; override;
   end;
 
-procedure TOSXTests.TestCriticalSectionThreaded;
+procedure TXPlatformTests.TestCriticalSectionThreaded;
 begin
   globalInt := GetCurrentThreadId;
   InitializeCriticalSection(cs);
@@ -4074,7 +4084,7 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestKCriticalSectionThreaded;
+procedure TXPlatformTests.TestKCriticalSectionThreaded;
 begin
   globalInt := GetCurrentThreadId;
   kcs := TFslLock.Create('none');
@@ -4099,19 +4109,24 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestRemoveAccents;
+procedure TXPlatformTests.TestRemoveAccents;
 begin
   assertEqual('Grahame Grieve', RemoveAccents('Grahame Grieve'));
   assertEqual('aaeeiiooouuu AAEEIIOOOUUU', RemoveAccents('aáeéiíoóöuúü AÁEÉIÍOÓÖUÚÜ'));
   assertEqual('Ваnерии Никоnаевич СЕРГЕЕВ', RemoveAccents('Валерий Николаевич СЕРГЕЕВ'));
 end;
 
-procedure TOSXTests.TestTemp;
+procedure TXPlatformTests.TestTemp;
 begin
   assertTrue(SystemTemp <> '');
 end;
 
-procedure TOSXTests.TestFslDateTime;
+procedure TXPlatformTests.TestTimeZoneName;
+begin
+  assertTrue(TimeZoneIANAName <> '');
+end;
+
+procedure TXPlatformTests.TestFslDateTime;
 var
   d1, d2 : TFslDateTime;
   dt1, dt2 : Double;
@@ -4207,7 +4222,7 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestSemaphore;
+procedure TXPlatformTests.TestSemaphore;
 var
   thread : TTestSemaphoreThread;
 begin
@@ -4216,28 +4231,23 @@ begin
   try
     thread := TTestSemaphoreThread.Create(false);
     try
-    writeln('start');
       thread.FreeOnTerminate := true;
       while (globalInt = 0) do
         sleep(100);
       assertTrue(globalInt = 1, '1');
-      writeln('release');
       sem.Release;
       sleep(500);
       assertTrue(globalInt = 2, '2');
-      writeln('release');
       sem.Release;
       sleep(500);
       assertTrue(globalInt = 3, '3');
       sleep(500);
       assertTrue(globalInt = 3, '4');
     finally
-      writeln('terminate');
       thread.Terminate;
       sem.release;
     end;
     sleep(500);
-    writeln('check');
     assertTrue(globalInt = 100, '100');
   finally
     sem.Free;
@@ -4251,26 +4261,21 @@ begin
   inc(globalInt);
   while not Terminated do
   begin
-    writeln('wait');
     case sem.WaitFor(10000) of
       wrSignaled:
         begin
-          writeln('inc global int');
           inc(globalInt);
         end;
       wrTimeout:
         begin
-          writeln('timeout');
           raise exception.create('timeout');
         end;
       wrAbandoned :
         begin
-          writeln('abandoned');
           raise exception.create('abandoned');
         end;
       wrError :
         begin
-          writeln('error');
           raise exception.create('error');
         end;
     end;
@@ -4306,10 +4311,9 @@ var
   jwk : TJWK;
   s: String;
 begin
-  jwk := TJWTUtils.loadKeyFromRSACert('C:\work\fhirserver\Exec\jwt-test.key.crt');
+  jwk := TJWTUtils.loadKeyFromRSACert(serverTestFile(['testcases', 'certs', 'jwt-test.key.crt']));
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
-    Writeln(s);
     assertTrue(true);
   finally
     jwk.Free;
@@ -4355,7 +4359,7 @@ begin
   jwt := TJWT.create;
   try
     jwt.id := GUIDToString(CreateGUID);
-    s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, 'C:\work\fhirserver\Exec\jwt-test.key.key', 'fhirserver');
+    s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, serverTestFile(['testcases', 'certs', 'jwt-test.key.key']), 'fhirserver');
     assertTrue(true);
   finally
     jwt.Free;
@@ -4534,7 +4538,7 @@ var
   s : string;
 begin
   inherited create;
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     i := 0;
     for test in tests do
@@ -4560,7 +4564,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     SetLength(result, tests.Count);
     i := 0;
@@ -4617,7 +4621,7 @@ end;
 
 procedure TJsonPatchTest.setup;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['resources', 'testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   engine := TJsonPatchEngine.Create;
 end;
 
@@ -4884,13 +4888,88 @@ begin
   assertTrue(not lang.matches('eng'));
 end;
 
+{ TTarGZParserTests }
+
+function TTarGZParserTests.load(filename : String) : TFslList<TFslNameBuffer>;
+var
+  z : TZDecompressionStream;
+  tar : TTarArchive;
+  entry : TTarDirRec;
+  bi : TBytesStream;
+  item : TFslNameBuffer;
+  stream : TFileStream;
+begin
+  result := TFslList<TFslNameBuffer>.create;
+  try
+    stream := TFileStream.Create(filename, fmOpenRead);
+    try
+      z := TZDecompressionStream.Create(stream, 15+16);
+      try
+        tar := TTarArchive.Create(z);
+        try
+          while tar.FindNext(entry) do
+          begin
+            item := TFslNameBuffer.Create;
+            try
+              item.Name := String(entry.Name);
+              bi := TBytesStream.Create;
+              try
+                tar.ReadFile(bi);
+                item.AsBytes := copy(bi.Bytes, 0, bi.size);
+              finally
+                bi.free;
+              end;
+              result.Add(item.link)
+            finally
+              item.Free;
+            end;
+          end;
+        finally
+          tar.free;
+        end;
+      finally
+        z.free;
+      end;
+    finally
+      stream.Free;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TTarGZParserTests.testPackage;
+var
+  tgz : TFslList<TFslNameBuffer>;
+begin
+  tgz := load(serverTestFile(['testcases', 'tgz', 'package.tgz']));
+  try
+    assertTrue(tgz.Count = 11);
+  finally
+    tgz.Free;
+  end;
+end;
+
+procedure TTarGZParserTests.testTzData;
+var
+  tgz : TFslList<TFslNameBuffer>;
+begin
+  tgz := load('tzdata.tar.gz');
+  try
+    assertTrue(tgz.Count = 12);
+  finally
+    tgz.Free;
+  end;
+end;
+
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   {$IFDEF FPC}
   RegisterTest('Generics Tests', TFslGenericsTests);
   RegisterTest('Collection Tests', TFslCollectionsTests);
-  RegisterTest('XPlatform Tests', TOSXTests);
+  RegisterTest('XPlatform Tests', TXPlatformTests);
   RegisterTest('Decimal Tests', TDecimalTests);
   RegisterTest('XML Tests', TXmlParserTests.create);
   RegisterTest('XML Utility Tests', TXmlUtilsTest);
@@ -4902,10 +4981,11 @@ begin
   RegisterTest('Turtle Tests', TTurtleTests);
   RegisterTest('Language Parser Tests', TLangParserTests);
   RegisterTest('Regex Test', TFslRegexTests);
+  RegisterTest('.tar.gz Tests', TTarGZParserTests);
   {$ELSE}
   TDUnitX.RegisterTestFixture(TFslGenericsTests);
   TDUnitX.RegisterTestFixture(TFslCollectionsTests);
-  TDUnitX.RegisterTestFixture(TOSXTests);
+  TDUnitX.RegisterTestFixture(TXPlatformTests);
   TDUnitX.RegisterTestFixture(TXmlParserTest);
   TDUnitX.RegisterTestFixture(TXmlUtilsTest);
   TDUnitX.RegisterTestFixture(TXPathParserTest);
@@ -4917,6 +4997,7 @@ begin
   TDUnitX.RegisterTestFixture(TTurtleTests);
   TDUnitX.RegisterTestFixture(TDecimalTests);
   TDUnitX.RegisterTestFixture(TLangParserTests);
+  TDUnitX.RegisterTestFixture(TTarGZParserTests);
 //  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
   {$ENDIF}
 end;

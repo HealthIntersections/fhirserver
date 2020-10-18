@@ -61,7 +61,7 @@ FHIR.R4.Tests.Context
 uses
   CommonTestBase, FHIR.Support.Testing,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests;
+  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests, FHIR.Ucum.Tests;
 
 procedure registerTests;
 
@@ -85,6 +85,7 @@ begin
   FHIR.Tx.IETFLang.Tests.registerTests;
   FHIR.Tests.IdUriParser.registerTests;
   FHIR.Database.Tests.registerTests;
+  FHIR.Ucum.Tests.registerTests;
 end;
 
 end.

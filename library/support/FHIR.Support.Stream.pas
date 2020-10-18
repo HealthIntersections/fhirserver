@@ -36,10 +36,10 @@ Interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
-  {$IFNDEF FPC} AnsiStrings, {$ENDIF}{$IFDEF FPC} ZStream,{$ENDIF}
+  {$IFNDEF FPC} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
   IdHeaderList, idGlobal, IdGlobalProtocols,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
+  FHIR.Support.Fpc, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
 type
 
@@ -1316,7 +1316,7 @@ type
     Magic       : AnsiString;            // Contents of the "Magic" field
     MajorDevNo  : integer;           // Major Device No. for ftCharacter and ftBlock
     MinorDevNo  : integer;           // Minor Device No. for ftCharacter and ftBlock
-    FilePos     : int64;             // Position in TAR file
+//    FilePos     : int64;             // Position in TAR file
   end;
 
   // --- The TAR Archive CLASS
@@ -5745,7 +5745,7 @@ begin
     Magic       := '';
     MajorDevNo  := 0;
     MinorDevNo  := 0;
-    FilePos     := 0;
+//    FilePos     := 0;
   end;
 end;
 
@@ -5983,7 +5983,6 @@ begin
   inherited Create;
   FStream     := Stream;
   FOwnsStream := FALSE;
-  Reset;
 end;
 
 
@@ -5992,7 +5991,6 @@ begin
   inherited Create;
   FStream     := TFileStream.Create (Filename, FileMode);
   FOwnsStream := TRUE;
-  Reset;
 end;
 
 
@@ -6017,7 +6015,6 @@ function  TTarArchive.FindNext (var DirRec : TTarDirRec) : boolean;
           // The Stream pointer must point to the first byte of the tar header
 var
   Rec          : array [0..RECORDSIZE-1] of CHAR;
-  CurFilePos   : integer;
   Header       : TTarHeader ABSOLUTE Rec;
   I            : integer;
   HeaderChkSum : WORD;
@@ -6029,18 +6026,12 @@ begin
 
   // --- EOF reached?
   Result := FALSE;
-  CurFilePos := FStream.Position;
-  TRY
     FStream.ReadBuffer (Rec, RECORDSIZE);
     if Rec [0] = #0 then EXIT;   // EOF reached
-  EXCEPT
-    EXIT;   // EOF reached, too
-    end;
   Result := TRUE;
 
   ClearDirRec (DirRec);
 
-  DirRec.FilePos := CurFilePos;
   DirRec.Name := ExtractText (Header.Name);
   DirRec.Size := ExtractNumber64 (@Header.Size, 12);
   DirRec.DateTime := EncodeDate (1970, 1, 1) + (ExtractNumber (@Header.MTime, 12) / 86400.0);

@@ -35,7 +35,7 @@
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
             <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -168,21 +168,24 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="PascalTZ"/>
       </Item1>
       <Item2>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownTests"/>
       </Item2>
       <Item3>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item4>
+      <Item5>
+        <PackageName Value="LCL"/>
+      </Item5>
     </RequiredPackages>
-    <Units Count="364">
+    <Units Count="367">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1649,6 +1652,18 @@
         <Filename Value="..\library\support\FHIR.Support.Testing.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit363>
+      <Unit364>
+        <Filename Value="..\dependencies\Indy10\System\IdGlobal.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit364>
+      <Unit365>
+        <Filename Value="..\library\database\fpcodbc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit365>
+      <Unit366>
+        <Filename Value="..\library\ucum\FHIR.Ucum.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit366>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

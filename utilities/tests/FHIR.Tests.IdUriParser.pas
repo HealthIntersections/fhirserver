@@ -51,7 +51,6 @@ type
   end;
 {$ENDIF}
 
-
 procedure registerTests;
 
 implementation

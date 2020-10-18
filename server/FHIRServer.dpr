@@ -475,7 +475,8 @@ uses
   CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas',
   FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
   FHIR.Tests.IdUriParser in '..\utilities\tests\FHIR.Tests.IdUriParser.pas',
-  FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas';
+  FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
+  FHIR.Ucum.Tests in '..\library\Ucum\FHIR.Ucum.Tests.pas';
 
 begin
   ExecuteFhirServer;

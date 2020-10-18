@@ -145,7 +145,7 @@
         <DCC_USE_BEFORE_DEF>error</DCC_USE_BEFORE_DEF>
         <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
-        <Debugger_CWD>C:\work\fhirserver\Exec</Debugger_CWD>
+        <Debugger_CWD>C:\work\fhirserver\exec\64</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
@@ -592,6 +592,7 @@
         <DCCReference Include="tests\FHIR.Tx.IETFLang.Tests.pas"/>
         <DCCReference Include="..\utilities\tests\FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Tests.pas"/>
+        <DCCReference Include="..\library\Ucum\FHIR.Ucum.Tests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

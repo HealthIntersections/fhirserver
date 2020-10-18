@@ -34,7 +34,7 @@ Interface
 
 uses
   SysUtils, Generics.Defaults,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
   FHIR.Ucum.Handlers, FHIR.Ucum.Base;
 
 Type
@@ -99,19 +99,20 @@ Type
 
   TUcumLexer = class (TFslObject)
   private
-    Fsource : String;
+    FSourceString : String;
+    Fsource : TArray<UnicodeChar>;
     Findex : integer;
     Ftoken : String;
     Ftype : TUcumLexerTokenType;
     Fstart : integer;
-    Function checkNumber(ch : Char) : boolean;
-    Function checkNumberOrSymbol(ch : Char) : boolean;
-    Function checkBrackets(ch : Char; inBrackets : boolean) : boolean;
-    Function isValidSymbolChar(ch : Char; allowDigits, inSquares: boolean): boolean;
-    Function checkAnnotation(ch : Char) : boolean;
-    function checkSingle(ch : Char; test : char; atype : TUcumLexerTokenType ) : boolean;
-    function nextChar() : char;
-    function peekChar() : char;
+    Function checkNumber(ch : UnicodeChar) : boolean;
+    Function checkNumberOrSymbol(ch : UnicodeChar) : boolean;
+    Function checkBrackets(ch : UnicodeChar; inBrackets : boolean) : boolean;
+    Function isValidSymbolChar(ch : UnicodeChar; allowDigits, inSquares: boolean): boolean;
+    Function checkAnnotation(ch : UnicodeChar) : boolean;
+    function checkSingle(ch : UnicodeChar; test : UnicodeChar; atype : TUcumLexerTokenType ) : boolean;
+    function nextChar() : UnicodeChar;
+    function peekChar() : UnicodeChar;
   public
     constructor Create(sSource : String);
 
@@ -477,14 +478,15 @@ End;
 Constructor TUcumLexer.Create(sSource : String);
 Begin
   Inherited Create;
-  Fsource := ssource;
+  FSourceString := sSource;
+  Fsource := unicodeChars(sSource);
   Findex := 1;
   consume();
 End;
 
 procedure TUcumLexer.consume;
 var
-  ch : Char;
+  ch : UnicodeChar;
 Begin
   Ftoken := '';
   Ftype := NONE;
@@ -499,11 +501,11 @@ Begin
         checkAnnotation(ch) or
         checkNumber(ch) or
         checkNumberOrSymbol(ch))) Then
-      raise ETerminologyError.create('Error processing Unit_ "'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
+      raise ETerminologyError.create('Error processing Unit_ "'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
   End;
 End;
 
-Function TUcumLexer.checkNumber(ch : Char) : boolean;
+Function TUcumLexer.checkNumber(ch : UnicodeChar) : boolean;
 Begin
   if (ch = '+') or (ch = '-') Then
   Begin
@@ -516,7 +518,7 @@ Begin
       ch := peekChar();
     End;
     if (Length(FToken) = 1) Then
-      raise ETerminologyError.create('Error processing Unit_"'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
+      raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
     Ftype := NUMBER;
     result := true;
   End
@@ -524,7 +526,7 @@ Begin
     result := false;
 End;
 
-Function TUcumLexer.checkNumberOrSymbol(ch : Char) : boolean;
+Function TUcumLexer.checkNumberOrSymbol(ch : UnicodeChar) : boolean;
 var
   isSymbol, inBrackets : boolean;
 Begin
@@ -556,7 +558,7 @@ Begin
 End;
 
 
-Function TUcumLexer.checkBrackets(ch : Char; inBrackets : boolean) : boolean;
+Function TUcumLexer.checkBrackets(ch : UnicodeChar; inBrackets : boolean) : boolean;
 Begin
   result := false;
   if (ch = '[') Then
@@ -573,14 +575,14 @@ Begin
     result := inBrackets;
 End;
 
-Function TUcumLexer.isValidSymbolChar(ch : Char; allowDigits, inSquares : boolean): boolean;
+Function TUcumLexer.isValidSymbolChar(ch : UnicodeChar; allowDigits, inSquares : boolean): boolean;
 Begin
   result := ((allowDigits) and (ch >= '0') and (ch <= '9')) or (inSquares or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or
        (ch = '[') or (ch = ']') or (ch = '%') or (ch = '*') or (ch = '^') or (ch = '''') or
        (ch = '"') or (ch = '_')) or (inSquares and (ch = '.'));
 End;
 
-Function TUcumLexer.checkAnnotation(ch : Char) : boolean;
+Function TUcumLexer.checkAnnotation(ch : UnicodeChar) : boolean;
 var
   s : String;
 Begin
@@ -591,9 +593,9 @@ Begin
     Begin
       ch := nextChar();
       if ord(ch) > 255 then
-        raise ETerminologyError.create('Error processing Unit_"'+FSource+'": annotation contains non-ascii characters');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": annotation contains non-ascii characters');
       if (ch = #0) Then
-        raise ETerminologyError.create('Error processing Unit_"'+FSource+'": unterminated annotation');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unterminated annotation');
       if (ch <> '}') then
         s := s + ch;
     End;
@@ -606,7 +608,7 @@ Begin
     result := false;
 End;
 
-function TUcumLexer.checkSingle(ch : Char; test : char; atype : TUcumLexerTokenType ) : boolean;
+function TUcumLexer.checkSingle(ch : UnicodeChar; test : UnicodeChar; atype : TUcumLexerTokenType ) : boolean;
 Begin
   if (ch = test) Then
   Begin
@@ -618,19 +620,19 @@ Begin
     result := false;
 End;
 
-function TUcumLexer.nextChar() : char;
+function TUcumLexer.nextChar() : UnicodeChar;
 Begin
   if Findex <= Length(FSource) Then
-    result := FSource[Findex]
+    result := FSource[Findex-1]
   else
     result := NO_CHAR;
   inc(Findex);
 End;
 
-function TUcumLexer.peekChar() : char;
+function TUcumLexer.peekChar() : UnicodeChar;
 Begin
   if Findex <= Length(FSource) Then
-    result := FSource[Findex]
+    result := FSource[Findex-1]
   else
     result := NO_CHAR;
 End;
@@ -638,7 +640,7 @@ End;
 
 Procedure TUcumLexer.error(errMsg : String);
 Begin
-  raise ETerminologyError.Create('Error processing Unit: '''+FSource+''': '+ errMsg +' at character '+IntToStr(FStart));
+  raise ETerminologyError.Create('Error processing Unit: '''+FSourceString+''': '+ errMsg +' at character '+IntToStr(FStart));
 End;
 
 Function TUcumLexer.getTokenAsInt() : Integer;

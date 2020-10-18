@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, {$IFDEF FPC} odbcsqldyn {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
+  SysUtils, Classes, {$IFDEF FPC} fpcodbc {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
   FHIR.Support.Utilities, FHIR.Support.Fpc,
   FHIR.Database.Dialects;
 
@@ -42,20 +42,27 @@ const
   EnterString = #0#0;
 
 {$IFDEF FPC}
-  SQL_CP_OFF = 0;              {$EXTERNALSYM SQL_CP_OFF}
-  SQL_CP_ONE_PER_DRIVER = 1;   {$EXTERNALSYM SQL_CP_ONE_PER_DRIVER}
-  SQL_CP_ONE_PER_HENV = 2;     {$EXTERNALSYM SQL_CP_ONE_PER_HENV}
-  SQL_CP_DEFAULT = SQL_CP_OFF; {$EXTERNALSYM SQL_CP_DEFAULT}
-  SQL_IGNORE = (-6);           {$EXTERNALSYM SQL_IGNORE}
-  SQL_ATTR_QUERY_TIMEOUT = SQL_QUERY_TIMEOUT; {$EXTERNALSYM SQL_ATTR_QUERY_TIMEOUT}
+  SQL_API_ALL_FUNCTIONS = 0;
+  SQL_API_ODBC3_ALL_FUNCTIONS = 999;
+
+  //SQL_CP_OFF = 0;
+  //SQL_CP_ONE_PER_DRIVER = 1;
+  //SQL_CP_ONE_PER_HENV = 2;
+  //SQL_CP_DEFAULT = SQL_CP_OFF;
+  SQL_IGNORE = (-6);
+  SQL_ATTR_QUERY_TIMEOUT = SQL_QUERY_TIMEOUT;
   SQL_LEN_DATA_AT_EXEC_OFFSET = (-100);
-  SQL_DIAG_CURSOR_ROW_COUNT = (-1249);  {$EXTERNALSYM SQL_DIAG_CURSOR_ROW_COUNT}
-  SQL_NEED_LONG_DATA_LEN = 111;  {$EXTERNALSYM SQL_NEED_LONG_DATA_LEN}
-  SQL_ATTR_PARAMSET_SIZE = 22;   {$EXTERNALSYM SQL_ATTR_PARAMSET_SIZE}
-  SQL_PC_UNKNOWN = 0;    {$EXTERNALSYM SQL_PC_UNKNOWN}
-  SQL_PC_NON_PSEUDO = 1; {$EXTERNALSYM SQL_PC_NON_PSEUDO}
-  SQL_PC_PSEUDO = 2;     {$EXTERNALSYM SQL_PC_PSEUDO}
-  SQL_ALL_TABLE_TYPES = '%'; {$EXTERNALSYM SQL_ALL_TABLE_TYPES}
+  SQL_DIAG_CURSOR_ROW_COUNT = (-1249);
+  SQL_NEED_LONG_DATA_LEN = 111;
+  SQL_NAMED = 0;
+  SQL_UNNAMED = 1;
+
+  SQL_ATTR_PARAMSET_SIZE = 22;
+  SQL_API_SQLPARAMDATA = 48;
+  SQL_PC_UNKNOWN = 0;
+  SQL_PC_NON_PSEUDO = 1;
+  SQL_PC_PSEUDO = 2;
+  SQL_ALL_TABLE_TYPES = '%';
 {$ELSE}
 type
   PtrUInt = SQLUInteger;
@@ -3076,14 +3083,9 @@ var
 Begin
   Init;
 
-  {$IFDEF FPC}
-  // i don't know why this isn't declared in odbcsql.inc...
-  result := 0;
-  {$ELSE}
-  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, @Result, SizeOf(Result), len);
+  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, @Result, SizeOf(Result), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
-  {$ENDIF}
 End;
 
 Procedure TOdbcConnection.SetLoginTimeOut(ALoginTimeOut: SQLUINTEGER);
@@ -3110,11 +3112,8 @@ Begin
 
   If FActive Then
   Begin
-    {$IFNDEF FPC}
-    // cause SQLGetConnectAttr is not defined
-    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, @LCursorLib, SizeOf(LCursorLib), len);
+    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, @LCursorLib, SizeOf(LCursorLib), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LCursorLib <> FCursorLib) Then
-    {$ENDIF}
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, Pointer(FCursorLib), SizeOf(FCursorLib));
       If Not FEnv.Error.Success(FRetCode) Then
@@ -3128,15 +3127,11 @@ Var
   LInTransaction: SQLUINTEGER;
   len : integer;
 Begin
-  {$IFDEF FPC}
-  result := false;
-  {$ELSE}
-  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, @LInTransaction, SizeOf(LInTransaction), len);
+  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, @LInTransaction, SizeOf(LInTransaction), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     Result:= False
   Else
     Result:= LInTransaction = SQL_AUTOCOMMIT_OFF;
-  {$ENDIF}
 End;
 
 Procedure TOdbcConnection.SetDriver(ADriver: String);
@@ -3181,10 +3176,8 @@ Begin
 
   If FActive Then
   Begin
-    {$IFNDEF FPC}
-    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, @LIsolationLevel, SizeOf(LIsolationLevel), len);
+    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, @LIsolationLevel, SizeOf(LIsolationLevel), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LIsolationLevel <> FIsolationLevel) Then
-    {$ENDIF}
     Begin
       FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, Pointer(FIsolationLevel), 0);
       If Not FEnv.Error.Success(FRetCode) Then
@@ -3444,21 +3437,17 @@ Function TOdbcConnection.GetFunction(FunctionID: SQLUSMALLINT): Boolean;
 Var
   Supported: SQLUSMALLINT;
 Begin
-  {$IFDEF FPC}
-  result := true;
-  {$ELSE}
   If (FunctionID = SQL_API_ALL_FUNCTIONS) Or
      (FunctionID = SQL_API_ODBC3_ALL_FUNCTIONS) Then
     Raise EODBCExpress.Create('Cannot return information for more than one function at a time.');
 
   Connect;
 
-  FRetCode:= SQLGetFunctions(FHdbc, FunctionID, Supported);
+  FRetCode:= SQLGetFunctions(FHdbc, FunctionID, {$IFDEF FPC}@{$ENDIF}Supported);
   If Not FEnv.Error.Success(FRetCode) Then
     Supported:= 0;
 
   Result := Supported <> 0;
-  {$ENDIF}
 End;
 
 Function TOdbcConnection.GetInfoString(InfoType: SQLUSMALLINT): String;
@@ -5133,10 +5122,8 @@ Begin
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
     ParamName:= FParamNames[Param-1];
-    {$IFNDEF FPC}
     SQLSetDescField(FHdesc, Param, SQL_DESC_NAME, Pointer(PChar(ParamName)), SQL_NTS);
     SQLSetDescField(FHdesc, Param, SQL_DESC_UNNAMED, Pointer(SQL_NAMED), 0);
-    {$ENDIF}
   End;
 End;
 
@@ -5194,11 +5181,9 @@ Begin
   End
   Else
   Begin
-    {$IFNDEF FPC} // never called for FPC
     FRetCode:= SQLDescribeParam(FHstmt, Param, SqlType, ParameterSize, DecimalDigits, Nullable);
     If Not FEnv.Error.Success(FRetCode) Then
       DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, True);
-    {$ENDIF}
   End;
 End;
 
@@ -5281,9 +5266,13 @@ Procedure TOdbcStatement.BindString(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
+  {$IFDEF FPC}
+  ParamType:= SQL_C_CHAR;
+  {$ELSE}
   ParamType:= SQL_C_WCHAR;
+  {$ENDIF}
   BindParam(Param, ParamType, PChar(ParamValue), ColTypeToSqlType(ParamType));
-  ParamSize[Param]:= Length(ParamValue) * 2;  //to allow binding memos, but causes re-exec problems
+  ParamSize[Param]:= Length(ParamValue){$IFNDEF FPC} * 2{$ENDIF};  //to allow binding memos, but causes re-exec problems
 End;
 
 Procedure TOdbcStatement.BindSingle(Param: SQLUSMALLINT;
@@ -6256,9 +6245,6 @@ Var
   PCursor: LongInt;
   OffsetPtr: Pointer;
 Begin
-  {$IFDEF FPC}
-  raise Exception.create('not supporred in FPC?');
-  {$ELSE}
   FRetCode:= SQLParamData(FHstmt, @PValue);
   If (FRetCode <> SQL_NEED_DATA) And (Not FEnv.Error.Success(FRetCode)) Then
     FEnv.Error.RaiseError(Self, FRetCode);
@@ -6290,7 +6276,6 @@ Begin
        (Not FEnv.Error.Success(FRetCode)) Then
       FEnv.Error.RaiseError(Self, FRetCode);
   Until FRetCode <> SQL_NEED_DATA;
-  {$ENDIF}
 End;
 
 Function TOdbcStatement.Fetch(FetchType: SQLSMALLINT;
@@ -7769,7 +7754,8 @@ Var
     End;
   End;
 
-var res: ansistring;
+var
+  res: ansistring;
 Begin
   //Alternative Semi-Optimal implementation
 
@@ -7785,10 +7771,6 @@ Begin
       End
     Else If (Not LrRowRec.FBlob) And (LrRowRec.FSize^ > 0) And ((LrRowRec.FType = SQL_C_CHAR) Or (LrRowRec.FType = SQL_C_BINARY)) Then
       Begin
-      //Kiap:
-      //Made temp changes to support reading strings with 0#
-      //What are the consequences of this
-      //TODO: The toString functions needs to be overhauled to take into account the size
       SetLength(Res, LrRowRec.FSize^);
       Move(LrRowRec.FValue^, Res[1], LrRowRec.FSize^);
       Result:= TrimString(Res, StringTrimming);
@@ -7802,34 +7784,6 @@ Begin
     Begin
     Result:= '';
     End;
-
-{
-Previous Non-Optimal implementation
-
-  temp:= RowRec(Col, Row);
-  if temp = nil then
-    Result:= ''
-  else
-  begin
-    if temp^.FBlob then
-      Result:= MemoryStreamToString(GetCellMemory(Col, Row));
-    if temp^.FSize^ = SQL_NULL_DATA then
-      Result:= NullData
-    else if (NOT temp^.FBlob) and (temp^.FSize^ > 0) and ((temp^.FType = SQL_C_CHAR) or (temp^.FType = SQL_C_BINARY)) then
-      begin
-      //Kiap:
-      //Made temp changes to support reading strings with 0#
-      //What are the consequences of this
-      //TODO: The toString functions needs to be overhauled to take into account the size
-      SetLength(Result, temp^.FSize^);
-      Move(temp^.FValue^, Result[1], temp^.FSize^);
-      Result:= TrimString(Result, StringTrimming);
-      end
-    else if NOT temp^.FBlob then
-      Result:= FormatString(temp^.FValue, temp^.FType);
-    Dispose(temp);
-  end;
-}
 End;
 
 Function TOdbcStatement.GetCellSingle(Col, Row: SQLUSMALLINT): Single;
@@ -8775,9 +8729,6 @@ Var
 Begin
   Close;
 
-  {$IFDEF FPC}
-  raise Exception.create('FPC problem');
-  {$ELSE}
   FRetCode:= SQLGetTypeInfo(FHstmt, SqlType);
   If FEnv.Error.Success(FRetCode) And FetchNext Then
   Begin
@@ -8797,7 +8748,6 @@ Begin
     Else
       Result:= Result+'('+IntToStr(SqlSize)+')';
   End;
-  {$ENDIF}
 End;
 
 Procedure TOdbcStatement.SetSkipByCursor(ASkipByCursor: Boolean);
@@ -10278,9 +10228,6 @@ begin
     ATableOwner:= PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  {$IFDEF FPC}
-  raise Exception.create('Not supported in FPC');
-  {$ELSE}
   RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
                                                    nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName));
   if not FEnv.Error.Success(RetCode) then
@@ -10291,7 +10238,6 @@ begin
     while FetchNext do
       //<COLUMN NAME>;[<FOREIGN OWNER>.]<FOREIGN TABLE>;<FOREIGN COLUMN>
       FForeignKeys.Add(ColString[8]+';'+Prefix(ColString[2], ColString[3])+';'+ColString[4]);
-  {$ENDIF}
 end;
 
 procedure TCatalogTable.RetrieveForeignReferences;
@@ -10314,9 +10260,6 @@ begin
     ATableOwner:= PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  {$IFDEF FPC}
-  raise Exception.create('Not supported in FPC');
-  {$ELSE}
   RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
                                                    nil, 0, nil, 0, nil, 0);
   if not FEnv.Error.Success(RetCode) then
@@ -10327,7 +10270,6 @@ begin
     while FetchNext do
       //<COLUMN NAME>;[<FOREIGN OWNER>.]<FOREIGN TABLE>;<FOREIGN COLUMN>
       FForeignReferences.Add(ColString[4]+';'+Prefix(ColString[6], ColString[7])+';'+ColString[8]);
-  {$ENDIF}
 end;
 
 procedure TCatalogTable.RetrieveIndexes;
