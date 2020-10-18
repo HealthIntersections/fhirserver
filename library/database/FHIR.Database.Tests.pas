@@ -34,7 +34,7 @@ unit FHIR.Database.Tests;
 interface
 
 Uses
-  Windows, Sysutils,
+  Sysutils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
 
   FHIR.Support.Utilities, FHIR.Support.Stream,

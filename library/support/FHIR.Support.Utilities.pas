@@ -1565,6 +1565,7 @@ Function LocalTime : TDateTime; Overload;
 Function LocalDateTime : TDateTime; Overload;
 
 Function TimeZoneBias : TDateTime; Overload;
+Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
 Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
 function SameInstant(t1, t2 : TDateTime) : boolean;
 Function TimeSeparator : Char; Overload;
@@ -1616,7 +1617,6 @@ Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset; Ove
 Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateTimeOffset) : Boolean; Overload;
 
 Function LocalDateTimeOffset : TDateTimeOffset; Overload;
-Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
 Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
 Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
 
@@ -9308,17 +9308,6 @@ Begin
   Result := DateTimeToXMLDateTimeString(aTimestamp) + 'T' + DateTimeToXMLTimeZoneString(aTimeZone);
 End;
 
-Function TimeZoneBias : TDateTime;
-begin
-  result := TTimeZone.Local.GetUtcOffset(now).TotalDays;
-end;
-
-Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
-begin
-  result := TTimeZone.Local.GetUtcOffset(when).TotalDays;
-end;
-
-
 Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; overload;
 Begin
   Result := RealCompare(aA, aB);
@@ -11238,6 +11227,17 @@ function UnixToDateTime(USec: Longint): TDateTime;
 begin
   Result := (Usec / 86400) + UnixStartDate;
 end;
+
+Function TimeZoneBias : TDateTime;
+begin
+  result := TTimeZone.Local.GetUtcOffset(now).TotalDays;
+end;
+
+Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
+begin
+  result := TTimeZone.Local.GetUtcOffset(when).TotalDays;
+end;
+
 
 function getIanaNameForWindowsTimezone(zone : String; country : String) : String;
 begin
