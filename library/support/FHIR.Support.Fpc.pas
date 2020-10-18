@@ -36,6 +36,9 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   {$ENDIF}
+  {$IFDEF LINUX}
+  baseunix, unix,
+  {$ENDIF}
   Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib
   {$IFDEF FPC}, dateutils, upascaltz {$ENDIF};
 
@@ -385,6 +388,7 @@ procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
 var
   i : integer;
 begin
+{$IFDEF WINDOWS}
   i := FileGetAttr(Filename);
   if readOnly then
     i := FileSetAttr(FileName, i or faReadOnly)
@@ -393,6 +397,20 @@ begin
   if i <> 0 then
     RaiseLastOSError(i);
   i := FileGetAttr(Filename);
+{$ENDIF}
+{$IFDEF LINUX}
+  if readOnly then
+    i := fpchmod(filename, S_IRUSR or S_IRGRP or S_IROTH or S_IRUSR or S_IXGRP or S_IXOTH)
+  else
+    i := fpchmod(filename, S_IRWXU or S_IRWXG or S_IRWXO);
+  if (i <> 0) then
+    raise Exception.create('chmod failed');
+{$ENDIF}
+{$IFDEF OSX}
+begin
+  raise Exception.create('Not supported');
+end;
+{$ENDIF}
 end;
 
 

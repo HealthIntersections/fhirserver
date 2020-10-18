@@ -67,6 +67,21 @@ procedure registerTests;
 
 implementation
 
+const
+{$IFDEF WINDOWS}
+  DefaultMDTestRoot =      'c:\work\markdown';
+  DefaultServerTestsRoot = 'c:\work\fhirserver';
+  DefaultFHIRTestsRoot =   'c:\work\org.hl7.fhir\fhir-test-cases';
+{$ENDIF}
+{$IFDEF LINUX}
+  DefaultMDTestRoot =      '/home/gg/markdown';
+  DefaultServerTestsRoot = '/home/gg/fhirserver';
+  DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
+{$ENDIF}
+{$IFDEF OSX}
+  ??
+{$ENDIF}
+
 procedure registerTests;
 begin
   // before we register the tests, we have to set up the locations of 3 folders:
@@ -74,10 +89,12 @@ begin
   // * the official tests github repo (local root)
   // * the github repo for the server (local root)
   // the tests don't clone these repos - this must be done first
-
-  MDTestRoot := 'c:\work\markdown';
-  ServerTestsRoot := 'c:\work\fhirserver';
-  FHIRTestsRoot := 'c:\work\org.hl7.fhir\fhir-test-cases';
+  if not getCommandLineParam('mdRoot', MDTestRoot) then
+    MDTestRoot := DefaultMDTestRoot;
+  if not getCommandLineParam('mdRoot', ServerTestsRoot) then
+    ServerTestsRoot := DefaultServerTestsRoot;
+  if not getCommandLineParam('mdRoot', FHIRTestsRoot) then
+    FHIRTestsRoot := DefaultFHIRTestsRoot;
 
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;

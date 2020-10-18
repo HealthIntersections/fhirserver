@@ -2010,7 +2010,7 @@ Implementation
 Uses
   {$IFDEF WINDOWS} ActiveX, ComObj, {$ENDIF}
   {$IFDEF FPC} Graphics, {$ENDIF}
-  IOUtils, DateUtils;
+  IOUtils, DateUtils, FHIR.Support.Stream;
 
 
 Function Percentage(Const iPart, iTotal : Integer) : Real;
@@ -12046,7 +12046,7 @@ end;
 {$ENDIF}
 {$IFDEF LINUX}
 begin
-  result := '';
+  result := FileToString('/etc/timezone', TEncoding.ASCII).Trim();
 end;
 {$ENDIF}
 
