@@ -6,9 +6,6 @@
         <Projects Include="Server\fhirserver.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utilities\tests\FHIRServerTests.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -26,23 +23,14 @@
     <Target Name="fhirserver:Make">
         <MSBuild Projects="Server\fhirserver.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FHIRServerTests">
-        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj"/>
-    </Target>
-    <Target Name="FHIRServerTests:Clean">
-        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FHIRServerTests:Make">
-        <MSBuild Projects="utilities\tests\FHIRServerTests.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver;FHIRServerTests"/>
+        <CallTarget Targets="fhirserver"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="fhirserver:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="fhirserver:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

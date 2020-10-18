@@ -39,7 +39,7 @@ uses
   TestInsight.DUnitX, DUnitX.Loggers.Console, DUnitX.Loggers.GUI.VCL, DUnitX.Loggers.Xml.NUnit, DUnitX.TestFramework,
   {$ENDIF}
   {$IFDEF FPC}
-  GuiTestRunner, FHIR.Support.Fpc.ConsoleTester,
+  GuiXTestRunner, FHIR.Support.Fpc.ConsoleTester,
   {$ENDIF}
   FHIR.Support.Utilities,
   FHIR.Server.Ini,
@@ -77,7 +77,8 @@ begin
   {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;
-  Application.CreateForm(TGuiTestRunner, TestRunner);
+  Application.CreateForm(TGuiXTestRunner, TestRunner);
+  TestRunner.FileName := serverTestFile('tests.ini');
   Application.Run;
   {$ELSE}
   Application.Initialize;
