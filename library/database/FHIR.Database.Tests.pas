@@ -98,7 +98,7 @@ var
   fn : string;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
-  fn := serverTestFile(['library', 'database', 'FHIR.Database.Tests.pas']);
+  fn := TestSettings.serverTestFile(['library', 'database', 'FHIR.Database.Tests.pas']);
   b := FileToBytes(fn);
   i64 := MaxInt;
   i64 := i64 + 2;
