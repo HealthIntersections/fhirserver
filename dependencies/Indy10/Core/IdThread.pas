@@ -658,7 +658,7 @@ begin
   // so the destroy here needs to be done inside of the same lock...
 
   //IdDisposeAndNil(FYarn);
-  if FYarn is TIdYarnOfThread then
+  if FYarn is TIdYarnOfThreadAccess then
   begin
     LScheduler := TIdYarnOfThreadAccess(FYarn).FScheduler;
     if Assigned(LScheduler) then

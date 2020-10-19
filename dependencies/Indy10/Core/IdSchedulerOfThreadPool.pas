@@ -166,7 +166,8 @@ var
 begin
   //take posession of the thread
   LThread := TIdYarnOfThread(AYarn).Thread;
-  TIdYarnOfThreadAccess(AYarn).FThread := nil;
+  if AYarn is TIdYarnOfThreadAccess then
+    TIdYarnOfThreadAccess(AYarn).FThread := nil;
   //Currently LThread can =nil. Is that a valid condition?
   //Assert(LThread<>nil);
 

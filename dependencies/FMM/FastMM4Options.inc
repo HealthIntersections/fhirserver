@@ -104,7 +104,7 @@ Set the default options for FastMM here.
  program overwriting the bounds of allocated memory). These checks are
  expensive, and this option should thus only be used for debugging purposes.
  If this option is set then the ASMVersion option is automatically disabled.}
-{$define CheckHeapForCorruption}
+{.$define CheckHeapForCorruption}
 
 {Enable this option to catch attempts to perform MM operations after FastMM has
  been uninstalled. With this option set when FastMM is uninstalled it will not
@@ -123,13 +123,13 @@ Set the default options for FastMM here.
  Very important: If you enable this option your application will require the
  FastMM_FullDebugMode.dll library. If this library is not available you will
  get an error on startup.}
-{$define FullDebugMode}
+{.$define FullDebugMode}
 
   {Set this option to perform "raw" stack traces, i.e. check all entries on the
    stack for valid return addresses. Note that this is significantly slower
    than using the stack frame tracing method, but is usually more complete. Has
    no effect unless FullDebugMode is enabled}
-  {$define RawStackTraces}
+  {.$define RawStackTraces}
 
   {Set this option to check for user code that uses an interface of a freed
    object. Note that this will disable the checking of blocks modified after
@@ -140,7 +140,7 @@ Set the default options for FastMM here.
   {Set this option to log all errors to a text file in the same folder as the
    application. Memory errors (with the FullDebugMode option set) will be
    appended to the log file. Has no effect if "FullDebugMode" is not set.}
-  {$define LogErrorsToFile}
+  {.$define LogErrorsToFile}
 
   {Set this option to log all memory leaks to a text file in the same folder as
    the application. Memory leak reports (with the FullDebugMode option set)
@@ -149,7 +149,7 @@ Set the default options for FastMM here.
    logged, even if they are "expected" leaks registered through
    AddExpectedMemoryLeaks. Expected leaks registered by pointer may be excluded
    through the HideExpectedLeaksRegisteredByPointer option.}
-  {$define LogMemoryLeakDetailToFile}
+  {.$define LogMemoryLeakDetailToFile}
 
   {Deletes the error log file on startup. No effect if LogErrorsToFile is not
    also set.}
