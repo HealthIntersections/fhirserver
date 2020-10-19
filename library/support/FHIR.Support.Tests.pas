@@ -1084,7 +1084,7 @@ var
 begin
   sl := TStringList.create;
   try
-    if FindFirst(serverTestFile(['testcases', 'xml', '*.xml', faAnyFile, SR) = 0 then
+    if FindFirst(serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
     repeat
       s := sr.Name;
       sl.Add(sr.Name);
@@ -1094,7 +1094,7 @@ begin
     begin
       result[i].Name := sl[i];
       SetLength(result[i].Values, 1);
-      result[i].Values[0] := serverTestFile(['testcases', 'xml', sl[i];
+      result[i].Values[0] := serverTestFile(['testcases', 'xml', sl[i]]);
     end;
   finally
     sl.Free;
@@ -1136,7 +1136,7 @@ var
   path : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1523,7 +1523,7 @@ begin
   tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
   {$IFNDEF FPC}
-  mstests := TMsXmlParser.Parse(serverTestFile(['testcases', 'xml', 'xpath-tests.xml');
+  mstests := TMsXmlParser.Parse(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']));
   mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
   {$ENDIF}
 end;

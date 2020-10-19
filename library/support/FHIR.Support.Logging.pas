@@ -124,6 +124,8 @@ Type
     function link : TLogListener; overload;
   end;
 
+  { TLogging }
+
   TLogging = class (TFslObject)
   private
     FLogToConsole : boolean;
@@ -133,6 +135,7 @@ Type
     FStartTime : TDateTime;
     FLastday : integer;
     FWorkingLine : String;
+    FCount : integer;
 
     procedure checkDay;
     procedure close;
@@ -153,6 +156,8 @@ Type
     procedure start(s : String);
     procedure continue(s : String);
     procedure finish(s : String = '');
+
+    function Counter : String;
 
     Function DescribeSize(b, min: Cardinal): String;
     function MemoryStatus : String;
@@ -461,7 +466,7 @@ begin
   FFileLogger := TLogger.Create(filename);
 end;
 
-Function TLogging.DescribeSize(b, min: Cardinal): String;
+function TLogging.DescribeSize(b, min: Cardinal): String;
 Begin
   If b = $FFFFFFFF Then
     Result := '??'
@@ -569,7 +574,7 @@ begin
 
 end;
 
-procedure TLogging.Log(s : String);
+procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
@@ -672,6 +677,12 @@ begin
     except
     end;
   end;
+end;
+
+function TLogging.Counter: String;
+begin
+  inc(FCount);
+  result := ' #'+inttostr(FCount);
 end;
 
 Initialization

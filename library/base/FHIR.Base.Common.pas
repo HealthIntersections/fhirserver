@@ -631,6 +631,11 @@ type
     property publisher : String read GetPublisher write SetPublisher;
   end;
 
+  TFslMetadataResourceList = class (TFslList<TFHIRMetadataResourceW>)
+  public
+    function link : TFslMetadataResourceList; overload;
+  end;
+
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
   protected
     FConceptList : TFslList<TFhirCodeSystemConceptW>;
@@ -1259,7 +1264,7 @@ type
     function count: integer;
     procedure clear;
     procedure listAll(list: TFslList<T>);
-    procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
+    procedure listAllM(list: TFslMetadataResourceList);
   end;
 
 implementation
@@ -2263,7 +2268,7 @@ begin
   list.addAll(Flist);
 end;
 
-procedure TFHIRMetadataResourceManagerW<T>.listAllM(list : TFslList<TFHIRMetadataResourceW>);
+procedure TFHIRMetadataResourceManagerW<T>.listAllM(list : TFslMetadataResourceList);
 var
   tt : T;
 begin
@@ -2319,6 +2324,13 @@ end;
 function TFHIRSubscriptionTopicW.link: TFHIRSubscriptionTopicW;
 begin
   result := TFHIRSubscriptionTopicW(inherited link);
+end;
+
+{ TFslMetadataResourceList }
+
+function TFslMetadataResourceList.link: TFslMetadataResourceList;
+begin
+  result := TFslMetadataResourceList(inherited link);
 end;
 
 end.

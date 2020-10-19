@@ -125,7 +125,7 @@ type
     function count: integer;
     procedure clear;
     procedure listAll(list: TFslList<TFHIRCodeSystemW>);
-    procedure listAllM(list: TFslList<TFHIRMetadataResourceW>);
+    procedure listAllM(list: TFslMetadataResourceList);
   end;
 
   TFhirCodeSystemProviderFilterSorter = class (TFslComparer<TFhirCodeSystemConceptMatch>)
@@ -1429,7 +1429,7 @@ begin
     list.add(tt.CodeSystem.link);
 end;
 
-procedure TFHIRCodeSystemManager.listAllM(list : TFslList<TFHIRMetadataResourceW>);
+procedure TFHIRCodeSystemManager.listAllM(list : TFslMetadataResourceList);
 var
   tt : TFHIRCodeSystemEntry;
 begin

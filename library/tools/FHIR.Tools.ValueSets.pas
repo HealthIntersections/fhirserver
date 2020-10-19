@@ -121,12 +121,12 @@ Type
     FOnGetValueSet : TGetValueSetEvent;
     FOnGetCSProvider : TGetProviderEvent;
     FParams : TFHIRExpansionParams;
-    FAdditionalResources : TFslList<TFHIRMetadataResourceW>;
+    FAdditionalResources : TFslMetadataResourceList;
 
     function findValueSet(url : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList); overload;
     destructor Destroy; override;
   end;
 
@@ -144,7 +144,7 @@ Type
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
     function getName: String;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; id : String); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; id : String); overload;
     destructor Destroy; override;
 
     property id : String read FId;
@@ -186,7 +186,7 @@ Type
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; getExpansion : TGetExpansionEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion : TGetExpansionEvent); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -198,7 +198,7 @@ implementation
 
 { TValueSetWorker }
 
-constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>);
+constructor TValueSetWorker.Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList);
 begin
   Create;
   FFactory := factory;
@@ -283,7 +283,7 @@ end;
 
 { TValueSetChecker }
 
-constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; id : string);
+constructor TValueSetChecker.create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; id : string);
 begin
   inherited Create(factory, getVs, getCs, txResources);
   FId := id;
@@ -1329,7 +1329,7 @@ begin
       result := ccd.value;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslList<TFHIRMetadataResourceW>; getExpansion: TGetExpansionEvent);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion: TGetExpansionEvent);
 begin
   inherited create(factory, getVS, getCS, txResources);
   FOnGetExpansion := getExpansion;

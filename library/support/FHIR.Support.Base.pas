@@ -260,7 +260,6 @@ Type
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
 
   { TFslList }
-
   TFslList<T : class> = class (TFslEnumerable<T>)
   public
   type
@@ -268,6 +267,7 @@ Type
     TEmptyEvent = function (sender : TObject; const L, R: T): Boolean of object;
     TListMatchEvent = function (sender : TObject; const i : T): boolean of object;
     TFslListRemoveEvent = function (sender : TObject; item : T):boolean of object;
+    TFslCollectionNotifyEvent = procedure(ASender: TObject; const AItem: T; AAction: TCollectionNotification) of object;
     {$IFNDEF FPC}
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
@@ -284,7 +284,7 @@ Type
     FItems: arrayofT;
     FCount: Integer;
     FComparer: TFslComparer<T>;
-    FOnNotify: TCollectionNotifyEvent<T>;
+    FOnNotify: TFslCollectionNotifyEvent;
     FArrayManager: TArrayManager<T>;
     FEnumFree : boolean;
 
@@ -303,7 +303,7 @@ Type
     procedure QuickSort(L, R: Integer; comparer: TFslComparer<T>); overload;
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
-    procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
+    procedure NotifyChange(const Item: T; Action: TCollectionNotification);
   public
 
     constructor Create; Overload; Override;
@@ -402,7 +402,7 @@ Type
     property Items[Index: Integer]: T read GetItem write SetItem; default;
     property List: arrayofT read FItems;
 
-    property OnNotify: TCollectionNotifyEvent<T> read FOnNotify write FOnNotify;
+    property OnNotify: TFslCollectionNotifyEvent read FOnNotify write FOnNotify;
 
     type
       TFslEnumerator = class(TEnumerator<T>)
@@ -436,6 +436,10 @@ Type
   { TFslMap }
 
   TFslMap<T : TFslObject> = class(TEnumerable<TFslPair<T>>)
+  public
+  type
+    TFslCollectionKeyNotifyEvent = procedure(ASender: TObject; const AItem: string; AAction: TCollectionNotification) of object;
+    TFslCollectionValueNotifyEvent = procedure(ASender: TObject; const AItem: T; AAction: TCollectionNotification) of object;
   private
     type
       TItem = record
@@ -585,8 +589,8 @@ Type
       end;
 
   private
-    FOnKeyNotify: TCollectionNotifyEvent<String>;
-    FOnValueNotify: TCollectionNotifyEvent<T>;
+    FOnKeyNotify: TFslCollectionKeyNotifyEvent;
+    FOnValueNotify: TFslCollectionValueNotifyEvent;
     FKeyCollection: TKeyCollection;
     FValueCollection: TValueCollection;
     function GetKeys: TKeyCollection;
@@ -599,8 +603,8 @@ Type
     property SortedKeys : TStringList read GetSortedKeys;
     property AsAddedKeys : TStringList read GetAsAddedKeys;
     property Values: TValueCollection read GetValues;
-    property OnKeyNotify: TCollectionNotifyEvent<String> read FOnKeyNotify write FOnKeyNotify;
-    property OnValueNotify: TCollectionNotifyEvent<T> read FOnValueNotify write FOnValueNotify;
+    property OnKeyNotify: TFslCollectionKeyNotifyEvent read FOnKeyNotify write FOnKeyNotify;
+    property OnValueNotify: TFslCollectionValueNotifyEvent read FOnValueNotify write FOnValueNotify;
   end;
 
   TFslStringDictionary = class (TDictionary<String, String>)
@@ -1119,8 +1123,8 @@ begin
   oldItem := FItems[Index];
   FItems[Index] := Value;
   try
-    Notify(oldItem, cnRemoved);
-    Notify(Value, cnAdded);
+    NotifyChange(oldItem, cnRemoved);
+    NotifyChange(Value, cnAdded);
   finally
     TFslObject(oldItem).free;
   end;
@@ -1305,7 +1309,7 @@ begin
     OutOfMemoryError;
 end;
 
-procedure TFslList<T>.Notify(const Item: T; Action: TCollectionNotification);
+procedure TFslList<T>.NotifyChange(const Item: T; Action: TCollectionNotification);
 begin
   if Assigned(FOnNotify) then
     FOnNotify(Self, Item, Action);
@@ -1417,7 +1421,7 @@ begin
   Result := Count;
   FItems[Count] := Value; // .link - no link here - the link has to be external, because the consumer of the list has to decide that the list owns the object
   Inc(FCount);
-  Notify(Value, cnAdded);
+  NotifyChange(Value, cnAdded);
 end;
 
 procedure TFslList<T>.AddRange(const Values: array of T);
@@ -1471,7 +1475,7 @@ begin
   end;
   FItems[Index] := Value; // .link - no, see above
   Inc(FCount);
-  Notify(Value, cnAdded);
+  NotifyChange(Value, cnAdded);
 end;
 
 procedure TFslList<T>.InsertRange(Index: Integer; const Values: array of T);
@@ -1494,7 +1498,7 @@ begin
   Inc(FCount, Length(Values));
 
   for I := 0 to Length(Values) - 1 do
-    Notify(Values[I], cnAdded);
+    NotifyChange(Values[I], cnAdded);
 end;
 
 procedure TFslList<T>.InsertRange(Index: Integer; const Collection: IEnumerable<T>);
@@ -1626,7 +1630,7 @@ begin
     FArrayManager.Finalize(FItems, Count, 1);
   end;
   try
-    Notify(oldItem, Notification);
+    NotifyChange(oldItem, Notification);
   finally
     TFslObject(oldItem).free;
   end;
@@ -1662,7 +1666,7 @@ begin
     Dec(FCount, ACount);
 
     for I := 0 to Length(oldItems) - 1 do
-      Notify(oldItems[I], cnRemoved);
+      NotifyChange(oldItems[I], cnRemoved);
   finally
     for I := 0 to Length(oldItems) - 1 do
       TFslObject(oldItems[I]).free;
@@ -1763,7 +1767,7 @@ begin
   Result := -1;
 end;
 
-function TFslList<T>.link: TFslList<t>;
+function TFslList<T>.link: TFslList<T>;
 begin
   result := TFslList<T>(inherited Link);
 end;
