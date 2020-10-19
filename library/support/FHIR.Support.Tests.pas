@@ -3948,7 +3948,8 @@ end;
 //
 
 var
-  globalInt : cardinal;
+  globalNum : cardinal;
+  globalThread : TThreadID;
   cs : TRTLCriticalSection;
   kcs : TFslLock;
   sem : TSemaphore;
@@ -4062,21 +4063,21 @@ type
 
 procedure TXPlatformTests.TestCriticalSectionThreaded;
 begin
-  globalInt := GetCurrentThreadId;
+  globalThread := GetCurrentThreadId;
   InitializeCriticalSection(cs);
   try
     EnterCriticalSection(cs);
     try
       TTestCriticalSectionThread.create(false);
       Sleep(10);
-      assertTrue(globalInt = GetCurrentThreadId);
+      assertTrue(globalThread = GetCurrentThreadId);
     finally
       LeaveCriticalSection(cs);
     end;
     sleep(10);
     EnterCriticalSection(cs);
     try
-      assertTrue(globalInt <> GetCurrentThreadId);
+      assertTrue(globalThread <> GetCurrentThreadId);
     finally
       LeaveCriticalSection(cs);
     end;
@@ -4087,21 +4088,21 @@ end;
 
 procedure TXPlatformTests.TestKCriticalSectionThreaded;
 begin
-  globalInt := GetCurrentThreadId;
+  globalThread := GetCurrentThreadId;
   kcs := TFslLock.Create('none');
   try
     kcs.Enter;
     try
       TTestKCriticalSectionThread.create(false);
       Sleep(10);
-      assertTrue(globalInt = GetCurrentThreadId);
+      assertTrue(globalThread = GetCurrentThreadId);
     finally
       kcs.Leave;
     end;
     sleep(10);
     kcs.Enter;
     try
-      assertTrue(globalInt <> GetCurrentThreadId);
+      assertTrue(globalThread <> GetCurrentThreadId);
     finally
       kcs.Leave;
     end;
@@ -4217,7 +4218,7 @@ procedure TTestCriticalSectionThread.execute;
 begin
   EnterCriticalSection(cs);
   try
-    globalInt := GetCurrentThreadId;
+    globalThread := GetCurrentThreadId;
   finally
     LeaveCriticalSection(cs);
   end;
@@ -4227,29 +4228,29 @@ procedure TXPlatformTests.TestSemaphore;
 var
   thread : TTestSemaphoreThread;
 begin
-  globalInt := 0;
+  globalNum := 0;
   sem := TSemaphore.Create(nil, 0, 1, '');
   try
     thread := TTestSemaphoreThread.Create(false);
     try
       thread.FreeOnTerminate := true;
-      while (globalInt = 0) do
+      while (globalNum = 0) do
         sleep(100);
-      assertTrue(globalInt = 1, '1');
+      assertTrue(globalNum = 1, '1');
       sem.Release;
       sleep(500);
-      assertTrue(globalInt = 2, '2');
+      assertTrue(globalNum = 2, '2');
       sem.Release;
       sleep(500);
-      assertTrue(globalInt = 3, '3');
+      assertTrue(globalNum = 3, '3');
       sleep(500);
-      assertTrue(globalInt = 3, '4');
+      assertTrue(globalNum = 3, '4');
     finally
       thread.Terminate;
       sem.release;
     end;
     sleep(500);
-    assertTrue(globalInt = 100, '100');
+    assertTrue(globalNum = 100, '100');
   finally
     sem.Free;
   end;
@@ -4259,13 +4260,13 @@ end;
 
 procedure TTestSemaphoreThread.execute;
 begin
-  inc(globalInt);
+  inc(globalNum);
   while not Terminated do
   begin
     case sem.WaitFor(10000) of
       wrSignaled:
         begin
-          inc(globalInt);
+          inc(globalNum);
         end;
       wrTimeout:
         begin
@@ -4281,7 +4282,7 @@ begin
         end;
     end;
   end;
-  globalInt := 100;
+  globalNum := 100;
 end;
 
 { TTestKCriticalSectionThread }
@@ -4290,7 +4291,7 @@ procedure TTestKCriticalSectionThread.Execute;
 begin
   kcs.Enter;
   try
-    globalInt := GetCurrentThreadId;
+    globalThread := GetCurrentThreadId;
   finally
     kcs.Leave;
   end;
