@@ -37,7 +37,7 @@ Uses
   Sysutils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
 
-  FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
@@ -251,24 +251,46 @@ end;
 procedure TFslDBTests.TestMSSQL;
 var
   db: TFslDBManager;
+  settings : TFslStringMap;
 begin
-  db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, 'SQL Server', '(local)', 'test', '', '');
-  try
-    test(db);
-  finally
-    db.Free;
+  if not TestSettings.hasSection('mssql') then
+    assertNotTested
+  else
+  begin
+    settings := TestSettings.section('mssql');
+    try
+      db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
+      try
+        test(db);
+      finally
+        db.Free;
+      end;
+    finally
+      settings.Free;
+    end;
   end;
 end;
 
 procedure TFslDBTests.TestMySQL;
 var
   db: TFslDBManager;
+  settings : TFslStringMap;
 begin
-  db := TFslDBOdbcManager.create('test', kdbMySql, 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'test', 'test', 'test');
-  try
-    test(db);
-  finally
-    db.Free;
+  if not TestSettings.hasSection('mysql') then
+    assertNotTested
+  else
+  begin
+    settings := TestSettings.section('mysql');
+    try
+      db := TFslDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      try
+        test(db);
+      finally
+        db.Free;
+      end;
+    finally
+      settings.Free;
+    end;
   end;
 end;
 

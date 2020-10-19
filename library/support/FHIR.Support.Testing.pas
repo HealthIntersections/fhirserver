@@ -34,19 +34,13 @@ interface
 
 Uses
   {$IFDEF WINDOWS}Windows,{$ENDIF}
-  SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, IniFiles,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
+  CommonTestBase,
   FHIR.Support.Base, FHIR.Support.Utilities;
 
 // *** General Testing Infrastructure ******************************************
-
-var
-  ServerTestsRoot : String;
-  FHIRTestsRoot : String;
-
-function serverTestFile(parts : array of String) : String;
-function fhirTestFile(parts : array of String) : String;
 
 type
   {$IFNDEF FPC}
@@ -67,6 +61,7 @@ type
   {$M+}
   TFslTestCase = class {$IFDEF FPC} (TTestCase) {$ENDIF}
   protected
+    procedure assertNotTested;
     procedure assertPass;
     procedure assertFail(message : String);
     procedure assertTrue(test : boolean; message : String); overload;
@@ -110,40 +105,29 @@ type
     constructor Create(proc : TRunMethod);
   end;
 
-implementation
+  TFslTestSettings = class (TFslObject)
+  private
+    Fini : TIniFile;
+    FFilename : String;
+    FServerTestsRoot : String;
+    FFHIRTestsRoot : String;
+    function testFile(root : String; parts : array of String) : String;
+  public
+    constructor Create(filename : String);
+    destructor Destroy; override;
+    property filename : String read FFilename;
 
-const
-  psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
+    function serverTestFile(parts : array of String) : String;
+    function fhirTestFile(parts : array of String) : String;
 
-function testFile(root : String; parts : array of String) : String;
-var
-  part : String;
-  s : String;
-begin
-  result := root;
-  for part in parts do
-  begin
-    s := part.Replace('/', psc).Replace('\', psc);
-    if result = '' then
-      result := s
-    else if not result.EndsWith(psc) and not s.startsWith(psc) then
-      result := result + psc + s
-    else if not result.EndsWith(psc) or not s.startsWith(psc) then
-      result := result + s
-    else
-      result := result + s.substring(1);
+    function section(name : String): TFslStringMap;
+    function hasSection(name : String): boolean;
   end;
-end;
 
-function serverTestFile(parts : array of String) : String;
-begin
-  result := testFile(ServerTestsRoot, parts);
-end;
+var
+  TestSettings : TFslTestSettings;
 
-function fhirTestFile(parts : array of String) : String;
-begin
-  result := testFile(FHIRTestsRoot, parts);
-end;
+implementation
 
 { TFslTestCase }
 
@@ -198,6 +182,15 @@ begin
   TAssert.AssertFalse(test);
   {$ELSE}
   Assert.IsFalse(test);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertNotTested;
+begin
+  {$IFDEF FPC}
+  TAssert.Fail('Not Tested');
+  {$ELSE}
+  Assert.NotImplemented;
   {$ENDIF}
 end;
 
@@ -285,7 +278,86 @@ begin
   Fproc;
 end;
 
+{ TFslTestSettings }
 
+const
+  psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
+
+constructor TFslTestSettings.Create(filename: String);
+begin
+  inherited create;
+  FIni := TIniFile.create(filename);
+  FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+end;
+
+destructor TFslTestSettings.Destroy;
+begin
+  FIni.Free;
+  inherited;
+end;
+
+function TFslTestSettings.fhirTestFile(parts: array of String): String;
+begin
+  result := testFile(FFHIRTestsRoot, parts);
+end;
+
+function TFslTestSettings.serverTestFile(parts: array of String): String;
+begin
+  result := testFile(FServerTestsRoot, parts);
+end;
+
+function TFslTestSettings.testFile(root: String; parts: array of String): String;
+var
+  part : String;
+  s : String;
+begin
+  result := root;
+  for part in parts do
+  begin
+    s := part.Replace('/', psc).Replace('\', psc);
+    if result = '' then
+      result := s
+    else if not result.EndsWith(psc) and not s.startsWith(psc) then
+      result := result + psc + s
+    else if not result.EndsWith(psc) or not s.startsWith(psc) then
+      result := result + s
+    else
+      result := result + s.substring(1);
+  end;
+end;
+
+function TFslTestSettings.section(name: String): TFslStringMap;
+var
+  list : TStringList;
+  s : String;
+begin
+  result := TFslStringMap.Create;
+  try
+    list := TStringList.Create;
+    try
+      FIni.ReadSection(name, list);
+      for s in list do
+        result.Items[s] := FIni.ReadString(name, s, '');
+    finally
+      list.Free;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFslTestSettings.hasSection(name: String): boolean;
+begin
+  result := FIni.SectionExists(name);
+end;
+
+initialization
+  TestSettings := TFslTestSettings.Create('fhir-tests.ini');
+finalization
+  TestSettings.Free;
 end.
 
 

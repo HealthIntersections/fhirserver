@@ -59,7 +59,8 @@ FHIR.R4.Tests.Context
 *)
 
 uses
-  CommonTestBase, FHIR.Support.Testing,
+  SysUtils, IniFiles,
+  FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
   FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests, FHIR.Ucum.Tests;
 
@@ -67,34 +68,69 @@ procedure registerTests;
 
 implementation
 
-const
-{$IFDEF WINDOWS}
-  DefaultMDTestRoot =      'c:\work\markdown';
-  DefaultServerTestsRoot = 'c:\work\fhirserver';
-  DefaultFHIRTestsRoot =   'c:\work\org.hl7.fhir\fhir-test-cases';
-{$ENDIF}
-{$IFDEF LINUX}
-  DefaultMDTestRoot =      '/home/gg/markdown';
-  DefaultServerTestsRoot = '/home/gg/fhirserver';
-  DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
-{$ENDIF}
-{$IFDEF OSX}
-  ??
-{$ENDIF}
-
-procedure registerTests;
-begin
   // before we register the tests, we have to set up the locations of 3 folders:
   // * the markdown github repo location (local root)
   // * the official tests github repo (local root)
   // * the github repo for the server (local root)
   // the tests don't clone these repos - this must be done first
-  if not getCommandLineParam('mdRoot', MDTestRoot) then
-    MDTestRoot := DefaultMDTestRoot;
-  if not getCommandLineParam('mdRoot', ServerTestsRoot) then
-    ServerTestsRoot := DefaultServerTestsRoot;
-  if not getCommandLineParam('mdRoot', FHIRTestsRoot) then
-    FHIRTestsRoot := DefaultFHIRTestsRoot;
+
+const
+{$IFDEF WINDOWS}
+  DefaultMDTestRoot =      'c:\work\markdown';
+  DefaultServerTestsRoot = 'c:\work\fhirserver';
+  DefaultFHIRTestsRoot =   'c:\work\org.hl7.fhir\fhir-test-cases';
+  DefaultMSSQLDriver = 'SQL Server';
+  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+{$ENDIF}
+{$IFDEF LINUX}
+  DefaultMDTestRoot =      '/home/gg/markdown';
+  DefaultServerTestsRoot = '/home/gg/fhirserver';
+  DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
+  DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
+  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+{$ENDIF}
+{$IFDEF OSX}
+  ??
+{$ENDIF}
+
+procedure setupDefaultTestSettings(filename : String);
+var
+  ini : TIniFile;
+begin
+  ini := TIniFile.Create(filename);
+  try
+    ini.WriteString('locations', 'fhirserver', DefaultServerTestsRoot);
+    ini.WriteString('locations', 'fhir-test-cases', DefaultFHIRTestsRoot);
+    ini.WriteString('locations', 'markdown', DefaultMDTestRoot);
+
+    // database tests:
+    ini.WriteString('mssql', 'driver', DefaultMSSQLDriver);
+    ini.WriteString('mssql', 'server', '(local)');
+    ini.WriteString('mssql', 'database', 'test');
+
+    // database tests:
+    ini.WriteString('mysql', 'driver', DefaultMySQLDriver);
+    ini.WriteString('mysql', 'server', 'localhost');
+    ini.WriteString('mysql', 'database', 'test');
+    ini.WriteString('mysql', 'username', 'test');
+    ini.WriteString('mysql', 'password', 'test');
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure registerTests;
+var
+  iniName : String;
+begin
+  if not getCommandLineParam('test-settings', iniName) then
+    iniName := partnerFile('test-settings.ini');
+
+  if not FileExists(iniName) then
+     setupDefaultTestSettings(iniName);
+
+  TestSettings.free;
+  TestSettings := TFslTestSettings.Create(iniName);
 
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;

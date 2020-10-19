@@ -119,6 +119,7 @@ type
     procedure init; override;
   public
     constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
+    constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
     destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
     property Driver : String read FDriver;
@@ -854,6 +855,11 @@ end;
 function TFslDBOdbcManager.GetDriver: String;
 begin
   result := FDriver;
+end;
+
+constructor TFslDBOdbcManager.Create(AName: String; platform: TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings: TFslStringMap);
+begin
+  Create(AName, platform, AMaxConnCount, ATimeout, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
 end;
 
 destructor TFslDBOdbcManager.Destroy;

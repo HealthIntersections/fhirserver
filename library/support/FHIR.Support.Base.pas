@@ -2913,7 +2913,7 @@ end;
 
 procedure TFslStringMap.SetItem(const Key, Value: String);
 begin
-  FDict[key] := value;
+  FDict.AddOrSetValue(key, value);
 end;
 
 { ETodo }
