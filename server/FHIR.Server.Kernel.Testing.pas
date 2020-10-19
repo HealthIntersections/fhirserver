@@ -39,9 +39,9 @@ uses
   TestInsight.DUnitX, DUnitX.Loggers.Console, DUnitX.Loggers.GUI.VCL, DUnitX.Loggers.Xml.NUnit, DUnitX.TestFramework,
   {$ENDIF}
   {$IFDEF FPC}
-  GuiXTestRunner, FHIR.Support.Fpc.ConsoleTester,
+  XGuiTestRunner, FHIR.Support.Fpc.ConsoleTester,
   {$ENDIF}
-  FHIR.Support.Utilities,
+  FHIR.Support.Utilities, FHIR.Support.Testing,
   FHIR.Server.Ini,
   FHIR.Server.TestRegistry;
 
@@ -78,7 +78,7 @@ begin
   {$IFDEF FPC}
   Application.Initialize;
   Application.CreateForm(TGuiXTestRunner, TestRunner);
-  TestRunner.FileName := serverTestFile('tests.ini');
+  TestRunner.FileName := serverTestFile(['tests.ini']);
   Application.Run;
   {$ELSE}
   Application.Initialize;

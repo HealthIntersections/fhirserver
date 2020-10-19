@@ -45,7 +45,6 @@ type
 
   TFHIRServiceBase = class (TSystemService)
   private
-    FInstaller : boolean;
     Fcallback: TInstallerCallback;
     FLoadStore : boolean;
     FTelnet : TFHIRTelnetServer;
@@ -82,15 +81,12 @@ type
     procedure DoStop; Override;
     procedure dump; override;
 
-    property installer : boolean read FInstaller write FInstaller;
     property callback : TInstallerCallback read Fcallback write Fcallback;
     property loadStore : boolean read FLoadStore write FLoadStore;
     property Telnet : TFHIRTelnetServer read FTelnet;
     property Ini : TFHIRServerIniFile read FIni;
     property Settings : TFHIRServerSettings read FSettings;
     property WebServer : TFhirWebServer read FWebServer;
-
-    procedure InstallerCallBack(i : integer; s : String);
 
     function command(cmd : String) : boolean; virtual;
   end;
@@ -134,11 +130,6 @@ begin
   FSettings.Free;
   FTelnet.Free;
   inherited;
-end;
-
-procedure TFHIRServiceBase.InstallerCallBack(i: integer; s: String);
-begin
-  writeln('##> '+inttostr(i)+' '+s);
 end;
 
 function TFHIRServiceBase.CanStart: boolean;
@@ -254,23 +245,20 @@ end;
 
 procedure TFHIRServiceBase.cb(i: integer; s: WideString);
 begin
-  if Installer then
-    InstallerCallBack(i, s);
+  if Assigned(Fcallback) then
+    Fcallback(i, s);
 end;
 
 procedure TFHIRServiceBase.resetProgress(name: String);
 begin
-  if not Installer then
-  begin
-    FProgress := 0;
-    FProgressName := name;
-    Logging.start(name+' ');
-  end;
+  FProgress := 0;
+  FProgressName := name;
+  Logging.start(name+' ');
 end;
 
 procedure TFHIRServiceBase.fetchProgress(sender: TObject; progess: integer);
 begin
-  if Installer then
+  if Assigned(Fcallback) then
     callback(progess, FProgressName)
   else
   begin
@@ -284,7 +272,7 @@ end;
 
 procedure TFHIRServiceBase.fetchProgress2(sender: TObject; pct: integer; done: boolean; desc: String);
 begin
-  if Installer then
+  if Assigned(Fcallback) then
     callback(pct, FProgressName)
   else
   begin
@@ -298,7 +286,7 @@ end;
 
 procedure TFHIRServiceBase.finishProgress(status: String);
 begin
-  if not Installer then
+  if not Assigned(Fcallback) then
     Logging.finish(' '+status);
 end;
 

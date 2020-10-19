@@ -45,12 +45,12 @@ type
   private
     FCacheId : String;
     FLastTouched : TDateTime;
-    FList : TFslList<TFHIRMetadataResourceW>;
+    FList : TFslMetadataResourceList;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link : TClientCacheManagerEntry; overload;
-    procedure update(list : TFslList<TFHIRMetadataResourceW>);
+    procedure update(list : TFslMetadataResourceList);
   end;
 
   TClientCacheManager = class (TFslObject)
@@ -62,7 +62,7 @@ type
     destructor Destroy; override;
 
     procedure sweep;
-    function processResources(cacheId : String; list : TFslList<TFHIRMetadataResourceW>) : TFslList<TFHIRMetadataResourceW>;
+    function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
   end;
 
 implementation
@@ -73,7 +73,7 @@ constructor TClientCacheManagerEntry.Create;
 begin
   inherited;
   FLastTouched := now;
-  FList := TFslList<TFHIRMetadataResourceW>.create;
+  FList := TFslMetadataResourceList.create;
 end;
 
 destructor TClientCacheManagerEntry.Destroy;
@@ -87,12 +87,12 @@ begin
   result := TClientCacheManagerEntry(inherited link);
 end;
 
-procedure TClientCacheManagerEntry.update(list: TFslList<TFHIRMetadataResourceW>);
+procedure TClientCacheManagerEntry.update(list: TFslMetadataResourceList);
 var
   i, j : TFHIRMetadataResourceW;
-  remove : TFslList<TFHIRMetadataResourceW>;
+  remove : TFslMetadataResourceList;
 begin
-  remove := TFslList<TFHIRMetadataResourceW>.create;
+  remove := TFslMetadataResourceList.create;
   try
     for i in list do
     begin
@@ -148,37 +148,37 @@ begin
   end;
 end;
 
-function TClientCacheManager.processResources(cacheId: String; list: TFslList<TFHIRMetadataResourceW>): TFslList<TFHIRMetadataResourceW>;
+function TClientCacheManager.processResources(cacheId: String; list: TFslMetadataResourceList): TFslMetadataResourceList;
 var
   i, f : TClientCacheManagerEntry;
   o : TFHIRMetadataResourceW;
 begin
-  result := TFslList<TFHIRMetadataResourceW>.create;
+  result := TFslMetadataResourceList.create;
   try
-    FLock.Lock('cache='+cacheId);
-    try
-      f := nil;
-      for i in FList do
+  FLock.Lock('cache='+cacheId);
+  try
+    f := nil;
+    for i in FList do
+    begin
+      if i.FCacheId = cacheId then
       begin
-        if i.FCacheId = cacheId then
-        begin
-          f := i;
-          break;
-        end;
+        f := i;
+        break;
       end;
-      if (f = nil) then
-      begin
-        f := TClientCacheManagerEntry.Create;
-        FList.Add(f);
-        f.FCacheId := cacheId;
-      end;
-      f.FLastTouched := now;
-      f.update(list);
+    end;
+    if (f = nil) then
+    begin
+      f := TClientCacheManagerEntry.Create;
+      FList.Add(f);
+      f.FCacheId := cacheId;
+    end;
+    f.FLastTouched := now;
+    f.update(list);
       for o in f.FList do
         result.Add(o.link);
-    finally
-      FLock.Unlock;
-    end;
+  finally
+    FLock.Unlock;
+  end;
     result.link;
   finally
     result.Free;

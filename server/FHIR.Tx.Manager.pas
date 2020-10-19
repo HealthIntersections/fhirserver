@@ -206,9 +206,9 @@ Type
 
     // publishing access
     procedure GetCodeSystemList(list : TFslList<TFHIRCodeSystemW>); overload;
-    procedure GetCodeSystemList(list : TFslList<TFHIRMetadataResourceW>); overload;
+    procedure GetCodeSystemList(list : TFslMetadataResourceList); overload;
     procedure GetValueSetList(list : TFslList<TFhirValueSetW>); overload;
-    procedure GetValueSetList(list : TFslList<TFHIRMetadataResourceW>); overload;
+    procedure GetValueSetList(list : TFslMetadataResourceList); overload;
     function GetConceptMapList : TLoadedConceptMapList;
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read getProviderClasses;
     function ValueSetCount : integer;
@@ -1253,7 +1253,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.GetCodeSystemList(list: TFslList<TFHIRMetadataResourceW>);
+procedure TTerminologyServerStore.GetCodeSystemList(list: TFslMetadataResourceList);
 begin
   FLock.Lock('GetCodeSystemList');
   try
@@ -1482,7 +1482,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.GetValueSetList(list: TFslList<TFHIRMetadataResourceW>);
+procedure TTerminologyServerStore.GetValueSetList(list: TFslMetadataResourceList);
 begin
   FLock.Lock('GetValueSetList');
   try

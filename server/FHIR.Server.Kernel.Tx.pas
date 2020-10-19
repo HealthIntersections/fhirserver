@@ -474,7 +474,7 @@ procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest;
 var
   search : TFslList<TSearchParameter>;
   sp : TSearchParameter;
-  l, list, filtered : TFslList<TFHIRMetadataResourceW>;
+  l, list, filtered : TFslMetadataResourceList;
   res : TFhirMetadataResourceW;
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcomeW;
@@ -515,7 +515,7 @@ begin
         bundle.addLink('self', base);
         bundle.setId(FhirGUIDToString(CreateGUID));
 
-        list := TFslList<TFHIRMetadataResourceW>.create;
+        list := TFslMetadataResourceList.create;
         try
           if (hasScope(request, 'CodeSystem')) then
             FData.CodeSystems.listAll(list);
@@ -526,7 +526,7 @@ begin
           if (hasScope(request, 'NamingSystem')) then
             FData.NamingSystems.listAll(list);
 
-          filtered := TFslList<TFHIRMetadataResourceW>.create;
+          filtered := TFslMetadataResourceList.create;
           try
             for res in list do
             begin

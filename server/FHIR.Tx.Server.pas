@@ -88,16 +88,16 @@ Type
     function isKnownValueSet(id : String; out vs : TFhirValueSetW): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslList<TFHIRMetadataResourceW>) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
     function expandVS(uri : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer) : TFhirValueSetW; overload;
 
     // these are internal services - not for use outside the terminology server
     function expandVS(uri: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFhirValueSetW; overload;
-    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslList<TFHIRMetadataResourceW>): TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslList<TFHIRMetadataResourceW>) : TFhirParametersW; overload;
-    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslList<TFHIRMetadataResourceW>) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean; txResources : TFslMetadataResourceList) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
     function translate(const lang : THTTPLanguages; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -257,7 +257,7 @@ begin
      FExpansions.DeleteByIndex(i);
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslList<TFHIRMetadataResourceW>): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   ts : TStringList;
 begin
@@ -293,7 +293,7 @@ begin
 end;
 
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslList<TFHIRMetadataResourceW>): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   s, d : String;
   p : TArray<String>;
@@ -485,7 +485,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslList<TFHIRMetadataResourceW>) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -508,7 +508,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslList<TFHIRMetadataResourceW>) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean; txResources : TFslMetadataResourceList) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Web.Parsers,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.ValueSets,
@@ -47,7 +47,7 @@ type
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
-    function processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslList<TFHIRMetadataResourceW>;
+    function processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     destructor Destroy; override;
@@ -212,7 +212,7 @@ var
   limit, count, offset : integer;
   params : TFhirParametersW;
   needSecure : boolean;
-  txResources : TFslList<TFHIRMetadataResourceW>;
+  txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
 begin
   result := 'Expand ValueSet';
@@ -386,7 +386,7 @@ var
   params, pout : TFhirParametersW;
   needSecure : boolean;
   profile : TFhirExpansionParams;
-  txResources : TFslList<TFHIRMetadataResourceW>;
+  txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
 begin
   result := 'Validate Code';
@@ -1122,14 +1122,14 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslList<TFHIRMetadataResourceW>;
+function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslMetadataResourceList;
 var
   p : TFhirParametersParameterW;
-  list : TFslList<TFHIRMetadataResourceW>;
+  list : TFslMetadataResourceList;
   cacheId : String;
 begin
   cacheId := '';
-  list := TFslList<TFHIRMetadataResourceW>.create;
+  list := TFslMetadataResourceList.create;
   try
     if (mr <> nil) then
       list.Add(mr.link);

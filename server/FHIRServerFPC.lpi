@@ -1715,7 +1715,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="16">
+    <Exceptions Count="18">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -1777,6 +1777,12 @@
         <Name Value="EConvertError"/>
         <Enabled Value="False"/>
       </Item16>
+      <Item17>
+        <Name Value="ETerminologyError"/>
+      </Item17>
+      <Item18>
+        <Name Value="ETerminologySetup"/>
+      </Item18>
     </Exceptions>
   </Debugging>
 </CONFIG>

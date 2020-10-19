@@ -399,6 +399,7 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodeableConceptW;
+  msg : String;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -406,7 +407,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);
+        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, msg);
         try
           result.Message := p.str('message');
           if p.bool('result') then

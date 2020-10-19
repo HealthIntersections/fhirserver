@@ -4408,8 +4408,6 @@ begin
   else
     txu := 'http://' + FHost + ':' + inttostr(FActualPort);
 
-  if ini.web['clients'] = '' then
-    raise EIOException.create('No Authorization file found');
   FGoogle.serverId := ini.web['googleid'];
   FTwilioDB := ini.admin['twilio'];
   FTwilioResponse := ini.admin['twilio-text'];
