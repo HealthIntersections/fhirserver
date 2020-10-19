@@ -227,3 +227,5 @@ web/QuestionnaireToHTML.xslt
 /exec/pack/loinc-2.65.cache
 /server/tests/backup
 /library/npm/backup
+/tests.ini
+/exec/pack/fhirserver.web

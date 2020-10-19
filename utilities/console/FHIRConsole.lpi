@@ -29,7 +29,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="FHIRConsole"/>
+            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
@@ -127,24 +127,26 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="PascalTZ"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="2">
       <Unit0>
+        <Filename Value="FHIRConsole.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
         <Filename Value="consoleform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainConsoleForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConsoleForm"/>
-      </Unit0>
-      <Unit1>
-        <Filename Value="frmserverconnection.pas"/>
-        <IsPartOfProject Value="True"/>
-        <HasResources Value="True"/>
       </Unit1>
     </Units>
   </ProjectOptions>
@@ -152,7 +154,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="FHIRConsole"/>
+      <Filename Value="..\..\exec\32\FHIRConsole.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>

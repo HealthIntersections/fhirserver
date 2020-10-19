@@ -99,6 +99,7 @@ var
   fn : String;
   svc : TFHIRServiceBase;
   logMsg : String;
+  compiler : String;
 begin
   // 1. logging.
   if getCommandLineParam('log', fn) then
@@ -111,6 +112,12 @@ begin
     RunTestInsight(ini)
   else if (hasCommandLineParam('gui') or hasCommandLineParam('manager')) then
     RunGui(ini)
+  else if (hasCommandLineParam('help')) then
+  begin
+    writeln('Health Intersections FHIR Server');
+    writeln('This is the Server. For command line parameters, see ');
+    writeln('http://www.healthintersections.com.au/wiki/index.php/Command_line_Parameters');
+  end
   else
   begin
     // if there's no parameters, then we don't log to the screen
@@ -130,6 +137,11 @@ begin
     {$ENDIF}
     Logging.log(commandLineAsString);
 
+    {$IFDEF FPC}
+    compiler := 'FPC';
+    {$ELSE}
+    compiler := 'Delphi';
+    {$ENDIF}
     if not getCommandLineParam('name', svcName) then
       if ini.service['name'] <> '' then
         svcName := ini.service['name']
@@ -144,10 +156,10 @@ begin
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
-      logMsg := 'FHIR Server '+SERVER_VERSION+'. Using ini file '+ini.FileName+' (+stack dumps)'
+      logMsg := 'FHIR Server '+SERVER_VERSION+' ('+compiler+'). Using ini file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
-      logMsg := 'FHIR Server '+SERVER_VERSION+'. Using ini file '+ini.FileName;
+      logMsg := 'FHIR Server '+SERVER_VERSION+' ('+compiler+'). Using ini file '+ini.FileName;
     if Logging.FileLog <> nil then
       logMsg := logMsg + '. Log File = '+Logging.FileLog.filename;
 
@@ -156,13 +168,6 @@ begin
 
     svc := makeKernel(svcName, dispName, logMsg, ini.link);
     try
-      if hasCommandLineParam('installer') then
-      begin
-        svc.Installer := true;
-        svc.callback := svc.InstallerCallBack;
-      end;
-      svc.LoadStore := not hasCommandLineParam('noload');
-
       if getCommandLineParam('cmd', cmd) then
       begin
         if (cmd = 'exec') or (cmd = 'console') then

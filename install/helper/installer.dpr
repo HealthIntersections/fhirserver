@@ -59,7 +59,8 @@ uses
   FHIR.Base.Utilities in '..\..\library\base\FHIR.Base.Utilities.pas',
   FHIR.Web.Parsers in '..\..\library\web\FHIR.Web.Parsers.pas',
   FHIR.Npm.Package in '..\..\library\npm\FHIR.Npm.Package.pas',
-  FHIR.Npm.Client in '..\..\library\npm\FHIR.Npm.Client.pas';
+  FHIR.Npm.Client in '..\..\library\npm\FHIR.Npm.Client.pas',
+  FHIR.Support.Osx in '..\..\library\support\FHIR.Support.Osx.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin

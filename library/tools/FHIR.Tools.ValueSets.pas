@@ -141,7 +141,7 @@ Type
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String; var cause : TFhirIssueType) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFslList<TFhirCodeSystemConceptW>; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
-    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
+    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; id : String); overload;
@@ -358,7 +358,6 @@ end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
 var
-  cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
   checker : TValueSetChecker;
@@ -408,20 +407,18 @@ begin
         end;
       end;
 
-      if (cs <> nil) then
-      begin
-        for cc in FValueSet.includes.forEnum do
-          prepareConceptSet('include', cc, cs);
-        for cc in FValueSet.excludes.forEnum do
-          prepareConceptSet('exclude', cc, cs);
-      end;
+      for cc in FValueSet.includes.forEnum do
+        prepareConceptSet('include', cc);
+      for cc in FValueSet.excludes.forEnum do
+        prepareConceptSet('exclude', cc);
     end;
   end;
 end;
 
-procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
+procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
 var
   other: TFhirValueSetW;
+  cs: TCodeSystemProvider;
   checker: TValueSetChecker;
   s : string;
   ccf: TFhirValueSetComposeIncludeFilterW;

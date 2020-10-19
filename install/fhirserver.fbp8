@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug doing expand"
+        as.returnvalue = "Add more information to server ping"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -414,7 +414,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\work\\fhirserver\\dependencies\\jcl
+            librarypath = $(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp;$(BDS)\\include;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\dependencies\\d32\\debug
             linkeroutput = 0
             localsymbols = false
             mapfile = 0
@@ -445,6 +445,7 @@ begin
       action.group
       begin
         description = "64 bit build"
+        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.files.delete
         begin
@@ -549,7 +550,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\fhirserver\\dependencies\\jcl"
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\markdown\\source;C:\\work\\fhirserver\\dependencies\\d64\\debug"
             linkeroutput = 0
             localsymbols = true
             mapfile = 3
@@ -712,7 +713,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\markdown\\source;C:\\work\\fhirserver\\dependencies\\d64\\debug"
             linkeroutput = 0
             localsymbols = false
             mapfile = 3
@@ -794,6 +795,7 @@ begin
       action.group
       begin
         description = "32 bit build"
+        enabled = false
         id = {E0E09074-DAE5-4B7A-A5C3-342806452053}
         action.files.delete
         begin
@@ -898,7 +900,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\markdown\\source;C:\\work\\fhirserver\\dependencies\\d32\\debug"
             linkeroutput = 0
             localsymbols = true
             mapfile = 3
@@ -1061,7 +1063,7 @@ begin
             includetd32 = false
             inlining = inOn
             iochecking = true
-            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\markdown\\source;C:\\work\\fhirserver\\dependencies\\d32\\debug"
             linkeroutput = 0
             localsymbols = false
             mapfile = 3
@@ -1143,6 +1145,7 @@ begin
       action.group
       begin
         description = "Build Install"
+        enabled = false
         id = {D4582147-49FC-42EF-8D85-74B4A37ABBB7}
         action.ini.write
         begin
