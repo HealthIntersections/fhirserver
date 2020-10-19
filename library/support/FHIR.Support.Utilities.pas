@@ -14025,7 +14025,8 @@ End;
 Function AnsiStringAsBytes(s : AnsiString):TBytes;
 Begin
   setLength(result, length(s));
-  move(s[1], result[0], length(s));
+  if (length(s) > 0) then
+    move(s[1], result[0], length(s));
 End;
 
 Function StringAsBytes(s : String):TBytes;

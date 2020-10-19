@@ -95,13 +95,11 @@ var
   b: TBytes;
   i64: Int64;
   md: TFslDBMetaData;
+  fn : string;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
-{$IFDEF OSX}
-  b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0))) + 'libcgsqlite3.dylib');
-{$ELSE}
-  b := FileToBytes('C:\work\fhirserver\Library\database\FHIR.Database.Tests.pas');
-{$ENDIF}
+  fn := serverTestFile(['library', 'database', 'FHIR.Database.Tests.pas']);
+  b := FileToBytes(fn);
   i64 := MaxInt;
   i64 := i64 + 2;
 

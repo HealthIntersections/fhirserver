@@ -240,7 +240,7 @@ Type
     {$ENDIF}
     function findTestCase(name : String) : TMXmlElement;
     function findSample(id : String) : TMXmlElement;
-    procedure runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+    procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
     {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
     {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
@@ -1435,7 +1435,7 @@ begin
   result := nil;
 end;
 
-procedure TXPathEngineTest.runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+procedure TXPathEngineTest.runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
 var
   focus, outcome : TMXmlElement;
   nodes : TFslList<TMXmlNode>;
@@ -1511,7 +1511,7 @@ begin
     {$IFNDEF FPC}
     runMsTest(test, outcomes);
     {$ENDIF}
-    runTest(test, outcomes);
+    runXTest(test, outcomes);
   finally
     outcomes.Free;
   end;
