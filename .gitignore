@@ -231,3 +231,5 @@ web/QuestionnaireToHTML.xslt
 /exec/pack/fhirserver.web
 /utilities/console/lib/win32-release
 /utilities/console/lib/win64
+
+server/r:/
