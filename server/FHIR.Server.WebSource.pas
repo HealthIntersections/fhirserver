@@ -160,7 +160,7 @@ end;
 
 function TFHIRWebServerSourceZipProvider.exists(filename: String): boolean;
 begin
-  result := FZip.ContainsKey('web/'+filename.replace('\', '/'));
+  result := (filename <> '') and FZip.ContainsKey('web/'+filename.replace('\', '/'));
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
