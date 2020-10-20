@@ -8985,7 +8985,7 @@ Begin
   oSegments.Add('}]', 'end optional + repeating');
 End;
 
-procedure Definitions231LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+procedure Definitions231LoadMessageStructures1(oStructures : THL7V2ModelMessageStructures);
 Var
   oStructure : THL7V2ModelMessageStructure;
   oGrp1 : THL7V2ModelSegmentGroup;
@@ -11632,6 +11632,21 @@ Begin
           oGrp3.Children.Add('OBX', False, False, gtSingle);
           oGrp3.Children.Add('NTE', True, True, gtSingle);
       oGrp1.Children.Add('CTI', True, True, gtSingle);
+End;
+
+procedure Definitions231LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+  oGrp9 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('RDO_O01', 'Pharmacy/Treatment Order Message', 'O01', 'ORM', 'order');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RDO_O01', False, False, gtGroup);
@@ -12476,6 +12491,12 @@ Begin
     oGrp1 := oStructure.SegmentMap.Children.Add('PATIENT', False, True, gtGroup);
       oGrp1.Children.Add('PID', False, False, gtSingle);
       oGrp1.Children.Add('NK1', True, True, gtSingle);
+End;
+
+procedure Definitions231LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+Begin
+  Definitions231LoadMessageStructures1(oStructures);
+  Definitions231LoadMessageStructures2(oStructures);
 End;
 
 procedure Definitions231LoadEvents(oEvents : THL7V2ModelEvents);

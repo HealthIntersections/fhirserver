@@ -13796,7 +13796,7 @@ Begin
   oSegments.Add('}]', 'end optional + repeating');
 End;
 
-procedure Definitions251LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+procedure Definitions251LoadMessageStructures1(oStructures : THL7V2ModelMessageStructures);
 Var
   oStructure : THL7V2ModelMessageStructure;
   oGrp1 : THL7V2ModelSegmentGroup;
@@ -15047,6 +15047,19 @@ Begin
       oGrp1.Children.Add('NCK', True, False, gtSingle);
       oGrp1.Children.Add('NST', True, False, gtSingle);
       oGrp1.Children.Add('NSC', True, False, gtSingle);
+End;
+
+procedure Definitions251LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('NMR_N01', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('NMR_N01', False, False, gtGroup);
@@ -18595,6 +18608,12 @@ Begin
   oEvent := oEvents.Add('Z99', 'Who Am I');
     oEvent.Messages.Add('QBP', 'QBP_Q13', 'NUL', 'NUL');
 End;
+
+procedure Definitions251LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+begin
+    Definitions251LoadMessageStructures1(oStructures);
+    Definitions251LoadMessageStructures2(oStructures);
+end;
 
 End.
 

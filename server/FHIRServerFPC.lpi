@@ -1811,26 +1811,32 @@
       <Unit376>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v21.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v21"/>
       </Unit376>
       <Unit377>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v251.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v251"/>
       </Unit377>
       <Unit378>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v22.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v22"/>
       </Unit378>
       <Unit379>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v231"/>
       </Unit379>
       <Unit380>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v25.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v25"/>
       </Unit380>
       <Unit381>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v24.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v24"/>
       </Unit381>
       <Unit382>
         <Filename Value="..\library\v2\FHIR.V2.Objects.pas"/>
