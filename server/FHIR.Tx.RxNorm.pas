@@ -765,6 +765,7 @@ begin
       filter.qry.release;
     end;
   end;
+  ctxt.free;
 end;
 
 { TUMLSPrep }
