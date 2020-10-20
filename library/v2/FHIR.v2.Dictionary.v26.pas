@@ -16733,6 +16733,19 @@ Begin
     oStructure.SegmentMap.Children.Add('UAC', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('EQU', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('ROL', True, False, gtSingle);
+End;
+
+procedure Definitions26LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('ESU_U01', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('ESU_U01', False, False, gtGroup);
@@ -19439,6 +19452,19 @@ Begin
     oStructure.SegmentMap.Children.Add('NTE', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSP', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
+End;
+
+procedure Definitions26LoadMessageStructures3(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('RPR_I03', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RPR_I03', False, False, gtGroup);
@@ -19825,19 +19851,6 @@ Begin
         oGrp2.Children.Add('LCH', True, True, gtSingle);
         oGrp2.Children.Add('LCC', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-End;
-
-procedure Definitions26LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
-Var
-  oStructure : THL7V2ModelMessageStructure;
-  oGrp1 : THL7V2ModelSegmentGroup;
-  oGrp2 : THL7V2ModelSegmentGroup;
-  oGrp3 : THL7V2ModelSegmentGroup;
-  oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-Begin
   oStructure := oStructures.Add('RSP_Z82', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RSP_Z82', False, False, gtGroup);
@@ -21030,6 +21043,7 @@ procedure Definitions26LoadMessageStructures(oStructures : THL7V2ModelMessageStr
 Begin
   Definitions26LoadMessageStructures1(oStructures);
   Definitions26LoadMessageStructures2(oStructures);
+  Definitions26LoadMessageStructures3(oStructures);
 end;
 
 End.

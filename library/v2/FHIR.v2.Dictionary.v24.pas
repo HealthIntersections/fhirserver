@@ -12309,7 +12309,7 @@ Begin
   oSegments.Add('}]', 'end optional + repeating');
 End;
 
-procedure Definitions24LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+procedure Definitions24LoadMessageStructures1(oStructures : THL7V2ModelMessageStructures);
 Var
   oStructure : THL7V2ModelMessageStructure;
   oGrp1 : THL7V2ModelSegmentGroup;
@@ -13539,6 +13539,21 @@ Begin
           oGrp3.Children.Add('OBX', False, False, gtSingle);
           oGrp3.Children.Add('NTE', True, True, gtSingle);
       oGrp1.Children.Add('BLG', True, False, gtSingle);
+End;
+
+procedure Definitions24LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+  oGrp9 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('ORD_O04', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('ORD_O04', False, False, gtGroup);
@@ -15271,6 +15286,21 @@ Begin
             oGrp4.Children.Add('OBX', True, False, gtSingle);
             oGrp4.Children.Add('NTE', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', False, False, gtSingle);
+End;
+
+procedure Definitions24LoadMessageStructures3(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+  oGrp9 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('RSP_Z90', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RSP_Z90', False, False, gtGroup);
@@ -15647,6 +15677,14 @@ Begin
       oGrp1.Children.Add('PID', False, False, gtSingle);
       oGrp1.Children.Add('NK1', True, True, gtSingle);
 End;
+
+procedure Definitions24LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+Begin
+  Definitions24LoadMessageStructures1(oStructures);
+  Definitions24LoadMessageStructures2(oStructures);
+  Definitions24LoadMessageStructures3(oStructures);
+End;
+
 
 procedure Definitions24LoadEvents(oEvents : THL7V2ModelEvents);
 Var

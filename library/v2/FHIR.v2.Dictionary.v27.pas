@@ -16400,6 +16400,20 @@ Begin
       oGrp2 := oGrp1.Children.Add('PRODUCT_STATUS', True, True, gtGroup);
         oGrp2.Children.Add('BTX', False, False, gtSingle);
         oGrp2.Children.Add('NTE', True, True, gtSingle);
+End;
+
+procedure Definitions27LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('CCF_I22', 'Collaborative Care Fetch', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('CCF_I22', False, False, gtGroup);
@@ -17084,6 +17098,20 @@ Begin
         oGrp2.Children.Add('IN2', True, False, gtSingle);
         oGrp2.Children.Add('IN3', True, True, gtSingle);
         oGrp2.Children.Add('ROL', True, True, gtSingle);
+End;
+
+procedure Definitions27LoadMessageStructures3(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('EAC_U07', 'Equipment Command Message', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('EAC_U07', False, False, gtGroup);
@@ -20014,20 +20042,6 @@ Begin
     oStructure.SegmentMap.Children.Add('NK1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('GT1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('NTE', True, True, gtSingle);
-End;
-
-procedure Definitions27LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
-Var
-  oStructure : THL7V2ModelMessageStructure;
-  oGrp1 : THL7V2ModelSegmentGroup;
-  oGrp2 : THL7V2ModelSegmentGroup;
-  oGrp3 : THL7V2ModelSegmentGroup;
-  oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-Begin
   oStructure := oStructures.Add('RRA_O18', 'Pharmacy/Treatment Administration Acknowledgment M', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RRA_O18', False, False, gtGroup);
@@ -20342,6 +20356,20 @@ Begin
       oGrp1.Children.Add('PV2', True, False, gtSingle);
       oGrp1.Children.Add('QRI', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
+End;
+
+procedure Definitions27LoadMessageStructures4(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('RSP_Z82', 'Response Grammar:  Pharmacy Dispense Message', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RSP_Z82', False, False, gtGroup);
@@ -21389,6 +21417,8 @@ procedure Definitions27LoadMessageStructures(oStructures : THL7V2ModelMessageStr
 begin
   Definitions27LoadMessageStructures1(oStructures);
   Definitions27LoadMessageStructures2(oStructures);
+  Definitions27LoadMessageStructures3(oStructures);
+  Definitions27LoadMessageStructures4(oStructures);
 end;
 
 End.
