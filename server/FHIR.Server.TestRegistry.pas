@@ -79,7 +79,9 @@ const
   DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
 {$ENDIF}
 {$IFDEF OSX}
-  ??
+DefaultMDTestRoot =      '/users/grahamegrieve/work/markdown';
+DefaultServerTestsRoot = '/users/grahamegrieve/work/fhirserver';
+DefaultFHIRTestsRoot =   '/users/grahamegrieve/work/fhir-test-cases';
 {$ENDIF}
 
 procedure registerTests;
