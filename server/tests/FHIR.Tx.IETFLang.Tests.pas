@@ -90,7 +90,7 @@ end;
 
 procedure TIETFLangTests.Setup;
 begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString(serverTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
+  FDefinitions := TIETFLanguageDefinitions.create(FileToString(TestSettings.serverTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
 end;
 
 procedure TIETFLangTests.TearDown;

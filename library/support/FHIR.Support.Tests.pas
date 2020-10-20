@@ -240,7 +240,7 @@ Type
     {$ENDIF}
     function findTestCase(name : String) : TMXmlElement;
     function findSample(id : String) : TMXmlElement;
-    procedure runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+    procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
     {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
     {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
@@ -936,7 +936,7 @@ var
   test : TMXmlElement;
 begin
   inherited create;
-  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
   try
     test := tests.document.first;
     while test <> nil do
@@ -960,7 +960,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
   try
     test := tests.document.first;
     i := 0;
@@ -1030,7 +1030,7 @@ end;
 
 procedure TXmlPatchTest.setup;
 begin
-  tests := TMXmlParser.ParseFile(fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces, xpDropWhitespace]);
+  tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
@@ -1065,7 +1065,7 @@ var
   i : integer;
 begin
   inherited Create;
-  if FindFirst(serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
+  if FindFirst(TestSettings.serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
   repeat
     AddTest(TXmlParserTest.Create(sr.Name));
   until FindNext(SR) <> 0;
@@ -1084,7 +1084,7 @@ var
 begin
   sl := TStringList.create;
   try
-    if FindFirst(serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
+    if FindFirst(TestSettings.serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
     repeat
       s := sr.Name;
       sl.Add(sr.Name);
@@ -1094,7 +1094,7 @@ begin
     begin
       result[i].Name := sl[i];
       SetLength(result[i].Values, 1);
-      result[i].Values[0] := serverTestFile(['testcases', 'xml', sl[i]]);
+      result[i].Values[0] := TestSettings.serverTestFile(['testcases', 'xml', sl[i]]);
     end;
   finally
     sl.Free;
@@ -1112,7 +1112,7 @@ var
   i : integer;
 begin
   inherited Create;
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1136,7 +1136,7 @@ var
   path : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   try
     i := 0;
     path := tests.document.first;
@@ -1237,7 +1237,7 @@ end;
 
 procedure TXPathParserTest.setup;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
   functionNames := TStringList.Create;
 end;
 
@@ -1256,7 +1256,7 @@ var
   i : integer;
 begin
   inherited create;
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1281,7 +1281,7 @@ var
   tcase : TMXmlElement;
   i : integer;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     i := 0;
     tcase := tests.document.firstElement;
@@ -1435,7 +1435,7 @@ begin
   result := nil;
 end;
 
-procedure TXPathEngineTest.runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+procedure TXPathEngineTest.runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
 var
   focus, outcome : TMXmlElement;
   nodes : TFslList<TMXmlNode>;
@@ -1511,7 +1511,7 @@ begin
     {$IFNDEF FPC}
     runMsTest(test, outcomes);
     {$ENDIF}
-    runTest(test, outcomes);
+    runXTest(test, outcomes);
   finally
     outcomes.Free;
   end;
@@ -1519,11 +1519,11 @@ end;
 
 procedure TXPathEngineTest.setup;
 begin
-  tests := TMXmlParser.ParseFile(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
+  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
   {$IFNDEF FPC}
-  mstests := TMsXmlParser.Parse(serverTestFile(['testcases', 'xml', 'xpath-tests.xml']));
+  mstests := TMsXmlParser.Parse(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']));
   mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
   {$ENDIF}
 end;
@@ -2073,7 +2073,7 @@ var
   s : String;
   ttl : TTurtleDocument;
 begin
-  s := fileToString(fhirTestFile(['turtle', filename]), TEncoding.UTF8);
+  s := fileToString(TestSettings.fhirTestFile(['turtle', filename]), TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);
     try
@@ -4313,7 +4313,7 @@ var
   jwk : TJWK;
   s: String;
 begin
-  jwk := TJWTUtils.loadKeyFromRSACert(serverTestFile(['testcases', 'certs', 'jwt-test.key.crt']));
+  jwk := TJWTUtils.loadKeyFromRSACert(TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.crt']));
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     assertTrue(true);
@@ -4361,7 +4361,7 @@ begin
   jwt := TJWT.create;
   try
     jwt.id := GUIDToString(CreateGUID);
-    s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, serverTestFile(['testcases', 'certs', 'jwt-test.key.key']), 'fhirserver');
+    s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.key']), 'fhirserver');
     assertTrue(true);
   finally
     jwt.Free;
@@ -4455,7 +4455,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(fhirTestFile(['r4', 'examples', 'observation-decimal.json']), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(TestSettings.fhirTestFile(['r4', 'examples', 'observation-decimal.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4473,7 +4473,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(serverTestFile(['testcases', 'json', 'test.json']), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(TestSettings.serverTestFile(['testcases', 'json', 'test.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4495,7 +4495,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(serverTestFile(['testcases', 'json', 'test-loose.json']), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(TestSettings.serverTestFile(['testcases', 'json', 'test-loose.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f, 0, true);
     try
@@ -4517,7 +4517,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create(fhirTestFile(['r4', 'examples', 'account-example.json']), fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create(TestSettings.fhirTestFile(['r4', 'examples', 'account-example.json']), fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -4540,7 +4540,7 @@ var
   s : string;
 begin
   inherited create;
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     i := 0;
     for test in tests do
@@ -4566,7 +4566,7 @@ var
   i : integer;
   s : String;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     SetLength(result, tests.Count);
     i := 0;
@@ -4623,7 +4623,7 @@ end;
 
 procedure TJsonPatchTest.setup;
 begin
-  tests := TJSONParser.ParseNode(FileToBytes(serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
+  tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   engine := TJsonPatchEngine.Create;
 end;
 
@@ -4814,15 +4814,15 @@ var
   x : TMXmlDocument;
   src, output, tgt : String;
 begin
-  src := FileToString(serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
-  tgt := FileToString(serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
+  src := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
+  tgt := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
   x := TMXmlParser.parse(src, [xpDropWhitespace]);
   try
     output := x.ToXml(true, false);
   finally
     x.Free;
   end;
-  StringToFile(output, serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
+  StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
 end;
 
@@ -4831,15 +4831,15 @@ var
   x : TMXmlDocument;
   src, output, tgt : String;
 begin
-  src := FileToString(serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
-  tgt := FileToString(serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
+  src := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
+  tgt := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
   x := TMXmlParser.parse(src, [xpDropWhitespace]);
   try
     output := x.ToXml(false, false);
   finally
     x.Free;
   end;
-  StringToFile(output, serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
+  StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
 end;
 
@@ -4848,15 +4848,15 @@ var
   x : TMXmlDocument;
   src, output, tgt : String;
 begin
-  src := FileToString(serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
-  tgt := FileToString(serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
+  src := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
+  tgt := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
   x := TMXmlParser.parse(src, [xpDropWhitespace]);
   try
     output := x.ToXml(true, false);
   finally
     x.Free;
   end;
-  StringToFile(output, serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
+  StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
 end;
 
@@ -4865,8 +4865,8 @@ var
   x : TMXmlDocument;
   src, output, tgt : String;
 begin
-  src := FileToString(serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
-  tgt := FileToString(serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
+  src := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-pretty.xml']), TEncoding.UTF8);
+  tgt := FileToString(TestSettings.serverTestFile(['testcases', 'xml', 'xml-condensed.xml']), TEncoding.UTF8);
   x := TMXmlParser.parse(src, [xpDropWhitespace]);
   try
     output := x.ToXml(false, false);
@@ -4945,7 +4945,7 @@ procedure TTarGZParserTests.testPackage;
 var
   tgz : TFslList<TFslNameBuffer>;
 begin
-  tgz := load(serverTestFile(['testcases', 'tgz', 'package.tgz']));
+  tgz := load(TestSettings.serverTestFile(['testcases', 'tgz', 'package.tgz']));
   try
     assertTrue(tgz.Count = 11);
   finally

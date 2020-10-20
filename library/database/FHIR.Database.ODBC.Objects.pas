@@ -185,6 +185,11 @@ Type
     FMessage: String;
   End;
 
+  TManagedMemoryStream = class (TMemoryStream)
+  public
+    property Capacity;
+  end;
+
   TODBCObject = class (TObject)
 
   end;
@@ -435,7 +440,7 @@ Type
     FType: SQLSMALLINT;
     FSql: SQLSMALLINT;
 
-    FMemory: TMemoryStream;
+    FMemory: TManagedMemoryStream;
     FBlob, FBlobFetched: Boolean;
     FFormatStyle: TFormatStyle;
     FFormatMask: String;
@@ -681,7 +686,7 @@ Type
     Function GetColDate(Col: SQLUSMALLINT): TDate;
     Function GetColTime(Col: SQLUSMALLINT): TTime;
     Function GetColTimeStamp(Col: SQLUSMALLINT): FHIR.Support.Utilities.TTimeStamp;
-    Function GetColMemory(Col: SQLUSMALLINT): TMemoryStream;
+    Function GetColMemory(Col: SQLUSMALLINT): TManagedMemoryStream;
     Function GetColVariant(Col: SQLUSMALLINT): Variant;
 
     Procedure SetColString(Col: SQLUSMALLINT;
@@ -717,7 +722,7 @@ Type
     Procedure SetColTimeStamp(Col: SQLUSMALLINT;
                               AValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure SetColMemory(Col: SQLUSMALLINT;
-                           AValue: TMemoryStream);
+                           AValue: TManagedMemoryStream);
     Procedure SetColVariant(Col: SQLUSMALLINT;
                             AValue: Variant);
 
@@ -737,7 +742,7 @@ Type
     Function GetColDateByName(ColName: String): TDate;
     Function GetColTimeByName(ColName: String): TTime;
     Function GetColTimeStampByName(ColName: String): FHIR.Support.Utilities.TTimeStamp;
-    Function GetColMemoryByName(ColName: String): TMemoryStream;
+    Function GetColMemoryByName(ColName: String): TManagedMemoryStream;
     Function GetColVariantByName(ColName: String): Variant;
 
     Procedure SetColStringByName(ColName: String;
@@ -773,7 +778,7 @@ Type
     Procedure SetColTimeStampByName(ColName: String;
                                     AValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure SetColMemoryByName(ColName: String;
-                                 AValue: TMemoryStream);
+                                 AValue: TManagedMemoryStream);
     Procedure SetColVariantByName(ColName: String;
                                   AValue: Variant);
 
@@ -793,7 +798,7 @@ Type
     Function GetCellDate(Col, Row: SQLUSMALLINT): TDate;
     Function GetCellTime(Col, Row: SQLUSMALLINT): TTime;
     Function GetCellTimeStamp(Col, Row: SQLUSMALLINT): FHIR.Support.Utilities.TTimeStamp;
-    Function GetCellMemory(Col, Row: SQLUSMALLINT): TMemoryStream;
+    Function GetCellMemory(Col, Row: SQLUSMALLINT): TManagedMemoryStream;
     Function GetCellVariant(Col, Row: SQLUSMALLINT): Variant;
 
     Procedure SetCellString(Col, Row: SQLUSMALLINT;
@@ -829,7 +834,7 @@ Type
     Procedure SetCellTimeStamp(Col, Row: SQLUSMALLINT;
                                AValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure SetCellMemory(Col, Row: SQLUSMALLINT;
-                            AValue: TMemoryStream);
+                            AValue: TManagedMemoryStream);
     Procedure SetCellVariant(Col, Row: SQLUSMALLINT;
                              AValue: Variant);
 
@@ -866,7 +871,7 @@ Type
     Function GetCellTimeStampByName(ColName: String;
                                     Row: SQLUSMALLINT): FHIR.Support.Utilities.TTimeStamp;
     Function GetCellMemoryByName(ColName: String;
-                                 Row: SQLUSMALLINT): TMemoryStream;
+                                 Row: SQLUSMALLINT): TManagedMemoryStream;
     Function GetCellVariantByName(ColName: String;
                                   Row: SQLUSMALLINT): Variant;
 
@@ -920,7 +925,7 @@ Type
                                      AValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure SetCellMemoryByName(ColName: String;
                                   Row: SQLUSMALLINT;
-                                  AValue: TMemoryStream);
+                                  AValue: TManagedMemoryStream);
     Procedure SetCellVariantByName(ColName: String;
                                    Row: SQLUSMALLINT;
                                    AValue: Variant);
@@ -1032,12 +1037,12 @@ Type
     Procedure BindTimeStamp(Param: SQLUSMALLINT;
                             Var ParamValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure BindMemory(Param: SQLUSMALLINT;
-                         Var ParamValue: TMemoryStream;
+                         Var ParamValue: TManagedMemoryStream;
                          Binary: Boolean);
     Procedure BindBinary(Param: SQLUSMALLINT;
-                         Var ParamValue: TMemoryStream);
+                         Var ParamValue: TManagedMemoryStream);
     Procedure BindText(Param: SQLUSMALLINT;
-                       Var ParamValue: TMemoryStream);
+                       Var ParamValue: TManagedMemoryStream);
 
     Procedure BindNullByName(ParamName: String);
     Procedure BindStringByName(ParamName: String;
@@ -1071,12 +1076,12 @@ Type
     Procedure BindTimeStampByName(ParamName: String;
                                   Var ParamValue: FHIR.Support.Utilities.TTimeStamp);
     Procedure BindMemoryByName(ParamName: String;
-                               Var ParamValue: TMemoryStream;
+                               Var ParamValue: TManagedMemoryStream;
                                Binary: Boolean);
     Procedure BindBinaryByName(ParamName: String;
-                               Var ParamValue: TMemoryStream);
+                               Var ParamValue: TManagedMemoryStream);
     Procedure BindTextByName(ParamName: String;
-                             Var ParamValue: TMemoryStream);
+                             Var ParamValue: TManagedMemoryStream);
 
     Procedure BindNulls(Param: SQLUSMALLINT);
     Procedure BindSingles(Param: SQLUSMALLINT;
@@ -1199,7 +1204,7 @@ Type
     Property ColDate[Col: SQLUSMALLINT]: TDate Read GetColDate Write SetColDate;
     Property ColTime[Col: SQLUSMALLINT]: TTime Read GetColTime Write SetColTime;
     Property ColTimeStamp[Col: SQLUSMALLINT]: FHIR.Support.Utilities.TTimeStamp Read GetColTimeStamp Write SetColTimeStamp;
-    Property ColMemory[Col: SQLUSMALLINT]: TMemoryStream Read GetColMemory Write SetColMemory;
+    Property ColMemory[Col: SQLUSMALLINT]: TManagedMemoryStream Read GetColMemory Write SetColMemory;
     Property ColVariant[Col: SQLUSMALLINT]: Variant Read GetColVariant Write SetColVariant;
 
     Property ColStringByName[ColName: String]: String Read GetColStringByName Write SetColStringByName;
@@ -1218,7 +1223,7 @@ Type
     Property ColDateByName[ColName: String]: TDate Read GetColDateByName Write SetColDateByName;
     Property ColTimeByName[ColName: String]: TTime Read GetColTimeByName Write SetColTimeByName;
     Property ColTimeStampByName[ColName: String]: FHIR.Support.Utilities.TTimeStamp Read GetColTimeStampByName Write SetColTimeStampByName;
-    Property ColMemoryByName[ColName: String]: TMemoryStream Read GetColMemoryByName Write SetColMemoryByName;
+    Property ColMemoryByName[ColName: String]: TManagedMemoryStream Read GetColMemoryByName Write SetColMemoryByName;
     Property ColVariantByName[ColName: String]: Variant Read GetColVariantByName Write SetColVariantByName;
 
     Property CellString[Col, Row: SQLUSMALLINT]: String Read GetCellString Write SetCellString;
@@ -1237,7 +1242,7 @@ Type
     Property CellDate[Col, Row: SQLUSMALLINT]: TDate Read GetCellDate Write SetCellDate;
     Property CellTime[Col, Row: SQLUSMALLINT]: TTime Read GetCellTime Write SetCellTime;
     Property CellTimeStamp[Col, Row: SQLUSMALLINT]: FHIR.Support.Utilities.TTimeStamp Read GetCellTimeStamp Write SetCellTimeStamp;
-    Property CellMemory[Col, Row: SQLUSMALLINT]: TMemoryStream Read GetCellMemory Write SetCellMemory;
+    Property CellMemory[Col, Row: SQLUSMALLINT]: TManagedMemoryStream Read GetCellMemory Write SetCellMemory;
     Property CellVariant[Col, Row: SQLUSMALLINT]: Variant Read GetCellVariant Write SetCellVariant;
 
     Property CellStringByName[ColName: String;
@@ -1273,7 +1278,7 @@ Type
     Property CellTimeStampByName[ColName: String;
                                  Row: SQLUSMALLINT]: FHIR.Support.Utilities.TTimeStamp Read GetCellTimeStampByName Write SetCellTimeStampByName;
     Property CellMemoryByName[ColName: String;
-                              Row: SQLUSMALLINT]: TMemoryStream Read GetCellMemoryByName Write SetCellMemoryByName;
+                              Row: SQLUSMALLINT]: TManagedMemoryStream Read GetCellMemoryByName Write SetCellMemoryByName;
     Property CellVariantByName[ColName: String;
                                Row: SQLUSMALLINT]: Variant Read GetCellVariantByName Write SetCellVariantByName;
 
@@ -2049,7 +2054,7 @@ Function IndexOf(S: String;
 Function Compare(S1, S2: String): Boolean;
 Procedure InsertNulls(Var S: String);
 Function Quoted(S: String): String;
-Function MemoryStreamToString(M: TMemoryStream): String;
+Function MemoryStreamToString(M: TManagedMemoryStream): String;
 Procedure SplitList(S, Separator: String;
                 Var Strings: TStrings);
 Procedure Log(ErrorNum: Integer;
@@ -2062,13 +2067,9 @@ Implementation
    Variants;
 {$ENDIF}
 
-
 Const
   MinBlobSize = 1024;
   Fractional = 9;  //yyyy-mm-dd hh:mm:ss.fffffffff = 20+Fractional
-
-Type
-  TMemoryStreamProtected = Class(TMemoryStream);
 
 { Public Utilities }
 
@@ -2142,7 +2143,7 @@ Begin
     Result:= S;
 End;
 
-Function MemoryStreamToString(M: TMemoryStream): String;
+Function MemoryStreamToString(M: TManagedMemoryStream): String;
 Var
   NewCapacity: {$IFDEF FPC} {$IFDEF CPU64} Int64 {$ELSE} Longint {$ENDIF} {$ELSE} LongInt {$ENDIF};
 Begin
@@ -2150,10 +2151,10 @@ Begin
     Result:= ''
   Else
   Begin
-    If TMemoryStreamProtected(M).Capacity = M.Size Then
+    If M.Capacity = M.Size Then
     Begin
       NewCapacity:= M.Size+1;
-      TMemoryStreamProtected(M).Realloc(NewCapacity);
+      M.Realloc(NewCapacity);
     End;
     pchar(M.Memory)[M.Size]:= #0;
     {$IFNDEF UNICODE}
@@ -3865,7 +3866,7 @@ Begin
   temp^.FBlobFetched:= False;
   temp^.FMemory:= Nil;
   If temp^.FBlob Then
-    temp^.FMemory:= TMemoryStream.Create;
+    temp^.FMemory:= TManagedMemoryStream.Create;
 
 
   temp^.FFormatStyle:= DefFormatStyle;
@@ -5400,7 +5401,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindMemory(Param: SQLUSMALLINT;
-                            Var ParamValue: TMemoryStream;
+                            Var ParamValue: TManagedMemoryStream;
                             Binary: Boolean);
 Begin
   If Binary Then
@@ -5414,13 +5415,13 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindBinary(Param: SQLUSMALLINT;
-                            Var ParamValue: TMemoryStream);
+                            Var ParamValue: TManagedMemoryStream);
 Begin
   BindMemory(Param, ParamValue, True);
 End;
 
 Procedure TOdbcStatement.BindText(Param: SQLUSMALLINT;
-                          Var ParamValue: TMemoryStream);
+                          Var ParamValue: TManagedMemoryStream);
 Begin
   BindMemory(Param, ParamValue, False);
 End;
@@ -5521,20 +5522,20 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindMemoryByName(ParamName: String;
-                                  Var ParamValue: TMemoryStream;
+                                  Var ParamValue: TManagedMemoryStream;
                                   Binary: Boolean);
 Begin
   BindMemory(ParamByName(ParamName), ParamValue, Binary);
 End;
 
 Procedure TOdbcStatement.BindBinaryByName(ParamName: String;
-                                  Var ParamValue: TMemoryStream);
+                                  Var ParamValue: TManagedMemoryStream);
 Begin
   BindBinary(ParamByName(ParamName), ParamValue);
 End;
 
 Procedure TOdbcStatement.BindTextByName(ParamName: String;
-                                Var ParamValue: TMemoryStream);
+                                Var ParamValue: TManagedMemoryStream);
 Begin
   BindText(ParamByName(ParamName), ParamValue);
 End;
@@ -6174,8 +6175,8 @@ Begin
   FRetCode:= SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @ColSize);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
-  If ColStream Is TMemoryStream Then
-    TMemoryStream(ColStream).Clear;
+  If ColStream Is TManagedMemoryStream Then
+    TManagedMemoryStream(ColStream).Clear;
   If ColSize < BSize Then
     ColStream.Write(Buffer^, ColSize)
   Else
@@ -7357,7 +7358,7 @@ Begin
   Result:= GetCellTimeStamp(Col, 1);
 End;
 
-Function TOdbcStatement.GetColMemory(Col: SQLUSMALLINT): TMemoryStream;
+Function TOdbcStatement.GetColMemory(Col: SQLUSMALLINT): TManagedMemoryStream;
 Var
   temp: TColPtr;
 Begin
@@ -7479,7 +7480,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetColMemory(Col: SQLUSMALLINT;
-                              AValue: TMemoryStream);
+                              AValue: TManagedMemoryStream);
 Var
   temp: TColPtr;
 Begin
@@ -7578,7 +7579,7 @@ Begin
   Result:= GetColTimeStamp(ColByName(ColName));
 End;
 
-Function TOdbcStatement.GetColMemoryByName(ColName: String): TMemoryStream;
+Function TOdbcStatement.GetColMemoryByName(ColName: String): TManagedMemoryStream;
 Begin
   Result:= GetColMemory(ColByName(ColName));
 End;
@@ -7685,7 +7686,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetColMemoryByName(ColName: String;
-                                    AValue: TMemoryStream);
+                                    AValue: TManagedMemoryStream);
 Begin
   SetColMemory(ColByName(ColName), AValue);
 End;
@@ -8017,7 +8018,7 @@ Previous Non-Optimal implementation
 }
 End;
 
-Function TOdbcStatement.GetCellMemory(Col, Row: SQLUSMALLINT): TMemoryStream;
+Function TOdbcStatement.GetCellMemory(Col, Row: SQLUSMALLINT): TManagedMemoryStream;
 Var
   tempCol: TColPtr;
   temp: TRowPtr;
@@ -8047,7 +8048,7 @@ Begin
 
         If tempCol^.FMemory = Nil Then
           Begin
-          tempCol^.FMemory := TMemoryStream.Create;
+          tempCol^.FMemory := TManagedMemoryStream.Create;
           End;
 
         tempCol^.FMemory.Size     := temp^.FSize^;
@@ -8412,7 +8413,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetCellMemory(Col, Row: SQLUSMALLINT;
-                               AValue: TMemoryStream);
+                               AValue: TManagedMemoryStream);
 Begin
   SetColMemory(Col, AValue);
 End;
@@ -8540,7 +8541,7 @@ Begin
 End;
 
 Function TOdbcStatement.GetCellMemoryByName(ColName: String;
-                                    Row: SQLUSMALLINT): TMemoryStream;
+                                    Row: SQLUSMALLINT): TManagedMemoryStream;
 Begin
   Result:= GetCellMemory(ColByName(ColName), Row);
 End;
@@ -8665,7 +8666,7 @@ End;
 
 Procedure TOdbcStatement.SetCellMemoryByName(ColName: String;
                                      Row: SQLUSMALLINT;
-                                     AValue: TMemoryStream);
+                                     AValue: TManagedMemoryStream);
 Begin
   SetCellMemory(ColByName(ColName), Row, AValue);
 End;

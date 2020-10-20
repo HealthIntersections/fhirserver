@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Test</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -101,7 +101,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Testing;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-testinsight -cmd tests -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core -mdroot c:\work\markdown</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -144,7 +144,6 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_HIDDEN_VIRTUAL>error</DCC_HIDDEN_VIRTUAL>
         <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>
         <DCC_NO_RETVAL>error</DCC_NO_RETVAL>
@@ -188,10 +187,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
-        <Debugger_RunParams>-cmd console -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
+        <Debugger_RunParams>-testinsight</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <Manifest_File>(None)</Manifest_File>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
     </PropertyGroup>
@@ -222,7 +219,6 @@
         <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Javascript.pas"/>
         <DCCReference Include="..\library\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Logging.pas"/>
@@ -235,8 +231,6 @@
         <DCCReference Include="..\library\database\FHIR.Database.SQLite3.Utilities.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.SQLite3.Wrapper.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Utilities.pas"/>
-        <DCCReference Include="..\library\javascript\FHIR.Javascript.pas"/>
-        <DCCReference Include="..\library\javascript\FHIR.Javascript.Base.pas"/>
         <DCCReference Include="..\library\loinc\FHIR.Loinc.Importer.pas"/>
         <DCCReference Include="..\library\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="..\library\loinc\FHIR.Loinc.Services.pas"/>
@@ -293,7 +287,6 @@
         <DCCReference Include="..\library\r4\FHIR.R4.ElementModel.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Factory.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.IndexInfo.pas"/>
-        <DCCReference Include="..\library\r4\FHIR.R4.Javascript.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Json.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.MapUtilities.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Narrative.pas"/>
@@ -320,9 +313,7 @@
         <DCCReference Include="FHIR.Server.Constants.pas"/>
         <DCCReference Include="FHIR.Server.DBInstaller.pas"/>
         <DCCReference Include="FHIR.Server.Database.pas"/>
-        <DCCReference Include="FHIR.Server.EventJs.pas"/>
         <DCCReference Include="FHIR.Server.GraphDefinition.pas"/>
-        <DCCReference Include="FHIR.Server.Javascript.pas"/>
         <DCCReference Include="FHIR.Server.Jwt.pas"/>
         <DCCReference Include="FHIR.Server.Kernel.pas"/>
         <DCCReference Include="FHIR.Server.MpiSearch.pas"/>
@@ -349,7 +340,6 @@
         <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Fpc.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Javascript.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
@@ -401,8 +391,6 @@
         <DCCReference Include="FHIR.Server.Tags.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.CodeSystemProvider.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ValueSets.pas"/>
-        <DCCReference Include="..\library\r2\FHIR.R2.Javascript.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Javascript.pas"/>
         <DCCReference Include="FHIR.Server.Context.pas"/>
         <DCCReference Include="FHIR.Server.Indexing.pas"/>
         <DCCReference Include="..\library\r2\FHIR.R2.IndexInfo.pas"/>
@@ -483,25 +471,15 @@
         <DCCReference Include="FHIR.Server.v2Server.pas"/>
         <DCCReference Include="..\library\v2\FHIR.v2.Protocol.pas"/>
         <DCCReference Include="..\library\v2\FHIR.v2.Message.pas"/>
-        <DCCReference Include="..\library\v2\FHIR.v2.Javascript.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Narrative.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Objects.pas"/>
-        <DCCReference Include="..\library\cda\FHIR.Cda.Types.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
         <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
-        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
         <DCCReference Include="..\dependencies\chakracore-delphi\Compat.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="FHIR.Server.ConsentEngine.pas"/>
         <DCCReference Include="FHIR.Tx.NDC.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.TextPresentation.pas">
             <Form>TextPresentationDialog</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
         <DCCReference Include="FHIR.Server.IndexingR5.pas"/>
@@ -513,7 +491,6 @@
         <DCCReference Include="..\library\r5\FHIR.R5.Enums.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.Factory.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.IndexInfo.pas"/>
-        <DCCReference Include="..\library\r5\FHIR.R5.Javascript.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.Json.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.PathEngine.pas"/>
         <DCCReference Include="..\library\r5\FHIR.R5.PathNode.pas"/>
@@ -550,7 +527,6 @@
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.WorkerTask.pas">
             <Form>WorkingForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\library\npm\FHIR.Npm.VersionBrowser.pas">
             <Form>PackageVersionChooserForm</Form>
@@ -590,12 +566,10 @@
         <DCCReference Include="FHIR.Server.Kernel.Tx.pas"/>
         <DCCReference Include="FHIR.Server.Gui.Vcl.pas">
             <Form>ServerGUI</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FHIR.Server.Gui.Controller.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.Search.pas"/>
         <DCCReference Include="FHIR.Server.Operations.pas"/>
-        <DCCReference Include="FHIR.Server.TestRegistry.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Tests.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Testing.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Comparisons.pas"/>
@@ -606,6 +580,51 @@
         <DCCReference Include="..\utilities\tests\FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Tests.pas"/>
         <DCCReference Include="..\library\Ucum\FHIR.Ucum.Tests.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Objects.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Dictionary.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Writer.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Parser.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.JpegLS.pas"/>
+        <DCCReference Include="..\library\snomed\FHIR.Snomed.Tests.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Tests.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Base.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.Compiled.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v21.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v251.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v22.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v27.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v26.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v25.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v23.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v24.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.Database.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.V2.Objects.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Objects.pas"/>
+        <DCCReference Include="FHIR.Server.TestRegistry.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Documents.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
+        <DCCReference Include="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
+        <DCCReference Include="FHIR.Server.EventJs.pas"/>
+        <DCCReference Include="..\library\client\FHIR.Client.Javascript.pas"/>
+        <DCCReference Include="..\library\javascript\FHIR.Javascript.pas"/>
+        <DCCReference Include="..\library\javascript\FHIR.Javascript.Base.pas"/>
+        <DCCReference Include="..\library\r4\FHIR.R4.Javascript.pas"/>
+        <DCCReference Include="FHIR.Server.Javascript.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.Javascript.pas"/>
+        <DCCReference Include="..\library\r2\FHIR.R2.Javascript.pas"/>
+        <DCCReference Include="..\library\r3\FHIR.R3.Javascript.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Javascript.pas"/>
+        <DCCReference Include="..\library\r5\FHIR.R5.Javascript.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Base.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Writer.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Types.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Parser.pas"/>
+        <DCCReference Include="..\library\cda\FHIR.Cda.Tests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -677,15 +696,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput">
                     <Platform Name="Win64">
-                        <RemoteName>fhirserver.rsm</RemoteName>
+                        <RemoteName>fhirserver.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>fhirserver.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

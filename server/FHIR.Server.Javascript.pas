@@ -30,6 +30,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
+{$IFDEF NO_JS}
+Should not include this
+{$ENDIF}
+
 interface
 
 uses

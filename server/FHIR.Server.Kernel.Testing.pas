@@ -78,7 +78,7 @@ begin
   {$IFDEF FPC}
   Application.Initialize;
   Application.CreateForm(TGuiXTestRunner, TestRunner);
-  TestRunner.FileName := serverTestFile(['tests.ini']);
+  TestRunner.FileName := TestSettings.serverTestFile(['tests.ini']);
   Application.Run;
   {$ELSE}
   Application.Initialize;

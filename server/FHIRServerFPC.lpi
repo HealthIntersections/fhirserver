@@ -19,7 +19,7 @@
     <MacroValues Count="1">
       <Macro3 Name="LCLWidgetType" Value="win32"/>
     </MacroValues>
-    <BuildModes Count="4">
+    <BuildModes Count="6">
       <Item1 Name="Win32" Default="True"/>
       <Item2 Name="Win64">
         <MacroValues Count="1">
@@ -29,13 +29,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
             <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -53,6 +53,9 @@
             <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -69,7 +72,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -86,7 +89,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\library"/>
             <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -104,9 +107,8 @@
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
             <Optimizations>
-              <OptimizationLevel Value="4"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -122,7 +124,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -139,15 +141,26 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
-              <OptimizationLevel Value="4"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -163,10 +176,89 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item4>
+      <Item5 Name="Win32-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="C:\work\fhirserver\exec\32\FHIRServerFPC.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
+            <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseLineInfoUnit Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
+      <Item6 Name="Win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
+            <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
+          </Other>
+        </CompilerOptions>
+      </Item6>
       <SharedMatrixOptions Count="3">
         <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="714078438566" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
@@ -197,7 +289,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="367">
+    <Units Count="387">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1676,6 +1768,90 @@
         <Filename Value="..\library\ucum\FHIR.Ucum.Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit366>
+      <Unit367>
+        <Filename Value="..\library\snomed\FHIR.Snomed.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit367>
+      <Unit368>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v23.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v23"/>
+      </Unit368>
+      <Unit369>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary"/>
+      </Unit369>
+      <Unit370>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v26.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v26"/>
+      </Unit370>
+      <Unit371>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v27.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v27"/>
+      </Unit371>
+      <Unit372>
+        <Filename Value="..\library\v2\FHIR.v2.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit372>
+      <Unit373>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.Database.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit373>
+      <Unit374>
+        <Filename Value="..\library\v2\FHIR.v2.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit374>
+      <Unit375>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.Compiled.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit375>
+      <Unit376>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v21.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit376>
+      <Unit377>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v251.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit377>
+      <Unit378>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v22.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit378>
+      <Unit379>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit379>
+      <Unit380>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v25.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit380>
+      <Unit381>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v24.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit381>
+      <Unit382>
+        <Filename Value="..\library\v2\FHIR.V2.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit382>
+      <Unit383>
+        <Filename Value="..\library\cda\FHIR.Cda.Documents.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit383>
+      <Unit384>
+        <Filename Value="..\library\cda\FHIR.Cda.Writer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit384>
+      <Unit385>
+        <Filename Value="..\library\cda\FHIR.Cda.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit385>
+      <Unit386>
+        <Filename Value="..\library\cda\FHIR.Cda.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit386>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1687,15 +1863,26 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
       <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
-      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="r:\units\$(BuildMode)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
     <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <VerifyObjMethodCallValidity Value="True"/>
       <TargetCPU Value="i386"/>
       <TargetOS Value="win32"/>
       <Optimizations>
         <OptimizationLevel Value="4"/>
       </Optimizations>
-      <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
@@ -1711,14 +1898,13 @@
       <CompilerMessages>
         <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dODBC"/>
+      <CustomOptions Value="-dODBC -dNO_JS"/>
     </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="18">
       <Item1>
         <Name Value="EAbort"/>
-        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>

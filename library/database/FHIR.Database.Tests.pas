@@ -37,7 +37,7 @@ Uses
   Sysutils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
 
-  FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
@@ -95,13 +95,11 @@ var
   b: TBytes;
   i64: Int64;
   md: TFslDBMetaData;
+  fn : string;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
-{$IFDEF OSX}
-  b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0))) + 'libcgsqlite3.dylib');
-{$ELSE}
-  b := FileToBytes('C:\work\fhirserver\Library\database\FHIR.Database.Tests.pas');
-{$ENDIF}
+  fn := TestSettings.serverTestFile(['library', 'database', 'FHIR.Database.Tests.pas']);
+  b := FileToBytes(fn);
   i64 := MaxInt;
   i64 := i64 + 2;
 
@@ -251,24 +249,46 @@ end;
 procedure TFslDBTests.TestMSSQL;
 var
   db: TFslDBManager;
+  settings : TFslStringMap;
 begin
-  db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, 'SQL Server', '(local)', 'test', '', '');
-  try
-    test(db);
-  finally
-    db.Free;
+  if not TestSettings.hasSection('mssql') then
+    assertNotTested
+  else
+  begin
+    settings := TestSettings.section('mssql');
+    try
+      db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
+      try
+        test(db);
+      finally
+        db.Free;
+      end;
+    finally
+      settings.Free;
+    end;
   end;
 end;
 
 procedure TFslDBTests.TestMySQL;
 var
   db: TFslDBManager;
+  settings : TFslStringMap;
 begin
-  db := TFslDBOdbcManager.create('test', kdbMySql, 8, 0, 'MySQL ODBC 8.0 Unicode Driver', 'localhost', 'test', 'test', 'test');
-  try
-    test(db);
-  finally
-    db.Free;
+  if not TestSettings.hasSection('mysql') then
+    assertNotTested
+  else
+  begin
+    settings := TestSettings.section('mysql');
+    try
+      db := TFslDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      try
+        test(db);
+      finally
+        db.Free;
+      end;
+    finally
+      settings.Free;
+    end;
   end;
 end;
 

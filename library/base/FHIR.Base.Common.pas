@@ -559,9 +559,12 @@ type
     function value : String; virtual; abstract;
   end;
 
+  TFhirCodeSystemConceptW = class;
+  TFhirCodeSystemConceptListW = TFslList<TFhirCodeSystemConceptW>;
+
   TFhirCodeSystemConceptW = class (TFHIRXVersionElementWrapper)
   protected
-    FConceptList : TFslList<TFhirCodeSystemConceptW>;
+    FConceptList : TFhirCodeSystemConceptListW;
   public
     destructor Destroy; override;
   public
@@ -569,7 +572,7 @@ type
     function code : String; virtual; abstract;
     function display : String; virtual; abstract;
     function definition : String; virtual; abstract;
-    function conceptList : TFslList<TFhirCodeSystemConceptW>; virtual; abstract;
+    function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
@@ -580,6 +583,7 @@ type
     procedure setDisplayTag(tag, value : String); virtual; abstract;
     function getCode(code : String) : TFhirCodeSystemConceptW; virtual; abstract;
   end;
+  TFhirCodeSystemConceptMapW = TFslMap<TFhirCodeSystemConceptW>;
 
   TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal);
   TFhirCodeSystemPropertyW = class (TFHIRXVersionElementWrapper)
@@ -635,10 +639,9 @@ type
   public
     function link : TFslMetadataResourceList; overload;
   end;
-
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
   protected
-    FConceptList : TFslList<TFhirCodeSystemConceptW>;
+    FConceptList : TFhirCodeSystemConceptListW;
     function getContent: TFhirCodeSystemContentMode; virtual; abstract;
     procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
     function getCount: integer; virtual; abstract;
@@ -656,15 +659,15 @@ type
 
     function properties : TFslList<TFhirCodeSystemPropertyW>;  virtual; abstract;
     // this is special because it's owned
-    function conceptList : TFslList<TFhirCodeSystemConceptW>; virtual; abstract;
+    function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function getCode(code : String) : TFhirCodeSystemConceptW; virtual; abstract;
 
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
-    function getParents(c : TFhirCodeSystemConceptW) : TFslList<TFhirCodeSystemConceptW>; virtual; abstract;
-    function getChildren(c : TFhirCodeSystemConceptW) : TFslList<TFhirCodeSystemConceptW>; virtual; abstract;
+    function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
+    function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
 
     function buildImplicitValueSet : TFHIRValueSetW; virtual; abstract;
   end;
@@ -759,7 +762,7 @@ type
   public
     function link : TFHIRValueSetCodeSystemW; overload;
     function systemUri : String; virtual; abstract;
-    function concepts : TFslList<TFHIRCodeSystemConceptW>; virtual; abstract;
+    function concepts : TFhirCodeSystemConceptListW; virtual; abstract;
   end;
 
   TFhirValueSetW =  class (TFHIRMetadataResourceW)

@@ -73,7 +73,9 @@ type
     FTotal : integer;
     FLength : int64;
     FCounts : array [0..9] of integer;
+    FStart : int64;
   public
+    constructor Create;
     procedure recordSession(start, length : int64);
     function report : String;
   end;
@@ -220,6 +222,12 @@ uses
 
 { TServerSessionStatistics }
 
+constructor TServerSessionStatistics.Create;
+begin
+  inherited Create;
+  FStart := GetTickCount64;
+end;
+
 procedure TServerSessionStatistics.recordSession(start, length: int64);
 begin
   inc(FCursor);
@@ -270,6 +278,7 @@ begin
     result := result + '  Frequency: '+FloatToStr((c * 1000) / span )+'hz'+#13#10;
     result := result + '  Avg Length: '+FloatToStr(length / c)+'ms'+#13#10;
   end;
+  result := result + 'Frequency (total): '+FloatToStr((FTotal * 1000)/ (GetTickCount64 - FStart))+'hz'+#13#10;
   result := result + #13#10+'Histogram (seconds): '+#13#10;
   result := result + '  0 - 0.1: '+inttostr(FCounts[0])+#13#10;
   result := result + '0.1 - 0.5: '+inttostr(FCounts[1])+#13#10;

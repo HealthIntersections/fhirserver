@@ -229,3 +229,5 @@ web/QuestionnaireToHTML.xslt
 /library/npm/backup
 /tests.ini
 /exec/pack/fhirserver.web
+/utilities/console/lib/win32-release
+/utilities/console/lib/win64

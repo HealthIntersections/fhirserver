@@ -1262,7 +1262,8 @@ begin
     store.FServerContext.Globals := Settings.Link;
     store.FServerContext.TerminologyServer := TTerminologyServer.Create(db.link, factory.Link, Terminologies.link);
     store.FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
-    configureResource(store.FServerContext.ResConfig['CodeSystem']);
+    if factory.version <> fhirVersionRelease2 then
+      configureResource(store.FServerContext.ResConfig['CodeSystem']);
     configureResource(store.FServerContext.ResConfig['ValueSet']);
     configureResource(store.FServerContext.ResConfig['NamingSystem']);
     configureResource(store.FServerContext.ResConfig['ConceptMap']);
@@ -1270,7 +1271,7 @@ begin
     store.loadPackage(factory, factory.corePackage, false);
     if UTGFolder <> '' then
       store.loadUTGFolder(factory, UTGFolder)
-    else
+    else if factory.txPackage <> '' then
       store.loadPackage(factory, factory.txPackage, true);
     store.loadPackage(factory, factory.txSupportPackage, false);
     for s in listP do

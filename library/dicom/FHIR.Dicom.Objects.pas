@@ -729,7 +729,7 @@ type
     {
       A string summary of the elements in the list, with tags separated by semi-colons and values separated by commas.
     }
-    Function ToString(includeTags : Boolean) : String;
+    Function AsString(includeTags : Boolean) : String;
 
     Property Elements[iIndex : integer] : TDicomDataElement Read GetElements; Default;
   Published
@@ -2462,8 +2462,7 @@ Begin
   SortedBy(CompareByTags);
 End;
 
-
-function TDicomDataElementList.ToString(includeTags: Boolean): String;
+function TDicomDataElementList.AsString(includeTags: Boolean): String;
 var
   oBuilder : TFslStringBuilder;
   oElem : TDicomDataElement;

@@ -341,8 +341,6 @@ Type
 
     procedure AddAll(list : TFslList<T>); overload;
 
-    procedure Pack; overload;
-
     function Remove(const Value: T): Integer;
     procedure RemoveAll(list : TFslList<T>); overload;
     {$IFNDEF FPC}
@@ -1313,51 +1311,6 @@ procedure TFslList<T>.NotifyChange(const Item: T; Action: TCollectionNotificatio
 begin
   if Assigned(FOnNotify) then
     FOnNotify(Self, Item, Action);
-end;
-
-procedure TFslList<T>.Pack;
-var
-  PackedCount : Integer;
-  StartIndex : Integer;
-  EndIndex : Integer;
-begin
-  if FCount = 0 then
-    Exit;
-
-  PackedCount := 0;
-  StartIndex := 0;
-  repeat
-    // Locate the first/next non-nil element in the list
-//    while (StartIndex < FCount) and (FComparer.Compare(FItems[StartIndex], Default(T)) = 0) do
-    while (StartIndex < FCount) and (FItems[StartIndex] = T(nil)) do
-      Inc(StartIndex);
-
-    if StartIndex < FCount then // There is nothing more to do
-    begin
-      // Locate the next nil pointer
-      EndIndex := StartIndex;
-//      while (EndIndex < FCount) and (FComparer.Compare(FItems[EndIndex], Default(T)) <> 0) do
-      while (EndIndex < FCount) and (FItems[EndIndex] <> T(nil)) do
-        Inc(EndIndex);
-      Dec(EndIndex);
-
-      // Move this block of non-null items to the index recorded in PackedToCount:
-      // If this is a contiguous non-nil block at the start of the list then
-      // StartIndex and PackedToCount will be equal (and 0) so don't bother with the move.
-      if StartIndex > PackedCount then
-        FArrayManager.Move(FItems, StartIndex, PackedCount, EndIndex - StartIndex + 1);
-
-      // Set the PackedToCount to reflect the number of items in the list
-      // that have now been packed.
-      Inc(PackedCount, EndIndex - StartIndex + 1);
-
-      // Reset StartIndex to the element following EndIndex
-      StartIndex := EndIndex + 1;
-    end;
-  until StartIndex >= FCount;
-
-  // Set Count so that the 'free' item
-  FCount := PackedCount;
 end;
 
 constructor TFslList<T>.Create;
@@ -2913,7 +2866,7 @@ end;
 
 procedure TFslStringMap.SetItem(const Key, Value: String);
 begin
-  FDict[key] := value;
+  FDict.AddOrSetValue(key, value);
 end;
 
 { ETodo }

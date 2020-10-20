@@ -780,7 +780,10 @@ end;
 
 procedure TFslDBConnection.BindBlob(AParamName: String; AParamValue: TBytes);
 begin
-  BindBlobV(AParamName, AParamValue);
+  if (aParamValue = nil) then
+    BindNullV(AParamName)
+  else
+    BindBlobV(AParamName, AParamValue);
 end;
 
 procedure TFslDBConnection.BindBlobFromString(AParamName, AParamValue: String);

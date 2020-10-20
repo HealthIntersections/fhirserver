@@ -167,7 +167,7 @@ Type
     procedure BuildStems(cs : TFhirCodeSystemW);
 
 
-    procedure checkForDuplicates(codes: TStringList; list: TFslList<TFhirCodeSystemConceptW>; url : String);
+    procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptListW; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
     procedure AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
@@ -684,7 +684,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
     end;
     result.SortAscending;
   end;
-  procedure processConcepts(parent : TFhirCodeSystemConceptW; list : TFslList<TFhirCodeSystemConceptW>; map : TFslMap<TFhirCodeSystemConceptW>);
+  procedure processConcepts(parent : TFhirCodeSystemConceptW; list : TFhirCodeSystemConceptListW; map : TFhirCodeSystemConceptMapW);
   var
     c : TFhirCodeSystemConceptW;
   begin
@@ -699,9 +699,9 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
     end;
   end;
 var
-  map : TFslMap<TFhirCodeSystemConceptW>;
+  map : TFhirCodeSystemConceptMapW;
 begin
-  map := TFslMap<TFhirCodeSystemConceptW>.create('stems');
+  map := TFhirCodeSystemConceptMapW.create('stems');
   try
     cs.Tag := TCodeSystemAdornment.create(map.link);
     processConcepts(nil, cs.conceptList, map);
@@ -711,7 +711,7 @@ begin
 end;
 
 
-procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFslList<TFhirCodeSystemConceptW>; url : String);
+procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFhirCodeSystemConceptListW; url : String);
 var
   cc : TFhirCodeSystemConceptW;
   i : integer;

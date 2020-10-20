@@ -15754,7 +15754,7 @@ Begin
   oSegments.Add('}]', 'end optional + repeating');
 End;
 
-procedure Definitions27LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+procedure Definitions27LoadMessageStructures1(oStructures : THL7V2ModelMessageStructures);
 Var
   oStructure : THL7V2ModelMessageStructure;
   oGrp1 : THL7V2ModelSegmentGroup;
@@ -20014,6 +20014,20 @@ Begin
     oStructure.SegmentMap.Children.Add('NK1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('GT1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('NTE', True, True, gtSingle);
+End;
+
+procedure Definitions27LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('RRA_O18', 'Pharmacy/Treatment Administration Acknowledgment M', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RRA_O18', False, False, gtGroup);
@@ -21370,6 +21384,12 @@ Begin
   oEvent := oEvents.Add('Znn', '');
     oEvent.Messages.Add('QBP', 'QBP_Qnn', 'RTB', 'RTB_Knn');
 End;
+
+procedure Definitions27LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+begin
+  Definitions27LoadMessageStructures1(oStructures);
+  Definitions27LoadMessageStructures2(oStructures);
+end;
 
 End.
 

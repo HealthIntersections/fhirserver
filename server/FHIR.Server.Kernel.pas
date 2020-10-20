@@ -41,7 +41,8 @@ Uses
 
   {$IFDEF FPC} {odbcsqldyn, }FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
 
-  FHIR.Server.Constants, FHIR.Server.Ini, FHIR.Server.Utilities, FHIR.Server.Javascript,
+  FHIR.Server.Constants, FHIR.Server.Ini, FHIR.Server.Utilities,
+  {$IFNDEF NO_JS}FHIR.Server.Javascript, {$ENDIF}
   FHIR.Server.Kernel.Base, FHIR.Server.Kernel.General, FHIR.Server.Kernel.Tx, FHIR.Server.Kernel.Bridge, FHIR.Server.Kernel.Testing;
 
 procedure ExecuteFhirServer; overload;
@@ -99,8 +100,11 @@ var
   fn : String;
   svc : TFHIRServiceBase;
   logMsg : String;
-  compiler : String;
 begin
+  {$IFDEF WINDOWS}
+  SetConsoleTitle('FHIR Server');
+  {$ENDIF}
+
   // 1. logging.
   if getCommandLineParam('log', fn) then
     Logging.logToFile(fn);
@@ -132,16 +136,8 @@ begin
     if ParamCount > 0 then
       Logging.LogToConsole := true;
 
-    {$IFDEF WINDOWS}
-    SetConsoleTitle('FHIR Server R4');
-    {$ENDIF}
     Logging.log(commandLineAsString);
 
-    {$IFDEF FPC}
-    compiler := 'FPC';
-    {$ELSE}
-    compiler := 'Delphi';
-    {$ENDIF}
     if not getCommandLineParam('name', svcName) then
       if ini.service['name'] <> '' then
         svcName := ini.service['name']
@@ -156,15 +152,15 @@ begin
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
-      logMsg := 'FHIR Server '+SERVER_VERSION+' ('+compiler+'). Using ini file '+ini.FileName+' (+stack dumps)'
+      logMsg := 'FHIR Server '+SERVER_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
-      logMsg := 'FHIR Server '+SERVER_VERSION+' ('+compiler+'). Using ini file '+ini.FileName;
+      logMsg := 'FHIR Server '+SERVER_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName;
     if Logging.FileLog <> nil then
       logMsg := logMsg + '. Log File = '+Logging.FileLog.filename;
 
     Logging.log(logMsg);
-    dispName := dispName + ' '+SERVER_VERSION;
+    dispName := dispName + ' '+SERVER_VERSION+' '+Logging.buildDetails+'';
 
     svc := makeKernel(svcName, dispName, logMsg, ini.link);
     try

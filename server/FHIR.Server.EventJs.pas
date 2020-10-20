@@ -30,12 +30,16 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
+{$IFDEF NO_JS}
+This should not be included when NO_JS is defined
+{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  {$IFNDEF NO_JS} FHIR.Javascript, {$ENDIF}
+  FHIR.Javascript,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Server.Session;
 

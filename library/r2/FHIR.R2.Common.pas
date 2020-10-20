@@ -411,7 +411,7 @@ type
     function code : String; override;
     function display : String; override;
     function definition : String; override;
-    function conceptList : TFslList<TFhirCodeSystemConceptW>; override;
+    function conceptList : TFhirCodeSystemConceptListW; override;
     function conceptCount : integer; override;
     function designationCount : integer; override;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; override;
@@ -426,7 +426,7 @@ type
   TFHIRValueSetCodeSystem2 = class (TFHIRValueSetCodeSystemW)
   public
     function systemUri : String; override;
-    function concepts : TFslList<TFHIRCodeSystemConceptW>; override;
+    function concepts : TFhirCodeSystemConceptListW; override;
 //    function version : String; override;
   end;
 
@@ -444,14 +444,14 @@ type
 
     function properties : TFslList<TFhirCodeSystemPropertyW>;  override;
     // this is special because it's owned
-    function conceptList : TFslList<TFhirCodeSystemConceptW>; override;
+    function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; override;
-    function getParents(c : TFhirCodeSystemConceptW) : TFslList<TFhirCodeSystemConceptW>; override;
-    function getChildren(c : TFhirCodeSystemConceptW) : TFslList<TFhirCodeSystemConceptW>; override;
+    function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
+    function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
 
@@ -2399,11 +2399,11 @@ end;
 
 { TFHIRValueSetCodeSystem2 }
 
-function TFHIRValueSetCodeSystem2.concepts: TFslList<TFHIRCodeSystemConceptW>;
+function TFHIRValueSetCodeSystem2.concepts: TFhirCodeSystemConceptListW;
 var
   i : TFHIRValueSetCodeSystemConcept;
 begin
-  result := TFslList<TFHIRCodeSystemConceptW>.create;
+  result := TFhirCodeSystemConceptListW.create;
   for i in (element as TFHIRValueSetCodeSystem).conceptList do
     result.Add(TFhirCodeSystemConcept2.create(i.Link));
 end;
@@ -2430,13 +2430,13 @@ begin
   result := (element as TFhirCodeSystemConcept).conceptList.Count;
 end;
 
-function TFhirCodeSystemConcept2.conceptList: TFslList<TFhirCodeSystemConceptW>;
+function TFhirCodeSystemConcept2.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRValueSetCodeSystemConcept;
 begin
   if FConceptList = nil then
   begin
-    FConceptList := TFslList<TFHIRCodeSystemConceptW>.create;
+    FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (element as TFhirCodeSystemConcept).conceptList do
       FConceptList.Add(TFhirCodeSystemConcept2.create(i.Link));
   end;
@@ -2756,13 +2756,13 @@ begin
   result := cs.conceptList.Count;
 end;
 
-function TFhirCodeSystem2.conceptList: TFslList<TFhirCodeSystemConceptW>;
+function TFhirCodeSystem2.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRCodeSystemConcept;
 begin
   if FConceptList = nil then
   begin
-    FConceptList := TFslList<TFHIRCodeSystemConceptW>.create;
+    FConceptList := TFhirCodeSystemConceptListW.create;
     for i in (resource as TFhirCodeSystem).conceptList do
       FConceptList.Add(TFhirCodeSystemConcept2.create(i.Link));
   end;
@@ -2785,14 +2785,14 @@ begin
   result := vs.description;
 end;
 
-function TFhirCodeSystem2.getChildren(c: TFhirCodeSystemConceptW): TFslList<TFhirCodeSystemConceptW>;
+function TFhirCodeSystem2.getChildren(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
 var
   list : TFhirCodeSystemConceptList;
   i :  TFhirCodeSystemConcept;
 begin
   list := cs.getChildren(c.element as TFhirCodeSystemConcept);
   try
-    result := TFslList<TFhirCodeSystemConceptW>.create;
+    result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
         result.Add(TFhirCodeSystemConcept2.Create(i.Link));
@@ -2830,14 +2830,14 @@ begin
   result := vs.date;
 end;
 
-function TFhirCodeSystem2.getParents(c: TFhirCodeSystemConceptW): TFslList<TFhirCodeSystemConceptW>;
+function TFhirCodeSystem2.getParents(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
 var
   list : TFhirCodeSystemConceptList;
   i :  TFhirCodeSystemConcept;
 begin
   list := cs.getParents(c.element as TFhirCodeSystemConcept);
   try
-    result := TFslList<TFhirCodeSystemConceptW>.create;
+    result := TFhirCodeSystemConceptListW.create;
     try
       for i in list do
         result.Add(TFhirCodeSystemConcept2.Create(i.Link));

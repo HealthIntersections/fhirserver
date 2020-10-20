@@ -35,79 +35,97 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
-  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
-  FHIR.R4.PathNode, FHIR.R4.PathEngine, FHIR.R4.Javascript,
-  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Javascript, FHIR.v2.Protocol;
+//  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
+  FHIR.R4.PathNode, FHIR.R4.PathEngine, // FHIR.R4.Javascript,
+  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Protocol;
 
-{$IFNDEF FPC}
 const
   TEST_PORT = 20032; // err, we hope that this is unused
 
 type
-  [TextFixture]
-  Tv2DictTests = Class (TObject)
-  public
-    [TestCase] Procedure TestDictionaryCompiled;
-    [TestCase] Procedure TestDictionaryAccess;
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  Tv2DictTests = Class (TFslTestCase)
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestDictionaryCompiled;
+
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestDictionaryAccess;
   end;
 
-  [TextFixture]
-  THL7v2ParserTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  THL7v2ParserTests = Class (TFslTestCase)
   private
     function parse(msg : String; fmt : THL7V2Format) : THL7v2Message;
   public
-    [SetupFixture] procedure Setup;
-    [TestCase] Procedure TestDictionaryParse;
+    {$IFNDEF FPC}[SetupFixture]{$ENDIF}
+    procedure Setup; override;
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestDictionaryParse;
   end;
 
-  [TextFixture]
-  Tv2ParserTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  Tv2ParserTests = Class (TFslTestCase)
   private
     procedure test(source : String);
-  public
-    [TestCase] Procedure TestSimple;
-    [TestCase] Procedure TestFHIRPath;
-    [TestCase] Procedure TestIndexOffsets;
-    [TestCase] Procedure TestJavascript;
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestSimple;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestFHIRPath;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestIndexOffsets;
+    {$IFDEF NOT_NOW}
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    Procedure TestJavascript;
+    {$ENDIF}
   end;
 
 
 type
-  [TextFixture]
-  TLLPTests = Class (TObject)
+  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TLLPTests = Class (TFslTestCase)
   private
     FDelay: Integer;
     procedure MessageReply(Sender: TObject; AConnection: TIdTCPConnection; Msg: TBytes; var VHandled: Boolean; var Reply: TBytes);
   public
-    [Setup] procedure Setup;
-    [TestCase] procedure TestNoConnectionServer;
-    [TestCase] procedure TestNoConnectionClient;
-    [TestCase] procedure TestConnection;
-    [TestCase] procedure TestConnectionLimit;
-    [TestCase] procedure TestSyncForwards;
-    [TestCase] procedure TestSyncBackwards;
-    [TestCase] procedure TestSyncForwards1000;
-    [TestCase] procedure TestSyncBackwards1000;
-    [TestCase] procedure TestSingleThread;
-    [TestCase] procedure TestSingleThreadTimeout;
+    {$IFNDEF FPC}[Setup]{$ENDIF}
+    procedure Setup; override;
+  published
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestNoConnectionServer;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestNoConnectionClient;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestConnection;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestConnectionLimit;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSyncForwards;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSyncBackwards;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSyncForwards1000;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSyncBackwards1000;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSingleThread;
+    {$IFNDEF FPC}[TestCase]{$ENDIF}
+    procedure TestSingleThreadTimeout;
   end;
 
-{$ENDIF}
+procedure RegisterTests;
 
 implementation
 
-{$IFNDEF FPC}
 
 Function StringAsBytes(s : String):TBytes;
 Begin
-  {$IFDEF VER130}
-
-  {$ELSE}
   result := TEncoding.UTF8.GetBytes(s);
-  {$ENDIF}
 End;
 
 Function BytesAsString(a : TBytes) : String;
@@ -127,8 +145,8 @@ var
 begin
   dict := THL7V2AccessDictionary.Create('C:\temp\hl7_94Jul2018.mdb');
   try
-    Assert.IsTrue(dict <> nil);
-    Assert.IsTrue(dict.Model[hv23].Tables.Count > 0);
+    assertTrue(dict <> nil);
+    assertTrue(dict.Model[hv23].Tables.Count > 0);
   finally
     dict.Free;
   end;
@@ -140,8 +158,8 @@ var
 begin
   dict := THL7V2CompiledDictionary.Create;
   try
-    Assert.IsTrue(dict <> nil);
-    Assert.IsTrue(dict.Model[hv23].Tables.Count > 0);
+    assertTrue(dict <> nil);
+    assertTrue(dict.Model[hv23].Tables.Count > 0);
   finally
     dict.Free;
   end;
@@ -184,7 +202,7 @@ begin
       LOut.Port := TEST_PORT;
       LOut.Start;
       LIn.WaitForConnection(2000);
-      Assert.IsTrue(LIn.Connected and LOut.Connected);
+      assertTrue(LIn.Connected and LOut.Connected);
       LOut.PreStop;
       LOut.Stop;
     finally
@@ -227,7 +245,7 @@ begin
         LOut2.Start;
         sleep(500);
 
-        Assert.IsTrue(LIn.Connected and LOut.Connected and not LOut2.connected);
+        assertTrue(LIn.Connected and LOut.Connected and not LOut2.connected);
         LOut2.PreStop;
         LOut2.Stop;
       finally
@@ -256,15 +274,15 @@ begin
     LHL7.Port := TEST_PORT; // hopefully this is not listening
     LHL7.CommunicationMode := cmSynchronous;
     LHL7.IsListener := False;
-    Assert.IsTrue(LHL7.Status = isStopped, 'Status not stopped when stopped');
+    assertTrue(LHL7.Status = isStopped, 'Status not stopped when stopped');
     LHL7.start;
-    Assert.IsTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status in [isNotConnected, isConnecting, isWaitReconnect], 'Status not connecting when should be connecting');
   finally
     FreeAndNil(LHL7);
   end;
@@ -280,15 +298,15 @@ begin
     LHL7.Port := TEST_PORT; // hopefully this is not listening
     LHL7.CommunicationMode := cmSynchronous;
     LHL7.IsListener := False;
-    Assert.IsTrue(LHL7.Status = isStopped, 'Status not stopped when stopped');
+    assertTrue(LHL7.Status = isStopped, 'Status not stopped when stopped');
     LHL7.start;
-    Assert.IsTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
     sleep(2000);
-    Assert.IsTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
+    assertTrue(LHL7.Status = isNotConnected, 'Status not connecting when should be connecting');
   finally
     FreeAndNil(LHL7);
   end;
@@ -321,9 +339,9 @@ begin
         sleep(20);
         LResult := LOut.GetReply(LMsg);
       until LResult <> srNone;
-      Assert.IsTrue(LResult = srOK, 'Status is wrong');
-      Assert.IsTrue(SameText(BytesAsString(LMsg), 'testsinglethreadReturn'), 'Did not receive message from responder');
-      Assert.IsTrue(LOut.GetReply(LMsg) = srError, 'Status is wrong');
+      assertTrue(LResult = srOK, 'Status is wrong');
+      assertTrue(SameText(BytesAsString(LMsg), 'testsinglethreadReturn'), 'Did not receive message from responder');
+      assertTrue(LOut.GetReply(LMsg) = srError, 'Status is wrong');
     finally
       FreeAndNil(LOut);
       end;
@@ -361,8 +379,8 @@ begin
         sleep(20);
         LResult := LOut.GetReply(LMsg);
       until LResult <> srNone;
-      Assert.IsTrue(LResult = srTimeout, 'Status is wrong');
-      Assert.IsTrue(length(LMsg) = 0, 'received message in error');
+      assertTrue(LResult = srTimeout, 'Status is wrong');
+      assertTrue(length(LMsg) = 0, 'received message in error');
     finally
       FreeAndNil(LOut);
       end;
@@ -393,10 +411,10 @@ begin
       LOut.Start;
       LIn.WaitForConnection(6000);
       Sleep(50);
-      Assert.IsTrue(LIn.Connected, 'in not connected');
-      Assert.IsTrue(LOut.Connected, 'Out not connected');
+      assertTrue(LIn.Connected, 'in not connected');
+      assertTrue(LOut.Connected, 'Out not connected');
       LOut.CheckSynchronousSendResult(LOut.SynchronousSend(StringAsBytes('test'), LMsg), '');
-      Assert.IsTrue(SameText(BytesAsString(LMsg), 'testReturn'), 'Msg returned was wrong ("' + BytesAsString(LMsg)+ '")');
+      assertTrue(SameText(BytesAsString(LMsg), 'testReturn'), 'Msg returned was wrong ("' + BytesAsString(LMsg)+ '")');
       LOut.PreStop;
       LOut.Stop;
     finally
@@ -436,8 +454,8 @@ begin
       for i := 0 to 1000 do
         begin
         LRes := LOut.SynchronousSend(StringAsBytes('test' + IntToStr(i)), LMsg);
-        Assert.IsTrue(LRes = srOK, 'Message '+inttostr(i)+' failed to be sent ('+SEND_RESPONSE_NAMES[LRes]+')');
-        Assert.IsTrue(SameText(BytesAsString(LMsg), 'test' + IntToStr(i) + 'Return'), 'Message '+inttostr(i)+' was wrong (expected "test' + IntToStr(i) + 'Return", got "' + BytesAsString(LMsg) + '")');
+        assertTrue(LRes = srOK, 'Message '+inttostr(i)+' failed to be sent ('+SEND_RESPONSE_NAMES[LRes]+')');
+        assertTrue(SameText(BytesAsString(LMsg), 'test' + IntToStr(i) + 'Return'), 'Message '+inttostr(i)+' was wrong (expected "test' + IntToStr(i) + 'Return", got "' + BytesAsString(LMsg) + '")');
         end;
       LOut.PreStop;
       LOut.Stop;
@@ -472,8 +490,8 @@ begin
       LOut.Port := TEST_PORT;
       LOut.Start;
       LIn.WaitForConnection(2000);
-      Assert.IsTrue(LOut.SynchronousSend(StringAsBytes('test'), LMsg) = srOK);
-      Assert.IsTrue(SameText(BytesAsString(LMsg), 'testReturn'));
+      assertTrue(LOut.SynchronousSend(StringAsBytes('test'), LMsg) = srOK);
+      assertTrue(SameText(BytesAsString(LMsg), 'testReturn'));
       LOut.PreStop;
       LOut.Stop;
     finally
@@ -510,8 +528,8 @@ begin
       LIn.WaitForConnection(6000);
       for i := 0 to 1000 do
         begin
-        Assert.IsTrue(LOut.SynchronousSend(StringAsBytes('test' + IntToStr(i)), LMsg) = srOK);
-        Assert.IsTrue(SameText(BytesAsString(LMsg), 'test' + IntToStr(i) + 'Return'), 'expected "'+'test' + IntToStr(i) + 'Return'+'" but got "'+BytesAsString(LMsg)+'"');
+        assertTrue(LOut.SynchronousSend(StringAsBytes('test' + IntToStr(i)), LMsg) = srOK);
+        assertTrue(SameText(BytesAsString(LMsg), 'test' + IntToStr(i) + 'Return'), 'expected "'+'test' + IntToStr(i) + 'Return'+'" but got "'+BytesAsString(LMsg)+'"');
         end;
       LOut.PreStop;
       LOut.Stop;
@@ -556,7 +574,7 @@ begin
     'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD^^|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
     'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13, hfER7);
   try
-    Assert.IsNotNull(msg);
+    assertTrue(msg <> nil);
   finally
     msg.Free;
   end;
@@ -577,7 +595,7 @@ begin
   end;
   StringToFile(source, 'c:\temp\source.hl7', TEncoding.UTF8);
   StringToFile(output, 'c:\temp\output.hl7', TEncoding.UTF8);
-  Assert.AreEqual(source, output);
+  assertEqual(source, output);
 end;
 
 procedure Tv2ParserTests.TestFHIRPath;
@@ -596,7 +614,7 @@ begin
       path.registerExtension(TV2FHIRPathExtensions.create);
       list := path.evaluate(nil, msg, 'Message.segment.where(code = ''PID'').field[5].element.first().text()');
       try
-        Assert.AreEqual(1, list.count);
+        assertEqual(1, list.count);
       finally
         list.free;
       end;
@@ -620,22 +638,22 @@ begin
     'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
     'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
   try
-    Assert.AreEqual(msg.segment[1].field[3].element[1].text, 'GHH LAB');
-    Assert.AreEqual(msg.segment[1].element(3).text, 'GHH LAB');
+    assertEqual(msg.segment[1].field[3].element[1].text, 'GHH LAB');
+    assertEqual(msg.segment[1].element(3).text, 'GHH LAB');
     path := TFHIRPathEngine.Create(nil, nil);
     try
       path.registerExtension(TV2FHIRPathExtensions.create);
       list := path.evaluate(nil, msg, 'Message.segment[1].field[3].element[1].text()');
       try
         s := path.convertToString(list);
-        Assert.AreEqual('GHH LAB', s);
+        assertEqual('GHH LAB', s);
       finally
         list.free;
       end;
       list := path.evaluate(nil, msg, 'Message.segment[1].element(3).text()');
       try
         s := path.convertToString(list);
-        Assert.AreEqual('GHH LAB', s);
+        assertEqual('GHH LAB', s);
       finally
         list.free;
       end;
@@ -646,6 +664,8 @@ begin
     msg.Free;
   end;
 end;
+
+{$IFDEF NOT_NOW}
 
 const
   JS_TEST_SCRIPT =
@@ -678,6 +698,7 @@ begin
     fpe.free;
   end;
 end;
+{$ENDIF}
 
 procedure Tv2ParserTests.TestSimple;
 begin
@@ -687,10 +708,20 @@ begin
     'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
 end;
 
-initialization
+procedure RegisterTests;
+// don't use initialization - give other code time to set up directories etc
+begin
+  {$IFDEF FPC}
+  RegisterTest('v2 Dictionary Tests', Tv2DictTests);
+  RegisterTest('v2 Parser Tests', THL7v2ParserTests);
+  RegisterTest('v2 Parser2 Tests', Tv2ParserTests);
+  RegisterTest('LLP Tests', TLLPTests);
+  {$ELSE}
   TDUnitX.RegisterTestFixture(Tv2DictTests);
   TDUnitX.RegisterTestFixture(THL7v2ParserTests);
   TDUnitX.RegisterTestFixture(Tv2ParserTests);
   TDUnitX.RegisterTestFixture(TLLPTests);
-{$ENDIF}
+  {$ENDIF}
+end;
+
 end.
