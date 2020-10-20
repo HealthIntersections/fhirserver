@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Test</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-testinsight -cmd tests -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -password gg -endpoint r4 -packages hl7.fhir.r4.core -mdroot c:\work\markdown</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -603,6 +603,27 @@
         <DCCReference Include="..\utilities\tests\FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Tests.pas"/>
         <DCCReference Include="..\library\Ucum\FHIR.Ucum.Tests.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Objects.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Dictionary.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Writer.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.Parser.pas"/>
+        <DCCReference Include="..\library\dicom\FHIR.Dicom.JpegLS.pas"/>
+        <DCCReference Include="..\library\snomed\FHIR.Snomed.Tests.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Tests.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Base.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.Compiled.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v21.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v251.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v22.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v27.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v26.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v25.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v23.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.v24.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.v2.Dictionary.Database.pas"/>
+        <DCCReference Include="..\library\v2\FHIR.V2.Objects.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -674,9 +695,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Test" Class="ProjectOutput">
                     <Platform Name="Win64">
-                        <RemoteName>fhirserver.rsm</RemoteName>
+                        <RemoteName>fhirserver.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -34,8 +34,7 @@ interface
 
 (*
 
-FHIR.Ucum.Tests
-FHIR.Tests.Snomed
+
 FHIR.Cql.Tests
 
 FHIR.Javascript.Tests
@@ -54,7 +53,6 @@ FHIR.Tests.RestFulServer
 FHIR.Tests.SearchSyntax
 FHIR.Tests.SmartLogin
 FHIR.XVersion.Tests
-FHIR.v2.Tests
 FHIR.R4.Tests.Context
 *)
 
@@ -62,7 +60,8 @@ uses
   SysUtils, IniFiles,
   FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests, FHIR.Ucum.Tests;
+  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests,
+  FHIR.Ucum.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests;
 
 procedure registerTests;
 
@@ -139,6 +138,8 @@ begin
   FHIR.Tests.IdUriParser.registerTests;
   FHIR.Database.Tests.registerTests;
   FHIR.Ucum.Tests.registerTests;
+  FHIR.Snomed.Tests.registerTests;
+  FHIR.v2.Tests.registerTests;
 end;
 
 end.

@@ -101,6 +101,10 @@ var
   logMsg : String;
   compiler : String;
 begin
+  {$IFDEF WINDOWS}
+  SetConsoleTitle('FHIR Server');
+  {$ENDIF}
+
   // 1. logging.
   if getCommandLineParam('log', fn) then
     Logging.logToFile(fn);
@@ -132,9 +136,6 @@ begin
     if ParamCount > 0 then
       Logging.LogToConsole := true;
 
-    {$IFDEF WINDOWS}
-    SetConsoleTitle('FHIR Server R4');
-    {$ENDIF}
     Logging.log(commandLineAsString);
 
     {$IFDEF FPC}
@@ -164,7 +165,7 @@ begin
       logMsg := logMsg + '. Log File = '+Logging.FileLog.filename;
 
     Logging.log(logMsg);
-    dispName := dispName + ' '+SERVER_VERSION;
+    dispName := dispName + ' '+SERVER_VERSION+' ('+compiler+')';
 
     svc := makeKernel(svcName, dispName, logMsg, ini.link);
     try

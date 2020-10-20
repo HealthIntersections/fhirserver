@@ -480,7 +480,7 @@ type
 
   TOdbcBoundBytes  = class (TFslDBBoundParam)
   private
-    FBytes: TMemoryStream;
+    FBytes: TManagedMemoryStream;
   public
     destructor Destroy; override;
   end;
@@ -557,7 +557,7 @@ var
   LBind: TOdbcBoundBytes;
 begin
   LBind := TOdbcBoundBytes.Create;
-  LBind.FBytes := TMemoryStream.Create;
+  LBind.FBytes := TManagedMemoryStream.Create;
   if Length(AParamValue) > 0 then
   begin
     LBind.FBytes.Write(AParamValue[0], Length(AParamValue));

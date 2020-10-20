@@ -70,6 +70,8 @@ type
     procedure assertFalse(test : boolean); overload;
     procedure assertEqual(left, right : String; message : String); overload;
     procedure assertEqual(left, right : String); overload;
+    procedure assertEqual(left, right : integer; message : String); overload;
+    procedure assertEqual(left, right : integer); overload;
     procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
     procedure thread(proc : TRunMethod);
   public
@@ -204,6 +206,24 @@ begin
 end;
 
 procedure TFslTestCase.assertEqual(left, right: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertEquals(left, right);
+  {$ELSE}
+  Assert.AreEqual(left, right);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(left, right : integer; message: String);
+begin
+  {$IFDEF FPC}
+  TAssert.AssertEquals(message, left, right);
+  {$ELSE}
+  Assert.AreEqual(left, right, message);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(left, right: integer);
 begin
   {$IFDEF FPC}
   TAssert.AssertEquals(left, right);

@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="367">
+    <Units Count="368">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1676,6 +1676,10 @@
         <Filename Value="..\library\ucum\FHIR.Ucum.Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit366>
+      <Unit367>
+        <Filename Value="..\library\snomed\FHIR.Snomed.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit367>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

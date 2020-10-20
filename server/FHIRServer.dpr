@@ -476,7 +476,28 @@ uses
   FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
   FHIR.Tests.IdUriParser in '..\utilities\tests\FHIR.Tests.IdUriParser.pas',
   FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
-  FHIR.Ucum.Tests in '..\library\Ucum\FHIR.Ucum.Tests.pas';
+  FHIR.Ucum.Tests in '..\library\Ucum\FHIR.Ucum.Tests.pas',
+  FHIR.Dicom.Objects in '..\library\dicom\FHIR.Dicom.Objects.pas',
+  FHIR.Dicom.Dictionary in '..\library\dicom\FHIR.Dicom.Dictionary.pas',
+  FHIR.Dicom.Writer in '..\library\dicom\FHIR.Dicom.Writer.pas',
+  FHIR.Dicom.Parser in '..\library\dicom\FHIR.Dicom.Parser.pas',
+  FHIR.Dicom.JpegLS in '..\library\dicom\FHIR.Dicom.JpegLS.pas',
+  FHIR.Snomed.Tests in '..\library\snomed\FHIR.Snomed.Tests.pas',
+  FHIR.v2.Tests in '..\library\v2\FHIR.v2.Tests.pas',
+  FHIR.v2.Base in '..\library\v2\FHIR.v2.Base.pas',
+  FHIR.v2.Dictionary in '..\library\v2\FHIR.v2.Dictionary.pas',
+  FHIR.v2.Dictionary.Compiled in '..\library\v2\FHIR.v2.Dictionary.Compiled.pas',
+  FHIR.v2.Dictionary.v21 in '..\library\v2\FHIR.v2.Dictionary.v21.pas',
+  FHIR.v2.Dictionary.v251 in '..\library\v2\FHIR.v2.Dictionary.v251.pas',
+  FHIR.v2.Dictionary.v22 in '..\library\v2\FHIR.v2.Dictionary.v22.pas',
+  FHIR.v2.Dictionary.v231 in '..\library\v2\FHIR.v2.Dictionary.v231.pas',
+  FHIR.v2.Dictionary.v27 in '..\library\v2\FHIR.v2.Dictionary.v27.pas',
+  FHIR.v2.Dictionary.v26 in '..\library\v2\FHIR.v2.Dictionary.v26.pas',
+  FHIR.v2.Dictionary.v25 in '..\library\v2\FHIR.v2.Dictionary.v25.pas',
+  FHIR.v2.Dictionary.v23 in '..\library\v2\FHIR.v2.Dictionary.v23.pas',
+  FHIR.v2.Dictionary.v24 in '..\library\v2\FHIR.v2.Dictionary.v24.pas',
+  FHIR.v2.Dictionary.Database in '..\library\v2\FHIR.v2.Dictionary.Database.pas',
+  FHIR.V2.Objects in '..\library\v2\FHIR.V2.Objects.pas';
 
 begin
   ExecuteFhirServer;
