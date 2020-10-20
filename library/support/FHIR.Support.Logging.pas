@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, {FastMM4,} {$ELSE} PsApi, {$ENDIF}{$ENDIF}
+  {$IFDEF WINDOWS} Windows, FastMM4, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Osx, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections;
 
@@ -161,6 +161,7 @@ Type
 
     Function DescribeSize(b, min: Cardinal): String;
     function MemoryStatus : String;
+    function buildDetails : String;
   end;
 
 var
@@ -492,41 +493,69 @@ begin
   result := inttostr(v)+'MB';
 end;
 
-function TLogging.MemoryStatus : String;
-//{$IFDEF WINDOWS}
-//var
-//  st: TMemoryManagerState;
-//  sb: TSmallBlockTypeState;
-//  v : UInt64;
-//  hProcess: THandle;
-//  pmc: PROCESS_MEMORY_COUNTERS;
-//begin
-//  result := '';
-//  GetMemoryManagerState(st);
-//  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
-//  for sb in st.SmallBlockTypeStates do
-//    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-//  if v > 16000 then
-//    result := ' '+memToMb(v);
-//
-//  hProcess := GetCurrentProcess;
-//  try
-//    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
-//      if result = '' then
-//        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
-//      else
-//        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
-//  finally
-//    CloseHandle(hProcess);
-//  end;
-//end;
-//{$ELSE}
-//begin
-//  raise Exception.create('MemoryStatus');
-//end;
-//{$ENDIF}
+function OSMem : UInt64;
+{$IFDEF WINDOWS}
+var
+  hProcess: THandle;
+  pmc: PROCESS_MEMORY_COUNTERS;
 begin
-  result := 'to do';
+  result := 0;
+  hProcess := GetCurrentProcess;
+  try
+    if (GetProcessMemoryInfo(hProcess, {$IFNDEF FPC}@{$ENDIF}pmc, SizeOf(pmc))) then
+      exit(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+  finally
+    CloseHandle(hProcess);
+  end;
+{$ELSE}
+begin
+  result := 0;
+{$ENDIF}
+end;
+
+function intMem : Uint64;
+var
+  st : TMemoryManagerUsageSummary;
+begin
+  GetMemoryManagerUsageSummary(st);
+  result := st.AllocatedBytes + st.OverheadBytes;
+end;
+
+function TLogging.MemoryStatus : String;
+// memory status has 2 parts: internal and OS
+var
+  os : UInt64;
+begin
+  os := OSMem;
+  if os <> 0 then
+    result := memToMB(intMem) + ' / '+memToMB(os)
+  else
+    result := memToMB(intMem);
+end;
+
+function TLogging.buildDetails: String;
+begin
+  {$IFDEF WINDOWS}
+  result := 'Win';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  result := 'Linux';
+  {$ENDIF}
+  {$IFDEF OSX}
+  result := 'OSX';
+  {$ENDIF}
+
+  {$IFDEF CPUX64}
+  result := result + '64';
+  {$ELSE}
+  result := result + '32';
+  {$ENDIF}
+
+  {$IFDEF FPC}
+  result := result + ':F';
+  {$ELSE}
+  result := result + ':D';
+  {$ENDIF}
 end;
 
 procedure TLogging.checkDay;

@@ -39,7 +39,8 @@ uses
   FHIR.Database.Manager,
   FHIR.Tx.Manager,
   FHIR.Server.Ini, FHIR.Server.Telnet, FHIR.Server.Utilities, FHIR.Server.WebSource,
-  FHIR.Server.Javascript, FHIR.Server.Web;
+  {$IFNDEF NO_JS}FHIR.Server.Javascript, {$ENDIF}
+  FHIR.Server.Web;
 
 type
 
@@ -68,7 +69,9 @@ type
     function initialise : boolean; virtual; // called while starting service;
     function setup : boolean; virtual; // called once service is stated to have started
     procedure registerEndPoints; virtual;  // this is where subclasses actually add all their functionality
+    {$IFNDEF NO_JS}
     procedure registerJs(sender: TObject; js: TJsHost); virtual;
+    {$ENDIF}
     procedure closeDown; virtual;
     function WantActive : boolean; virtual;
     function WantThreads : boolean; virtual;
@@ -176,11 +179,16 @@ begin
   FWebServer.OnRegisterJs := registerJs;
   {$ENDIF}
   FWebServer.loadConfiguration(Ini);
-  Logging.log('Web source from '+Ini.web['folder']);
-  if FolderExists('c:\work\fhirserver\server\web') then
+  if FolderExists('c:\work\fhirserver\server\webn') then
+  begin
+    Logging.log('Web source from '+Ini.web['folder']);
     FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhiserver\server\web')
+  end
   else if FileExists(partnerFile('fhirserver.web')) then
+  begin
+    Logging.log('Web source from '+partnerFile('fhirserver.web'));
     FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(partnerFile('fhirserver.web'))
+  end
   else
     raise Exception.Create('Unable to find web source');
 
@@ -238,10 +246,12 @@ begin
   // nothing
 end;
 
+{$IFNDEF NO_JS}
 procedure TFHIRServiceBase.registerJs(sender: TObject; js: TJsHost);
 begin
   // nothing
 end;
+{$ENDIF}
 
 procedure TFHIRServiceBase.cb(i: integer; s: WideString);
 begin

@@ -439,7 +439,11 @@ uses
   FHIR.v2.Dictionary.Database in '..\library\v2\FHIR.v2.Dictionary.Database.pas',
   FHIR.V2.Objects in '..\library\v2\FHIR.V2.Objects.pas',
   FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
-  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas';
+  FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas',
+  FHIR.Cda.Documents in '..\library\cda\FHIR.Cda.Documents.pas',
+  FHIR.Cda.Writer in '..\library\cda\FHIR.Cda.Writer.pas',
+  FHIR.Cda.Parser in '..\library\cda\FHIR.Cda.Parser.pas',
+  FHIR.Cda.Tests in '..\library\cda\FHIR.Cda.Tests.pas';
 
 {$R *.res}
 

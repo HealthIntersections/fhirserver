@@ -39,6 +39,11 @@ SOFTWARE.
 ///
 /// This file contains a flat C API layer. This is the API exported by ChakraCore.dll.
 
+{$IFDEF NO_JS}
+This should not be included when NO_JS is defined
+{$ENDIF}
+
+
 unit ChakraDebug;
 
 {$include common.inc}

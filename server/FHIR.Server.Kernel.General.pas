@@ -54,30 +54,14 @@ Uses
   FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine, FHIR.R5.PathEngine,
 
   FHIR.Database.Manager,
-(*
-  {$IFDEF WINDOWS} FHIR.Support.Service, {$ELSE} FHIR.Support.SystemService, {$ENDIF}
-  FHIR.Web.Fetcher,
-  FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm,
-  FHIR.Loinc.Importer, FHIR.Loinc.Services, FHIR.Ucum.Services,
-  FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-
-
-                                            *)
   FHIR.Tools.Indexing,
   FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Tx.Unii,
-  (*
-
-  FHIR.Base.Objects,
-  FHIR.Server.WebSource,
-  FHIR.CdsHooks.Service,
-  {$IFNDEF FPC} FHIR.Server.Manager, {$ENDIF}
-  FHIR.Server.Telnet, FHIR.Server.TxKernel,
-  *)
-
   FHIR.Scim.Server,
   FHIR.Server.DBInstaller, FHIR.Server.Version, FHIR.Server.Ini, FHIR.Server.Utilities,
-  FHIR.Server.Context, FHIR.Server.Javascript, FHIR.Server.Storage, FHIR.Server.Database,
+  FHIR.Server.Context,
+  {$IFNDEF NO_JS}FHIR.Server.Javascript, {$ENDIF}
+  FHIR.Server.Storage, FHIR.Server.Database,
   FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Web,
   FHIR.Server.Kernel.Base;
 

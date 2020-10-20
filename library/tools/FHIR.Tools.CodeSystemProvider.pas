@@ -65,11 +65,11 @@ type
 
   TCodeSystemAdornment = class (TFslObject)
   private
-    FMap : TFslMap<TFhirCodeSystemConceptW>;
+    FMap : TFhirCodeSystemConceptMapW;
   public
-    constructor Create(map : TFslMap<TFhirCodeSystemConceptW>);
+    constructor Create(map : TFhirCodeSystemConceptMapW);
     destructor Destroy; override;
-    property map : TFslMap<TFhirCodeSystemConceptW> read FMap;
+    property map : TFhirCodeSystemConceptMapW read FMap;
   end;
 
   TFHIRCodeSystemEntry = class (TFslObject)
@@ -155,18 +155,18 @@ type
   TFhirCodeSystemProvider = class (TCodeSystemProvider)
   private
     FCs : TFhirCodeSystemEntry;
-    FMap : TFslMap<TFhirCodeSystemConceptW>;
+    FMap : TFhirCodeSystemConceptMapW;
     FFactory : TFHIRFactory;
 
     function LocateCode(code : String) : TFhirCodeSystemConceptW;
     function doLocate(code : String) : TFhirCodeSystemProviderContext; overload;
-    function doLocate(list : TFslList<TFhirCodeSystemConceptW>; code : String) : TFhirCodeSystemProviderContext; overload;
+    function doLocate(list : TFhirCodeSystemConceptListW; code : String) : TFhirCodeSystemProviderContext; overload;
     function getParent(ctxt : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptW;
-    procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText);
+    procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptListW; filter : TSearchFilterText);
     procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; exception : TFhirCodeSystemConceptW = nil);
-    function locCode(list: TFslList<TFhirCodeSystemConceptW>; code: String): TFhirCodeSystemConceptW;
+    function locCode(list: TFhirCodeSystemConceptListW; code: String): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
-    procedure iterateConceptsByProperty(src : TFslList<TFhirCodeSystemConceptW>; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
   public
     constructor Create(factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
@@ -332,7 +332,7 @@ end;
 
 { TCodeSystemAdornment }
 
-constructor TCodeSystemAdornment.Create(map: TFslMap<TFhirCodeSystemConceptW>);
+constructor TCodeSystemAdornment.Create(map: TFhirCodeSystemConceptMapW);
 begin
   inherited Create;
   FMap := map;
@@ -409,7 +409,7 @@ var
   ctxt : TFhirCodeSystemProviderContext;
   concept, c : TFhirCodeSystemConceptW;
   d : TFhirCodeSystemConceptDesignationW;
-  codes : TFslList<TFhirCodeSystemConceptW>;
+  codes : TFhirCodeSystemConceptListW;
 begin
   b := TStringBuilder.Create;
   try
@@ -618,7 +618,7 @@ begin
 end;
 
 function TFhirCodeSystemProvider.getParent(ctxt: TFhirCodeSystemConceptW): TFhirCodeSystemConceptW;
-  function getMyParent(list: TFslList<TFhirCodeSystemConceptW>): TFhirCodeSystemConceptW;
+  function getMyParent(list: TFhirCodeSystemConceptListW): TFhirCodeSystemConceptW;
   var
     c, TFHIRCodeSystemEntry : TFhirCodeSystemConceptW;
   begin
@@ -665,7 +665,7 @@ begin
       exit(true);
 end;
 
-function TFhirCodeSystemProvider.locCode(list : TFslList<TFhirCodeSystemConceptW>; code : String) : TFhirCodeSystemConceptW;
+function TFhirCodeSystemProvider.locCode(list : TFhirCodeSystemConceptListW; code : String) : TFhirCodeSystemConceptW;
 var
   c : TFhirCodeSystemConceptW;
 begin
@@ -690,7 +690,7 @@ begin
     result := locCode(FCs.CodeSystem.conceptList, code);
 end;
 
-function TFhirCodeSystemProvider.doLocate(list : TFslList<TFhirCodeSystemConceptW>; code : String) : TFhirCodeSystemProviderContext;
+function TFhirCodeSystemProvider.doLocate(list : TFhirCodeSystemConceptListW; code : String) : TFhirCodeSystemProviderContext;
 var
   c : TFhirCodeSystemConceptW;
 begin
@@ -726,7 +726,7 @@ end;
 
 procedure TFhirCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
-  concepts : TFslList<TFhirCodeSystemConceptW>;
+  concepts : TFhirCodeSystemConceptListW;
   cc, context : TFhirCodeSystemConceptW;
   parent, child : TFhirCodeSystemConceptW;
   ccd : TFhirCodeSystemConceptDesignationW;
@@ -737,7 +737,7 @@ var
   css : TFHIRCodeSystemW;
 begin
   context := TFHIRCodeSystemProviderContext(ctxt).context;
-  concepts := TFslList<TFhirCodeSystemConceptW>.create;
+  concepts := TFhirCodeSystemConceptListW.create;
   try
     concepts.Add(context.Link);
     for css in FCs.Supplements do
@@ -938,16 +938,16 @@ begin
 end;
 
 
-procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFslList<TFhirCodeSystemConceptW>; pp: TFhirCodeSystemPropertyW; value: String; list: TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; value: String; list: TFhirCodeSystemProviderFilterContext);
 var
   c, cc : TFhirCodeSystemConceptW;
-  concepts : TFslList<TFhirCodeSystemConceptW>;
+  concepts : TFhirCodeSystemConceptListW;
   css : TFhirCodeSystemW;
   cp : TFhirCodeSystemConceptPropertyW;
   ok, val : boolean;
   coding : TFHIRCodingW;
 begin
-  concepts := TFslList<TFhirCodeSystemConceptW>.create;
+  concepts := TFhirCodeSystemConceptListW.create;
   try
     for c in src do
     begin
@@ -1105,7 +1105,7 @@ begin
   end
 end;
 
-procedure TFhirCodeSystemProvider.FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source: TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText);
+procedure TFhirCodeSystemProvider.FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source: TFhirCodeSystemConceptListW; filter : TSearchFilterText);
 var
   i : integer;
   code : TFhirCodeSystemConceptW;

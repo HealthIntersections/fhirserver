@@ -34,9 +34,6 @@ interface
 
 (*
 
-
-FHIR.Cql.Tests
-
 FHIR.Javascript.Tests
 FHIR.R4.Tests.Client
 FHIR.R4.Tests.Liquid
@@ -61,7 +58,7 @@ uses
   FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
   FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests,
-  FHIR.Ucum.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests;
+  FHIR.Ucum.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests;
 
 procedure registerTests;
 

@@ -53,6 +53,9 @@
             <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -69,7 +72,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -121,7 +124,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -173,7 +176,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item4>
@@ -198,7 +201,9 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <UseLineInfoUnit Value="False"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
@@ -210,7 +215,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item5>
@@ -237,6 +242,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -249,7 +255,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
+            <CustomOptions Value="-dODBC -dNO_JS"/>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -283,7 +289,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="383">
+    <Units Count="387">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1830,6 +1836,22 @@
         <Filename Value="..\library\v2\FHIR.V2.Objects.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit382>
+      <Unit383>
+        <Filename Value="..\library\cda\FHIR.Cda.Documents.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit383>
+      <Unit384>
+        <Filename Value="..\library\cda\FHIR.Cda.Writer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit384>
+      <Unit385>
+        <Filename Value="..\library\cda\FHIR.Cda.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit385>
+      <Unit386>
+        <Filename Value="..\library\cda\FHIR.Cda.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit386>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1876,14 +1898,13 @@
       <CompilerMessages>
         <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dODBC"/>
+      <CustomOptions Value="-dODBC -dNO_JS"/>
     </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="18">
       <Item1>
         <Name Value="EAbort"/>
-        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>

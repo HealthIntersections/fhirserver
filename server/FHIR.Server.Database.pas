@@ -47,7 +47,8 @@ uses
   FHIR.Base.Scim, FHIR.Scim.Server,
   FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Server.Subscriptions, FHIR.Server.Security, FHIR.Server.ObsStats, FHIR.Server.BundleBuilder,
   FHIR.Server.ClosureMgr, FHIR.Server.GraphDefinition, FHIR.Server.Tags, FHIR.Server.Utilities,
-  FHIR.Server.DBInstaller, FHIR.Server.MpiSearch, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Constants, FHIR.Server.Javascript;
+  {$IFNDEF NO_JS}FHIR.Server.Javascript,{$ENDIF}
+  FHIR.Server.DBInstaller, FHIR.Server.MpiSearch, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Constants;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -803,7 +804,7 @@ begin
           begin
             checkProposedContent(request.Session, request, request.Resource, tags);
             Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-            {$IFNDEF FPC}
+            {$IFNDEF NO_JS}
             GJsHost.checkChanges(ttDataAdded, request.Session,
               function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
               function (context : pointer) : TFHIRResourceV begin result := nil; end,
@@ -969,7 +970,7 @@ begin
 
         checkProposedDeletion(request.session, request, request.Resource, tags);
         Repository.checkDropResource(request.session, request, request.Resource, tags);
-        {$IFNDEF FPC}
+        {$IFNDEF NO_JS}
         GJsHost.checkChanges(ttDataRemoved, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
@@ -2134,7 +2135,7 @@ begin
 
           checkProposedContent(request.session, request, request.Resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-          {$IFNDEF FPC}
+          {$IFNDEF  NO_JS}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
@@ -2425,7 +2426,7 @@ begin
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request.session, request, request.resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
-          {$IFNDEF FPC}
+          {$IFNDEF NO_JS}
           GJsHost.checkChanges(ttDataModified, request.Session,
             function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
             function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,

@@ -139,9 +139,9 @@ Type
 
     function determineSystem(code : String) : String;
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String; var cause : TFhirIssueType) : boolean; overload;
-    function findCode(cs : TFhirCodeSystemW; code: String; list : TFslList<TFhirCodeSystemConceptW>; displays : TStringList; out isabstract : boolean): boolean;
+    function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
-    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
+    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
     function getName: String;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; id : String); overload;
@@ -168,7 +168,7 @@ Type
 
     procedure processCodeAndDescendants(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 
-    procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetCodeSystemW; defines : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
+    procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
     procedure importValueSet(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; importHash : TStringList);
     procedure processCodes(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; cset : TFhirValueSetComposeIncludeW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; var notClosed : boolean);
     procedure handleCompose(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; var notClosed : boolean);
@@ -358,6 +358,7 @@ end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
 var
+  cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
   checker : TValueSetChecker;
@@ -407,18 +408,20 @@ begin
         end;
       end;
 
-      for cc in FValueSet.includes.forEnum do
-        prepareConceptSet('include', cc);
-      for cc in FValueSet.excludes.forEnum do
-        prepareConceptSet('exclude', cc);
+      if (cs <> nil) then
+      begin
+        for cc in FValueSet.includes.forEnum do
+          prepareConceptSet('include', cc, cs);
+        for cc in FValueSet.excludes.forEnum do
+          prepareConceptSet('exclude', cc, cs);
+      end;
     end;
   end;
 end;
 
-procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
+procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
 var
   other: TFhirValueSetW;
-  cs: TCodeSystemProvider;
   checker: TValueSetChecker;
   s : string;
   ccf: TFhirValueSetComposeIncludeFilterW;
@@ -459,10 +462,10 @@ begin
   end;
 end;
 
-function TValueSetChecker.findCode(cs : TFhirCodeSystemW; code: String; list : TFslList<TFhirCodeSystemConceptW>; displays : TStringList; out isabstract : boolean): boolean;
+function TValueSetChecker.findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TStringList; out isabstract : boolean): boolean;
 var
   i : integer;
-  ccl : TFslList<TFhirCodeSystemConceptW>;
+  ccl : TFhirCodeSystemConceptListW;
 begin
   result := false;
   for i := 0 to list.count - 1 do
@@ -520,7 +523,7 @@ var
   checker : TValueSetChecker;
   s : String;
   ics : TFHIRValueSetCodeSystemW;
-  ccl : TFslList<TFhirCodeSystemConceptW>;
+  ccl : TFhirCodeSystemConceptListW;
 begin
   result := false;
   {special case:}
@@ -1065,7 +1068,7 @@ var
   tr : TFhirXHtmlNode;
   exp: TFHIRValueSetExpansionW;
   ics : TFHIRValueSetCodeSystemW;
-  cl : TFslList<TFHIRCodeSystemConceptW>;
+  cl : TFhirCodeSystemConceptListW;
   cs2 : TFhirCodeSystemW;
 begin
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
@@ -1283,7 +1286,7 @@ begin
     processCodes(true, list, map, c, filter, dependencies, expansion, params, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetCodeSystemW; defines : TFslList<TFhirCodeSystemConceptW>; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
+procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 var
   cm : TFhirCodeSystemConceptW;
   v : String;
