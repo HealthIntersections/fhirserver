@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.358 2020-10-20</title>
+		<item><title>FHIRServer release 1.0.359 2020-10-21</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.359.exe</link>
+			<description>2020-10-21 (v1.0.359): fix bug serving R2 code systems</description>
+		</item>
+<item><title>FHIRServer release 1.0.358 2020-10-20</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.358.exe</link>
 			<description>2020-10-20 (v1.0.358): Fix bug finding pages</description>
 		</item>
-<item><title>FHIRServer release 1.0.357 2020-10-20</title>
+		<item><title>FHIRServer release 1.0.357 2020-10-20</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.357.exe</link>
 			<description>2020-10-20 (v1.0.357): Fix R2 loading issue</description>
 		</item>

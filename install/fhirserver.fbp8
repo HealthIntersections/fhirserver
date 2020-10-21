@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix bug finding pages"
+        as.returnvalue = "fix bug serving R2 code systems"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -155,7 +155,6 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
-          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.exe
           id = {5A08D7F1-55CA-4A06-964A-58237EE2EC9D}
@@ -176,7 +175,6 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10_3
           description = "Compile the Server (64bit)"
-          enabled = false
           enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
@@ -288,7 +286,6 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
-          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer.exe
           id = {527CD1D2-2DFA-4E34-B065-3390702471E0}
@@ -309,7 +306,6 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10_3
           description = "Compile the Server (32bit)"
-          enabled = false
           enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
