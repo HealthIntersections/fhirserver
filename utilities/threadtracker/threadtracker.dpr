@@ -38,8 +38,10 @@ uses
 type
   TTheadRecord = record
     id : cardinal;
+    startTick : UInt64;
     name : AnsiString;
     state : AnsiString;
+    stateTick : UInt64;
   end;
   PTheadRecord = ^TTheadRecord;
 
@@ -72,6 +74,7 @@ begin
       end;
     end;
     new(p);
+    p.startTick := GetTickCount64;
     p.id := id;
     p.name := 'Unknown';
     GList.Add(p);
@@ -137,6 +140,7 @@ begin
       end;
     end;
     new(p);
+    p.startTick := GetTickCount64;
     p.id := id;
     p.name := name;
     GList.Add(p);
@@ -160,17 +164,68 @@ begin
       if (p.id = id) then
       begin
         p.state := status;
+        p.stateTick := GetTickCount64;
         exit;
       end;
     end;
     new(p);
+    p.startTick := GetTickCount64;
     p.id := id;
     p.name := 'Unknown';
     p.state := status;
+    p.stateTick := GetTickCount64;
     GList.Add(p);
   finally
     LeaveCriticalSection(GLock);
   end;
+end;
+
+function age(tick : UInt64) : AnsiString;
+var
+  duration : UInt64;
+begin
+  duration := GetTickCount64 - tick;
+  if duration < 2000 then
+    result := inttostr(duration)+'ms'
+  else
+  begin
+    duration := duration div 1000;
+    if duration < 1000 then
+      result := inttostr(duration)+'s'
+    else
+    begin
+      duration := duration div 60;
+      if duration < 120 then
+        result := inttostr(duration)+'min'
+      else
+      begin
+        duration := duration div 60;
+        if duration < 48 then
+          result := inttostr(duration)+'hr'
+        else
+        begin
+          duration := duration div 24;
+          result := inttostr(duration)+'d'
+        end;
+      end;
+    end;
+  end;
+end;
+
+function info(p : PTheadRecord; id : boolean) : AnsiString;
+begin
+  if (id) then
+    result := inttohex(p.id, 8)+': '
+  else
+    result := '';
+  result := result + p.name;
+  if p.state <> '' then
+  begin
+    result := result + ' = '+p.state;
+    result := result + ' (born '+age(p.startTick)+', last seen '+age(p.stateTick)+')';
+  end
+  else
+    result := result + ' (born '+age(p.startTick)+')';
 end;
 
 function THThreadInfo : PAnsiChar; stdcall; export;
@@ -189,10 +244,7 @@ begin
       p := GList[i];
       if (p.id = id) then
       begin
-        if p.state <> '' then
-          s := p.name+' = '+p.state
-        else
-          s := p.name;
+        s := info(p, false);
         break;
       end;
     end;
@@ -229,10 +281,7 @@ begin
       p := GList[i];
       if (s <> '') then
         s := s + '|';
-      if (p.state <> '') then
-        s := s + inttohex(p.id, 8)+': '+p.name+' = '+p.state
-      else
-        s := s + inttohex(p.id, 8)+': '+p.name;
+      s := s + info(p, true);
     end;
   finally
     LeaveCriticalSection(GLock);

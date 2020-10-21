@@ -43,7 +43,8 @@ interface
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   Classes, Contnrs, SyncObjs, SysUtils,
-  IdContext, IdBaseComponent, IdException, IdGlobal, IdStackConsts, IdIOHandlerSocket, IdTCPClient, IdTCPConnection, IdTCPServer;
+  IdContext, IdBaseComponent, IdException, IdGlobal, IdStackConsts, IdIOHandlerSocket, IdTCPClient, IdTCPConnection, IdTCPServer,
+  FHIR.Support.Threads;
 
 Const
   MSG_START : AnsiString = #11;
@@ -1279,6 +1280,7 @@ Var
   LRecTime: TDateTime;
   d : integer;
 Begin
+  SetThreadName('v2.Client');
   Try
     FClient := TIdTCPClient.Create(Nil);
     Try
@@ -1287,6 +1289,7 @@ Begin
       Repeat
         // try to connect. Try indefinitely but wait Owner.FReconnectDelay
         // between attempts.
+        SetThreadStatus('Connecting');
         Repeat
           FOwner.InternalSetStatus(IsConnecting, rsHL7StatusConnecting);
           Try
@@ -1310,7 +1313,7 @@ Begin
           Begin
           Exit;
           End;
-
+        SetThreadStatus('Connected');
         if FOwner.FKeepAlive Then
         Begin
           d := -1;
@@ -1366,7 +1369,8 @@ Begin
       Until Terminated Or (Not FOwner.IsListener And TimedOut);
     Finally
       FreeAndNil(FClient);
-      End;
+      SetThreadStatus('Done');
+    End;
   Except
     On e:
     Exception Do

@@ -4636,6 +4636,7 @@ Begin
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
+    FPlainServer.ConnectionTimeOut := 120*1000;
     FPlainServer.active := active;
   end;
   if FActualSSLPort > 0 then
@@ -4654,6 +4655,7 @@ Begin
     FSSLServer.DefaultPort := FActualSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
+    FSSLServer.ConnectionTimeOut := 120*1000;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
     FIOHandler.SSLOptions.Method := sslvTLSv1_2;
