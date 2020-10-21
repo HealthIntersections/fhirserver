@@ -55,9 +55,9 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 892
-      ActivePage = Threads
+      ActivePage = TabSheet5
       Align = alClient
-      TabIndex = 1
+      TabIndex = 5
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'Console'
@@ -82,34 +82,29 @@ object MainConsoleForm: TMainConsoleForm
           Images = ImageList1
           TabOrder = 1
           object ToolButton1: TToolButton
-            Left = 24
+            Left = 1
+            Hint = 'Clear the log'
             Top = 2
             Caption = 'ToolButton1'
             ImageIndex = 0
             OnClick = ToolButton1Click
           end
           object ToolButton2: TToolButton
-            Left = 47
+            Left = 24
             Height = 22
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
           end
           object edtFilter: TEdit
-            Left = 55
+            Left = 32
             Height = 23
+            Hint = 'Filter what you see in the log'
             Top = 2
             Width = 144
             OnChange = edtFilterChange
             TabOrder = 0
             TextHint = 'Filter'
-          end
-          object ToolButton3: TToolButton
-            Left = 1
-            Top = 2
-            Caption = 'ToolButton3'
-            ImageIndex = 1
-            OnClick = ToolButton3Click
           end
         end
       end
@@ -132,7 +127,7 @@ object MainConsoleForm: TMainConsoleForm
             Height = 25
             Top = 5
             Width = 75
-            Caption = 'Refresh'
+            Caption = 'Fetch'
             OnClick = Button1Click
             TabOrder = 0
           end
@@ -227,18 +222,18 @@ object MainConsoleForm: TMainConsoleForm
       end
       object TabSheet5: TTabSheet
         Caption = 'Terminology Imports'
-        ClientHeight = 589
+        ClientHeight = 615
         ClientWidth = 884
         object Panel2: TPanel
           Left = 0
-          Height = 589
+          Height = 615
           Top = 0
           Width = 115
           Align = alLeft
           BevelInner = bvLowered
           BevelOuter = bvNone
           BorderWidth = 2
-          ClientHeight = 589
+          ClientHeight = 615
           ClientWidth = 115
           Color = clWhite
           ParentBackground = False
@@ -931,7 +926,7 @@ object MainConsoleForm: TMainConsoleForm
         end
         object pgTerminologies: TPageControl
           Left = 115
-          Height = 589
+          Height = 615
           Top = 0
           Width = 769
           ActivePage = tbUMLS
@@ -2139,7 +2134,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbUMLS: TTabSheet
             Caption = 'Process UMLS'
-            ClientHeight = 581
+            ClientHeight = 607
             ClientWidth = 761
             ImageIndex = 2
             object Panel17: TPanel
@@ -2200,12 +2195,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel26: TPanel
               Left = 0
-              Height = 388
+              Height = 414
               Top = 101
               Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 388
+              ClientHeight = 414
               ClientWidth = 761
               TabOrder = 2
               object Label8: TLabel
@@ -2322,7 +2317,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel27: TPanel
               Left = 0
               Height = 51
-              Top = 489
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
@@ -2360,7 +2355,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel28: TPanel
               Left = 0
               Height = 41
-              Top = 540
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
@@ -2992,6 +2987,9 @@ object MainConsoleForm: TMainConsoleForm
     Top = 8
     object MenuItem1: TMenuItem
       Caption = '&File'
+      object MenuItem2: TMenuItem
+        Caption = '&Connect to Server'
+      end
       object MenuItem6: TMenuItem
         Caption = '&Package Manager'
         ImageIndex = 2
@@ -3002,6 +3000,32 @@ object MainConsoleForm: TMainConsoleForm
       object MenuItem17: TMenuItem
         Caption = 'E&xit'
         ImageIndex = 14
+      end
+    end
+    object MenuItem3: TMenuItem
+      Caption = '&Server'
+      object MenuItem4: TMenuItem
+        Caption = '&Connect'
+        OnClick = MenuItem4Click
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem10: TMenuItem
+        Caption = 'localhost'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem7: TMenuItem
+        Caption = 'tx.fhir.org'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem8: TMenuItem
+        Caption = 'test.fhir.org'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem9: TMenuItem
+        Caption = 'packages.fhir.org'
+        OnClick = MenuItem7Click
       end
     end
     object MenuItem5: TMenuItem

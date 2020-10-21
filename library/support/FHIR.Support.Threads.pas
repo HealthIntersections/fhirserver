@@ -339,7 +339,7 @@ begin
   end;
 end;
 
-proceure CloseThread;
+procedure CloseThread;
 begin
   // nothing - dllmain will look after this
 end;
@@ -549,6 +549,11 @@ end;
 
 {$ENDIF}
 
+procedure CloseThreadInternal(name : AnsiString);
+begin
+  closeThread;
+end;
+
 procedure InitUnit;
 begin
   InitializeCriticalSection(GCritSct);
@@ -557,8 +562,9 @@ begin
   {$IFNDEF WINDOWS}
   GThreadList := TList.Create;
   {$ENDIF}
-  IdThread.registerThread := SetThreadName;
-  IdThread.unRegisterThread := closeThread;
+  IdThread.fsThreadName := SetThreadName;
+  IdThread.fsThreadStatus := SetThreadStatus;
+  IdThread.fsThreadClose := CloseThreadInternal;
 end;
 
 procedure DoneUnit;
@@ -568,8 +574,9 @@ var
   p : PTheadRecord;
 {$ENDIF}
 begin
-  IdThread.registerThread := nil;
-  IdThread.unRegisterThread := nil;
+  IdThread.fsThreadName := nil;
+  IdThread.fsThreadStatus := nil;
+  IdThread.fsThreadClose := nil;
   {$IFNDEF WINDOWS}
   for i := GThreadList.Count - 1 downto 0 do
   begin

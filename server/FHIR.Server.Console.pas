@@ -180,6 +180,14 @@ type
     lbSessions: TListBox;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    MenuItem10: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
+    N1: TMenuItem;
     mThreads: TMemo;
     MenuItem1: TMenuItem;
     MenuItem17: TMenuItem;
@@ -253,7 +261,6 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
@@ -284,6 +291,9 @@ type
     procedure Image4Click(Sender: TObject);
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
+    procedure MenuItem8Click(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
@@ -291,6 +301,7 @@ type
   private
     FLock : TFslLock;
     FTelnet: TIdTelnet;
+    FConnected : boolean;
     FIncoming : TStringList;
     FTheads : TStringList;
     FServerStatus : String;
@@ -309,6 +320,7 @@ type
     procedure recordSessionLength(start, length : int64);
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
     procedure DoConnected(Sender: TObject);
+    procedure DoDisconnected(Sender: TObject);
     procedure handleSession(line: String);
     procedure processIncomingLine(line: String);
     function passesFilter(line: String) : boolean;
@@ -320,6 +332,7 @@ type
     procedure umlsCallback(pct: Integer; action: String);
     procedure setupTerminologyPage;
     function getSnomedModule: String;
+    procedure connectToServer(server : String);
   public
 
   end;
@@ -450,6 +463,7 @@ begin
   FTelnet.Port := 44123;
   FTelnet.ThreadedEvent := true;
   FTelnet.OnConnected := DoConnected;
+  FTelnet.onDisconnected := DoDisconnected;
   FTelnet.OnDataAvailable := DoIncoming;
 
   setupTerminologyPage;
@@ -526,6 +540,69 @@ end;
 procedure TMainConsoleForm.lbEditionsClick(Sender: TObject);
 begin
   btnDeleteEdition.Enabled := lbEditions.ItemIndex <> -1;
+end;
+
+procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
+begin
+  ServerConnectionForm.edtServer.Text := FAddress;
+  ServerConnectionForm.edtServer.ReadOnly:= false;
+  ServerConnectionForm.edtPassword.Text := FPassword;
+  if ServerConnectionForm.ShowModal = mrOk then
+  begin
+    FAddress := ServerConnectionForm.edtServer.Text;
+    FPassword := ServerConnectionForm.edtPassword.Text;
+    FIni.WriteString('console', 'address', FAddress);
+    if FPassword = '' then
+      FPassword := DEF_PASSWORD;
+    FIni.WriteString('console', 'password', FPassword);
+    FIni.WriteString('servers', FAddress, FPassword);
+    FLines.clear;
+    mConsole.Lines.Clear;
+    if FConnected then
+      FTelnet.Disconnect;
+    FStatus := csDiconnected;
+  end;
+end;
+
+procedure TMainConsoleForm.connectToServer(server : String);
+var
+  pwd : String;
+begin
+  if (server = 'localhost') then
+    pwd := DEF_PASSWORD
+  else
+    pwd := FIni.ReadString('servers', FAddress, '');
+  if (pwd = '') then
+  begin
+    ServerConnectionForm.edtServer.Text := server;
+    ServerConnectionForm.edtServer.ReadOnly:= true;
+    ServerConnectionForm.edtPassword.Text := FPassword;
+    if ServerConnectionForm.ShowModal = mrOk then
+      pwd := ServerConnectionForm.edtPassword.Text
+  end;
+  if pwd <> '' then
+  begin
+    FAddress := server;
+    FPassword := ServerConnectionForm.edtPassword.Text;
+    FIni.WriteString('console', 'address', FAddress);
+    FIni.WriteString('console', 'password', FPassword);
+    FIni.WriteString('servers', FAddress, FPassword);
+    FLines.clear;
+    mConsole.Lines.Clear;
+    if FConnected then
+      FTelnet.Disconnect;
+    FStatus := csDiconnected;
+  end;
+end;
+
+procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
+begin
+  connectToServer((Sender as TMenuItem).Caption);
+end;
+
+procedure TMainConsoleForm.MenuItem8Click(Sender: TObject);
+begin
+
 end;
 
 procedure TMainConsoleForm.pnlSnomedImportClick(Sender: TObject);
@@ -1445,6 +1522,12 @@ begin
   finally
     FLock.Unlock;
   end;
+  FConnected := true;
+end;
+
+procedure TMainConsoleForm.DoDisconnected(Sender: TObject);
+begin
+  FConnected := false;
 end;
 
 end.

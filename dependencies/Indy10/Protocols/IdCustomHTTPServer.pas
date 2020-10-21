@@ -1287,11 +1287,14 @@ begin
     try
       LConn := AContext.Connection;
       repeat
+        FSThreadStatus('waiting');
+
         LInputLine := InternalReadLn(LConn.IOHandler, FConnectionTimeout);
         i := RPos(' ', LInputLine, -1);    {Do not Localize}
         if i = 0 then begin
           raise EIdHTTPErrorParsingCommand.Create(RSHTTPErrorParsingCommand);
         end;
+        FSThreadStatus('reading headers');
         // TODO: don't recreate the Request and Response objects on each loop
         // iteration. Just create them once before entering the loop, and then
         // reset them as needed on each iteration...
@@ -1402,6 +1405,7 @@ begin
             // Get data can exists with POSTs, but can POST data exist with GETs?
             // If only the first, the solution is easy. If both - need more
             // investigation.
+            FSThreadStatus('receiving body');
 
             if not PreparePostStream then begin
               Break;
@@ -1464,6 +1468,7 @@ begin
                 // Session management
                 GetSessionFromCookie(AContext, LRequestInfo, LResponseInfo, LContinueProcessing);
                 if LContinueProcessing then begin
+                  FSThreadStatus('handling');
                   // These essentially all "retrieve" so they are all "Get"s
                   if LRequestInfo.CommandType in [hcGET, hcPOST, hcHEAD] then begin
                     DoCommandGet(AContext, LRequestInfo, LResponseInfo);
@@ -1497,6 +1502,7 @@ begin
                 end;
               end;
 
+              FSThreadStatus('writing');
               // Write even though WriteContent will, may be a redirect or other
               if not LResponseInfo.HeaderHasBeenWritten then begin
                 LResponseInfo.WriteHeader;
@@ -1519,6 +1525,7 @@ begin
           FreeAndNil(LRequestInfo);
         end;
       until LCloseConnection;
+      FSThreadStatus('closing');
     except
       on E: EIdSocketError do begin
         if not ((E.LastError = Id_WSAESHUTDOWN) or (E.LastError = Id_WSAECONNABORTED) or (E.LastError = Id_WSAECONNRESET)) then begin
@@ -1530,6 +1537,7 @@ begin
       end;
     end;
   finally
+    FSThreadStatus('disconnect');
     AContext.Connection.Disconnect(False);
   end;
 end;

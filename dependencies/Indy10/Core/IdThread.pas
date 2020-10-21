@@ -313,12 +313,12 @@ var
 
 // FHIR Server Additions
 type
-  TRegisterThread = procedure (name : AnsiString);
-  TUnRegisterThread = procedure;
+  TThreadEvent = procedure (name : AnsiString);
 
 var
-  registerThread : TRegisterThread;
-  unRegisterThread : TUnRegisterThread;
+  fsThreadName : TThreadEvent;
+  fsThreadStatus : TThreadEvent;
+  fsThreadClose : TThreadEvent;
 
 implementation
 
@@ -393,8 +393,8 @@ var
   s : AnsiString;
 begin
   // FHIR Server Modification:
-  if assigned(registerThread) then
-    registerThread(className);
+  if assigned(fsThreadName) then
+    fsThreadName(className);
   try
     // Must make this call from INSIDE the thread. The call in Create
     // was naming the thread that was creating this thread. :(
@@ -490,8 +490,8 @@ begin
       end;
     end;
   finally
-    if (assigned(unRegisterThread)) then
-      unRegisterThread;
+    if (assigned(fsThreadClose)) then
+      fsThreadClose(className);
   end;
 end;
 

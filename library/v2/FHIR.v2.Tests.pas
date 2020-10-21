@@ -43,8 +43,10 @@ uses
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
-//  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
-  FHIR.R4.PathNode, FHIR.R4.PathEngine, // FHIR.R4.Javascript,
+  FHIR.R4.PathNode, FHIR.R4.PathEngine,
+  {$IFNDEF NO_JS}
+  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base, FHIR.R4.Javascript, FHIR.v2.Javascript,
+  {$ENDIF}
   FHIR.v2.Base, FHIR.v2.Dictionary, {$IFDEF TEST_COMPILED} FHIR.v2.Dictionary.Compiled, {$ENDIF} FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Protocol;
 
 const
