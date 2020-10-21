@@ -8,12 +8,14 @@ uses
   {$ELSE}
   FastMM4,
   {$ENDIF}
-  {$IFDEF HASAMIGA}
-  athreads,
-  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, datetimectrls, ConsoleForm, FHIR.Support.Threads, frmServerConnection
-  { you can add units after this };
+  Forms, datetimectrls, FHIR.Support.Threads,
+  FHIR.Snomed.Combiner, FHIR.Web.Parsers, FHIR.Base.Objects, FHIR.Ucum.IFace,
+  FHIR.Npm.Cache, FHIR.Client.Base, FHIR.CdsHooks.Utilities,
+  FHIR.Smart.Utilities, FHIR.Tx.Service, FHIR.Database.Manager,
+  FHIR.Loinc.Services,
+  { you can add units after this }
+  FHIR.Server.Console, FHIR.Server.Connection.Lcl;
 
 {$R *.res}
 

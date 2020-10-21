@@ -1,4 +1,4 @@
-unit FHIR.Ucum.IFace;
+unit FHIR.Server.Connection.Lcl;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,43 +28,45 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$I fhir.inc}
+
 interface
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
 
-Type
-  TUcumPair = class (TFslObject)
+type
+
+  { TServerConnectionForm }
+
+  TServerConnectionForm = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    edtServer: TEdit;
+    edtPassword: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
-    FUnitCode: String;
-    FValue: TFslDecimal;
-  Public
-    constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
-    Property Value : TFslDecimal read FValue write FValue;
-    Property UnitCode : String read FUnitCode write FUnitCode;
-  End;
-
-  TUcumServiceInterface = class (TFslObject)
   public
-    function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
-    function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual; abstract;
-    function isConfigured : boolean; virtual; abstract;
+
   end;
+
+var
+  ServerConnectionForm: TServerConnectionForm;
 
 implementation
 
-{ TUcumPair }
+{$R *.lfm}
 
-constructor TUcumPair.Create(oValue: TFslDecimal; sUnitCode: String);
+{ TServerConnectionForm }
+
+procedure TServerConnectionForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  Create;
-  Value := oValue;
-  UnitCode := sUnitCode;
+  if not (SameText(edtServer.text, 'Localhost') or SameText(edtServer.text, '127.0.0.1')) then
+    CanClose := edtPassword.text <> '';
 end;
 
-
-{ TUcumServiceInterface }
-
 end.
+

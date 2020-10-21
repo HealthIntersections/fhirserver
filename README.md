@@ -9,9 +9,11 @@ Basic Information
 This is a set of FHIR applications written in Pascal. It is also 
 the home of the pascal reference implementation for FHIR. Included 
 in this project:
-* The Pascal reference implementation for FHIR (/reference-platform)
-* A set of tests for the pascal reference implementation 
-* The FHIR reference server (supports the entire FHIR functionality, along with OAuth, OpenID.Connect, and SCIM)
+* The Pascal reference implementation for FHIR (/library)
+* The FHIR reference server 
+  * supports the entire FHIR functionality, along with OAuth, OpenID.Connect, and SCIM
+  * includes v2 and DICOM end points
+  * includes set of tests for the server and library 
 * The FHIR toolkit - a set of utilities for developers
 * The FHIR Notepad++ plug-in - a set of useful utilities for FHIR developers 
 * A VCL demo program that shows how to connect to to an argonaut interface (contributed by Wellsoft, thanks)
@@ -19,7 +21,7 @@ in this project:
 For binary releases of this content, see http://www.healthintersections.com.au/FhirServer
 
 This project is maintained by the FHIR Project lead. The server runs in 
-multiple locations, including http://test.fhir.org, and other places. 
+multiple locations, including http://test.fhir.org, http://tx.fhir.org, and http://packages2.fhir.org
 
 Support
 -------
@@ -45,6 +47,7 @@ The open source FHIR Server includes delphi/pascal implementations of:
 * Turtle format (RDF)
 * GraphQL
 * HL7 V2
+* DICOM
 * CDA
 * Liquid Templating language
 * Javascript and Java invocation libraries
@@ -60,6 +63,14 @@ The open source FHIR Server includes delphi/pascal implementations of:
 
 Folders
 -------
+
+* **library**: the pascal reference implementation with supporting code
+* **exec**: files needed by the server at run time
+
+
+
+
+
 
 The full source base has many dependencies on other github projects, and many tools 
 operate across the github projects. In order to properly compile and execute the 
