@@ -108,6 +108,7 @@ Source: "..\exec\pack\w64\sqlite3.dll";                       DestDir: "{app}"; 
 Source: "..\exec\pack\w64\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\pack\w64\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\pack\w64\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 
 ; 2. 32 Application executables & Dlls
 Source: "..\exec\32\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
@@ -118,6 +119,7 @@ Source: "..\exec\pack\w32\sqlite3.dll";                       DestDir: "{app}"; 
 Source: "..\exec\pack\w32\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w32\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w32\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\exec\pack\w32\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 
 ; 3. Data Files
 Source: "..\exec\pack\fhirserver.ini";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full

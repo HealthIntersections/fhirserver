@@ -321,6 +321,7 @@ end;
 
 procedure TFHIRTelnetServerThread.Execute;
 begin
+  SetThreadName('Telnet Connection');
   while Not Terminated do
   begin
     try

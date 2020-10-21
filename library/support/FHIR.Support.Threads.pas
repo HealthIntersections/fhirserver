@@ -684,6 +684,7 @@ End;
 
 procedure TFslThread.Execute;
 Begin
+  SetThreadName(ClassName);
   If Assigned(FDelegate) Then
     FDelegate;
 End;
@@ -881,6 +882,7 @@ var
 begin
   SetThreadName(name);
   try
+    SetThreadStatus('Sleeping');
     while not FWantStop do
     begin
       pck := nil;
@@ -897,12 +899,14 @@ begin
       end;
       if (pck <> nil) then
       begin
+        SetThreadStatus('Working');
         try
           GBackgroundTasks.log('exec for '+name);
           doExec(pck);
         finally
           pck.Free;
         end;
+        SetThreadStatus('Sleeping');
       end;
       sleep(50);
     end;
@@ -910,6 +914,7 @@ begin
     GBackgroundTasks.log('close task '+name);
     setStatus(btsClosed);
   end;
+  SetThreadStatus('Done');
 end;
 
 procedure TBackgroundTaskEngine.uiInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
@@ -940,6 +945,7 @@ end;
 
 procedure TBackgroundTaskThread.execute;
 begin
+  SetThreadName('TBackgroundTaskThread');
   try
     FEngine.threadProc;
   except
