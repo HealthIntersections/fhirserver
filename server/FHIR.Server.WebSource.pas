@@ -146,7 +146,7 @@ begin
     zip.Stream := TFslFile.Create(path, fmOpenRead);
     zip.ReadZip;
     for i := 0 to zip.Parts.Count - 1 do
-      FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);
+      FZip.Add('web/'+zip.Parts[i].Name, zip.Parts[i].Link);
   finally
     zip.Free;
   end;

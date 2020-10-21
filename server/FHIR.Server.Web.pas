@@ -4636,6 +4636,7 @@ Begin
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
+    FPlainServer.ConnectionTimeOut := 120*1000;
     FPlainServer.active := active;
   end;
   if FActualSSLPort > 0 then
@@ -4654,6 +4655,7 @@ Begin
     FSSLServer.DefaultPort := FActualSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
+    FSSLServer.ConnectionTimeOut := 120*1000;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
     FIOHandler.SSLOptions.Method := sslvTLSv1_2;
@@ -4775,7 +4777,8 @@ var
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
-  SetThreadName('WebRequest - '+request.Document);
+  SetThreadName('http:'+AContext.Binding.PeerIP);
+  SetThreadStatus('Processing '+request.Document);
   session := FTelnet.makeSession(AContext.Binding.PeerIP+' p '+request.RawHTTPCommand);
   try
     MarkEntry(AContext, request, response);
@@ -4852,7 +4855,7 @@ begin
     finally
       InterlockedDecrement(GCounterWebRequests);
       MarkExit(AContext);
-      SetThreadName('');
+      SetThreadStatus('Done');
     end;
   finally
     session.Free;
@@ -4873,6 +4876,8 @@ begin
   t := GetTickCount;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
+  SetThreadName('http:'+AContext.Binding.PeerIP);
+  SetThreadStatus('Processing '+request.Document);
   session := FTelnet.makeSession(AContext.Binding.PeerIP+' s '+request.RawHTTPCommand);
   try
     MarkEntry(AContext, request, response);
@@ -4945,6 +4950,7 @@ begin
     finally
       InterlockedDecrement(GCounterWebRequests);
       MarkExit(AContext);
+      SetThreadStatus('Done');
     end;
   finally
     session.free;
@@ -5452,6 +5458,7 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Maintenance Thread');
+  SetThreadStatus('Working');
   Logging.log('Starting TFhirServerMaintenanceThread');
   try
     FServer.FSettings.MaintenanceThreadStatus := 'starting';
@@ -5544,7 +5551,7 @@ begin
   except
     Logging.log('Failing TFhirServerMaintenanceThread');
   end;
-  SetThreadName('');
+  SetThreadStatus('Done');
 end;
 
 { TFhirServerSubscriptionThread }
@@ -5561,6 +5568,7 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Subscription Thread');
+  SetThreadStatus('Working');
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
@@ -5595,7 +5603,7 @@ begin
   GJsHost.Free;
   GJsHost := nil;
   {$ENDIF}
-  SetThreadName('');
+  SetThreadStatus('Done');
 end;
 
 { TFhirServerEmailThread }
@@ -5612,6 +5620,7 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Email Thread');
+  SetThreadStatus('Working');
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
@@ -5651,7 +5660,7 @@ begin
   GJsHost.Free;
   GJsHost := nil;
   {$ENDIF}
-  SetThreadName('');
+  SetThreadStatus('Done');
 end;
 
 type
@@ -5803,6 +5812,7 @@ begin
   t := 0;
 
   SetThreadName('Server Async Thread');
+  SetThreadStatus('Working');
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
   {$ENDIF}
@@ -5871,7 +5881,7 @@ begin
   GJsHost.Free;
   GJsHost := nil;
   {$ENDIF}
-  SetThreadName('');
+  SetThreadStatus('Done');
 end;
 
 procedure TAsyncTaskThread.kill;

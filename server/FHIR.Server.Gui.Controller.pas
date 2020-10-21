@@ -355,6 +355,7 @@ var
   svc : TFHIRServiceTxServer;
   s : String;
 begin
+  SetThreadName('Gui Controller');
   FStopped := false;
   s := 'Starting';
   FController.setStatus(ssStarting);
