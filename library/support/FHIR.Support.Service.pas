@@ -85,9 +85,6 @@ type
     procedure Stop(AReason : String; ATellUser : boolean = true);
     procedure Execute;
     Property DisplayName : String read FDisplayName;
-    {$IFNDEF FPC}
-    function ThreadStatus: String;
-    {$ENDIF}
   end;
 
 var
@@ -239,72 +236,9 @@ begin
   result := EncodeDate(1601, 1, 1);
 end;
 
-{$IFNDEF FPC}
-function TSystemService.ThreadStatus : String;
-var
-  SnapProcHandle: THandle;
-  NextProc      : Boolean;
-  TThreadEntry  : TThreadEntry32;
-  Proceed       : Boolean;
-  pid, count, tid : Cardinal;
-  c, e, k, u : _FILETIME;
-  sc, se, sk, su, s, sn : String;
-  h : THandle;
-begin
-  pid := GetCurrentProcessId;
-  tid := GetCurrentThreadId;
-  result := '';
-  Count := 0;
-  SnapProcHandle := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); //Takes a snapshot of the all threads
-  Proceed := (SnapProcHandle <> INVALID_HANDLE_VALUE);
-  if Proceed then
-    try
-      TThreadEntry.dwSize := SizeOf(TThreadEntry);
-      NextProc := Thread32First(SnapProcHandle, TThreadEntry);//get the first Thread
-      while NextProc do
-      begin
-        if TThreadEntry.th32OwnerProcessID = PID then //Check the owner Pid against the PID requested
-        begin
-          Inc(count);
-          if TThreadEntry.th32ThreadID = tid then
-            s := ' <- this thread'
-          else
-            s := '';
-          sn := inttostr(TThreadEntry.th32ThreadID)+' "'+GetThreadName(TThreadEntry.th32ThreadID)+'":';
-          h := OpenThread(TThreadEntry.th32ThreadID);
-          if h <> 0 then
-            try
-              GetThreadTimes(h, c, e, k, u);
-              sc := DescribePeriod(FileTimeToDateTime(c, true)-FStartTime);
-              if (e.dwLowDateTime = 0) and (e.dwHighDateTime = 0) then
-                se := 'n/a'
-              else
-                se := DescribePeriod(now-FileTimeToDateTime(e, true));
-
-              sk := DescribePeriod(FileTimeToDateTime(k, false)-FileTimeZero);
-              su := DescribePeriod(FileTimeToDateTime(u, false)-FileTimeZero);
-              result := result + sn+sc+' '+se+' '+sk+' '+su+s+#13#10
-            finally
-              CloseHandle(h);
-            end
-          else
-            result := result + sn+' '+ErrorAsString+s+#13#10
-        end;
-        NextProc := Thread32Next(SnapProcHandle, TThreadEntry);//get the Next Thread
-      end;
-    finally
-      CloseHandle(SnapProcHandle);//Close the Handle
-    end;
-  result := result+inttostr(count)+' threads';
-end;
-{$ENDIF}
-
-
 procedure TSystemService.dump;
 begin
-  {$IFNDEF FPC}
-  Logging.log(ThreadStatus);
-  {$ENDIF}
+  Logging.log(GetThreadReport);
   Logging.log(DumpLocks);
 end;
 
@@ -322,6 +256,7 @@ procedure TSystemService.ConsoleExecute;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.ConsoleExecute';
 begin
   SetThreadName('Service.Execute.Console');
+  SetThreadStatus('Executing');
 //  AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   SetConsoleCtrlHandler(@DebugCtrlC, true);
@@ -334,6 +269,7 @@ begin
     write('press Enter to close');
     readln;
     end;
+  SetThreadStatus('Finished');
 end;
 
 {$IFNDEF FPC}
@@ -472,6 +408,7 @@ end;
 procedure ServiceMainEntry(dwArgc: DWORD; lpszArgv: pointer); Stdcall;
 begin
   SetThreadName('Service');
+  SetThreadStatus('Starting');
   GService.FHandle := RegisterServiceCtrlHandler(PChar(lpszArgv^), @ServiceCallHandler);
   if GService.FHandle <> 0 then
     begin
@@ -483,7 +420,7 @@ begin
     end;
     end;
 
-  SetThreadName('');
+  SetThreadStatus('Finished');
 end;
 
 var

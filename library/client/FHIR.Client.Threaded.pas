@@ -201,6 +201,7 @@ var
   id : String;
 begin
   SetThreadName('FHIR.Client.Thread');
+  SetThreadStatus('Working');
   try
     try
       case FPackage.command of
@@ -250,7 +251,7 @@ begin
   finally
     FPackage.FDone := true;
   end;
-  SetThreadName('');
+  SetThreadStatus('Done');
 end;
 
 { TFhirFacadeCommunicator }

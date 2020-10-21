@@ -293,7 +293,7 @@ procedure TTelnetThreadHelper.ping;
 begin
   if (now > FNextPing) then
   begin
-    send('$@ping: '+inttostr(threadCount)+' threads, '+Logging.MemoryStatus);
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus);
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
@@ -302,6 +302,8 @@ procedure TTelnetThreadHelper.processCommand(s: String);
 begin
   if (s = '@console') then
     FEnhanced := true
+  else if (s = '@threads') then
+    send('$@threads: '+GetThreadReport)
   else
     send('Unrecognised command '+s);
 end;

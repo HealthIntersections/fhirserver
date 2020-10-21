@@ -104,6 +104,7 @@ type
     btnSource: TSpeedButton;
     btnStopCombine: TBitBtn;
     btnUMLSStop: TBitBtn;
+    Button1: TButton;
     cbUMLSDriver: TComboBox;
     cbUMLSType: TComboBox;
     cbxEdition: TComboBox;
@@ -179,6 +180,7 @@ type
     lbSessions: TListBox;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    mThreads: TMemo;
     MenuItem1: TMenuItem;
     MenuItem17: TMenuItem;
     MenuItem33: TMenuItem;
@@ -192,6 +194,7 @@ type
     N8: TMenuItem;
     dlgOpen: TOpenDialog;
     PageControl1: TPageControl;
+    Panel29: TPanel;
     pgTerminologies: TPageControl;
     Panel1: TPanel;
     Panel10: TPanel;
@@ -241,6 +244,7 @@ type
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
+    Threads: TTabSheet;
     tbSnomed: TTabSheet;
     tbSnomedCombine: TTabSheet;
     tbLoinc: TTabSheet;
@@ -269,6 +273,7 @@ type
     procedure btnSourceClick(Sender: TObject);
     procedure btnStopCombineClick(Sender: TObject);
     procedure btnUMLSStopClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
@@ -287,6 +292,7 @@ type
     FLock : TFslLock;
     FTelnet: TIdTelnet;
     FIncoming : TStringList;
+    FTheads : TStringList;
     FServerStatus : String;
     FLines : TStringList;
     FSessions : TFslMap<TServerSession>;
@@ -449,6 +455,7 @@ begin
   setupTerminologyPage;
   FStatus := csDiconnected;
   FIncoming := TStringList.create;
+  FTheads := TStringList.create;;
   FLines := TStringList.create;
   FSessions := TFslMap<TServerSession>.create('session map');
   FStatistics := TServerSessionStatistics.create;
@@ -464,6 +471,7 @@ begin
     ;
   FTelnet.Free;
   FIncoming.Free;
+  FTheads.Free;
   FLines.Free;
   FSessions.Free;
   FStatistics.Free;
@@ -560,6 +568,14 @@ end;
 procedure TMainConsoleForm.btnUMLSStopClick(Sender: TObject);
 begin
   FWantStop := true;
+end;
+
+procedure TMainConsoleForm.Button1Click(Sender: TObject);
+begin
+  try
+    FTelnet.SendString('@threads'+#10);
+  except
+  end;
 end;
 
 procedure TMainConsoleForm.cbUMLSDriverChange(Sender: TObject);
@@ -997,7 +1013,7 @@ end;
 
 procedure TMainConsoleForm.Timer1Timer(Sender: TObject);
 var
-  ts, tsl, tsd : TStringList;
+  ts, tsl, tsd, tsth : TStringList;
   s, ss, rs : String;
   st : TConnectionStatus;
   id : String;
@@ -1013,6 +1029,7 @@ begin
   ts := TStringList.create;
   tsl := TStringList.create;
   tsd := TStringList.create;
+  tsth := TStringList.create;
   try
     d := 0;
     Flock.Lock;
@@ -1021,6 +1038,8 @@ begin
       ss := FServerStatus;
       ts.assign(FIncoming);
       FIncoming.clear;
+      tsth.assign(FTheads);
+      FTheads.clear;
 
       for s in FSessions.SortedKeys do
         tsl.add(s);
@@ -1080,6 +1099,9 @@ begin
     else
       mSession.lines.Clear;
 
+    if tsth.Count > 0 then
+      mThreads.lines.Assign(tsth);
+
     for s in ts do
     begin
       FLines.add(s);
@@ -1095,6 +1117,7 @@ begin
     mStats.Text := rs;
   finally
     ts.free;
+    tsth.free;
     tsl.free;
     tsd.free;
   end;
@@ -1265,6 +1288,16 @@ begin
       FLock.Lock;
       try
         handleSession(line.Substring(10));
+      finally
+        FLock.unLock;
+      end;
+      exit(true);
+    end;
+    if line.startsWith('$@threads') then
+    begin
+      FLock.Lock;
+      try
+        FTheads.Text := line.subString(10).replace('|', #13#10).trim();
       finally
         FLock.unLock;
       end;

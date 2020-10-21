@@ -775,6 +775,10 @@ object ServerManagerForm: TServerManagerForm
     StyleElements = [seFont, seClient]
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -1144,7 +1148,7 @@ object ServerManagerForm: TServerManagerForm
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           Date = 42643.000000000000000000
-          Time = 0.695417002316389700
+          Time = 0.695417002316389800
           TabOrder = 2
         end
         object edtDestination: TEdit
@@ -1212,6 +1216,10 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet4: TTabSheet
       Caption = 'Snomed Combination'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel20: TPanel
         Left = 0
         Top = 372
@@ -1690,6 +1698,10 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 41
@@ -2062,6 +2074,10 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet3: TTabSheet
       Caption = 'Process UMLS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel14: TPanel
         Left = 0
         Top = 0
@@ -2403,6 +2419,10 @@ object ServerManagerForm: TServerManagerForm
     object TabSheet5: TTabSheet
       Caption = 'Package Manager'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnlPackageManager: TPanel
         Left = 0
         Top = 41
