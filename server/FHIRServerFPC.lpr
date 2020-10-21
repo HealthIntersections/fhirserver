@@ -30,9 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
-
 uses
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WINDOWS}
   FastMM4 in '..\dependencies\FMMAVX\FastMM4.pas',
   FastMM4Messages in '..\dependencies\FMMAVX\FastMM4Messages.pas',
   Windows,

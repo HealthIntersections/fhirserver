@@ -51,6 +51,12 @@ const
   TEST_PORT = 20032; // err, we hope that this is unused
 
 type
+  {$IFDEF WINDOWS}
+  // these 2 sets of tests rely on access, which is not a thing outside windows.
+  // we could load the compiled dictionary but it's crazy slow for FPC to compile,
+  // and anyway, people should use the second parser not the first. Maybe come
+  // back to solve this at some time in the future - copy from msaccess to mysql?
+  // the problem is that the content of the database is protected, so can't be shared.
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2DictTests = Class (TFslTestCase)
   published
@@ -74,6 +80,7 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryParse;
   end;
+  {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2ParserTests = Class (TFslTestCase)
@@ -86,7 +93,7 @@ type
     Procedure TestFHIRPath;
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestIndexOffsets;
-    {$IFDEF NOT_NOW}
+    {$IFNDEF NO_JS}
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestJavascript;
     {$ENDIF}
@@ -144,6 +151,7 @@ Begin
    result[i + 1] := Char(a[i]);
 End;
 
+{$IFDEF WINDOWS}
 { Tv2Tests }
 
 procedure Tv2DictTests.TestDictionaryAccess;
@@ -179,6 +187,8 @@ begin
     dict.Free;
   end;
 end;
+{$ENDIF}
+
 {$ENDIF}
 
 { TLLPTests }
@@ -559,6 +569,7 @@ begin
   end;
 end;
 
+{$IFDEF WINDOWS}
 { THL7v2ParserTests }
 
 function THL7v2ParserTests.parse(msg: String; fmt: THL7V2Format): THL7v2Message;
@@ -606,6 +617,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 { Tv2ParserTests }
 
@@ -692,7 +704,7 @@ begin
   end;
 end;
 
-{$IFDEF NOT_NOW}
+{$IFNDEF NO_JS}
 
 const
   JS_TEST_SCRIPT =
