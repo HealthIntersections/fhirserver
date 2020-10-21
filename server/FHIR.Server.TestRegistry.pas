@@ -86,9 +86,9 @@ const
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
 {$IFDEF OSX}
-  DefaultMDTestRoot =      '/home/grahamegrieve/work/markdown';
-  DefaultServerTestsRoot = '/home/grahamegrieve/work/fhirserver';
-  DefaultFHIRTestsRoot =   '/home/grahamegrieve/work/fhir-test-cases';
+DefaultServerTestsRoot = '/users/grahamegrieve/work/fhirserver';
+DefaultMDTestRoot =      '/users/grahamegrieve/work/markdown';
+DefaultFHIRTestsRoot =   '/users/grahamegrieve/work/fhir-test-cases';
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
