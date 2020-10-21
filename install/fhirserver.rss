@@ -3,11 +3,23 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.358 2020-10-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.358.exe</link>
+			<description>2020-10-20 (v1.0.358): Fix bug finding pages</description>
+		</item>
+<item><title>FHIRServer release 1.0.357 2020-10-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.357.exe</link>
+			<description>2020-10-20 (v1.0.357): Fix R2 loading issue</description>
+		</item>
+		<item><title>FHIRServer release 1.0.356 2020-10-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.356.exe</link>
+			<description>2020-10-20 (v1.0.356): Experimental release for new installer</description>
+		</item>
 		<item><title>FHIRServer release 1.0.342 2020-08-13</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.342.exe</link>
 			<description>2020-08-13 (v1.0.342): FIx bugs in LOINC server</description>
 		</item>
-<item><title>FHIRServer release 1.0.341 2020-08-13</title>
+		<item><title>FHIRServer release 1.0.341 2020-08-13</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.341.exe</link>
 			<description>2020-08-13 (v1.0.341): fix for bugs in caching for client provided terminology resources</description>
 		</item>
