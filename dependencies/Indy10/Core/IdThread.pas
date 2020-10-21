@@ -378,8 +378,17 @@ procedure TIdThread.AfterExecute;
 begin
 end;
 
+// FHIR Server Mod
+procedure THThreadName(name : PAnsiChar); stdcall; external 'threadtracker.dll';
+
 procedure TIdThread.Execute;
+var
+  s : AnsiString;
 begin
+  // FHIR Server Modification:
+  s := ClassName;
+  THThreadName(PAnsiChar(s));
+
   // Must make this call from INSIDE the thread. The call in Create
   // was naming the thread that was creating this thread. :(
   //

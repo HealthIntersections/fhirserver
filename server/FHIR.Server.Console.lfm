@@ -52,45 +52,117 @@ object MainConsoleForm: TMainConsoleForm
     TabOrder = 2
     object PageControl1: TPageControl
       Left = 1
-      Height = 617
-      Top = 27
+      Height = 643
+      Top = 1
       Width = 892
-      ActivePage = TabSheet5
+      ActivePage = Threads
       Align = alClient
-      TabIndex = 4
+      TabIndex = 1
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'Console'
-        ClientHeight = 589
+        ClientHeight = 615
         ClientWidth = 884
         object mConsole: TMemo
           Left = 0
           Height = 589
-          Top = 0
+          Top = 26
           Width = 884
           Align = alClient
           Color = 15724527
           TabOrder = 0
           WordWrap = False
         end
+        object ToolBar1: TToolBar
+          Left = 0
+          Height = 26
+          Top = 0
+          Width = 884
+          Caption = 'ToolBar1'
+          Images = ImageList1
+          TabOrder = 1
+          object ToolButton1: TToolButton
+            Left = 24
+            Top = 2
+            Caption = 'ToolButton1'
+            ImageIndex = 0
+            OnClick = ToolButton1Click
+          end
+          object ToolButton2: TToolButton
+            Left = 47
+            Height = 22
+            Top = 2
+            Caption = 'ToolButton2'
+            Style = tbsSeparator
+          end
+          object edtFilter: TEdit
+            Left = 55
+            Height = 23
+            Top = 2
+            Width = 144
+            OnChange = edtFilterChange
+            TabOrder = 0
+            TextHint = 'Filter'
+          end
+          object ToolButton3: TToolButton
+            Left = 1
+            Top = 2
+            Caption = 'ToolButton3'
+            ImageIndex = 1
+            OnClick = ToolButton3Click
+          end
+        end
+      end
+      object Threads: TTabSheet
+        Caption = 'Threads'
+        ClientHeight = 615
+        ClientWidth = 884
+        object Panel29: TPanel
+          Left = 0
+          Height = 34
+          Top = 0
+          Width = 884
+          Align = alTop
+          Caption = 'Panel29'
+          ClientHeight = 34
+          ClientWidth = 884
+          TabOrder = 0
+          object Button1: TButton
+            Left = 6
+            Height = 25
+            Top = 5
+            Width = 75
+            Caption = 'Refresh'
+            OnClick = Button1Click
+            TabOrder = 0
+          end
+        end
+        object mThreads: TMemo
+          Left = 0
+          Height = 581
+          Top = 34
+          Width = 884
+          Align = alClient
+          TabOrder = 1
+        end
       end
       object TabSheet2: TTabSheet
         Caption = 'By Request'
-        ClientHeight = 589
+        ClientHeight = 615
         ClientWidth = 884
         object Panel1: TPanel
           Left = 0
-          Height = 589
+          Height = 615
           Top = 0
           Width = 280
           Align = alLeft
           Caption = 'Panel1'
-          ClientHeight = 589
+          ClientHeight = 615
           ClientWidth = 280
           TabOrder = 0
           object lbSessions: TListBox
             Left = 1
-            Height = 587
+            Height = 613
             Top = 1
             Width = 278
             Align = alClient
@@ -100,13 +172,13 @@ object MainConsoleForm: TMainConsoleForm
         end
         object Splitter1: TSplitter
           Left = 280
-          Height = 589
+          Height = 615
           Top = 0
           Width = 5
         end
         object mSession: TMemo
           Left = 285
-          Height = 589
+          Height = 615
           Top = 0
           Width = 599
           Align = alClient
@@ -2384,45 +2456,6 @@ object MainConsoleForm: TMainConsoleForm
       Width = 892
       Align = alBottom
       ResizeAnchor = akBottom
-    end
-    object ToolBar1: TToolBar
-      Left = 1
-      Height = 26
-      Top = 1
-      Width = 892
-      Caption = 'ToolBar1'
-      Images = ImageList1
-      TabOrder = 2
-      object ToolButton1: TToolButton
-        Left = 24
-        Top = 2
-        Caption = 'ToolButton1'
-        ImageIndex = 0
-        OnClick = ToolButton1Click
-      end
-      object ToolButton2: TToolButton
-        Left = 47
-        Height = 22
-        Top = 2
-        Caption = 'ToolButton2'
-        Style = tbsSeparator
-      end
-      object edtFilter: TEdit
-        Left = 55
-        Height = 23
-        Top = 2
-        Width = 144
-        OnChange = edtFilterChange
-        TabOrder = 0
-        TextHint = 'Filter'
-      end
-      object ToolButton3: TToolButton
-        Left = 1
-        Top = 2
-        Caption = 'ToolButton3'
-        ImageIndex = 1
-        OnClick = ToolButton3Click
-      end
     end
   end
   object Timer1: TTimer

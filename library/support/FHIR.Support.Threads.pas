@@ -54,10 +54,11 @@ Function ThreadHandle : TThreadHandle; Overload;
 Procedure ThreadYield; Overload;
 Procedure ThreadBreakpoint; Overload;
 
-procedure SetThreadName(name : String);
-function GetThreadName(id : TThreadId) : String;
-
-function threadCount : Integer;
+procedure SetThreadName(name : AnsiString);
+procedure SetThreadStatus(status : AnsiString);
+function GetThreadInfo : AnsiString;
+function GetThreadReport : AnsiString;
+function GetThreadCount : Integer;
 
 type
   {$IFNDEF FPC}
@@ -280,7 +281,6 @@ implementation
 var
   GHaveCritSect : Boolean = False;
   GCritSct: TRTLCriticalSection;
-  GThreadManager : TDictionary<TThreadId,String>;
 
   GFirst: TFslLock = NIL;
   GCount: Integer = 0;
@@ -291,16 +291,125 @@ begin
   InitializeCriticalSection(GCritSct);
   GHaveCritSect := true;
   GBackgroundTasks := TBackgroundTaskManager.Create;
-  GThreadManager := TDictionary<TThreadId,String>.create;
 end;
 
 procedure DoneUnit;
 begin
-  GThreadManager.Free;
-  GThreadManager := nil;
   GBackgroundTasks.Free;
   DeleteCriticalSection(GCritSct);
 end;
+
+{ Thread tracking is delegated to a .dll to ensure thoroughness }
+
+procedure THThreadName(name : PAnsiChar); stdcall; external 'threadtracker.dll';
+procedure THThreadStatus(status : PAnsiChar); stdcall; external 'threadtracker.dll';
+function THThreadInfo : PAnsiChar; stdcall; external 'threadtracker.dll';
+function THThreadCount : Cardinal; stdcall; external 'threadtracker.dll';
+function THGetReport : PAnsiChar; stdcall; external 'threadtracker.dll';
+procedure THFreeMem(rep : PAnsiChar); stdcall; external 'threadtracker.dll';
+
+procedure SetThreadName(name : AnsiString);
+begin
+  THThreadName(pAnsichar(name));
+end;
+
+procedure SetThreadStatus(status : AnsiString);
+begin
+  THThreadStatus(pAnsichar(status));
+end;
+
+function GetThreadCount : Integer;
+begin
+  result := THThreadCount;
+end;
+
+function GetThreadInfo : AnsiString;
+var
+  p : PAnsiChar;
+begin
+  p := THThreadInfo;
+  try
+    SetLength(result, length(p));
+    Move(p^, result[1], length(p));
+  finally
+    THFreeMem(p);
+  end;
+end;
+
+function GetThreadReport : AnsiString;
+var
+  p : PAnsiChar;
+begin
+  p := THGetReport;
+  try
+    SetLength(result, length(p));
+    Move(p^, result[1], length(p));
+  finally
+    THFreeMem(p);
+  end;
+end;
+
+//
+//{$IFNDEF FPC}
+//function TSystemService.ThreadStatus : String;
+//var
+//  SnapProcHandle: THandle;
+//  NextProc      : Boolean;
+//  TThreadEntry  : TThreadEntry32;
+//  Proceed       : Boolean;
+//  pid, count, tid : Cardinal;
+//  c, e, k, u : _FILETIME;
+//  sc, se, sk, su, s, sn : String;
+//  h : THandle;
+//begin
+//  pid := GetCurrentProcessId;
+//  tid := GetCurrentThreadId;
+//  result := '';
+//  Count := 0;
+//  SnapProcHandle := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); //Takes a snapshot of the all threads
+//  Proceed := (SnapProcHandle <> INVALID_HANDLE_VALUE);
+//  if Proceed then
+//    try
+//      TThreadEntry.dwSize := SizeOf(TThreadEntry);
+//      NextProc := Thread32First(SnapProcHandle, TThreadEntry);//get the first Thread
+//      while NextProc do
+//      begin
+//        if TThreadEntry.th32OwnerProcessID = PID then //Check the owner Pid against the PID requested
+//        begin
+//          Inc(count);
+//          if TThreadEntry.th32ThreadID = tid then
+//            s := ' <- this thread'
+//          else
+//            s := '';
+//          sn := inttostr(TThreadEntry.th32ThreadID)+' "'+GetThreadInfo(TThreadEntry.th32ThreadID)+'":';
+//          h := OpenThread(TThreadEntry.th32ThreadID);
+//          if h <> 0 then
+//            try
+//              GetThreadTimes(h, c, e, k, u);
+//              sc := DescribePeriod(FileTimeToDateTime(c, true)-FStartTime);
+//              if (e.dwLowDateTime = 0) and (e.dwHighDateTime = 0) then
+//                se := 'n/a'
+//              else
+//                se := DescribePeriod(now-FileTimeToDateTime(e, true));
+//
+//              sk := DescribePeriod(FileTimeToDateTime(k, false)-FileTimeZero);
+//              su := DescribePeriod(FileTimeToDateTime(u, false)-FileTimeZero);
+//              result := result + sn+sc+' '+se+' '+sk+' '+su+s+#13#10
+//            finally
+//              CloseHandle(h);
+//            end
+//          else
+//            result := result + sn+' '+ErrorAsString+s+#13#10
+//        end;
+//        NextProc := Thread32Next(SnapProcHandle, TThreadEntry);//get the Next Thread
+//      end;
+//    finally
+//      CloseHandle(SnapProcHandle);//Close the Handle
+//    end;
+//  result := result+inttostr(count)+' threads';
+//end;
+//{$ENDIF}
+//
 
 { TFslLock }
 
@@ -1037,35 +1146,6 @@ Begin
 End;
 
 
-procedure SetThreadName(name : String);
-begin
-  if not GHaveCritSect then
-    InitUnit;
-  if GThreadManager <> nil then
-  begin
-    EnterCriticalSection(GCritSct);
-    try
-      if name = '' then
-        GThreadManager.Remove(GetCurrentThreadId)
-      else
-        GThreadManager.AddOrSetValue(GetCurrentThreadId, name);
-    finally
-      LeaveCriticalSection(GCritSct);
-    end;
-  end;
-end;
-
-function GetThreadName(id : TThreadId) : String;
-begin
-  EnterCriticalSection(GCritSct);
-  try
-    if not GThreadManager.TryGetValue(id, result) then
-      result := 'n/a';
-  finally
-    LeaveCriticalSection(GCritSct);
-  end;
-end;
-
 
 
 { TBackgroundTaskUIRequest }
@@ -1081,36 +1161,6 @@ function TBackgroundTaskUIResponse.link: TBackgroundTaskUIResponse;
 begin
   result := TBackgroundTaskUIResponse(inherited link);
 end;
-
-function threadCount : integer;
-{$IFDEF WINDOWS}
-var
-  h : THandle;
-  te : THREADENTRY32;
-begin
-  h := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-  result := 0;
-  if (h <> INVALID_HANDLE_VALUE) then
-  begin
-    try
-      te.dwSize := sizeof(te);
-      if (Thread32First(h, te)) then
-      begin
-        repeat
-          if (te.th32OwnerProcessID = GetCurrentProcessId) then
-            inc(result);
-        until not Thread32Next(h, te);
-      end;
-    finally
-      CloseHandle(h);
-    end;
-  end;
-end;
-{$ELSE}
-begin
-  raise Exception.Create('how to do this is to be determined');
-end;
-{$ENDIF}
 
 Initialization
   InitUnit;
