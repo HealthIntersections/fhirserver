@@ -144,6 +144,7 @@ unit IdThread;
   -TIdThreadOptions
 }
 
+
 interface
 
 {$I IdCompilerDefines.inc}
@@ -310,6 +311,15 @@ var
   // "fixes" it.
   GThreadCount: TIdThreadSafeInteger = nil{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
 
+// FHIR Server Additions
+type
+  TRegisterThread = procedure (name : AnsiString);
+  TUnRegisterThread = procedure;
+
+var
+  registerThread : TRegisterThread;
+  unRegisterThread : TUnRegisterThread;
+
 implementation
 
 uses
@@ -378,65 +388,74 @@ procedure TIdThread.AfterExecute;
 begin
 end;
 
-// FHIR Server Mod
-procedure THThreadName(name : PAnsiChar); stdcall; external 'threadtracker.dll';
-
 procedure TIdThread.Execute;
 var
   s : AnsiString;
 begin
   // FHIR Server Modification:
-  s := ClassName;
-  THThreadName(PAnsiChar(s));
-
-  // Must make this call from INSIDE the thread. The call in Create
-  // was naming the thread that was creating this thread. :(
-  //
-  // RLebeau - no need to put this inside the try blocks below as it
-  // already uses its own try..except block internally
-  if Name = '' then begin
-    Name := 'IdThread (unknown)';   {do not localize}
-  end;
-  SetThreadName(Name);
-
-  {$IFDEF PLATFORM_CLEANUP_NEEDED}
-    {$IFDEF MACOS}
-  // Register the auto release pool
-  FObjCPool := objc_msgSend(objc_msgSend(objc_getClass('NSAutoreleasePool'), sel_getUid('alloc')), sel_getUid('init'));
-    {$ENDIF MACOS}
-  {$ENDIF}
-
+  if assigned(registerThread) then
+    registerThread(className);
   try
-    BeforeExecute;
+    // Must make this call from INSIDE the thread. The call in Create
+    // was naming the thread that was creating this thread. :(
+    //
+    // RLebeau - no need to put this inside the try blocks below as it
+    // already uses its own try..except block internally
+    if Name = '' then begin
+      Name := 'IdThread (unknown)';   {do not localize}
+    end;
+    SetThreadName(Name);
+
+    {$IFDEF PLATFORM_CLEANUP_NEEDED}
+      {$IFDEF MACOS}
+    // Register the auto release pool
+    FObjCPool := objc_msgSend(objc_msgSend(objc_getClass('NSAutoreleasePool'), sel_getUid('alloc')), sel_getUid('init'));
+      {$ENDIF MACOS}
+    {$ENDIF}
+
     try
-      while not Terminated do begin
-        if Stopped then begin
-          DoStopped;
-          // It is possible that either in the DoStopped or from another thread,
-          // the thread is restarted, in which case we dont want to restop it.
-          if Stopped then begin // DONE: if terminated?
-            if Terminated then begin
-              Break;
-            end;
-            // Thread manager will revive us
-            {$IFDEF DEPRECATED_TThread_SuspendResume}
-            Suspended := True;
-            {$ELSE}
-            Suspend;
-            {$ENDIF}
-            if Terminated then begin
-              Break;
+      BeforeExecute;
+      try
+        while not Terminated do begin
+          if Stopped then begin
+            DoStopped;
+            // It is possible that either in the DoStopped or from another thread,
+            // the thread is restarted, in which case we dont want to restop it.
+            if Stopped then begin // DONE: if terminated?
+              if Terminated then begin
+                Break;
+              end;
+              // Thread manager will revive us
+              {$IFDEF DEPRECATED_TThread_SuspendResume}
+              Suspended := True;
+              {$ELSE}
+              Suspend;
+              {$ENDIF}
+              if Terminated then begin
+                Break;
+              end;
             end;
           end;
-        end;
 
-        Include(FOptions, itoReqCleanup);
-        try
+          Include(FOptions, itoReqCleanup);
           try
             try
-              BeforeRun;
-              if Loop then begin
-                while not Stopped do begin
+              try
+                BeforeRun;
+                if Loop then begin
+                  while not Stopped do begin
+                    try
+                      Run;
+                    except
+                      on E: Exception do begin
+                        if not HandleRunException(E) then begin
+                          Terminate;
+                          raise;
+                        end;
+                      end;
+                    end;
+                  end;
+                end else begin
                   try
                     Run;
                   except
@@ -448,39 +467,31 @@ begin
                     end;
                   end;
                 end;
-              end else begin
-                try
-                  Run;
-                except
-                  on E: Exception do begin
-                    if not HandleRunException(E) then begin
-                      Terminate;
-                      raise;
-                    end;
-                  end;
-                end;
+              finally
+                AfterRun;
               end;
-            finally
-              AfterRun;
+            except
+              Terminate;
+              raise;
             end;
-          except
-            Terminate;
-            raise;
+          finally
+            Cleanup;
           end;
-        finally
-          Cleanup;
         end;
+      finally
+        AfterExecute;
       end;
-    finally
-      AfterExecute;
+    except
+      on E: Exception do begin
+        FTerminatingExceptionClass := E.ClassType;
+        FTerminatingException := E.Message;
+        DoException(E);
+        Terminate;
+      end;
     end;
-  except
-    on E: Exception do begin
-      FTerminatingExceptionClass := E.ClassType;
-      FTerminatingException := E.Message;
-      DoException(E);
-      Terminate;
-    end;
+  finally
+    if (assigned(unRegisterThread)) then
+      unRegisterThread;
   end;
 end;
 

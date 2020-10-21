@@ -37,7 +37,7 @@ interface
 uses
   {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
-  SysUtils, SyncObjs, Classes, Generics.Collections,
+  SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc;
 
 const
@@ -59,6 +59,7 @@ procedure SetThreadStatus(status : AnsiString);
 function GetThreadInfo : AnsiString;
 function GetThreadReport : AnsiString;
 function GetThreadCount : Integer;
+procedure closeThread;
 
 type
   {$IFNDEF FPC}
@@ -286,20 +287,9 @@ var
   GCount: Integer = 0;
   GTotal: Integer = 0;
 
-procedure InitUnit;
-begin
-  InitializeCriticalSection(GCritSct);
-  GHaveCritSect := true;
-  GBackgroundTasks := TBackgroundTaskManager.Create;
-end;
+{$IFDEF WINDOWS}
 
-procedure DoneUnit;
-begin
-  GBackgroundTasks.Free;
-  DeleteCriticalSection(GCritSct);
-end;
-
-{ Thread tracking is delegated to a .dll to ensure thoroughness }
+{ Thread tracking is delegated to a .dll to ensure thoroughness (because of DLL Main) }
 
 procedure THThreadName(name : PAnsiChar); stdcall; external 'threadtracker.dll';
 procedure THThreadStatus(status : PAnsiChar); stdcall; external 'threadtracker.dll';
@@ -349,67 +339,249 @@ begin
   end;
 end;
 
-//
-//{$IFNDEF FPC}
-//function TSystemService.ThreadStatus : String;
-//var
-//  SnapProcHandle: THandle;
-//  NextProc      : Boolean;
-//  TThreadEntry  : TThreadEntry32;
-//  Proceed       : Boolean;
-//  pid, count, tid : Cardinal;
-//  c, e, k, u : _FILETIME;
-//  sc, se, sk, su, s, sn : String;
-//  h : THandle;
-//begin
-//  pid := GetCurrentProcessId;
-//  tid := GetCurrentThreadId;
-//  result := '';
-//  Count := 0;
-//  SnapProcHandle := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); //Takes a snapshot of the all threads
-//  Proceed := (SnapProcHandle <> INVALID_HANDLE_VALUE);
-//  if Proceed then
-//    try
-//      TThreadEntry.dwSize := SizeOf(TThreadEntry);
-//      NextProc := Thread32First(SnapProcHandle, TThreadEntry);//get the first Thread
-//      while NextProc do
-//      begin
-//        if TThreadEntry.th32OwnerProcessID = PID then //Check the owner Pid against the PID requested
-//        begin
-//          Inc(count);
-//          if TThreadEntry.th32ThreadID = tid then
-//            s := ' <- this thread'
-//          else
-//            s := '';
-//          sn := inttostr(TThreadEntry.th32ThreadID)+' "'+GetThreadInfo(TThreadEntry.th32ThreadID)+'":';
-//          h := OpenThread(TThreadEntry.th32ThreadID);
-//          if h <> 0 then
-//            try
-//              GetThreadTimes(h, c, e, k, u);
-//              sc := DescribePeriod(FileTimeToDateTime(c, true)-FStartTime);
-//              if (e.dwLowDateTime = 0) and (e.dwHighDateTime = 0) then
-//                se := 'n/a'
-//              else
-//                se := DescribePeriod(now-FileTimeToDateTime(e, true));
-//
-//              sk := DescribePeriod(FileTimeToDateTime(k, false)-FileTimeZero);
-//              su := DescribePeriod(FileTimeToDateTime(u, false)-FileTimeZero);
-//              result := result + sn+sc+' '+se+' '+sk+' '+su+s+#13#10
-//            finally
-//              CloseHandle(h);
-//            end
-//          else
-//            result := result + sn+' '+ErrorAsString+s+#13#10
-//        end;
-//        NextProc := Thread32Next(SnapProcHandle, TThreadEntry);//get the Next Thread
-//      end;
-//    finally
-//      CloseHandle(SnapProcHandle);//Close the Handle
-//    end;
-//  result := result+inttostr(count)+' threads';
-//end;
-//{$ENDIF}
-//
+proceure CloseThread;
+begin
+  // nothing - dllmain will look after this
+end;
+
+{$ELSE}
+
+var
+  GThreadList : TList;
+
+type
+  TTheadRecord = record
+    id : TThreadID;
+    startTick : UInt64;
+    name : AnsiString;
+    state : AnsiString;
+    stateTick : UInt64;
+  end;
+  PTheadRecord = ^TTheadRecord;
+
+procedure closeThread;
+var
+  id : TThreadID;
+  i : integer;
+  p : PTheadRecord;
+begin
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+      begin
+        Dispose(p);
+        GThreadList.Delete(i);
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
+
+procedure SetThreadName(name : AnsiString);
+var
+  id : TThreadID;
+  i : integer;
+  p : PTheadRecord;
+begin
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+      begin
+        p.name := name;
+        exit;
+      end;
+    end;
+    new(p);
+    p.startTick := GetTickCount64;
+    p.id := id;
+    p.name := name;
+    GThreadList.Add(p);
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
+
+procedure SetThreadStatus(status : AnsiString);
+var
+  id : TThreadID;
+  i : integer;
+  p : PTheadRecord;
+begin
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+      begin
+        p.state := status;
+        p.stateTick := GetTickCount64;
+        exit;
+      end;
+    end;
+    new(p);
+    p.startTick := GetTickCount64;
+    p.id := id;
+    p.name := 'Unknown';
+    p.state := status;
+    p.stateTick := GetTickCount64;
+    GThreadList.Add(p);
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
+
+function age(tick : UInt64) : AnsiString;
+var
+  duration : UInt64;
+begin
+  duration := GetTickCount64 - tick;
+  if duration < 2000 then
+    result := inttostr(duration)+'ms'
+  else
+  begin
+    duration := duration div 1000;
+    if duration < 1000 then
+      result := inttostr(duration)+'s'
+    else
+    begin
+      duration := duration div 60;
+      if duration < 120 then
+        result := inttostr(duration)+'min'
+      else
+      begin
+        duration := duration div 60;
+        if duration < 48 then
+          result := inttostr(duration)+'hr'
+        else
+        begin
+          duration := duration div 24;
+          result := inttostr(duration)+'d'
+        end;
+      end;
+    end;
+  end;
+end;
+
+function info(p : PTheadRecord; id : boolean) : AnsiString;
+begin
+  if (id) then
+    result := inttohex(p.id, 8)+': '
+  else
+    result := '';
+  result := result + p.name;
+  if p.state <> '' then
+  begin
+    result := result + ' = '+p.state;
+    result := result + ' (born '+age(p.startTick)+', last seen '+age(p.stateTick)+')';
+  end
+  else
+    result := result + ' (born '+age(p.startTick)+')';
+end;
+
+function GetThreadInfo : AnsiString;
+var
+  id : cardinal;
+  i : integer;
+  p : PTheadRecord;
+  s : AnsiString;
+begin
+  s := 'Unknown thread';
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+      begin
+        s := info(p, false);
+        break;
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+  result := s;
+end;
+
+function GetThreadCount : Integer;
+begin
+  EnterCriticalSection(GCritSct);
+  try
+    result := GThreadList.Count;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
+
+function GetThreadReport : AnsiString;
+var
+  i : integer;
+  s : AnsiString;
+  p : PTheadRecord;
+begin
+  s := '';
+  EnterCriticalSection(GCritSct);
+  try
+    for i := 0 to GThreadList.Count - 1 do
+    begin
+      p := GThreadList[i];
+      if (s <> '') then
+        s := s + '|';
+      s := s + info(p, true);
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+  result := s;
+end;
+
+{$ENDIF}
+
+procedure InitUnit;
+begin
+  InitializeCriticalSection(GCritSct);
+  GHaveCritSect := true;
+  GBackgroundTasks := TBackgroundTaskManager.Create;
+  {$IFNDEF WINDOWS}
+  GThreadList := TList.Create;
+  {$ENDIF}
+  IdThread.registerThread := SetThreadName;
+  IdThread.unRegisterThread := closeThread;
+end;
+
+procedure DoneUnit;
+{$IFNDEF WINDOWS}
+var
+  i : integer;
+  p : PTheadRecord;
+{$ENDIF}
+begin
+  IdThread.registerThread := nil;
+  IdThread.unRegisterThread := nil;
+  {$IFNDEF WINDOWS}
+  for i := GThreadList.Count - 1 downto 0 do
+  begin
+    p := GThreadList[i];
+    Dispose(p);
+    GThreadList.Delete(i);
+  end;
+  GThreadList.Free;
+  {$ENDIF}
+  GBackgroundTasks.Free;
+  DeleteCriticalSection(GCritSct);
+end;
 
 { TFslLock }
 

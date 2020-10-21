@@ -751,8 +751,10 @@ procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   {$IFDEF FPC}
+  {$IFDEF WINDOWS}
   RegisterTest('v2 Dictionary Tests', Tv2DictTests);
   RegisterTest('v2 Parser Tests', THL7v2ParserTests);
+  {$ENDIF}
   RegisterTest('v2 Parser2 Tests', Tv2ParserTests);
   RegisterTest('LLP Tests', TLLPTests);
   {$ELSE}
