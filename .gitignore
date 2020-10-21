@@ -231,3 +231,6 @@ web/QuestionnaireToHTML.xslt
 /exec/pack/fhirserver.web
 /utilities/console/lib/win32-release
 /utilities/console/lib/win64
+/testcases/v2dict/hl7_94Jul2018.mdb
+/server/lib
+server/r:

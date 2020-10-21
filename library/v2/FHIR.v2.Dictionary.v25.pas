@@ -13392,7 +13392,7 @@ Begin
   oSegments.Add('}]', 'end optional + repeating');
 End;
 
-procedure Definitions25LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+procedure Definitions25LoadMessageStructures1(oStructures : THL7V2ModelMessageStructures);
 Var
   oStructure : THL7V2ModelMessageStructure;
   oGrp1 : THL7V2ModelSegmentGroup;
@@ -15363,6 +15363,19 @@ Begin
           oGrp4 := oGrp3.Children.Add('COMPONENT', True, True, gtGroup);
             oGrp4.Children.Add('RXC', False, False, gtSingle);
             oGrp4.Children.Add('NTE', True, True, gtSingle);
+End;
+
+procedure Definitions25LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('ORR_O02', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('ORR_O02', False, False, gtGroup);
@@ -17553,6 +17566,12 @@ Begin
     oGrp1 := oStructure.SegmentMap.Children.Add('PATIENT', False, True, gtGroup);
       oGrp1.Children.Add('PID', False, False, gtSingle);
       oGrp1.Children.Add('NK1', True, True, gtSingle);
+End;
+
+procedure Definitions25LoadMessageStructures(oStructures : THL7V2ModelMessageStructures);
+Begin
+  Definitions25LoadMessageStructures1(oStructures);
+  Definitions25LoadMessageStructures2(oStructures);
 End;
 
 procedure Definitions25LoadEvents(oEvents : THL7V2ModelEvents);

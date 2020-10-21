@@ -30,6 +30,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
+// the compiled dictionary is fast to use but very slow to compile.
+// given the low value of the dictionary and the low value of testing the compiled one,
+// it's not generally worth testing it
+{.$.DEFINE TEST_COMPILED}
+
 interface
 
 uses
@@ -40,7 +45,7 @@ uses
   FHIR.Base.Objects,
 //  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
   FHIR.R4.PathNode, FHIR.R4.PathEngine, // FHIR.R4.Javascript,
-  FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.v2.Dictionary.Compiled, FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Protocol;
+  FHIR.v2.Base, FHIR.v2.Dictionary, {$IFDEF TEST_COMPILED} FHIR.v2.Dictionary.Compiled, {$ENDIF} FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Protocol;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
@@ -49,8 +54,10 @@ type
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2DictTests = Class (TFslTestCase)
   published
+    {$IFDEF TEST_COMPILED}
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryCompiled;
+    {$ENDIF}
 
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryAccess;
@@ -141,17 +148,25 @@ End;
 
 procedure Tv2DictTests.TestDictionaryAccess;
 var
+  fn : String;
   dict : THL7V2Dictionary;
 begin
-  dict := THL7V2AccessDictionary.Create('C:\temp\hl7_94Jul2018.mdb');
-  try
-    assertTrue(dict <> nil);
-    assertTrue(dict.Model[hv23].Tables.Count > 0);
-  finally
-    dict.Free;
-  end;
+  fn := TestSettings.serverTestFile(['testcases', 'v2dict', 'hl7_94Jul2018.mdb']);
+  if (FileExists(fn)) then
+  begin
+    dict := THL7V2AccessDictionary.Create(fn);
+    try
+      assertTrue(dict <> nil);
+      assertTrue(dict.Model[hv23].Tables.Count > 0);
+    finally
+      dict.Free;
+    end;
+  end
+  else
+    assertNotTested;
 end;
 
+{$IFDEF TEST_COMPILED}
 procedure Tv2DictTests.TestDictionaryCompiled;
 var
   dict : THL7V2Dictionary;
@@ -164,6 +179,7 @@ begin
     dict.Free;
   end;
 end;
+{$ENDIF}
 
 { TLLPTests }
 
@@ -558,9 +574,15 @@ begin
 end;
 
 procedure THL7v2ParserTests.Setup;
+var
+  fn : String;
 begin
   if GHL7Dict = nil then
-    GHL7Dict := THL7V2CompiledDictionary.Create;
+  begin
+    fn := TestSettings.serverTestFile(['testcases', 'v2dict', 'hl7_94Jul2018.mdb']);
+    if (FileExists(fn)) then
+      GHL7Dict := THL7V2AccessDictionary.Create(fn);
+  end;
   if GHL7V2DecoderFactory = nil then
     GHL7V2DecoderFactory := THL7V2DecoderFactory.Create(GHL7Dict.link);
 end;
@@ -569,14 +591,19 @@ procedure THL7v2ParserTests.TestDictionaryParse;
 var
   msg : THL7V2Message;
 begin
-  msg := parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
-    'PID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520'#13+
-    'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD^^|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
-    'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13, hfER7);
-  try
-    assertTrue(msg <> nil);
-  finally
-    msg.Free;
+  if GHL7Dict = nil then
+    assertNotTested
+  else
+  begin
+    msg := parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
+      'PID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520'#13+
+      'OBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| 555-55-5555^PRIMARY^PATRICIA P^^^^MD^^|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD'#13+
+      'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13, hfER7);
+    try
+      assertTrue(msg <> nil);
+    finally
+      msg.Free;
+    end;
   end;
 end;
 

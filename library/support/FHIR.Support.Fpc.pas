@@ -118,6 +118,7 @@ type
 
 function DeleteDirectory(const DirectoryName: string; OnlyChildren: boolean): boolean;
 procedure FileSetReadOnly(const FileName : String; readOnly : boolean);
+procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 
 //function ColorToString(Color: TColor): AnsiString;
 
@@ -413,6 +414,10 @@ end;
 {$ENDIF}
 end;
 
+procedure FileSetModified(const FileName : String; dateTime : TDateTime);
+begin
+  FileSetDate(filename, DateTimeToFileDate(dateTIme));
+end;
 
 { TShortStringHelper }
 

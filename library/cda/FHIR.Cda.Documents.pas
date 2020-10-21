@@ -35,7 +35,7 @@ Interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Cda.Objects, FHIR.Cda.Parser, FHIR.Cda.Writer;
 
 type
@@ -865,10 +865,8 @@ end;
 procedure TCDAAttachment.SaveToFile(filename: String);
 begin
   FBuffer.SaveToFileName(filename);
-  {$IFNDEF OSX}
   if FDateTime <> 0 then
     FileSetModified(filename, FDateTime);
-  {$ENDIF}
 end;
 
 procedure TCDAAttachment.SetBuffer(const Value: TFslBuffer);

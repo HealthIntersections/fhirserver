@@ -10036,6 +10036,21 @@ Begin
                 oGrp6.Children.Add('OBX', False, False, gtSingle);
                 oGrp6.Children.Add('NTE', True, True, gtSingle);
                 oGrp6.Children.Add('VAR', True, True, gtSingle);
+End;
+
+procedure Definitions23LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
+Var
+  oStructure : THL7V2ModelMessageStructure;
+  oGrp1 : THL7V2ModelSegmentGroup;
+  oGrp2 : THL7V2ModelSegmentGroup;
+  oGrp3 : THL7V2ModelSegmentGroup;
+  oGrp4 : THL7V2ModelSegmentGroup;
+  oGrp5 : THL7V2ModelSegmentGroup;
+  oGrp6 : THL7V2ModelSegmentGroup;
+  oGrp7 : THL7V2ModelSegmentGroup;
+  oGrp8 : THL7V2ModelSegmentGroup;
+  oGrp9 : THL7V2ModelSegmentGroup;
+Begin
   oStructure := oStructures.Add('PGL_PC7', '(Implicitly Created by HL7Connect)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('PGL_PC7', False, False, gtGroup);
@@ -11967,21 +11982,6 @@ Begin
       oGrp1.Children.Add('PV1', False, False, gtSingle);
       oGrp1.Children.Add('PV2', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('NTE', True, True, gtSingle);
-End;
-
-procedure Definitions23LoadMessageStructures2(oStructures : THL7V2ModelMessageStructures);
-Var
-  oStructure : THL7V2ModelMessageStructure;
-  oGrp1 : THL7V2ModelSegmentGroup;
-  oGrp2 : THL7V2ModelSegmentGroup;
-  oGrp3 : THL7V2ModelSegmentGroup;
-  oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-  oGrp9 : THL7V2ModelSegmentGroup;
-Begin
   oStructure := oStructures.Add('RRI_I13', '(Implicitly Created by HL7Connect)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RRI_I13', False, False, gtGroup);

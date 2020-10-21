@@ -514,11 +514,16 @@ begin
 end;
 
 function intMem : Uint64;
+{$IFDEF WINDOWS}
 var
   st : TMemoryManagerUsageSummary;
 begin
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
+{$ELSE}
+begin
+  result := 0;
+{$ENDIF}
 end;
 
 function TLogging.MemoryStatus : String;
