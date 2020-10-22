@@ -251,7 +251,7 @@ begin
   finally
     FPackage.FDone := true;
   end;
-  SetThreadStatus('Done');
+  closeThread();
 end;
 
 { TFhirFacadeCommunicator }
