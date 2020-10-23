@@ -39,9 +39,9 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Threads,
-  {$IFNDEF NO_JS}FHIR.Javascript, {$ENDIF}FHIR.Support.Utilities, FHIR.Support.Base,
+  FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
-  {$IFNDEF NO_JS} FHIR.Javascript.Base, {$ENDIF}
+  FHIR.Javascript.Base,
   FHIR.Server.Session;
 
 Const
@@ -89,10 +89,6 @@ Type
     procedure seeResource(event : TFhirEventDefinitionW);
   end;
 
-  TJsGetFHIRResource = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRResourceV;
-  TJsGetFHIRClient = {$IFNDEF FPC}reference to {$ENDIF}function(context : pointer) : TFHIRClientV;
-
-{$IFNDEF NO_JS}
   // we create one of these for evrey thread, but it will only actually create a javscript engine when it needs to.
   // then, we retain it as long as we can
   TJsHost = class (TFslObject)
@@ -107,22 +103,34 @@ Type
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
     property engine : TFHIRJavascript read FEngine;
     procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
-    procedure checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
+    function hasScripts(event: TTriggerType; resourceName : String) : boolean;
+    procedure checkChanges(event: TTriggerType; session : TFHIRSession; before : TFHIRResourceV; after : TFHIRResourceV; client : TFHIRClientV);
   end;
 
   TRegisterJavascriptEvent = procedure (sender : TObject; js : TJsHost) of Object;
 
 threadvar
   GJsHost : TJsHost;
-{$ENDIF}
 
 implementation
 
-{$IFNDEF NO_JS}
-
 { TJsHost }
 
-procedure TJsHost.checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
+function TJsHost.hasScripts(event: TTriggerType; resourceName : String) : boolean;
+var
+  scripts : TFslList<TEventScript>;
+begin
+  scripts := TFslList<TEventScript>.create;
+  try
+    FRegistry.getApplicableScripts(event, resourceName, scripts);
+    result := scripts.Count > 0;
+  finally
+    scripts.Free;
+  end;
+end;
+
+
+procedure TJsHost.checkChanges(event: TTriggerType; session : TFHIRSession; before : TFHIRResourceV; after : TFHIRResourceV; client : TFHIRClientV);
 var
   scripts : TFslList<TEventScript>;
   script : TEventScript;
@@ -135,8 +143,8 @@ begin
 
   scripts := TFslList<TEventScript>.create;
   try
-    if before(nil) <> nil then
-      rn := before(nil).fhirType
+    if before <> nil then
+      rn := before.fhirType
     else
       rn := after.fhirType;
 
@@ -146,9 +154,9 @@ begin
       engine := FEngine;
       engine.ObjectsImmutable := true;
       s := engine.wrap(session.Link, 'Session', true, true);
-      b := engine.wrap(before(nil).Link, rn, true, true);
+      b := engine.wrap(before.Link, rn, true, true);
       a := engine.wrap(after.Link, rn, true, true);
-      c := engine.wrap(client(nil).link, 'FHIR.Version.Client', true, true);
+      c := engine.wrap(client.link, 'FHIR.Version.Client', true, true);
       engine.addGlobal('fhir', c);
       for script in scripts do
         engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
@@ -201,8 +209,6 @@ begin
   FRegistry.Free;
   FRegistry := Value;
 end;
-
-{$ENDIF}
 
 { TEventScriptRegistry }
 

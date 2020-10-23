@@ -88,6 +88,7 @@ uses
   SysUtils,
   Classes,
   IdSSLOpenSSLHeaders,
+  IdCustomHTTPServer,
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
