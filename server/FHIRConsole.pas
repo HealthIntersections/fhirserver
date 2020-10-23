@@ -9,13 +9,14 @@ uses
   FastMM4,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, datetimectrls, FHIR.Support.Threads,
+  Forms, datetimectrls,
+  FHIR.Support.Base,
   FHIR.Snomed.Combiner, FHIR.Web.Parsers, FHIR.Base.Objects, FHIR.Ucum.IFace,
   FHIR.Npm.Cache, FHIR.Client.Base, FHIR.CdsHooks.Utilities,
   FHIR.Smart.Utilities, FHIR.Tx.Service, FHIR.Database.Manager,
   FHIR.Loinc.Services,
   { you can add units after this }
-  FHIR.Server.Console, FHIR.Server.Connection.Lcl;
+  FHIR.Server.Connection.Lcl;
 
 {$R *.res}
 
