@@ -39,7 +39,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Support.JSON,
+  FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Support.Json,
   FHIR.R2.ParserBase, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types,
   FHIR.R2.Resources.Base, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other;
 

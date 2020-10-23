@@ -78,7 +78,7 @@
             <Filename Value="..\exec\64\FHIRConsole.exe"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
             <OtherUnitFiles Value="..\library\snomed;..\library\web;..\library\support;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>

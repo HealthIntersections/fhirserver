@@ -80,7 +80,7 @@ Uses
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
   {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
