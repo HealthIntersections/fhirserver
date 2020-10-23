@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectGroup FileVersion="2">
+    <Targets>
+      <Target FileName="server\FHIRServerFPC.lpi">
+        <BuildModes>
+          <Mode Name="Win32"/>
+          <Mode Name="Win64"/>
+          <Mode Name="Linux"/>
+          <Mode Name="OSX"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="server\FHIRConsole.lpi">
+        <BuildModes>
+          <Mode Name="win32" Compile="True"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="win32-release"/>
+          <Mode Name="win64-release"/>
+        </BuildModes>
+      </Target>
+    </Targets>
+  </ProjectGroup>
+</CONFIG>

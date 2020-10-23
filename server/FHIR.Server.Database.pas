@@ -710,6 +710,7 @@ var
   src : Tbytes;
   comps : TFslList<TFHIRCompartmentId>;
   mw : TFhirMetaW;
+  client : TFhirClientV;
 begin
   key := 0;
   CheckCreateNarrative(request);
@@ -805,11 +806,16 @@ begin
             checkProposedContent(request.Session, request, request.Resource, tags);
             Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
             {$IFNDEF NO_JS}
-            GJsHost.checkChanges(ttDataAdded, request.Session,
-              function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-              function (context : pointer) : TFHIRResourceV begin result := nil; end,
-              request.Resource);
-            {$ENDIF}
+            if GJsHost.HasScripts(ttDataAdded, request.ResourceName) then
+            begin
+              client := createClient(request.Lang, request.Session);
+              try
+                GJsHost.checkChanges(ttDataAdded, request.Session, nil, request.Resource, client);
+              finally
+                client.Free;
+              end;
+            end;
+           {$ENDIF}
             result := sId;
             request.id := sId;
             key := Repository.NextVersionKey;
@@ -901,6 +907,8 @@ var
   ok : boolean;
   meta : TFHIRMetaW;
   rp : TFhirParametersW;
+  current : TFHIRResourceV;
+  client : TFhirClientV;
 begin
   key := 0;
   nvid := 0;
@@ -971,10 +979,20 @@ begin
         checkProposedDeletion(request.session, request, request.Resource, tags);
         Repository.checkDropResource(request.session, request, request.Resource, tags);
         {$IFNDEF NO_JS}
-        GJsHost.checkChanges(ttDataRemoved, request.Session,
-            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
-            nil);
+        if GJsHost.HasScripts(ttDataRemoved, request.ResourceName) then
+        begin
+          current := loadResourceVersion(versionKey, true);
+          try
+            client := createClient(request.Lang, request.Session);
+            try
+              GJsHost.checkChanges(ttDataRemoved, request.Session, current, nil, client);
+            finally
+              client.Free;
+            end;
+          finally
+            current.Free;
+          end;
+        end;
         {$ENDIF}
 
         for i := 0 to tags.count - 1 do
@@ -2032,6 +2050,8 @@ var
   src : TBytes;
   meta : TFhirMetaW;
   b : TFHIRBundleW;
+  current : TFHIRResourceV;
+  client : TFhirClientV;
 begin
   CheckCreateNarrative(request);
 
@@ -2136,10 +2156,20 @@ begin
           checkProposedContent(request.session, request, request.Resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           {$IFNDEF  NO_JS}
-          GJsHost.checkChanges(ttDataModified, request.Session,
-            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
-            request.Resource);
+          if GJsHost.HasScripts(ttDataModified, request.ResourceName) then
+          begin
+            current := loadResourceVersion(versionKey, true);
+            try
+              client := createClient(request.Lang, request.Session);
+              try
+                GJsHost.checkChanges(ttDataModified, request.Session, current, request.Resource, client);
+              finally
+                client.Free;
+              end;
+            finally
+              current.Free;
+            end;
+          end;
           {$ENDIF}
 
           for i := 0 to tags.count - 1 do
@@ -2243,6 +2273,8 @@ var
   b : TFHIRBundleW;
   diff : TDifferenceEngine;
   params : TFHIRParametersW;
+  current : TFHIRResourceV;
+  client : TFhirClientV;
 begin
   result := false;
   json := nil;
@@ -2427,10 +2459,20 @@ begin
           checkProposedContent(request.session, request, request.resource, tags);
           Repository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           {$IFNDEF NO_JS}
-          GJsHost.checkChanges(ttDataModified, request.Session,
-            function (context : pointer) : TFHIRClientV begin result := createClient(request.Lang, request.Session); end,
-            function (context : pointer) : TFHIRResourceV begin result := loadResourceVersion(versionKey, true); end,
-            request.Resource);
+          if GJsHost.HasScripts(ttDataModified, request.ResourceName) then
+          begin
+            current := loadResourceVersion(versionKey, true);
+            try
+              client := createClient(request.Lang, request.Session);
+              try
+                GJsHost.checkChanges(ttDataModified, request.Session, current, request.Resource, client);
+              finally
+                client.Free;
+              end;
+            finally
+              current.Free;
+            end;
+          end;
           {$ENDIF}
 
           for i := 0 to tags.count - 1 do

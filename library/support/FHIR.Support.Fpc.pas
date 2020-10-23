@@ -709,7 +709,7 @@ begin
   else if (Offset = 0) and (Origin = soEnd) then
   begin
     SetLength(buf, BufSize);
-    while Read(buf, 0, BufSize) > 0 do ;
+    while Read(buf, BufSize) > 0 do ;
   end
   else
     raise EIOException.Create('Invalid Operation');

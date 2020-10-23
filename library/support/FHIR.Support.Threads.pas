@@ -341,7 +341,7 @@ end;
 
 procedure CloseThread;
 begin
-  // nothing - dllmain will look after this
+  SetThreadStatus('closed');
 end;
 
 {$ELSE}

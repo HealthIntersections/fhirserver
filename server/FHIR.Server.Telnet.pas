@@ -42,15 +42,6 @@ uses
 type
   TFHIRTelnetServer = class;
 
-  TTelnetSession = class (TFslObject)
-  private
-    FServer : TFHIRTelnetServer;
-    FId : Integer;
-  public
-    destructor Destroy; override;
-    procedure SendMsg(s : String);
-  end;
-
   TTelnetThreadHelper = class (TFslObject)
   Private
     FServer : TFHIRTelnetServer;
@@ -96,7 +87,6 @@ type
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
-    function makeSession(desc : String) : TTelnetSession;
 
     procedure addContext(ctxt : TFHIRServerContext);
     procedure removeContext(ctxt : TFHIRServerContext);
@@ -203,26 +193,6 @@ end;
 function TFHIRTelnetServer.Link: TFHIRTelnetServer;
 begin
   result := TFHIRTelnetServer(inherited Link);
-end;
-
-function TFHIRTelnetServer.makeSession(desc: String): TTelnetSession;
-begin
-  result := TTelnetSession.create;
-  try
-    result.FServer := self.link;
-    FLock.Lock;
-    try
-      inc(FLastId);
-      result.FId := FLastId;
-    finally
-      FLock.Unlock;
-    end;
-    Log('$@session-'+inttostr(result.FId)+': @start|'+inttostr(GetTickCount64)+'|'+desc);
-    result.link;
-  finally
-    result.free;
-  end;
-
 end;
 
 procedure TFHIRTelnetServer.removeContext(ctxt: TFHIRServerContext);
@@ -367,20 +337,6 @@ begin
     sleep(50);
   end;
   closeThread;
-end;
-
-{ TTelnetSession }
-
-destructor TTelnetSession.Destroy;
-begin
-  FServer.log('$@session-'+inttostr(FId)+': @stop|'+inttostr(GetTickCount64));
-  FServer.Free;
-  inherited;
-end;
-
-procedure TTelnetSession.SendMsg(s: String);
-begin
-  FServer.Log('$@session-'+inttostr(FId)+': @msg|'+s);
 end;
 
 end.
