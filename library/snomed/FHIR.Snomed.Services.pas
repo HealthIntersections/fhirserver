@@ -64,7 +64,8 @@ Uses
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
 
 Const
-  SNOMED_CACHE_VERSION = '15'; // 15: add default language refset
+  SNOMED_CACHE_VERSION_CURRENT = '16'; // 15: add default language refset - 16: change to 8 byte strings not 16 byte strings
+  SNOMED_CACHE_VERSION_UTF16 = '15';
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
@@ -126,11 +127,13 @@ type
   //   each entry in the String starts with a byte length, and then the series of characters as bytes
   TSnomedStrings = class (TFslObject)
   Private
+    FIsUTF16 : boolean;
     FMaster : TBytes;
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
     procedure clear;
   Public
+    property isUTF16 : boolean read FIsUTF16 write FIsUTF16;
     Function GetEntry(iIndex : Cardinal):String;
 
     Procedure StartBuild;
@@ -542,7 +545,7 @@ operations
     procedure findMatchingConcepts(list : TFslList<TMatchingConcept>; reference : cardinal; refinements : TFslList<TSnomedRefinementGroup>);
     function checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TFslList<TSnomedRefinementGroup>; grps : TFslList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
     function listNonMatchingGroups(tgt, src : TFslList<TSnomedRefinementGroup>) : TFslList<TSnomedRefinementGroup>;
-    procedure mergeRefinements(list : TFslList<TSnomedRefinement>);
+    procedure mergeRefinements(list : TSnomedRefinementList);
     function mergeGroups(grp1, grp2 : TSnomedRefinementGroup) : boolean;
     procedure rationaliseExpr(exp: TSnomedExpression);
     function GetEditionName: String;
@@ -780,7 +783,10 @@ begin
   Move(FMaster[iIndex], i, 2);
   if (iIndex + 2 + (i * 2) > FLength) then
     Raise ETerminologySetup.Create('Wrong length index getting snomed name (2)');
-  result := memU16ToString(FMaster, iIndex+2, i);
+  if FIsUTF16 then
+    result := memU16ToString(FMaster, iIndex+2, i)
+  else
+  result := memU8ToString(FMaster, iIndex+2, i)
 end;
 
 procedure TSnomedStrings.Reopen;
@@ -798,7 +804,7 @@ begin
   result := FBuilder.Length;
   i := length(s);
   FBuilder.AddWord(i);
-  FBuilder.AddString(s);
+  FBuilder.AddString1Byte(s);
 end;
 
 procedure TSnomedStrings.clear;
@@ -1398,6 +1404,7 @@ var
   oFile : Tfilestream;
   oread : TReader;
   s : TArray<String>;
+  v : String;
   function readBytes : TBytes;
   var
     i : integer;
@@ -1411,7 +1418,8 @@ begin
   try
     oread := TReader.Create(oFile, 8192);
     try
-      if oRead.ReadString <> SNOMED_CACHE_VERSION Then
+      v := oRead.ReadString;
+      if (v <> SNOMED_CACHE_VERSION_CURRENT) and (v <> SNOMED_CACHE_VERSION_UTF16) then
         raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
@@ -1442,6 +1450,7 @@ var
   oread : TReader;
   i : Integer;
   s : TArray<String>;
+  v : String;
   function readBytes : TBytes;
   begin
     SetLength(result, oRead.ReadInteger);
@@ -1458,7 +1467,12 @@ begin
     try
       oread := TReader.Create(oFile, 8192);
       try
-        if oRead.ReadString <> SNOMED_CACHE_VERSION Then
+        v := oRead.ReadString;
+        if v = SNOMED_CACHE_VERSION_CURRENT Then
+          FStrings.IsUTF16 := false
+        else if v = SNOMED_CACHE_VERSION_UTF16 Then
+          FStrings.IsUTF16 := true
+        else
           raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities');
         VersionUri := oread.ReadString;
         VersionDate := oread.ReadString;
@@ -1569,7 +1583,7 @@ begin
   try
     oWrite := TWriter.Create(oFile, 8192);
     try
-      oWrite.WriteString(SNOMED_CACHE_VERSION);
+      oWrite.WriteString(SNOMED_CACHE_VERSION_CURRENT);
       oWrite.WriteString(VersionUri);
       oWrite.WriteString(VersionDate);
       WriteBytes(FStrings.FMaster);
@@ -4324,7 +4338,7 @@ begin
 end;
 
 function TSnomedServices.mergeGroups(grp1, grp2: TSnomedRefinementGroup): boolean;
-  function getRef(c : cardinal; list: TFslList<TSnomedRefinement>) : TSnomedRefinement;
+  function getRef(c : cardinal; list: TSnomedRefinementList) : TSnomedRefinement;
   var
     t : TSnomedRefinement;
   begin
@@ -4403,7 +4417,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.mergeRefinements(list : TFslList<TSnomedRefinement>);
+procedure TSnomedServices.mergeRefinements(list : TSnomedRefinementList);
 var
   i, j : integer;
   ref1, ref2 : TSnomedRefinement;
@@ -5205,7 +5219,8 @@ end;
 
 initialization
   {$IFDEF FPC}
-  // what to do?
+  SNOMED_DATE_FORMAT := DefaultFormatSettings;
+  SNOMED_DATE_FORMAT.ShortDateFormat := 'dd/mm/yyyy';
   {$ELSE}
   SNOMED_DATE_FORMAT := TFormatSettings.Create('en-AU');
   {$ENDIF}

@@ -119,6 +119,8 @@ Type
     // database maintenance
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
+    function cacheCount : integer; override;
+    procedure clearCache;
   end;
 
 implementation
@@ -546,6 +548,18 @@ begin
   result := getProvider(url, version, params, nullOk);
 end;
 
+function TTerminologyServer.cacheCount : integer;
+begin
+  result := inherited cacheCount;
+  FLock.Lock;
+  try
+    result := result + FExpansions.Count;
+    result := result + FDependencies.Count;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TTerminologyServer.checkCode(op : TFhirOperationOutcomeW; const lang : THTTPLanguages; path : string; code : string; system, version : string; display : string) : boolean;
 var
   cs : TFhirCodeSystemW;
@@ -609,6 +623,17 @@ begin
         cs.free;
       end;
     end;
+  end;
+end;
+
+procedure TTerminologyServer.clearCache;
+begin
+  FLock.Lock;
+  try
+    FExpansions.Clear;
+    FDependencies.Clear;
+  finally
+    FLock.UnLock;
   end;
 end;
 

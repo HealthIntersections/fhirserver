@@ -133,6 +133,9 @@ Source: "..\exec\pack\translations.xml";                      DestDir: "{app}"; 
 Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";
 Source: "..\readme.md";                                       DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "readme.txt";
 Source: "readme.rtf";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "installation-documentation.rtf";
+Source: "..\resources\sql\rxnorm_import.sql";                 DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "rxnorm_import.sql";
+
+"C:\work\fhirserver\"
 
 ; utilities files - put in app dir because these may be different to ones already on the machine.
 Source: "..\exec\pack\w32\openssl.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: not Is64BitInstallMode 

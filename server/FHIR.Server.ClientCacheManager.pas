@@ -61,6 +61,8 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
+    function cacheCount : integer;
+    procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
   end;
@@ -108,6 +110,30 @@ begin
 end;
 
 { TClientCacheManager }
+
+function TClientCacheManager.cacheCount: integer;
+var
+  item : TClientCacheManagerEntry;
+begin
+  FLock.Lock;
+  try
+    result := 0;
+    for item in FList do
+      result := result + item.FList.Count;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TClientCacheManager.clearCache;
+begin
+  FLock.Lock;
+  try
+    FList.Clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
 
 constructor TClientCacheManager.Create;
 begin
