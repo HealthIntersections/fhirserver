@@ -4417,8 +4417,16 @@ procedure TFhirWebServer.DoConnect(AContext: TIdContext);
 var
   ci: TFHIRWebServerClientInfo;
 begin
+  SetThreadStatus('Connecting');
   if (AContext.Connection.IOHandler is TIdSSLIOHandlerSocketBase) then
+  begin
+    SetThreadName('https:'+AContext.Binding.PeerIP);
     TIdSSLIOHandlerSocketBase(AContext.Connection.IOHandler).PassThrough := false;
+  end
+  else
+    SetThreadName('http:'+AContext.Binding.PeerIP);
+
+  AContext.Connection.IOHandler.ReadTimeout := 10*1000;
 
   InterlockedIncrement(GCounterWebConnections);
 {$IFDEF WINDOWS}
@@ -4439,10 +4447,12 @@ begin
   finally
     FLock.Unlock;
   end;
+  SetThreadStatus('Connected');
 end;
 
 procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
+  SetThreadStatus('Disconnecting');
   InterlockedDecrement(GCounterWebConnections);
   FLock.Lock;
   try
@@ -4458,6 +4468,7 @@ begin
 {$IFDEF WINDOWS}
   CoUninitialize;
 {$ENDIF}
+  SetThreadStatus('Disconnected');
 end;
 
 function TFhirWebServer.DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
@@ -4636,7 +4647,6 @@ Begin
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
-    FPlainServer.ConnectionTimeOut := 120*1000;
     FPlainServer.active := active;
   end;
   if FActualSSLPort > 0 then
@@ -4655,7 +4665,6 @@ Begin
     FSSLServer.DefaultPort := FActualSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
-    FSSLServer.ConnectionTimeOut := 120*1000;
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
     FIOHandler.SSLOptions.Method := sslvTLSv1_2;
@@ -4777,7 +4786,6 @@ var
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
-  SetThreadName('http:'+AContext.Binding.PeerIP);
   SetThreadStatus('Processing '+request.Document);
   session := FTelnet.makeSession(AContext.Binding.PeerIP+' p '+request.RawHTTPCommand);
   try
@@ -4876,7 +4884,6 @@ begin
   t := GetTickCount;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
-  SetThreadName('http:'+AContext.Binding.PeerIP);
   SetThreadStatus('Processing '+request.Document);
   session := FTelnet.makeSession(AContext.Binding.PeerIP+' s '+request.RawHTTPCommand);
   try
@@ -5015,19 +5022,19 @@ begin
 
   package := TFslBytesBuilder.Create;
   try
-    package.addUtf8('-----------------------------------------------------------------'#13#10);
-    package.addUtf8(id);
-    package.addUtf8(' @ ');
-    package.addUtf8(TFslDateTime.makeUTC.toXML);
+    package.addStringUtf8('-----------------------------------------------------------------'#13#10);
+    package.addStringUtf8(id);
+    package.addStringUtf8(' @ ');
+    package.addStringUtf8(TFslDateTime.makeUTC.toXML);
     if secure then
-      package.addUtf8(' (https)');
-    package.addUtf8(#13#10);
-    package.addUtf8(request.RawHTTPCommand);
-    package.addUtf8(#13#10);
-    package.addUtf8(request.RawHeaders.Text);
+      package.addStringUtf8(' (https)');
+    package.addStringUtf8(#13#10);
+    package.addStringUtf8(request.RawHTTPCommand);
+    package.addStringUtf8(#13#10);
+    package.addStringUtf8(request.RawHeaders.Text);
     if request.PostStream <> nil then
     begin
-      package.addUtf8(#13#10);
+      package.addStringUtf8(#13#10);
       SetLength(b, request.PostStream.Size);
       request.PostStream.Read(b[0], length(b));
       request.PostStream.Position := 0;
@@ -5035,13 +5042,13 @@ begin
         package.Append(b)
       else
         package.addBase64(b);
-      package.addUtf8(#13#10);
+      package.addStringUtf8(#13#10);
     end
     else if request.ContentType = 'application/x-www-form-urlencoded' then
     begin
-      package.addUtf8(#13#10);
-      package.addUtf8(request.UnparsedParams);
-      package.addUtf8(#13#10);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(request.UnparsedParams);
+      package.addStringUtf8(#13#10);
     end;
 
     FInLog.WriteToLog(package.AsBytes);
@@ -5058,19 +5065,19 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
   begin
     package := TFslBytesBuilder.Create;
     try
-      package.addUtf8('-----------------------------------------------------------------'#13#10);
-      package.addUtf8(id);
-      package.addUtf8(' @ ');
-      package.addUtf8(TFslDateTime.makeUTC.toXML);
+      package.addStringUtf8('-----------------------------------------------------------------'#13#10);
+      package.addStringUtf8(id);
+      package.addStringUtf8(' @ ');
+      package.addStringUtf8(TFslDateTime.makeUTC.toXML);
       if (msg <> '') then
-        package.addUtf8(' '+msg);
-      package.addUtf8(#13#10);
-      package.addUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
-      package.addUtf8(#13#10);
-      package.addUtf8(resp.RawHeaders.Text);
+        package.addStringUtf8(' '+msg);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(resp.RawHeaders.Text);
       if resp.ContentStream <> nil then
       begin
-        package.addUtf8(#13#10);
+        package.addStringUtf8(#13#10);
         SetLength(b, resp.ContentStream.Size);
         if (length(b) > 0) then
           resp.ContentStream.Read(b[0], length(b));
@@ -5079,13 +5086,13 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
           package.Append(b)
         else
           package.addBase64(b);
-        package.addUtf8(#13#10);
+        package.addStringUtf8(#13#10);
       end
       else if resp.ContentText <> '' then
       begin
-        package.addUtf8(#13#10);
-        package.addUtf8(resp.ContentText);
-        package.addUtf8(#13#10);
+        package.addStringUtf8(#13#10);
+        package.addStringUtf8(resp.ContentText);
+        package.addStringUtf8(#13#10);
       end;
 
       FOutLog.WriteToLog(package.AsBytes);

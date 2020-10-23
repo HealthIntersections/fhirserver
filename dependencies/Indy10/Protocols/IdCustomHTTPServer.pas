@@ -154,7 +154,6 @@
   Rev 1.0    11/14/2002 02:16:32 PM  JPMugaas
 }
 
-// FHIR Server changes: Add FConnectionTimeout and use it in
 unit IdCustomHTTPServer;
 
 interface
@@ -422,7 +421,6 @@ type
     FImplicitSessionList: Boolean;
     FSessionState: Boolean;
     FSessionTimeOut: Integer;
-    FConnectionTimeOut : Integer;
     //
     FOnCreatePostStream: TIdHTTPCreatePostStream;
     FOnDoneWithPostStream: TIdHTTPDoneWithPostStream;
@@ -503,7 +501,6 @@ type
     property ServerSoftware: string read FServerSoftware write FServerSoftware;
     property SessionState: Boolean read FSessionState write SetSessionState default Id_TId_HTTPServer_SessionState;
     property SessionTimeOut: Integer read FSessionTimeOut write FSessionTimeOut default Id_TId_HTTPSessionTimeOut;
-    property ConnectionTimeOut : Integer read FConnectionTimeOut write FConnectionTimeOut default Id_TId_HTTPConnectionTimeOut;
     property SessionIDCookieName: string read FSessionIDCookieName write SetSessionIDCookieName stored IsSessionIDCookieNameStored;
     //
     property OnCommandError: TIdHTTPCommandError read FOnCommandError write FOnCommandError;
@@ -665,9 +662,9 @@ type
     procedure Run; override;
   end; // class
 
-function InternalReadLn(AIOHandler: TIdIOHandler; ATimeout : Integer): String;
+function InternalReadLn(AIOHandler: TIdIOHandler): String;
 begin
-  Result := AIOHandler.ReadLn(LF, ATimeout);
+  Result := AIOHandler.ReadLn(LF);
   if AIOHandler.ReadLnTimedout then begin
     raise EIdReadTimeout.Create(RSReadTimeout);
   end;
@@ -908,7 +905,6 @@ begin
   FKeepAlive := Id_TId_HTTPServer_KeepAlive;
   FMaximumHeaderLineCount := Id_TId_HTTPMaximumHeaderLineCount;
   FSessionIDCookieName := GSessionIDCookie;
-  FConnectionTimeOut := Id_TId_HTTPConnectionTimeOut;
 end;
 
 // under ARC, all weak references to a freed object get nil'ed automatically
@@ -1216,7 +1212,7 @@ var
       // not start at Position 0.
       LRequestInfo.PostStream.Position := 0;
       repeat
-        S := InternalReadLn(LIOHandler, FConnectionTimeout);
+        S := InternalReadLn(LIOHandler);
         I := IndyPos(';', S); {do not localize}
         if I > 0 then begin
           S := Copy(S, 1, I - 1);
@@ -1226,10 +1222,10 @@ var
           Break;
         end;
         LIOHandler.ReadStream(LRequestInfo.PostStream, Size);
-        InternalReadLn(LIOHandler, FConnectionTimeout); // CRLF at end of chunk data
+        InternalReadLn(LIOHandler); // CRLF at end of chunk data
       until False;
       // skip trailer headers
-      repeat until InternalReadLn(LIOHandler, FConnectionTimeout) = '';
+      repeat until InternalReadLn(LIOHandler) = '';
       // TODO: seek back to the original Position where CreatePostStream()
       // left it, not all the way back to Position 0.
       LRequestInfo.PostStream.Position := 0;
@@ -1289,7 +1285,7 @@ begin
       repeat
         FSThreadStatus('waiting');
 
-        LInputLine := InternalReadLn(LConn.IOHandler, FConnectionTimeout);
+        LInputLine := InternalReadLn(LConn.IOHandler);
         i := RPos(' ', LInputLine, -1);    {Do not Localize}
         if i = 0 then begin
           raise EIdHTTPErrorParsingCommand.Create(RSHTTPErrorParsingCommand);

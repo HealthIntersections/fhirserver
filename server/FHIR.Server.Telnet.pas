@@ -36,7 +36,8 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Logging;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Logging,
+  FHIR.Server.Context;
 
 type
   TFHIRTelnetServer = class;
@@ -52,6 +53,7 @@ type
 
   TTelnetThreadHelper = class (TFslObject)
   Private
+    FServer : TFHIRTelnetServer;
     FContext: TIdContext;
     FNextPing : TDateTime;
     FHasSent : boolean;
@@ -61,7 +63,7 @@ type
     procedure send(s : String);
     procedure ping;
   Public
-    constructor Create(context: TIdContext);
+    constructor Create(server : TFHIRTelnetServer; context: TIdContext);
     destructor Destroy; Override;
     function link : TTelnetThreadHelper; overload;
   end;
@@ -78,6 +80,7 @@ type
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
+    FContexts : TFslList<TFHIRServerContext>;
     FPassword : String;
     FLog : TStringList;
     FWelcomeMsg : String;
@@ -93,13 +96,20 @@ type
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
-
     function makeSession(desc : String) : TTelnetSession;
+
+    procedure addContext(ctxt : TFHIRServerContext);
+    procedure removeContext(ctxt : TFHIRServerContext);
   end;
 
 implementation
 
 { TFHIRTelnetServer }
+
+procedure TFHIRTelnetServer.addContext(ctxt: TFHIRServerContext);
+begin
+  FContexts.Add(ctxt.Link);
+end;
 
 constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg : String);
 begin
@@ -107,6 +117,7 @@ begin
   FWelcomeMsg := WelcomeMsg;
   FLock := TFslLock.Create('TelnetServer');
   FClients := TFslList<TTelnetThreadHelper>.create;
+  FContexts := TFslList<TFHIRServerContext>.create;
 
   FLog := TStringList.Create;
 
@@ -133,6 +144,7 @@ begin
     FServer.Active := false;
     FServer.Free;
     FClients.Free;
+    FContexts.Free;
   except
     // not interested
   end;
@@ -213,6 +225,11 @@ begin
 
 end;
 
+procedure TFHIRTelnetServer.removeContext(ctxt: TFHIRServerContext);
+begin
+  FContexts.remove(ctxt);
+end;
+
 procedure TFHIRTelnetServer.TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
 begin
   If (username = 'console') and (password = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1') and (AThread.Binding.PeerIP = '127.0.0.1') then
@@ -229,7 +246,8 @@ procedure TFHIRTelnetServer.telnetExecute(AThread: TIdContext);
 var
   tth: TTelnetThreadHelper;
 begin
-  tth := TTelnetThreadHelper.Create(AThread);
+  SetThreadName('Telnet Client at '+AThread.Binding.PeerIP);
+  tth := TTelnetThreadHelper.Create(self, AThread);
   try
     FLock.Lock;
     try
@@ -254,9 +272,10 @@ end;
 
 { TTelnetThreadHelper }
 
-constructor TTelnetThreadHelper.Create(context: TIdContext);
+constructor TTelnetThreadHelper.Create(server : TFHIRTelnetServer; context: TIdContext);
 begin
   inherited create;
+  FServer := server;
   FContext := context;
 end;
 
@@ -290,20 +309,36 @@ begin
 end;
 
 procedure TTelnetThreadHelper.ping;
+var
+  count : integer;
+  ctxt : TFHIRServerContext;
 begin
   if (now > FNextPing) then
   begin
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus);
+    count := 0;
+    for ctxt in FServer.FContexts do
+    begin
+      count := count + ctxt.cacheCount;
+    end;
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+inttostr(count)+' Objects cached');
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
+var
+  ctxt : TFHIRServerContext;
 begin
   if (s = '@console') then
     FEnhanced := true
   else if (s = '@threads') then
     send('$@threads: '+GetThreadReport)
+  else if (s = '@cache') then
+  begin
+    for ctxt in FServer.FContexts do
+      ctxt.clearCache;
+    ping;
+  end
   else
     send('Unrecognised command '+s);
 end;
@@ -321,7 +356,7 @@ end;
 
 procedure TFHIRTelnetServerThread.Execute;
 begin
-  SetThreadName('Telnet Connection');
+  SetThreadName('Telnet Server');
   while Not Terminated do
   begin
     try

@@ -200,7 +200,6 @@ Type
     Function link : TLoincLanguageCodes; overload;
 
     function Display : String;
-    function longestName : integer;
 
     property Component : String read FComponent write FComponent;
     property Prop : String read FProperty write FProperty;
@@ -237,7 +236,6 @@ Type
     FStart : TDateTime;
     FFolder : String;
     TotalConcepts : Integer;
-    longestName : integer;
 
     FDesc : TLoincStrings;
     FCode : TLOINCCodeList;
@@ -1335,7 +1333,7 @@ begin
       begin
         inc(j);
         if j mod 100 = 0 then
-          Progress(i, f.Position / f.Size, 'Loading Language '+lang.Lang+'-'+lang.Country);
+          Progress(i, f.Position / f.Size, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(f.Position, f.Size));
         items.Clear;
         csv.ConsumeEntries(items);
         if items.count > 0 then
@@ -1355,7 +1353,6 @@ begin
             for p in s.Split([';']) do
               if code.RelatedNames.IndexOf(p.Trim) = -1 then
                 code.RelatedNames.add(p.trim());
-            longestName := Integermax(longestName, code.longestName);
             lang.Codes.Add(items[0], code.Link);
           finally
             code.Free;
@@ -1709,15 +1706,6 @@ end;
 function TLoincLanguageCodes.link: TLoincLanguageCodes;
 begin
   result := TLoincLanguageCodes(inherited Link);
-end;
-
-function TLoincLanguageCodes.longestName: integer;
-var
-  s : String;
-begin
-  result := IntegerMax(FShortname.Length, FLongName.Length);
-  for s in FRelatedNames do
-    result := IntegerMax(s.Length, result);
 end;
 
 { TLoincLanguage }

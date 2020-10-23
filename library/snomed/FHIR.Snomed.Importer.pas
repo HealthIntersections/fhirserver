@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  SysUtils, Classes, Inifiles, Generics.Collections,
+  Windows, SysUtils, Classes, Inifiles, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects;
@@ -110,6 +110,7 @@ Type
     FOutbounds : TRelationshipArray;
     FActiveParents : TCardinalArray;
     FInActiveParents : TCardinalArray;
+    descCount : integer;
     FDescriptions : TCardinalArray;
     Active : boolean;
 //    FClosed : Boolean;
@@ -120,12 +121,23 @@ Type
     destructor Destroy; Override;
   End;
 
-  TWordCache = class (TObject)
+  TWordCache = class (TFslObject)
   public
     Flags : Integer;
-    Stem : String;
-    constructor Create(aStem : String);
+    Word, Stem : String;
+    constructor Create(word, aStem : String);
   End;
+
+  { TStemCache }
+
+  TStemCache = class (TFslObject)
+  private
+    stem : String;
+    values : TFslIntegerList;
+  public
+    constructor Create(stem : String);
+    destructor Destroy; override;
+  end;
 
   TSnomedImporter = class (TFslObject)
   private
@@ -142,7 +154,7 @@ Type
     OverallCount : Integer;
     ClosureCount : Integer;
 
-    FStringsTemp : TStringList;
+    FStringsTemp : TDictionary<String, Cardinal>;
     FConcepts : TFslObjectList;
 
     FStrings : TSnomedStrings;
@@ -162,8 +174,8 @@ Type
     FVersionUri : String;
     FVersionDate : String;
     Findex_is_a : Cardinal;
-    FWordList : TStringList;
-    FStemList : TStringList;
+    FWordList : TFslMap<TWordCache>;
+    FStemList : TFslMap<TStemCache>;
     FStemmer : TFslWordStemmer;
 
     FStatus: Integer;
@@ -190,7 +202,7 @@ Type
     Procedure CloseReferenceSets(); overload;
     Procedure LoadReferenceSet(pfxLen : integer; sFile : String; isLangRefset : boolean);
     Procedure SeeDesc(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
-    Procedure SeeWord(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
+    Procedure SeeWord(sDesc : String; iConceptIndex : Integer; active, fsn : boolean; stem : String);
     procedure ReadRelationshipsFile;
     Procedure BuildClosureTable;
     Procedure BuildNormalForms;
@@ -336,11 +348,26 @@ Function CompareUInt64(a,b : Uint64) : Integer;
 begin
   if a > b Then
     result := 1
-  Else if a < b THen
+  Else if a < b Then
     result := -1
   Else
     Result := 0;
 End;
+
+{ TStemCache }
+
+constructor TStemCache.Create(stem: String);
+begin
+  inherited create;
+  values := TFslIntegerList.Create;
+  values.SortAscending;
+end;
+
+destructor TStemCache.Destroy;
+begin
+  values.free;
+  inherited Destroy;
+end;
 
 { TConcept }
 
@@ -359,8 +386,10 @@ end;
 
 { TWordCache }
 
-constructor TWordCache.create(aStem: String);
+constructor TWordCache.create(word, aStem: String);
 begin
+  inherited create;
+  self.word := word;
   Stem := aStem;
 end;
 
@@ -401,13 +430,11 @@ function TSnomedImporter.AddString(const s: String): Cardinal;
 var
   i : Integer;
 begin
-  if FStringsTemp.Find(s, i) Then
-    result := Cardinal(FStringsTemp.Objects[i])
-  Else
-  Begin
+  if not FStringsTemp.tryGetValue(s, result) then
+  begin
     result := FStrings.AddString(s);
-    FStringsTemp.AddObject(s, TObject(result));
-  End;
+    FStringsTemp.add(s, result);
+  end;
 end;
 
 procedure TSnomedImporter.Go;
@@ -439,17 +466,15 @@ begin
   FStart := now;
 
   FSvc := TSnomedServices.Create;
-  FWordList := TStringList.Create;
-  FStemList := TStringList.Create;
-  FStringsTemp := TStringList.Create;
+  FWordList := TFslMap<TWordCache>.Create('wordmap');
+  FStemList := TFslMap<TStemCache>.Create('stemmap');
+  FStringsTemp := TDictionary<String, Cardinal>.Create;
   FConcepts := TFslObjectList.Create;
   FStemmer := TFslWordStemmer.create('english');
   Frefsets := TRefSetList.Create;
   try
     FSvc.Building := true;
     Frefsets.SortedByName;
-    FWordList.Sorted := True;
-    FStemList.Sorted := True;
     FSvc.VersionUri := FVersionUri;
     FSvc.VersionDate := FVersionDate;
     FStrings := FSvc.Strings;
@@ -588,7 +613,7 @@ Begin
       inc(iCursor, 2);
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ = 0 then
-        Progress(STEP_READ_CONCEPT, iCursor / Length(s), '');
+        Progress(STEP_READ_CONCEPT, iCursor / Length(s), 'Read Concept Files '+pct(iCursor, Length(s)));
     End;
   End;
 
@@ -693,13 +718,12 @@ End;
 procedure TSnomedImporter.ReadDescriptionsFile;
 var
   s : TBytes;
-  iCursor : Integer;
+  iCursor, len : Integer;
   iStart, iId, iStatus, iConcept, iTerm, iCaps, iType, iLang, iDate, iModuleId, iConceptStart, iTermStart : Integer;
   oConcept : TConcept;
   iDescId, cid : UInt64;
   sDesc : String;
   i, j, iStem : integer;
-  oList : TFslIntegerList;
   aCardinals : TCardinalArray;
   iConceptIndex : integer;
   aIndex : TIndexArray;
@@ -711,6 +735,8 @@ var
   fi : integer;
   active : boolean;
   iFlag, lang : Byte;
+  wc : TWordCache;
+  sc : TStemCache;
   Function Next(ch : byte) : integer;
   begin
     inc(iCursor);
@@ -727,7 +753,8 @@ begin
     s := LoadFile(DescriptionFiles[fi]);
     iCursor := -1;
     iCursor := Next(13) + 2;
-    While iCursor < Length(s) Do
+    len := Length(s);
+    While iCursor < len Do
     Begin
       iStart := iCursor;
       iId := Next(9);
@@ -768,9 +795,11 @@ begin
       sDesc := memU8toString(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, active, iKind = RF2_MAGIC_FSN);
 
-      SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
       iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, caps, active, lang);
-      oConcept.FDescriptions[Length(oConcept.FDescriptions)-1] := iRef;
+      if oConcept.descCount = length(oConcept.FDescriptions) then
+        SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+10);
+      oConcept.FDescriptions[oConcept.descCount] := iRef;
+      inc(oConcept.descCount);
 
       if aIndexLength = Length(aIndex) Then
         SetLength(aIndex, Length(aIndex)+10000);
@@ -780,8 +809,9 @@ begin
 
       inc(iCursor, 2);
       inc(OverallCount);
+
       if OverallCount mod UPDATE_FREQ_D = 0 then
-        Progress(STEP_READ_DESC, iCursor / Length(s), '');
+        Progress(STEP_READ_DESC, iCursor / len, 'Read Description Files '+pct(iCursor, len));
     End;
   end;
   Progress(STEP_SORT_DESC, 0, 'Sort Descriptions');
@@ -799,34 +829,35 @@ begin
 
   Progress(STEP_PROCESS_WORDS, 0, 'Process Words');
   FWords.StartBuild;
-  For i := 0 to FWordList.Count - 1 Do
+  i := 0;
+  For wc in FWordList.values Do
   Begin
     if OverallCount mod 5011 = 0 then
       Progress(STEP_PROCESS_WORDS, i / FWordList.Count, '');
-    iFlag := TWordCache(FWordList.Objects[i]).Flags;
+    iFlag := wc.Flags;
     iFlag := iFlag xor FLAG_WORD_DEP; // reverse usage
-    FWords.AddWord(FStrings.AddString(FWordList[i]), iFlag);
-    FWordList.Objects[i].Free;
+    FWords.AddWord(FStrings.AddString(wc.word), iFlag);
     inc(OverallCount);
+    inc(i);
   End;
   FWords.DoneBuild;
 
   Progress(STEP_PROCESS_STEMS, 0, 'Process Stems');
   FStems.StartBuild;
-  For i := 0 to FStemList.Count - 1 Do
+  i := 0;
+  For sc in FStemList.Values Do
   Begin
     if OverallCount mod 5011 = 0 then
       Progress(STEP_PROCESS_STEMS, i / FStemList.Count, '');
-    oList := TFslIntegerList(FStemList.Objects[i]);
-    SetLength(aCardinals, oList.Count);
-    for j := 0 to oList.Count - 1 Do
-      aCardinals[j] := TConcept(FConcepts[oList[j]]).Index;
-    iStem := FStrings.AddString(FStemList[i]);
+    SetLength(aCardinals, sc.values.Count);
+    for j := 0 to sc.values.Count - 1 Do
+      aCardinals[j] := TConcept(FConcepts[sc.values[j]]).Index;
+    iStem := FStrings.AddString(sc.stem);
     FStems.AddStem(iStem, FRefs.AddReferences(aCardinals));
-    for j := 0 to oList.Count - 1 Do
-      TConcept(FConcepts[oList[j]]).Stems.Add(iStem);
-    oList.Free;
+    for j := 0 to sc.values.Count - 1 Do
+      TConcept(FConcepts[sc.values[j]]).Stems.Add(iStem);
     inc(OverallCount);
+    inc(i);
   End;
   FStems.DoneBuild;
   Progress(STEP_MARK_STEMS, 0, 'Mark Stems');
@@ -973,7 +1004,7 @@ Begin
       inc(iCursor, 2);
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ_D = 0 then
-        Progress(STEP_READ_REL, fi / RelationshipFiles.Count, '');
+        Progress(STEP_READ_REL, fi / RelationshipFiles.Count, 'Read Relationship Files '+pct(iCursor, Length(s)));
     End;
   End;
   if FDuplicateRelationships.Count > 0 then
@@ -1102,6 +1133,7 @@ begin
       SetLength(inactive, length(inactive)+1);
       inactive[length(inactive) - 1] := oConcept.Identity;
     End;
+    SetLength(oConcept.FDescriptions, oConcept.descCount);
     FConcept.SetDescriptions(oConcept.index, FRefs.AddReferences(oConcept.FDescriptions));
 
     aCards := SortRelationshipArray(oConcept.FInBounds);
@@ -1124,6 +1156,8 @@ begin
   Progress(STEP_BUILD_CLOSURE, 0, 'Build Closure Table');
   for i := 0 to FConcepts.Count - 1 do
   begin
+    if (i mod 10000 = 0) then
+      Progress(STEP_BUILD_CLOSURE, 0, 'Build Closure Table '+pct(i, FConcepts.count));
     BuildClosure(TConcept(FConcepts[i]).Index);
   End;
 end;
@@ -1138,7 +1172,7 @@ begin
   for i := 0 to FConcepts.Count - 1 do
   begin
     if i mod UPDATE_FREQ = 0 then
-      Progress(STEP_NORMAL_FORMS, i / FConcepts.Count, 'Build Normal Forms');
+      Progress(STEP_NORMAL_FORMS, i / FConcepts.Count, 'Build Normal Forms '+pct(i, FConcepts.Count));
     exp := TSnomedExpression.Create;
     try
       exp.concepts.Add(TSnomedConcept.create(TConcept(FConcepts[i]).Index));
@@ -1333,27 +1367,31 @@ end;
 
 procedure TSnomedImporter.SeeDesc(sDesc: String; iConceptIndex : Integer; active, FSN : boolean);
 var
-  s : String;
+  s, stem : String;
 begin
-  while (sDesc <> '') Do
-  Begin
-    StringSplit(sdesc, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='],
-      s, sdesc);
-    if (s <> '') And not StringIsInteger32(s) Then
-      SeeWord(s, iConceptIndex, active, fsn);
+  for s in sDesc.Split([',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '-', '+', '=']) do
+  begin
+    if (s <> '') And not StringIsInteger32(s) and (s.length > 2) Then
+    begin
+      stem := FStemmer.Stem(s);
+      if (stem <> '') then
+        SeeWord(s, iConceptIndex, active, fsn, stem);
+    end;
   End;
 end;
 
-procedure TSnomedImporter.SeeWord(sDesc: String; iConceptIndex : Integer; active, FSN : boolean);
+procedure TSnomedImporter.SeeWord(sDesc: String; iConceptIndex : Integer; active, FSN : boolean; stem : String);
 var
   i, m : integer;
-  oList : TFslIntegerList;
+  oStem : TStemCache;
   oWord : TWordCache;
 begin
   sDesc := lowercase(sdesc);
-  if not FWordList.Find(sDesc, i) Then
-    i := FWordList.AddObject(sdesc, TWordCache.Create(FStemmer.Stem(sDesc)));
-  oWord := TWordCache(FWordList.Objects[i]);
+  if not FWordList.TryGetValue(sDesc, oWord) Then
+  begin
+    oWord := TWordCache.Create(sDesc, stem);
+    FWordList.add(sdesc, oWord);
+  end;
   m := oWord.Flags;
   if FSN then
   m := m or FLAG_WORD_FSN;
@@ -1361,18 +1399,15 @@ begin
     m := m or FLAG_WORD_DEP; // note it being used backwards here - set to true if anything is active
   oWord.Flags := m;
 
-  if not FStemList.Find(oWord.Stem, i) Then
+  if not FStemList.TryGetValue(oWord.Stem, oStem) Then
   Begin
-    oList := TFslIntegerList.Create;
-    oList.SortAscending;
-    FStemList.AddObject(oWord.Stem, oList);
-  End
-  Else
-    oList := TFslIntegerList(FStemList.Objects[i]);
-  if not oList.ExistsByValue(iConceptIndex) Then
-    oList.Add(iConceptIndex);
-End;
+    oStem := TStemCache.create(oWord.stem);
+    FStemList.Add(oWord.Stem, oStem);
+  End;
 
+  if not oStem.Values.ExistsByValue(iConceptIndex) Then
+    oStem.Values.Add(iConceptIndex);
+End;
 
 
 procedure TSnomedImporter.SetDepths(aRoots : UInt64Array);
@@ -1792,6 +1827,7 @@ var
   parts : TArray<String>;
   ti : cardinal;
   fieldnames : TStringList;
+  line : Integer;
   Function Next(ch : Byte) : integer;
   begin
     inc(iCursor);
@@ -1800,6 +1836,7 @@ var
     result := iCursor;
   End;
 begin
+  Progress(STEP_IMPORT_REFSET, 0, 'Import Reference Set '+ExtractFileName(sFile));
   ss := ExtractFileName(sFile);
   parts := ss.Split(['_']);
   name := parts[1];
@@ -1825,8 +1862,7 @@ begin
     end;
   end;
 
-  // writeln('refset: '+sFile+': '+name+'+'+caToString(types));
-
+  line := 0;
   s := LoadFile(sFile);
   iCursor := 0;
   // figure out what kind of reference set this is
@@ -1843,6 +1879,10 @@ begin
       fieldnames.add(name.trim);
     While iCursor < Length(s) Do
     Begin
+      inc(line);
+      if (line mod 50 = 0) then
+        Progress(STEP_IMPORT_REFSET, 0, 'Import Reference Set '+ExtractFileName(sFile)+' line '+inttostr(line));
+
       iId := iCursor;
       iDate := Next(9);
       iTime := Next(9);
@@ -1985,6 +2025,7 @@ begin
   for i := 0 to Frefsets.Count - 1  do
   begin
     refset := Frefsets[i] as TRefSet;
+    Progress(STEP_IMPORT_REFSET, 0, 'Closing Reference Set '+refset.Name+' ('+pct(i, FRefSets.Count)+')');
     SetLength(refset.aMembers, refset.iMemberLength);
     QuickSortPairsByName(refset.aMembers);
     refset.membersByName := FRefsetMembers.AddMembers(false, refset.aMembers);
@@ -2098,3 +2139,5 @@ begin
 end;
 
 End.
+
+

@@ -1858,10 +1858,15 @@ type
       Procedure AddCardinal(val : cardinal);
       Procedure AddInteger(val : integer);
       Procedure AddUInt64(val : UInt64);
-      Procedure AddString(val : String);
-      procedure AddUtf8(val : String);
-      Procedure AddAnsiString(val : AnsiString);
       Procedure addBase64(val : TBytes);
+
+      // 1 byte/2byte are internal memory formats - they are not quite UTF16 and utf8, and potentially fragile
+      Procedure AddString2Byte(val : String);
+      procedure AddString1Byte(val : String);
+      // utf16 and utf8 are the real unicode formats, but variable in length
+      Procedure AddStringUtf16(val : String);
+      procedure AddStringUtf8(val : String);
+      Procedure AddStringAnsi(val : AnsiString);
 
       procedure Read(index : cardinal; var buffer; ilength : cardinal);
 
@@ -7419,101 +7424,6 @@ Begin
     Inc(iBytes);
   End;
   result := TEncoding.UTF8.GetString(bytes, 0, iBytes);
-End;
-
-Function EncodeNYSIIS(Const sValue : String) : String;
-// NYSIIS Phonetic Encoder
-// Based on Pseudo code from http://www.dropby.com/NYSIIS.html
-Var
-  cFirst : Char;
-Begin
-
-  // Remove non-alpha characters
-  Result := StringKeep(StringUpper(RemoveAccents(sValue)), setAlphabet);
-
-  //Remove space and control characters from end
-  Result := StringTrimWhitespaceRight(Result);
-
-  //Remove trailing 'S' and 'Z' characters
-  Result := StringTrimSetRight(Result, ['S', 'Z']);
-
-  If Length(Result) = 0 Then
-    Result := 'S';
-
-
-  If Result <> '' Then
-  Begin
-    // Transcode initial strings MAC => MC; PF => F
-    Result := StringReplaceBefore(Result, 'MAC', 'MC');
-    Result := StringReplaceBefore(Result, 'PF', 'F');
-
-    // Transcode trailing strings as follows : IX => IC; EX => EC; YE, EE, IE => Y; NT, ND => D
-    Result := StringReplaceAfter(Result, 'IX',  'IC');
-    Result := StringReplaceAfter(Result, 'EX',  'EE');
-    Result := StringReplaceAfter(Result, 'YE',  'Y');
-    Result := StringReplaceAfter(Result, 'EE',  'Y');
-    Result := StringReplaceAfter(Result, 'IE',  'Y');
-    Result := StringReplaceAfter(Result, 'NT',  'N');
-    Result := StringReplaceAfter(Result, 'ND',  'N');
-    // Next 3 are not in the pseudo code, but are in the javascript from site
-    Result := StringReplaceAfter(Result, 'DT',  'D');
-    Result := StringReplaceAfter(Result, 'RT',  'D');
-    Result := StringReplaceAfter(Result, 'RD',  'D');
-
-
-    // Transcode 'EV' to 'EF' if not at the start of string
-    Result := StringReplaceAll(Result, 'EV', 'EF', 2);
-
-    cFirst := Result[1];
-
-    // Replace all vowels with 'A'
-    Result := StringReplace(Result, ['E', 'I', 'O', 'U'], 'A');
-
-    // Remove any 'W' that follows a vowel
-    Result := StringReplaceAll(Result, 'AW', 'A');
-
-    // Transcode 'GHT' => 'GT'; 'DG' => 'G'; 'PH' => 'F'
-    Result := StringReplaceAll(Result, 'GHT', 'GT');
-    Result := StringReplaceAll(Result, 'DG', 'G');
-    Result := StringReplaceAll(Result, 'PH', 'F');
-
-    // If not first character, eliminate all 'H' preceded or followed by a vowel
-    Result := StringReplaceAll(Result, 'AH', 'A');
-    Result := StringReplaceAll(Result, 'HA', 'A', 2);
-
-    // Change 'KN' to 'N', else 'K' to 'C'
-    Result := StringReplaceAll(Result, 'KN', 'N');
-    Result := StringReplaceAll(Result, 'K', 'C');
-
-    // If not first character, change 'M' to 'N' & 'Q' to 'G'
-    Result := StringReplaceAll(Result, 'M', 'N', 2);
-    Result := StringReplaceAll(Result, 'Q', 'G', 2);
-
-    // Transcode 'SH' to 'S', 'SCH' to 'S', 'YW' to 'Y'
-    Result := StringReplaceAll(Result, 'SH', 'S');
-    Result := StringReplaceAll(Result, 'SCH', 'S');
-    Result := StringReplaceAll(Result, 'YW', 'Y');
-
-    // If not first or last character, change 'Y' to 'A'
-    Result := StringReplaceAll(Result, 'Y', 'A', 2, 1);
-
-    // Transcode 'WR' to 'R'
-    Result := StringReplaceAll(Result, 'WR', 'R');
-
-    // If not first character, change 'Z' to 'S'
-    Result := StringReplaceAll(Result, 'Z', 'S', 2);
-
-    // Transcode terminal 'AY' to 'Y'
-    Result := StringReplaceAfter(Result, 'AY', 'Y');
-
-    Result := StringStripDuplicates(StringTrimSetRight(Result, setVowels));
-
-    // If first char is a vowel, use original character as first character instead of A
-    Result := StringReplaceBefore(Result, 'A', cFirst);
-
-    If Result = '' Then
-      Result := cFirst;
-  End;
 End;
 
 function GetCryptKey(const AStr: String): Word;
@@ -14207,18 +14117,57 @@ Begin
   Inc(FLength);
 End;
 
-procedure TFslBytesBuilder.AddAnsiString(val: AnsiString);
+procedure TFslBytesBuilder.AddString2Byte(val: String);
+Var
+  v : {$IFDEF FPC}WideString{$ELSE}String{$ENDIF};
+  s : TBytes;
+Begin
+  if val.length > 0 then
+  begin
+    v := val;
+    SetLength(s, System.Length(v)*2);
+    move(v[1], s[0], System.Length(v)*2);
+    Append(s);
+  end;
+end;
+
+procedure TFslBytesBuilder.AddString1Byte(val: String);
+var
+  v : AnsiString;
+begin
+  if val.length > 0 then
+  begin
+    v := val;
+    AddStringAnsi(v);
+  end;
+end;
+
+procedure TFslBytesBuilder.AddStringUtf8(val: String);
+begin
+  append(TEncoding.UTF8.GetBytes(val));
+end;
+
+procedure TFslBytesBuilder.AddStringUtf16(val: String);
+begin
+  append(TEncoding.BigEndianUnicode.GetBytes(val));
+end;
+
+
+procedure TFslBytesBuilder.AddStringAnsi(val: AnsiString);
 Var
   s : TBytes;
 Begin
-  SetLength(s, System.Length(val));
-  move(val[1], s[0], System.Length(val));
-  Append(s);
+  if System.length(val) > 0 then
+  begin
+    SetLength(s, System.Length(val));
+    move(val[1], s[0], System.Length(val));
+    Append(s);
+  end;
 end;
 
 procedure TFslBytesBuilder.addBase64(val: TBytes);
 begin
-  AddAnsiString(EncodeBase64(val));
+  AddStringAnsi(EncodeBase64(val));
 end;
 
 procedure TFslBytesBuilder.AddCardinal(val: cardinal);
@@ -14239,22 +14188,6 @@ Begin
   Append(s);
 end;
 
-procedure TFslBytesBuilder.AddString(val: String);
-Var
-  s : TBytes;
-Begin
-  {$IFDEF FPC}
-  raise Exception.Create('Not Done Yet');
-  {$ELSE}
-  if val.length > 0 then
-  begin
-    SetLength(s, val.Length*2);
-    move(val[1], s[0], val.Length*2);
-    Append(s);
-  end;
-  {$ENDIF}
-end;
-
 procedure TFslBytesBuilder.AddUInt64(val: UInt64);
 Var
   s : TBytes;
@@ -14262,11 +14195,6 @@ Begin
   SetLength(s, 8);
   move(val, s[0], 8);
   Append(s);
-end;
-
-procedure TFslBytesBuilder.AddUtf8(val: String);
-begin
-  append(TEncoding.UTF8.GetBytes(val));
 end;
 
 procedure TFslBytesBuilder.AddWord(val: word);
@@ -15444,7 +15372,7 @@ begin
   // result := FStem.Stem(word);
 end;
 
-function removeAccent(ch : UnicodeChar) : String;
+function removeAccentFromChar(ch : UnicodeChar) : String;
 begin
   case ch of
     //' '
@@ -16504,13 +16432,115 @@ begin
   b := TFslStringBuilder.create;
   try
     for ch in unicodeChars(s) do
-      b.append(removeAccent(ch));
+      b.append(removeAccentFromChar(ch));
     result := b.ToString;
   finally
     b.Free;
   end;
-
 end;
+
+Function EncodeNYSIIS(Const sValue : String) : String;
+// NYSIIS Phonetic Encoder
+// Based on Pseudo code from http://www.dropby.com/NYSIIS.html
+Var
+  working : String;
+  cursor, len, top : integer;
+  procedure add(s : string; count : integer);
+  var
+    ch : char;
+  begin
+      for ch in s do
+      begin
+      if (len = 0) or (result[len] <> ch) then
+      begin
+        inc(len);
+        result[len] := ch;
+      end;
+    end;
+    inc(cursor, count-1);
+  end;
+  function matches(s : String) : boolean;
+  var
+    i : integer;
+  begin
+    result := true;
+    for i := 1 to length(s)-1 do
+      if (cursor+i > length(working)) or (working[cursor+i] <> s[i+1]) then
+        exit(false);
+  end;
+Begin
+  if (sValue = '') then
+    exit('');
+
+  Setlength(result, sValue.length*2);
+  len := 0;
+
+  working := RemoveAccents(sValue).ToUpper;
+
+  // remove trailing S/Z
+  top := length(working);
+  while ((top > 0) and (working[top] in ['S', 'Z'])) do
+    dec(top);
+  if (top = 0) then
+    exit('S');
+
+  cursor := 1;
+  while (cursor <= top) do
+  begin
+    case working[cursor] of
+      'A': if matches('AH') then add('A', 2)
+           else if matches('AW') then add('A', 2)
+           else if matches('AY') then add('Y', 2)
+           else add('A', 1);
+      'D': if matches('DG') then add('G', 2)
+           else if matches('DT') then add('D', 2)
+           else add('D', 1);
+      'E': if matches('EE') then add('Y', 2)
+           else if matches('EV') then add('EF', 2)
+           else if matches('EX') then add('EE', 2)
+           else add('E', 1);
+      'G': if matches('GHT') then add('GT', 2)
+           else add('G', 1);
+      'H': if matches('HA') then add('A', 2)
+           else add('H', 1);
+      'I': if matches('IE') then add('Y', 2)
+           else if matches('IX') then add('IC', 2)
+           else add('I', 1);
+      'K': if matches('KN') then add('N', 2)
+           else add('C', 1);
+      'M': if matches('MAC') then add('MC', 3)
+           else add('N', 1);
+      'N': if matches('ND') then add('N', 2)
+           else if matches('NT') then add('N', 2)
+           else add('N', 1);
+      'P': if matches('PF') then add('F', 2)
+           else if matches('PH') then add('F', 2)
+           else add('P', 1);
+      'Q': add('C', 1);
+      'R': if matches('RD') then add('D', 2)
+           else if matches('RT') then add( 'D', 2)
+           else add('R', 1);
+      'S': if matches('SCH') then add('S', 3)
+           else if matches('SH') then add('S', 2)
+           else add('S', 1);
+      'W': if matches('WR') then add('R', 2)
+           else add('W', 1);
+      'Y': if matches('YE') then add('Y', 2)
+           else if matches('YW') then add('Y', 2)
+           else add('G', 1);
+     'Z': add('S', 1);
+     else if (len > 0) and (working[cursor] in ['E', 'I', 'O', 'U']) then
+       add('A', 1)
+     else if (working[cursor] in ['A'..'Z', '0'..'9']) then
+      add(working[cursor], 1)
+     else ;
+      // else ignore any other character
+    end;
+    inc(cursor, 1);
+  end;
+  SetLength(result, len);
+End;
+
 
 procedure init;
 begin

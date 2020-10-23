@@ -44,6 +44,7 @@ const
 Type
   TSnomedRefinementGroup = class;
   TSnomedRefinement = class;
+  TSnomedRefinementList = TFslList<TSnomedRefinement>;
 
   TSnomedExpressionBase = class (TFslObject)
   private
@@ -85,18 +86,18 @@ Type
   TSnomedExpression = class (TSnomedExpressionBase)
   private
     FrefinementGroups: TFslList<TSnomedRefinementGroup>;
-    Frefinements: TFslList<TSnomedRefinement>;
+    Frefinements: TSnomedRefinementList;
     Fconcepts: TFslList<TSnomedConcept>;
     FStatus: TSnomedExpressionStatus;
     function GetRefinementGroups: TFslList<TSnomedRefinementGroup>;
-    function GetRefinements: TFslList<TSnomedRefinement>;
+    function GetRefinements: TSnomedRefinementList;
   public
     constructor Create; Override;
     destructor Destroy; Override;
     Function Link : TSnomedExpression; overload;
     Property status : TSnomedExpressionStatus read FStatus write FStatus;
     Property concepts : TFslList<TSnomedConcept> read Fconcepts;
-    Property refinements : TFslList<TSnomedRefinement> read GetRefinements;
+    Property refinements : TSnomedRefinementList read GetRefinements;
     Property refinementGroups : TFslList<TSnomedRefinementGroup> read GetRefinementGroups;
 
     function HasRefinements : boolean;
@@ -134,12 +135,12 @@ Type
 
   TSnomedRefinementGroup = class (TSnomedExpressionBase)
   private
-    Frefinements: TFslList<TSnomedRefinement>;
+    Frefinements: TSnomedRefinementList;
   public
     constructor Create; Override;
     destructor Destroy; Override;
     Function Link : TSnomedRefinementGroup; overload;
-    Property refinements : TFslList<TSnomedRefinement> read Frefinements;
+    Property refinements : TSnomedRefinementList read Frefinements;
 
     function matches(other : TSnomedRefinementGroup) : boolean;
     function hasRefinement(refinement : TSnomedRefinement) : boolean;
@@ -374,10 +375,10 @@ begin
   result := FrefinementGroups;
 end;
 
-function TSnomedExpression.GetRefinements: TFslList<TSnomedRefinement>;
+function TSnomedExpression.GetRefinements: TSnomedRefinementList;
 begin
   if Frefinements = nil then
-    Frefinements := TFslList<TSnomedRefinement>.Create;
+    Frefinements := TSnomedRefinementList.Create;
   result := Frefinements;
 end;
 
@@ -575,7 +576,7 @@ end;
 constructor TSnomedRefinementGroup.Create;
 begin
   inherited;
-  Frefinements := TFslList<TSnomedRefinement>.Create;
+  Frefinements := TSnomedRefinementList.Create;
 end;
 
 function TSnomedRefinementGroup.describe: String;

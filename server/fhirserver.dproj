@@ -421,9 +421,6 @@
         <DCCReference Include="FHIR.Server.ValidatorR2.pas"/>
         <DCCReference Include="FHIR.Server.ValidatorR3.pas"/>
         <DCCReference Include="FHIR.Server.SessionMgr.pas"/>
-        <DCCReference Include="FHIR.Server.Manager.pas">
-            <Form>ServerManagerForm</Form>
-        </DCCReference>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Actions.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.Classes.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.ClipBoard.pas"/>

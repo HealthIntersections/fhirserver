@@ -58,7 +58,8 @@ also:
   v2 & v3 data type
 }
 Const
-  LOINC_CACHE_VERSION = '11';
+  LOINC_CACHE_VERSION_CURRENT = '12';
+  LOINC_CACHE_VERSION_UTF16 = '11';
   NO_PARENT = $FFFFFFFF;
 
   CL_OFFSET_Description = 0;
@@ -107,10 +108,12 @@ type
   // we store loinc descriptions, and other names in here
   TLoincStrings = class (TFslObject)
     Private
+      FIsUtf16 : boolean;
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
     Public
+      Property IsUtf16 : boolean read FIsUtf16 write FIsUtf16;
       Function GetEntry(iIndex : Cardinal; var lang : byte):String;
 
       Procedure StartBuild;
@@ -467,8 +470,14 @@ function nolang : TLangArray;
 
 function memU8toString(bytes : TBytes; index, chars : integer) : String;
 function memU16ToString(const bytes : TBytes; index : cardinal; chars : word) : String;
+function pct(i, t : integer) : String;
 
 Implementation
+
+function pct(i, t : integer) : String;
+begin
+  result := FloatToStrF((i * 100) / t, ffFixed, 1, 1)+'%';
+end;
 
 // the bytes contain UTF16
 function memU16ToString(const bytes : TBytes; index : cardinal; chars : word) : String;
@@ -530,15 +539,18 @@ begin
     if l > 0 Then
     begin
       lang := FMaster[iIndex+2];
-      result := memU16ToString(FMaster, iIndex+3, l);
+      if FIsUtf16 then
+        result := memU16ToString(FMaster, iIndex+3, l)
+      else
+        result := memU8ToString(FMaster, iIndex+3, l);
     end;
   end;
 end;
 
 function TLoincStrings.AddEntry(lang : byte; const s: String): Cardinal;
 begin
-  if Length(s) > 2000 Then
-    raise ETerminologyError.create('LOINC Description too long: '+s);
+  if Length(s) > 65535 Then
+    raise ETerminologyError.create('LOINC Description too long: '+inttostr(s.length));
   result := FBuilder.Length;
   FBuilder.AddWord(Length(s));
   if (length(s) > 0) then
@@ -546,7 +558,7 @@ begin
     FBuilder.Append(lang);
     if (s[1] < ' ') and DebugConsoleMessages then
       writeln('error');
-    FBuilder.AddString(s);
+    FBuilder.AddString1Byte(s);
   end;
 end;
 
@@ -708,7 +720,7 @@ begin
   FillChar(s[1], FCodeLength, 32);
   for I := 1 to length(sCode) do
     s[i] := AnsiChar(sCode[i]);
-  FBuilder.AddAnsiString(s);
+  FBuilder.AddStringAnsi(s);
   FBuilder.AddCardinal(iDescriptions);
   FBuilder.AddCardinal(iOtherNames);
   FBuilder.AddCardinal(0); // Component
@@ -1101,6 +1113,7 @@ var
   aLoop : TLoincPropertyType;
   a : TLoincSubsetId;
   i, t : integer;
+  v : String;
   function readBytes : TBytes;
   begin
     SetLength(result, oRead.ReadInteger);
@@ -1112,8 +1125,14 @@ begin
   try
     oread := TReader.Create(oFile, 8192);
     try
-      if oRead.ReadString <> LOINC_CACHE_VERSION Then
-        raise ETerminologyError.create('the LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
+      v := oRead.ReadString;
+      if v = LOINC_CACHE_VERSION_CURRENT Then
+        FDesc.FIsUtf16 := false
+      else if v = LOINC_CACHE_VERSION_UTF16 Then
+        FDesc.FIsUtf16 := true
+      else
+        raise ETerminologyError.create('The LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
+
       FCode.CodeLength := oRead.ReadInteger;
       FLang.FMaster := ReadBytes;
       FLang.FLength := Length(FLang.FMaster);
@@ -1175,7 +1194,7 @@ begin
   try
     oWrite := TWriter.Create(oFile, 8192);
     try
-      oWrite.WriteString(LOINC_CACHE_VERSION);
+      oWrite.WriteString(LOINC_CACHE_VERSION_CURRENT);
       oWrite.WriteInteger(FCode.CodeLength);
       WriteBytes(FLang.FMaster);
       WriteBytes(FCode.FMaster);
@@ -2695,7 +2714,7 @@ begin
     raise ETerminologyError.create('LOINC Language code too long: '+country);
   assert(FBuilder.Length mod 10 = 0);
   result := FBuilder.Length div 10;
-  FBuilder.AddString(lang+'-'+country);
+  FBuilder.AddString2Byte(lang+'-'+country);
 end;
 
 function TLoincLanguages.count: integer;

@@ -270,7 +270,11 @@ begin
 end;
 
 procedure TFHIRServiceGeneral.closeDown;
+var
+  ctxt : TFHIRServerContext;
 begin
+  for ctxt in FContexts.Values do
+    Telnet.removeContext(ctxt);
   if FPackageUpdater <> nil then
     FPackageUpdater.Terminate;
   inherited CloseDown;
@@ -355,7 +359,7 @@ begin
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
       try
-        ctxt.TelnetServer := Telnet.Link;
+        Telnet.addContext(ctxt);
         FContexts.add(s, ctxt.Link);
         ctxt.OnGetNamedContext := doGetNamedContext;
         Logging.log('  .. check DB '+details['database']);

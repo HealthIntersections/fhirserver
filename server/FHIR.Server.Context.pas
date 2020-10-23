@@ -39,7 +39,7 @@ uses
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
   FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine,
-  FHIR.Server.ClientCacheManager, FHIR.Server.Telnet
+  FHIR.Server.ClientCacheManager
   {$IFNDEF NO_JS}, FHIR.Server.Javascript {$ENDIF};
 
 Const
@@ -66,6 +66,8 @@ Type
     procedure clear(rtype: string; id: String); overload;
     procedure clearVS(id: string);
     procedure clear; overload;
+    function cacheCount : integer;
+    procedure clearCache;
   end;
 
   TFHIRServerContext = class;
@@ -107,7 +109,6 @@ Type
     FConsentEngine: TFHIRConsentEngine;
     FClientCacheManager: TClientCacheManager;
     FOnGetNamedContext : TGetNamedContextEvent;
-    FTelnetServer : TFHIRTelnetServer;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -120,7 +121,6 @@ Type
     procedure SetValidate(const Value: Boolean);
 
     procedure SetClientCacheManager(const Value: TClientCacheManager);
-    procedure SetTelnetServer(const Value: TFHIRTelnetServer);
   public
     constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
@@ -146,7 +146,6 @@ Type
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
     property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
-    property TelnetServer : TFHIRTelnetServer read FTelnetServer write SetTelnetServer;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -164,6 +163,9 @@ Type
     function getMaps : TFslMap<TFHIRStructureMapW>;
 
     procedure DoneLoading(conn : TFslDBConnection);
+
+    function cacheCount : integer;
+    procedure clearCache;
 
     property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
   end;
@@ -191,6 +193,16 @@ begin
   inherited;
 end;
 
+function TQuestionnaireCache.cacheCount: integer;
+begin
+  FLock.Lock;
+  try
+    result := FQuestionnaires.Count + FForms.Count;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TQuestionnaireCache.clear;
 begin
   FLock.Lock('clear');
@@ -198,6 +210,17 @@ begin
     FQuestionnaires.clear;
     FForms.clear;
     FValueSetDependencies.clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TQuestionnaireCache.clearCache;
+begin
+  FLock.Lock;
+  try
+    FQuestionnaires.Clear;
+    FForms.Clear;
   finally
     FLock.Unlock;
   end;
@@ -317,6 +340,18 @@ end;
 
 { TFHIRServerContext }
 
+function TFHIRServerContext.cacheCount: integer;
+begin
+  result := FQuestionnaireCache.cacheCount + FTerminologyServer.cacheCount + FClientCacheManager.cacheCount;
+end;
+
+procedure TFHIRServerContext.clearCache;
+begin
+  FQuestionnaireCache.clearCache;
+  FTerminologyServer.clearCache;
+  FClientCacheManager.clearCache;
+end;
+
 constructor TFHIRServerContext.Create(storage: TFHIRStorageService; serverFactory : TFHIRServerFactory);
 var
   a: String;
@@ -380,7 +415,6 @@ begin
   FServerFactory.Free;
   FTerminologyServer.Free;
   FClientCacheManager.Free;
-  FTelnetServer.Free;
 
   FValidatorContext.Free;
   FValidator.free;
@@ -467,12 +501,6 @@ procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionMa
 begin
   FSubscriptionManager.Free;
   FSubscriptionManager := Value;
-end;
-
-procedure TFHIRServerContext.SetTelnetServer(const Value: TFHIRTelnetServer);
-begin
-  FTelnetServer.Free;
-  FTelnetServer := Value;
 end;
 
 procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServer);
