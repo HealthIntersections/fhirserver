@@ -476,7 +476,7 @@ end;
 function info(p : PTheadRecord; id : boolean) : AnsiString;
 begin
   if (id) then
-    result := inttohex(p.id, 8)+': '
+    result := inttohex(NativeUInt(p.id), 8)+': '
   else
     result := '';
   result := result + p.name;
@@ -491,7 +491,7 @@ end;
 
 function GetThreadInfo : AnsiString;
 var
-  id : cardinal;
+  id : TThreadId;
   i : integer;
   p : PTheadRecord;
   s : AnsiString;

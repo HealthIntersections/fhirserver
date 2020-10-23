@@ -106,11 +106,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
+            <Filename Value="..\exec\64\FHIRConsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\web;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\library\support;..\dependencies\FMMAVX;..\library\snomed;..\library\web;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -121,11 +121,6 @@
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
         </CompilerOptions>
       </Item4>
