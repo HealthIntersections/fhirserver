@@ -29,31 +29,29 @@ unit FHIR.Database.Tests;
 }
 
 {$I fhir.inc}
-{$DEFINE DIFF}
 
 interface
 
 Uses
   Sysutils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
 Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TFslDBTests = Class (TFslTestCase)
   private
     conn4: TFslDBConnection;
     procedure TestThread;
     procedure test(manager: TFslDBManager);
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestMSSQL;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestMySQL;
-    // {[TestCase] }procedure TestMySQLMaria;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSQLite;
+    procedure TestSemaphore;
+    procedure TestMSSQL;
+    procedure TestMySQL;
+    // procedure TestMySQLMaria;
+    procedure TestSQLite;
   End;
 
 procedure registerTests;
@@ -551,14 +549,10 @@ end;
 // end;
 //
 
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-{$IFDEF FPC}
-  RegisterTest('DB Tests', TFslDBTests);
-{$ELSE}
-  TDUnitX.RegisterTestFixture(TFslDBTests);
-{$ENDIF}
+  RegisterTest('Library.DB Tests', TFslDBTests.Suite);
 end;
 
 end.

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Base.Objects,
   FHIR.Cda.Objects, FHIR.Cda.Parser, FHIR.Cda.Writer;
@@ -44,13 +44,11 @@ const
   TEST_PORT = 20032; // err, we hope that this is unused
 
 type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TCdaTests = Class (TFslTestCase)
   private
     function parse(filename : String) : TcdaClinicalDocument;
     procedure compose(filename : String; doc : TcdaClinicalDocument);
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestParseDocument;
   end;
 
@@ -118,11 +116,7 @@ end;
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  {$IFDEF FPC}
-  RegisterTest('CDA Tests', TCdaTests);
-  {$ELSE}
-  TDUnitX.RegisterTestFixture(TCdaTests);
-  {$ENDIF}
+  RegisterTest('Library.CDA Tests', TCdaTests.Suite);
 end;
 
 end.

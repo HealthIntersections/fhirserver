@@ -28,36 +28,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   Windows, Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdUri;
 
-{$IFNDEF FPC}
 type
-  [TextFixture]
-  TIdUriParserTests = Class (TObject)
+  TIdUriParserTests = Class (TFslTestCase)
   private
     procedure ok(uri : String);
-  public
-    [TestCase] Procedure TestOK;
-    [TestCase] Procedure TestFail;
-    [TestCase] Procedure TestUnicode1;
-    [TestCase] Procedure TestUnicode2;
+  published
+    Procedure TestOK;
+    Procedure TestFail;
+    Procedure TestUnicode1;
+    Procedure TestUnicode2;
   end;
-{$ENDIF}
 
 procedure registerTests;
 
 implementation
-
-{$IFNDEF FPC}
-
-//
 
 { TIdUriParserTests }
 
@@ -67,7 +60,7 @@ var
 begin
   o := TIdUri.create(uri);
   try
-    Assert.IsTrue(o <> nil);
+    assertTrue(o <> nil);
   finally
     o.free;
   end;
@@ -93,11 +86,10 @@ begin
   ok('http://orange.tw/sandbox/%EF%BC%AE%EF%BC%AE/passwd');
 end;
 
-{$ENDIF}
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  TDUnitX.RegisterTestFixture(TIdUriParserTests);
+  RegisterTest('Library.UriTests', TIdUriParserTests.Suite);
 end;
 
 end.

@@ -35,7 +35,7 @@ interface
 Uses
   {$IFDEF WINDOWS}Windows,{$ENDIF}
   SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, IniFiles,
-  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF}
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   CommonTestBase,
   FHIR.Support.Base, FHIR.Support.Utilities;
@@ -49,17 +49,10 @@ type
   TFslTestThread = class;
 
   {
-    TFslTestCase
-
-    Base test case for all tests.
-
-    For DUnitX, this doesn't do much directly, but it does define common assertions mechanism for FPCUnit and DUnitX.
-
-    For FPC, it also makes it easy to register tests with alternative names
-
+    TFslTestCase - works with DUnit or FPCUnit
   }
   {$M+}
-  TFslTestCase = class {$IFDEF FPC} (TTestCase) {$ENDIF}
+  TFslTestCase = class (TTestCase)
   protected
     procedure assertNotTested;
     procedure assertPass;
@@ -75,28 +68,33 @@ type
     procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
     procedure thread(proc : TRunMethod);
   public
-    {$IFNDEF FPC}
-    procedure setup; virtual;
-    procedure tearDown; virtual;
-    {$ENDIF}
   end;
 
-  TFslTestSuite = class (TFslTestCase)
+  TFslTestSuiteCase = class (TFslTestCase)
   protected
-    {$IFDEF FPC}
     FName : String;
+    {$IFDEF FPC}
     function GetTestName: string; override;
     {$ENDIF}
   public
-    {$IFDEF FPC}
-    constructor Create(name : String);
+    constructor Create(name : String); {$IFNDEF FPC} reintroduce;
+    function GetName: string; override;
     {$ENDIF}
     procedure TestCase(name : String); virtual;
   published
     {$IFDEF FPC}
     procedure Test;
+    {$ELSE}
+    procedure Run;
     {$ENDIF}
   end;
+
+  TFslTestSuite = class (TTestSuite)
+  private
+  public
+    constructor Create; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
+  end;
+
 
   TFslTestThread = class (TThread)
   private
@@ -138,7 +136,7 @@ begin
   {$IFDEF FPC}
   // nothing
   {$ELSE}
-  Assert.Pass;
+  check(true);
   {$ENDIF}
 end;
 
@@ -147,7 +145,7 @@ begin
   {$IFDEF FPC}
   TAssert.Fail(message);
   {$ELSE}
-  Assert.Fail(message);
+  Fail(message);
   {$ENDIF}
 end;
 
@@ -156,7 +154,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertTrue(message, test);
   {$ELSE}
-  Assert.IsTrue(test, message);
+  check(test, message);
   {$ENDIF}
 end;
 
@@ -165,7 +163,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertTrue(test);
   {$ELSE}
-  Assert.IsTrue(test);
+  check(test);
   {$ENDIF}
 end;
 
@@ -174,7 +172,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertFalse(message, test);
   {$ELSE}
-  Assert.IsFalse(test, message);
+  checkFalse(test, message);
   {$ENDIF}
 end;
 
@@ -183,7 +181,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertFalse(test);
   {$ELSE}
-  Assert.IsFalse(test);
+  checkFalse(test);
   {$ENDIF}
 end;
 
@@ -192,7 +190,7 @@ begin
   {$IFDEF FPC}
   TAssert.Fail('Not Tested');
   {$ELSE}
-  Assert.NotImplemented;
+  Fail('Not Tested');
   {$ENDIF}
 end;
 
@@ -201,7 +199,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertEquals(message, left, right);
   {$ELSE}
-  Assert.AreEqual(left, right, message);
+  checkEquals(left, right, message);
   {$ENDIF}
 end;
 
@@ -210,7 +208,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertEquals(left, right);
   {$ELSE}
-  Assert.AreEqual(left, right);
+  checkEquals(left, right);
   {$ENDIF}
 end;
 
@@ -219,7 +217,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertEquals(message, left, right);
   {$ELSE}
-  Assert.AreEqual(left, right, message);
+  checkEquals(left, right, message);
   {$ENDIF}
 end;
 
@@ -228,7 +226,7 @@ begin
   {$IFDEF FPC}
   TAssert.AssertEquals(left, right);
   {$ELSE}
-  Assert.AreEqual(left, right);
+  checkEquals(left, right);
   {$ENDIF}
 end;
 
@@ -237,52 +235,77 @@ begin
   {$IFDEF FPC}
   TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
   {$ELSE}
-  Assert.WillRaise(AMethod, AExceptionClass, AExceptionMessage);
+  try
+    AMethod;
+    if (AExceptionMessage = '') then
+      fail('Expected '+AExceptionClass.ClassName+', but it did not occur')
+    else
+      fail('Expected '+AExceptionClass.ClassName+' with message "'+AExceptionMessage+'", but it did not occur')
+  except
+    on e : Exception do
+    begin
+      assertTrue(e.ClassType = AExceptionClass, 'Method raised an exception, but not of the right type ('+e.ClassName+' vs '+AExceptionClass.ClassName);
+      if AExceptionMessage <> '' then
+        assertEqual(e.Message, AExceptionMessage);
+    end;
+  end;
   {$ENDIF}
 end;
-
-{$IFNDEF FPC}
-procedure TFslTestCase.setup;
-begin
-
-end;
-
-procedure TFslTestCase.tearDown;
-begin
-
-end;
-{$ENDIF}
 
 procedure TFslTestCase.thread(proc: TRunMethod);
 begin
   TFSLTestThread.Create(proc);
 end;
 
-{ TFslTestSuite }
+{ TFslTestSuiteCase }
 
-{$IFDEF FPC}
-constructor TFslTestSuite.Create(name : String);
+constructor TFslTestSuiteCase.Create(name : String);
 begin
+  {$IFDEF FPC}
   inherited CreateWith('Test', name);
+  {$ELSE}
+  inherited Create('Run');
+  {$ENDIF}
   FName := name;
 end;
 
-function TFslTestSuite.GetTestName: string;
+{$IFDEF FPC}
+function TFslTestSuiteCase.GetTestName: string;
 begin
   Result := FName;
 end;
 
-procedure TFslTestSuite.Test;
+procedure TFslTestSuiteCase.Test;
+begin
+  TestCase(FName);
+end;
+
+{$ELSE}
+
+function TFslTestSuiteCase.GetName: string;
+begin
+  Result := FName;
+end;
+
+procedure TFslTestSuiteCase.Run;
 begin
   TestCase(FName);
 end;
 
 {$ENDIF}
 
-procedure TFslTestSuite.TestCase(name: String);
+procedure TFslTestSuiteCase.TestCase(name: String);
 begin
   // nothing - override this
 end;
+
+{ TFslTestSuite }
+
+constructor TFslTestSuite.Create;
+begin
+  inherited Create;
+end;
+
 
 { TFslTestThread }
 

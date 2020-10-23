@@ -34,7 +34,7 @@ interface
 
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
-  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdGlobalProtocols, IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml,
@@ -61,24 +61,16 @@ Type
     property value : String read FValue write FValue;
   end;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TFslGenericsTests = class (TFslTestCase)
   private
     function doSort(sender : TObject; const left, right : TFslTestObject) : integer;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testSimple; //(obj : TFslObject);
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testiterate;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testRemove;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testAddAll;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testReplace;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testMap;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure testSort;
   end;
 
@@ -89,17 +81,14 @@ Type
   public
   end;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TFslCollectionsTests = class (TFslTestCase)
   private
     list : TFslTestObjectList;
     procedure executeFail();
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAdd;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure testAddFail;
+    procedure testAdd;
+    procedure testAddFail;
   end;
-
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
 
   {$IFDEF FPC}
   TFslRegexTests = class (TFslTestCase)
@@ -109,26 +98,24 @@ Type
   end;
   {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TXPlatformTests = class (TFslTestCase)
   private
     procedure test60sec;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslObject;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionSimple;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCriticalSectionThreaded;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestKCriticalSectionThreaded;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestKCriticalSectionSimple;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestSemaphore;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTemp;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslDateTime;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestFslFile;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestRemoveAccents;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestTimeZoneName;
+    procedure TestFslObject;
+    procedure TestCriticalSectionSimple;
+    procedure TestCriticalSectionThreaded;
+    procedure TestKCriticalSectionThreaded;
+    procedure TestKCriticalSectionSimple;
+    procedure TestSemaphore;
+    procedure TestTemp;
+    procedure TestFslDateTime;
+    procedure TestFslFile;
+    procedure TestRemoveAccents;
+    procedure TestTimeZoneName;
   end;
 
 Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TDecimalTests = Class (TFslTestCase)
   Private
     procedure testString(s, st, std : String);
@@ -145,92 +132,57 @@ Type
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
     procedure TestTruncation(value : String; digits : integer; outcome : String; round : boolean);
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestIsDecimal;
+    Procedure TestIsDecimal;
 
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestAsInteger;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestStringSupport;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestAddition;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestMultiplication;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestBounds;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestNormalisedDecimal;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestInfinity;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestOverloading;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestTrunc;
+    Procedure TestAsInteger;
+    Procedure TestStringSupport;
+    Procedure TestAddition;
+    Procedure TestMultiplication;
+    Procedure TestBounds;
+    Procedure TestNormalisedDecimal;
+    Procedure TestInfinity;
+    Procedure TestOverloading;
+    Procedure TestTrunc;
   End;
 
 Type
-  {$IFDEF FPC}
-  TXmlParserTests = class(TTestSuite)
+  TXmlParserTest = Class (TFslTestSuiteCase)
+  Published
+    procedure TestCase(Name : String); override;
+  End;
+
+  TXmlParserTests = class (TFslTestSuite)
   private
   public
     constructor Create; override;
   end;
-  {$ELSE}
-  XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-  [TextFixture]
-  {$ENDIF}
-  TXmlParserTest = Class (TFslTestSuite)
-  Published
-    {$IFNDEF FPC}[XmlParserTestCase]{$ENDIF}
-    procedure ParserTest(Name : String);
-  End;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TXmlUtilsTest = Class (TFslTestCase)
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestUnPretty;
     procedure TestPretty;
     procedure TestNoPretty;
     procedure TestNoDense;
   End;
 
-  {$IFDEF FPC}
-  TXPathParserTests = class(TTestSuite)
-  private
-  public
-    constructor Create; override;
-  end;
-  {$ELSE}
-  XPathParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-
-  [TextFixture]
-  {$ENDIF}
-  TXPathParserTest = Class (TFslTestSuite)
+  TXPathParserTest = Class (TFslTestSuiteCase)
   Private
     tests : TMXmlDocument;
     functionNames : TStringList;
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
   public
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
+    procedure setup; override;
+    procedure teardown; override;
   Published
-    {$IFNDEF FPC}[XPathParserTestCase]{$ENDIF}
-    procedure PathTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
 
-  {$IFDEF FPC}
-  TXPathEngineTests = class(TTestSuite)
-  private
+  TXPathParserTests = class(TFslTestSuite)
   public
     constructor Create; override;
   end;
-  {$ELSE}
-  XPathEngineTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-  {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXPathEngineTest = Class (TFslTestSuite)
+  TXPathEngineTest = Class (TFslTestSuiteCase)
   Private
     tests : TMXmlDocument;
     {$IFNDEF FPC}
@@ -242,29 +194,18 @@ Type
     function findSample(id : String) : TMXmlElement;
     procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
+    procedure setup; override;
+    procedure teardown; override;
   Published
-
-    {$IFNDEF FPC}[XPathEngineTestCase]{$ENDIF}
-    procedure PathTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
 
-  {$IFDEF FPC}
-  TXmlPatchTests = class(TTestSuite)
-  private
+  TXPathEngineTests = class (TFslTestSuite)
   public
     constructor Create; override;
   end;
-  {$ELSE}
-  XmlPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-  {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TXmlPatchTest = Class (TFslTestSuite)
+  TXmlPatchTest = Class (TFslTestSuiteCase)
   Private
     tests : TMXmlDocument;
     engine : TXmlPatchEngine;
@@ -272,477 +213,463 @@ Type
     test, target, patch, error, patched : TMXmlElement;
     procedure doExecute;
   public
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
+    procedure setup; override;
+    procedure teardown; override;
   Published
-
-    {$IFNDEF FPC}[XmlPatchTestCase]{$ENDIF}
-    procedure PatchTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
 
-Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TJsonTests = Class (TFslTestCase)
-  Private
-  Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestResource;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDoc2;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDoc2Loose;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCustomDecimal;
-  End;
-
-  {$IFDEF FPC}
-  TJsonPatchTests = class(TTestSuite)
-  private
+  TXmlPatchTests = class (TFslTestSuite)
   public
     constructor Create; override;
   end;
-  {$ELSE}
-  JsonPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-  {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TJsonPatchTest = Class (TFslTestSuite)
+Type
+  TJsonTests = Class (TFslTestCase)
+  Private
+  Published
+    procedure TestResource;
+    procedure TestCustomDoc2;
+    procedure TestCustomDoc2Loose;
+    procedure TestCustomDecimal;
+  End;
+
+  TJsonPatchTest = Class (TFslTestSuiteCase)
   Private
     tests : TJsonArray;
     test : TJsonObject;
     engine : TJsonPatchEngine;
     procedure execute;
   public
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF} procedure setup; override;
-    {$IFNDEF FPC}[TearDownFixture]{$ENDIF} procedure teardown; override;
+    procedure setup; override;
+    procedure teardown; override;
   Published
-
-    {$IFNDEF FPC}[JsonPatchTestCase]{$ENDIF}
     procedure PatchTest(Name : String);
   End;
 
-Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TJsonPatchTests = class (TFslTestSuite)
+  private
+  public
+    constructor Create; override;
+  end;
+
   TJWTTests = Class (TFslTestCase)
   public
-    {$IFNDEF FPC}[SetUp]{$ENDIF} procedure Setup; override;
+    procedure Setup; override;
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestPacking;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestUnpacking;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure TestCert;
+    procedure TestPacking;
+    procedure TestUnpacking;
+    procedure TestCert;
   End;
 
-Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TTurtleTests = Class (TFslTestCase)
   Private
     procedure parseTTl(filename : String; ok : boolean);
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_double_lower_case_e1;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_double_lower_case_e2();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_empty_collection1();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_empty_collection2();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_first1();
+    procedure test_double_lower_case_e1;
+    procedure test_double_lower_case_e2();
+    procedure test_empty_collection1();
+    procedure test_empty_collection2();
+    procedure test_first1();
 //    procedure test_first2();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_HYPHEN_MINUS_in_localNameNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_HYPHEN_MINUS_in_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_spoNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_subject();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_all_punctuationNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_all_punctuation();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_eight_digit_numeric_escape();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRI_with_four_digit_numeric_escape();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRIREF_datatypeNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_IRIREF_datatype();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_objectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_object();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_subjectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_subject();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_leading_digit();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_leading_underscore();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_non_leading_extras();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_labeled_blank_node_with_PN_CHARS_BASE_character_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG_with_subtagNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_LONG_with_subtag();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_non_LONGNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_langtagged_non_LONG();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lantag_with_subtagNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lantag_with_subtag();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_lastNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_last();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_falseNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_false();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_ascii_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_ascii_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_1_squoteNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_1_squote();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_2_squotesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_2_squotes();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG1_with_UTF8_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_ascii_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_ascii_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_1_squoteNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_1_squote();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_2_squotesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_2_squotes();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUSNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUS();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_LONG2_with_UTF8_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_trueNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_true();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_BACKSPACENT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_BACKSPACE();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CARRIAGE_RETURNNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CARRIAGE_RETURN();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CHARACTER_TABULATIONNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_CHARACTER_TABULATION();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_BACKSPACE();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_CARRIAGE_RETURN();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_CHARACTER_TABULATION();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_FORM_FEED();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_escaped_LINE_FEED();
+    procedure test_HYPHEN_MINUS_in_localNameNT();
+    procedure test_HYPHEN_MINUS_in_localName();
+    procedure test_IRI_spoNT();
+    procedure test_IRI_subject();
+    procedure test_IRI_with_all_punctuationNT();
+    procedure test_IRI_with_all_punctuation();
+    procedure test_IRI_with_eight_digit_numeric_escape();
+    procedure test_IRI_with_four_digit_numeric_escape();
+    procedure test_IRIREF_datatypeNT();
+    procedure test_IRIREF_datatype();
+    procedure test_labeled_blank_node_objectNT();
+    procedure test_labeled_blank_node_object();
+    procedure test_labeled_blank_node_subjectNT();
+    procedure test_labeled_blank_node_subject();
+    procedure test_labeled_blank_node_with_leading_digit();
+    procedure test_labeled_blank_node_with_leading_underscore();
+    procedure test_labeled_blank_node_with_non_leading_extras();
+    procedure test_labeled_blank_node_with_PN_CHARS_BASE_character_boundaries();
+    procedure test_langtagged_LONG();
+    procedure test_langtagged_LONG_with_subtagNT();
+    procedure test_langtagged_LONG_with_subtag();
+    procedure test_langtagged_non_LONGNT();
+    procedure test_langtagged_non_LONG();
+    procedure test_lantag_with_subtagNT();
+    procedure test_lantag_with_subtag();
+    procedure test_lastNT();
+    procedure test_last();
+    procedure test_literal_falseNT();
+    procedure test_literal_false();
+    procedure test_LITERAL_LONG1();
+    procedure test_LITERAL_LONG1_ascii_boundariesNT();
+    procedure test_LITERAL_LONG1_ascii_boundaries();
+    procedure test_LITERAL_LONG1_with_1_squoteNT();
+    procedure test_LITERAL_LONG1_with_1_squote();
+    procedure test_LITERAL_LONG1_with_2_squotesNT();
+    procedure test_LITERAL_LONG1_with_2_squotes();
+    procedure test_LITERAL_LONG1_with_UTF8_boundaries();
+    procedure test_LITERAL_LONG2();
+    procedure test_LITERAL_LONG2_ascii_boundariesNT();
+    procedure test_LITERAL_LONG2_ascii_boundaries();
+    procedure test_LITERAL_LONG2_with_1_squoteNT();
+    procedure test_LITERAL_LONG2_with_1_squote();
+    procedure test_LITERAL_LONG2_with_2_squotesNT();
+    procedure test_LITERAL_LONG2_with_2_squotes();
+    procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUSNT();
+    procedure test_LITERAL_LONG2_with_REVERSE_SOLIDUS();
+    procedure test_LITERAL_LONG2_with_UTF8_boundaries();
+    procedure test_literal_trueNT();
+    procedure test_literal_true();
+    procedure test_literal_with_BACKSPACENT();
+    procedure test_literal_with_BACKSPACE();
+    procedure test_literal_with_CARRIAGE_RETURNNT();
+    procedure test_literal_with_CARRIAGE_RETURN();
+    procedure test_literal_with_CHARACTER_TABULATIONNT();
+    procedure test_literal_with_CHARACTER_TABULATION();
+    procedure test_literal_with_escaped_BACKSPACE();
+    procedure test_literal_with_escaped_CARRIAGE_RETURN();
+    procedure test_literal_with_escaped_CHARACTER_TABULATION();
+    procedure test_literal_with_escaped_FORM_FEED();
+    procedure test_literal_with_escaped_LINE_FEED();
 //    procedure test_literal_with_FORM_FEEDNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_FORM_FEED();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_LINE_FEEDNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_LINE_FEED();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape4NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape4();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_numeric_escape8();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_REVERSE_SOLIDUSNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_literal_with_REVERSE_SOLIDUS();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL_with_UTF8_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_controlsNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_controls();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_punctuationNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_all_punctuation();
+    procedure test_literal_with_FORM_FEED();
+    procedure test_literal_with_LINE_FEEDNT();
+    procedure test_literal_with_LINE_FEED();
+    procedure test_literal_with_numeric_escape4NT();
+    procedure test_literal_with_numeric_escape4();
+    procedure test_literal_with_numeric_escape8();
+    procedure test_literal_with_REVERSE_SOLIDUSNT();
+    procedure test_literal_with_REVERSE_SOLIDUS();
+    procedure test_LITERAL_with_UTF8_boundariesNT();
+    procedure test_LITERAL1NT();
+    procedure test_LITERAL1();
+    procedure test_LITERAL1_all_controlsNT();
+    procedure test_LITERAL1_all_controls();
+    procedure test_LITERAL1_all_punctuationNT();
+    procedure test_LITERAL1_all_punctuation();
 //    procedure test_LITERAL1_ascii_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_ascii_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL1_with_UTF8_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_ascii_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_ascii_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_LITERAL2_with_UTF8_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries();
+    procedure test_LITERAL1_ascii_boundaries();
+    procedure test_LITERAL1_with_UTF8_boundaries();
+    procedure test_LITERAL2();
+    procedure test_LITERAL2_ascii_boundariesNT();
+    procedure test_LITERAL2_ascii_boundaries();
+    procedure test_LITERAL2_with_UTF8_boundaries();
+    procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundariesNT();
+    procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundaries();
+    procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundariesNT();
+    procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries();
 //    procedure test_localname_with_COLONNT();
 //    procedure test_localname_with_COLON();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_digitNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_digit();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_underscoreNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_leading_underscore();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundariesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_non_leading_extrasNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_localName_with_non_leading_extras();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_negative_numericNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_negative_numeric();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_blankNodePropertyListsNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_blankNodePropertyLists();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_collectionNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_nested_collection();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_number_sign_following_localNameNT();
+    procedure test_localName_with_leading_digitNT();
+    procedure test_localName_with_leading_digit();
+    procedure test_localName_with_leading_underscoreNT();
+    procedure test_localName_with_leading_underscore();
+    procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundariesNT();
+    procedure test_localName_with_nfc_PN_CHARS_BASE_character_boundaries();
+    procedure test_localName_with_non_leading_extrasNT();
+    procedure test_localName_with_non_leading_extras();
+    procedure test_negative_numericNT();
+    procedure test_negative_numeric();
+    procedure test_nested_blankNodePropertyListsNT();
+    procedure test_nested_blankNodePropertyLists();
+    procedure test_nested_collectionNT();
+    procedure test_nested_collection();
+    procedure test_number_sign_following_localNameNT();
 //    procedure test_number_sign_following_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_number_sign_following_PNAME_NSNT();
+    procedure test_number_sign_following_PNAME_NSNT();
 //    procedure test_number_sign_following_PNAME_NS();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_numeric_with_leading_0NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_numeric_with_leading_0();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_objectList_with_two_objectsNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_objectList_with_two_objects();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_old_style_base();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_old_style_prefix();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_percent_escaped_localNameNT();
+    procedure test_numeric_with_leading_0NT();
+    procedure test_numeric_with_leading_0();
+    procedure test_objectList_with_two_objectsNT();
+    procedure test_objectList_with_two_objects();
+    procedure test_old_style_base();
+    procedure test_old_style_prefix();
+    procedure test_percent_escaped_localNameNT();
 //    procedure test_percent_escaped_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_positive_numericNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_positive_numeric();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_predicateObjectList_with_two_objectListsNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_predicateObjectList_with_two_objectLists();
+    procedure test_positive_numericNT();
+    procedure test_positive_numeric();
+    procedure test_predicateObjectList_with_two_objectListsNT();
+    procedure test_predicateObjectList_with_two_objectLists();
 //    procedure test_prefix_only_IRI();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_reassigned_and_usedNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_reassigned_and_used();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_with_non_leading_extras();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefix_with_PN_CHARS_BASE_character_boundaries();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_IRI_object();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_IRI_predicate();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_prefixed_name_datatype();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_at_end();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_not_at_endNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_repeated_semis_not_at_end();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_reserved_escaped_localNameNT();
+    procedure test_prefix_reassigned_and_usedNT();
+    procedure test_prefix_reassigned_and_used();
+    procedure test_prefix_with_non_leading_extras();
+    procedure test_prefix_with_PN_CHARS_BASE_character_boundaries();
+    procedure test_prefixed_IRI_object();
+    procedure test_prefixed_IRI_predicate();
+    procedure test_prefixed_name_datatype();
+    procedure test_repeated_semis_at_end();
+    procedure test_repeated_semis_not_at_endNT();
+    procedure test_repeated_semis_not_at_end();
+    procedure test_reserved_escaped_localNameNT();
 //    procedure test_reserved_escaped_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_sole_blankNodePropertyList();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_SPARQL_style_base();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_SPARQL_style_prefix();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_bad_03();
+    procedure test_sole_blankNodePropertyList();
+    procedure test_SPARQL_style_base();
+    procedure test_SPARQL_style_prefix();
+    procedure test_turtle_eval_bad_01();
+    procedure test_turtle_eval_bad_02();
+    procedure test_turtle_eval_bad_03();
 //    procedure test_turtle_eval_bad_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_01NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_02NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_eval_struct_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_01NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_02NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_03NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_04NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_05NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_06NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_07NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_09NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_10NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_11NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_11();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_12NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_12();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_13NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_13();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_14NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_14();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_15NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_15();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_16NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_16();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_17NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_17();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_18NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_18();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_19NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_19();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_20NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_20();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_21NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_21();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_22NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_22();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_23NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_23();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_24NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_24();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_25NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_25();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_26NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_26();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_27NT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_subm_27();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_base_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_esc_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_kw_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_lang_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_LITERAL2_with_langtag_and_datatype();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_dash_start();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_escape();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ln_escape_start();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_missing_ns_dot_end();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_missing_ns_dot_start();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_11();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_12();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_n3_extras_13();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ns_dot_end();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_ns_dot_start();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_num_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_number_dot_in_anon();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_pname_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_pname_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_prefix_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_string_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_11();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_12();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_13();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_14();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_15();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_16();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_struct_17();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_uri_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bad_uri_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_base_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_blank_label();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_bnode_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_datatypes_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_datatypes_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_file_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_kw_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_lists_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_lists_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_ln_dots();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_ns_dots();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_number_11();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_pname_esc_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_prefix_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_str_esc_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_06();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_07();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_08();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_09();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_10();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_string_11();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_struct_05();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_01();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_02();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_03();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_turtle_syntax_uri_04();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_two_LITERAL_LONG2sNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_two_LITERAL_LONG2s();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_underscore_in_localNameNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_underscore_in_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_anonymous_blank_node_object();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_anonymous_blank_node_subject();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_a_predicateNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_a_predicate();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_decimalNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_decimal();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_doubleNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_double();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_bareword_integer();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_objectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_object();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_as_subjectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_containing_collectionNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_containing_collection();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_with_multiple_triplesNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_blankNodePropertyList_with_multiple_triples();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_objectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_object();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_subjectNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_collection_subject();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_localName();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_PNAME_NSNT();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test_comment_following_PNAME_NS();
-    {$IFNDEF FPC}[TestCase]{$ENDIF} procedure test__default_namespace_IRI();
+    procedure test_turtle_eval_struct_01NT();
+    procedure test_turtle_eval_struct_01();
+    procedure test_turtle_eval_struct_02NT();
+    procedure test_turtle_eval_struct_02();
+    procedure test_turtle_subm_01NT();
+    procedure test_turtle_subm_01();
+    procedure test_turtle_subm_02NT();
+    procedure test_turtle_subm_02();
+    procedure test_turtle_subm_03NT();
+    procedure test_turtle_subm_03();
+    procedure test_turtle_subm_04NT();
+    procedure test_turtle_subm_04();
+    procedure test_turtle_subm_05NT();
+    procedure test_turtle_subm_05();
+    procedure test_turtle_subm_06NT();
+    procedure test_turtle_subm_06();
+    procedure test_turtle_subm_07NT();
+    procedure test_turtle_subm_07();
+    procedure test_NT();
+    procedure test_turtle_subm_08();
+    procedure test_turtle_subm_09NT();
+    procedure test_turtle_subm_09();
+    procedure test_turtle_subm_10NT();
+    procedure test_turtle_subm_10();
+    procedure test_turtle_subm_11NT();
+    procedure test_turtle_subm_11();
+    procedure test_turtle_subm_12NT();
+    procedure test_turtle_subm_12();
+    procedure test_turtle_subm_13NT();
+    procedure test_turtle_subm_13();
+    procedure test_turtle_subm_14NT();
+    procedure test_turtle_subm_14();
+    procedure test_turtle_subm_15NT();
+    procedure test_turtle_subm_15();
+    procedure test_turtle_subm_16NT();
+    procedure test_turtle_subm_16();
+    procedure test_turtle_subm_17NT();
+    procedure test_turtle_subm_17();
+    procedure test_turtle_subm_18NT();
+    procedure test_turtle_subm_18();
+    procedure test_turtle_subm_19NT();
+    procedure test_turtle_subm_19();
+    procedure test_turtle_subm_20NT();
+    procedure test_turtle_subm_20();
+    procedure test_turtle_subm_21NT();
+    procedure test_turtle_subm_21();
+    procedure test_turtle_subm_22NT();
+    procedure test_turtle_subm_22();
+    procedure test_turtle_subm_23NT();
+    procedure test_turtle_subm_23();
+    procedure test_turtle_subm_24NT();
+    procedure test_turtle_subm_24();
+    procedure test_turtle_subm_25NT();
+    procedure test_turtle_subm_25();
+    procedure test_turtle_subm_26NT();
+    procedure test_turtle_subm_26();
+    procedure test_turtle_subm_27NT();
+    procedure test_turtle_subm_27();
+    procedure test_turtle_syntax_bad_base_01();
+    procedure test_turtle_syntax_bad_base_02();
+    procedure test_turtle_syntax_bad_base_03();
+    procedure test_turtle_syntax_bad_esc_01();
+    procedure test_turtle_syntax_bad_esc_02();
+    procedure test_turtle_syntax_bad_esc_03();
+    procedure test_turtle_syntax_bad_esc_04();
+    procedure test_turtle_syntax_bad_kw_01();
+    procedure test_turtle_syntax_bad_kw_02();
+    procedure test_turtle_syntax_bad_kw_03();
+    procedure test_turtle_syntax_bad_kw_04();
+    procedure test_turtle_syntax_bad_kw_05();
+    procedure test_turtle_syntax_bad_lang_01();
+    procedure test_turtle_syntax_bad_LITERAL2_with_langtag_and_datatype();
+    procedure test_turtle_syntax_bad_ln_dash_start();
+    procedure test_turtle_syntax_bad_ln_escape();
+    procedure test_turtle_syntax_bad_ln_escape_start();
+    procedure test_turtle_syntax_bad_missing_ns_dot_end();
+    procedure test_turtle_syntax_bad_missing_ns_dot_start();
+    procedure test_turtle_syntax_bad_n3_extras_01();
+    procedure test_turtle_syntax_bad_n3_extras_02();
+    procedure test_turtle_syntax_bad_n3_extras_03();
+    procedure test_turtle_syntax_bad_n3_extras_04();
+    procedure test_turtle_syntax_bad_n3_extras_05();
+    procedure test_turtle_syntax_bad_n3_extras_07();
+    procedure test_turtle_syntax_bad_n3_extras_08();
+    procedure test_turtle_syntax_bad_n3_extras_09();
+    procedure test_turtle_syntax_bad_n3_extras_10();
+    procedure test_turtle_syntax_bad_n3_extras_11();
+    procedure test_turtle_syntax_bad_n3_extras_12();
+    procedure test_turtle_syntax_bad_n3_extras_13();
+    procedure test_turtle_syntax_bad_ns_dot_end();
+    procedure test_turtle_syntax_bad_ns_dot_start();
+    procedure test_turtle_syntax_bad_num_01();
+    procedure test_turtle_syntax_bad_num_02();
+    procedure test_turtle_syntax_bad_num_03();
+    procedure test_turtle_syntax_bad_num_04();
+    procedure test_turtle_syntax_bad_num_05();
+    procedure test_turtle_syntax_bad_number_dot_in_anon();
+    procedure test_turtle_syntax_bad_pname_01();
+    procedure test_turtle_syntax_bad_pname_02();
+    procedure test_turtle_syntax_bad_prefix_01();
+    procedure test_turtle_syntax_bad_prefix_02();
+    procedure test_turtle_syntax_bad_prefix_03();
+    procedure test_turtle_syntax_bad_prefix_04();
+    procedure test_turtle_syntax_bad_prefix_05();
+    procedure test_turtle_syntax_bad_string_01();
+    procedure test_turtle_syntax_bad_string_02();
+    procedure test_turtle_syntax_bad_string_03();
+    procedure test_turtle_syntax_bad_string_04();
+    procedure test_turtle_syntax_bad_string_05();
+    procedure test_turtle_syntax_bad_string_06();
+    procedure test_turtle_syntax_bad_string_07();
+    procedure test_turtle_syntax_bad_struct_01();
+    procedure test_turtle_syntax_bad_struct_02();
+    procedure test_turtle_syntax_bad_struct_03();
+    procedure test_turtle_syntax_bad_struct_04();
+    procedure test_turtle_syntax_bad_struct_05();
+    procedure test_turtle_syntax_bad_struct_06();
+    procedure test_turtle_syntax_bad_struct_07();
+    procedure test_turtle_syntax_bad_struct_08();
+    procedure test_turtle_syntax_bad_struct_09();
+    procedure test_turtle_syntax_bad_struct_10();
+    procedure test_turtle_syntax_bad_struct_11();
+    procedure test_turtle_syntax_bad_struct_12();
+    procedure test_turtle_syntax_bad_struct_13();
+    procedure test_turtle_syntax_bad_struct_14();
+    procedure test_turtle_syntax_bad_struct_15();
+    procedure test_turtle_syntax_bad_struct_16();
+    procedure test_turtle_syntax_bad_struct_17();
+    procedure test_turtle_syntax_bad_uri_02();
+    procedure test_turtle_syntax_bad_uri_03();
+    procedure test_turtle_syntax_base_01();
+    procedure test_turtle_syntax_base_02();
+    procedure test_turtle_syntax_base_03();
+    procedure test_turtle_syntax_base_04();
+    procedure test_turtle_syntax_blank_label();
+    procedure test_turtle_syntax_bnode_01();
+    procedure test_turtle_syntax_bnode_02();
+    procedure test_turtle_syntax_bnode_03();
+    procedure test_turtle_syntax_bnode_04();
+    procedure test_turtle_syntax_bnode_05();
+    procedure test_turtle_syntax_bnode_06();
+    procedure test_turtle_syntax_bnode_07();
+    procedure test_turtle_syntax_bnode_08();
+    procedure test_turtle_syntax_bnode_09();
+    procedure test_turtle_syntax_bnode_10();
+    procedure test_turtle_syntax_datatypes_01();
+    procedure test_turtle_syntax_datatypes_02();
+    procedure test_turtle_syntax_file_01();
+    procedure test_turtle_syntax_file_02();
+    procedure test_turtle_syntax_file_03();
+    procedure test_turtle_syntax_kw_01();
+    procedure test_turtle_syntax_kw_02();
+    procedure test_turtle_syntax_kw_03();
+    procedure test_turtle_syntax_lists_01();
+    procedure test_turtle_syntax_lists_02();
+    procedure test_turtle_syntax_ln_dots();
+    procedure test_turtle_syntax_ns_dots();
+    procedure test_turtle_syntax_number_01();
+    procedure test_turtle_syntax_number_02();
+    procedure test_turtle_syntax_number_03();
+    procedure test_turtle_syntax_number_04();
+    procedure test_turtle_syntax_number_06();
+    procedure test_turtle_syntax_number_07();
+    procedure test_turtle_syntax_number_09();
+    procedure test_turtle_syntax_number_10();
+    procedure test_turtle_syntax_number_11();
+    procedure test_turtle_syntax_pname_esc_01();
+    procedure test_turtle_syntax_pname_esc_02();
+    procedure test_turtle_syntax_pname_esc_03();
+    procedure test_turtle_syntax_prefix_01();
+    procedure test_turtle_syntax_prefix_03();
+    procedure test_turtle_syntax_prefix_04();
+    procedure test_turtle_syntax_prefix_07();
+    procedure test_turtle_syntax_prefix_08();
+    procedure test_turtle_syntax_prefix_09();
+    procedure test_turtle_syntax_str_esc_01();
+    procedure test_turtle_syntax_str_esc_02();
+    procedure test_turtle_syntax_str_esc_03();
+    procedure test_turtle_syntax_string_01();
+    procedure test_turtle_syntax_string_02();
+    procedure test_turtle_syntax_string_03();
+    procedure test_turtle_syntax_string_04();
+    procedure test_turtle_syntax_string_05();
+    procedure test_turtle_syntax_string_06();
+    procedure test_turtle_syntax_string_07();
+    procedure test_turtle_syntax_string_08();
+    procedure test_turtle_syntax_string_09();
+    procedure test_turtle_syntax_string_10();
+    procedure test_turtle_syntax_string_11();
+    procedure test_turtle_syntax_struct_01();
+    procedure test_turtle_syntax_struct_02();
+    procedure test_turtle_syntax_struct_03();
+    procedure test_turtle_syntax_struct_04();
+    procedure test_turtle_syntax_struct_05();
+    procedure test_turtle_syntax_uri_01();
+    procedure test_turtle_syntax_uri_02();
+    procedure test_turtle_syntax_uri_03();
+    procedure test_turtle_syntax_uri_04();
+    procedure test_two_LITERAL_LONG2sNT();
+    procedure test_two_LITERAL_LONG2s();
+    procedure test_underscore_in_localNameNT();
+    procedure test_underscore_in_localName();
+    procedure test_anonymous_blank_node_object();
+    procedure test_anonymous_blank_node_subject();
+    procedure test_bareword_a_predicateNT();
+    procedure test_bareword_a_predicate();
+    procedure test_bareword_decimalNT();
+    procedure test_bareword_decimal();
+    procedure test_bareword_doubleNT();
+    procedure test_bareword_double();
+    procedure test_bareword_integer();
+    procedure test_blankNodePropertyList_as_objectNT();
+    procedure test_blankNodePropertyList_as_object();
+    procedure test_blankNodePropertyList_as_subjectNT();
+    procedure test_blankNodePropertyList_containing_collectionNT();
+    procedure test_blankNodePropertyList_containing_collection();
+    procedure test_blankNodePropertyList_with_multiple_triplesNT();
+    procedure test_blankNodePropertyList_with_multiple_triples();
+    procedure test_collection_objectNT();
+    procedure test_collection_object();
+    procedure test_collection_subjectNT();
+    procedure test_collection_subject();
+    procedure test_comment_following_localName();
+    procedure test_comment_following_PNAME_NSNT();
+    procedure test_comment_following_PNAME_NS();
+    procedure test__default_namespace_IRI();
   End;
+
    (*
 Type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
-  TDigitalSignatureTests = Class (TObject)
+  TDigitalSignatureTests = Class (TFslTestCase)
   private
     procedure testFile(filename : String);
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileRSA;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileDSA;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testFileJames;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenRSA_1;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenRSA_256;
-//    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenDSA_1;
-//    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testGenDSA_256;
+    Procedure testFileRSA;
+    Procedure testFileDSA;
+    Procedure testFileJames;
+    Procedure testGenRSA_1;
+    Procedure testGenRSA_256;
+//    Procedure testGenDSA_1;
+//    Procedure testGenDSA_256;
   End;
      *)
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TLangParserTests = Class (TFslTestCase)
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testBase;
+    Procedure testBase;
   End;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TTarGZParserTests = Class (TFslTestCase)
   private
     function load(filename : String) : TFslList<TFslNameBuffer>;
   Published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testPackage;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure testTzData;
+    Procedure testPackage;
+    Procedure testTzData;
   End;
-  
+
 procedure registerTests;
-  
+
 implementation
 
 
@@ -929,7 +856,6 @@ end;
 
 { TXmlTests }
 
-{$IFDEF FPC}
 constructor TXmlPatchTests.Create;
 var
   tests : TMXmlDocument;
@@ -949,40 +875,6 @@ begin
     tests.Free;
   end;
 end;
-{$ELSE}
-
-{ XmlPatchTestCaseAttribute }
-
-function XmlPatchTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : TMXmlDocument;
-  test : TMXmlElement;
-  i : integer;
-  s : String;
-begin
-  tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
-  try
-    test := tests.document.first;
-    i := 0;
-    while test <> nil do
-    begin
-      if test.Name = 'case' then
-      begin
-        s := test.attribute['name'];
-        SetLength(result, i+1);
-        result[i].Name := s;
-        SetLength(result[i].Values, 1);
-        result[i].Values[0] := s;
-        inc(i);
-      end;
-      test := test.Next;
-    end;
-  finally
-    tests.Free;
-  end;
-end;
-
-{$ENDIF}
 
 { TXmlPatchTest }
 
@@ -991,7 +883,7 @@ begin
   engine.execute(tests, target, patch);
 end;
 
-procedure TXmlPatchTest.PatchTest(Name: String);
+procedure TXmlPatchTest.TestCase(Name: String);
 var
   s : String;
   ok : boolean;
@@ -1007,14 +899,7 @@ begin
       patched := test.element('patched');
 
       if (error <> nil) then
-        {$IFDEF FPC}
         assertWillRaise(doExecute, EXmlException, error.text)
-        {$ELSE}
-        Assert.WillRaiseWithMessage(
-          procedure begin
-            engine.execute(tests, target, patch);
-          end, EXmlException, error.text)
-        {$ENDIF}
       else
       begin
         engine.execute(tests, target, patch);
@@ -1042,11 +927,11 @@ end;
 
 { TXmlParserTest }
 
-procedure TXmlParserTest.ParserTest(Name: String);
+procedure TXmlParserTest.TestCase(Name: String);
 var
   xml : TMXmlElement;
 begin
-  xml := TMXmlParser.parseFile(name, []);
+  xml := TMXmlParser.parseFile(TestSettings.serverTestFile(['testcases', 'xml', name]), []);
   try
     assertPass();
   finally
@@ -1054,7 +939,6 @@ begin
   end;
 end;
 
-{$IFDEF FPC}
 { TXmlParserTests }
 
 constructor TXmlParserTests.Create;
@@ -1071,38 +955,6 @@ begin
   until FindNext(SR) <> 0;
 end;
 
-{$ELSE}
-
-{ XmlParserTestCaseAttribute }
-
-function XmlParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  sl : TStringlist;
-  sr : TSearchRec;
-  s : String;
-  i : integer;
-begin
-  sl := TStringList.create;
-  try
-    if FindFirst(TestSettings.serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
-    repeat
-      s := sr.Name;
-      sl.Add(sr.Name);
-    until FindNext(SR) <> 0;
-    setLength(result, sl.Count);
-    for i := 0 to sl.Count - 1 do
-    begin
-      result[i].Name := sl[i];
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := TestSettings.serverTestFile(['testcases', 'xml', sl[i]]);
-    end;
-  finally
-    sl.Free;
-  end;
-end;
-{$ENDIF}
-
-{$IFDEF FPC}
 { TXPathParserTests }
 
 constructor TXPathParserTests.Create;
@@ -1126,34 +978,6 @@ begin
     tests.Free;
   end;
 end;
-
-{$ELSE}
-{ XPathParserTestCaseAttribute }
-
-function XPathParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : TMXmlDocument;
-  path : TMXmlElement;
-  i : integer;
-begin
-  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-parser-tests.xml']), [xpDropWhitespace, xpDropComments]);
-  try
-    i := 0;
-    path := tests.document.first;
-    while path <> nil do
-    begin
-      SetLength(result, i+1);
-      result[i].Name := inttostr(i);
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := inttostr(i);
-      inc(i);
-      path := path.next;
-    end;
-  finally
-    tests.Free;
-  end;
-end;
-{$ENDIF}
 
 { TXPathTests }
 
@@ -1220,7 +1044,7 @@ begin
   collectFunctionNames(xp.NextOp);
 end;
 
-procedure TXPathParserTest.PathTest(Name: String);
+procedure TXPathParserTest.TestCase(Name: String);
 var
   test : TMXmlElement;
   xp : TMXPathExpressionNode;
@@ -1247,8 +1071,6 @@ begin
   tests.Free;
 end;
 
-{$IFDEF FPC}
-
 constructor TXPathEngineTests.Create;
 var
   tests : TMXmlDocument;
@@ -1270,39 +1092,6 @@ begin
     tests.Free;
   end;
 end;
-
-{$ELSE}
-
-{ XPathEngineTestCaseAttribute }
-
-function XPathEngineTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : TMXmlDocument;
-  tcase : TMXmlElement;
-  i : integer;
-begin
-  tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
-  try
-    i := 0;
-    tcase := tests.document.firstElement;
-    while tcase <> nil do
-    begin
-      if tcase.Name = 'case' then
-      begin
-        SetLength(result, i+1);
-        result[i].Name := tcase.attribute['name'];
-        SetLength(result[i].Values, 1);
-        result[i].Values[0] := inttostr(i);
-        inc(i);
-      end;
-      tcase := tcase.nextElement;
-    end;
-  finally
-    tests.Free;
-  end;
-end;
-
-{$ENDIF}
 
 { TXPathEngineTest }
 
@@ -1418,17 +1207,14 @@ end;
 function TXPathEngineTest.findTestCase(name: String): TMXmlElement;
 var
   tcase : TMXmlElement;
-  i : integer;
 begin
-  i := 0;
   tcase := tests.document.firstElement;
   while tcase <> nil do
   begin
     if tcase.Name = 'case' then
     begin
-      if (inttostr(i) = Name) then
+      if (tcase.attribute['name'] = Name) then
         exit(tcase);
-      inc(i);
     end;
     tcase := tcase.next;
   end;
@@ -1500,20 +1286,25 @@ begin
   end;
 end;
 
-procedure TXPathEngineTest.PathTest(Name: String);
+procedure TXPathEngineTest.TestCase(Name: String);
 var
   test : TMXmlElement;
   outcomes : TFslList<TMXmlElement>;
 begin
   test := findTestCase(name);
-  outcomes := tests.selectElements('node', test.element('outcomes'));
-  try
-    {$IFNDEF FPC}
-    runMsTest(test, outcomes);
-    {$ENDIF}
-    runXTest(test, outcomes);
-  finally
-    outcomes.Free;
+  if test = nil then
+    assertFail('can''t find test')
+  else
+  begin
+    outcomes := tests.selectElements('node', test.element('outcomes'));
+    try
+      {$IFNDEF FPC}
+      runMsTest(test, outcomes);
+      {$ENDIF}
+      runXTest(test, outcomes);
+    finally
+      outcomes.Free;
+    end;
   end;
 end;
 
@@ -1676,10 +1467,10 @@ procedure TDecimalTests.TestAdd(s1, s2, s3: String);
 var
   o1, o2, o3: TFslDecimal;
 begin
-    o1 := TFslDecimal.valueOf(s1);
-    o2 := TFslDecimal.valueOf(s2);
-    o3 := o1.add(o2);
-    assertTrue(o3.AsDecimal = s3);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
+  o3 := o1.add(o2);
+  assertTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestSubtract(s1, s2, s3: String);
@@ -4530,8 +4321,6 @@ begin
   end;
 end;
 
-{$IFDEF FPC}
-
 constructor TJsonPatchTests.Create;
 var
   tests : TJsonArray;
@@ -4554,36 +4343,6 @@ begin
     tests.free;
   end;
 end;
-
-{$ELSE}
-
-{ JsonPatchTestCaseAttribute }
-
-function JsonPatchTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : TJsonArray;
-  test : TJsonNode;
-  i : integer;
-  s : String;
-begin
-  tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
-  try
-    SetLength(result, tests.Count);
-    i := 0;
-    for test in tests do
-    begin
-      s := (test as TJsonObject)['comment'];
-      s := s.Substring(0, s.IndexOf(' '));
-      result[i].Name := s;
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := s;
-      inc(i);
-    end;
-  finally
-    tests.free;
-  end;
-end;
-{$ENDIF}
 
 { TJsonPatchTest }
 
@@ -4968,39 +4727,22 @@ end;
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  {$IFDEF FPC}
-  RegisterTest('Generics Tests', TFslGenericsTests);
-  RegisterTest('Collection Tests', TFslCollectionsTests);
-  RegisterTest('XPlatform Tests', TXPlatformTests);
-  RegisterTest('Decimal Tests', TDecimalTests);
+  RegisterTest('Generics Tests', TFslGenericsTests.Suite);
+  RegisterTest('Collection Tests', TFslCollectionsTests.Suite);
+  RegisterTest('XPlatform Tests', TXPlatformTests.Suite);
+  RegisterTest('Decimal Tests', TDecimalTests.Suite);
   RegisterTest('XML Tests', TXmlParserTests.create);
-  RegisterTest('XML Utility Tests', TXmlUtilsTest);
+  RegisterTest('XML Utility Tests', TXmlUtilsTest.Suite);
   RegisterTest('XPath Tests', TXPathParserTests.create);
   RegisterTest('XPath Engine Tests', TXPathEngineTests.create);
   RegisterTest('XML Patch Tests', TXmlPatchTests.create);
-  RegisterTest('Json Tests', TJsonTests);
-  RegisterTest('JWT Tests', TJWTTests);
-  RegisterTest('Turtle Tests', TTurtleTests);
-  RegisterTest('Language Parser Tests', TLangParserTests);
-  RegisterTest('Regex Test', TFslRegexTests);
-  RegisterTest('.tar.gz Tests', TTarGZParserTests);
-  {$ELSE}
-  TDUnitX.RegisterTestFixture(TFslGenericsTests);
-  TDUnitX.RegisterTestFixture(TFslCollectionsTests);
-  TDUnitX.RegisterTestFixture(TXPlatformTests);
-  TDUnitX.RegisterTestFixture(TXmlParserTest);
-  TDUnitX.RegisterTestFixture(TXmlUtilsTest);
-  TDUnitX.RegisterTestFixture(TXPathParserTest);
-  TDUnitX.RegisterTestFixture(TXPathEngineTest);
-  TDUnitX.RegisterTestFixture(TXmlPatchTest);
-  TDUnitX.RegisterTestFixture(TJsonTests);
-  TDUnitX.RegisterTestFixture(TJsonPatchTest);
-  TDUnitX.RegisterTestFixture(TJWTTests);
-  TDUnitX.RegisterTestFixture(TTurtleTests);
-  TDUnitX.RegisterTestFixture(TDecimalTests);
-  TDUnitX.RegisterTestFixture(TLangParserTests);
-  TDUnitX.RegisterTestFixture(TTarGZParserTests);
-//  TDUnitX.RegisterTestFixture(TDigitalSignatureTests);
+  RegisterTest('Json Tests', TJsonTests.Suite);
+  RegisterTest('JWT Tests', TJWTTests.Suite);
+  RegisterTest('Turtle Tests', TTurtleTests.Suite);
+  RegisterTest('Language Parser Tests', TLangParserTests.Suite);
+  RegisterTest('.tar.gz Tests', TTarGZParserTests.Suite);
+  {$IFDEF FPC}
+  RegisterTest('Regex Test', TFslRegexTests.Suite);
   {$ENDIF}
 end;
 

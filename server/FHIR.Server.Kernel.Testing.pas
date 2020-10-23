@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Forms,
   {$IFNDEF FPC}
-  TestInsight.DUnitX, DUnitX.Loggers.Console, DUnitX.Loggers.GUI.VCL, DUnitX.Loggers.Xml.NUnit, DUnitX.TestFramework,
+  TestInsight.DUnit, DUnitTestRunner, GUITestRunner,
   {$ENDIF}
   {$IFDEF FPC}
   XGuiTestRunner, FHIR.Support.Fpc.ConsoleTester,
@@ -66,7 +66,7 @@ begin
   {$IFDEF FPC}
   raise Exception.create('This is not supported in FPC');
   {$ELSE}
-  TestInsight.DUnitX.RunRegisteredTests;
+  TestInsight.DUnit.RunRegisteredTests;
   {$ENDIF}
 end;
 
@@ -81,10 +81,7 @@ begin
   TestRunner.FileName := TestSettings.serverTestFile(['tests.ini']);
   Application.Run;
   {$ELSE}
-  Application.Initialize;
-  Application.Title := 'FHIRServer Tests';
-  Application.CreateForm(TGUIVCLTestRunner, GUIVCLTestRunner);
-  Application.Run;
+  TGUITestRunner.runRegisteredTests;
   {$ENDIF}
 end;
 
@@ -101,23 +98,8 @@ begin
   app.Free;
 end;
 {$ELSE}
-var
-  runner : ITestRunner;
-  results : IRunResults;
-  logger : ITestLogger;
-  nunitLogger : ITestLogger;
-  s : String;
 begin
-  runner := TDUnitX.CreateRunner;
-  runner.UseRTTI := True;
-  logger := TDUnitXConsoleLogger.Create(false);
-  runner.AddLogger(logger);
-  nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
-  runner.AddLogger(nunitLogger);
-  runner.FailsOnNoAsserts := True;
-  results := runner.Execute;
-  if not results.AllPassed then
-    System.ExitCode := EXIT_ERRORS;
+  DUnitTestRunner.RunRegisteredTests;
   if not hasCommandLineParam('-ci') then
   begin
     System.Write('Done.. press <Enter> key to quit.');

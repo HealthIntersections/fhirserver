@@ -92,7 +92,7 @@ procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
 {$IFDEF FPC}
-  RegisterTest('IdUri Test', TIdUriParserTests);
+  RegisterTest('Library.IdUri Test', TIdUriParserTests);
 {$ELSE}
   TDUnitX.RegisterTestFixture(TIdUriParserTests);
 {$ENDIF}

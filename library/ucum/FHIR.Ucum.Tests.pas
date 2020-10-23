@@ -34,25 +34,12 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml,
   FHIR.Ucum.Services;
 
 type
-  {$IFDEF FPC}
-  TUcumTests = class(TTestSuite)
-  public
-    constructor Create; override;
-  end;
-  {$ELSE}
-  UcumTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  {$ENDIF}
-  TUcumTest = class (TFslTestSuite)
+  TUcumTest = class (TFslTestSuiteCase)
   private
     procedure findTest(name : String; var foundGroup, foundTest : TMXmlElement);
 
@@ -61,23 +48,22 @@ type
     procedure TestConversion(test : TMXmlElement);
     procedure TestMultiplication(test : TMXmlElement);
   public
-    {$IFNDEF FPC}[Setup]{$ENDIF}
     procedure Setup; override;
-    {$IFNDEF FPC}[TearDown]{$ENDIF}
     procedure TearDown; override;
   published
-    {$IFNDEF FPC}[UcumTestCase]{$ENDIF}
     procedure TestCase(name : String); override;
   end;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
+  TUcumTests = class(TFslTestSuite)
+  public
+    constructor Create; override;
+  end;
+
   TUcumSpecialTests = class (TFslTestCase)
   private
   public
-    {$IFNDEF FPC}[Setup]{$ENDIF}
     procedure Setup; override;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestIssue10;
   end;
 
@@ -95,7 +81,7 @@ begin
     testList := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'ucum', 'ucum-tests.xml']), [xpDropWhitespace]);
 end;
 
-{$IFDEF FPC}
+
 { TUcumTests }
 
 constructor TUcumTests.Create;
@@ -110,35 +96,6 @@ begin
         AddTest(TUcumTest.create(group.Name+'-'+test.attribute['id']));
 end;
 
-{$ELSE}
-{ UcumTestCaseAttribute }
-
-function UcumTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  group, test : TMXmlElement;
-  i: integer;
-begin
-  LoadTests;
-
-  i := 0;
-  for group in testList.document.Children do
-    for test in group.Children do
-      if (test.Name = 'case') and (test.attribute['id'] <> '') then
-        inc(i);
-  setLength(result, i);
-  i := 0;
-  for group in testList.document.Children do
-    for test in group.Children do
-      if (test.Name = 'case') and (test.attribute['id'] <> '') then
-      begin
-        result[i].Name := group.Name+'-'+test.attribute['id'];
-        SetLength(result[i].Values, 1);
-        result[i].Values[0] := test.attribute['id'];
-        inc(i);
-      end;
-end;
-{$ENDIF}
-
 { TUcumTest }
 
 procedure TUcumTest.findTest(name: String; var foundGroup, foundTest: TMXmlElement);
@@ -151,11 +108,7 @@ begin
 
   for group in testList.document.Children do
     for test in group.Children do
-      {$IFDEF FPC}
       if (test.Name = 'case') and  (group.name+'-'+test.attribute['id'] = name) then
-      {$ELSE}
-      if (test.Name = 'case') and (test.attribute['id'] = name) then
-      {$ENDIF}
       begin
         foundGroup := Group;
         foundTest := test;
@@ -303,16 +256,11 @@ begin
   end;
 end;
 
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  {$IFDEF FPC}
-  RegisterTest('UCUM testList', TUcumTests.create);
-  RegisterTest('UCUM Special Test', TUcumSpecialTests);
-  {$ELSE}
-  TDUnitX.RegisterTestFixture(TUcumTest);
-  TDUnitX.RegisterTestFixture(TUcumSpecialTests);
-  {$ENDIF}
+  RegisterTest('Library.UCUM testList', TUcumTests.create);
+  RegisterTest('Library.UCUM Special Test', TUcumSpecialTests.Suite);
 end;
 
 initialization

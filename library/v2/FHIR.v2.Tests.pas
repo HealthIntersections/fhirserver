@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
   FHIR.R4.PathNode, FHIR.R4.PathEngine,
@@ -59,82 +59,59 @@ type
   // and anyway, people should use the second parser not the first. Maybe come
   // back to solve this at some time in the future - copy from msaccess to mysql?
   // the problem is that the content of the database is protected, so can't be shared.
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2DictTests = Class (TFslTestCase)
   published
     {$IFDEF TEST_COMPILED}
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryCompiled;
     {$ENDIF}
 
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryAccess;
   end;
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   THL7v2ParserTests = Class (TFslTestCase)
   private
     function parse(msg : String; fmt : THL7V2Format) : THL7v2Message;
   public
-    {$IFNDEF FPC}[SetupFixture]{$ENDIF}
     procedure Setup; override;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryParse;
   end;
   {$ENDIF}
 
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2ParserTests = Class (TFslTestCase)
   private
     procedure test(source : String);
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestSimple;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestFHIRPath;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestIndexOffsets;
     {$IFNDEF NO_JS}
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestJavascript;
     {$ENDIF}
   end;
 
 
 type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TLLPTests = Class (TFslTestCase)
   private
     FDelay: Integer;
     procedure MessageReply(Sender: TObject; AConnection: TIdTCPConnection; Msg: TBytes; var VHandled: Boolean; var Reply: TBytes);
   public
-    {$IFNDEF FPC}[Setup]{$ENDIF}
     procedure Setup; override;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestNoConnectionServer;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestNoConnectionClient;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestConnection;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestConnectionLimit;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSyncForwards;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSyncBackwards;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSyncForwards1000;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSyncBackwards1000;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSingleThread;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     procedure TestSingleThreadTimeout;
   end;
 
-procedure RegisterTests;
+procedure registerTests;
 
 implementation
 
@@ -731,7 +708,7 @@ begin
     try
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       js.execute(JS_TEST_SCRIPT, '', 'test', []);
-      Assert.Pass();
+      assertPass();
     finally
       js.free;
     end;
@@ -749,22 +726,15 @@ begin
     'OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F'#13);
 end;
 
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  {$IFDEF FPC}
   {$IFDEF WINDOWS}
-  RegisterTest('v2 Dictionary Tests', Tv2DictTests);
-  RegisterTest('v2 Parser Tests', THL7v2ParserTests);
+  RegisterTest('Library.v2 Dictionary Tests', Tv2DictTests.Suite);
+  RegisterTest('Library.v2 Parser Tests', THL7v2ParserTests.Suite);
   {$ENDIF}
-  RegisterTest('v2 Parser2 Tests', Tv2ParserTests);
-  RegisterTest('LLP Tests', TLLPTests);
-  {$ELSE}
-  TDUnitX.RegisterTestFixture(Tv2DictTests);
-  TDUnitX.RegisterTestFixture(THL7v2ParserTests);
-  TDUnitX.RegisterTestFixture(Tv2ParserTests);
-  TDUnitX.RegisterTestFixture(TLLPTests);
-  {$ENDIF}
+  RegisterTest('Library.v2 Parser2 Tests', Tv2ParserTests.Suite);
+  RegisterTest('Library.LLP Tests', TLLPTests.Suite);
 end;
 
 end.

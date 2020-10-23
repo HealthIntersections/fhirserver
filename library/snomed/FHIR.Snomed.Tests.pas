@@ -34,12 +34,11 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Base,
   FHIR.Snomed.Services, FHIR.Snomed.Expressions;
 
 type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TSnomedTests = Class (TFslTestCase)
   private
     FServices : TSnomedServices;
@@ -51,29 +50,19 @@ type
     procedure n(s, d : String); // normalise from s to d
     procedure s(p, c : String; yes : boolean); // test subsumption
   public
-    {$IFNDEF FPC}[Setup]{$ENDIF}
     procedure Setup; override;
-    {$IFNDEF FPC}[TearDown]{$ENDIF}
     procedure TearDown; override;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure Base;
-
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure Parse;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure ParseErrors;
-
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure Equivalence;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure Normalise;
-    {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure Subsumes;
   end;
 
 
-procedure RegisterTests;
+procedure registerTests;
 
 
 implementation
@@ -83,7 +72,7 @@ implementation
 procedure TSnomedTests.Setup;
 begin
   FServices := TSnomedServices.Create;
-  FServices.Load('C:\ProgramData\fhirserver\snomed_20161031_au.cache', true);
+  FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
 end;
 
 procedure TSnomedTests.TearDown;
@@ -290,14 +279,10 @@ begin
 end;
 
 
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-{$IFDEF FPC}
-  RegisterTest('Snomed Tests', TSnomedTests);
-{$ELSE}
-  TDUnitX.RegisterTestFixture(TSnomedTests);
-{$ENDIF}
+  RegisterTest('Library.Snomed Tests', TSnomedTests.Suite);
 end;
 
 end.

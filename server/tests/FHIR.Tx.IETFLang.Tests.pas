@@ -28,30 +28,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
   Sysutils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Tx.Lang;
 
 
 type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TIETFLangTests = Class (TFslTestCase)
   private
     FDefinitions : TIETFLanguageDefinitions;
     procedure pass(code : String);
     procedure fail(code : String);
   public
-    {$IFNDEF FPC}[Setup]{$ENDIF} procedure Setup; override;
-    {$IFNDEF FPC}[TearDown]{$ENDIF} procedure TearDown; override;
+    procedure Setup; override;
+    procedure TearDown; override;
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestSimple;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestWrong;
+    Procedure TestSimple;
+    Procedure TestWrong;
   end;
 
 procedure registerTests;
@@ -112,14 +111,10 @@ begin
   fail('en-AUA');
 end;
 
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-{$IFDEF FPC}
-  RegisterTest('Lang Tests', TIETFLangTests);
-{$ELSE}
-  TDUnitX.RegisterTestFixture(TIETFLangTests);
-{$ENDIF}
+  RegisterTest('Library.Lang Tests', TIETFLangTests.Suite);
 end;
 
 end.
