@@ -5559,6 +5559,7 @@ begin
     Logging.log('Failing TFhirServerMaintenanceThread');
   end;
   SetThreadStatus('Done');
+  closeThread;
 end;
 
 { TFhirServerSubscriptionThread }
@@ -5611,6 +5612,7 @@ begin
   GJsHost := nil;
   {$ENDIF}
   SetThreadStatus('Done');
+  closeThread;
 end;
 
 { TFhirServerEmailThread }
@@ -5668,6 +5670,7 @@ begin
   GJsHost := nil;
   {$ENDIF}
   SetThreadStatus('Done');
+  closeThread;
 end;
 
 type
@@ -5889,6 +5892,7 @@ begin
   GJsHost := nil;
   {$ENDIF}
   SetThreadStatus('Done');
+  closeThread;
 end;
 
 procedure TAsyncTaskThread.kill;

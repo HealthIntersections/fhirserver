@@ -1372,11 +1372,11 @@ Begin
       SetThreadStatus('Done');
     End;
   Except
-    On e:
-    Exception Do
+    On e: Exception Do
       // presumably some comms or indy related exception
       // there's not really anyplace good to put this????
     End;
+  closeThread;
 End;
 
 {==========================================================

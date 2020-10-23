@@ -395,6 +395,7 @@ begin
   finally
     FController.setStatus(ssNotRunning);
   end;
+  closeThread;
 end;
 
 end.

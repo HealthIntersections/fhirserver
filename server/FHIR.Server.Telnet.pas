@@ -366,6 +366,7 @@ begin
     end;
     sleep(50);
   end;
+  closeThread;
 end;
 
 { TTelnetSession }
