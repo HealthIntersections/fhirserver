@@ -252,11 +252,6 @@ Type
     function link : TFslComparer<T>; overload;
   end;
 
-  TDefaultComparer<T : class> = class (TFslComparer<T>)
-  protected
-    function compare(const l, r : T) : integer; override;
-  end;
-
   // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
 
   { TFslList }
@@ -280,6 +275,11 @@ Type
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
+    TDefaultComparer = class (TFslComparer<T>)
+    protected
+      function compare(const l, r : T) : integer; override;
+    end;
+
   var
     FItems: arrayofT;
     FCount: Integer;
@@ -1316,7 +1316,7 @@ end;
 constructor TFslList<T>.Create;
 begin
   inherited Create;
-  FComparer := TDefaultComparer<T>.create;
+  FComparer := TDefaultComparer.create;
   FArrayManager := TMoveArrayManager<T>.Create;
 end;
 
@@ -1330,7 +1330,7 @@ end;
 constructor TFslList<T>.Create(const Collection: TEnumerable<T>);
 begin
   inherited Create;
-  FComparer := TDefaultComparer<T>.create;
+  FComparer := TDefaultComparer.create;
   FArrayManager := TMoveArrayManager<T>.Create;
   InsertRange(0, Collection);
 end;
@@ -1338,7 +1338,7 @@ end;
 constructor TFslList<T>.Create(capacity: integer);
 begin
   inherited Create;
-  FComparer := TDefaultComparer<T>.create;
+  FComparer := TDefaultComparer.create;
   FArrayManager := TMoveArrayManager<T>.Create;
   self.Capacity := capacity;
 end;
@@ -2913,9 +2913,9 @@ begin
   FCol := Col;
 end;
 
-{ TDefaultComparer<T> }
+{ TFslList<T>.TDefaultComparer }
 
-function TDefaultComparer<T>.compare(const l, r: T): integer;
+function TFslList<T>.TDefaultComparer.compare(const l, r: T): integer;
 var
   li, ri : NativeUInt;
 begin

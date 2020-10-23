@@ -34,11 +34,11 @@ interface
 
 uses
   FastMM4, Windows,
-  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
+  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry,
   ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
   IniFiles, Math, IdTelnet, IdGlobal, FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Shell, FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
-  FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm;
+  FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm, Types;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -98,13 +98,14 @@ type
     btnLoincDest: TSpeedButton;
     btnLoincImportStop: TBitBtn;
     btnLoincSource: TSpeedButton;
-    btnNDC: TButton;
     btnProcessUMLS: TBitBtn;
+    btnNDC: TBitBtn;
     btnSnomedImportStop: TBitBtn;
     btnSource: TSpeedButton;
     btnStopCombine: TBitBtn;
     btnUMLSStop: TBitBtn;
-    Button1: TButton;
+    btnFetchThreads: TButton;
+    btnClearCache: TButton;
     cbUMLSDriver: TComboBox;
     cbUMLSType: TComboBox;
     cbxEdition: TComboBox;
@@ -180,6 +181,13 @@ type
     lbSessions: TListBox;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    MenuItem10: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
+    N1: TMenuItem;
     mThreads: TMemo;
     MenuItem1: TMenuItem;
     MenuItem17: TMenuItem;
@@ -239,12 +247,12 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
-    TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
-    TabSheet4: TTabSheet;
-    TabSheet5: TTabSheet;
-    Threads: TTabSheet;
+    tbConsole: TTabSheet;
+    tbRequests: TTabSheet;
+    tbStatistics: TTabSheet;
+    tbManage: TTabSheet;
+    tbTerminologies: TTabSheet;
+    tbThreads: TTabSheet;
     tbSnomed: TTabSheet;
     tbSnomedCombine: TTabSheet;
     tbLoinc: TTabSheet;
@@ -253,9 +261,9 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
+    procedure btnClearCacheClick(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
     procedure btnCombineGoClick(Sender: TObject);
@@ -273,24 +281,33 @@ type
     procedure btnSourceClick(Sender: TObject);
     procedure btnStopCombineClick(Sender: TObject);
     procedure btnUMLSStopClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnFetchThreadsClick(Sender: TObject);
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
     procedure Image4Click(Sender: TObject);
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
+    procedure MenuItem8Click(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
+    procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
+    procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton3Click(Sender: TObject);
   private
     FLock : TFslLock;
     FTelnet: TIdTelnet;
+    FConnected : boolean;
     FIncoming : TStringList;
     FTheads : TStringList;
     FServerStatus : String;
@@ -309,6 +326,7 @@ type
     procedure recordSessionLength(start, length : int64);
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
     procedure DoConnected(Sender: TObject);
+    procedure DoDisconnected(Sender: TObject);
     procedure handleSession(line: String);
     procedure processIncomingLine(line: String);
     function passesFilter(line: String) : boolean;
@@ -320,6 +338,8 @@ type
     procedure umlsCallback(pct: Integer; action: String);
     procedure setupTerminologyPage;
     function getSnomedModule: String;
+    procedure connectToServer(server : String);
+    procedure GetODBCDriversList(list : TStrings);
   public
 
   end;
@@ -372,7 +392,7 @@ begin
   result := 'Total Requests: '+inttostr(FTotal)+#13#10;
   if (FTotal > 0) then
   begin
-    result := result + 'Avg Length: '+FloatToStr(FLength / FTotal)+'ms'+#13#10;
+    result := result + 'Avg Length: '+FloatToStrF(FLength / FTotal, ffFixed, 2, 2)+'ms'+#13#10;
     t := FCursor;
     latest := FStarts[t];
     length := 0;
@@ -389,10 +409,10 @@ begin
       if t < 0 then
         t := 999;
     end;
-    result := result + '  Frequency: '+FloatToStr((c * 1000) / span )+'hz'+#13#10;
-    result := result + '  Avg Length: '+FloatToStr(length / c)+'ms'+#13#10;
+    result := result + '  Frequency: '+FloatToStrF((c * 1000) / span , ffFixed, 2, 2)+'hz'+#13#10;
+    result := result + '  Avg Length: '+FloatToStrF(length / c, ffFixed, 2, 2)+'ms'+#13#10;
   end;
-  result := result + 'Frequency (total): '+FloatToStr((FTotal * 1000)/ (GetTickCount64 - FStart))+'hz'+#13#10;
+  result := result + 'Frequency (total): '+FloatToStrF((FTotal * 1000)/ (GetTickCount64 - FStart), ffFixed, 2, 2)+'hz'+#13#10;
   result := result + #13#10+'Histogram (seconds): '+#13#10;
   result := result + '  0 - 0.1: '+inttostr(FCounts[0])+#13#10;
   result := result + '0.1 - 0.5: '+inttostr(FCounts[1])+#13#10;
@@ -450,6 +470,7 @@ begin
   FTelnet.Port := 44123;
   FTelnet.ThreadedEvent := true;
   FTelnet.OnConnected := DoConnected;
+  FTelnet.onDisconnected := DoDisconnected;
   FTelnet.OnDataAvailable := DoIncoming;
 
   setupTerminologyPage;
@@ -477,6 +498,11 @@ begin
   FStatistics.Free;
   FLock.Free;
   FIni.Free;
+end;
+
+procedure TMainConsoleForm.FormShow(Sender: TObject);
+begin
+  GetODBCDriversList(cbUMLSDriver.items);
 end;
 
 procedure TMainConsoleForm.Image2Click(Sender: TObject);
@@ -528,7 +554,104 @@ begin
   btnDeleteEdition.Enabled := lbEditions.ItemIndex <> -1;
 end;
 
+procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
+begin
+  ServerConnectionForm.edtServer.Text := FAddress;
+  ServerConnectionForm.edtServer.ReadOnly:= false;
+  ServerConnectionForm.edtPassword.Text := FPassword;
+  if ServerConnectionForm.ShowModal = mrOk then
+  begin
+    FAddress := ServerConnectionForm.edtServer.Text;
+    FPassword := ServerConnectionForm.edtPassword.Text;
+    FIni.WriteString('console', 'address', FAddress);
+    if FPassword = '' then
+      FPassword := DEF_PASSWORD;
+    FIni.WriteString('console', 'password', FPassword);
+    FIni.WriteString('servers', FAddress, FPassword);
+    FLines.clear;
+    mConsole.Lines.Clear;
+    if FConnected then
+      FTelnet.Disconnect;
+    FStatus := csDiconnected;
+  end;
+end;
+
+procedure TMainConsoleForm.connectToServer(server : String);
+var
+  pwd : String;
+begin
+  if (server = 'localhost') then
+    pwd := DEF_PASSWORD
+  else
+    pwd := FIni.ReadString('servers', FAddress, '');
+  if (pwd = '') then
+  begin
+    ServerConnectionForm.edtServer.Text := server;
+    ServerConnectionForm.edtServer.ReadOnly:= true;
+    ServerConnectionForm.edtPassword.Text := pwd;
+    if ServerConnectionForm.ShowModal = mrOk then
+      pwd := ServerConnectionForm.edtPassword.Text
+  end;
+  if pwd <> '' then
+  begin
+    FAddress := server;
+    FPassword := ServerConnectionForm.edtPassword.Text;
+    FIni.WriteString('console', 'address', FAddress);
+    FIni.WriteString('console', 'password', FPassword);
+    FIni.WriteString('servers', FAddress, FPassword);
+    FLines.clear;
+    mConsole.Lines.Clear;
+    if FConnected then
+      FTelnet.Disconnect;
+    FStatus := csDiconnected;
+  end;
+end;
+
+procedure TMainConsoleForm.GetODBCDriversList(list : TStrings);
+var
+  aStringlist   : TStringlist;
+  aRegistry   : TRegistry;
+Begin
+  aStringlist:= Tstringlist.Create;
+  try
+    aRegistry:= TRegistry.Create;
+    try
+      aRegistry.rootkey:= HKEY_LOCAL_MACHINE;
+      aRegistry.OpenKeyReadOnly('SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers');
+      aRegistry.GetValueNames(aStringlist);
+
+      list.assign(aStringlist);
+    finally
+      aRegistry.Free;
+    end;
+  finally
+    aStringlist.Sort;
+  end;
+end;
+
+procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
+begin
+  connectToServer((Sender as TMenuItem).Caption);
+end;
+
+procedure TMainConsoleForm.MenuItem8Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainConsoleForm.pnlSnomedImportClick(Sender: TObject);
+begin
+
+end;
+
+procedure TMainConsoleForm.tbConsoleContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+
+end;
+
+procedure TMainConsoleForm.tbTerminologiesContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
 begin
 
 end;
@@ -570,10 +693,11 @@ begin
   FWantStop := true;
 end;
 
-procedure TMainConsoleForm.Button1Click(Sender: TObject);
+procedure TMainConsoleForm.btnFetchThreadsClick(Sender: TObject);
 begin
   try
-    FTelnet.SendString('@threads'+#10);
+    if FConnected then
+      FTelnet.SendString('@threads'+#10);
   except
   end;
 end;
@@ -596,6 +720,15 @@ begin
   dlgFolder.Title := 'Choose SNOMED CT RF2 International Snapshot Folder';
   if dlgFolder.Execute then
     edtBase.text := dlgFolder.filename;
+end;
+
+procedure TMainConsoleForm.btnClearCacheClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@cache'+#10);
+  except
+  end;
 end;
 
 procedure TMainConsoleForm.btnCombinedDestinationClick(Sender: TObject);
@@ -627,6 +760,7 @@ var
   combiner : TSnomedCombiner;
   svc : TSnomedServices;
 begin
+  raise Exception.create('not done yet');
   if not FileExists(edtInternational.Text) then
     ShowMessage('International File "'+edtInternational.Text+'" not found')
   else if lbEditions.Items.Count = 0 then
@@ -886,8 +1020,7 @@ var
   start : TDateTime;
   ndc : TNdcImporter;
 begin
-
-  if dlgOpen.execute then
+  if dlgFolder.execute then
   begin
     start := now;
     if cbUMLSDriver.Text = '' then
@@ -909,7 +1042,7 @@ begin
       FIni.WriteString('umls-process', 'username', edtUMLSUsername.text);
       FIni.WriteString('umls-process', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
 
-      ndc := TNDCImporter.create(dlgOpen.FileName);
+      ndc := TNDCImporter.create(dlgFolder.FileName);
       try
         ndc.Database := TFslDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
         FWantStop := false;
@@ -1445,6 +1578,16 @@ begin
   finally
     FLock.Unlock;
   end;
+  FConnected := true;
+  btnClearCache.enabled := true;
+  btnFetchThreads.enabled := true;
+end;
+
+procedure TMainConsoleForm.DoDisconnected(Sender: TObject);
+begin
+  FConnected := false;
+  btnClearCache.enabled := false;
+  btnFetchThreads.enabled := false;
 end;
 
 end.

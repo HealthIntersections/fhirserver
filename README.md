@@ -1,15 +1,13 @@
-fhirserver
-==========
+# Pascal FHIRServer Reference Implementation
 
-Reference Implementation Server + Libraries for the FHIR Specification. 
+Reference Implementation Server + Libraries for the FHIR Specification, written in Pascal
 
-Basic Information
------------------
+## Basic Information
 
 This is a set of FHIR applications written in Pascal. It is also 
 the home of the pascal reference implementation for FHIR. Included 
 in this project:
-* The Pascal reference implementation for FHIR (/library)
+* The Pascal reference implementation for FHIR (/library) + many useful supporting libraries
 * The FHIR reference server 
   * supports the entire FHIR functionality, along with OAuth, OpenID.Connect, and SCIM
   * includes v2 and DICOM end points
@@ -23,13 +21,11 @@ For binary releases of this content, see http://www.healthintersections.com.au/F
 This project is maintained by the FHIR Project lead. The server runs in 
 multiple locations, including http://test.fhir.org, http://tx.fhir.org, and http://packages2.fhir.org
 
-Support
--------
+## Support
 
 See <https://chat.fhir.org/#narrow/stream/179281-pascal>
 
-Reference Server
-----------------
+## Reference Server
 
 In form, this a middleware tool to help applications exchange data via a repository. 
 It also shows how to implement a generic FHIR server against an SQL database. The server 
@@ -37,8 +33,7 @@ is specifically written as an reference server - it implements all parts of the
 specification as defined, and is co-developed with the specification. It is not 
 well optimised for hosting/supporting very large repositories efficiently. 
 
-Libraries
----------
+## Libraries
 
 The open source FHIR Server includes delphi/pascal implementations of:
 * Xml/XPath/XML Patch + XML Digital Signature
@@ -61,57 +56,35 @@ The open source FHIR Server includes delphi/pascal implementations of:
   * FHIR FMX Components
 * All of FHIR + FHIRPath + smart all launch + cds-hooks, of course
 
-Folders
--------
+## Projects
+
+* \server\FHIRServer.dproj (delphi)  or \server\FHIRServerFPC.lpi (FPC) - the main server
+* \server\FHIRConsole.lpi (FPC only): management utility for the server 
+
++ others - still be documented.
+
+## Folders
 
 * **library**: the pascal reference implementation with supporting code
 * **exec**: files needed by the server at run time
 
+## Compiling 
 
+The code compiles under either Delphi (windows 32+64) or Lazarus/FPC (windows 32+64/Linux/OSX).
 
+### Delphi
 
+The code should in principle compile under Delphi XE3+ (any edition, personal will do). Note that 
+in practice, various subtle but breaking changes have been introduced to the runtime library (Streams, 
+Indy) that mean that some fiddling with IFDEFs may be necessary. 10.3 and 10.4 are both expected to 
+work without modification.
 
-
-The full source base has many dependencies on other github projects, and many tools 
-operate across the github projects. In order to properly compile and execute the 
-tests and applications, the following git repositories must be put in these places:
+In order to properly compile, the following git repositories must be put in these places:
 - https://github.com/grahamegrieve/fhirserver in C:\work\fhirserver
 - https://github.com/grahamegrieve/delphi-markdown in C:\work\markdown
-- http://github.com/hl7/fhir in C:\work\org.hl7.fhir\build
-- https://github.com/hapifhir/org.hl7.fhir.core in C:\work\org.hl7.fhir\org.hl7.fhir.core
-
-Compiling 
----------
-
-The code compiles under either Delphi (windows 32/64) or Lazarus/FPC (windows 32/64/Linux/OSX).
-
-Delphi: 
-  The code should in principle compiles under Delphi XE3+ (any edition, personal will do).
-  Note that in practice, various subtle but breaking changes have been introduced to the runtime
-  library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary. 10.3 and 10.4 
-  are btoh expected to work
-
-FPC:
-  The code compiles using FPC 3.3.1 / Lazarus 2.1.0 (or more recent). The code depends on some recent
-  bug fixes so older versions are probably not supported.
-  
-The FhirServer depends on the following other GitHub repositories:
-* https://github.com/grahamegrieve/delphi-markdown
-* https://github.com/VSoftTechnologies/DUnitX
-
-You need to get a copy of these and fix the paths for the markdown processor units in the .dprs.
-You also need to get a copy of the latest version of the Indy components, since the server
-depends on some recent fixes to Indy. note you don't need to install them to delphi - just put them in 
-your system path. (Tools...Options)
 
 And also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Home (all delphi 
 users should have this installed!)
-
-After that, compiling should be simple: open one of the .groupproj in the root 
-folder in your version of delphi, and compile
-
-Design Time support
--------------------
 
 For design time support for the GUI applications, you need to install treeview and 
 synedit (see in dependencies folders), then open and compile the packages in /packages, 
@@ -120,19 +93,23 @@ and install the 2 design time packages.
 Note that the FHIRServer is a *big* compile. You may have problems compiling in 
 resource constrained environments.
 
-Building Release
-----------------
+### FPC / Lazarus
 
-Bulding an actual release has a long list of dependencies, including 
-several versions of the FHIR specification, and the following tools
-* Innosetup + InnoSetup download plug-in
-* FinalBuilder
+The code compiles using FPC 3.3.1 / Lazarus 2.1.0 (or more recent). The code depends on some 
+recent bug fixes so older versions are probably not supported.
+  
+The FhirServer depends on the following other GitHub repositories:
+* https://github.com/dezlov/PascalTZ
+* https://github.com/grahamegrieve/delphi-markdown
 
-All the dependencies are free, though assmebly is a pain. 
+Get a local copy of these, and install their packages. 
 
-Running
--------
+## Test Cases
 
-* Notepad++ plug-in. Either run the installer, or change the compile location to compile the plug-in to the notepad++ plug-in directory for your systems
-* Server: See install\readme.txt, and also, you need a copy of the full specification for the same version as the generated reference implementation code (see the downloads page for that version) 
+in order to run the tests, you also need the repo https://github.com/FHIR/fhir-test-cases locally, and you'll need to pass this as a parameter to the test cases.
 
+## Building Release
+
+Bulding an actual release requires the following tools
+* Innosetup v6 + 
+* FinalBuilder v8

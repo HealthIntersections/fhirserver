@@ -311,7 +311,6 @@ uses
   FHIR.Server.ValidatorR2 in 'FHIR.Server.ValidatorR2.pas',
   FHIR.Server.ValidatorR3 in 'FHIR.Server.ValidatorR3.pas',
   FHIR.Server.SessionMgr in 'FHIR.Server.SessionMgr.pas',
-  FHIR.Server.Manager in 'FHIR.Server.Manager.pas' {ServerManagerForm},
   VirtualTrees.Actions in '..\dependencies\treeview\Source\VirtualTrees.Actions.pas',
   VirtualTrees.Classes in '..\dependencies\treeview\Source\VirtualTrees.Classes.pas',
   VirtualTrees.ClipBoard in '..\dependencies\treeview\Source\VirtualTrees.ClipBoard.pas',
@@ -499,7 +498,7 @@ uses
   FHIR.R3.Javascript in '..\library\r3\FHIR.R3.Javascript.pas',
   FHIR.v2.Javascript in '..\library\v2\FHIR.v2.Javascript.pas',
   FHIR.R5.Javascript in '..\library\r5\FHIR.R5.Javascript.pas',
-  {$ENDIF}
+  {$ENDIF }
   FHIR.Cda.Base in '..\library\cda\FHIR.Cda.Base.pas',
   FHIR.Cda.Writer in '..\library\cda\FHIR.Cda.Writer.pas',
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',

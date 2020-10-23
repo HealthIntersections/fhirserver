@@ -83,7 +83,7 @@ implementation
 procedure TSnomedTests.Setup;
 begin
   FServices := TSnomedServices.Create;
-  FServices.Load('C:\ProgramData\fhirserver\snomed_20161031_au.cache', true);
+  FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
 end;
 
 procedure TSnomedTests.TearDown;

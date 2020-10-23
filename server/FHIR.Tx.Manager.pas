@@ -166,7 +166,6 @@ Type
     procedure UpdateConceptMaps;
     procedure BuildStems(cs : TFhirCodeSystemW);
 
-
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptListW; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
     procedure AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
@@ -224,6 +223,8 @@ Type
     function NextConceptKey : integer;
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
+
+    function cacheCount : integer; virtual;
   end;
 
 implementation
@@ -710,6 +711,11 @@ begin
   end;
 end;
 
+
+function TTerminologyServerStore.cacheCount: integer;
+begin
+  result := 0;
+end;
 
 procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFhirCodeSystemConceptListW; url : String);
 var

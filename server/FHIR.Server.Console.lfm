@@ -9,6 +9,7 @@ object MainConsoleForm: TMainConsoleForm
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   Position = poDefault
   LCLVersion = '2.1.0.0'
   object sBar: TStatusBar
@@ -55,14 +56,15 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 892
-      ActivePage = Threads
+      ActivePage = tbTerminologies
       Align = alClient
-      TabIndex = 1
+      TabIndex = 5
       TabOrder = 0
-      object TabSheet1: TTabSheet
+      object tbConsole: TTabSheet
         Caption = 'Console'
         ClientHeight = 615
         ClientWidth = 884
+        OnContextPopup = tbConsoleContextPopup
         object mConsole: TMemo
           Left = 0
           Height = 589
@@ -82,39 +84,34 @@ object MainConsoleForm: TMainConsoleForm
           Images = ImageList1
           TabOrder = 1
           object ToolButton1: TToolButton
-            Left = 24
+            Left = 1
+            Hint = 'Clear the log'
             Top = 2
             Caption = 'ToolButton1'
             ImageIndex = 0
             OnClick = ToolButton1Click
           end
           object ToolButton2: TToolButton
-            Left = 47
-            Height = 22
+            Left = 24
+            Height = 8
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
           end
           object edtFilter: TEdit
-            Left = 55
+            Left = 32
             Height = 23
+            Hint = 'Filter what you see in the log'
             Top = 2
             Width = 144
             OnChange = edtFilterChange
             TabOrder = 0
             TextHint = 'Filter'
           end
-          object ToolButton3: TToolButton
-            Left = 1
-            Top = 2
-            Caption = 'ToolButton3'
-            ImageIndex = 1
-            OnClick = ToolButton3Click
-          end
         end
       end
-      object Threads: TTabSheet
-        Caption = 'Threads'
+      object tbThreads: TTabSheet
+        Caption = 'Status'
         ClientHeight = 615
         ClientWidth = 884
         object Panel29: TPanel
@@ -127,14 +124,23 @@ object MainConsoleForm: TMainConsoleForm
           ClientHeight = 34
           ClientWidth = 884
           TabOrder = 0
-          object Button1: TButton
+          object btnFetchThreads: TButton
             Left = 6
             Height = 25
             Top = 5
-            Width = 75
-            Caption = 'Refresh'
-            OnClick = Button1Click
+            Width = 122
+            Caption = 'Fetch Threads'
+            OnClick = btnFetchThreadsClick
             TabOrder = 0
+          end
+          object btnClearCache: TButton
+            Left = 152
+            Height = 25
+            Top = 5
+            Width = 96
+            Caption = 'Clear Cache'
+            OnClick = btnClearCacheClick
+            TabOrder = 1
           end
         end
         object mThreads: TMemo
@@ -146,7 +152,7 @@ object MainConsoleForm: TMainConsoleForm
           TabOrder = 1
         end
       end
-      object TabSheet2: TTabSheet
+      object tbRequests: TTabSheet
         Caption = 'By Request'
         ClientHeight = 615
         ClientWidth = 884
@@ -188,13 +194,13 @@ object MainConsoleForm: TMainConsoleForm
           TabOrder = 2
         end
       end
-      object TabSheet3: TTabSheet
+      object tbStatistics: TTabSheet
         Caption = 'Statistics'
-        ClientHeight = 589
+        ClientHeight = 615
         ClientWidth = 884
         object mStats: TMemo
           Left = 296
-          Height = 589
+          Height = 615
           Top = 0
           Width = 588
           Align = alClient
@@ -208,7 +214,7 @@ object MainConsoleForm: TMainConsoleForm
         end
         object Panel5: TPanel
           Left = 0
-          Height = 589
+          Height = 615
           Top = 0
           Width = 291
           Align = alLeft
@@ -217,28 +223,29 @@ object MainConsoleForm: TMainConsoleForm
         end
         object Splitter4: TSplitter
           Left = 291
-          Height = 589
+          Height = 615
           Top = 0
           Width = 5
         end
       end
-      object TabSheet4: TTabSheet
+      object tbManage: TTabSheet
         Caption = 'Manage Server'
       end
-      object TabSheet5: TTabSheet
+      object tbTerminologies: TTabSheet
         Caption = 'Terminology Imports'
-        ClientHeight = 589
+        ClientHeight = 615
         ClientWidth = 884
+        OnContextPopup = tbTerminologiesContextPopup
         object Panel2: TPanel
           Left = 0
-          Height = 589
+          Height = 615
           Top = 0
           Width = 115
           Align = alLeft
           BevelInner = bvLowered
           BevelOuter = bvNone
           BorderWidth = 2
-          ClientHeight = 589
+          ClientHeight = 615
           ClientWidth = 115
           Color = clWhite
           ParentBackground = False
@@ -931,19 +938,19 @@ object MainConsoleForm: TMainConsoleForm
         end
         object pgTerminologies: TPageControl
           Left = 115
-          Height = 589
+          Height = 615
           Top = 0
           Width = 769
-          ActivePage = tbUMLS
+          ActivePage = tbSnomed
           Align = alClient
           ShowTabs = False
           Style = tsButtons
-          TabIndex = 3
+          TabIndex = 0
           TabOrder = 1
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
             Caption = 'SNOMED Import'
-            ClientHeight = 581
+            ClientHeight = 607
             ClientWidth = 761
             object Panel4: TPanel
               Left = 0
@@ -964,7 +971,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel6: TPanel
               Left = 0
               Height = 41
-              Top = 517
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
@@ -1051,7 +1058,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel7: TPanel
               Left = 0
               Height = 51
-              Top = 466
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
@@ -1088,12 +1095,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel8: TPanel
               Left = 0
-              Height = 365
+              Height = 414
               Top = 101
               Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 365
+              ClientHeight = 414
               ClientWidth = 761
               TabOrder = 3
               object Label2: TLabel
@@ -1360,13 +1367,13 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbSnomedCombine: TTabSheet
             Caption = 'Snomed Combination'
-            ClientHeight = 581
+            ClientHeight = 607
             ClientWidth = 761
             ImageIndex = 3
             object Panel20: TPanel
               Left = 0
               Height = 41
-              Top = 517
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
@@ -1453,7 +1460,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel21: TPanel
               Left = 0
               Height = 51
-              Top = 466
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
@@ -1546,12 +1553,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel25: TPanel
               Left = 0
-              Height = 365
+              Height = 414
               Top = 101
               Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 365
+              ClientHeight = 414
               ClientWidth = 761
               TabOrder = 4
               object Label18: TLabel
@@ -1803,7 +1810,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbLoinc: TTabSheet
             Caption = 'LOINC Import'
-            ClientHeight = 581
+            ClientHeight = 607
             ClientWidth = 761
             ImageIndex = 1
             object Panel11: TPanel
@@ -1865,7 +1872,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel14: TPanel
               Left = 0
               Height = 51
-              Top = 466
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
@@ -1903,7 +1910,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel15: TPanel
               Left = 0
               Height = 41
-              Top = 517
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
@@ -1989,12 +1996,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel16: TPanel
               Left = 0
-              Height = 346
+              Height = 395
               Top = 120
               Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 346
+              ClientHeight = 395
               ClientWidth = 761
               TabOrder = 4
               object Label10: TLabel
@@ -2139,7 +2146,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbUMLS: TTabSheet
             Caption = 'Process UMLS'
-            ClientHeight = 581
+            ClientHeight = 607
             ClientWidth = 761
             ImageIndex = 2
             object Panel17: TPanel
@@ -2200,12 +2207,12 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel26: TPanel
               Left = 0
-              Height = 388
+              Height = 414
               Top = 101
               Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 388
+              ClientHeight = 414
               ClientWidth = 761
               TabOrder = 2
               object Label8: TLabel
@@ -2309,20 +2316,11 @@ object MainConsoleForm: TMainConsoleForm
                 OnChange = cbUMLSDriverChange
                 TabOrder = 4
               end
-              object btnNDC: TButton
-                Left = 12
-                Height = 25
-                Top = 189
-                Width = 75
-                Caption = 'Import NDC'
-                OnClick = btnNDCClick
-                TabOrder = 6
-              end
             end
             object Panel27: TPanel
               Left = 0
               Height = 51
-              Top = 489
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
@@ -2360,7 +2358,7 @@ object MainConsoleForm: TMainConsoleForm
             object Panel28: TPanel
               Left = 0
               Height = 41
-              Top = 540
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
@@ -2368,12 +2366,12 @@ object MainConsoleForm: TMainConsoleForm
               ClientWidth = 761
               TabOrder = 4
               object btnProcessUMLS: TBitBtn
-                Left = 674
+                Left = 624
                 Height = 25
                 Top = 9
-                Width = 82
+                Width = 132
                 Anchors = [akTop, akRight]
-                Caption = 'Process'
+                Caption = 'Process RxNorm'
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
                   18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -2442,6 +2440,52 @@ object MainConsoleForm: TMainConsoleForm
                 OnClick = btnUMLSStopClick
                 TabOrder = 1
                 Visible = False
+              end
+              object btnNDC: TBitBtn
+                Left = 488
+                Height = 25
+                Top = 9
+                Width = 132
+                Anchors = [akTop, akRight]
+                Caption = 'Import NDC'
+                Glyph.Data = {
+                  36040000424D3604000000000000360000002800000010000000100000000100
+                  2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+                  FF00FFFFFF0005057F0108088E340A0A97740909945107078E0DFFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                  FF000B0B8E111515A4AF3030D6EF3131E5FD2727DDFD1D1DC3FB1313A64AFFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF001010
+                  93143434C6E25B5BEBFA5A5AF4FF3E3EEAFF4040F2FF3131EEFF2C2CD5FF1F1F
+                  BA51FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF000C0C93012828
+                  B0D27070EBFE7474F4FF4747EAFF3E3EE7FF3434E5FF3636EAFF3535EFFF3838
+                  DEFF2A2ACB51FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF001818A8205757
+                  D6FF9999F8FF5B5BEFFF5252EDFF4949EAFF4040E8FF3636E6FF3939EAFF3939
+                  F0FF6C6CDFFF5D5DBF58FFFFFF00FFFFFF00FFFFFF00FFFFFF002121B8267070
+                  DFFFABABFAFF6767F2FF5E5EF0FF5555EDFF4B4BEBFF4242E8FF3939E6FF8A8A
+                  E5FFE8E8EAFFA9A9D1FF7878C758FFFFFF00FFFFFF00FFFFFF001E1EC5076A6A
+                  DDFFB9B9FBFF8484F6FF6A6AF2FF6060F0FF5757EEFF4E4EEBFF8C8CE3FFDADA
+                  DAFFE0E0E0FFE9E9EAFFBBBBCDFF9999AD58FFFFFF00FFFFFF00FFFFFF005959
+                  DB679C9CEFFFBDBDFBFF8888F7FF6C6CF3FF6262F1FFA5A5EAFFE2E2E2FFDEDE
+                  DEFFDBDBDBFFE1E1E1FFE9E9E9FFB9B9B8FFA6A6A21DFFFFFF00FFFFFF00FFFF
+                  FF007B7BE783AAAAF3FFC0C0FBFF8A8AF7FFBFBFF0FFEAEAEAFFE6E6E6FFE3E3
+                  E3FFDFDFDFFFDCDCDCFFEBEBEBFFE1E1E0FFB2B2ADD9FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00A4A4DB83BCBCE6FFEBEBFAFFF2F2F2FFEDEDEDFFEBEBEBFFE7E7
+                  E7FFE4E4E4FFE0E0E0FFDDDDDDFFEDEDEDFFBDBDB8FFFFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00BFBFBF84DDDDDAFFFAFAFAFFF3F3F3FFEEEEEEFFEBEB
+                  EBFFE8E8E8FFE5E5E5FFE5E5E5FFECECEBFFC2C2BFEDFFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00C5C5BF86E3E3DFFFFAFAFAFFF4F4F4FFEFEF
+                  EFFFEBEBEBFFE9E9E9FFF3F3F3FFDDDDDBFFC6C6C474FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D0D0CC85E7E7E5FFFAFAFAFFF8F8
+                  F8FFF3F3F3FFF6F6F6FFEEEEEEFFCFCFCFEFC7C7C508FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D9D9D87DE8E8E7FFEFEF
+                  EFFFEFEFEFFFE5E5E5FFD8D8D8E6CFCFCF13FFFFFF00FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00E1E1E025E2E2
+                  E27ADFDFDF9DDBDBDB51E8E8E803FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                  FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+                }
+                OnClick = btnNDCClick
+                TabOrder = 2
               end
             end
           end
@@ -3002,6 +3046,33 @@ object MainConsoleForm: TMainConsoleForm
       object MenuItem17: TMenuItem
         Caption = 'E&xit'
         ImageIndex = 14
+      end
+    end
+    object MenuItem3: TMenuItem
+      Caption = '&Server'
+      object MenuItem4: TMenuItem
+        Caption = '&Connect'
+        ImageIndex = 1
+        OnClick = MenuItem4Click
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem10: TMenuItem
+        Caption = 'localhost'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem7: TMenuItem
+        Caption = 'tx.fhir.org'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem8: TMenuItem
+        Caption = 'test.fhir.org'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem9: TMenuItem
+        Caption = 'packages.fhir.org'
+        OnClick = MenuItem7Click
       end
     end
     object MenuItem5: TMenuItem

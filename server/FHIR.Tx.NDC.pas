@@ -726,7 +726,7 @@ end;
 
 function TNDCServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.getcontext');
+  result := nil;
 end;
 
 function TNDCServices.getDefinition(code: String): String;

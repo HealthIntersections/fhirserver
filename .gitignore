@@ -234,3 +234,5 @@ web/QuestionnaireToHTML.xslt
 /testcases/v2dict/hl7_94Jul2018.mdb
 /server/lib
 server/r:
+
+testcases/snomed/

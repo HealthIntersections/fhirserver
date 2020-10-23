@@ -43,14 +43,22 @@ uses
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
-//  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base,
-  FHIR.R4.PathNode, FHIR.R4.PathEngine, // FHIR.R4.Javascript,
+  FHIR.R4.PathNode, FHIR.R4.PathEngine,
+  {$IFNDEF NO_JS}
+  FHIR.Javascript, FHIR.Support.Javascript, FHIR.Javascript.Base, FHIR.R4.Javascript, FHIR.v2.Javascript,
+  {$ENDIF}
   FHIR.v2.Base, FHIR.v2.Dictionary, {$IFDEF TEST_COMPILED} FHIR.v2.Dictionary.Compiled, {$ENDIF} FHIR.v2.Dictionary.Database, FHIR.v2.Objects, FHIR.v2.Message, FHIR.v2.Protocol;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
 
 type
+  {$IFDEF WINDOWS}
+  // these 2 sets of tests rely on access, which is not a thing outside windows.
+  // we could load the compiled dictionary but it's crazy slow for FPC to compile,
+  // and anyway, people should use the second parser not the first. Maybe come
+  // back to solve this at some time in the future - copy from msaccess to mysql?
+  // the problem is that the content of the database is protected, so can't be shared.
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2DictTests = Class (TFslTestCase)
   published
@@ -74,6 +82,7 @@ type
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestDictionaryParse;
   end;
+  {$ENDIF}
 
   {$IFNDEF FPC}[TextFixture]{$ENDIF}
   Tv2ParserTests = Class (TFslTestCase)
@@ -86,7 +95,7 @@ type
     Procedure TestFHIRPath;
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestIndexOffsets;
-    {$IFDEF NOT_NOW}
+    {$IFNDEF NO_JS}
     {$IFNDEF FPC}[TestCase]{$ENDIF}
     Procedure TestJavascript;
     {$ENDIF}
@@ -144,6 +153,7 @@ Begin
    result[i + 1] := Char(a[i]);
 End;
 
+{$IFDEF WINDOWS}
 { Tv2Tests }
 
 procedure Tv2DictTests.TestDictionaryAccess;
@@ -179,6 +189,8 @@ begin
     dict.Free;
   end;
 end;
+{$ENDIF}
+
 {$ENDIF}
 
 { TLLPTests }
@@ -559,6 +571,7 @@ begin
   end;
 end;
 
+{$IFDEF WINDOWS}
 { THL7v2ParserTests }
 
 function THL7v2ParserTests.parse(msg: String; fmt: THL7V2Format): THL7v2Message;
@@ -606,6 +619,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 { Tv2ParserTests }
 
@@ -692,7 +706,7 @@ begin
   end;
 end;
 
-{$IFDEF NOT_NOW}
+{$IFNDEF NO_JS}
 
 const
   JS_TEST_SCRIPT =
@@ -739,8 +753,10 @@ procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   {$IFDEF FPC}
+  {$IFDEF WINDOWS}
   RegisterTest('v2 Dictionary Tests', Tv2DictTests);
   RegisterTest('v2 Parser Tests', THL7v2ParserTests);
+  {$ENDIF}
   RegisterTest('v2 Parser2 Tests', Tv2ParserTests);
   RegisterTest('LLP Tests', TLLPTests);
   {$ELSE}

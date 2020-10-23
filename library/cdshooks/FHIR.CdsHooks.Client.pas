@@ -686,7 +686,8 @@ procedure TCDSHooksManagerWorkThread.Execute;
 //  resp : TCDSHookResponse;
 //  client : TFhirClient;
 begin
-(*  SetThreadName('CDSHooks manager');
+(*  SetThreadName('CDSHooks manager');t
+try
   {$IFDEF WINDOWS}
   CoInitialize(nil); // though there's no reason internal reason to initialize
   {$ENDIF}
@@ -743,7 +744,7 @@ begin
     CoUninitialize;
     {$ENDIF}
   end;
-  SetThreadName('');\*)
+  closeThread();\*)
 end;
 
 function TCDSHooksManagerWorkThread.Link: TCDSHooksManagerWorkThread;

@@ -1260,6 +1260,7 @@ begin
   try
     store.FServerContext := TFHIRServerContext.Create(store.Link, TTerminologyServerFactory.create(factory.version));
     store.FServerContext.Globals := Settings.Link;
+    Telnet.addContext(store.FServerContext);
     store.FServerContext.TerminologyServer := TTerminologyServer.Create(db.link, factory.Link, Terminologies.link);
     store.FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
     if factory.version <> fhirVersionRelease2 then
@@ -1343,6 +1344,7 @@ begin
   begin
     for t in FStores.values do
     begin
+      telnet.removeContext(t.FServerContext);
       t.FServerContext.free;
     end;
     FStores.Clear;
