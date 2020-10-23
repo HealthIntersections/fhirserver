@@ -295,7 +295,8 @@ class function THMACUtils.HMAC(alg : TIdHMACClass; aKey, aMessage: TBytes): TByt
 var
   _alg : TIdHMAC;
 begin
-  if not IdSSLOpenSSL.LoadOpenSSLLibrary then Exit;
+  if not IdSSLOpenSSL.LoadOpenSSLLibrary then
+    raise EFslException.create('Unable to load openSSL: '+WhichFailedToLoad);
   _alg := alg.Create;
   try
     _alg.Key := idb(aKey);
