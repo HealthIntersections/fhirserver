@@ -6818,7 +6818,10 @@ begin
 end;
 
 Initialization
-  GetOpenSSLLoader.Load;
+  if not GetOpenSSLLoader.Load then
+    raise Exception.create('open SSL failed to load');
+  if GetOpenSSLLoader.FailedToLoad.count > 0 then
+    raise Exception.create('openSSL failed to load some methods: '+GetOpenSSLLoader.FailedToLoad.CommaText);
 End.
 
 

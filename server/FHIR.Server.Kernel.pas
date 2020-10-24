@@ -200,8 +200,8 @@ var
 begin
   {$IFDEF WINDOWS}
   JclStartExceptionTracking;
-  {$ENDIF}
   GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  {$ENDIF}
   try
     {$IFDEF FPC}
     initialiseTZData(partnerFile('tzdata.tar.gz'));

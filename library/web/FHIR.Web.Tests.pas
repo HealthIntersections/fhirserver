@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Sysutils, FHIR.Web.Facebook,
+  Sysutils, FHIR.Web.Facebook,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdUri,
   FHIR.Support.Json, FHIR.Support.Utilities,
