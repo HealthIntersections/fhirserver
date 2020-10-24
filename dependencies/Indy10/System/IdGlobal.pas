@@ -9820,7 +9820,7 @@ begin
   Temp.DisposeOf;
   // __ObjRelease() is called when Temp goes out of scope
   {$ELSE}
-  FreeAndNil(Obj);
+  FreeAndNil(TObject(Obj));
   {$ENDIF}
 end;
 

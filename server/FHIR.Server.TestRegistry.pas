@@ -57,8 +57,9 @@ uses
   SysUtils, IniFiles,
   FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Tests.IdUriParser, FHIR.Database.Tests,
-  FHIR.Ucum.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests;
+  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests,
+  FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests,
+  FHIR.v2.Tests, FHIR.Cda.Tests;
 
 procedure registerTests;
 
@@ -135,8 +136,8 @@ begin
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;
   FHIR.Support.Tests.registerTests;
+  FHIR.Web.Tests.registerTests;
   FHIR.Tx.IETFLang.Tests.registerTests;
-  FHIR.Tests.IdUriParser.registerTests;
   FHIR.Database.Tests.registerTests;
   FHIR.Ucum.Tests.registerTests;
   FHIR.Snomed.Tests.registerTests;

@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
+        <Debugger_RunParams>-testinsight -cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.ini</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -574,7 +574,6 @@
         <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\CommonTestBase.pas"/>
         <DCCReference Include="tests\FHIR.Tx.IETFLang.Tests.pas"/>
-        <DCCReference Include="..\utilities\tests\FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="..\library\database\FHIR.Database.Tests.pas"/>
         <DCCReference Include="..\library\Ucum\FHIR.Ucum.Tests.pas"/>
         <DCCReference Include="..\library\dicom\FHIR.Dicom.Objects.pas"/>
@@ -623,6 +622,7 @@
         <DCCReference Include="..\library\cda\FHIR.Cda.Parser.pas"/>
         <DCCReference Include="..\library\cda\FHIR.Cda.Tests.pas"/>
         <DCCReference Include="FHIR.Server.Kernel.Testing.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.Tests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

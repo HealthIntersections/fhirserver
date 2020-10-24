@@ -259,8 +259,8 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Library.UCUM testList', TUcumTests.create);
-  RegisterTest('Library.UCUM Special Test', TUcumSpecialTests.Suite);
+  RegisterTest('Terminology.UCUM testList', TUcumTests.create);
+  RegisterTest('Terminology.UCUM Special Test', TUcumSpecialTests.Suite);
 end;
 
 initialization
