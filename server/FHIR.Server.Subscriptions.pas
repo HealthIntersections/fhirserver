@@ -354,7 +354,7 @@ begin
         ssl.Host := settings.DirectPopHost;
         ssl.MaxLineAction := maException;
         ssl.Port := StrToInt(settings.DirectPopPort);
-        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
         ssl.Options.VerifyServerCertificate := false;
       end;
       pop.Connect();
@@ -717,7 +717,7 @@ begin
       ssl.Host := chooseSMTPHost(direct);
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(chooseSMTPPort(direct));
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
       ssl.Options.VerifyServerCertificate := false;
     end;
     sender.Connect;
@@ -917,7 +917,7 @@ begin
       ssl.Host := settings.DirectHost;
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(settings.DirectPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
       ssl.Options.VerifyServerCertificate := false;
     end;
     sender.Connect;

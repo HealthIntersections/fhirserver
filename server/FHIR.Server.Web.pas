@@ -4668,7 +4668,7 @@ Begin
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
-    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
     FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
     FIOHandler.Options.CertFile := FCertFile;
     FIOHandler.Options.CertKey := ChangeFileExt(FCertFile, '.key');
@@ -6415,7 +6415,8 @@ begin
       ssl.Host := FServer.settings.SMTPHost;
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(FServer.settings.SMTPPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+      ssl.Options.VerifyServerCertificate := false;
     end;
     sender.Connect;
     msg := TIdMessage.Create(Nil);

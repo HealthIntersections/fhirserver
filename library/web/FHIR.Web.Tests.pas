@@ -35,7 +35,8 @@ interface
 uses
   Windows, Sysutils, FHIR.Web.Facebook,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
-  IdUri,
+  IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase,
+  IdOpenSSLVersion, IdOpenSSLIOHandlerClient,
   FHIR.Support.Json, FHIR.Support.Utilities,
   FHIR.Npm.Spider,
   FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Certs;
@@ -290,8 +291,46 @@ end;
 { TOpenSSLTests }
 
 procedure TOpenSSLTests.testSendEmail;
+var
+  sender : TIdSMTP;
+  msg : TIdMessage;
+  ssl : TIdOpenSSLIOHandlerClient;
 begin
-  assertFail('not done yet');
+  assertTrue(TestSettings.SMTPUsername <> '', 'Must provide username(/source email) for SMTP test in '+TestSettings.filename+' ([email] sender=)');
+  assertTrue(TestSettings.SMTPPassword <> '', 'Must provide password for SMTP test in '+TestSettings.filename+' ([email] password=)');
+  assertTrue(TestSettings.SMTPDestination <> '', 'Must provide destinatino for SMTP test in '+TestSettings.filename+' ([email] destination=)');
+
+  sender := TIdSMTP.Create(Nil);
+  try
+    sender.Host := 'smtp.gmail.com';
+    sender.port := 587;
+    sender.Username := TestSettings.SMTPUsername;
+    sender.Password := TestSettings.SMTPPassword;
+    ssl := TIdOpenSSLIOHandlerClient.create;
+    sender.IOHandler := ssl;
+    sender.UseTLS := utUseExplicitTLS;
+    ssl.Destination := 'smtp.gmail.com:587';
+    ssl.Host := 'smtp.gmail.com';
+    ssl.MaxLineAction := maException;
+    ssl.Port := 587;
+    ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+    ssl.Options.VerifyServerCertificate := false;
+    sender.Connect;
+    msg := TIdMessage.Create(Nil);
+    try
+      msg.Subject := 'Test Email';
+      msg.Recipients.Add.Address := TestSettings.SMTPDestination;
+      msg.From.Text := TestSettings.SMTPUsername;
+      msg.Body.Text := 'Test Email from FHIRServer Unit tests';
+      sender.Send(msg);
+    Finally
+      msg.Free;
+    End;
+    sender.Disconnect;
+  Finally
+    sender.IOHandler.free;
+    sender.Free;
+  End;
 end;
 
 procedure TOpenSSLTests.testWebFetcher;

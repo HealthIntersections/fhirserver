@@ -122,6 +122,10 @@ type
 
     function section(name : String): TFslStringMap;
     function hasSection(name : String): boolean;
+
+    function SMTPUsername : String;
+    function SMTPPassword : String;
+    function SMTPDestination : String;
   end;
 
 var
@@ -329,6 +333,7 @@ const
 constructor TFslTestSettings.Create(filename: String);
 begin
   inherited create;
+  FFilename := filename;
   FIni := TIniFile.create(filename);
   FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
   FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
@@ -349,6 +354,21 @@ end;
 function TFslTestSettings.serverTestFile(parts: array of String): String;
 begin
   result := testFile(FServerTestsRoot, parts);
+end;
+
+function TFslTestSettings.SMTPDestination: String;
+begin
+  result := Fini.ReadString('email', 'destination', '');
+end;
+
+function TFslTestSettings.SMTPPassword: String;
+begin
+  result := Fini.ReadString('email', 'password', '');
+end;
+
+function TFslTestSettings.SMTPUsername: String;
+begin
+  result := Fini.ReadString('email', 'sender', '');
 end;
 
 function TFslTestSettings.testFile(root: String; parts: array of String): String;
