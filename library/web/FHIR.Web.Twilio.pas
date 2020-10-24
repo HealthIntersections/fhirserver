@@ -33,7 +33,8 @@ interface
 
 Uses
   SysUtils, Classes,
-  IdHTTP, IdSSLOpenSSL, IdAuthentication, IdMultipartFormData,
+  IdHTTP, IdAuthentication, IdMultipartFormData,
+  IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   FHIR.Support.Base;
 
 Type
@@ -80,7 +81,7 @@ end;
 procedure TTwilioClient.send;
 var
   http : TIdHTTP;
-  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  ssl : TIdOpenSSLIOHandlerClient;
   response : TMemoryStream;
   url : String;
   params : TIdMultiPartFormDataStream;
@@ -93,10 +94,9 @@ begin
     params.AddFormField('Body', Body);
     http := TIdHTTP.create(nil);
     response := TMemoryStream.Create;
-    ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+    ssl := TIdOpenSSLIOHandlerClient.Create(nil);
     try
       http.IOHandler := ssl;
-      ssl.SSLOptions.Mode := sslmClient;
       http.Request.BasicAuthentication := true;
       http.Request.Username := Account;
       http.Request.Password := Token;

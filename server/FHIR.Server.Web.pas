@@ -77,8 +77,9 @@ Interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections, {JCL JclDebug,} {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
-  IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
+  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
+  IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
+  IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509, IdOpenSSLLoader,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON, FHIR.Support.MXml,
   {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
@@ -374,7 +375,7 @@ Type
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509) : String;
+    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
 {$IFDEF WINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
@@ -421,9 +422,9 @@ Type
 
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
-      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
+      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String) : String;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String;
     Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean);
   public
     constructor Create(code : String; path : String; server : TFHIRWebServer; context : TFHIRServerContext);
@@ -514,7 +515,7 @@ Type
     // operational fields
     FPlainServer: TIdHTTPServer;
     FSSLServer: TIdHTTPServer;
-    FIOHandler: TIdServerIOHandlerSSLOpenSSL;
+    FIOHandler: TIdOpenSSLIOHandlerServer {TIdServerIOHandlerSSLOpenSSL};
     FStats : TFHIRWebServerStats;
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
@@ -558,14 +559,14 @@ Type
     function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     Procedure StartServer(active: boolean);
     Procedure StopServer;
-    procedure SSLPassword(var Password: String);
+    procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
     function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc: String;
     function packageLink: String;
     function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
-    function DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
+    procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
     function ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
     function HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : string;
     procedure smsStatus(Msg: String);
@@ -1070,7 +1071,7 @@ begin
     conf.addSmartExtensions('', '', '', '', []); // just set cors
 end;
 
-function TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdX509; id : String) : String;
+function TFhirWebServerEndPoint.secureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String;
 var
   Session: TFHIRSession;
   sp : TFHIRWebServerSourceProvider;
@@ -1092,7 +1093,7 @@ begin
           if cert = nil then
             Session := FContext.SessionManager.getSessionFromJWT(request.RemoteIP, 'Unknown', systemUnknown, JWT)
           else
-            Session := FContext.SessionManager.getSessionFromJWT(request.RemoteIP, cert.CanonicalName, systemFromCertificate, JWT);
+            Session := FContext.SessionManager.getSessionFromJWT(request.RemoteIP, cert.Subject.CN, systemFromCertificate, JWT);
         finally
           JWT.Free;
         end;
@@ -1265,7 +1266,7 @@ end;
 
 
 
-function TFhirWebServerEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509) : String;
+function TFhirWebServerEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
 var
   sHost, token, url: string;
   oRequest: TFHIRRequest;
@@ -2235,7 +2236,7 @@ end;
 
 Function TFhirWebServerEndpoint.BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
   sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
-  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509)
+  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509)
   : TFHIRRequest;
 Var
   sURL, Msg: String;
@@ -2322,7 +2323,7 @@ Begin
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', Msg, lang);
     end
     else if cert <> nil then
-      oRequest.Session := FContext.SessionManager.CreateImplicitSession(sClient, cert.CanonicalName, 'Anonymous', systemFromCertificate, false, false)
+      oRequest.Session := FContext.SessionManager.CreateImplicitSession(sClient, cert.Subject.CN, 'Anonymous', systemFromCertificate, false, false)
     else
       oRequest.Session := FContext.SessionManager.CreateImplicitSession(sClient, 'Unknown', 'Anonymous', systemUnknown, false, false);
 
@@ -4471,11 +4472,11 @@ begin
   SetThreadStatus('Disconnected');
 end;
 
-function TFhirWebServer.DoVerifyPeer(Certificate: TIdX509; AOk: boolean; ADepth, AError: integer): boolean;
+procedure TFhirWebServer.DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
 var
   i: integer;
 begin
-  result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
+  Accepted := ServeUnknownCertificate or FCertificateIdList.Find(x509.SerialNumber, i);
 end;
 
 function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
@@ -4665,23 +4666,18 @@ Begin
     FSSLServer.DefaultPort := FActualSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
-    FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
+    FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
-    FIOHandler.SSLOptions.Method := sslvTLSv1_2;
-    FIOHandler.SSLOptions.Mode := sslmServer;
-    FIOHandler.SSLOptions.SSLVersions := [sslvTLSv1_2];
-    FIOHandler.SSLOptions.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
-    FIOHandler.SSLOptions.CertFile := FCertFile;
-    FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
-    FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
-    if FServeMissingCertificate then
-      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfClientOnce]
-    else
-      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfFailIfNoPeerCert, sslvrfClientOnce];
-//    FIOHandler.SSLOptions.VerifyDepth := 2;
-    FIOHandler.OnVerifyPeer := DoVerifyPeer;
-    // FIOHandler.SSLOptions.
-    FIOHandler.OnGetPassword := SSLPassword;
+    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+    FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+    FIOHandler.Options.CertFile := FCertFile;
+    FIOHandler.Options.CertKey := ChangeFileExt(FCertFile, '.key');
+    FIOHandler.Options.VerifyCertificate := FRootCertFile;
+    FIOHandler.Options.RequestCertificate := true;
+    FIOHandler.Options.RequestCertificateOnlyOnce := true;
+    FIOHandler.Options.FailIfNoPeerCertificate := FServeMissingCertificate;
+    FIOHandler.Options.OnVerify := DoVerifyPeer;
+    FIOHandler.Options.OnGetPassword := SSLPassword;
     FSSLServer.OnCommandGet := SecureRequest;
     FSSLServer.OnCommandOther := SecureRequest;
     FSSLServer.OnConnect := DoConnect;
@@ -4866,7 +4862,7 @@ end;
 
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  cert: TIdX509;
+  cert: TIdOpenSSLX509;
   id, summ : String;
   t: cardinal;
   ok : boolean;
@@ -4875,7 +4871,8 @@ var
 begin
   InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
-  cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
+  raise Exception.Create('todo');
+  cert := nil; // todo (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
   SetThreadStatus('Processing '+request.Document);
   MarkEntry(AContext, request, response);
@@ -4959,7 +4956,7 @@ begin
   FSourceProvider := Value;
 end;
 
-procedure TFhirWebServer.SSLPassword(var Password: String);
+procedure TFhirWebServer.SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
 begin
   Password := FSSLPassword;
 end;
@@ -6401,7 +6398,7 @@ procedure TFHIRServerThread.sendEmail(dest, subj, body: String);
 var
   sender : TIdSMTP;
   msg : TIdMessage;
-  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  ssl : TIdOpenSSLIOHandlerClient;
 begin
   sender := TIdSMTP.Create(Nil);
   try
@@ -6411,17 +6408,14 @@ begin
     sender.Password := FServer.settings.SMTPPassword;
     if FServer.settings.SMTPUseTLS then
     begin
-      ssl := TIdSSLIOHandlerSocketOpenSSL.create;
+      ssl := TIdOpenSSLIOHandlerClient.create;
       sender.IOHandler := ssl;
       sender.UseTLS := utUseExplicitTLS;
       ssl.Destination := FServer.settings.SMTPHost+':'+FServer.settings.SMTPPort;
       ssl.Host := FServer.settings.SMTPHost;
       ssl.MaxLineAction := maException;
       ssl.Port := StrToInt(FServer.settings.SMTPPort);
-      ssl.SSLOptions.Method := sslvTLSv1_2;
-      ssl.SSLOptions.Mode := sslmUnassigned;
-      ssl.SSLOptions.VerifyMode := [];
-      ssl.SSLOptions.VerifyDepth := 0;
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2
     end;
     sender.Connect;
     msg := TIdMessage.Create(Nil);
@@ -6824,7 +6818,7 @@ begin
 end;
 
 Initialization
-  IdSSLOpenSSLHeaders.Load;
+  GetOpenSSLLoader.Load;
 End.
 
 

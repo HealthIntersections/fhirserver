@@ -35,7 +35,8 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
-  IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
+  IdGlobal, IdHMAC, IdHash, IdHMACSHA1,
+  IdOpenSSLHeaders_ossl_typ,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json;
 
 
@@ -68,12 +69,12 @@ procedure UnloadEAYExtensions;
 function WhichFailedToLoad2 : String;
 
 type
-  TIdX509Helper = class helper for TIdX509
-  private
-    function GetCanonicalName: String;
-  public
-    property CanonicalName : String read GetCanonicalName;
-  end;
+//  TIdX509Helper = class helper for TIdX509
+//  private
+//    function GetCanonicalName: String;
+//  public
+//    property CanonicalName : String read GetCanonicalName;
+//  end;
 
   TIdHMACClass = class of TIdHMAC;
   THMACUtils = class
@@ -263,19 +264,19 @@ Type
 implementation
 
 
-function TIdX509Helper.GetCanonicalName() : String;
-var
-  s : String;
-  p : TArray<String>;
-begin
-  s := String(self.Certificate.name);
-  p := s.Split(['/']);
-  result := '(no canonical name)';
-  for s in p do
-    if (s.StartsWith('CN=')) then
-      exit(s.Substring(3));
-end;
-
+//function TIdX509Helper.GetCanonicalName() : String;
+//var
+//  s : String;
+//  p : TArray<String>;
+//begin
+//  s := String(self.Certificate.name);
+//  p := s.Split(['/']);
+//  result := '(no canonical name)';
+//  for s in p do
+//    if (s.StartsWith('CN=')) then
+//      exit(s.Substring(3));
+//end;
+//
 
 function idb(b : TBytes) : TIdBytes;
 begin
@@ -295,7 +296,7 @@ class function THMACUtils.HMAC(alg : TIdHMACClass; aKey, aMessage: TBytes): TByt
 var
   _alg : TIdHMAC;
 begin
-  if not IdSSLOpenSSL.LoadOpenSSLLibrary then Exit;
+//  if not IdSSLOpenSSL.LoadOpenSSLLibrary then Exit;
   _alg := alg.Create;
   try
     _alg.Key := idb(aKey);
@@ -407,26 +408,26 @@ var
   b : TBytes;
 begin
   create;
-  obj := TJsonObject.Create;
-  keyType := 'RSA';
-  if (pkey.e <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.e));
-    BN_bn2bin(pkey.e, @b[0]);
-    exponent := b;
-  end;
-  if (pkey.n <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.n));
-    BN_bn2bin(pkey.n, @b[0]);
-    publicKey := b;
-  end;
-  if (pkey.d <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.d));
-    BN_bn2bin(pkey.d, @b[0]);
-    privateKey := b;
-  end;
+//  obj := TJsonObject.Create;
+//  keyType := 'RSA';
+//  if (pkey.e <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.e));
+//    BN_bn2bin(pkey.e, @b[0]);
+//    exponent := b;
+//  end;
+//  if (pkey.n <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.n));
+//    BN_bn2bin(pkey.n, @b[0]);
+//    publicKey := b;
+//  end;
+//  if (pkey.d <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.d));
+//    BN_bn2bin(pkey.d, @b[0]);
+//    privateKey := b;
+//  end;
 end;
 
 destructor TJWK.Destroy;
@@ -607,19 +608,20 @@ begin
   else
     check(hasPublicKey, 'RSA Key needs an public key');
 
-  result := RSA_new;
-  b := exponent;
-  result.e := BN_bin2bn(@b[0], length(b), nil);
-  if hasPublicKey then
-  begin
-    b := publicKey;
-    result.n := BN_bin2bn(@b[0], length(b), nil);
-  end;
-  if hasPrivateKey then
-  begin
-    b := privateKey;
-    result.d := BN_bin2bn(@b[0], length(b), nil);
-  end;
+  result := nil;
+//  result := RSA_new;
+//  b := exponent;
+//  result.e := BN_bin2bn(@b[0], length(b), nil);
+//  if hasPublicKey then
+//  begin
+//    b := publicKey;
+//    result.n := BN_bin2bn(@b[0], length(b), nil);
+//  end;
+//  if hasPrivateKey then
+//  begin
+//    b := privateKey;
+//    result.d := BN_bin2bn(@b[0], length(b), nil);
+//  end;
 end;
 
 constructor TJWK.create(pkey: PDSA; loadPrivate : Boolean);
@@ -629,36 +631,36 @@ begin
   create;
   obj := TJsonObject.Create;
   keyType := 'DSA';
-  if (pkey.p <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.p));
-    BN_bn2bin(pkey.p, @b[0]);
-    P := b;
-  end;
-  if (pkey.q <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.q));
-    BN_bn2bin(pkey.q, @b[0]);
-    Q := b;
-  end;
-  if (pkey.g <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.g));
-    BN_bn2bin(pkey.g, @b[0]);
-    G := b;
-  end;
-  if (pkey.pub_key <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.pub_key));
-    BN_bn2bin(pkey.pub_key, @b[0]);
-    Y := b;
-  end;
-  if loadPrivate and (pkey.priv_key <> nil) then
-  begin
-    setlength(b,  BN_num_bytes(pKey.priv_key));
-    BN_bn2bin(pkey.priv_key, @b[0]);
-    X := b;
-  end;
+//  if (pkey.p <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.p));
+//    BN_bn2bin(pkey.p, @b[0]);
+//    P := b;
+//  end;
+//  if (pkey.q <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.q));
+//    BN_bn2bin(pkey.q, @b[0]);
+//    Q := b;
+//  end;
+//  if (pkey.g <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.g));
+//    BN_bn2bin(pkey.g, @b[0]);
+//    G := b;
+//  end;
+//  if (pkey.pub_key <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.pub_key));
+//    BN_bn2bin(pkey.pub_key, @b[0]);
+//    Y := b;
+//  end;
+//  if loadPrivate and (pkey.priv_key <> nil) then
+//  begin
+//    setlength(b,  BN_num_bytes(pKey.priv_key));
+//    BN_bn2bin(pkey.priv_key, @b[0]);
+//    X := b;
+//  end;
 end;
 
 
@@ -792,36 +794,39 @@ class function TJWTUtils.loadKeyFromRSACert(filename: AnsiString): TJWK;
 var
   key : PRSA;
 begin
-  key := PRSA(LoadRSAPublicKey(filename));
-  try
-    result := TJWK.create(key, false);
-  finally
-    RSA_free(key);
-  end;
+//  key := PRSA(LoadRSAPublicKey(filename));
+//  try
+//    result := TJWK.create(key, false);
+//  finally
+//    RSA_free(key);
+//  end;
+  result := nil;
 end;
 
 class function TJWTUtils.loadKeyFromDSACert(filename, password: AnsiString): TJWK;
 var
   key : PDSA;
 begin
-  key := PDSA(LoadDSAPublicKey(filename, password));
-  try
-    result := TJWK.create(key, true);
-  finally
-    DSA_free(key);
-  end;
+//  key := PDSA(LoadDSAPublicKey(filename, password));
+//  try
+//    result := TJWK.create(key, true);
+//  finally
+//    DSA_free(key);
+//  end;
+  result := nil;
 end;
 
 class function TJWTUtils.loadKeyFromRSACert(content: TBytes): TJWK;
 var
   key : PRSA;
 begin
-  key := PRSA(LoadRSAPublicKey(content));
-  try
-    result := TJWK.create(key, false);
-  finally
-    RSA_free(key);
-  end;
+//  key := PRSA(LoadRSAPublicKey(content));
+//  try
+//    result := TJWK.create(key, false);
+//  finally
+//    RSA_free(key);
+//  end;
+  result := nil;
 end;
 
 class function TJWTUtils.loadRSAPrivateKey(pemfile, pempassword: AnsiString): PRSA;
@@ -830,14 +835,15 @@ var
   fn, pp: PAnsiChar;
   pk: PRSA;
 begin
-  fn := PAnsiChar(pemfile);
-  pp := PAnsiChar(pempassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+//  fn := PAnsiChar(pemfile);
+//  pp := PAnsiChar(pempassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+  result := nil;
 end;
 
 class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
@@ -876,23 +882,24 @@ var
   xk : PX509;
   pk : PEVP_PKEY;
 begin
-  fn := PAnsiChar(pemfile);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  xk := nil;
-  xk := PEM_read_bio_X509(bp, @xk, nil, nil);
-  if xk = nil then
-    raise ELibraryException.create('Public key failure.' + GetSSLErrorMessage);
-  try
-    pk := X509_get_pubkey(xk);
-    try
-      result := EVP_PKEY_get1_RSA(pk);
-    finally
-      EVP_PKEY_free(pk);
-    end;
-  finally
-    X509_free(xk);
-  end;
+//  fn := PAnsiChar(pemfile);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  xk := nil;
+//  xk := PEM_read_bio_X509(bp, @xk, nil, nil);
+//  if xk = nil then
+//    raise ELibraryException.create('Public key failure.' + GetSSLErrorMessage);
+//  try
+//    pk := X509_get_pubkey(xk);
+//    try
+//      result := EVP_PKEY_get1_RSA(pk);
+//    finally
+//      EVP_PKEY_free(pk);
+//    end;
+//  finally
+//    X509_free(xk);
+//  end;
+  result := nil;
 end;
 
 class function TJWTUtils.loadDSAPublicKey(pemfile, pempassword: AnsiString) : PDSA;
@@ -901,14 +908,15 @@ var
   fn, pp: PAnsiChar;
   pk: PDSA;
 begin
-  fn := PAnsiChar(pemfile);
-  pp := PAnsiChar(pempassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+//  fn := PAnsiChar(pemfile);
+//  pp := PAnsiChar(pempassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+  result := nil;
 end;
 
 class function TJWTUtils.pack(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
@@ -1008,41 +1016,7 @@ var
   rkey: PRSA;
   keys : TJWKList;
 begin
-  OpenSSL_add_all_algorithms;
-
-  keys := TJWKList.create;
-  try
-    // 1. Load the RSA private Key from FKey
-    rkey := loadRSAPrivateKey(AnsiString(pemfile), AnsiString(pempassword));
-    try
-      pkey := EVP_PKEY_new;
-      try
-        check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-        // 2. do the signing
-        keysize := EVP_PKEY_size(pkey);
-        SetLength(result, keysize);
-        EVP_MD_CTX_init(@ctx);
-        try
-          EVP_SignInit(@ctx, EVP_sha256);
-          check(EVP_SignUpdate(@ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
-          check(EVP_SignFinal(@ctx, @result[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
-          SetLength(result, len);
-        finally
-          EVP_MD_CTX_cleanup(@ctx);
-        end;
-      finally
-        EVP_PKEY_free(pKey);
-      end;
-      keys.Add(TJWK.create(rkey, false));
-    finally
-      RSA_free(rkey);
-    end;
-
-    Verify_Hmac_RSA256(input, result, nil, keys);
-  finally
-    keys.Free;
-  end;
+  result := nil;
 end;
 
 class function TJWTUtils.Sign_Hmac_SHA256(input: TBytes; key: TJWK): TBytes;
@@ -1079,42 +1053,43 @@ var
   rkey: PRSA;
   keys : TJWKList;
 begin
-  check(key <> nil, 'A key must be provided for RSA/SHA-256');
-  OpenSSL_add_all_algorithms;
-
-  // 1. Load the RSA private Key from FKey
-  rkey := key.Load(true);
-  try
-    pkey := EVP_PKEY_new;
-    try
-      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-      // 2. do the signing
-      keysize := EVP_PKEY_size(pkey);
-      SetLength(result, keysize);
-      EVP_MD_CTX_init(@ctx);
-      try
-        EVP_SignInit(@ctx, EVP_sha256);
-        check(EVP_SignUpdate(@ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
-        check(EVP_SignFinal(@ctx, @result[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
-        SetLength(result, len);
-      finally
-        EVP_MD_CTX_cleanup(@ctx);
-      end;
-    finally
-      EVP_PKEY_free(pKey);
-    end;
-  finally
-    RSA_free(rkey);
-  end;
-
-  keys := TJWKList.create;
-  try
-    keys.Add(key.Link);
-    Verify_Hmac_RSA256(input, result, nil, keys);
-  finally
-    keys.Free;
-  end;
+//  check(key <> nil, 'A key must be provided for RSA/SHA-256');
+//  OpenSSL_add_all_algorithms;
+//
+//  // 1. Load the RSA private Key from FKey
+//  rkey := key.Load(true);
+//  try
+//    pkey := EVP_PKEY_new;
+//    try
+//      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+//
+//      // 2. do the signing
+//      keysize := EVP_PKEY_size(pkey);
+//      SetLength(result, keysize);
+//      EVP_MD_CTX_init(@ctx);
+//      try
+//        EVP_SignInit(@ctx, EVP_sha256);
+//        check(EVP_SignUpdate(@ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
+//        check(EVP_SignFinal(@ctx, @result[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
+//        SetLength(result, len);
+//      finally
+//        EVP_MD_CTX_cleanup(@ctx);
+//      end;
+//    finally
+//      EVP_PKEY_free(pKey);
+//    end;
+//  finally
+//    RSA_free(rkey);
+//  end;
+//
+//  keys := TJWKList.create;
+//  try
+//    keys.Add(key.Link);
+//    Verify_Hmac_RSA256(input, result, nil, keys);
+//  finally
+//    keys.Free;
+//  end;
+  result := nil;
 end;
 
 class procedure TJWTUtils.Verify_Hmac_RSA256(input, sig: TBytes; header : TJsonObject; keys: TJWKList);
@@ -1127,46 +1102,46 @@ var
   i : integer;
 begin
   check((keys <> nil) and (keys.Count > 0), 'No keys provided for RSA/SHA-256 verification');
-  OpenSSL_add_all_algorithms;
-
-  key := nil;
-  if (header <> nil) and (header['kid'] <> '') then
-  begin
-    for i := 0 to keys.count - 1 do
-      if keys[i].id = header['kid'] then
-        key := keys[i];
-    check(key <> nil, 'No matching key found for key '+header['kid']);
-  end
-  else
-  begin
-    check(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified');
-    key := keys[0];
-  end;
-
-  // 1. Load the RSA private Key from FKey
-  rkey := key.Load(false);
-  try
-    pkey := EVP_PKEY_new;
-    try
-      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-      // 2. do the signing
-      EVP_MD_CTX_init(@ctx);
-      try
-        EVP_VerifyInit(@ctx, EVP_sha256);
-        check(EVP_VerifyUpdate(@ctx, @input[0], Length(input)) = 1, 'openSSL EVP_VerifyUpdate failed');
-        e := EVP_VerifyFinal(@ctx, @sig[0], length(sig), pKey);
-        check(e = 1, 'Signature is not valid (RSA) (e = '+inttostr(e)+')');
-      finally
-        EVP_MD_CTX_cleanup(@ctx);
-      end;
-
-    finally
-      EVP_PKEY_free(pKey);
-    end;
-  finally
-    RSA_free(rkey);
-  end;
+//  OpenSSL_add_all_algorithms;
+//
+//  key := nil;
+//  if (header <> nil) and (header['kid'] <> '') then
+//  begin
+//    for i := 0 to keys.count - 1 do
+//      if keys[i].id = header['kid'] then
+//        key := keys[i];
+//    check(key <> nil, 'No matching key found for key '+header['kid']);
+//  end
+//  else
+//  begin
+//    check(keys.count = 1, 'No Key Id specified in JWT, and multiple possible keys specified');
+//    key := keys[0];
+//  end;
+//
+//  // 1. Load the RSA private Key from FKey
+//  rkey := key.Load(false);
+//  try
+//    pkey := EVP_PKEY_new;
+//    try
+//      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+//
+//      // 2. do the signing
+//      EVP_MD_CTX_init(@ctx);
+//      try
+//        EVP_VerifyInit(@ctx, EVP_sha256);
+//        check(EVP_VerifyUpdate(@ctx, @input[0], Length(input)) = 1, 'openSSL EVP_VerifyUpdate failed');
+//        e := EVP_VerifyFinal(@ctx, @sig[0], length(sig), pKey);
+//        check(e = 1, 'Signature is not valid (RSA) (e = '+inttostr(e)+')');
+//      finally
+//        EVP_MD_CTX_cleanup(@ctx);
+//      end;
+//
+//    finally
+//      EVP_PKEY_free(pKey);
+//    end;
+//  finally
+//    RSA_free(rkey);
+//  end;
 end;
 
 var
@@ -1175,11 +1150,12 @@ var
 
 function LoadFunctionCLib(const FceName: string; const ACritical : Boolean = True): Pointer;
 begin
-  Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, PChar(FceName));
-  if (Result = nil) and ACritical then
-    raise ELibraryException.create('Count not load '+FceName+' from '+ParamStr(0))
-  else
-    GLoadInfo.add('Count not load '+FceName+' from '+ParamStr(0));
+//  Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, PChar(FceName));
+//  if (Result = nil) and ACritical then
+//    raise ELibraryException.create('Count not load '+FceName+' from '+ParamStr(0))
+//  else
+//    GLoadInfo.add('Count not load '+FceName+' from '+ParamStr(0));
+  result := nil;
 end;
 
 function WhichFailedToLoad2 : String;
@@ -1220,23 +1196,23 @@ begin
   dec(gLoadCount);
   if gLoadCount = 0 then
   begin
-    @DES_ecb_encrypt := nil;
-    @BN_num_bits := nil;
-    @BN_bn2bin := nil;
-    @BN_bin2bn := nil;
-    @X509_get_pubkey := nil;
-    @EVP_PKEY_get1_RSA := nil;
-    @EVP_PKEY_set1_RSA := nil;
-    @EVP_PKEY_get1_DSA := nil;
-    @EVP_PKEY_set1_DSA := nil;
-    @EVP_PKEY_size := nil;
-    @EVP_DigestInit := nil;
-    @EVP_DigestUpdate := nil;
-    @EVP_SignFinal := nil;
-    @EVP_VerifyFinal := nil;
-    @DSA_new := nil;
-    @DSA_free := nil;
-    GLoadInfo.Free;
+//    @DES_ecb_encrypt := nil;
+//    @BN_num_bits := nil;
+//    @BN_bn2bin := nil;
+//    @BN_bin2bn := nil;
+//    @X509_get_pubkey := nil;
+//    @EVP_PKEY_get1_RSA := nil;
+//    @EVP_PKEY_set1_RSA := nil;
+//    @EVP_PKEY_get1_DSA := nil;
+//    @EVP_PKEY_set1_DSA := nil;
+//    @EVP_PKEY_size := nil;
+//    @EVP_DigestInit := nil;
+//    @EVP_DigestUpdate := nil;
+//    @EVP_SignFinal := nil;
+//    @EVP_VerifyFinal := nil;
+//    @DSA_new := nil;
+//    @DSA_free := nil;
+//    GLoadInfo.Free;
   end;
 end;
 
@@ -1346,7 +1322,7 @@ var
   err: TBytes;
 begin
   SetLength(err, BUFF_SIZE);
-  ERR_error_string(ERR_get_error, @err[0]);
+//  ERR_error_string(ERR_get_error, @err[0]);
   result := string(err);
 end;
 

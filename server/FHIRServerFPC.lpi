@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>

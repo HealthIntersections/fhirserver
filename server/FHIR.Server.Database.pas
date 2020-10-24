@@ -434,7 +434,7 @@ function typeForReference(ref : String) : String;
 implementation
 
 uses
-  IdMessage, IdSMTP, IdSSLOpenSSL, IdExplicitTLSClientServerBase,
+  IdMessage, IdSMTP,
   FHIR.Support.Logging,
   FHIR.Tx.Manager, FHIR.Tx.Operations,
   FHIR.Server.Search;

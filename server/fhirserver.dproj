@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Test</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -101,7 +101,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_UsePackage>bindcompfmx;DBXSqliteDriver;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;bindcomp;inetdb;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DBXOdbcDriver;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;DBXSybaseASEDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;vclactnband;bindengine;vcldb;soaprtl;bindcompdbx;vcldsnap;bindcompvcl;vclie;vcltouch;DBXDb2Driver;websnap;DBXOracleDriver;CustomIPTransport;VclSmp;dsnap;IndyIPServer;DBXInformixDriver;fmxase;vcl;IndyCore;IndyIPCommon;DBXMSSQLDriver;dsnapcon;DBXFirebirdDriver;inet;fmxobj;vclx;inetdbxpress;webdsnap;DBXSybaseASADriver;fmxdae;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Testing;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">

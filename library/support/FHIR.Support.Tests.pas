@@ -35,7 +35,7 @@ interface
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
-  IdGlobalProtocols, IdSSLOpenSSLHeaders,
+  IdGlobalProtocols,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Fpc,
   FHIR.Support.Xml, FHIR.Support.MXml,
   {$IFNDEF FPC}
@@ -4095,8 +4095,8 @@ var
 
 procedure TJWTTests.Setup;
 begin
-  IdSSLOpenSSLHeaders.Load;
-  LoadEAYExtensions(true);
+//  IdSSLOpenSSLHeaders.Load;
+//  LoadEAYExtensions(true);
 end;
 
 procedure TJWTTests.TestCert;

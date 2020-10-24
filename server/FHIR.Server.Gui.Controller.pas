@@ -34,7 +34,6 @@ interface
 
 uses
   SysUtils, Classes,
-  IdSSLOpenSSLHeaders,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Threads,
   FHIR.Base.Objects,
   FHIR.Npm.Cache,
@@ -391,7 +390,6 @@ begin
         Logging.log('Exception '+s+': '+e.message);
       end;
     end;
-    Logging.log('ssl: '+WhichFailedToLoad);
   finally
     FController.setStatus(ssNotRunning);
   end;

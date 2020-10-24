@@ -34,7 +34,8 @@ Interface
 
 Uses
   SysUtils, Classes,
-  IdComponent,
+  IdComponent, IdURI, IdFTP, IdHTTP,
+  IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json;
 
 Type
@@ -88,12 +89,6 @@ Type
 
 Implementation
 
-Uses
-  IdURI,
-  IdFTP,
-  IdHTTP,
-  IdSSLOpenSSL;
-
 { TInternetFetcher }
 
 function TInternetFetcher.CanFetch: Boolean;
@@ -122,7 +117,7 @@ var
   oUri : TIdURI;
   oHTTP: TIdHTTP;
   oMem : TMemoryStream;
-  oSSL : TIdSSLIOHandlerSocketOpenSSL;
+  oSSL : TIdOpenSSLIOHandlerClient;
   oFtp : TIdFTP;
 begin
   if StringStartsWith(url, 'file:') Then
@@ -135,14 +130,13 @@ begin
       Begin
         oHTTP := TIdHTTP.Create(nil);
         Try
-          oSSL := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+          oSSL := TIdOpenSSLIOHandlerClient.Create(Nil);
           Try
             oHTTP.IOHandler := oSSL;
             oHTTP.OnWork := HTTPWork;
             oHTTP.OnWorkBegin := HTTPWorkBegin;
             oHTTP.OnWorkEnd := HTTPWorkEnd;
-            oSSL.SSLOptions.Mode := sslmClient;
-            oSSL.SSLOptions.Method := sslvTLSv1_2;
+            oSSL.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
             oHTTP.HandleRedirects := true;
             oHTTP.Request.Accept := FAccept;
             if (UserAgent <> '') then
