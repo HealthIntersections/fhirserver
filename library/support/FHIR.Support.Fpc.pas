@@ -58,6 +58,8 @@ function SetThreadUILanguage(LangId: LANGID): LANGID; stdcall;
 {$IFDEF WINDOWS}
 type
   TLibHandle = THandle;
+{$ELSE}
+function RGB(r,g,b : longint) : DWORD; inline;
 {$ENDIF}
 
 // unicode helpers - make life easier for shared fpc/delphi code
@@ -229,6 +231,11 @@ uses
 
 {$IFDEF WINDOWS}
 function SetThreadUILanguage; external kernel32 name 'SetThreadUILanguage'; // 5.1
+{$ELSE}
+function RGB(r,g,b : longint) : DWORD;
+  begin
+     RGB:=DWORD(((DWORD(BYTE(r))) or ((DWORD(WORD(g))) shl 8)) or ((DWORD(BYTE(b))) shl 16));
+  end;
 {$ENDIF}
 
 function unicodeChars(s : String) : TArray<UnicodeChar>;

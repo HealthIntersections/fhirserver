@@ -4727,22 +4727,22 @@ end;
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Generics Tests', TFslGenericsTests.Suite);
-  RegisterTest('Collection Tests', TFslCollectionsTests.Suite);
-  RegisterTest('XPlatform Tests', TXPlatformTests.Suite);
-  RegisterTest('Decimal Tests', TDecimalTests.Suite);
-  RegisterTest('XML Tests', TXmlParserTests.create);
-  RegisterTest('XML Utility Tests', TXmlUtilsTest.Suite);
-  RegisterTest('XPath Tests', TXPathParserTests.create);
-  RegisterTest('XPath Engine Tests', TXPathEngineTests.create);
-  RegisterTest('XML Patch Tests', TXmlPatchTests.create);
-  RegisterTest('Json Tests', TJsonTests.Suite);
-  RegisterTest('JWT Tests', TJWTTests.Suite);
-  RegisterTest('Turtle Tests', TTurtleTests.Suite);
-  RegisterTest('Language Parser Tests', TLangParserTests.Suite);
-  RegisterTest('.tar.gz Tests', TTarGZParserTests.Suite);
+  RegisterTest('Library.Generics Tests', TFslGenericsTests.Suite);
+  RegisterTest('Library.Collection Tests', TFslCollectionsTests.Suite);
+  RegisterTest('Library.XPlatform Tests', TXPlatformTests.Suite);
+  RegisterTest('Library.Decimal Tests', TDecimalTests.Suite);
+  RegisterTest('Library.XML Tests', TXmlParserTests.create);
+  RegisterTest('Library.XML Utility Tests', TXmlUtilsTest.Suite);
+  RegisterTest('Library.XPath Tests', TXPathParserTests.create);
+  RegisterTest('Library.XPath Engine Tests', TXPathEngineTests.create);
+  RegisterTest('Library.XML Patch Tests', TXmlPatchTests.create);
+  RegisterTest('Library.Json Tests', TJsonTests.Suite);
+  RegisterTest('Library.JWT Tests', TJWTTests.Suite);
+  RegisterTest('Library.Turtle Tests', TTurtleTests.Suite);
+  RegisterTest('Library.Language Parser Tests', TLangParserTests.Suite);
+  RegisterTest('Library.TarGz Tests', TTarGZParserTests.Suite);
   {$IFDEF FPC}
-  RegisterTest('Regex Test', TFslRegexTests.Suite);
+  RegisterTest('Library.Regex Test', TFslRegexTests.Suite);
   {$ENDIF}
 end;
 

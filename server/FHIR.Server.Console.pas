@@ -33,12 +33,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FastMM4, Windows,
-  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry,
+  {$IFDEF WINDOWS}FastMM4, Windows, {$ENDIF}
+  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry, Types,
   ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
-  IniFiles, Math, IdTelnet, IdGlobal, FHIR.Support.Base, FHIR.Support.Threads,
-  FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Shell, FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
-  FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm, Types;
+  IniFiles, Math,
+  IdTelnet, IdGlobal,
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Fpc,  FHIR.Support.Utilities, FHIR.Support.Logging,
+  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
+  FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -461,8 +463,11 @@ end;
 { TMainConsoleForm }
 
 procedure TMainConsoleForm.FormCreate(Sender: TObject);
+var
+  s : String;
 begin
-  FIni := TIniFile.create('FHIRConsole.ini');
+  s := getAppConfigDir(false);
+  FIni := TIniFile.create(path([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
 
@@ -965,10 +970,6 @@ begin
         btnSource.enabled := true;
         btnDestination.enabled := true;
         sctCallback(0, '');
-      end;
-      if MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start)+'. Do you want to Zip it?', mtInformation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        ExecuteLaunch('open', 'c:\program files\7-zip\7z.exe', 'a -mx9 '+changeFileExt(edtDestination.text, '.zip')+' '+edtDestination.text, true, false);
       end;
     end;
   end;

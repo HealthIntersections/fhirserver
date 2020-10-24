@@ -134,12 +134,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+            <Filename Value="..\exec\64\FhirServerFPC"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -1691,6 +1691,7 @@
       <Unit370>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary"/>
       </Unit370>
       <Unit371>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.Database.pas"/>

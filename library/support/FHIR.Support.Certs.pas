@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   IdGlobal, IdHMAC, IdHash, IdHMACSHA1,
-  IdOpenSSLHeaders_ossl_typ,
+  IdOpenSSLHeaders_ossl_typ,  IdOpenSSLX509,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json;
 
 
@@ -69,12 +69,12 @@ procedure UnloadEAYExtensions;
 function WhichFailedToLoad2 : String;
 
 type
-//  TIdX509Helper = class helper for TIdX509
-//  private
-//    function GetCanonicalName: String;
-//  public
-//    property CanonicalName : String read GetCanonicalName;
-//  end;
+  TIdX509Helper = class helper for TIdOpenSSLX509
+  private
+    function GetCanonicalName: String;
+  public
+    property CanonicalName : String read GetCanonicalName;
+  end;
 
   TIdHMACClass = class of TIdHMAC;
   THMACUtils = class
@@ -264,19 +264,19 @@ Type
 implementation
 
 
-//function TIdX509Helper.GetCanonicalName() : String;
-//var
-//  s : String;
-//  p : TArray<String>;
-//begin
-//  s := String(self.Certificate.name);
+function TIdX509Helper.GetCanonicalName() : String;
+var
+  s : String;
+  p : TArray<String>;
+begin
+  s := String(self.Subject.CN);
 //  p := s.Split(['/']);
 //  result := '(no canonical name)';
 //  for s in p do
 //    if (s.StartsWith('CN=')) then
 //      exit(s.Substring(3));
-//end;
-//
+end;
+
 
 function idb(b : TBytes) : TIdBytes;
 begin

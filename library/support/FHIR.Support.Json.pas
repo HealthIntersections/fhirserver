@@ -1,4 +1,4 @@
-Unit FHIR.Support.JSON;
+Unit FHIR.Support.Json;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
