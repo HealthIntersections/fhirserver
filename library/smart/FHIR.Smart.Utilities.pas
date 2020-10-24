@@ -109,7 +109,8 @@ interface
 
 uses
   SysUtils, Classes,
-  IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
+  IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP,
+  IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang;
 
@@ -268,7 +269,7 @@ end;
 function getSmartOnFhirAuthTokenRequest(server : TRegisteredFHIRServer; request : String) : TClientAccessToken;
 var
   http: TIdHTTP;
-  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  ssl : TIdOpenSSLIOHandlerClient;
   post, resp : TBytesStream;
   json : TJSONObject;
   s : String;
@@ -283,11 +284,10 @@ begin
         http.Request.Username := server.clientid;
         http.Request.Password := server.clientsecret;
       end;
-      ssl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+      ssl := TIdOpenSSLIOHandlerClient.Create(Nil);
       Try
         http.IOHandler := ssl;
-        ssl.SSLOptions.Mode := sslmClient;
-        ssl.SSLOptions.Method := sslvTLSv1_2;
+        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
         http.Request.ContentType := 'application/x-www-form-urlencoded; charset=UTF-8';
         resp := TBytesStream.create;
         try

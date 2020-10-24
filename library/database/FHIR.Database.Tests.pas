@@ -552,7 +552,7 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Library.DB Tests', TFslDBTests.Suite);
+  RegisterTest('Database.Manager', TFslDBTests.Suite);
 end;
 
 end.

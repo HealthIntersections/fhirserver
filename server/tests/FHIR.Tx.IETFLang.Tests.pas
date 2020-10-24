@@ -114,7 +114,7 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Library.Lang Tests', TIETFLangTests.Suite);
+  RegisterTest('Terminology.Lang Tests', TIETFLangTests.Suite);
 end;
 
 end.

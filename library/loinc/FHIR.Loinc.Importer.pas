@@ -1,4 +1,4 @@
-Unit FHIR.LOINC.Importer;
+Unit FHIR.Loinc.Importer;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

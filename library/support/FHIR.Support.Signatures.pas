@@ -75,10 +75,10 @@ certificate you nominate
 uses
   SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdHashSHA, IdGlobal,
-   FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.Support.MXml, FHIR.Support.Xml,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Web.Fetcher;
+  FHIR.Support.Certs, FHIR.Web.Fetcher;
 
 Const
   NS_DS = 'http://www.w3.org/2000/09/xmldsig#';
@@ -112,8 +112,8 @@ Type
 
   TKeyInfo = class (TFslObject)
   private
-    dsa : PDSA;
-    rsa : PRSA;
+//    dsa : PDSA;
+//    rsa : PRSA;
     function checkSignatureRSA(digest, signature : TBytes; method : TSignatureMethod) : boolean;
     function checkSignatureDSA(digest, signature : TBytes; method : TSignatureMethod) : boolean;
     function checkSignature(digest, signature : TBytes; method : TSignatureMethod) : boolean;
@@ -156,8 +156,8 @@ Type
 
     // key/ certificate management routines
     function LoadKeyInfo(sig : TMXmlElement) : TKeyInfo;
-    function loadRSAKey: PRSA;
-    function loadDSAKey: PDSA;
+//    function loadRSAKey: PRSA;
+//    function loadDSAKey: PDSA;
     procedure AddKeyInfo(sig: TMXmlElement; method : TSignatureMethod);
 
     // source content management
@@ -386,9 +386,9 @@ end;
 constructor TDigitalSigner.create;
 begin
   inherited;
-  LoadEAYExtensions(true);
-  ERR_load_crypto_strings;
-  OpenSSL_add_all_algorithms;
+//  LoadEAYExtensions(true);
+//  ERR_load_crypto_strings;
+//  OpenSSL_add_all_algorithms;
 end;
 
 function TDigitalSigner.verifySignature(xml: TBytes): boolean;
@@ -451,84 +451,86 @@ begin
 end;
 
 function TKeyInfo.checkSignatureRSA(digest, signature: TBytes; method: TSignatureMethod) : boolean;
-var
-  ctx : EVP_MD_CTX;
-  e: integer;
-  pkey: PEVP_PKEY;
+//var
+//  ctx : EVP_MD_CTX;
+//  e: integer;
+//  pkey: PEVP_PKEY;
 begin
-  pkey := EVP_PKEY_new;
-  try
-    check(EVP_PKEY_set1_RSA(pkey, rsa) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-    // 2. do the signing
-    EVP_MD_CTX_init(@ctx);
-    try
-      if method = sdXmlRSASha1 then
-        EVP_VerifyInit(@ctx, EVP_sha1)
-      else
-        EVP_VerifyInit(@ctx, EVP_sha256);
-      check(EVP_VerifyUpdate(@ctx, @digest[0], Length(digest)) = 1, 'openSSL EVP_VerifyUpdate failed');
-      e := EVP_VerifyFinal(@ctx, @signature[0], length(signature), pKey);
-      result := e = 1;
-    finally
-      EVP_MD_CTX_cleanup(@ctx);
-    end;
-  finally
-    EVP_PKEY_free(pKey);
-  end;
+//  pkey := EVP_PKEY_new;
+//  try
+//    check(EVP_PKEY_set1_RSA(pkey, rsa) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+//
+//    // 2. do the signing
+//    EVP_MD_CTX_init(@ctx);
+//    try
+//      if method = sdXmlRSASha1 then
+//        EVP_VerifyInit(@ctx, EVP_sha1)
+//      else
+//        EVP_VerifyInit(@ctx, EVP_sha256);
+//      check(EVP_VerifyUpdate(@ctx, @digest[0], Length(digest)) = 1, 'openSSL EVP_VerifyUpdate failed');
+//      e := EVP_VerifyFinal(@ctx, @signature[0], length(signature), pKey);
+//      result := e = 1;
+//    finally
+//      EVP_MD_CTX_cleanup(@ctx);
+//    end;
+//  finally
+//    EVP_PKEY_free(pKey);
+//  end;
+  result := false;
 end;
 
 function TKeyInfo.checkSignatureDSA(digest, signature: TBytes; method: TSignatureMethod) : Boolean;
-var
-  ctx : EVP_MD_CTX;
-  e: integer;
-  pkey: PEVP_PKEY;
-  err : Array [0..250] of ansichar;
-  m : String;
-  asn1 : TBytes;
+//var
+//  ctx : EVP_MD_CTX;
+//  e: integer;
+//  pkey: PEVP_PKEY;
+//  err : Array [0..250] of ansichar;
+//  m : String;
+//  asn1 : TBytes;
 begin
-  pkey := EVP_PKEY_new;
-  try
-    check(EVP_PKEY_set1_DSA(pkey, dsa) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-    // 2. do the signing
-    EVP_MD_CTX_init(@ctx);
-    try
-      if method = sdXmlDSASha1 then
-        EVP_VerifyInit(@ctx, EVP_sha1)
-      else
-        EVP_VerifyInit(@ctx, EVP_sha256);
-      check(EVP_VerifyUpdate(@ctx, @digest[0], Length(digest)) = 1, 'openSSL EVP_VerifyUpdate failed');
-      asn1 := BytesPairToAsn1(signature);
-      e := EVP_VerifyFinal(@ctx, @asn1[0], length(asn1), pKey);
-      if (e = -1) then
-      begin
-        m := '';
-        e := ERR_get_error;
-        repeat
-          ERR_error_string(e, @err);
-          m := m + inttohex(e, 8)+' ('+String(err)+')'+#13#10;
-          e := ERR_get_error;
-        until e = 0;
-        raise ELibraryException.create('OpenSSL Error verifying signature: '+#13#10+m);
-      end
-      else
-        result := e = 1;
-    finally
-      EVP_MD_CTX_cleanup(@ctx);
-    end;
-  finally
-    EVP_PKEY_free(pKey);
-  end;
+//  pkey := EVP_PKEY_new;
+//  try
+//    check(EVP_PKEY_set1_DSA(pkey, dsa) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+//
+//    // 2. do the signing
+//    EVP_MD_CTX_init(@ctx);
+//    try
+//      if method = sdXmlDSASha1 then
+//        EVP_VerifyInit(@ctx, EVP_sha1)
+//      else
+//        EVP_VerifyInit(@ctx, EVP_sha256);
+//      check(EVP_VerifyUpdate(@ctx, @digest[0], Length(digest)) = 1, 'openSSL EVP_VerifyUpdate failed');
+//      asn1 := BytesPairToAsn1(signature);
+//      e := EVP_VerifyFinal(@ctx, @asn1[0], length(asn1), pKey);
+//      if (e = -1) then
+//      begin
+//        m := '';
+//        e := ERR_get_error;
+//        repeat
+//          ERR_error_string(e, @err);
+//          m := m + inttohex(e, 8)+' ('+String(err)+')'+#13#10;
+//          e := ERR_get_error;
+//        until e = 0;
+//        raise ELibraryException.create('OpenSSL Error verifying signature: '+#13#10+m);
+//      end
+//      else
+//        result := e = 1;
+//    finally
+//      EVP_MD_CTX_cleanup(@ctx);
+//    end;
+//  finally
+//    EVP_PKEY_free(pKey);
+//  end;
+  result := false;
 end;
 
 
 destructor TKeyInfo.Destroy;
 begin
-  if dsa <> nil then
-    DSA_Free(dsa);
-  if rsa <> nil then
-    RSA_free(rsa);
+//  if dsa <> nil then
+//    DSA_Free(dsa);
+//  if rsa <> nil then
+//    RSA_free(rsa);
   inherited;
 end;
 
@@ -568,39 +570,39 @@ begin
 end;
 
 
-function TDigitalSigner.loadRSAKey: PRSA;
-var
-  bp: pBIO;
-  fn, pp: PAnsiChar;
-  pk: PRSA;
-begin
-  fn := PAnsiChar(FPrivateKey);
-  pp := PAnsiChar(FKeyPassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
-end;
-
-
-function TDigitalSigner.loadDSAKey: PDSA;
-var
-  bp: pBIO;
-  fn, pp: PAnsiChar;
-  pk: PDSA;
-begin
-  fn := PAnsiChar(FPrivateKey);
-  pp := PAnsiChar(FKeyPassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
-end;
-
+//function TDigitalSigner.loadRSAKey: PRSA;
+//var
+//  bp: pBIO;
+//  fn, pp: PAnsiChar;
+//  pk: PRSA;
+//begin
+//  fn := PAnsiChar(FPrivateKey);
+//  pp := PAnsiChar(FKeyPassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+//end;
+//
+//
+//function TDigitalSigner.loadDSAKey: PDSA;
+//var
+//  bp: pBIO;
+//  fn, pp: PAnsiChar;
+//  pk: PDSA;
+//begin
+//  fn := PAnsiChar(FPrivateKey);
+//  pp := PAnsiChar(FKeyPassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+//end;
+//
 
 function TDigitalSigner.sign(src : TBytes; method: TSignatureMethod) : TBytes;
 begin
@@ -612,80 +614,82 @@ end;
 
 
 function TDigitalSigner.signDSA(src : TBytes; method: TSignatureMethod) : TBytes;
-var
-  pkey: PEVP_PKEY;
-  dkey: PDSA;
-  ctx : EVP_MD_CTX;
-  len : integer;
-  asn1 : TBytes;
+//var
+//  pkey: PEVP_PKEY;
+//  dkey: PDSA;
+//  ctx : EVP_MD_CTX;
+//  len : integer;
+//  asn1 : TBytes;
 begin
-  // 1. Load the RSA private Key from FKey
-  dkey := loadDSAKey;
-  try
-    pkey := EVP_PKEY_new;
-    try
-      check(EVP_PKEY_set1_DSA(pkey, dkey) = 1, 'openSSL EVP_PKEY_set1_DSA failed');
-
-      // 2. do the signing
-      SetLength(asn1, EVP_PKEY_size(pkey));
-      EVP_MD_CTX_init(@ctx);
-      try
-        if method = sdXmlDSASha256 then
-          EVP_SignInit(@ctx, EVP_sha256)
-        else
-          EVP_SignInit(@ctx, EVP_sha1);
-        check(EVP_SignUpdate(@ctx, @src[0], Length(src)) = 1, 'openSSL EVP_SignUpdate failed');
-        check(EVP_SignFinal(@ctx, @asn1[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
-        SetLength(asn1, len);
-        result := asn1SigToBytePair(asn1);
-      finally
-        EVP_MD_CTX_cleanup(@ctx);
-      end;
-    finally
-      EVP_PKEY_free(pKey);
-    end;
-  finally
-    DSA_free(dkey);
-  end;
+//  // 1. Load the RSA private Key from FKey
+//  dkey := loadDSAKey;
+//  try
+//    pkey := EVP_PKEY_new;
+//    try
+//      check(EVP_PKEY_set1_DSA(pkey, dkey) = 1, 'openSSL EVP_PKEY_set1_DSA failed');
+//
+//      // 2. do the signing
+//      SetLength(asn1, EVP_PKEY_size(pkey));
+//      EVP_MD_CTX_init(@ctx);
+//      try
+//        if method = sdXmlDSASha256 then
+//          EVP_SignInit(@ctx, EVP_sha256)
+//        else
+//          EVP_SignInit(@ctx, EVP_sha1);
+//        check(EVP_SignUpdate(@ctx, @src[0], Length(src)) = 1, 'openSSL EVP_SignUpdate failed');
+//        check(EVP_SignFinal(@ctx, @asn1[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
+//        SetLength(asn1, len);
+//        result := asn1SigToBytePair(asn1);
+//      finally
+//        EVP_MD_CTX_cleanup(@ctx);
+//      end;
+//    finally
+//      EVP_PKEY_free(pKey);
+//    end;
+//  finally
+//    DSA_free(dkey);
+//  end;
+  result := nil;
 end;
 
 
 function TDigitalSigner.signRSA(src : TBytes; method: TSignatureMethod) : TBytes;
-var
-  pkey: PEVP_PKEY;
-  rkey: PRSA;
-  ctx : EVP_MD_CTX;
-  keysize : integer;
-  len : integer;
+//var
+//  pkey: PEVP_PKEY;
+//  rkey: PRSA;
+//  ctx : EVP_MD_CTX;
+//  keysize : integer;
+//  len : integer;
 begin
-  // 1. Load the RSA private Key from FKey
-  rkey := loadRSAKey;
-  try
-    pkey := EVP_PKEY_new;
-    try
-      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
-
-      // 2. do the signing
-      keysize := EVP_PKEY_size(pkey);
-      SetLength(result, keysize);
-      EVP_MD_CTX_init(@ctx);
-      try
-        if method = sdXmlRSASha256 then
-          EVP_SignInit(@ctx, EVP_sha256)
-        else
-          EVP_SignInit(@ctx, EVP_sha1);
-        check(EVP_SignUpdate(@ctx, @src[0], Length(src)) = 1, 'openSSL EVP_SignUpdate failed');
-        check(EVP_SignFinal(@ctx, @result[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
-        SetLength(result, len);
-      finally
-        EVP_MD_CTX_cleanup(@ctx);
-      end;
-    finally
-      EVP_PKEY_free(pKey);
-    end;
-  finally
-    RSA_free(rkey);
-  end;
+//  // 1. Load the RSA private Key from FKey
+//  rkey := loadRSAKey;
+//  try
+//    pkey := EVP_PKEY_new;
+//    try
+//      check(EVP_PKEY_set1_RSA(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+//
+//      // 2. do the signing
+//      keysize := EVP_PKEY_size(pkey);
+//      SetLength(result, keysize);
+//      EVP_MD_CTX_init(@ctx);
+//      try
+//        if method = sdXmlRSASha256 then
+//          EVP_SignInit(@ctx, EVP_sha256)
+//        else
+//          EVP_SignInit(@ctx, EVP_sha1);
+//        check(EVP_SignUpdate(@ctx, @src[0], Length(src)) = 1, 'openSSL EVP_SignUpdate failed');
+//        check(EVP_SignFinal(@ctx, @result[0], len, pKey) = 1, 'openSSL EVP_SignFinal failed');
+//        SetLength(result, len);
+//      finally
+//        EVP_MD_CTX_cleanup(@ctx);
+//      end;
+//    finally
+//      EVP_PKEY_free(pKey);
+//    end;
+//  finally
+//    RSA_free(rkey);
+//  end;
+  result := nil;
 end;
 
 function TDigitalSigner.signAlgorithmForMethod(method : TSignatureMethod) : String;
@@ -797,139 +801,140 @@ begin
 end;
 {$ENDIF}
 
-function bn2Base64(p : PBigNum) : String;
-var
-  b : TBytes;
-begin
-  setlength(b,  BN_num_bytes(p));
-  BN_bn2bin(p, @b[0]);
-  result := String(EncodeBase64(b));
-end;
+//function bn2Base64(p : PBigNum) : String;
+//var
+//  b : TBytes;
+//begin
+//  setlength(b,  BN_num_bytes(p));
+//  BN_bn2bin(p, @b[0]);
+//  result := String(EncodeBase64(b));
+//end;
 
 procedure TDigitalSigner.AddKeyInfo(sig : TMXmlElement; method : TSignatureMethod);
-var
-  kv: TMXmlElement;
-  dkey : PDSA;
-  rkey : PRSA;
+//var
+//  kv: TMXmlElement;
+//  dkey : PDSA;
+//  rkey : PRSA;
 begin
-  if method in [sdXmlDSASha1, sdXmlDSASha256] then
-  begin
-    kv := sig.AddElement('KeyInfo').AddElement('KeyValue').AddElement('DSAKeyValue');
-    dkey := LoadDSAKey;
-    try
-      kv.AddElement('P').AddText(bn2Base64(dkey.p));
-      kv.AddElement('Q').AddText(bn2Base64(dkey.q));
-      kv.AddElement('G').AddText(bn2Base64(dkey.g));
-      kv.AddElement('Y').AddText(bn2Base64(dkey.pub_key));
-    finally
-      DSA_free(dKey);
-    end;
-  end
-  else
-  begin
-    kv := sig.AddElement('KeyInfo').AddElement('KeyValue').AddElement('RSAKeyValue');
-    rkey := loadRSAKey;
-    try
-      kv.AddElement('Modulus').AddText(bn2Base64(rkey.n));
-      kv.AddElement('Exponent').AddText(bn2Base64(rkey.e));
-    finally
-      RSA_free(rkey);
-    end;
-  end;
+//  if method in [sdXmlDSASha1, sdXmlDSASha256] then
+//  begin
+//    kv := sig.AddElement('KeyInfo').AddElement('KeyValue').AddElement('DSAKeyValue');
+//    dkey := LoadDSAKey;
+//    try
+//      kv.AddElement('P').AddText(bn2Base64(dkey.p));
+//      kv.AddElement('Q').AddText(bn2Base64(dkey.q));
+//      kv.AddElement('G').AddText(bn2Base64(dkey.g));
+//      kv.AddElement('Y').AddText(bn2Base64(dkey.pub_key));
+//    finally
+//      DSA_free(dKey);
+//    end;
+//  end
+//  else
+//  begin
+//    kv := sig.AddElement('KeyInfo').AddElement('KeyValue').AddElement('RSAKeyValue');
+//    rkey := loadRSAKey;
+//    try
+//      kv.AddElement('Modulus').AddText(bn2Base64(rkey.n));
+//      kv.AddElement('Exponent').AddText(bn2Base64(rkey.e));
+//    finally
+//      RSA_free(rkey);
+//    end;
+//  end;
 end;
 
 function TDigitalSigner.signExternal(references: TDigitalSignatureReferenceList; method : TSignatureMethod; keyinfo : boolean): TBytes;
-var
-  doc : TMXMLDocument;
-  sig, si, ref, trns : TMXmlElement;
-  i : integer;
-  reference : TDigitalSignatureReference;
-  s : AnsiString;
-  t : String;
-  can, dig : TBytes;
+//var
+//  doc : TMXMLDocument;
+//  sig, si, ref, trns : TMXmlElement;
+//  i : integer;
+//  reference : TDigitalSignatureReference;
+//  s : AnsiString;
+//  t : String;
+//  can, dig : TBytes;
 begin
-  doc := TMXMLDocument.Create();
-  sig := doc.addElementNS(NS_DS, 'Signature');
-  sig.attribute['xmlns'] := NS_DS;
-  si := sig.AddElement('SignedInfo');
-  si.AddElement('CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n+0315';
-  si.AddElement('SignatureMethod').attribute['Algorithm'] := signAlgorithmForMethod(method);
-  for i := 0 to references.Count - 1 do
-  begin
-    reference := references[i];
-    ref := si.AddElement('Reference');
-    ref.attribute['URI'] := reference.URL;
-    if reference.transforms.count > 0 then
-    begin
-      trns := ref.AddElement('Transforms');
-      for t in reference.transforms do
-        trns.AddElement('Transform').attribute['Algorithm'] := t;
-    end;
-    ref.AddElement('DigestMethod').attribute['Algorithm'] := digestAlgorithmForMethod(method);
-    dig := digest(reference.content, method);
-    ref.AddElement('DigestValue').Text := String(EncodeBase64(dig));
-  end;
-  can := canonicaliseXml([xcmCanonicalise],si);
-  dig := sign(can, method);
-  s := EncodeBase64(dig);
-  sig.AddElement('SignatureValue').Text := string(s);
-  if keyinfo then
-    AddKeyInfo(sig, method);
-  result := canonicaliseXml([xcmCanonicalise], sig);  // don't need to canonicalise the whole lot, but why not?
+//  doc := TMXMLDocument.Create();
+//  sig := doc.addElementNS(NS_DS, 'Signature');
+//  sig.attribute['xmlns'] := NS_DS;
+//  si := sig.AddElement('SignedInfo');
+//  si.AddElement('CanonicalizationMethod').attribute['Algorithm'] := 'http://www.w3.org/TR/2001/REC-xml-c14n+0315';
+//  si.AddElement('SignatureMethod').attribute['Algorithm'] := signAlgorithmForMethod(method);
+//  for i := 0 to references.Count - 1 do
+//  begin
+//    reference := references[i];
+//    ref := si.AddElement('Reference');
+//    ref.attribute['URI'] := reference.URL;
+//    if reference.transforms.count > 0 then
+//    begin
+//      trns := ref.AddElement('Transforms');
+//      for t in reference.transforms do
+//        trns.AddElement('Transform').attribute['Algorithm'] := t;
+//    end;
+//    ref.AddElement('DigestMethod').attribute['Algorithm'] := digestAlgorithmForMethod(method);
+//    dig := digest(reference.content, method);
+//    ref.AddElement('DigestValue').Text := String(EncodeBase64(dig));
+//  end;
+//  can := canonicaliseXml([xcmCanonicalise],si);
+//  dig := sign(can, method);
+//  s := EncodeBase64(dig);
+//  sig.AddElement('SignatureValue').Text := string(s);
+//  if keyinfo then
+//    AddKeyInfo(sig, method);
+//  result := canonicaliseXml([xcmCanonicalise], sig);  // don't need to canonicalise the whole lot, but why not?
 end;
 
 function TDigitalSigner.LoadKeyInfo(sig: TMXmlElement): TKeyInfo;
-var
-  ki, kv, kd : TMXmlElement;
-  v : TBytes;
-//  p : pansichar;
+//var
+//  ki, kv, kd : TMXmlElement;
+//  v : TBytes;
+////  p : pansichar;
 begin
-  result := TKeyInfo.Create;
-  try
-    ki := sig.elementNS(NS_DS, 'KeyInfo');
-    if ki = nil then
-      raise ELibraryException.create('No KeyInfo found in digital signature');
-    kv := ki.elementNS(NS_DS, 'KeyValue');
-    if kv = nil then
-      raise ELibraryException.create('No KeyValue found in digital signature');
-    kd := kv.elementNS(NS_DS, 'RSAKeyValue');
-    if kd <> nil then
-    begin
-      result.rsa := RSA_new;
-      v := DecodeBase64(kd.elementNS(NS_DS, 'Modulus').Text);
-      result.rsa.n := BN_bin2bn(@v[0], length(v), nil);
-      v := DecodeBase64(kd.elementNS(NS_DS, 'Exponent').Text);
-      result.rsa.e := BN_bin2bn(@v[0], length(v), nil);
-    end
-    else
-    begin
-      kd := kv.elementNS(NS_DS, 'DSAKeyValue');
-      if kd <> nil then
-      begin
-        result.dsa := DSA_new;
-        v := DecodeBase64(kd.elementNS(NS_DS, 'P').Text);
-        result.dsa.p := BN_bin2bn(@v[0], length(v), nil);
-        v := DecodeBase64(kd.elementNS(NS_DS, 'Q').Text);
-        result.dsa.q := BN_bin2bn(@v[0], length(v), nil);
-        v := DecodeBase64(kd.elementNS(NS_DS, 'G').Text);
-        result.dsa.g := BN_bin2bn(@v[0], length(v), nil);
-        v := DecodeBase64(kd.elementNS(NS_DS, 'Y').Text);
-        result.dsa.pub_key := BN_bin2bn(@v[0], length(v), nil);
-
-//        if elementNS(kd, 'X', NS_DS) <> nil then
-//        begin
-//          v := DecodeBase64(elementNS(kd, 'X', NS_DS).Text);
-//          result.dsa.priv_key := BN_bin2bn(@v[0], length(v), nil);
-//        end;
-      end
-      else
-        raise ELibraryException.create('No Key Info found');
-    end;
-
-    result.Link;
-  finally
-    result.Free;
-  end;
+//  result := TKeyInfo.Create;
+//  try
+//    ki := sig.elementNS(NS_DS, 'KeyInfo');
+//    if ki = nil then
+//      raise ELibraryException.create('No KeyInfo found in digital signature');
+//    kv := ki.elementNS(NS_DS, 'KeyValue');
+//    if kv = nil then
+//      raise ELibraryException.create('No KeyValue found in digital signature');
+//    kd := kv.elementNS(NS_DS, 'RSAKeyValue');
+//    if kd <> nil then
+//    begin
+//      result.rsa := RSA_new;
+//      v := DecodeBase64(kd.elementNS(NS_DS, 'Modulus').Text);
+//      result.rsa.n := BN_bin2bn(@v[0], length(v), nil);
+//      v := DecodeBase64(kd.elementNS(NS_DS, 'Exponent').Text);
+//      result.rsa.e := BN_bin2bn(@v[0], length(v), nil);
+//    end
+//    else
+//    begin
+//      kd := kv.elementNS(NS_DS, 'DSAKeyValue');
+//      if kd <> nil then
+//      begin
+//        result.dsa := DSA_new;
+//        v := DecodeBase64(kd.elementNS(NS_DS, 'P').Text);
+//        result.dsa.p := BN_bin2bn(@v[0], length(v), nil);
+//        v := DecodeBase64(kd.elementNS(NS_DS, 'Q').Text);
+//        result.dsa.q := BN_bin2bn(@v[0], length(v), nil);
+//        v := DecodeBase64(kd.elementNS(NS_DS, 'G').Text);
+//        result.dsa.g := BN_bin2bn(@v[0], length(v), nil);
+//        v := DecodeBase64(kd.elementNS(NS_DS, 'Y').Text);
+//        result.dsa.pub_key := BN_bin2bn(@v[0], length(v), nil);
+//
+////        if elementNS(kd, 'X', NS_DS) <> nil then
+////        begin
+////          v := DecodeBase64(elementNS(kd, 'X', NS_DS).Text);
+////          result.dsa.priv_key := BN_bin2bn(@v[0], length(v), nil);
+////        end;
+//      end
+//      else
+//        raise ELibraryException.create('No Key Info found');
+//    end;
+//
+//    result.Link;
+//  finally
+//    result.Free;
+//  end;
+  result := nil;
 end;
 
 function TDigitalSigner.loadXml(source: TBytes): TMXmlDocument;

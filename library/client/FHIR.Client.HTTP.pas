@@ -35,7 +35,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
-  IdHTTP, IdSSLOpenSSL, IdComponent,
+  IdHTTP, IdComponent,
+  IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   {$IFDEF WINDOWS}FHIR.Web.WinInet, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang,
   FHIR.Smart.Utilities;
@@ -59,7 +60,7 @@ type
     FBytesToTransfer: Int64;
 
     indy : TIdHTTP;
-    ssl : TIdSSLIOHandlerSocketOpenSSL;
+    ssl : TIdOpenSSLIOHandlerClient;
     {$IFDEF WINDOWS}
     http : TFslWinInetClient;
     {$ENDIF}
@@ -83,7 +84,7 @@ type
     procedure SetCertFile(const Value: String);
     procedure SetCertPWord(const Value: String);
     procedure SetCertKey(const Value: String);
-    procedure getSSLpassword(var Password: String);
+    procedure getSSLpassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
 
     function authoriseByOWinIndy(server, username, password : String): TJsonObject;
     function authoriseByOWinHttp(server, username, password : String): TJsonObject;
@@ -246,7 +247,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TFHIRHTTPCommunicator.getSSLpassword(var Password: String);
+procedure TFHIRHTTPCommunicator.getSSLpassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
 begin
   Password := FCertPWord;
 end;
@@ -342,20 +343,18 @@ begin
           raise EFHIRException.create('Unable to process proxy "'+proxy+'" - use address:port');
         end;
       end;
-      ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+      ssl := TIdOpenSSLIOHandlerClient.Create(nil);
       indy.IOHandler := ssl;
-      ssl.SSLOptions.Mode := sslmClient;
-      ssl.SSLOptions.SSLVersions := [sslvTLSv1_2];
-      ssl.SSLOptions.Method := sslvTLSv1_2;
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
 
       if certFile <> '' then
       begin
-        ssl.SSLOptions.CertFile := certFile;
+        ssl.Options.CertFile := certFile;
         if certKey <> '' then
-          ssl.SSLOptions.KeyFile := certKey
+          ssl.Options.CertKey := certKey
         else
-          ssl.SSLOptions.KeyFile := ChangeFileExt(certFile,'.key');
-        ssl.OnGetPassword := getSSLpassword;
+          ssl.Options.CertKey := ChangeFileExt(certFile,'.key');
+        ssl.Options.OnGetPassword := getSSLpassword;
       end;
     end;
   end

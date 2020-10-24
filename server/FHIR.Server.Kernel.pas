@@ -35,7 +35,8 @@ interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
-  IdSSLOpenSSLHeaders,
+
+  IdOpenSSLLoader,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
 
@@ -200,7 +201,7 @@ begin
   {$IFDEF WINDOWS}
   JclStartExceptionTracking;
   {$ENDIF}
-  IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
+  GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
   try
     {$IFDEF FPC}
     initialiseTZData(partnerFile('tzdata.tar.gz'));

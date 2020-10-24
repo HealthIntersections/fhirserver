@@ -463,8 +463,11 @@ end;
 { TMainConsoleForm }
 
 procedure TMainConsoleForm.FormCreate(Sender: TObject);
+var
+  s : String;
 begin
-  FIni := TIniFile.create('FHIRConsole.ini');
+  s := getAppConfigDir(false);
+  FIni := TIniFile.create(path([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
 

@@ -36,7 +36,7 @@ Uses
   {$IFDEF WINDOWS}Windows,{$ENDIF}
   SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, IniFiles,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF}
-  IdGlobalProtocols, IdSSLOpenSSLHeaders,
+  IdGlobalProtocols,
   CommonTestBase,
   FHIR.Support.Base, FHIR.Support.Utilities;
 

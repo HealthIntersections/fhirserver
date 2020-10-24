@@ -455,7 +455,6 @@ uses
   MarkdownDaringFireballTests in '..\..\markdown\tests\MarkdownDaringFireballTests.pas',
   CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas',
   FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
-  FHIR.Tests.IdUriParser in '..\utilities\tests\FHIR.Tests.IdUriParser.pas',
   FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
   FHIR.Ucum.Tests in '..\library\Ucum\FHIR.Ucum.Tests.pas',
   FHIR.Dicom.Objects in '..\library\dicom\FHIR.Dicom.Objects.pas',
@@ -505,7 +504,8 @@ uses
   FHIR.Cda.Types in '..\library\cda\FHIR.Cda.Types.pas',
   FHIR.Cda.Parser in '..\library\cda\FHIR.Cda.Parser.pas',
   FHIR.Cda.Tests in '..\library\cda\FHIR.Cda.Tests.pas',
-  FHIR.Server.Kernel.Testing in 'FHIR.Server.Kernel.Testing.pas';
+  FHIR.Server.Kernel.Testing in 'FHIR.Server.Kernel.Testing.pas',
+  FHIR.Web.Tests in '..\library\web\FHIR.Web.Tests.pas';
 
 begin
   ExecuteFhirServer;

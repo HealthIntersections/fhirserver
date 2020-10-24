@@ -730,11 +730,11 @@ procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
   {$IFDEF WINDOWS}
-  RegisterTest('Library.v2 Dictionary Tests', Tv2DictTests.Suite);
-  RegisterTest('Library.v2 Parser Tests', THL7v2ParserTests.Suite);
+  RegisterTest('Formats.v2 Dictionary Tests', Tv2DictTests.Suite);
+  RegisterTest('Formats.v2 Parser Tests', THL7v2ParserTests.Suite);
   {$ENDIF}
-  RegisterTest('Library.v2 Parser2 Tests', Tv2ParserTests.Suite);
-  RegisterTest('Library.LLP Tests', TLLPTests.Suite);
+  RegisterTest('Formats.v2 Parser2 Tests', Tv2ParserTests.Suite);
+  RegisterTest('Formats.LLP Tests', TLLPTests.Suite);
 end;
 
 end.

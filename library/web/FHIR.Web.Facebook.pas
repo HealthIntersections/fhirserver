@@ -28,11 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$I fhir.inc}
+
 interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities;
+  IdHTTP, idHMAC, IdHMACSHA1,
+  IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
+  FHIR.Support.Json, FHIR.Support.Certs, FHIR.Support.Utilities,
+  FHIR.Web.Parsers, FHIR.Web.Fetcher;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 Function FacebookGetDetails(token : String; var id, name, email, error : String) : boolean;
@@ -43,11 +48,6 @@ Function GoogleGetDetails(token, key, jwtsrc : String; var id, name, email, erro
 function FitBitInitiate(secret, key, nonce, callback : String) : String;
 
 implementation
-
-uses
-  FHIR.Web.Fetcher,
-  IdHTTP, IdSSLOpenSSL, idHMAC, IdHMACSHA1,
-  FHIR.Support.Json, FHIR.Support.Certs, FHIR.Web.Parsers;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var
@@ -81,7 +81,7 @@ end;
 Function GoogleCheckLogin(id, secret, url, code : String; var token, expires, jwt, error : String) : boolean;
 var
   http: TIdHTTP;
-  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  ssl : TIdOpenSSLIOHandlerClient;
   post, resp : TBytesStream;
   json : TJSONObject;
 begin
@@ -97,11 +97,10 @@ begin
       result := false;
       http := TIdHTTP.Create(nil);
       Try
-        ssl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+        ssl := TIdOpenSSLIOHandlerClient.Create(Nil);
         Try
           http.IOHandler := ssl;
-          ssl.SSLOptions.Mode := sslmClient;
-          ssl.SSLOptions.Method := sslvTLSv1_2;
+          ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
           http.Request.ContentType := 'application/x-www-form-urlencoded';
           resp := TBytesStream.create;
           try

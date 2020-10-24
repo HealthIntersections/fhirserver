@@ -282,7 +282,7 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Library.Snomed Tests', TSnomedTests.Suite);
+  RegisterTest('Terminology.Snomed Tests', TSnomedTests.Suite);
 end;
 
 end.
