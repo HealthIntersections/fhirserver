@@ -391,6 +391,7 @@ uses
   FHIR.Ucum.Tests in '..\library\ucum\FHIR.Ucum.Tests.pas',
   FHIR.Snomed.Tests in '..\library\snomed\FHIR.Snomed.Tests.pas',
   FHIR.v2.Tests in '..\library\v2\FHIR.v2.Tests.pas',
+  FHIR.Web.Tests in '..\library\web\FHIR.Web.Tests.pas',
   FHIR.v2.Base in '..\library\v2\FHIR.v2.Base.pas',
   FHIR.v2.Dictionary in '..\library\v2\FHIR.v2.Dictionary.pas',
   FHIR.v2.Dictionary.Database in '..\library\v2\FHIR.v2.Dictionary.Database.pas',
