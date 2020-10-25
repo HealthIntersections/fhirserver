@@ -439,13 +439,6 @@ type
 
   fn = procedure(const ciph: PEVP_CIPHER; const from: PIdAnsiChar; const &to: PIdAnsiChar; x: Pointer); cdecl;
 
-  rsa_st = type Pointer;
-  Prsa_st = ^rsa_st;
-
-  dsa_st = type Pointer;
-
-  Pdsa_st = ^dsa_st;
-
   dh_st = type Pointer;
 
   Pdh_st = ^dh_st;
@@ -1041,13 +1034,13 @@ var
   EVP_PKEY_get0_poly1305: function(const pkey: PEVP_PKEY; len: PIdC_SIZET): PByte cdecl = nil;
   EVP_PKEY_get0_siphash: function(const pkey: PEVP_PKEY; len: PIdC_SIZET): PByte cdecl = nil;
 
-  EVP_PKEY_set1_RSA: function(pkey: PEVP_PKEY): TIdC_INT cdecl = nil;
-  EVP_PKEY_get0_RSA: function(pkey: PEVP_PKEY): Prsa_st cdecl = nil;
-  EVP_PKEY_get1_RSA: function(pkey: PEVP_PKEY): Prsa_st cdecl = nil;
+  EVP_PKEY_set1_RSA: function(pkey: PEVP_PKEY; key : PRSA): TIdC_INT cdecl = nil;
+  EVP_PKEY_get0_RSA: function(pkey: PEVP_PKEY): Prsa cdecl = nil;
+  EVP_PKEY_get1_RSA: function(pkey: PEVP_PKEY): Prsa cdecl = nil;
 
-  EVP_PKEY_set1_DSA: function(pkey: PEVP_PKEY): TIdC_INT cdecl = nil;
-  EVP_PKEY_get0_DSA: function(pkey: PEVP_PKEY): Pdsa_st cdecl = nil;
-  EVP_PKEY_get1_DSA: function(pkey: PEVP_PKEY): Pdsa_st cdecl = nil;
+  EVP_PKEY_set1_DSA: function(pkey: PEVP_PKEY; key : PDSA): TIdC_INT cdecl = nil;
+  EVP_PKEY_get0_DSA: function(pkey: PEVP_PKEY): Pdsa cdecl = nil;
+  EVP_PKEY_get1_DSA: function(pkey: PEVP_PKEY): Pdsa cdecl = nil;
 
   EVP_PKEY_set1_DH: function(pkey: PEVP_PKEY; key: Pdh_st): TIdC_INT cdecl = nil;
   EVP_PKEY_get0_DH: function(pkey: PEVP_PKEY): Pdh_st cdecl = nil;
