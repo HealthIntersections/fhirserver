@@ -35,11 +35,11 @@ interface
 uses
   Sysutils, FHIR.Web.Facebook,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
-  IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase,
-  IdOpenSSLVersion, IdOpenSSLIOHandlerClient,
+  IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer,
+  IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   FHIR.Support.Json, FHIR.Support.Utilities,
   FHIR.Npm.Spider,
-  FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Certs;
+  FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Crypto;
 
 type
   TIdUriParserTests = Class (TFslTestCase)
@@ -67,9 +67,17 @@ type
   End;
 
   TOpenSSLTests = Class (TFslTestCase)
+  private
+    FServer : TIdHTTPServer;
+    FIOHandler : TIdOpenSSLIOHandlerServer;
+    procedure startServer;
+    procedure stopServer;
+    procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
+    Procedure DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   published
     procedure testWebFetcher;
     procedure testSendEmail;
+    procedure testWebServer;
   End;
 
 procedure registerTests;
@@ -184,6 +192,7 @@ begin
       '{"alg":"RS256"}',
       '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
       jwt_hmac_rsa256, jwk);
+//    assertTrue(gs = 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.LteI-Jtns1KTLm0-lnDU_gI8_QHDnnIfZCEB2dI-ix4YxLQjaOTVQolkaa-Y4Cie-mEd8c34vSWeeNRgVcXuJsZ_iVYywDWqUDpXY6KwdMx6kXZQ0-'+'mihsowKzrFbmhUWun2aGOx44w3wAxHpU5cqE55B0wx2v_f98zUojMp6mkje_pFRdgPmCIYTbym54npXz7goROYyVl8MEhi1HgKmkOVsihaVLfaf5rt3OMbK70Lup3RrkxFbneKslTQ3bwdMdl_Zk1vmjRklvjhmVXyFlEHZVAe4_4n_FYk6oq6UFFJDkEjrWo25B0lKC7XucZZ5b8NDr04xujyV4XaR11ZuQ');
   finally
     jwk.Free;
   end;
@@ -342,6 +351,79 @@ begin
     assertTrue(json <> nil)
   finally
     json.Free;
+  end;
+end;
+
+procedure TOpenSSLTests.DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+begin
+  response.ContentText := 'Response';
+end;
+
+procedure TOpenSSLTests.SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
+begin
+  Password := TestSettings.SSLPassword;
+end;
+
+procedure TOpenSSLTests.startServer;
+begin
+  FServer := TIdHTTPServer.Create(Nil);
+  FServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+  TIdSchedulerOfThreadPool(FServer.Scheduler).PoolSize := 20;
+  FServer.DefaultPort := 17456;
+  FServer.KeepAlive := false;
+  FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
+  FServer.IOHandler := FIOHandler;
+
+  FIOHandler.Options.CertFile := TestSettings.SSLCertFile;
+  FIOHandler.Options.OnGetPassword := SSLPassword;
+  FIOHandler.Options.CertKey := TestSettings.SSLKeyFile;
+  FIOHandler.Options.VerifyCertificate := TestSettings.SSLCAFile;
+
+  FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.UseServerCipherPreferences := true;
+//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
+//    FIOHandler.Options.UseLegacyServerConnect := true;
+//
+//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+//   FIOHandler.Options.CipherSuites := '';
+//    FIOHandler.Options.RequestCertificate := true;
+//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
+//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
+//    FIOHandler.Options.OnVerify := DoVerifyPeer;
+  FServer.OnCommandGet := DoServe;
+  FServer.active := true;
+end;
+
+procedure TOpenSSLTests.stopServer;
+begin
+  try
+    FServer.active := false;
+  except
+    // nothing
+  end;
+  FServer.IOHandler := nil;
+  FIOHandler.Free;
+  FServer.Scheduler.Free;
+  FServer.Free;
+end;
+
+procedure TOpenSSLTests.testWebServer;
+begin
+  assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
+  assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
+  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
+  assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
+
+  startServer;
+  try
+    assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17456/test')) = 8);
+  finally
+    try
+      stopServer;
+    except
+      // nothing
+    end;
   end;
 end;
 

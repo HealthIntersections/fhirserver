@@ -42,6 +42,7 @@ uses
   Classes, SysUtils,
   Interfaces,
   IdGlobal in '..\dependencies\Indy10\System\IdGlobal.pas',
+  IdOpenSSLIOHandlerClient in '..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClient.pas',
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',
@@ -201,7 +202,7 @@ uses
   FHIR.Snomed.Publisher in '..\library\snomed\FHIR.Snomed.Publisher.pas',
   FHIR.Snomed.Services in '..\library\snomed\FHIR.Snomed.Services.pas',
   FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
-  FHIR.Support.Certs in '..\library\support\FHIR.Support.Certs.pas',
+  FHIR.Support.Crypto in '..\library\support\FHIR.Support.Crypto.pas',
   FHIR.Support.Collections in '..\library\support\FHIR.Support.Collections.pas',
   FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
   FHIR.Support.Json in '..\library\support\FHIR.Support.Json.pas',
@@ -215,7 +216,7 @@ uses
   {$ELSE}
   FHIR.Support.SystemService in '..\library\support\FHIR.Support.SystemService.pas',
   {$ENDIF}
-  FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
+  FHIR.Support.OpenSSL in '..\library\support\FHIR.Support.OpenSSL.pas',
   FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
@@ -396,7 +397,6 @@ uses
   FHIR.v2.Dictionary in '..\library\v2\FHIR.v2.Dictionary.pas',
   FHIR.v2.Dictionary.Database in '..\library\v2\FHIR.v2.Dictionary.Database.pas',
   FHIR.V2.Objects in '..\library\v2\FHIR.V2.Objects.pas',
-  FHIR.Web.Tests in '..\library\web\FHIR.Web.Tests.pas',
   FHIR.Database.Tests in '..\library\database\FHIR.Database.Tests.pas',
   FHIR.Tx.HGVS in 'FHIR.Tx.HGVS.pas',
   FHIR.Cda.Documents in '..\library\cda\FHIR.Cda.Documents.pas',

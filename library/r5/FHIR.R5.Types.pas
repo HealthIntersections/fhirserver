@@ -1,4 +1,4 @@
-unit FHIR.R5.Types;
+﻿unit FHIR.R5.Types;
 
 {$I FHIR.R5.inc}
 
@@ -39,7 +39,7 @@ interface
 
 uses
   Classes, SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
   FHIR.R5.Base, FHIR.R5.Enums;
 

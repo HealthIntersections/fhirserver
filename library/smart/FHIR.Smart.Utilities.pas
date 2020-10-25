@@ -111,7 +111,7 @@ uses
   SysUtils, Classes,
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang;
 
 type

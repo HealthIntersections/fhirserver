@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="378">
+    <Units Count="379">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1720,6 +1720,10 @@
         <Filename Value="..\library\web\FHIR.Web.Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit377>
+      <Unit378>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit378>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -126,6 +126,11 @@ type
     function SMTPUsername : String;
     function SMTPPassword : String;
     function SMTPDestination : String;
+
+    function SSLCertFile : String;
+    function SSLKeyFile : String;
+    function SSLPassword : String;
+    function SSLCAFile : String;
   end;
 
 var
@@ -369,6 +374,26 @@ end;
 function TFslTestSettings.SMTPUsername: String;
 begin
   result := Fini.ReadString('email', 'sender', '');
+end;
+
+function TFslTestSettings.SSLCAFile: String;
+begin
+  result := Fini.ReadString('ssl', 'cacert', '');
+end;
+
+function TFslTestSettings.SSLCertFile: String;
+begin
+  result := Fini.ReadString('ssl', 'cert', '');
+end;
+
+function TFslTestSettings.SSLKeyFile: String;
+begin
+  result := Fini.ReadString('ssl', 'key', '');
+end;
+
+function TFslTestSettings.SSLPassword: String;
+begin
+  result := Fini.ReadString('ssl', 'password', '');
 end;
 
 function TFslTestSettings.testFile(root: String; parts: array of String): String;

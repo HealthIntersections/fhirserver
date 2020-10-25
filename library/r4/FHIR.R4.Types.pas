@@ -39,7 +39,7 @@ interface
 
 uses
   Classes, SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
   FHIR.R4.Base;
 

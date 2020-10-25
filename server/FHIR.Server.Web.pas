@@ -79,9 +79,9 @@ Uses
   SysUtils, Classes, IniFiles, Generics.Collections, {JCL JclDebug,} {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
-  IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509, IdOpenSSLLoader,
+  IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.OpenSSL,
   {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
@@ -4427,7 +4427,7 @@ begin
   else
     SetThreadName('http:'+AContext.Binding.PeerIP);
 
-  AContext.Connection.IOHandler.ReadTimeout := 10*1000;
+  AContext.Connection.IOHandler.ReadTimeout := 60*1000;
 
   InterlockedIncrement(GCounterWebConnections);
 {$IFDEF WINDOWS}
@@ -4668,23 +4668,30 @@ Begin
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
-    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-    FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+
     FIOHandler.Options.CertFile := FCertFile;
     FIOHandler.Options.CertKey := ChangeFileExt(FCertFile, '.key');
     FIOHandler.Options.VerifyCertificate := FRootCertFile;
-    FIOHandler.Options.RequestCertificate := true;
-    FIOHandler.Options.RequestCertificateOnlyOnce := true;
-    FIOHandler.Options.FailIfNoPeerCertificate := FServeMissingCertificate;
-    FIOHandler.Options.OnVerify := DoVerifyPeer;
     FIOHandler.Options.OnGetPassword := SSLPassword;
+
+//    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.UseServerCipherPreferences := true;
+//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
+//    FIOHandler.Options.UseLegacyServerConnect := true;
+//
+//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+//   FIOHandler.Options.CipherSuites := '';
+//    FIOHandler.Options.RequestCertificate := true;
+//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
+//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
+//    FIOHandler.Options.OnVerify := DoVerifyPeer;
     FSSLServer.OnCommandGet := SecureRequest;
     FSSLServer.OnCommandOther := SecureRequest;
     FSSLServer.OnConnect := DoConnect;
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
     FSSLServer.active := active;
-    LoadEAYExtensions(true);
   end;
 end;
 
@@ -4696,7 +4703,6 @@ Begin
     FSSLServer.Scheduler.Free;
     FreeAndNil(FSSLServer);
     FreeAndNil(FIOHandler);
-    UnloadEAYExtensions;
   end;
   if FPlainServer <> nil then
   begin
@@ -6818,11 +6824,6 @@ begin
   end;
 end;
 
-Initialization
-  if not GetOpenSSLLoader.Load then
-    raise Exception.create('open SSL failed to load');
-//  if GetOpenSSLLoader.FailedToLoad.count > 0 then
-//    raise Exception.create('openSSL failed to load some methods: '+GetOpenSSLLoader.FailedToLoad.CommaText);
 End.
 
 
