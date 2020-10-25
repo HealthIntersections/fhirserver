@@ -1121,7 +1121,7 @@ end;
 
 class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; key: TJWK): TBytes;
 var
-  ctx : PEVP_CIPHER_CTX;
+  ctx : PEVP_MD_CTX;
   keysize : integer;
   len : Cardinal;
   pkey: PEVP_PKEY;
@@ -1140,14 +1140,14 @@ begin
       // 2. do the signing
       keysize := EVP_PKEY_size(pkey);
       SetLength(result, keysize);
-      ctx := EVP_CIPHER_CTX_new;
+      ctx := EVP_MD_CTX_new;
       try
         check(EVP_DigestSignInit(ctx, nil, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
-        check(EVP_DigestUpdate(PEVP_MD_CTX(ctx), @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
+        check(EVP_DigestUpdate(ctx, @input[0], Length(input)) = 1, 'openSSL EVP_SignUpdate failed');
         check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_SignFinal failed');
         SetLength(result, len);
       finally
-        EVP_CIPHER_CTX_free(ctx);
+        EVP_MD_CTX_free(ctx);
       end;
     finally
       EVP_PKEY_free(pKey);

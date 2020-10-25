@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="379">
+    <Units Count="381">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1724,6 +1724,14 @@
         <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClient.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit378>
+      <Unit379>
+        <Filename Value="..\library\support\FHIR.Support.Crypto.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit379>
+      <Unit380>
+        <Filename Value="..\library\support\FHIR.Support.OpenSSL.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit380>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
