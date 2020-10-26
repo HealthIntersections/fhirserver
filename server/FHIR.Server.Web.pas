@@ -81,9 +81,9 @@ Uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.OpenSSL,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
   {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
-  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
+  FHIR.Web.OpenSSL, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 
   {$IFDEF WINDOWS}
   FHIR.Database.ODBC,
@@ -501,6 +501,7 @@ Type
     FOutLog : TLogger;
 
     // security admin
+    FNoUserAuthentication : boolean;
     FUseOAuth: boolean;
     FOWinSecurityPlain: boolean;
     FOWinSecuritySecure: boolean;
@@ -4375,6 +4376,7 @@ begin
   FRootCertFile := ini.web['cacertname'];
   FSSLPassword := ini.web['password'];
 
+  FNoUserAuthentication := ini.web['no-auth'] = 'true';
   FUseOAuth := ini.web['oauth'] <> 'false';
   FOWinSecuritySecure := ini.web['owin'] = 'true';
   FOWinSecurityPlain := ini.web['owin-http'] = 'true';
@@ -4875,83 +4877,88 @@ var
   ep: TFhirWebServerEndpoint;
   sp : TFHIRWebServerSourceProvider;
 begin
-  InterlockedIncrement(GCounterWebRequests);
-  t := GetTickCount;
-  raise Exception.Create('todo');
-  cert := nil; // todo (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
+  if FNoUserAuthentication then // we treat this as if it's a plain request
+    PlainRequest(AContext, request, response)
+  else
+  begin
+    InterlockedIncrement(GCounterWebRequests);
+    t := GetTickCount;
+    raise Exception.Create('todo');
+    cert := nil; // todo (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
-  SetThreadStatus('Processing '+request.Document);
-  MarkEntry(AContext, request, response);
-  try
-    id := FSettings.nextRequestId;
-    logRequest(true, id, request);
-    response.CustomHeaders.Add('X-Request-Id: '+id);
-    if (request.CommandType = hcOption) then
-    begin
-      response.ResponseNo := 200;
-      response.ContentText := 'ok';
-      response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-      response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-      response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-        response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-    end
-    else
-    begin
-      ok := false;
-      sp := FSourceProvider;
-      for ep in FEndPoints do
-        if request.Document.StartsWith(ep.path) then
-        begin
-          ok := true;
-          summ := ep.SecureRequest(AContext, request, response, cert, id);
-        end;
-      if not ok then
+    SetThreadStatus('Processing '+request.Document);
+    MarkEntry(AContext, request, response);
+    try
+      id := FSettings.nextRequestId;
+      logRequest(true, id, request);
+      response.CustomHeaders.Add('X-Request-Id: '+id);
+      if (request.CommandType = hcOption) then
       begin
-        if request.Document = '/diagnostics' then
-          summ := ReturnDiagnostics(AContext, request, response, false, false)
-        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+        response.ResponseNo := 200;
+        response.ContentText := 'ok';
+        response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+        response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+        response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+        response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+        if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+          response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+      end
+      else
+      begin
+        ok := false;
+        sp := FSourceProvider;
+        for ep in FEndPoints do
+          if request.Document.StartsWith(ep.path) then
+          begin
+            ok := true;
+            summ := ep.SecureRequest(AContext, request, response, cert, id);
+          end;
+        if not ok then
         begin
-          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
-        end
-        {$IFNDEF FHIR3}
-        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          summ := FPackageServer.serve(request, response)
-        {$ENDIF}
-        else if request.Document = '/twilio' then
-          summ := HandleTwilio(AContext, request, response, false, false)
-        else if sp.exists(sp.AltFile(request.Document, '/')) then
-        begin
-          summ := 'Static File';
-          ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
-        end
-        else if request.Document = '/' then
-        begin
-          summ := 'Processed File';
-          ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
-        end
-        else
-        begin
-          response.ResponseNo := 404;
-          response.ContentText := 'Document ' + request.Document + ' not found';
+          if request.Document = '/diagnostics' then
+            summ := ReturnDiagnostics(AContext, request, response, false, false)
+          else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
+          begin
+            summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
+          end
+          {$IFNDEF FHIR3}
+          else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
+            summ := FPackageServer.serve(request, response)
+          {$ENDIF}
+          else if request.Document = '/twilio' then
+            summ := HandleTwilio(AContext, request, response, false, false)
+          else if sp.exists(sp.AltFile(request.Document, '/')) then
+          begin
+            summ := 'Static File';
+            ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
+          end
+          else if request.Document = '/' then
+          begin
+            summ := 'Processed File';
+            ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
+          end
+          else
+          begin
+            response.ResponseNo := 404;
+            response.ContentText := 'Document ' + request.Document + ' not found';
+          end;
         end;
       end;
-    end;
 
-    logResponse(id, response);
-    t := GetTickCount - t;
-    Logging.log(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+Logging.MemoryStatus);
-    Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
-    {$IFNDEF OSX}
-//    if GService <> nil then
-//      Logging.log(GService.ThreadStatus);
-    {$ENDIF}
-    response.CloseConnection := not SECURE_KEEP_ALIVE;
-  finally
-    InterlockedDecrement(GCounterWebRequests);
-    MarkExit(AContext);
-    SetThreadStatus('Done');
+      logResponse(id, response);
+      t := GetTickCount - t;
+      Logging.log(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+Logging.MemoryStatus);
+      Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
+      {$IFNDEF OSX}
+  //    if GService <> nil then
+  //      Logging.log(GService.ThreadStatus);
+      {$ENDIF}
+      response.CloseConnection := not SECURE_KEEP_ALIVE;
+    finally
+      InterlockedDecrement(GCounterWebRequests);
+      MarkExit(AContext);
+      SetThreadStatus('Done');
+    end;
   end;
 end;
 

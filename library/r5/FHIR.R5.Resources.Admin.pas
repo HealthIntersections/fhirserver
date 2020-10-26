@@ -324,7 +324,7 @@ type
     procedure SetReferencedItem(value : TFhirReference);
     function GetRelatedEntryList : TFhirCatalogEntryRelatedEntryList;
     function GetHasRelatedEntryList : Boolean;
-    procedure SetUpdatedBy(value : TFhirReference);
+    Procedure SetUpdatedBy(value : TFhirReference);
     function GetNoteList : TFhirAnnotationList;
     function GetHasNoteList : Boolean;
     procedure SetEstimatedDuration(value : TFhirDuration);

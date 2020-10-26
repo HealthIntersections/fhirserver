@@ -33,13 +33,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Sysutils, FHIR.Web.Facebook,
+  Sysutils,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Npm.Spider,
-  FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Crypto;
+  FHIR.Web.Facebook, FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Crypto,
+  FHIR.Npm.Spider;
 
 type
   TIdUriParserTests = Class (TFslTestCase)
@@ -59,7 +59,7 @@ type
 
   TJWTTests = Class (TFslTestCase)
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
   Published
     procedure TestPacking;
     procedure TestUnpacking;

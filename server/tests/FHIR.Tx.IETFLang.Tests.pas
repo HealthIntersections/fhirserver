@@ -46,7 +46,7 @@ type
     procedure pass(code : String);
     procedure fail(code : String);
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
     procedure TearDown; override;
   published
     Procedure TestSimple;

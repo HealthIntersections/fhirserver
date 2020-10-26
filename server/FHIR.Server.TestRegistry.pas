@@ -34,15 +34,14 @@ interface
 
 (*
 
-FHIR.Javascript.Tests
 FHIR.R4.Tests.Client
 FHIR.R4.Tests.Liquid
 FHIR.R4.Tests.Maps
-FHIR.R4.Tests.Parser
+
 FHIR.R4.Tests.PathEngine
 FHIR.R4.Tests.Utilities
-FHIR.R4.Tests.Validator
 FHIR.R4.Tests.Worker
+FHIR.R4.Tests.Context
 FHIR.Tools.GraphQL.Tests
 FHIR.Tests.FullServer
 FHIR.Tests.GraphDefinition
@@ -50,16 +49,15 @@ FHIR.Tests.RestFulServer
 FHIR.Tests.SearchSyntax
 FHIR.Tests.SmartLogin
 FHIR.XVersion.Tests
-FHIR.R4.Tests.Context
 *)
 
 uses
   SysUtils, IniFiles,
   FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests,
-  FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests,
-  FHIR.v2.Tests, FHIR.Cda.Tests;
+  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests,
+  {$IFNDEF NO_JS}FHIR.Javascript.Tests, {$ENDIF}
+  FHIR.R4.Tests.Parser;
 
 procedure registerTests;
 
@@ -94,7 +92,7 @@ DefaultFHIRTestsRoot =   '/users/grahamegrieve/work/fhir-test-cases';
   DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
 {$ENDIF}
 
-procedure setupDefaultTestSettings(filename : String);
+Procedure SetUpDefaultTestSettings(filename : String);
 var
   ini : TIniFile;
 begin
@@ -143,6 +141,10 @@ begin
   FHIR.Ucum.Tests.registerTests;
   FHIR.Snomed.Tests.registerTests;
   FHIR.v2.Tests.registerTests;
+  {$IFNDEF NO_JS}
+  FHIR.Javascript.Tests.registerTests;
+  {$ENDIF}
+  FHIR.R4.Tests.Parser.registerTests;
 end;
 
 end.

@@ -88,7 +88,7 @@ Type
     procedure InitialiseRestServer;
     procedure registerJs(sender: TObject; js: TJsHost);
   public
-    [SetupFixture] procedure Setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
 
     [TestCase] Procedure TestStarted;

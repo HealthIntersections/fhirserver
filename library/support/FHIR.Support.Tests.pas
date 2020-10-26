@@ -170,7 +170,7 @@ Type
     functionNames : TStringList;
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
   public
-    procedure setup; override;
+    Procedure SetUp; override;
     procedure teardown; override;
   Published
     procedure TestCase(Name : String); override;
@@ -193,7 +193,7 @@ Type
     function findSample(id : String) : TMXmlElement;
     procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
-    procedure setup; override;
+    Procedure SetUp; override;
     procedure teardown; override;
   Published
     procedure TestCase(Name : String); override;
@@ -212,7 +212,7 @@ Type
     test, target, patch, error, patched : TMXmlElement;
     procedure doExecute;
   public
-    procedure setup; override;
+    Procedure SetUp; override;
     procedure teardown; override;
   Published
     procedure TestCase(Name : String); override;
@@ -240,7 +240,7 @@ Type
     engine : TJsonPatchEngine;
     procedure execute;
   public
-    procedure setup; override;
+    Procedure SetUp; override;
     procedure teardown; override;
   Published
     procedure PatchTest(Name : String);

@@ -46,7 +46,7 @@ Type
     FWorker : TFHIRWorkerContext;
 
   public
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
   end;

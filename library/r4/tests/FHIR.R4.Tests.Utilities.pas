@@ -45,7 +45,7 @@ type
   [TextFixture]
   TFHIRUtilityTests4 = Class (TObject)
   public
-    [SetUp] procedure Setup;
+    [SetUp] Procedure SetUp;
 
     [TestCase] Procedure TestZipPartCreation;
     Procedure TestZipGeneration;

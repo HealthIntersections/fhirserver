@@ -49,7 +49,7 @@ Type
     procedure checkStatus(name : String; value : string); overload;
     procedure checkStatusMissing(name : String); overload;
   Published
-    [SetupFixture]    Procedure Setup;
+    [SetupFixture]    Procedure SetUp;
     [TearDownFixture] Procedure TearDown;
     [TestCase]        Procedure TestStatus;
     [TestCase]        Procedure TestSeeResource;

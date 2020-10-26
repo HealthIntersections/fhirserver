@@ -590,7 +590,6 @@ begin
   // nothing
 end;
 
-
 { TAreaCodeConcept }
 
 function TAreaCodeConcept.link: TAreaCodeConcept;

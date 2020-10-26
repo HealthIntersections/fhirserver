@@ -238,3 +238,4 @@ server/r:
 testcases/snomed/
 
 .DS_Store
+/dependencies/Indy10/OpenSSL/backup

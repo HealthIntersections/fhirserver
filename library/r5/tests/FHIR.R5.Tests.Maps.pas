@@ -70,7 +70,7 @@ type
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
   public
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [TestCase] procedure testCD;
@@ -87,7 +87,7 @@ type
     ctxt : TFHIRWorkerContext;
     utils : TFHIRStructureMapUtilities;
   Published
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [MapParserTest2Case]

@@ -765,8 +765,8 @@ var
 
   EVP_DigestVerify: function(ctx: PEVP_CIPHER_CTX; const sigret: PByte; siglen: TIdC_SIZET; const tbs: PByte; tbslen: TIdC_SIZET): TIdC_INT cdecl = nil;
 
-  EVP_DigestSignInit: function(ctx: PEVP_CIPHER_CTX; pctx: PPEVP_PKEY_CTX; const &type: PEVP_MD; e: PENGINE; pkey: PEVP_PKEY): TIdC_INT cdecl = nil;
-  EVP_DigestSignFinal: function(ctx: PEVP_CIPHER_CTX; sigret: PByte; siglen: PIdC_SIZET): TIdC_INT cdecl = nil;
+  EVP_DigestSignInit: function(ctx: PEVP_MD_CTX; pctx: PPEVP_PKEY_CTX; const &type: PEVP_MD; e: PENGINE; pkey: PEVP_PKEY): TIdC_INT cdecl = nil;
+  EVP_DigestSignFinal: function(ctx: PEVP_MD_CTX; sigret: PByte; siglen: PIdC_SIZET): TIdC_INT cdecl = nil;
 
   EVP_DigestVerifyInit: function(ctx: PEVP_MD_CTX; ppctx: PPEVP_PKEY_CTX; const &type: PEVP_MD; e: PENGINE; pkey: PEVP_PKEY): TIdC_INT cdecl = nil;
   EVP_DigestVerifyFinal: function(ctx: PEVP_MD_CTX; const sig: PByte; siglen: TIdC_SIZET): TIdC_INT cdecl = nil;

@@ -52,9 +52,12 @@ type
     Column: Integer;
     Source: UnicodeString;
     ScriptURL: UnicodeString;
+    FJSEngineError : string;
   public
     constructor Create(AErrorCode: JsErrorCode);
+    property JSEngineError : String read FJSEngineError;
   end;
+
   EChakraCoreFatal = class(EChakraCore);
   EChakraCoreDiag = class(EChakraCore);
 
@@ -304,12 +307,16 @@ begin
   inherited Create(AErrorCode, Error);
   if Assigned(Error) then
     SException := JsStringToUnicodeString(Error);
+
+  FJSEngineError := Message;
   if SException <> '' then
+  begin
 {$ifdef UNICODE}
-    Message := Message + sLineBreak + SException;
+    Message := SException;
 {$else}
-    Message := Message + sLineBreak + UTF8Encode(SException);
+    Message := UTF8Encode(SException);
 {$endif}
+  end;
 end;
 
 function BooleanToJsBoolean(Value: Boolean): JsValueRef;

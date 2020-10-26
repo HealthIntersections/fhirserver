@@ -216,7 +216,7 @@ uses
   {$ELSE}
   FHIR.Support.SystemService in '..\library\support\FHIR.Support.SystemService.pas',
   {$ENDIF}
-  FHIR.Support.OpenSSL in '..\library\support\FHIR.Support.OpenSSL.pas',
+  FHIR.Web.OpenSSL in '..\library\web\FHIR.Web.OpenSSL.pas',
   FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
