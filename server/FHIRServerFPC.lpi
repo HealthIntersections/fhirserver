@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="381">
+    <Units Count="477">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1732,6 +1732,391 @@
         <Filename Value="..\library\support\FHIR.Support.OpenSSL.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit380>
+      <Unit381>
+        <Filename Value="..\library\javascript\FHIR.Javascript.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit381>
+      <Unit382>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContext.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit382>
+      <Unit383>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ossl_typ.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit383>
+      <Unit384>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit384>
+      <Unit385>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLTypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit385>
+      <Unit386>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLX509.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit386>
+      <Unit387>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocketClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit387>
+      <Unit388>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_aes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit388>
+      <Unit389>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit389>
+      <Unit390>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1_mac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit390>
+      <Unit391>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1err.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit391>
+      <Unit392>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1t.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit392>
+      <Unit393>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_async.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit393>
+      <Unit394>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asyncerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit394>
+      <Unit395>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bio.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit395>
+      <Unit396>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bioerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit396>
+      <Unit397>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_blowfish.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit397>
+      <Unit398>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bn.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit398>
+      <Unit399>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bnerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit399>
+      <Unit400>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_buffer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit400>
+      <Unit401>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_buffererr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit401>
+      <Unit402>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_camellia.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit402>
+      <Unit403>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cast.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit403>
+      <Unit404>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit404>
+      <Unit405>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cms.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit405>
+      <Unit406>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cmserr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit406>
+      <Unit407>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_comp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit407>
+      <Unit408>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_comperr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit408>
+      <Unit409>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conf.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit409>
+      <Unit410>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conf_api.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit410>
+      <Unit411>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conferr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit411>
+      <Unit412>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_crypto.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit412>
+      <Unit413>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cryptoerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit413>
+      <Unit414>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cterr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit414>
+      <Unit415>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dh.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit415>
+      <Unit416>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dherr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit416>
+      <Unit417>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dsa.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit417>
+      <Unit418>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dsaerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit418>
+      <Unit419>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ebcdic.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit419>
+      <Unit420>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ec.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit420>
+      <Unit421>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ecerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit421>
+      <Unit422>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_engine.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit422>
+      <Unit423>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_engineerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit423>
+      <Unit424>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_err.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit424>
+      <Unit425>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_evp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit425>
+      <Unit426>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_evperr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit426>
+      <Unit427>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_hmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit427>
+      <Unit428>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_idea.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit428>
+      <Unit429>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_kdferr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit429>
+      <Unit430>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_obj_mac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit430>
+      <Unit431>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_objects.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit431>
+      <Unit432>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_objectserr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit432>
+      <Unit433>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ocsperr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit433>
+      <Unit434>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pem.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit434>
+      <Unit435>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pemerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit435>
+      <Unit436>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pkcs7.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit436>
+      <Unit437>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pkcs7err.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit437>
+      <Unit438>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rand.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit438>
+      <Unit439>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_randerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit439>
+      <Unit440>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rsa.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit440>
+      <Unit441>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rsaerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit441>
+      <Unit442>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_sha.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit442>
+      <Unit443>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_srtp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit443>
+      <Unit444>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ssl.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit444>
+      <Unit445>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ssl3.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit445>
+      <Unit446>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_sslerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit446>
+      <Unit447>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_storeerr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit447>
+      <Unit448>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_tls1.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit448>
+      <Unit449>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit449>
+      <Unit450>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_tserr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit450>
+      <Unit451>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_txt_db.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit451>
+      <Unit452>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ui.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit452>
+      <Unit453>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_uierr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit453>
+      <Unit454>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_whrlpool.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit454>
+      <Unit455>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit455>
+      <Unit456>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509_vfy.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit456>
+      <Unit457>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509err.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit457>
+      <Unit458>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509v3.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit458>
+      <Unit459>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLConsts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit459>
+      <Unit460>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContextClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit460>
+      <Unit461>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContextServer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit461>
+      <Unit462>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLExceptionResourcestrings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit462>
+      <Unit463>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLExceptions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit463>
+      <Unit464>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClientBase.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit464>
+      <Unit465>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClientServer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit465>
+      <Unit466>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerServer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit466>
+      <Unit467>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLLoader.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit467>
+      <Unit468>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptionsClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit468>
+      <Unit469>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptionsServer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit469>
+      <Unit470>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLPersistent.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit470>
+      <Unit471>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocket.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit471>
+      <Unit472>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocketServer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit472>
+      <Unit473>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit473>
+      <Unit474>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLVersion.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit474>
+      <Unit475>
+        <Filename Value="..\library\web\FHIR.Web.OpenSSL.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit475>
+      <Unit476>
+        <Filename Value="..\library\npm\fhir.npm.tests.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Npm.Tests"/>
+      </Unit476>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1771,7 +2156,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="19">
+    <Exceptions Count="20">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -1818,7 +2203,6 @@
       </Item12>
       <Item13>
         <Name Value="EAssertionFailedError"/>
-        <Enabled Value="False"/>
       </Item13>
       <Item14>
         <Name Value="ERegExpr"/>
@@ -1826,11 +2210,9 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
-        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
-        <Enabled Value="False"/>
       </Item16>
       <Item17>
         <Name Value="ETerminologyError"/>
@@ -1841,6 +2223,9 @@
       <Item19>
         <Name Value="EIdReadTimeout"/>
       </Item19>
+      <Item20>
+        <Name Value="EIdResolveError"/>
+      </Item20>
     </Exceptions>
   </Debugging>
 </CONFIG>

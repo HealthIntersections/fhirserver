@@ -1,4 +1,4 @@
-unit FHIR.Cda.Tests;
+unit FHIR.Npm.Tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,90 +33,79 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
-  IdTCPConnection,
+  SysUtils, Classes, Generics.Collections,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
-  FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
-  FHIR.Base.Objects,
-  FHIR.Cda.Objects, FHIR.Cda.Parser, FHIR.Cda.Writer;
-
-const
-  TEST_PORT = 20032; // err, we hope that this is unused
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Npm.Package, FHIR.Npm.Cache;
 
 type
-  TCdaTests = Class (TFslTestCase)
+  { TNpmPackageTests }
+  TNpmPackageTests = class (TFslTestCase)
   private
-    function parse(filename : String) : TcdaClinicalDocument;
-    procedure compose(filename : String; doc : TcdaClinicalDocument);
+    FCache : TFHIRPackageManager;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
   published
-    Procedure TestParseDocument;
+    procedure ClearNpmPackages;
+    procedure LoadUSCore;
+    procedure TestVersionComparison;
   end;
 
-procedure RegisterTests;
+procedure registerTests;
 
 implementation
 
+{ TNpmPackageTests }
 
-{ Tv2Tests }
-
-function TCdaTests.parse(filename: String): TCDAClinicalDocument;
+procedure TNpmPackageTests.LoadUSCore;
 var
-   p : TCDAParser;
-   x : TMXmlDocument;
+  npm : TNpmPackage;
 begin
-  x := TMXmlParser.parseFile(filename, [xpResolveNamespaces, xpDropComments, xpHTMLEntities]);
+  npm := FCache.loadPackage('hl7.fhir.us.core');
   try
-    p := TCDAParser.Create;
-    try
-      result := p.Parse(x);
-    finally
-      p.Free;
-    end;
+    assertTrue(npm <> nil);
   finally
-    x.free;
+    npm.Free;
+  end;
+
+end;
+
+procedure TNpmPackageTests.SetUp;
+begin
+  FCache := TFHIRPackageManager.create(true);
+end;
+
+procedure TNpmPackageTests.TearDown;
+begin
+  FCache.free;
+end;
+
+
+procedure TNpmPackageTests.TestVersionComparison;
+begin
+  assertTrue(isMoreRecentVersion('1.0.0', '0.9.8'));
+end;
+
+procedure TNpmPackageTests.ClearNpmPackages;
+var
+  ts : TStringList;
+begin
+  FCache.clear;
+  ts := TStringList.create;
+  try
+    FCache.ListPackageIds(ts);
+    AssertTrue(ts.count = 0);
+  finally
+    ts.free;
   end;
 end;
 
-procedure TCdaTests.compose(filename: String; doc: TcdaClinicalDocument);
-var
-  w : TCDAWriter;
-  x : TFslXmlBuilder;
-begin
-  x := TFslXmlBuilder.Create;
-  try
-    x.Start;
-    w := TCDAWriter.Create;
-    try
-      w.WriteCDA(x, doc);
-    finally
-      w.Free;
-    end;
-    x.Finish;
-    StringToFile(x.Build, filename, TEncoding.UTF8);
-  finally
-    x.Free;
-  end;
-end;
-
-procedure TCdaTests.TestParseDocument;
-var
-  doc : TcdaClinicalDocument;
-begin
-  doc := parse(TestSettings.fhirTestFile(['cda', 'cda-original.xml']));
-  try
-    assertTrue(doc <> nil);
-    assertTrue(doc.templateId[0].root = '2.16.840.1.113883.3.27.1776');
-    compose(TestSettings.fhirTestFile(['cda', 'cda-original.out.xml']), doc);
-  finally
-    doc.free;
-  end;
-//  assertXmlMatches(
-end;
-
-procedure RegisterTests;
+procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Formats.CDA Tests', TCdaTests.Suite);
+  RegisterTest('Library.Npm', TNpmPackageTests.Suite);
 end;
 
 end.
+
