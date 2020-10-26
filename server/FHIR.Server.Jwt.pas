@@ -36,7 +36,7 @@ uses
   SysUtils,
   FHIR.Support.Utilities,
   FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Support.Crypto;
+  FHIR.Web.Crypto;
 
 type
   TJWTServices = class (TFslObject)

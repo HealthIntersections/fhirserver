@@ -337,14 +337,13 @@
         <DCCReference Include="..\library\snomed\FHIR.Snomed.Publisher.pas"/>
         <DCCReference Include="..\library\Snomed\FHIR.Snomed.Services.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Crypto.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.Crypto.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Fpc.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.MsXml.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Service.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\library\web\FHIR.Web.OpenSSL.pas"/>
@@ -628,6 +627,10 @@
         <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Worker.pas"/>
         <DCCReference Include="FHIR.Tx.AreaCode.pas"/>
         <DCCReference Include="..\library\npm\FHIR.Npm.Tests.pas"/>
+        <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Context.pas"/>
+        <DCCReference Include="..\library\support\FHIR.Support.SCrypt.Tests.pas"/>
+        <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Utilities.pas"/>
+        <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Client.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -708,6 +711,12 @@
                 <DeployFile LocalName="..\exec\64\FHIRServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirserver.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\exec\64\FHIRServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>fhirserver.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

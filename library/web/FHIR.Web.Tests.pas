@@ -34,11 +34,11 @@ interface
 
 uses
   Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Web.Facebook, FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Crypto,
+  FHIR.Web.Facebook, FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Web.Crypto,
   FHIR.Npm.Spider;
 
 type

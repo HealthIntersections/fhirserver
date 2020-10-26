@@ -228,14 +228,13 @@ uses
   FHIR.Snomed.Publisher in '..\library\snomed\FHIR.Snomed.Publisher.pas',
   FHIR.Snomed.Services in '..\library\Snomed\FHIR.Snomed.Services.pas',
   FHIR.Support.Base in '..\library\Support\FHIR.Support.Base.pas',
-  FHIR.Support.Crypto in '..\library\support\FHIR.Support.Crypto.pas',
+  FHIR.Web.Crypto in '..\library\web\FHIR.Web.Crypto.pas',
   FHIR.Support.Collections in '..\library\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
   FHIR.Support.Json in '..\library\Support\FHIR.Support.Json.pas',
   FHIR.Support.Logging in '..\library\support\FHIR.Support.Logging.pas',
   FHIR.Support.MXml in '..\library\support\FHIR.Support.MXml.pas',
   FHIR.Support.MsXml in '..\library\support\FHIR.Support.MsXml.pas',
-  FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
   FHIR.Support.Service in '..\library\support\FHIR.Support.Service.pas',
   FHIR.Support.Shell in '..\library\Support\FHIR.Support.Shell.pas',
   FHIR.Web.OpenSSL in '..\library\web\FHIR.Web.OpenSSL.pas',
@@ -510,7 +509,11 @@ uses
   FHIR.R4.Tests.Parser in '..\library\r4\tests\FHIR.R4.Tests.Parser.pas',
   FHIR.R4.Tests.Worker in '..\library\r4\tests\FHIR.R4.Tests.Worker.pas',
   FHIR.Tx.AreaCode in 'FHIR.Tx.AreaCode.pas',
-  FHIR.Npm.Tests in '..\library\npm\FHIR.Npm.Tests.pas';
+  FHIR.Npm.Tests in '..\library\npm\FHIR.Npm.Tests.pas',
+  FHIR.R4.Tests.Context in '..\library\r4\tests\FHIR.R4.Tests.Context.pas',
+  FHIR.Support.SCrypt.Tests in '..\library\support\FHIR.Support.SCrypt.Tests.pas',
+  FHIR.R4.Tests.Utilities in '..\library\r4\tests\FHIR.R4.Tests.Utilities.pas',
+  FHIR.R4.Tests.Client in '..\library\r4\tests\FHIR.R4.Tests.Client.pas';
 
 begin
   ExecuteFhirServer;

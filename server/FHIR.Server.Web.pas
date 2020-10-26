@@ -81,7 +81,7 @@ Uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
   {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
   FHIR.Web.OpenSSL, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
 

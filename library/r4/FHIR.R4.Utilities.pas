@@ -1,7 +1,5 @@
 unit FHIR.R4.Utilities;
 
-{$I FHIR.R4.inc}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -30,7 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
+{$I FHIR.R4.inc}
 
 interface
 
@@ -38,7 +37,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections, ZLib,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Crypto,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Web.Crypto,
   FHIR.Web.Fetcher,
 
   FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities,

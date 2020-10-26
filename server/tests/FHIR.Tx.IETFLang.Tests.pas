@@ -34,7 +34,7 @@ interface
 
 uses
   Sysutils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Tx.Lang;
 

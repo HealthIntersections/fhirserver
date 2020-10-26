@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Stream,
   FHIR.Base.Objects,
   FHIR.R4.PathNode, FHIR.R4.PathEngine,

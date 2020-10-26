@@ -358,7 +358,9 @@ End;
 Constructor TFslWinInetClient.Create;
 Begin
   Inherited;
-  FHeaders := TFslStringDictionary.create;;
+  FHeaders := TFslStringDictionary.create;
+
+
 
 {$IFDEF VER130}
   Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);

@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, FastMM4, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Osx, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections;
+  FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections;
 
 Type
   TLogEvent = procedure (msg : String) of object;

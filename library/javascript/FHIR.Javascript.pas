@@ -94,9 +94,9 @@ type
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
   TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T of object;
 
-  TJavascriptArrayValueProvider = {$IFNDEF FPC} reference to {$ENDIF} function (context : pointer; index : integer) : JsValueRef;
-  TJavascriptArrayValueConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (context : pointer; index : integer; value : JsValueRef);
-  TJavascriptPropertyConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (context : pointer; name : String; value : JsValueRef);
+  TJavascriptArrayValueProvider = {$IFNDEF FPC} reference to {$ENDIF} function (js : TJavascript; context : pointer; index : integer) : JsValueRef;
+  TJavascriptArrayValueConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (js : TJavascript; context : pointer; index : integer; value : JsValueRef);
+  TJavascriptPropertyConsumer = {$IFNDEF FPC} reference to {$ENDIF} procedure (js : TJavascript; context : pointer; name : String; value : JsValueRef);
 
   TJsValue = JsValueRef;
   TJsValues = array of JsValueRef;
@@ -430,7 +430,7 @@ valueOf()	Returns the primitive value of an array
        script can change the array, but unless the modified array is assigned to something,
        the changes will disappear. To get a managed array, use the next method
     }
-    function makeArray(count : integer; valueProvider : TJavascriptArrayValueProvider) : JsValueRef;
+    function makeArray(count : integer; valueProvider : TJavascriptArrayValueProvider; context : pointer) : JsValueRef;
 
     {
        Create a managed array. The manager is provided by the host application,
@@ -1246,7 +1246,7 @@ begin
     free;
 end;
 
-function TJavascript.makeArray(count: integer; valueProvider: TJavascriptArrayValueProvider): JsValueRef;
+function TJavascript.makeArray(count: integer; valueProvider: TJavascriptArrayValueProvider; context : pointer): JsValueRef;
 var
   i : integer;
   vi, v : JsValueRef;
@@ -1254,7 +1254,7 @@ begin
   JsCheck(JsCreateArray(count, result));
   for i := 0 to count - 1 do
   begin
-    v := valueProvider(nil, i);
+    v := valueProvider(self, context, i);
     vi := wrap(i);
     JsCheck(JsSetIndexedProperty(result, vi, v));
   end;
@@ -1313,7 +1313,7 @@ begin
   begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
-    valueConsumer(context, i, v);
+    valueConsumer(self, context, i, v);
   end;
 end;
 
@@ -1330,7 +1330,7 @@ begin
     vi := wrap(i);
     jsCheck(JsGetIndexedProperty(arr, vi, v));
     n := asString(v);
-    proc(context, n, getProperty(value, n));
+    proc(self, context, n, getProperty(value, n));
   end;
 end;
 

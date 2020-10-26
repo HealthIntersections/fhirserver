@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Npm.Package, FHIR.Npm.Cache;
 

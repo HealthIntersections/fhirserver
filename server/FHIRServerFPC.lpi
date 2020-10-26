@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="477">
+    <Units Count="480">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1725,7 +1725,7 @@
         <IsPartOfProject Value="True"/>
       </Unit378>
       <Unit379>
-        <Filename Value="..\library\support\FHIR.Support.Crypto.pas"/>
+        <Filename Value="..\library\web\FHIR.Web.Crypto.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit379>
       <Unit380>
@@ -2117,6 +2117,18 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="FHIR.Npm.Tests"/>
       </Unit476>
+      <Unit477>
+        <Filename Value="..\library\support\FHIR.Support.SCrypt.Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit477>
+      <Unit478>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit478>
+      <Unit479>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Worker.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit479>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

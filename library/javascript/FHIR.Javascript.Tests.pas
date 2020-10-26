@@ -37,7 +37,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Base.Objects, FHIR.Javascript;
 
 Type
@@ -59,6 +59,7 @@ Type
     procedure PropComplexArraySetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function PropObjGetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     procedure PropObjSetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
+
     procedure execConsole;
     procedure execException;
   public
@@ -205,16 +206,28 @@ begin
   inherited;
 end;
 
+function array1ObjectProvider(js : TJavascript; context : pointer; index : integer) : JsValueRef;
+var
+  obj : TArrayObj;
+begin
+  obj := TArrayObj(context);
+  result := js.wrap(obj.value[index]);
+end;
+
+function array1Maker(js : TJavascript; context : pointer; index : integer) : JsValueRef;
+var
+  obj : TArrayObj;
+begin
+  obj := TArrayObj(context);
+  result := js.wrap(obj.value[index]);
+end;
+
 Function TJavascriptTests.PropArray1GetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TArrayObj;
 begin
   obj := this as TArrayObj;
-  result := js.makeArray(obj.value.Count,
-      function (context : pointer; index : integer) : JsValueRef
-      begin
-        result := js.wrap(obj.value[index]);
-      end);
+  result := js.makeArray(obj.value.Count, array1Maker, obj);
 end;
 
 function TJavascriptTests.PropArray2GetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -225,17 +238,29 @@ begin
   result := js.makeManagedArray(TStringListManager.create(obj.FValue));
 end;
 
+procedure Array1Consumer(js : TJavascript; context : pointer; i : integer; v : JsValueRef);
+var
+  obj : TArrayObj;
+begin
+  obj := TArrayObj(context);
+  obj.value.Add(js.asString(v));
+end;
+
 procedure TJavascriptTests.PropArray1SetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TArrayObj;
 begin
   obj := this as TArrayObj;
   obj.value.Clear;
-  js.iterateArray(value,
-      procedure (context : pointer; i : integer; v : JsValueRef)
-      begin
-        obj.value.Add(js.asString(v));
-      end, nil);
+  js.iterateArray(value, Array1Consumer, obj);
+end;
+
+procedure Array2Consumer(js : TJavascript; context : pointer; i : integer; v : JsValueRef);
+var
+  obj : TArrayObj2;
+begin
+  obj := TArrayObj2(context);
+  obj.value.Add(js.asString(v));
 end;
 
 procedure TJavascriptTests.PropArray2SetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
@@ -244,13 +269,8 @@ var
 begin
   obj := this as TArrayObj2;
   obj.value.Clear;
-  js.iterateArray(value,
-      procedure (context : pointer; i : integer; v : JsValueRef)
-      begin
-        obj.value.Add(js.asString(v));
-      end, nil);
+  js.iterateArray(value, Array2Consumer, obj);
 end;
-
 
 type
   TComplexArrayObj = class
@@ -290,30 +310,42 @@ begin
   result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, js.getDefinedClass('TPropObj')));
 end;
 
-procedure TJavascriptTests.PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+type
+  TarrayCConsumerContext = record
+    this : TJavascriptTests;
+    obj : TComplexArrayObj;
+    def : TJavascriptClassDefinition;
+  end;
+  ParrayCConsumerContext = ^TarrayCConsumerContext;
+
+procedure arrayCConsumer(js : TJavascript; context : pointer; i : integer; v : JsValueRef);
 var
-  obj : TComplexArrayObj;
+  ctxt : ParrayCConsumerContext;
+  params : TJsValues;
   o : TPropObj;
   owns : boolean;
-  def : TJavascriptClassDefinition;
-  params : TJsValues;
 begin
-  obj := this as TComplexArrayObj;
-  obj.value.Clear;
-  def := js.getDefinedClass('TPropObj');
-  js.iterateArray(value,
-    procedure (context : pointer; i : integer; v : JsValueRef)
-    begin
-      o := js.getWrapped<TPropObj>(v);
-      if (o = nil) then
-      begin
-        setLength(params, 1);
-        params[0] := v;
-        o := MakePropObjFromData(js, def, params, owns) as TPropObj;
-      end;
-      obj.value.Add(o);
-      js.unOwn(v);
-    end, nil);
+  ctxt := context;
+  o := js.getWrapped<TPropObj>(v);
+  if (o = nil) then
+  begin
+    setLength(params, 1);
+    params[0] := v;
+    o := ctxt.this.MakePropObjFromData(js, ctxt.def, params, owns) as TPropObj;
+  end;
+  ctxt.obj.value.Add(o);
+  js.unOwn(v);
+end;
+
+procedure TJavascriptTests.PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+var
+  ctxt : TarrayCConsumerContext;
+begin
+  ctxt.this := self;
+  ctxt.obj := this as TComplexArrayObj;
+  ctxt.obj.value.Clear;
+  ctxt.def := js.getDefinedClass('TPropObj');
+  js.iterateArray(value, arrayCConsumer, @ctxt);
 end;
 
 
@@ -397,6 +429,11 @@ begin
   assertWillRaise(execConsole, EChakraCoreScript, 'Internal error');
 end;
 
+procedure propIterCounter(js : TJavascript; context : pointer; name : String; v : TJsValue);
+begin
+  inc(integer(context^));
+end;
+
 procedure TJavascriptTests.TestAddOne;
 var
   i : TIntObj;
@@ -409,10 +446,7 @@ begin
     o := FJs.wrap(i, 'TIntObj', false);
     FJs.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
     c := 0;
-    FJs.iterateProperties(o, procedure (context : pointer; name : String; v : TJsValue)
-      begin
-        inc(c);
-      end, nil);
+    FJs.iterateProperties(o, propIterCounter, @c);
     assertTrue(c > 0);
     assertTrue(i.value = 2);
   finally
