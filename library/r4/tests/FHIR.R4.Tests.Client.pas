@@ -32,119 +32,30 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
+  FHIR.Support.Testing, FHIR.Support.Utilities,
+  FHIR.Web.Parsers,
+  FHIR.Base.Objects, FHIR.Client.Http,
+  FHIR.R4.Json, FHIR.R4.Client, FHIR.R4.Types, FHIR.R4.Resources.Base, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
 
-{$IFNDEF FPC}
 Type
-  [TextFixture]
-  TFhirHTTPClientTests4 = class (TObject)
+  TFhirHTTPClientTests4 = class (TFslTestCase)
   private
     FWorker : TFHIRWorkerContext;
-
+    function loadResource(filename : String) : TFHIRResource;
+    procedure testClient(client: TFhirClient4);
   public
-    [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
-
+    Procedure SetUp; override;
+    procedure teardown; override;
+  published
+    procedure testIndyJson;
+    procedure testIEJson;
+    procedure testIndyXml;
+    procedure testIEXml;
   end;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
-
-{$IFNDEF FPC}
-
-{ TFhirHTTPClientTests4 }
-(*
-class function TFhirHTTPClientTests4.LoadResource(filename: String): TFHIRResource;
-var
-  f : TFileStream;
-  prsr : TFHIRJsonParser;
-begin
-  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
-  try
-    prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
-    try
-      prsr.source := f;
-      prsr.parse;
-      result := prsr.resource.Link;
-    finally
-      prsr.Free;
-    end;
-  finally
-    f.Free;
-  end;
-end;
-
-class procedure TFhirHTTPClientTests4.testClient(client: TFhirHTTPClient);
-var
-  conf : TFHIRConformance;
-  patient : TFhirPatient;
-  id : string;
-  ok : boolean;
-begin
-  client.conformance(true).Free;
-  client.conformance(false).Free;
-  patient := LoadResource('C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\patient-example.json') as TFHIRPatient;
-  try
-    client.createResource(patient, id);
-  finally
-    patient.free
-  end;
-  patient := client.readResource(frtPatient, id) as TFHIRPatient;
-  try
-    patient.deceased := TFHIRDate.Create(NowUTC);
-    client.updateResource(patient);
-  finally
-    patient.free;
-  end;
-  ok := false;
-  client.deleteResource(frtPatient, id);
-  try
-    client.readResource(frtPatient, id).Free;
-  except
-    ok := true;
-  end;
-  if not ok then
-    raise ETestCase.create('test failed');
-end;
-
-class procedure TFhirHTTPClientTests4.tests(url: String);
-var
-  client : TFhirHTTPClient;
-begin
-  client := TFhirHTTPClient.Create(nil, url, true);
-  try
-    client.UseIndy := true;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirHTTPClient.Create(nil, url, false);
-  try
-    client.UseIndy := true;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirHTTPClient.Create(nil, url, true);
-  try
-    client.UseIndy := false;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirHTTPClient.Create(nil, url, false);
-  try
-    client.UseIndy := false;
-    testClient(client);
-  finally
-    client.free;
-  end;
-end;
-
- *)
 
 { TFhirHTTPClientTests4 }
 
@@ -158,8 +69,141 @@ begin
   FWorker.Free;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFhirHTTPClientTests4);
-{$ENDIF}
+function TFhirHTTPClientTests4.LoadResource(filename: String): TFHIRResource;
+var
+  f : TFileStream;
+  prsr : TFHIRJsonParser;
+begin
+  f := TFileStream.Create(TestSettings.fhirTestFile(['R4', 'examples', filename]), fmOpenRead + fmShareDenyWrite);
+  try
+    prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+    try
+      prsr.source := f;
+      prsr.parse;
+      result := prsr.resource.Link as TFhirResource;
+    finally
+      prsr.Free;
+    end;
+  finally
+    f.Free;
+  end;
+end;
+
+procedure TFhirHTTPClientTests4.testClient(client: TFhirClient4);
+var
+  patient : TFhirPatient;
+  id : string;
+  ok : boolean;
+begin
+  client.conformance(true).Free;
+  client.conformance(false).Free;
+  patient := LoadResource('patient-example.json') as TFHIRPatient;
+  try
+    client.createResource(patient, id);
+  finally
+    patient.free
+  end;
+  patient := client.readResource(frtPatient, id) as TFHIRPatient;
+  try
+    patient.deceased := TFHIRDate.Create(TFslDateTime.makeUTC);
+    client.updateResource(patient);
+  finally
+    patient.free;
+  end;
+  ok := false;
+  client.deleteResource(frtPatient, id);
+  try
+    client.readResource(frtPatient, id).Free;
+  except
+    ok := true;
+  end;
+  assertTrue(ok);
+end;
+
+procedure TFhirHTTPClientTests4.testIEJson;
+var
+  http: TFHIRHTTPCommunicator;
+  client : TFhirClient4;
+begin
+  http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
+  try
+    http.UseIndy := false;
+    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    try
+      client.format := ffJson;
+      testClient(client);
+    finally
+      client.Free;
+    end;
+  finally
+    http.Free;
+  end;
+end;
+
+procedure TFhirHTTPClientTests4.testIEXml;
+var
+  http: TFHIRHTTPCommunicator;
+  client : TFhirClient4;
+begin
+  http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
+  try
+    http.UseIndy := false;
+    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    try
+      client.format := ffXml;
+      testClient(client);
+    finally
+      client.Free;
+    end;
+  finally
+    http.Free;
+  end;
+end;
+
+procedure TFhirHTTPClientTests4.testIndyJson;
+var
+  http: TFHIRHTTPCommunicator;
+  client : TFhirClient4;
+begin
+  http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
+  try
+    http.UseIndy := true;
+    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    try
+      client.format := ffJson;
+      testClient(client);
+    finally
+      client.Free;
+    end;
+  finally
+    http.Free;
+  end;
+end;
+
+procedure TFhirHTTPClientTests4.testIndyXml;
+var
+  http: TFHIRHTTPCommunicator;
+  client : TFhirClient4;
+begin
+  http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
+  try
+    http.UseIndy := true;
+    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    try
+      client.format := ffXml;
+      testClient(client);
+    finally
+      client.Free;
+    end;
+  finally
+    http.Free;
+  end;
+end;
+
+procedure registerTests;
+begin
+  RegisterTest('R4', TFhirHTTPClientTests4.Suite);
+end;
+
 end.
 

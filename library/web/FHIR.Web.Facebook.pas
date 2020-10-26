@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdHTTP, idHMAC, IdHMACSHA1,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
-  FHIR.Support.Json, FHIR.Support.Crypto, FHIR.Support.Utilities,
+  FHIR.Support.Json, FHIR.Web.Crypto, FHIR.Support.Utilities,
   FHIR.Web.Parsers, FHIR.Web.Fetcher;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;

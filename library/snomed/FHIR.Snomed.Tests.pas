@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Base,
   FHIR.Snomed.Services, FHIR.Snomed.Expressions;
 

@@ -54,6 +54,7 @@ type
   {$M+}
   TFslTestCase = class (TTestCase)
   protected
+    procedure Status(const Msg: string);
     procedure assertNotTested;
     procedure assertPass;
     procedure assertFail(message : String);
@@ -143,7 +144,31 @@ type
 var
   TestSettings : TFslTestSettings;
 
+{$IFDEF FPC}
+procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+{$ELSE}
+procedure RegisterTest(SuitePath: string; test: ITest);
+{$ENDIF}
+
 implementation
+
+{$IFDEF FPC}
+procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+begin
+  TestRegistry.RegisterTest(ASuitePath, ATestClass);
+end;
+
+procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+begin
+  TestRegistry.RegisterTest(ASuitePath, ATest);
+end;
+{$ELSE}
+procedure RegisterTest(SuitePath: string; test: ITest);
+begin
+  TestFramework.RegisterTest(SuitePath, test);
+end;
+{$ENDIF}
 
 { TFslTestCase }
 
@@ -266,6 +291,11 @@ begin
     end;
   end;
   {$ENDIF}
+end;
+
+procedure TFslTestCase.Status(const Msg: string);
+begin
+ // nothing, for now
 end;
 
 procedure TFslTestCase.thread(proc: TRunMethod);

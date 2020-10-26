@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Base.Objects,
   FHIR.Cda.Objects, FHIR.Cda.Parser, FHIR.Cda.Writer;

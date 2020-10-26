@@ -34,28 +34,23 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  FHIR.Support.Testing,
   FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
+  FHIR.Base.Objects,
+  FHIR.R4.Parser, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker;
 
-{$IFNDEF FPC}
 Type
-  [TextFixture]
-  TFhirHTTPMetadataResourceManagerTests4 = class (TObject)
-  private
-
+  TFhirHTTPMetadataResourceManagerTests4 = class (TFslTestCase)
   public
-    [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
-
-    [Fixture] procedure testSingleNoVersion;
+    Procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure testSingleNoVersion;
   end;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
-
-{$IFNDEF FPC}
 
 { TFhirHTTPMetadataResourceManagerTests4 }
 
@@ -69,11 +64,13 @@ end;
 
 procedure TFhirHTTPMetadataResourceManagerTests4.testSingleNoVersion;
 begin
-
+  assertPass(); // till we get around to testing
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFhirHTTPMetadataResourceManagerTests4);
-{$ENDIF}
+procedure registerTests;
+begin
+  registerTest('R4', TFhirHTTPMetadataResourceManagerTests4.Suite);
+end;
+
 end.
 

@@ -34,30 +34,24 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  IdSSLOpenSSLHeaders,
-  FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Version.Parser, 
+  FHIR.Support.Testing, FHIR.Support.Stream,
+  FHIR.Web.Parsers, FHIR.Web.Crypto,
+  FHIR.Base.Objects, FHIR.R4.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
-{$IFNDEF FPC}
 type
-  [TextFixture]
-  TFHIRUtilityTests4 = Class (TObject)
+  TFHIRUtilityTests4 = Class (TFslTestCase)
   public
-    [SetUp] Procedure SetUp;
-
-    [TestCase] Procedure TestZipPartCreation;
-    Procedure TestZipGeneration;
-    [TestCase] Procedure TestReferenceAnalysis;
-    {[TestCase] }Procedure TestBundleSigningXml;
-    {[TestCase] }Procedure TestBundleSigningJson;
+    Procedure TestBundleSigningXml;
+    Procedure TestBundleSigningJson;
+  published
+    Procedure TestZipPartCreation;
+    Procedure TestReferenceAnalysis;
   end;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
-
-{$IFNDEF FPC}
 
 { TFHIRUtilityTests4 }
 
@@ -65,31 +59,25 @@ procedure TFHIRUtilityTests4.TestBundleSigningXml;
 var
   bnd : TFhirBundle;
 begin
-  bnd := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'document-example-dischargesummary.xml')) as TFHIRBundle;
+  bnd := fileToResource(TestSettings.fhirTestFile(['R4', 'examples', 'document-example-dischargesummary.xml'])) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
-    Assert.IsTrue(bnd <> nil);
+    assertTrue(bnd <> nil);
   finally
     bnd.Free;
   end;
-end;
-
-procedure TFHIRUtilityTests4.Setup;
-begin
-  IdSSLOpenSSLHeaders.Load;
-  LoadEAYExtensions(true);
 end;
 
 procedure TFHIRUtilityTests4.TestBundleSigningJson;
 var
   bnd : TFhirBundle;
 begin
-  bnd := fileToResource(FHIR_TESTING_FILE(4, 'examples', 'document-example-dischargesummary.xml')) as TFHIRBundle;
+  bnd := fileToResource(TestSettings.fhirTestFile(['R4', 'examples', 'document-example-dischargesummary.xml'])) as TFHIRBundle;
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\utilities\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
-    Assert.IsTrue(bnd <> nil);
+    assertTrue(bnd <> nil);
   finally
     bnd.Free;
   end;
@@ -102,56 +90,29 @@ begin
   ref := TFhirReference.Create;
   try
     ref.reference := 'http://hl7.org/fhir/Patient/example';
-    Assert.IsTrue(not ref.isRelative);
-    Assert.IsTrue(ref.getType = 'Patient');
-    Assert.IsTrue(ref.getId = 'example');
+    assertTrue(not ref.isRelative);
+    assertTrue(ref.getType = 'Patient');
+    assertTrue(ref.getId = 'example');
   finally
     ref.Free;
   end;
   ref := TFhirReference.Create;
   try
     ref.reference := 'http://hl7.org/fhir/Patient/example/history/2';
-    Assert.IsTrue(not ref.isRelative);
-    Assert.IsTrue(ref.getType = 'Patient');
-    Assert.IsTrue(ref.getId = 'example');
+    assertTrue(not ref.isRelative);
+    assertTrue(ref.getType = 'Patient');
+    assertTrue(ref.getId = 'example');
   finally
     ref.Free;
   end;
   ref := TFhirReference.Create;
   try
     ref.reference := 'Patient/example';
-    Assert.IsTrue(ref.isRelative);
-    Assert.IsTrue(ref.getType = 'Patient');
-    Assert.IsTrue(ref.getId = 'example');
+    assertTrue(ref.isRelative);
+    assertTrue(ref.getType = 'Patient');
+    assertTrue(ref.getId = 'example');
   finally
     ref.Free;
-  end;
-end;
-
-procedure TFHIRUtilityTests4.TestZipGeneration;
-var
-  dr : TFHIRDocumentReference;
-  fn : String;
-  f : TFileStream;
-  s : TStream;
-begin
-  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
-  try
-    s:= dr.asZip(fn);
-    try
-      s.Position := 0;
-      f := TFIleStream.create('c:\temp\test.zip', fmCreate);
-      try
-        f.CopyFrom(s, s.Size)
-      finally
-        f.Free;
-      end;
-    finally
-     s.Free;
-    end;
-    Assert.IsTrue(fn <> '');
-  finally
-    dr.Free;
   end;
 end;
 
@@ -167,9 +128,9 @@ begin
     att.contentType := 'text/plain';
     p := att.asZipPart(0);
     try
-      Assert.IsTrue(p.Name = 'test.txt');
-      Assert.IsTrue(p.Size > 0);
-      Assert.IsTrue(p.Comment = 'text/plain');
+      assertTrue(p.Name = 'test.txt');
+      assertTrue(p.Size > 0);
+      assertTrue(p.Comment = 'text/plain');
     finally
       p.Free;
     end;
@@ -178,7 +139,9 @@ begin
   end;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRUtilityTests4);
-{$ENDIF}
+procedure registerTests;
+begin
+  RegisterTest('R4', TFHIRUtilityTests4.Suite);
+end;
+
 end.

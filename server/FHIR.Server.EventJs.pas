@@ -184,7 +184,7 @@ begin
   {$IFDEF FPC}
   raise EFHIRException.create('todo');
   {$ELSE}
-  result := js.makeArray(TFhirSession(this).Compartments.Count, function (context : pointer; i : integer) : JsValueRef
+  result := js.makeArray(TFhirSession(this).Compartments.Count, function (js : TJavascript; context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(TFhirSession(this).Compartments[i].Id);
      end);
@@ -199,7 +199,7 @@ begin
   raise EFHIRException.create('todo');
   {$ELSE}
   sl := TFhirSession(this).scopes.Split([' ']);
-  result := js.makeArray(length(sl), function (context : pointer; i : integer) : JsValueRef
+  result := js.makeArray(length(sl), function (js : TJavascript; context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(sl[i]);
      end);

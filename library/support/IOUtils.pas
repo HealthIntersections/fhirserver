@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Types,
+  Classes, SysUtils, Types, FileUtil,
   FHIR.Support.Utilities;
 
 Type
@@ -47,7 +47,27 @@ Type
     class function getDirectories(const Path: string): TStringDynArray; overload; inline; static;
   end;
 
+  { TFile }
+
+  TFile = record
+    class procedure copy(src, dest : String; dummy : boolean); overload; inline; static;
+    class procedure delete(path : String); overload; inline; static;
+  end;
+
 implementation
+
+{ TFile }
+
+class procedure TFile.copy(src, dest: String; dummy: boolean);
+begin
+  CopyFile(src, dest);
+end;
+
+class procedure TFile.delete(path: String);
+begin
+  FileDelete(path);
+
+end;
 
 { TDirectory }
 

@@ -46,7 +46,7 @@ Uses
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
-  FHIR.Support.Osx, FHIR.Support.Fpc, FHIR.Support.Base;
+  FHIR.Support.Fpc, FHIR.Support.Base;
 
 
 Function IntegerCompare(Const iA, iB : Byte) : Integer; Overload;

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdGlobal,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Crypto, FHIR.Base.Scim, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Web.Crypto, FHIR.Base.Scim, FHIR.Support.MXml,
   FHIR.Web.Parsers, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Server.Tags, FHIR.Server.BundleBuilder;

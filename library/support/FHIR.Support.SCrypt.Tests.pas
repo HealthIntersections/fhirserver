@@ -1,42 +1,21 @@
-unit SCryptTests;
+unit FHIR.Support.SCrypt.Tests;
 
 {
 see https://github.com/JackTrapper/scrypt-for-delphi
 }
-{
-Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
-All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+{$i fhir.inc}
 
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to
-   endorse or promote products derived from this software without specific
-   prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-}
 interface
 
 uses
-	TestFramework, SysUtils, Scrypt;
+  Windows,
+	SysUtils,
+  FHIR.Support.Testing,
+  FHIR.Support.Scrypt;
 
 type
-	TScryptTests = class(TTestCase)
+	TScryptTests = class (TFslTestCase)
 	protected
 		FScrypt: TScrypt;
 		FFreq: Int64;
@@ -102,7 +81,7 @@ type
 		//Password hashing
 		procedure Test_PasswordHashing; //Test, and verify, "correct horse battery staple"
 		procedure Test_JavaWgScrypt; //the only other example out there
-		procedure Test_RehashNeededKicksIn; 
+		procedure Test_RehashNeededKicksIn;
 	end;
 
 	TSHA1Tester = class(TObject)
@@ -143,10 +122,9 @@ type
 	public
 	end;
 
-implementation
+procedure registerTests;
 
-uses
-	Windows;
+implementation
 
 function HexToBytes(s: string): TBytes;
 var
@@ -321,6 +299,7 @@ var
 begin
 	sha256 := TScryptCracker.CreateObject('SHA256') as IHashAlgorithm;
 	TSHA256Tester.Test(sha256);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA256_Cng;
@@ -329,6 +308,7 @@ var
 begin
 	sha256 := TScryptCracker.CreateObject('SHA256.Cng') as IHashAlgorithm;
 	TSHA256Tester.Test(sha256);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA256_Csp;
@@ -336,7 +316,8 @@ var
 	sha256: IHashAlgorithm;
 begin
 	sha256 := TScryptCracker.CreateObject('SHA256.Csp') as IHashAlgorithm;
-  	TSHA256Tester.Test(sha256);
+  TSHA256Tester.Test(sha256);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA256_PurePascal;
@@ -345,6 +326,7 @@ var
 begin
 	sha256 := TScryptCracker.CreateObject('SHA256.PurePascal') as IHashAlgorithm;
 	TSHA256Tester.Test(sha256);
+  assertPass();
 end;
 
 procedure TScryptTests.SetUp;
@@ -412,6 +394,7 @@ begin
 
 	}
 	TScrypt.CheckPassword('secret', '$s0$e0801$epIxT/h6HbbwHaehFnh/bw==$7H0vsXlY8UxxyW/BWx/9GuY7jEvGjT71GFd6O4SZND0=', {out}passwordRehashNeeded);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_Base64;
@@ -467,7 +450,9 @@ begin
 
 	bufferActual := TScryptCracker.Base64Decode('epIxT/h6HbbwHaehFnh/bw==');
 	CheckEquals(Length(buffer), Length(bufferActual));
+  {$IFNDEF FPC}
 	CheckEqualsMem(@buffer[0], @bufferActual[0], Length(bufferActual));
+  {$ENDIF}
 end;
 
 procedure TScryptTests.Test_RehashNeededKicksIn;
@@ -484,6 +469,7 @@ begin
 
 	CheckTrue(TScrypt.CheckPassword('Hashes too fast', SHash, {out}passwordRehashNeeded));
 	CheckTrue(passwordRehashNeeded);
+  assertPass();
 end;
 
 { TSHA256Tester }
@@ -668,7 +654,7 @@ begin
 	//#13) 0x6000003e (1,610,612,798) bytes of 0x42 o?=Bo?=
 	GetMem(data, $6000003e);
 	try
-	   FillChar(data^, $6000003e, $420);
+	  FillChar(data^, $6000003e, $42);
 		tb(data^, $6000003e, 'c23ce8a7 895f4b21 ec0daf37 920ac0a2 62a22004 5a03eb2d fed48ef9 b05aabea');
    finally
 		FreeMem(data);
@@ -1034,6 +1020,7 @@ begin
 	hash := TScryptCracker.CreateObject('HMAC.SHA1') as IHmacAlgorithm;
 	Tester_HMAC_SHA1(hash);
 	hash := nil;
+  assertPass();
 end;
 
 procedure TScryptTests.Test_HMAC_SHA1_Cng;
@@ -1043,6 +1030,7 @@ begin
 	hash := TScryptCracker.CreateObject('HMAC.SHA1.Cng') as IHmacAlgorithm;
 	Tester_HMAC_SHA1(hash);
 	hash := nil;
+  assertPass();
 end;
 
 procedure TScryptTests.Test_HMAC_SHA1_PurePascal;
@@ -1052,6 +1040,7 @@ begin
 	hash := TScryptCracker.CreateObject('HMAC.SHA1.PurePascal') as IHmacAlgorithm;
 	Tester_HMAC_SHA1(hash);
 	hash := nil;
+  assertPass();
 end;
 
 procedure TScryptTests.Test_HMAC_SHA256;
@@ -1060,6 +1049,7 @@ var
 begin
 	hmac := TScryptCracker.CreateObject('HMAC.SHA256') as IHmacAlgorithm;
 	Tester_HMAC_SHA256(hmac);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_HMAC_SHA256_Cng;
@@ -1068,6 +1058,7 @@ var
 begin
 	hmac := TScryptCracker.CreateObject('HMAC.SHA256.Cng') as IHmacAlgorithm;
 	Tester_HMAC_SHA256(hmac);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_HMAC_SHA256_PurePascal;
@@ -1076,6 +1067,7 @@ var
 begin
 	hmac := TScryptCracker.CreateObject('HMAC.SHA256.PurePascal') as IHmacAlgorithm;
 	Tester_HMAC_SHA256(hmac);
+  assertPass();
 end;
 
 procedure TScryptTests.Tester_HMAC_SHA256(HMACsha256: IHmacAlgorithm);
@@ -1099,11 +1091,11 @@ procedure TScryptTests.Tester_HMAC_SHA256(HMACsha256: IHmacAlgorithm);
 
 		if (Length(expected) <> Length(actual)) then
 			raise EScryptException.CreateFmt('Scrypt self-test failed: Length failed with Key "%s" and Data "%s"',
-					[Key, Data]);
+					[KeyHexString, DataHexString]);
 
 		if not CompareMem(@expected[0], @actual[0], Length(expected)) then
 			raise EScryptException.CreateFmt('Scrypt self-test failed: Compare failed with Key "%s" and Data "%s"',
-					[Key, Data]);
+					[KeyHexString, DataHexString]);
 	end;
 
 begin
@@ -1321,6 +1313,7 @@ begin
 	Self.CheckTrue(TScrypt.CheckPassword('correct horse battery staple', hash, {out}passwordRehashNeeded));
 	if not QueryPerformanceCounter(t2) then t2 := 0;
 	Status(Format('Time to verify password: %.4f ms', [(t2-t1)/freq*1000]));
+  assertPass();
 end;
 
 procedure TScryptTests.Tester_PBKDF2_SHA1(Pbkdf: IPBKDF2Algorithm);
@@ -1565,7 +1558,9 @@ begin
 
 
 	Self.CheckEquals(Length(expected), Length(actual), 'Salsa20/8 array length');
+  {$IFNDEF FPC}
 	Self.CheckEqualsMem(@expected[0], @actual[0], Length(expected), 'Salsa20/8 data failed');
+  {$ENDIF}
 end;
 
 procedure TScryptTests.Test_Scrypt_PasswordFormatting;
@@ -1637,7 +1632,10 @@ begin
 	actual := TScryptCracker(FScrypt).BlockMix(input);
 
 	Self.CheckEquals(Length(expected), Length(actual), 'BlockMix array length');
+  {$IFNDEF FPC}
 	Self.CheckEqualsMem(@expected[0], @actual[0], Length(expected), 'BlockMix data failed');
+  {$ENDIF}
+  assertPass();
 end;
 
 procedure TScryptTests.Test_ROMix;
@@ -1701,7 +1699,10 @@ begin
 	actual := TScryptCracker(FScrypt).ROMix(input[0], Length(input), 4); //N=16 --> costFactor = 4 (2^4 = 16)
 
 	Self.CheckEquals(Length(expected), Length(actual), 'ROMix array length');
+  {$IFNDEF FPC}
 	Self.CheckEqualsMem(@expected[0], @actual[0], Length(expected), 'ROMix data failed');
+  {$ENDIF}
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA1;
@@ -1710,6 +1711,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA1') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA1(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA1_Cng;
@@ -1718,6 +1720,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA1.Cng') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA1(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA1_PurePascal;
@@ -1726,6 +1729,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA1.PurePascal') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA1(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA256;
@@ -1734,6 +1738,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA256') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA256(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA256_Cng;
@@ -1742,6 +1747,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA256.Cng') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA256(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_PBKDF2_SHA256_PurePascal;
@@ -1750,6 +1756,7 @@ var
 begin
 	db := TScryptCracker.CreateObject('PBKDF2.SHA256.PurePascal') as IPBKDF2Algorithm;
 	Tester_PBKDF2_SHA256(db);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_Scrypt;
@@ -1818,6 +1825,7 @@ begin
 	end
 	else
 		Status('1 GB slow test skipped. Use -IncludeSlowTests');
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA1_PurePascal;
@@ -1826,6 +1834,7 @@ var
 begin
 	sha1 := TScryptCracker(FScrypt).CreateObject('SHA1.PurePascal') as IHashAlgorithm;
 	TSHA1Tester.Test(sha1);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA1;
@@ -1834,6 +1843,7 @@ var
 begin
 	sha1 := TScryptCracker.CreateObject('SHA1') as IHashAlgorithm;
 	TSHA1Tester.Test(sha1);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA1_Cng;
@@ -1842,6 +1852,7 @@ var
 begin
 	sha1 := TScryptCracker(FScrypt).CreateObject('SHA1.Cng') as IHashAlgorithm;
 	TSHA1Tester.Test(sha1);
+  assertPass();
 end;
 
 procedure TScryptTests.Test_SHA1_Csp;
@@ -1850,11 +1861,12 @@ var
 begin
 	sha1 := TScryptCracker(FScrypt).CreateObject('SHA1.Csp') as IHashAlgorithm;
 	TSHA1Tester.Test(sha1);
+  assertPass();
 end;
 
-{$IFDEF UnitTests}
-initialization
-	TestFramework.RegisterTest('Library/Scrypt', TScryptTests.Suite);
-{$ENDIF}
+procedure registerTests;
+begin
+	RegisterTest('Library.Scrypt', TScryptTests.Suite);
+end;
 
 end.

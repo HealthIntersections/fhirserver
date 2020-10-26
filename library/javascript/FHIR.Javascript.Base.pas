@@ -293,7 +293,7 @@ type
   end;
   PCallBackRecord2 = ^TCallBackRecord2;
 
-procedure iterArray2(context : pointer; i : integer; v : JsValueRef);
+procedure iterArray2(js : TJavascript; context : pointer; i : integer; v : JsValueRef);
 var
   p : PCallBackRecord2;
   o : TFHIRObject;

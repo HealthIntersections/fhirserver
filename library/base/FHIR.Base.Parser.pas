@@ -38,7 +38,7 @@ Interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Math, Generics.Collections, Character, {$IFNDEF VER260} system.NetEncoding, {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.Osx,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
 

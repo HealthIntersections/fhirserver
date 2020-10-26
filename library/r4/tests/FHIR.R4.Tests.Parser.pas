@@ -34,7 +34,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, IOUtils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   IdGlobalProtocols,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Support.Comparisons,
   FHIR.Web.Parsers,

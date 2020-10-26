@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Threads,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Crypto,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Crypto,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Scim.Server,
   FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Storage;

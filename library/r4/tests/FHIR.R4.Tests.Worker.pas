@@ -30,12 +30,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 interface
 
 uses
   {$IFDEF WINDOWS}Windows, ShellAPI, {$ENDIF}
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  FHIR.Support.Testing,
   FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,

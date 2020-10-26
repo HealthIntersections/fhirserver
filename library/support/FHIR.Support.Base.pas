@@ -608,10 +608,13 @@ Type
   TFslStringDictionary = class (TDictionary<String, String>)
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    function GetValue(const Key: String): String;
+    procedure SetValue(const Key, Value: String);
   public
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     Procedure Free; Overload;
     Function Link : TFslStringDictionary; Overload;
+    property Values[const Key: String]: String read GetValue write SetValue; default;
   end;
 
   TFslStringSet = class (TFslObject)
@@ -2610,11 +2613,22 @@ begin
     Destroy;
 end;
 
+function TFslStringDictionary.GetValue(const Key: String): String;
+begin
+  if not TryGetValue(key, result) then
+    result := '';
+end;
+
 function TFslStringDictionary.Link: TFslStringDictionary;
 begin
   Result := Self;
   If Assigned(Self) Then
     InterlockedIncrement(FFslObjectReferenceCount);
+end;
+
+procedure TFslStringDictionary.SetValue(const Key, Value: String);
+begin
+  Items[key] := value;
 end;
 
 { TArrayMoveManager<T> }

@@ -34,14 +34,13 @@ interface
 
 (*
 
-FHIR.R4.Tests.Client
+
 FHIR.R4.Tests.Liquid
 FHIR.R4.Tests.Maps
 
 FHIR.R4.Tests.PathEngine
-FHIR.R4.Tests.Utilities
-FHIR.R4.Tests.Worker
-FHIR.R4.Tests.Context
+
+
 FHIR.Tools.GraphQL.Tests
 FHIR.Tests.FullServer
 FHIR.Tests.GraphDefinition
@@ -55,10 +54,10 @@ uses
   SysUtils, IniFiles,
   FHIR.Support.Testing, FHIR.Support.Utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests,
+  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests, FHIR.Support.SCrypt.Tests,
   FHIR.Npm.Tests,
   {$IFNDEF NO_JS} FHIR.Javascript.Tests, {$ENDIF}
-  FHIR.R4.Tests.Parser;
+  FHIR.R4.Tests.Parser, FHIR.R4.Tests.Context, FHIR.R4.Tests.Utilities, FHIR.R4.Tests.Client;
 
 procedure registerTests;
 
@@ -135,6 +134,7 @@ begin
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;
   FHIR.Support.Tests.registerTests;
+  FHIR.Support.SCrypt.Tests.registerTests;
   FHIR.Web.Tests.registerTests;
   FHIR.Cda.Tests.registerTests;
   FHIR.Tx.IETFLang.Tests.registerTests;
@@ -147,6 +147,9 @@ begin
   {$ENDIF}
   FHIR.Npm.Tests.registerTests;
   FHIR.R4.Tests.Parser.registerTests;
+  FHIR.R4.Tests.Context.registerTests;
+  FHIR.R4.Tests.Utilities.registerTests;
+  FHIR.R4.Tests.Client.registerTests;
 end;
 
 end.

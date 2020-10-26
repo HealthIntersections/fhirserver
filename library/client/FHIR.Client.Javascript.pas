@@ -193,7 +193,7 @@ type
   end;
   PCallBackContext1 = ^TCallBackContext1;
 
-procedure arryIter1(context : pointer; i : integer; v : TJsValue);
+procedure arryIter1(js : TJavascript; context : pointer; i : integer; v : TJsValue);
 var
   p : PCallBackContext1;
 begin
@@ -201,7 +201,7 @@ begin
   p.ts.Add(p.name+'='+p.js.asString(v));
 end;
 
-procedure propIter1(context : pointer; name : String; value : TJsValue);
+procedure propIter1(js : TJavascript; context : pointer; name : String; value : TJsValue);
 var
   p : PCallBackContext1;
 begin
