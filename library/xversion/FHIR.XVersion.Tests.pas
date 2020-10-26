@@ -47,7 +47,7 @@ type
   private
     procedure test4to3to4(res : TBytes);
   public
-    [Setup] procedure Setup;
+    [Setup] Procedure SetUp;
     [TearDown] procedure TearDown;
 
     [TestCase] Procedure TestPatient_34_simple;

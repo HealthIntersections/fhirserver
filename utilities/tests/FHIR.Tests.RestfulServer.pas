@@ -169,7 +169,7 @@ Type
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
 
-    procedure SetupRecording(Session : TFHIRSession); override;
+    Procedure SetUpRecording(Session : TFHIRSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
   end;
@@ -192,7 +192,7 @@ Type
     function SslGet(url: String): TFHIRResource;
     function getJson(url: String): TJsonObject;
   public
-    [Setup] procedure Setup;
+    [Setup] Procedure SetUp;
     [TearDown] procedure TearDown;
 
     [TestCase] Procedure TestLowLevelXml;

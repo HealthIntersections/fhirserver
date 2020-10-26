@@ -48,7 +48,7 @@ type
     procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
   public
 
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [TestCase] procedure testXmlListMinimal;

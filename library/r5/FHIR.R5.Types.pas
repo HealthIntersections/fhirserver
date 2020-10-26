@@ -5502,9 +5502,9 @@ type
     procedure SetLowerLimit(value : TFhirDecimal);
     function GetLowerLimitST : String;
     procedure SetLowerLimitST(value : String);
-    procedure SetUpperLimit(value : TFhirDecimal);
+    Procedure SetUpperLimit(value : TFhirDecimal);
     function GetUpperLimitST : String;
-    procedure SetUpperLimitST(value : String);
+    Procedure SetUpperLimitST(value : String);
     procedure SetDimensions(value : TFhirPositiveInt);
     function GetDimensionsST : String;
     procedure SetDimensionsST(value : String);

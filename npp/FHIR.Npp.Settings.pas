@@ -85,7 +85,7 @@ type
     procedure SetBackgroundValidation(const Value: boolean);
     procedure SetNoWelcomeForm(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
-    procedure SetUpdateResourceOnSend(const Value: boolean);
+    Procedure SetUpdateResourceOnSend(const Value: boolean);
     procedure SetValidationAnnotations(const Value: boolean);
 
     function GetLoadR2: boolean;

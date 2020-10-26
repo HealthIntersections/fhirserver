@@ -35,27 +35,15 @@ interface
 uses
   {$IFDEF WINDOWS}Windows, ShellAPI, {$ENDIF}
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
   FHIR.Support.Utilities, FHIR.Support.Json,
   FHIR.Npm.Cache,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
-  FHIR.Version.Parser,
+  FHIR.R4.Parser,
   FHIR.Support.Tests,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine;
 
-{$IFNDEF FPC}
 Type
-  FHIRFolderBasedTestCase4Attribute = class (CustomTestCaseSourceAttribute)
-  private
-    FFolder : String;
-    FFilter : String;
-    FCount : integer;
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  public
-    constructor Create(folder, filter : String; count : integer);
-  end;
-
   TTestingWorkerContext4 = class (TBaseWorkerContext)
   public
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
@@ -70,15 +58,10 @@ Type
     class procedure closeUp;
   end;
 
-
-{$ENDIF}
-
 implementation
 
 uses
   IdGlobalProtocols, FHIR.R4.Factory;
-
-{$IFNDEF FPC}
 
 
 { TTestingWorkerContext4 }
@@ -149,67 +132,8 @@ begin
   raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
 end;
 
-{ FHIRFolderBasedTestCase4Attribute }
-
-constructor FHIRFolderBasedTestCase4Attribute.Create(folder, filter: String; count : integer);
-begin
-  inherited Create;
-  FFolder := folder;
-  FFilter := filter;
-  FCount := count;
-end;
-
-function FHIRFolderBasedTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  sl : TStringlist;
-  sr : TSearchRec;
-  s : String;
-  i : integer;
-begin
-  sl := TStringList.create;
-  try
-    if FindFirst(FHIR_TESTING_FILE(FFolder, '\*.*'), faAnyFile, SR) = 0 then
-    repeat
-      s := sr.Name;
-      if ((FFilter = '') or s.endsWith(FFilter)) and ((FCount = 0) or (sl.count < FCount)) then
-        sl.Add(sr.Name);
-    until FindNext(SR) <> 0;
-    setLength(result, sl.Count);
-    for i := 0 to sl.Count - 1 do
-    begin
-      result[i].Name := sl[i];
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := IncludeTrailingPathDelimiter(FFolder) + sl[i];
-    end;
-  finally
-    sl.Free;
-  end;
-end;
-
-{ TTestObjectThread4 }
-
-constructor TTestObjectThread4.Create(proc: TThreadProcedure);
-begin
-  FProc := proc;
-  FreeOnTerminate := true;
-  inherited Create(false);
-end;
-
-procedure TTestObjectThread4.execute;
-begin
-  Fproc;
-end;
-
-{ TTestObject4 }
-
-procedure TTestObject4.thread(proc: TThreadProcedure);
-begin
-  TTestObjectThread4.Create(proc);
-end;
-
 initialization
 finalization
   TTestingWorkerContext4.closeUp;
-{$ENDIF}
 end.
 

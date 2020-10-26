@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Test</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -347,7 +347,7 @@
         <DCCReference Include="..\library\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Service.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="..\library\Support\FHIR.Support.OpenSSL.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.OpenSSL.pas"/>
         <DCCReference Include="..\library\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
@@ -623,6 +623,10 @@
         <DCCReference Include="..\library\cda\FHIR.Cda.Tests.pas"/>
         <DCCReference Include="FHIR.Server.Kernel.Testing.pas"/>
         <DCCReference Include="..\library\web\FHIR.Web.Tests.pas"/>
+        <DCCReference Include="..\library\javascript\FHIR.Javascript.Tests.pas"/>
+        <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Parser.pas"/>
+        <DCCReference Include="..\library\r4\tests\FHIR.R4.Tests.Worker.pas"/>
+        <DCCReference Include="FHIR.Tx.AreaCode.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

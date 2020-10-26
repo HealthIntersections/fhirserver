@@ -47,7 +47,7 @@ type
     procedure pass(code : String);
     procedure fail(code : String);
   public
-    [Setup] procedure Setup;
+    [Setup] Procedure SetUp;
     [TearDown] procedure TearDown;
     [TestCase] Procedure TestSimple;
     [TestCase] Procedure TestWrong;

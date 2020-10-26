@@ -154,7 +154,7 @@ type
     function asURL : String;
     procedure readURL(pm : THTTPParameters);
 
-    procedure setUpColumns;
+    Procedure SetUpColumns;
     procedure AddColumn(name, path : String);
     function ignoreColumn(st : TFhirStructureDefinitionW; ed : TFhirElementDefinitionW) : boolean;
     procedure clearColumns;

@@ -80,7 +80,7 @@ uses
   IdOpenSSLHeaders_ossl_typ, IdOpenSSLHeaders_rsa, IdOpenSSLHeaders_dsa, IdOpenSSLHeaders_bn, IdOpenSSLHeaders_bio, IdOpenSSLHeaders_hmac,
   IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_x509, IdOpenSSLHeaders_evp, IdOpenSSLX509,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml,
-  FHIR.Support.Xml, FHIR.Support.OpenSSL, FHIR.Web.Fetcher;
+  FHIR.Support.Xml, FHIR.Web.OpenSSL, FHIR.Web.Fetcher;
 
 Type
   TIdHMACClass = class of TIdHMAC;

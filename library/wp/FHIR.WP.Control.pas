@@ -730,7 +730,7 @@ Type
       Procedure SelectionChanged(oSender : TObject);
       Procedure ProcessList(oBuilder : TWPDocumentBuilder; oProps : TWPPropertyList; oOwner : TWPDocumentTableRow);
       Procedure CommitField(oField: TWPDocumentField; Const sContent: String);
-      Procedure Setup;
+      Procedure SetUp;
     Protected
       Procedure WPChange(oSender : TObject); Override;
       Function DesiredWidth : Integer; Override;

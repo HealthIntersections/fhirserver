@@ -174,7 +174,7 @@ type
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
 
-    procedure SetupRecording(session : TFhirSession); override;
+    Procedure SetUpRecording(session : TFhirSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
 

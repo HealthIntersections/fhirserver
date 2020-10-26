@@ -69,7 +69,7 @@ type
   JsValueRefArray = array [0..10 {arbitrary size}] of JsValueRef;
   PJsValueRefArray = ^JsValueRefArray;
   bool = Boolean;
-
+  EChakraCoreScript = ChakraCoreUtils.EChakraCoreScript;
 const
   JS_INVALID_REFERENCE = nil;
   JsUndefined = ChakraCommon.JsUndefined;
@@ -195,14 +195,17 @@ valueOf()	Returns the primitive value of an array
     procedure defineProperty(name : String; context : Pointer; getter : TJsGetterFunction; setter : TJsSetterProcedure);
   end;
 
+  TJavascriptClass = class of TJavascript;
   // only one of these per thread
   TJavascript = class
   private
+    FUseCount : integer;
     FRuntime : JsRuntimeHandle;
     FInstanceId : cardinal;
     FContext : JsHandle;
     FApplicationError : JsValueRef;
     FOnLog : TJavascriptConsoleLogEvent;
+    FNamespaces : TStringList;
     FDefinedClasses : TDictionary<String,TJavascriptClassDefinition>;
     FOwnedObjects : TObjectList<TObject>;
     FImmutableObjects : boolean;
@@ -225,6 +228,8 @@ valueOf()	Returns the primitive value of an array
   protected
     procedure freeObject(obj : TObject); virtual;
     function checkSetupDefinitions(definitions : String) : string; virtual;
+
+    class function acquire(clss : TJavascriptClass) : TJavascript; overload;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -234,11 +239,18 @@ valueOf()	Returns the primitive value of an array
     property ObjectsImmutable : boolean read FImmutableObjects write FImmutableObjects;
     property Strict : boolean read FStrict write FStrict;
 
+    class function acquire : TJavascript; overload;
+    procedure yield;
+
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
 
     // take ownership of any object the host application wants to associate with the JS context (usually definition helpers)
     procedure ownObject(obj : TObject);
+
+    // this is purely advisory, to help track whether a set of definitions has already been performed;
+    procedure defineNamespace(name : String);
+    function namespaceDefined(name : String) : boolean;
 
     // 1st, class registration
     {
@@ -665,13 +677,22 @@ begin
   gjs := self;
   FDefinedClasses := TDictionary<String,TJavascriptClassDefinition>.create;
   FOwnedObjects := TObjectList<TObject>.create;
+  FNamespaces := TStringList.create;
   registerConsoleLog;
+  FUseCount := 1; // this use, whatever it is.
   init;
 end;
 
 function TJavascript.defineClass(name: String; context: Pointer; factory: TJsFactoryFunction): TJavascriptClassDefinition;
 begin
   result := defineClass(name, context, name, factory);
+end;
+
+procedure TJavascript.defineNamespace(name: String);
+begin
+  if FNamespaces.IndexOf(name) > -1 then
+    raise EJavascriptApplication.Create('Namespace '+name+' is already registered');
+  FNamespaces.Add(name);
 end;
 
 destructor TJavascript.Destroy;
@@ -683,6 +704,7 @@ begin
   for def in FDefinedClasses.Values do
       def.Free;
   FDefinedClasses.Free;
+  FNamespaces.Free;
   gjs := nil;
   inherited;
 end;
@@ -908,6 +930,24 @@ end;
 function TJavascript.getNull: JsValueRef;
 begin
   jsCheck(JsGetNullValue(result));
+end;
+
+class function TJavascript.acquire(clss: TJavascriptClass): TJavascript;
+begin
+  if gjs = nil then
+    result := clss.Create
+  else if gjs is clss then
+  begin
+    result := gjs;
+    inc(result.FUseCount);
+  end
+  else
+    raise EJavascriptApplication.Create('Attempt to acquire a javascript engine of the wrong class (exists: '+gjs.className+', attempt to use '+clss.ClassName+')');
+end;
+
+class function TJavascript.acquire: TJavascript;
+begin
+  result := acquire(TJavascript);
 end;
 
 procedure TJavascript.addGlobal(name : AnsiString; obj : TJsValue);
@@ -1199,6 +1239,13 @@ begin
   result := wrap(o, o.ClassName, owns, immutable);
 end;
 
+procedure TJavascript.yield;
+begin
+  dec(FUseCount);
+  if FUseCount = 0 then
+    free;
+end;
+
 function TJavascript.makeArray(count: integer; valueProvider: TJavascriptArrayValueProvider): JsValueRef;
 var
   i : integer;
@@ -1242,6 +1289,11 @@ begin
   // now populate the array
   for i := 0 to manager.count - 1 do
     JsCheck(JsSetIndexedProperty(result, wrap(i), manager.item(i)));
+end;
+
+function TJavascript.namespaceDefined(name: String): boolean;
+begin
+  result := FNamespaces.IndexOf(name) > -1;
 end;
 
 function TJavascript.arrayLength(arr: JsValueRef): integer;

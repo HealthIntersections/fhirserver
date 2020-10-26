@@ -557,7 +557,7 @@ type
     procedure Setprofile(Value: string);
     procedure Setsubject(Value: string);
     procedure SettimeZone(Value: string);
-    procedure SetupdatedAt(Value: TDateTime);
+    Procedure SetUpdatedAt(Value: TDateTime);
     procedure Setwebsite(Value: string);
   public
     constructor Create; override;

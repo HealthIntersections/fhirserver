@@ -72,7 +72,7 @@ type
   private
     function parse(msg : String; fmt : THL7V2Format) : THL7v2Message;
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
   published
     Procedure TestDictionaryParse;
   end;
@@ -97,7 +97,7 @@ type
     FDelay: Integer;
     procedure MessageReply(Sender: TObject; AConnection: TIdTCPConnection; Msg: TBytes; var VHandled: Boolean; var Reply: TBytes);
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
   published
     procedure TestNoConnectionServer;
     procedure TestNoConnectionClient;
@@ -704,13 +704,13 @@ begin
   fpe := TFHIRPathEngine.Create(nil, nil);
   try
     fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.Create;
+    js := TFHIRJavascript.acquire;
     try
       TV2JavascriptHelper.registerv2Objects(js, fpe);
       js.execute(JS_TEST_SCRIPT, '', 'test', []);
       assertPass();
     finally
-      js.free;
+      js.yield;
     end;
   finally
     fpe.free;

@@ -50,7 +50,7 @@ type
 //    procedure testBuildPatientExampleB;
   public
 
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [TestCase] procedure testXmlListMinimal;

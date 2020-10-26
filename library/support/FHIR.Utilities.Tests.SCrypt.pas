@@ -40,7 +40,7 @@ type
 	protected
 		FScrypt: TScrypt;
 		FFreq: Int64;
-		procedure SetUp; override;
+		Procedure SetUp; override;
 		procedure TearDown; override;
 
 		function GetTimestamp: Int64;

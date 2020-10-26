@@ -48,7 +48,7 @@ type
     procedure TestConversion(test : TMXmlElement);
     procedure TestMultiplication(test : TMXmlElement);
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestCase(name : String); override;
@@ -62,7 +62,7 @@ type
   TUcumSpecialTests = class (TFslTestCase)
   private
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
   published
     procedure TestIssue10;
   end;

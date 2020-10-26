@@ -55,7 +55,7 @@ type
     function FetchInclude(sender : TFHIRLiquidEngine; name : String; var content : String) : boolean;
     function loadResource : TFhirResource;
   Published
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [LiquidTestCase4]
