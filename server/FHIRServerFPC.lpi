@@ -2156,7 +2156,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="19">
+    <Exceptions Count="20">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -2203,7 +2203,6 @@
       </Item12>
       <Item13>
         <Name Value="EAssertionFailedError"/>
-        <Enabled Value="False"/>
       </Item13>
       <Item14>
         <Name Value="ERegExpr"/>
@@ -2211,11 +2210,9 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
-        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
-        <Enabled Value="False"/>
       </Item16>
       <Item17>
         <Name Value="ETerminologyError"/>
@@ -2226,6 +2223,9 @@
       <Item19>
         <Name Value="EIdReadTimeout"/>
       </Item19>
+      <Item20>
+        <Name Value="EIdResolveError"/>
+      </Item20>
     </Exceptions>
   </Debugging>
 </CONFIG>

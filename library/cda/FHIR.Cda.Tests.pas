@@ -116,7 +116,7 @@ end;
 procedure RegisterTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Library.CDA Tests', TCdaTests.Suite);
+  RegisterTest('Formats.CDA Tests', TCdaTests.Suite);
 end;
 
 end.
