@@ -47,7 +47,7 @@ Type
     FJs : TFHIRJavascript;
     procedure JSLog(sender : TJavascript; message : String);
   Published
-    [SetUp]    Procedure Setup;
+    [SetUp]    Procedure SetUp;
     [TearDown] Procedure TearDown;
     [TestCase] Procedure TestPatient;
     [TestCase] Procedure TestPatientUnknownProperty;

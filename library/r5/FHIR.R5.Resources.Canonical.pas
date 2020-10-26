@@ -1103,9 +1103,9 @@ type
     procedure SetReadHistory(value : TFhirBoolean);
     function GetReadHistoryST : Boolean;
     procedure SetReadHistoryST(value : Boolean);
-    procedure SetUpdateCreate(value : TFhirBoolean);
+    Procedure SetUpdateCreate(value : TFhirBoolean);
     function GetUpdateCreateST : Boolean;
-    procedure SetUpdateCreateST(value : Boolean);
+    Procedure SetUpdateCreateST(value : Boolean);
     procedure SetConditionalCreate(value : TFhirBoolean);
     function GetConditionalCreateST : Boolean;
     procedure SetConditionalCreateST(value : Boolean);

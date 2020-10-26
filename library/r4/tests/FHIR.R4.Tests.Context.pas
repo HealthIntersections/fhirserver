@@ -46,7 +46,7 @@ Type
   private
 
   public
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [Fixture] procedure testSingleNoVersion;

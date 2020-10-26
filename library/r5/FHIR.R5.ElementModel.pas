@@ -211,7 +211,7 @@ type
     constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
 
-    procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
+    Procedure SetUpValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
     procedure logError(line, col : integer; path : String; type_ : TFhirIssueTypeEnum; message : String; level : TFhirIssueSeverityEnum);
 
     function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; virtual; abstract;

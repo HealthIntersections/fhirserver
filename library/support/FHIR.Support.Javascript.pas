@@ -45,6 +45,8 @@ type
   TFslJavascript = class (TJavascript)
   protected
     procedure freeObject(obj : TObject); override;
+  public
+    function acquire : TFslJavascript; overload;
   end;
 
   TFslJavascriptTypeCategory = (jtcObject, jtcString, jtcInteger, jtcBoolean);
@@ -104,6 +106,11 @@ begin
 end;
 
 { TFslJavascript }
+
+function TFslJavascript.acquire: TFslJavascript;
+begin
+  result := TFslJavascript(inherited acquire(TFslJavascript));
+end;
 
 procedure TFslJavascript.freeObject(obj: TObject);
 begin

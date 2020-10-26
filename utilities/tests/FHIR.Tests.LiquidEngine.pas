@@ -48,7 +48,7 @@ type
     procedure checkProcess(source, expected : String);
     function FetchInclude(sender : TFHIRLiquidEngine; name : String; var content : String) : boolean;
   public
-    [Setup] procedure Setup;
+    [Setup] Procedure SetUp;
     [TearDown] procedure TearDown;
 
     [TestCase] Procedure testConstant;

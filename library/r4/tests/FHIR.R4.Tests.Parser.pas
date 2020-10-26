@@ -34,93 +34,54 @@ interface
 
 uses
   Windows, SysUtils, Classes, IOUtils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Version.Parser, FHIR.Base.Parser,
-  FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker,
-  FHIR.Support.Tests, FHIR.Support.Comparisons;
+  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} TestFramework, {$ENDIF} FHIR.Support.Testing,
+  IdGlobalProtocols,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Support.Comparisons,
+  FHIR.Web.Parsers,
+  FHIR.Base.Objects, FHIR.R4.Parser, FHIR.Base.Parser,
+  FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker;
 
-{$IFNDEF FPC}
 type
-  FHIRParserTestCase4Attribute = class (FHIRFolderBasedTestCase4Attribute)
+  TFHIRR4ParserTestCase = class (TFslTestSuiteCase)
   public
-    constructor Create;
+    procedure TestCase(name : String); override;
   end;
 
-  [TextFixture]
-  TFHIRParserTests = class (TObject)
-  public
-    [FHIRParserTestCase4] procedure RoundTripTest(Filename: String);
+  TFHIRParserSpecialTests = class (TFslTestCase)
+  published
+    procedure DecimalTest;
   end;
 
-  [TextFixture]
-  TFHIRParserSpecialTests = class (TObject)
-  public
-    [TestCase] procedure DecimalTest;
-  end;
-{$ENDIF}
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 
-uses
-  IdGlobalProtocols,
-  FHIR.Web.Parsers;
+{ TFHIRR4ParserTestCase }
 
-{ TFHIRParserTests }
-
-procedure TFHIRParserSpecialTests.DecimalTest;
-var
-  src, xml, json, json2 : String;
-  obs : TFhirObservation;
-begin
-  src := 'C:\temp\obs.xml';
-  xml := 'C:\temp\xml.xml';
-  json := 'C:\temp\json.json';
-  json2 := 'C:\temp\json2.json';
-  if FileExists(src) then  
-    TFIle.Delete(src);
-  TFile.Copy(FHIR_TESTING_FILE(4, 'examples', 'observation-decimal.xml'), src, false);
-  obs := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), src) as TFhirObservation;
-  try
-    TFHIRParsers.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json, OutputStylePretty);
-  finally
-    obs.Free;
-  end;
-  obs := TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), json) as TFhirObservation;
-  try
-    TFHIRParsers.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json2, OutputStylePretty);
-    TFHIRParsers.composeFile(nil, ffXml, obs, THTTPLanguages.create('en'), xml, OutputStylePretty);
-  finally
-    obs.Free;
-  end;
-  Assert.IsTrue(true);
-end;
-
-procedure TFHIRParserTests.RoundTripTest(filename: String);
+procedure TFHIRR4ParserTestCase.TestCase(name: String);
 var
   r : TFHIRResource;
-  fn, j1, j2, x1, x2 : String;             
+  fn, j1, j2, x1, x2 : String;
   b : boolean;
   msg : String;
   re : TFHIRMMElement;
   ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
-  r := TFHIRParsers.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+  r := TFHIRParsers4.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
   try
-    Assert.IsNotNull(r, 'Resource could not be loaded');
+    assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
+      TFHIRParsers4.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
-      assert.IsTrue(b, msg);
+      assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRParsers.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -129,12 +90,12 @@ begin
   try
     re := TFHIRMMManager.parseFile(ctxt, filename, ffXml);
     try
-      Assert.IsNotNull(re, 'Resource could not be loaded');
+      assertTrue(re <> nil, 'Resource could not be loaded');
       fn := MakeTempFilename();
       try
         TFHIRMMManager.composeFile(ctxt, re, fn, ffXml, OutputStylePretty);
         b := CheckXMLIsSame(filename, fn, msg);
-        assert.IsTrue(b, msg);
+        assertTrue(b, msg);
       finally
         DeleteFile(fn);
       end;
@@ -148,23 +109,23 @@ begin
   end;
 
   b := CheckJsonIsSame(j1, j2, msg);
-  assert.IsTrue(b, msg);
+  assertTrue(b, msg);
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRParsers.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
+  r := TFHIRParsers4.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
   try
-    Assert.IsNotNull(r, 'Resource could not be loaded');
+    assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
+      TFHIRParsers4.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
-      assert.IsTrue(b, msg);
+      assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
+    TFHIRParsers4.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
   finally
     r.Free;
   end;
@@ -173,12 +134,12 @@ begin
   try
     re := TFHIRMMManager.parseFile(ctxt, j1, ffJson);
     try
-      Assert.IsNotNull(re, 'Resource could not be loaded');
+      assertTrue(re <> nil, 'Resource could not be loaded');
       fn := MakeTempFilename();
       try
         TFHIRMMManager.composeFile(ctxt, re, fn, ffJson, OutputStylePretty);
         b := CheckJsonIsSame(j1, fn, msg);
-        assert.IsTrue(b, msg);
+        assertTrue(b, msg);
       finally
         DeleteFile(fn);
       end;
@@ -192,10 +153,10 @@ begin
   end;
 
   b := CheckXMLIsSame(x1, x2, msg);
-  assert.IsTrue(b, msg);
+  assertTrue(b, msg);
 
   b := CheckXMLIsSame(filename, x1, msg);
-  assert.IsTrue(b, msg);
+  assertTrue(b, msg);
 
 (*  r := TFHIRParsers.parseFile(nil, ffTurtle, THTTPLanguages.create('en'), filename);
   try
@@ -204,7 +165,7 @@ begin
     try
       TFHIRParsers.composeFile(nil, ffTurtle, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
       b := CheckTurtleIsSame(filename, fn, msg);
-      assert.IsTrue(b, msg);
+      assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
@@ -215,18 +176,44 @@ begin
   end;
 
   b := CheckXMLIsSame(x1, x2, msg);
-  assert.IsTrue(b, msg);*)
+  assertTrue(b, msg);*)
 end;
 
-{ FHIRParserTestCase4Attribute }
 
-constructor FHIRParserTestCase4Attribute.Create;
+{ TFHIRParserSpecialTests }
+
+procedure TFHIRParserSpecialTests.DecimalTest;
+var
+  src, xml, json, json2 : String;
+  obs : TFhirObservation;
 begin
-  inherited Create('examples', '.xml', 20);
+  src := Path(['[tmp]', 'obs.xml']);
+  xml := Path(['[tmp]', 'xml.xml']);
+  json := Path(['[tmp]', 'json.json']);
+  json2 := Path(['[tmp]', 'json2.json']);
+  if FileExists(src) then
+    TFile.Delete(src);
+  TFile.Copy(TestSettings.fhirTestFile(['r4', 'examples', 'observation-decimal.xml']), src, false);
+  obs := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), src) as TFhirObservation;
+  try
+    TFHIRParsers4.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json, OutputStylePretty);
+  finally
+    obs.Free;
+  end;
+  obs := TFHIRParsers4.ParseFile(nil, ffJson, THTTPLanguages.create('en'), json) as TFhirObservation;
+  try
+    TFHIRParsers4.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json2, OutputStylePretty);
+    TFHIRParsers4.composeFile(nil, ffXml, obs, THTTPLanguages.create('en'), xml, OutputStylePretty);
+  finally
+    obs.Free;
+  end;
+  assertTrue(true);
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRParserTests);
-  TDUnitX.RegisterTestFixture(TFHIRParserSpecialTests);
-{$ENDIF}
+procedure registerTests;
+begin
+  registerTest('R4.Parser', TFslTestSuite.Create(TestSettings.fhirTestFile(['r4', 'examples']), '.xml', 20, TFHIRR4ParserTestCase));
+  registerTest('R4.Parser', TFHIRParserSpecialTests.Suite);
+end;
+
 end.

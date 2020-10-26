@@ -76,7 +76,7 @@ Type
     procedure CompareXml(name, mode : String; expected, obtained : TFHIRResource);
     procedure execCase(name : String; mode : String; input : TFhirResource; diff : TFhirParameters; output : TFhirResource);
   Published
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [DifferenceEngineTestCase]

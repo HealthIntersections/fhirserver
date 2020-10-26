@@ -57,7 +57,7 @@ Type
 
     function findTest(path : String) : IXMLDOMElement;
   Published
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [FHIRPathTestCase]

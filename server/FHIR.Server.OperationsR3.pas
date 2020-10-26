@@ -353,7 +353,7 @@ type
     function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
     function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; override;
-    procedure SetupRecording(session : TFhirSession); override;
+    Procedure SetUpRecording(session : TFhirSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
   end;

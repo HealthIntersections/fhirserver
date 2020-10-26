@@ -73,11 +73,16 @@ type
   TFslTestSuiteCase = class (TFslTestCase)
   protected
     FName : String;
+    FFolder : String;
     {$IFDEF FPC}
     function GetTestName: string; override;
     {$ENDIF}
+    function filename : String;
   public
-    constructor Create(name : String); {$IFNDEF FPC} reintroduce;
+    constructor Create(name : String); {$IFNDEF FPC} reintroduce; {$ENDIF}
+    constructor CreateInFolder(name, folder : String);
+
+    {$IFNDEF FPC}
     function GetName: string; override;
     {$ENDIF}
     procedure TestCase(name : String); virtual;
@@ -88,11 +93,13 @@ type
     procedure Run;
     {$ENDIF}
   end;
+  TFslTestSuiteCaseClass = class of TFslTestSuiteCase;
 
   TFslTestSuite = class (TTestSuite)
   private
   public
-    constructor Create; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
+    constructor Create; overload; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
+    constructor Create(folder, filter : String; count : integer; clss : TFslTestSuiteCaseClass); overload;
   end;
 
 
@@ -255,7 +262,7 @@ begin
     begin
       assertTrue(e.ClassType = AExceptionClass, 'Method raised an exception, but not of the right type ('+e.ClassName+' vs '+AExceptionClass.ClassName);
       if AExceptionMessage <> '' then
-        assertEqual(e.Message, AExceptionMessage);
+        assertEqual(AExceptionMessage, e.Message);
     end;
   end;
   {$ENDIF}
@@ -276,6 +283,17 @@ begin
   inherited Create('Run');
   {$ENDIF}
   FName := name;
+end;
+
+constructor TFslTestSuiteCase.CreateInFolder(name, folder : String);
+begin
+  Create(name);
+  FFolder := folder;
+end;
+
+function TFslTestSuiteCase.filename : String;
+begin
+  result := IncludeTrailingPathDelimiter(FFolder) + name;
 end;
 
 {$IFDEF FPC}
@@ -314,6 +332,27 @@ constructor TFslTestSuite.Create;
 begin
   inherited Create;
 end;
+
+constructor TFslTestSuite.Create(folder, filter : String; count : integer; clss : TFslTestSuiteCaseClass);
+var
+  sr : TSearchRec;
+  s : String;
+  c : integer;
+begin
+  inherited Create;
+
+  c := 0;
+  if FindFirst(IncludeTrailingPathDelimiter(folder)+'*.*', faAnyFile, SR) = 0 then
+  repeat
+    s := sr.Name;
+    if ((filter = '') or s.endsWith(filter)) and ((count = 0) or (c < count)) then
+    begin
+      AddTest(clss.CreateInFolder(s, folder));
+      inc(c);
+    end;
+  until FindNext(SR) <> 0;
+end;
+
 
 
 { TFslTestThread }

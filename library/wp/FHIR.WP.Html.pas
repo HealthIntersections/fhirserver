@@ -73,7 +73,7 @@ Type
       Procedure PopStyleContext;
       Procedure ReadStyleContext(oPiece : TWPWorkingDocumentPiece);
       Procedure ReadStyleContextPara(oParagraph : TWPWorkingDocumentParaPiece);
-      Procedure SetupDefaultStyleContext(oContext : TWPStyle);
+      Procedure SetUpDefaultStyleContext(oContext : TWPStyle);
 
       Procedure AddTextPiece(oDocument : TWPWorkingDocument; Const sText : String);
       Procedure ReadTextFragment(oDocument : TWPWorkingDocument; oText : TFslHTMLTextFragment);

@@ -72,7 +72,7 @@ type
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
   public
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [TestCase] procedure testCD;

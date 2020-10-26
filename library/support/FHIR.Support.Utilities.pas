@@ -3013,7 +3013,14 @@ begin
   for part in parts do
   begin
     s := part.Replace('/', psc).Replace('\', psc);
-    if result = '' then
+    if s = '[tmp]' then
+    begin
+      if FolderExists('c:\temp') then
+        result := 'c:\temp'
+      else
+        result := SystemTemp();
+    end
+    else if result = '' then
       result := s
     else if not result.EndsWith(psc) and not s.startsWith(psc) then
       result := result + psc + s

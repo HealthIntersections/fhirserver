@@ -59,6 +59,8 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
+    class function acquire : TFHIRJavascript; overload;
+
     procedure registerFactory(reg : TRegisterFHIRTypes; version : TFHIRVersion; fact : TFHIRFactory);
     function factory(v : TFHIRVersion) : TFHIRFactory;
 
@@ -103,6 +105,11 @@ uses
   FHIR.Server.EventJs};
 
 { TFHIRJavascript }
+
+class function TFHIRJavascript.acquire: TFHIRJavascript;
+begin
+  result := TFHIRJavascript(inherited acquire(TFHIRJavascript));
+end;
 
 constructor TFHIRJavascript.Create;
 begin

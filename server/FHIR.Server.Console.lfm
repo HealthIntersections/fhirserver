@@ -56,9 +56,9 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 892
-      ActivePage = tbTerminologies
+      ActivePage = tbStatistics
       Align = alClient
-      TabIndex = 5
+      TabIndex = 2
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -150,48 +150,6 @@ object MainConsoleForm: TMainConsoleForm
           Width = 884
           Align = alClient
           TabOrder = 1
-        end
-      end
-      object tbRequests: TTabSheet
-        Caption = 'By Request'
-        ClientHeight = 615
-        ClientWidth = 884
-        object Panel1: TPanel
-          Left = 0
-          Height = 615
-          Top = 0
-          Width = 280
-          Align = alLeft
-          Caption = 'Panel1'
-          ClientHeight = 615
-          ClientWidth = 280
-          TabOrder = 0
-          object lbSessions: TListBox
-            Left = 1
-            Height = 613
-            Top = 1
-            Width = 278
-            Align = alClient
-            ItemHeight = 0
-            TabOrder = 0
-          end
-        end
-        object Splitter1: TSplitter
-          Left = 280
-          Height = 615
-          Top = 0
-          Width = 5
-        end
-        object mSession: TMemo
-          Left = 285
-          Height = 615
-          Top = 0
-          Width = 599
-          Align = alClient
-          Lines.Strings = (
-            'Memo2'
-          )
-          TabOrder = 2
         end
       end
       object tbStatistics: TTabSheet

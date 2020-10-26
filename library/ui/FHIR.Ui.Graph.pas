@@ -261,7 +261,7 @@ type
     procedure SetBoundsColor(v : TAlphaColor);
     procedure SetBoundsLineStyle(v : TPenstyle);
     procedure setBoundsType(v : TFGraphBoundType);
-    procedure SetUpperBound(v : double);
+    Procedure SetUpperBound(v : double);
     procedure SetLowerBound(v : Double);
     procedure setErrorsLinestyle(v : TPenStyle);
     procedure SetErrorsLineColor(v : TAlphaColor);
@@ -889,7 +889,7 @@ type
     procedure MouseDown(Button : TMouseButton; Shift : TShiftState; X, Y : Integer); override;
     procedure MouseMove(Shift : TShiftState; X,Y : Integer); override;
     procedure MouseUp(Button : TMouseButton; Shift : TShiftState; X,Y : Integer); override;
-    procedure SetUpDragging(X,Y : Integer);
+    Procedure SetUpDragging(X,Y : Integer);
     {$ENDIF}
   public
     constructor Create(AOwner : TComponent); override;

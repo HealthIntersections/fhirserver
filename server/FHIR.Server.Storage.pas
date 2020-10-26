@@ -350,7 +350,7 @@ type
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResourceV; virtual; abstract;
 
-    procedure SetupRecording(session : TFhirSession); virtual; abstract;
+    Procedure SetUpRecording(session : TFhirSession); virtual; abstract;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); virtual; abstract;
     procedure FinishRecording(); virtual; abstract;
 

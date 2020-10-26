@@ -200,7 +200,7 @@ type
     FUpgradeTask : integer;
 
     // Scintilla control
-    procedure setUpSquiggles;
+    Procedure SetUpSquiggles;
     procedure squiggle(level : integer; line, start, length : integer; annotation : boolean; message : String);
     procedure clearSquiggle(level : integer; line, start, length : integer);
 

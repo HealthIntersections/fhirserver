@@ -238,7 +238,7 @@ uses
   FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
   FHIR.Support.Service in '..\library\support\FHIR.Support.Service.pas',
   FHIR.Support.Shell in '..\library\Support\FHIR.Support.Shell.pas',
-  FHIR.Support.OpenSSL in '..\library\Support\FHIR.Support.OpenSSL.pas',
+  FHIR.Web.OpenSSL in '..\library\web\FHIR.Web.OpenSSL.pas',
   FHIR.Support.Stream in '..\library\Support\FHIR.Support.Stream.pas',
   FHIR.Support.Threads in '..\library\support\FHIR.Support.Threads.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
@@ -505,7 +505,11 @@ uses
   FHIR.Cda.Parser in '..\library\cda\FHIR.Cda.Parser.pas',
   FHIR.Cda.Tests in '..\library\cda\FHIR.Cda.Tests.pas',
   FHIR.Server.Kernel.Testing in 'FHIR.Server.Kernel.Testing.pas',
-  FHIR.Web.Tests in '..\library\web\FHIR.Web.Tests.pas';
+  FHIR.Web.Tests in '..\library\web\FHIR.Web.Tests.pas',
+  FHIR.Javascript.Tests in '..\library\javascript\FHIR.Javascript.Tests.pas',
+  FHIR.R4.Tests.Parser in '..\library\r4\tests\FHIR.R4.Tests.Parser.pas',
+  FHIR.R4.Tests.Worker in '..\library\r4\tests\FHIR.R4.Tests.Worker.pas',
+  FHIR.Tx.AreaCode in 'FHIR.Tx.AreaCode.pas';
 
 begin
   ExecuteFhirServer;

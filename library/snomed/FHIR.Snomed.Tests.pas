@@ -50,7 +50,7 @@ type
     procedure n(s, d : String); // normalise from s to d
     procedure s(p, c : String; yes : boolean); // test subsumption
   public
-    procedure Setup; override;
+    Procedure SetUp; override;
     procedure TearDown; override;
   published
     Procedure Base;

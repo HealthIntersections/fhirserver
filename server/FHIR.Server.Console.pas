@@ -180,7 +180,6 @@ type
     lblSCTAmount: TLabel;
     lblUMLSAction: TLabel;
     lblUMLSAmount: TLabel;
-    lbSessions: TListBox;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
     MenuItem10: TMenuItem;
@@ -199,14 +198,12 @@ type
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
     mStats: TMemo;
-    mSession: TMemo;
     N4: TMenuItem;
     N8: TMenuItem;
     dlgOpen: TOpenDialog;
     PageControl1: TPageControl;
     Panel29: TPanel;
     pgTerminologies: TPageControl;
-    Panel1: TPanel;
     Panel10: TPanel;
     Panel11: TPanel;
     Panel12: TPanel;
@@ -244,13 +241,11 @@ type
     prgUMLSImport: TProgressBar;
     dlgFolder: TSelectDirectoryDialog;
     dlgSave: TSaveDialog;
-    Splitter1: TSplitter;
     sBar: TStatusBar;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     tbConsole: TTabSheet;
-    tbRequests: TTabSheet;
     tbStatistics: TTabSheet;
     tbManage: TTabSheet;
     tbTerminologies: TTabSheet;
@@ -314,7 +309,6 @@ type
     FTheads : TStringList;
     FServerStatus : String;
     FLines : TStringList;
-    FSessions : TFslMap<TServerSession>;
     FStatistics : TServerSessionStatistics;
     FLastIncoming : TDateTime;
     FStatus : TConnectionStatus;
@@ -329,7 +323,6 @@ type
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
     procedure DoConnected(Sender: TObject);
     procedure DoDisconnected(Sender: TObject);
-    procedure handleSession(line: String);
     procedure processIncomingLine(line: String);
     function passesFilter(line: String) : boolean;
     function handleCommand(line: String) : boolean;
@@ -338,7 +331,7 @@ type
     procedure cmbCallback(pct: Integer; action: String);
     procedure loincCallback(pct: Integer; action: String);
     procedure umlsCallback(pct: Integer; action: String);
-    procedure setupTerminologyPage;
+    Procedure SetUpTerminologyPage;
     function getSnomedModule: String;
     procedure connectToServer(server : String);
     procedure GetODBCDriversList(list : TStrings);
@@ -483,7 +476,6 @@ begin
   FIncoming := TStringList.create;
   FTheads := TStringList.create;;
   FLines := TStringList.create;
-  FSessions := TFslMap<TServerSession>.create('session map');
   FStatistics := TServerSessionStatistics.create;
   FLock := TFslLock.create('incoming');
   FThread := TConnectingThread.create;
@@ -499,7 +491,6 @@ begin
   FIncoming.Free;
   FTheads.Free;
   FLines.Free;
-  FSessions.Free;
   FStatistics.Free;
   FLock.Free;
   FIni.Free;
@@ -1155,11 +1146,6 @@ var
   i : integer;
   d : TDateTime;
 begin
-  if lbSessions.ItemIndex = -1 then
-    id := ''
-  else
-    id := lbSessions.Items[lbSessions.ItemIndex];
-
   ts := TStringList.create;
   tsl := TStringList.create;
   tsd := TStringList.create;
@@ -1174,14 +1160,6 @@ begin
       FIncoming.clear;
       tsth.assign(FTheads);
       FTheads.clear;
-
-      for s in FSessions.SortedKeys do
-        tsl.add(s);
-      if (id <> '') and FSessions.ContainsKey(id) then
-      begin
-        tsd.Assign(FSessions[id].FLog);
-        d := FSessions[id].FLocal;
-      end;
       rs := FStatistics.report;
     finally
       FLock.Unlock;
@@ -1221,17 +1199,6 @@ begin
           end;
         end;
     end;
-
-    lbSessions.Items.assign(tsl);
-    lbSessions.ItemIndex := lbSessions.items.indexOf(id);
-    if lbSessions.ItemIndex > -1 then
-    begin
-      mSession.lines.assign(tsd);
-      if (d <> 0) then
-        mSession.lines.add(DescribePeriod(now - d));
-    end
-    else
-      mSession.lines.Clear;
 
     if tsth.Count > 0 then
       mThreads.lines.Assign(tsth);
@@ -1369,39 +1336,6 @@ begin
   result := (FFilter = '') or line.ToLower.Contains(FFilter);
 end;
 
-procedure TMainConsoleForm.handleSession(line: String);
-var
-  id, cmd, t, msg : String;
-  session : TServerSession;
-begin
-  id := line.Substring(0, line.IndexOf(':')).trim();
-  cmd := line.Substring(line.IndexOf(':') + 1).trim();
-  if cmd.startsWith('@stop|') then
-  begin
-    if FSessions.ContainsKey(id) then
-    begin
-      t := cmd.Substring(6);
-      recordSessionLength(FSessions[id].FStart, StrToInt64(t) - FSessions[id].FStart);
-      FSessions.Remove(id);
-    end;
-  end
-  else if cmd.StartsWith('@start|') then
-  begin
-    session := TServerSession.create;
-    FSessions.AddOrSetValue(id, session);
-    line := cmd.Substring(7);
-    t := line.Substring(0, line.IndexOf('|')).trim();
-    msg := line.Substring(line.IndexOf('|') + 1).trim();
-    session.FStart := StrToInt64(t);
-    session.FLog.add(msg);
-  end
-  else if cmd.StartsWith('@msg|') and FSessions.ContainsKey(id) then
-  begin
-    session := FSessions[id];
-    session.FLog.add(cmd.Substring(5));
-  end;
-end;
-
 function TMainConsoleForm.handleCommand(line: String): boolean;
 begin
   result := false;
@@ -1412,16 +1346,6 @@ begin
       FLock.Lock;
       try
         FServerStatus := line.Substring(8);
-      finally
-        FLock.unLock;
-      end;
-      exit(true);
-    end;
-    if line.startsWith('$@session-') then
-    begin
-      FLock.Lock;
-      try
-        handleSession(line.Substring(10));
       finally
         FLock.unLock;
       end;

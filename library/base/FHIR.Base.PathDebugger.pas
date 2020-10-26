@@ -153,7 +153,7 @@ type
     procedure Log(s : String);
 
     procedure Layout;
-    procedure SetUp;
+    Procedure SetUp;
     procedure Go;
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;

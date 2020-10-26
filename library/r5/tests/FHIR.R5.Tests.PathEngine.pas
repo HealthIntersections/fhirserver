@@ -59,7 +59,7 @@ Type
     {$ENDIF}
     function findTest(path : String) : TMXmlElement;
   Published
-    [SetupFixture] procedure setup;
+    [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure teardown;
 
     [FHIRPathTestCase]
