@@ -509,7 +509,8 @@ uses
   FHIR.Javascript.Tests in '..\library\javascript\FHIR.Javascript.Tests.pas',
   FHIR.R4.Tests.Parser in '..\library\r4\tests\FHIR.R4.Tests.Parser.pas',
   FHIR.R4.Tests.Worker in '..\library\r4\tests\FHIR.R4.Tests.Worker.pas',
-  FHIR.Tx.AreaCode in 'FHIR.Tx.AreaCode.pas';
+  FHIR.Tx.AreaCode in 'FHIR.Tx.AreaCode.pas',
+  FHIR.Npm.Tests in '..\library\npm\FHIR.Npm.Tests.pas';
 
 begin
   ExecuteFhirServer;

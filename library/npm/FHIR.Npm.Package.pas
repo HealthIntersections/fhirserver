@@ -199,6 +199,7 @@ const
   NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools', 'Generation Package', 'Group', 'Examples');
 
 function isValidPackageId(id : String) : boolean;
+function isMoreRecentVersion(test, base : String) : boolean;
 
 implementation
 
@@ -1056,6 +1057,11 @@ begin
     FVersion.ToLower.Contains(text) or
     FKind.ToLower.Contains(text) or
     FResourceType.ToLower.Contains(text);
+end;
+
+function isMoreRecentVersion(test, base : String) : boolean;
+begin
+  result := test > base;
 end;
 
 end.

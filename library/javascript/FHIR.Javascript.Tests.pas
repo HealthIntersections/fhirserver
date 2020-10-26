@@ -30,6 +30,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$I fhir.inc}
 
 interface
 
@@ -44,10 +45,10 @@ Type
   Private
     FLog : TStringList;
     FRaise : boolean;
-    js : TJavascript;
+    FJs : TJavascript;
 
     procedure JSLog(sender : TJavascript; message : String);
-    procedure defineTestTypes(js: TJavascript);
+    procedure defineTestTypes;
     function AddOne(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function MakePropObjFromData(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
     function PropArray1GetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
@@ -322,34 +323,34 @@ procedure TJavascriptTests.Setup;
 begin
   FRaise := false;
   FLog := TStringList.create;
-  js := TJavascript.acquire();
-  js.OnLog := JSLog;
-  defineTestTypes(js);
+  FJs := TJavascript.acquire();
+  FJs.OnLog := JSLog;
+  defineTestTypes;
 end;
 
 procedure TJavascriptTests.TearDown;
 begin
-  js.yield;
+  FJs.yield;
   FLog.Free;
 end;
 
-procedure TJavascriptTests.defineTestTypes(js : TJavascript);
+procedure TJavascriptTests.defineTestTypes;
 var
   def : TJavascriptClassDefinition;
 begin
-  if not js.namespaceDefined('tests') then
+  if not FJs.namespaceDefined('tests') then
   begin
-    def := js.defineClass('TIntObj', nil);
+    def := FJs.defineClass('TIntObj', nil);
     def.defineRoutine('addOne', nil, AddOne);
-    def := js.defineClass('TPropObj', nil, 'MyObject', MakePropObjFromData);
+    def := FJs.defineClass('TPropObj', nil, 'MyObject', MakePropObjFromData);
     def.defineProperty('value', nil, PropObjGetValue, PropObjSetValue);
-    def := js.defineClass('TArrayObj', nil);
+    def := FJs.defineClass('TArrayObj', nil);
     def.defineProperty('value', nil, PropArray1GetValue, PropArray1SetValue);
-    def := js.defineClass('TArrayObj2', nil);
+    def := FJs.defineClass('TArrayObj2', nil);
     def.defineProperty('value', nil, PropArray2GetValue, PropArray2SetValue);
-    def := js.defineClass('TComplexArrayObj', nil);
+    def := FJs.defineClass('TComplexArrayObj', nil);
     def.defineProperty('value', nil, PropComplexArrayGetValue, PropComplexArraySetValue);
-    js.defineNamespace('tests');
+    FJs.defineNamespace('tests');
   end;
 end;
 
@@ -366,20 +367,19 @@ end;
 
 procedure TJavascriptTests.TestHelloWorld;
 begin
-  assertTrue(js.asString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
+  assertTrue(FJs.asString(FJs.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
 end;
 
 procedure TJavascriptTests.TestConsoleLog;
 begin
   FLog.Clear;
-  js.OnLog := JSLog;
-  js.execute('console.log("Hello world");', 'test.js');
+  FJs.execute('console.log("Hello world");', 'test.js');
   assertTrue(FLog.Text = 'Hello world'+#13#10);
 end;
 
 procedure TJavascriptTests.execException;
 begin
-  js.execute('(()=>{throw "test exception";})()', 'test.js');
+  FJs.execute('(()=>{throw "test exception";})()', 'test.js');
 end;
 procedure TJavascriptTests.TestException;
 begin
@@ -388,7 +388,7 @@ end;
 
 procedure TJavascriptTests.execConsole;
 begin
-  js.execute('console.log("Hello world");', 'test.js');
+  FJs.execute('console.log("Hello world");', 'test.js');
 end;
 
 procedure TJavascriptTests.TestAppException;
@@ -406,10 +406,10 @@ begin
   i := TIntObj.Create;
   try
     i.value := 1;
-    o := js.wrap(i, 'TIntObj', false);
-    js.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
+    o := FJs.wrap(i, 'TIntObj', false);
+    FJs.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
     c := 0;
-    js.iterateProperties(o, procedure (context : pointer; name : String; v : TJsValue)
+    FJs.iterateProperties(o, procedure (context : pointer; name : String; v : TJsValue)
       begin
         inc(c);
       end, nil);
@@ -427,8 +427,8 @@ var
 begin
   i := TPropObj.Create('test');
   try
-    o := js.wrap(i, i.ClassName, false);
-    js.execute('function funcX(o) {'+#13#10+' if (o.value == ''test'') o.value = ''test1'';'+#13#10+' } ', 'test.js', 'funcX', [o]);
+    o := FJs.wrap(i, i.ClassName, false);
+    FJs.execute('function funcX(o) {'+#13#10+' if (o.value == ''test'') o.value = ''test1'';'+#13#10+' } ', 'test.js', 'funcX', [o]);
     assertTrue(i.value = 'test1');
   finally
     i.Free;
@@ -437,7 +437,7 @@ end;
 
 procedure TJavascriptTests.TestType;
 begin
-  js.execute('function funcX() {'+#13#10+
+  FJs.execute('function funcX() {'+#13#10+
              ' var o = new MyObject(''text'');'+#13#10+
              ' console.log(o.value);'+#13#10+
              '} ', 'test.js', 'funcX', []);
@@ -452,8 +452,8 @@ begin
   i := TArrayObj.Create;
   try
     i.value.CommaText := 'test,test1';
-    o := js.wrap(i, i.ClassName, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, i.ClassName, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0]);'+#13#10+
                ' console.log(o.value[1]);'+#13#10+
@@ -474,8 +474,8 @@ begin
   i := TArrayObj.Create;
   try
     i.value.CommaText := 'test,test1';
-    o := js.wrap(i, i.ClassName, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, i.ClassName, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0]);'+#13#10+
                ' console.log(o.value[1]);'+#13#10+
@@ -496,8 +496,8 @@ begin
   i := TArrayObj2.Create;
   try
     i.value.CommaText := 'test,test1';
-    o := js.wrap(i, i.ClassName, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, i.ClassName, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0]);'+#13#10+
                ' console.log(o.value[1]);'+#13#10+
@@ -519,8 +519,8 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    o := js.wrap(i, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0].value);'+#13#10+
                ' o.value = o.value.concat([new MyObject(''v2'')]);'+#13#10+
@@ -541,8 +541,8 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    o := js.wrap(i, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0].value);'+#13#10+
                ' o.value = o.value.concat([{ "value" : "test-v2"} ]);'+#13#10+
@@ -563,8 +563,8 @@ begin
   i := TComplexArrayObj.Create;
   try
     i.value.add(TPropObj.Create('v1'));
-    o := js.wrap(i, false);
-    js.execute('function funcX(o) {'+#13#10+
+    o := FJs.wrap(i, false);
+    FJs.execute('function funcX(o) {'+#13#10+
                ' console.log(o.value.length);'+#13#10+
                ' console.log(o.value[0].value);'+#13#10+
                ' o.value.push({ "value" : "test-v2"} );'+#13#10+

@@ -126,6 +126,8 @@ type
     procedure loadPackage(idver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadInfo : TPackageLoadingInformation); overload;
 
+    procedure clear;
+
     procedure import(content : TBytes); overload;
     function install(url : String) : boolean;
 
@@ -492,6 +494,15 @@ begin
 end;
 
 
+procedure TFHIRPackageManager.clear;
+var
+  s : String;
+begin
+  for s in TDirectory.GetDirectories(FFolder) do
+    if s.Contains('#') then
+      FolderDelete(s);
+end;
+
 procedure TFHIRPackageManager.ListPackages(list: TStrings);
 var
   s : String;
@@ -676,7 +687,7 @@ end;
 function TFHIRPackageManager.autoInstallPackage(id, ver: String): boolean;
 var
   list : TFslList<TFHIRPackageInfo>;
-  pd : TFHIRPackageInfo;
+  t, pd : TFHIRPackageInfo;
 begin
   result := packageExists(id, ver);
   if (not result) then
@@ -691,9 +702,12 @@ begin
         TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
       end;
 
-      for pd in list do
-        if (pd.Id = id) and ((ver = '') or (pd.Version = ver)) then
-          self.install(pd.Url);
+      pd := nil;
+      for t in list do
+        if (t.Id = id) and ((ver = '') or (t.Version = ver)) and ((pd = nil) or isMoreRecentVersion(t.version, pd.version)) then
+          pd := t;
+      if (pd <> nil) then
+        self.install(pd.Url);
     finally
       list.Free;
     end;

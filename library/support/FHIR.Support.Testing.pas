@@ -293,7 +293,7 @@ end;
 
 function TFslTestSuiteCase.filename : String;
 begin
-  result := IncludeTrailingPathDelimiter(FFolder) + name;
+  result := IncludeTrailingPathDelimiter(FFolder) + FName;
 end;
 
 {$IFDEF FPC}
