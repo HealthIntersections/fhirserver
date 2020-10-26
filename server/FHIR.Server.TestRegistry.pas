@@ -137,6 +137,7 @@ begin
   MarkdownCommonMarkTests.registerTests;
   FHIR.Support.Tests.registerTests;
   FHIR.Web.Tests.registerTests;
+  FHIR.Cda.Tests.registerTests;
   FHIR.Tx.IETFLang.Tests.registerTests;
   FHIR.Database.Tests.registerTests;
   FHIR.Ucum.Tests.registerTests;
