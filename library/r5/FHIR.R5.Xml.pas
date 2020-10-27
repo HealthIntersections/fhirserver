@@ -6025,8 +6025,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to value.securityList.Count - 1 do
       ComposeCoding(xml, 'security', value.securityList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to value.tagList.Count - 1 do
+  for i := 0 to value.tagList.Count - 1 do
+    if (SummaryOption in [soFull, soSummary, soData]) or isSubsettedTag(value.tagList[i]) then
       ComposeCoding(xml, 'tag', value.tagList[i]);
 end;
 
@@ -9799,7 +9799,7 @@ begin
   composeBaseChildren(xml, value);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeId(xml, 'id', value.idElement); {L738}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (true) {(SummaryOption in [soFull, soSummary, soData])} then
     ComposeMeta(xml, 'meta', value.meta); {L741}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(xml, 'implicitRules', value.implicitRulesElement); {L738}

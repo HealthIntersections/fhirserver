@@ -187,7 +187,7 @@ begin
   result := js.makeArray(TFhirSession(this).Compartments.Count, function (js : TJavascript; context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(TFhirSession(this).Compartments[i].Id);
-     end);
+     end, nil);
   {$ENDIF}
 end;
 
@@ -202,7 +202,7 @@ begin
   result := js.makeArray(length(sl), function (js : TJavascript; context : pointer; i : integer) : JsValueRef
      begin
        result := js.wrap(sl[i]);
-     end);
+     end, nil);
   {$ENDIF}
 end;
 

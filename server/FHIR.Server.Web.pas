@@ -2684,8 +2684,8 @@ begin
             begin
               meta := factory.wrapMeta(res);
               try
-                if not meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
-                   meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
+                if (res.fhirType <> 'Bundle') and not meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
+                  meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
               finally
                 meta.Free;
               end;

@@ -231,7 +231,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
-    function AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW; overload;
+    function AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; subsetted : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW; overload;
     procedure DefineConformanceResources(base : String); // called after database is created
     function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; system, code : String) : boolean;
     function GraphLookup(appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean;
@@ -538,7 +538,7 @@ begin
      doAuditRest(session, intreqid, extreqid, ip, resourceName, id, ver, verkey, op, provenance, opName, httpCode, name, message, sid);
 end;
 
-function TFHIRNativeOperationEngine.AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW;
+function TFHIRNativeOperationEngine.AddResourceTobundle(request : TFHIRRequest; bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; fmt : TFHIRFormat; purpose : TFHIRBundleEntrySearchMode; makeRequest : boolean; subsetted : boolean; var type_ : String; patIds : TPatientIdTracker; first : boolean = false) : TFHIRBundleEntryW;
 var
   parser : TFhirParser;
   mem : TBytesStream;
@@ -645,6 +645,8 @@ begin
           result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
           try
             result.resource := parser.resource.Link as TFHIRResourceV;
+            if subsetted then
+              factory.markWithTag(result.resource, 'http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
             patIds.seeIds(patientIds(request, result.resource));
             result.Url := AppendForwardSlash(base)+parser.resource.fhirType+'/'+parser.resource.id;
             if (purpose <> smUnknown) then
@@ -1390,7 +1392,7 @@ begin
             try
               FConnection.Execute;
               while FConnection.FetchNext do
-                AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, true, type_, patIds);
+                AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, true, request.parameters.has('_summary'), type_, patIds);
             finally
               FConnection.Terminate;
             end;
@@ -1851,7 +1853,7 @@ begin
       try
         FConnection.Execute;
         while FConnection.FetchNext do
-          AddResourceTobundle(request, bundle, secure, base, field, fmt, smInclude, false, type_, patIds);
+          AddResourceTobundle(request, bundle, secure, base, field, fmt, smInclude, false, request.parameters.has('_summary'), type_, patIds);
       finally
         FConnection.Terminate;
       end;
@@ -1983,7 +1985,7 @@ begin
                     inc(i);
                     if (i > offset) then
                     begin
-                      AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smMatch, false, type_, patIds);
+                      AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smMatch, false, request.parameters.has('_summary'), type_, patIds);
                       keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
                       inc(t);
                     end;

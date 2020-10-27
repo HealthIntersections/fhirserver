@@ -6480,11 +6480,12 @@ begin
       ComposeCoding(json, '', value.securityList[i]); {L682}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (value.tagList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.tagList.Count > 0) or (hasSubsettedTag(value.tagList)) then
   begin
     json.valueArray('tag');
     for i := 0 to value.tagList.Count - 1 do
-      ComposeCoding(json, '', value.tagList[i]); {L682}
+      if (SummaryOption in [soFull, soSummary, soText, soData]) or (isSubsettedTag(value.tagList[i])) then
+        ComposeCoding(json, '', value.tagList[i]); {L682}
     json.FinishArray;
   end;
   if not noObj then json.finishObject;
@@ -10474,7 +10475,7 @@ begin
     ComposeIdValue(json, 'id', value.idElement, false); {L769}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdProps(json, 'id', value.idElement, false); {L770}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  // we always compose meta - special case. if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMeta(json, 'meta', value.meta); {L772}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'implicitRules', value.implicitRulesElement, false); {L769}

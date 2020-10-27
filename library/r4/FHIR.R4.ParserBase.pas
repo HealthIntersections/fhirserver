@@ -75,13 +75,13 @@ type
   protected
     procedure ComposeResourceV(xml : TXmlBuilder; resource : TFhirResourceV); override;
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource); virtual;
+
   end;
 
   TFHIRJsonComposerBase4 = class (TFHIRJsonComposerBase)
   protected
     procedure ComposeResourceV(json : TJSONWriter; resource : TFhirResourceV); override;
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource); virtual;
-
   end;
 
   TFHIRTurtleComposerBase4 = class (TFHIRTurtleComposerBase)
@@ -90,7 +90,25 @@ type
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; virtual;
   end;
 
+function hasSubsettedTag(list : TFHIRCodingList) : boolean;
+function isSubsettedTag(c : TFHIRCoding) : boolean;
+
 implementation
+
+function hasSubsettedTag(list : TFHIRCodingList) : boolean;
+var
+  c : TFHIRCoding;
+begin
+  result := false;
+  for c in list do
+    if isSubsettedTag(c) then
+      exit(true);
+end;
+
+function isSubsettedTag(c : TFHIRCoding) : boolean;
+begin
+  result := (c.system = 'http://hl7.org/fhir/v3/ObservationValue') and (c.code = 'SUBSETTED');
+end;
 
 { TFHIRXmlParserBase4 }
 

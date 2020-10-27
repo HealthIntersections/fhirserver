@@ -120,6 +120,8 @@ function TJsHost.hasScripts(event: TTriggerType; resourceName : String) : boolea
 var
   scripts : TFslList<TEventScript>;
 begin
+  if Registry = nil then
+    exit(false);
   scripts := TFslList<TEventScript>.create;
   try
     FRegistry.getApplicableScripts(event, resourceName, scripts);
