@@ -45,32 +45,34 @@ type
 		//Even though we don't use SHA-1, we implemented it because PBKDF2_SHA1 is the only one with published test vectors
 		procedure Test_SHA1;
 		procedure Test_SHA1_PurePascal;
+		{$IFNDEF FPC}
 		procedure Test_SHA1_Csp;
-		procedure Test_SHA1_Cng;
+                procedure Test_SHA1_Cng;
+                {$ENDIF}
 
 		//Scrypt uses PBKDF2_SHA256. We fallback through Cng -> Csp -> PurePascal
 		procedure Test_SHA256;
 		procedure Test_SHA256_PurePascal;
-		procedure Test_SHA256_Csp;
-		procedure Test_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_SHA256_Csp;{$ENDIF}
+		{$IFNDEF FPC}procedure Test_SHA256_Cng;{$ENDIF}
 
 		//PBKDF2 uses HMAC. Test our implementation with known SHA1 and SHA256 test vectors
 		procedure Test_HMAC_SHA1;
 		procedure Test_HMAC_SHA1_PurePascal;
-		procedure Test_HMAC_SHA1_Cng;
+		{$IFNDEF FPC}procedure Test_HMAC_SHA1_Cng;{$ENDIF}
 
 		procedure Test_HMAC_SHA256;
 		procedure Test_HMAC_SHA256_PurePascal;
-		procedure Test_HMAC_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_HMAC_SHA256_Cng;{$ENDIF}
 
 		//Test PBKDF implementations; test with known SHA1 and SHA256 test vectors
 		procedure Test_PBKDF2_SHA1;
 		procedure Test_PBKDF2_SHA1_PurePascal;
-		procedure Test_PBKDF2_SHA1_Cng;
+		{$IFNDEF FPC}procedure Test_PBKDF2_SHA1_Cng;{$ENDIF}
 
 		procedure Test_PBKDF2_SHA256;
 		procedure Test_PBKDF2_SHA256_PurePascal;
-		procedure Test_PBKDF2_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_PBKDF2_SHA256_Cng;{$ENDIF}
 
 		//Salsa 20/8, BlockMix, and ROMix are the heart of scrypt. PBKDF2 is for key derivation. These are used for expensive salt
 		procedure Test_Salsa208Core;
@@ -302,6 +304,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_SHA256_Cng;
 var
 	sha256: IHashAlgorithm;
@@ -319,6 +322,7 @@ begin
   TSHA256Tester.Test(sha256);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_SHA256_PurePascal;
 var
@@ -333,7 +337,7 @@ procedure TScryptTests.SetUp;
 begin
 	inherited;
 
-	FScrypt := TScrypt.Create;
+	FScrypt := TScryptCracker.Create;
 
 	if not QueryPerformanceFrequency(FFreq) then //it's documented to never fail, but it can (see SO).
 		FFreq := -1;
@@ -1023,6 +1027,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_HMAC_SHA1_Cng;
 var
 	hash: IHmacAlgorithm;
@@ -1032,6 +1037,7 @@ begin
 	hash := nil;
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_HMAC_SHA1_PurePascal;
 var
@@ -1052,6 +1058,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_HMAC_SHA256_Cng;
 var
 	hmac: IHmacAlgorithm;
@@ -1060,6 +1067,7 @@ begin
 	Tester_HMAC_SHA256(hmac);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_HMAC_SHA256_PurePascal;
 var
@@ -1714,6 +1722,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA1_Cng;
 var
 	db: IPBKDF2Algorithm;
@@ -1722,6 +1731,7 @@ begin
 	Tester_PBKDF2_SHA1(db);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA1_PurePascal;
 var
@@ -1741,6 +1751,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA256_Cng;
 var
 	db: IPBKDF2Algorithm;
@@ -1749,6 +1760,7 @@ begin
 	Tester_PBKDF2_SHA256(db);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA256_PurePascal;
 var
@@ -1846,6 +1858,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_SHA1_Cng;
 var
 	sha1: IHashAlgorithm;
@@ -1863,7 +1876,7 @@ begin
 	TSHA1Tester.Test(sha1);
   assertPass();
 end;
-
+{$ENDIF}
 procedure registerTests;
 begin
 	RegisterTest('Library.Scrypt', TScryptTests.Suite);

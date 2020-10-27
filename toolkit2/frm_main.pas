@@ -6,13 +6,14 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniPropStorage;
+  ComCtrls, ActnList, StdActns, IniFiles;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    actionToolsPackageManager: TAction;
     actionHelpCheckUpgrade: TAction;
     actionhelpAbout: TAction;
     actionToolsOptions: TAction;
@@ -108,6 +109,7 @@ type
     MenuItem50: TMenuItem;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
+    MenuItem53: TMenuItem;
     N9: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -123,28 +125,28 @@ type
     N7: TMenuItem;
     N8: TMenuItem;
     PageControl1: TPageControl;
-    PageControl2: TPageControl;
-    PageControl3: TPageControl;
-    PageControl4: TPageControl;
-    Panel1: TPanel;
+    pgLeft: TPageControl;
+    pgBottom: TPageControl;
+    pgRight: TPageControl;
+    pnlBottom: TPanel;
     Panel2: TPanel;
-    Panel3: TPanel;
-    Panel4: TPanel;
+    pnlLeft: TPanel;
+    pnlRight: TPanel;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
-    TabSheet1: TTabSheet;
-    TabSheet10: TTabSheet;
-    TabSheet11: TTabSheet;
-    TabSheet12: TTabSheet;
-    TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
-    TabSheet4: TTabSheet;
-    TabSheet5: TTabSheet;
-    TabSheet6: TTabSheet;
-    TabSheet7: TTabSheet;
-    TabSheet8: TTabSheet;
-    TabSheet9: TTabSheet;
+    tbMessages: TTabSheet;
+    tbStack: TTabSheet;
+    tbExpression: TTabSheet;
+    tbPackages: TTabSheet;
+    tbProjects: TTabSheet;
+    tbServers: TTabSheet;
+    tbInspector: TTabSheet;
+    tbVariables: TTabSheet;
+    tbLog: TTabSheet;
+    tbSearch: TTabSheet;
+    tbBreakpoints: TTabSheet;
+    tbTasks: TTabSheet;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
@@ -167,6 +169,7 @@ type
     ToolButton26: TToolButton;
     ToolButton27: TToolButton;
     ToolButton28: TToolButton;
+    ToolButton29: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
@@ -175,11 +178,35 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     procedure actionFileManageRenameExecute(Sender: TObject);
+    procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
+    procedure actionToolsOptionsExecute(Sender: TObject);
+    procedure actionViewEditorExecute(Sender: TObject);
     procedure actionViewExpressionEditorExecute(Sender: TObject);
+    procedure actionViewInspectorExecute(Sender: TObject);
+    procedure actionViewLogExecute(Sender: TObject);
+    procedure actionViewMessagesExecute(Sender: TObject);
+    procedure actionViewPackagesExecute(Sender: TObject);
+    procedure actionViewProjectManagerExecute(Sender: TObject);
+    procedure actionViewSearchExecute(Sender: TObject);
+    procedure actionViewServersExecute(Sender: TObject);
+    procedure actionViewStackExecute(Sender: TObject);
+    procedure actionViewTasksExecute(Sender: TObject);
+    procedure actionViewVariablesExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure Splitter1Moved(Sender: TObject);
+    procedure Splitter2Moved(Sender: TObject);
+    procedure Splitter3Moved(Sender: TObject);
   private
-
+    FIni : TIniFile;
+    FSourceMaximised : boolean;
+    procedure saveLayout;
+    procedure loadLayout;
+    procedure maximiseSource;
+    procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
+    procedure unmaximiseSource;
   public
 
   end;
@@ -193,17 +220,175 @@ implementation
 
 { TForm1 }
 
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
+  loadLayout;
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  saveLayout;
+  FIni.Free;
+end;
+
+procedure TForm1.loadLayout;
+begin
+  if FIni.readBool('window', 'maximised', false) then
+    WindowState := wsMaximized;
+  Top := FIni.readInteger('window', 'top', Top);
+  Left := FIni.readInteger('window', 'left', Left);
+  Height := FIni.readInteger('window', 'height', Height);
+  Width := FIni.readInteger('window', 'width', Width);
+  pnlLeft.Width := FIni.readInteger('window', 'panel.left.width', pnlLeft.Width);
+  pnlRight.Width := FIni.readInteger('window', 'panel.right.width', pnlRight.Width);
+  pnlBottom.Width := FIni.ReadInteger('window', 'panel.bottom.width', pnlBottom.Width);
+  if FIni.readBool('window', 'source.maximised', false) then
+    maximiseSource;
+end;
+
+procedure TForm1.saveLayout;
+begin
+  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
+  if WindowState = wsMaximized then
+  begin
+    FIni.WriteInteger('window', 'top', Top);
+    FIni.WriteInteger('window', 'left', Left);
+    FIni.WriteInteger('window', 'height', Height);
+    FIni.WriteInteger('window', 'width', Width);
+  end;
+  FIni.WriteInteger('window', 'panel.left.width', pnlLeft.Width);
+  FIni.WriteInteger('window', 'panel.right.width', pnlRight.Width);
+  FIni.WriteInteger('window', 'panel.bottom.width', pnlBottom.Width);
+  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
+  FIni.WriteBool('window', 'source.maximised', FSourceMaximised);
+end;
+
+procedure TForm1.Splitter3Moved(Sender: TObject);
+begin
+  saveLayout;
+end;
+
+procedure TForm1.Splitter1Moved(Sender: TObject);
+begin
+  saveLayout;
+end;
+
+procedure TForm1.Splitter2Moved(Sender: TObject);
+begin
+  saveLayout;
+end;
+
+procedure TForm1.maximiseSource;
+begin
+  pnlLeft.visible := false;
+  pnlRight.visible := false;
+  pnlBottom.visible := false;
+  Splitter1.enabled := false;
+  Splitter2.enabled := false;
+  Splitter3.enabled := false;
+  FSourceMaximised := true;
+end;
+
+procedure TForm1.unmaximiseSource;
+begin
+  pnlLeft.visible := true;
+  pnlRight.visible := true;
+  pnlBottom.visible := true;
+  Splitter1.enabled := true;
+  Splitter2.enabled := true;
+  Splitter3.enabled := true;
+  FSourceMaximised := false;
+end;
+
+procedure TForm1.actionViewEditorExecute(Sender: TObject);
+begin
+  if FSourceMaximised then
+    unmaximiseSource
+  else
+    maximiseSource;
+end;
+
+procedure TForm1.showView(pnl : TPanel; pg : TPageControl; tab : TTabSheet);
+begin
+  if FSourceMaximised then
+    unmaximiseSource;
+  pg.ActivePage := tab;
+end;
+
 procedure TForm1.actionViewExpressionEditorExecute(Sender: TObject);
 begin
-
+  showView(pnlLeft, pgLeft, tbExpression);
 end;
+
+procedure TForm1.actionViewInspectorExecute(Sender: TObject);
+begin
+  showView(pnlRight, pgRight, tbInspector);
+end;
+
+procedure TForm1.actionViewLogExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbLog);
+end;
+
+procedure TForm1.actionViewMessagesExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbMessages);
+end;
+
+procedure TForm1.actionViewPackagesExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbPackages);
+end;
+
+procedure TForm1.actionViewProjectManagerExecute(Sender: TObject);
+begin
+  showView(pnlLeft, pgLeft, tbProjects);
+end;
+
+procedure TForm1.actionViewSearchExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbSearch);
+end;
+
+procedure TForm1.actionViewServersExecute(Sender: TObject);
+begin
+  showView(pnlLeft, pgLeft, tbServers);
+end;
+
+procedure TForm1.actionViewStackExecute(Sender: TObject);
+begin
+  showView(pnlRight, pgRight, tbStack);
+end;
+
+procedure TForm1.actionViewTasksExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbTasks);
+end;
+
+procedure TForm1.actionViewVariablesExecute(Sender: TObject);
+begin
+  showView(pnlRight, pgRight, tbVariables);
+end;
+
+
 
 procedure TForm1.actionFileManageRenameExecute(Sender: TObject);
 begin
 
 end;
 
+procedure TForm1.actionHelpCheckUpgradeExecute(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.actionHelpContentExecute(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.actionToolsOptionsExecute(Sender: TObject);
 begin
 
 end;

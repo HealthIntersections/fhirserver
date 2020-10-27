@@ -307,7 +307,7 @@ implementation
 
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
-	{$IFDEF WINDOWS}Windows, ComObj, ActiveX,{$ENDIF}
+	{$IFNDEF FPC}Windows, ComObj, ActiveX,{$ENDIF}
 	Math, FHIR.Support.Utilities;
 
 {$IFDEF COMPILER_7_DOWN}
@@ -326,7 +326,7 @@ type
 	PUInt64 = ^UInt64;
 {$ENDIF}
 
-{$IFNDEF WINDOWS}
+{$IFDEF FPC}
 type
   LARGE_INTEGER = record
     case Integer of
@@ -387,7 +387,7 @@ type
 	PLongWordArray = ^TLongWordArray_Unsafe;
 	TLongWordArray_Unsafe = array[0..79] of LongWord; //SHA uses an array of 80 elements
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 const
 	//Cryptography Service Provider (CSP) items
 	CALG_SHA1 = $00008004;
@@ -519,7 +519,7 @@ begin
 			( X shl 24);
 end;
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 procedure RaiseOSError(ErrorCode: DWORD; Msg: string);
 var
 	ex: EOSError;
@@ -566,7 +566,7 @@ type
 		procedure SelfTest;
 	end;
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 {
 	SHA-1 implemented by Microsoft Crypto Service Provider (CSP)
 }
@@ -617,7 +617,7 @@ type
 		procedure HashCore(Hash: BCRYPT_HASH_HANDLE; const Data; DataLen: Integer);
 		function HashFinal(Hash: BCRYPT_HASH_HANDLE): TBytes;
 	public
-		constructor Create(const AlgorithmID: String; const Provider: PWideChar; HmacMode: Boolean);
+		constructor Create(const AlgorithmID: wideString; const Provider: PWideChar; HmacMode: Boolean);
 		destructor Destroy; override;
 
 		class function IsAvailable: Boolean;
@@ -681,7 +681,7 @@ type
 		function GetBytes(const Password: String; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
 
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	TBCryptDeriveKeyPBKDF2 = class(TInterfacedObject, IPBKDF2Algorithm)
 	private
 		FAlgorithm: BCRYPT_ALG_HANDLE;
@@ -756,7 +756,7 @@ begin
 	//And we certainly won't go any lower than the default 14,8,1 (anyone remember 8,N,1 anymore?)
 	if testCostFactor > CostFactor then
 	begin
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
 		OutputDebugString(PChar(Format('Increasing scrypt cost factor from default %d up to %d', [CostFactor, testCostFactor])));
     {$ENDIF}
 		CostFactor := testCostFactor;
@@ -1016,11 +1016,11 @@ begin
 		if not scrypt.TryParseHashString(ExpectedHashString, {out}costFactor, blockSizeFactor, parallelizationFactor, salt, expected) then
 			raise EScryptException.Create(SCouldNotParsePassword);
 		try
-      {$IFDEF WINDOWS}
+      {$IFNDEF FPC}
 			QueryPerformanceCounter(t1);
       {$ENDIF}
 			actual := scrypt.DeriveBytes(Passphrase, salt, costFactor, blockSizeFactor, ParallelizationFactor, Length(expected));
-      {$IFDEF WINDOWS}
+      {$IFNDEF FPC}
 			QueryPerformanceCounter(t2);
       {$ENDIF}
 
@@ -1034,14 +1034,14 @@ begin
 				//Only advertise a rehash being needed if they got the correct password.
 				//Don't want someone blindly re-hashing with a bad password because they forgot to check the result,
 				//or because they decided to handle "PasswordRehashNeeded" first.
-        {$IFDEF WINDOWS}
+        {$IFNDEF FPC}
 				if QueryPerformanceFrequency(freq) then
 				begin
         {$ENDIF}
 					duration := (t2-t1)/freq * 1000; //ms
 					if duration < 250 then
 						PasswordRehashNeeded := True;
-        {$IFDEF WINDOWS}
+        {$IFNDEF FPC}
 				end;
         {$ENDIF}
 			end;
@@ -1163,7 +1163,7 @@ begin
 	}
 	if IsAlgo('SHA1') then
 	begin
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 		//Microsoft SHA1 Cng and CSP versions are about 87% faster than our "PurePascal" versions
 		if TCngHash.IsAvailable then
 			ObjectName := 'SHA1.Cng'
@@ -1178,7 +1178,7 @@ begin
 
 	if IsAlgo('SHA256') then
 	begin
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 		//Microsoft SHA256 Cng and CSP versions are about 87% faster than our "PurePascal" versions
 		if TCngHash.IsAvailable then
 			ObjectName := 'SHA256.Cng'
@@ -1193,7 +1193,7 @@ begin
 
 	if IsAlgo('HMAC.SHA1') then
 	begin
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 		//Microsoft Cng provides a full HMAC implementation using SHA-1
 		if TCngHash.IsAvailable then
 			ObjectName := 'HMAC.SHA1.Cng'
@@ -1208,7 +1208,7 @@ begin
 
 	if IsAlgo('HMAC.SHA256') then
 	begin
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 		//Microsoft Cng provides a full HMAC implementation using SHA256
 		if TCngHash.IsAvailable then
 			ObjectName := 'HMAC.SHA256.Cng'
@@ -1224,28 +1224,28 @@ begin
 
 	{ SHA1 }
 	if      IsAlgo('SHA1.PurePascal')        then Result := TSHA1.Create
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('SHA1.Csp')               then Result := TCspHash.Create(CALG_SHA1, 64)
 	else if IsAlgo('SHA1.Cng')               then Result := TCngHash.Create(BCRYPT_SHA1_ALGORITHM, nil, False)
   {$ENDIF}
 
 	{ SHA256 }
 	else if IsAlgo('SHA256.PurePascal')      then Result := TSHA256.Create
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('SHA256.Csp')             then Result := TCspHash.Create(CALG_SHA_256, 64)
 	else if IsAlgo('SHA256.Cng')             then Result := TCngHash.Create(BCRYPT_SHA256_ALGORITHM, nil, False)
   {$ENDIF}
 
 	{ HMAC - SHA1 }
 	else if IsAlgo('HMAC.SHA1.PurePascal')   then Result := THmac.Create(TSHA1.Create)
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('HMAC.SHA1.csp')          then Result := THmac.Create(TCspHash.Create(CALG_SHA1, 64))
 	else if IsAlgo('HMAC.SHA1.Cng')          then Result := TCngHash.Create(BCRYPT_SHA1_ALGORITHM, nil, True)
   {$ENDIF}
 
 	{ HMAC - SHA256 }
 	else if IsAlgo('HMAC.SHA256.PurePascal') then Result := THmac.Create(TSHA256.Create)
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('HMAC.SHA256.csp')        then Result := THmac.Create(TCspHash.Create(CALG_SHA_256, 64))
 	else if IsAlgo('HMAC.SHA256.Cng')        then Result := TCngHash.Create(BCRYPT_SHA256_ALGORITHM, nil, True)
   {$ENDIF}
@@ -1253,7 +1253,7 @@ begin
 	{ PBKDF2 - SHA1 }
 	else if IsAlgo('PBKDF2.SHA1') then
 	begin
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
 		if TCngHash.IsAvailable then
 			Result := TScrypt.CreateObject('PBKDF2.SHA1.Cng')
 		else
@@ -1261,14 +1261,14 @@ begin
 			Result := TScrypt.CreateObject('PBKDF2.SHA1.PurePascal');
 	end
 	else if IsAlgo('PBKDF2.SHA1.PurePascal') then Result := TRfc2898DeriveBytes.Create(THmac.Create(TSHA1.Create))
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('PBKDF2.SHA1.Cng')        then Result := TBCryptDeriveKeyPBKDF2.Create(BCRYPT_SHA1_ALGORITHM, nil)
   {$ENDIF}
 
 	{ PBKDF2 - SHA256 }
 	else if IsAlgo('PBKDF2.SHA256') then
 	begin
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
 		if TCngHash.IsAvailable then
 			Result := TScrypt.CreateObject('PBKDF2.SHA256.Cng')
 		else
@@ -1276,7 +1276,7 @@ begin
 			Result := TScrypt.CreateObject('PBKDF2.SHA256.PurePascal');
 	end
 	else if IsAlgo('PBKDF2.SHA256.PurePascal') then Result := TRfc2898DeriveBytes.Create(THmac.Create(TSHA256.Create))
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
 	else if IsAlgo('PBKDF2.SHA256.Cng')        then Result := TBCryptDeriveKeyPBKDF2.Create(BCRYPT_SHA256_ALGORITHM, nil)
   {$ENDIF}
 
@@ -2682,7 +2682,7 @@ begin
 	Inc(FHashLength, NumBytes * 8);
 end;
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 
 { TSHA256CryptoServiceProvider }
 
@@ -2918,7 +2918,7 @@ begin
 	end;
 end;
 
-constructor TCngHash.Create(const AlgorithmID: String; const Provider: PWideChar; HmacMode: Boolean);
+constructor TCngHash.Create(const AlgorithmID: WideString; const Provider: PWideChar; HmacMode: Boolean);
 var
 	nts: NTSTATUS;
 	algorithm: BCRYPT_ALG_HANDLE;
@@ -3330,7 +3330,7 @@ begin
 	Result := derivedKey;
 end;
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 
 { TBCryptDeriveKeyPBKDF2 }
 
