@@ -63,7 +63,7 @@ Type
     function findTest(path : String) : TMXmlElement;
   Published
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [FHIRPathTestCase4]
     procedure FHIRPathTest(Name : String);
@@ -294,7 +294,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TFHIRPathTests4.teardown;
+procedure TFHIRPathTests4.TearDown;
 begin
   {$IFNDEF SIMPLETEST}
   ucum.free;

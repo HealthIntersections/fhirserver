@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns;
+  ComCtrls, ActnList, StdActns, IniPropStorage;
 
 type
 
@@ -30,12 +30,12 @@ type
     actionViewMessages: TAction;
     actionViewLog: TAction;
     actionViewStack: TAction;
-    actionPasteSpecial: TAction;
-    actionCopyFilename: TAction;
+    actionEditPasteSpecial: TAction;
+    actionEditCopyFilename: TAction;
     actionCopyFileTitle: TAction;
     actionCopyFilePath: TAction;
     actionCopyFile: TAction;
-    actionBeginEnd: TAction;
+    actionEditBeginEnd: TAction;
     actionEditRedo: TAction;
     actionFilePrint: TAction;
     actionFileClose: TAction;
@@ -174,7 +174,10 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    procedure actionFileManageRenameExecute(Sender: TObject);
+    procedure actionHelpContentExecute(Sender: TObject);
     procedure actionViewExpressionEditorExecute(Sender: TObject);
+    procedure MenuItem34Click(Sender: TObject);
   private
 
   public
@@ -191,6 +194,21 @@ implementation
 { TForm1 }
 
 procedure TForm1.actionViewExpressionEditorExecute(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.actionFileManageRenameExecute(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.actionHelpContentExecute(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.MenuItem34Click(Sender: TObject);
 begin
 
 end;

@@ -197,7 +197,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="480">
+    <Units Count="483">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -2113,9 +2113,8 @@
         <IsPartOfProject Value="True"/>
       </Unit475>
       <Unit476>
-        <Filename Value="..\library\npm\fhir.npm.tests.pas"/>
+        <Filename Value="..\library\npm\FHIR.Npm.Tests.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Npm.Tests"/>
       </Unit476>
       <Unit477>
         <Filename Value="..\library\support\FHIR.Support.SCrypt.Tests.pas"/>
@@ -2129,6 +2128,18 @@
         <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Worker.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit479>
+      <Unit480>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit480>
+      <Unit481>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Client.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit481>
+      <Unit482>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit482>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

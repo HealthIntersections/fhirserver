@@ -47,7 +47,7 @@ Type
 
   public
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
   end;
 
@@ -154,7 +154,7 @@ begin
   FWorker := TTestingWorkerContext.Use;
 end;
 
-procedure TFhirHTTPClientTests.teardown;
+procedure TFhirHTTPClientTests.TearDown;
 begin
   FWorker.Free;
 end;

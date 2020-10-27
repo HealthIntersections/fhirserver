@@ -45,7 +45,7 @@ Type
     procedure testClient(client: TFhirClient4);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   published
     procedure testIndyJson;
     procedure testIEJson;
@@ -64,7 +64,7 @@ begin
   FWorker := TTestingWorkerContext4.Use;
 end;
 
-procedure TFhirHTTPClientTests4.teardown;
+procedure TFhirHTTPClientTests4.TearDown;
 begin
   FWorker.Free;
 end;

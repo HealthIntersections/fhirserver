@@ -54,7 +54,7 @@ type
     function loadResource : TFhirResource;
   Published
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [LiquidTestCase]
     procedure FHIRPathTest(Name : String);

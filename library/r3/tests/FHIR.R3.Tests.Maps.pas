@@ -73,7 +73,7 @@ type
     procedure loadMaps(folder : String);
   public
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [TestCase] procedure testCD;
   end;
@@ -154,7 +154,7 @@ begin
   loadMaps(IncludeTrailingBackslash(PUB_HOME)+'build\guides\ccda\maps');
 end;
 
-procedure TMapTransformTests.teardown;
+procedure TMapTransformTests.TearDown;
 begin
   utils.Free;
   ctxt.free;

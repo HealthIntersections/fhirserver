@@ -50,7 +50,7 @@ type
   public
 
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [TestCase] procedure testXmlListMinimal;
     [TestCase] procedure testXmlListWrongOrder;
@@ -127,7 +127,7 @@ begin
   FServices := TTestingWorkerContext.Use;
 end;
 
-procedure TFHIRValidatorTests.teardown;
+procedure TFHIRValidatorTests.TearDown;
 begin
   FServices.Free;
 end;

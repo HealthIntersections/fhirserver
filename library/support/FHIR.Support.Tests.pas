@@ -171,7 +171,7 @@ Type
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -194,7 +194,7 @@ Type
     procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -213,7 +213,7 @@ Type
     procedure doExecute;
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -241,7 +241,7 @@ Type
     procedure execute;
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure PatchTest(Name : String);
   End;
@@ -904,7 +904,7 @@ begin
   engine := TXmlPatchEngine.Create;
 end;
 
-procedure TXmlPatchTest.teardown;
+procedure TXmlPatchTest.TearDown;
 begin
   engine.Free;
   tests.Free;
@@ -1050,7 +1050,7 @@ begin
   functionNames := TStringList.Create;
 end;
 
-procedure TXPathParserTest.teardown;
+procedure TXPathParserTest.TearDown;
 begin
   functionNames.Free;
   tests.Free;
@@ -1304,7 +1304,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TXPathEngineTest.teardown;
+procedure TXPathEngineTest.TearDown;
 begin
   tests.Free;
 end;
@@ -4220,7 +4220,7 @@ begin
   engine := TJsonPatchEngine.Create;
 end;
 
-procedure TJsonPatchTest.teardown;
+procedure TJsonPatchTest.TearDown;
 begin
   engine.Free;
   tests.Free;

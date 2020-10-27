@@ -51,7 +51,7 @@ type
   public
 
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [TestCase] procedure testXmlListMinimal;
     [TestCase] procedure testXmlListWrongOrder;
@@ -131,7 +131,7 @@ begin
   FServices := TTestingWorkerContext4.Use;
 end;
 
-procedure TFHIRValidatorTests4.teardown;
+procedure TFHIRValidatorTests4.TearDown;
 begin
   FServices.Free;
 end;
