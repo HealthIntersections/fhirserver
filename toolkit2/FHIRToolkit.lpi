@@ -45,15 +45,12 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="fhir.toolkit.context.pas"/>
+        <Filename Value="FHIR.Toolkit.Context.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.Context"/>
       </Unit>
       <Unit>
-        <Filename Value="frame_editor.pas"/>
+        <Filename Value="..\library\support\FHIR.Support.Base.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Frame1"/>
-        <ResourceBaseClass Value="Frame"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -64,7 +61,8 @@
       <Filename Value="FHIRToolkit"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);..\library"/>
+      <OtherUnitFiles Value="..\library\support"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

@@ -10,7 +10,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, frm_main, FHIR.Toolkit.Context
+  Forms, frm_main, FHIR.Toolkit.Context, FHIR.Support.Base
   { you can add units after this };
 
 {$R *.res}

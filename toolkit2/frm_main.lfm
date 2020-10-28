@@ -3369,6 +3369,7 @@ object Form1: TForm1
       Align = alClient
       ParentFont = False
       TabOrder = 4
+      OnChange = PageControl1Change
     end
     object ToolBar1: TToolBar
       Left = 1

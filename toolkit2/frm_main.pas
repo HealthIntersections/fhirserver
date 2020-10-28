@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniFiles;
+  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd,
+  FHIR.Toolkit.Context;
 
 type
 
@@ -196,19 +197,22 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
   private
     FIni : TIniFile;
     FSourceMaximised : boolean;
+    FContext : TToolkitContext;
     procedure saveLayout;
     procedure loadLayout;
     procedure maximiseSource;
     procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
     procedure unmaximiseSource;
+    procedure updateActionStatus;
   public
-
+    property Context : TToolkitContext read FContext;
   end;
 
 var
@@ -224,10 +228,13 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   loadLayout;
+  FContext := TToolkitContext.create;
+  updateActionStatus;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
+  FContext.Free;
   saveLayout;
   FIni.Free;
 end;
@@ -299,6 +306,65 @@ begin
   Splitter2.enabled := true;
   Splitter3.enabled := true;
   FSourceMaximised := false;
+end;
+
+procedure TForm1.updateActionStatus;
+begin
+  // always enabled
+  actionToolsPackageManager.enabled := true;
+  actionToolsOptions.enabled := true;
+  actionHelpContent.enabled := true;
+  actionHelpCheckUpgrade.enabled := true;
+  actionhelpAbout.enabled := true;
+  actionViewTasks.enabled := true;
+  actionViewExpressionEditor.enabled := true;
+  actionViewVariables.enabled := true;
+  actionViewInspector.enabled := true;
+  actionViewPackages.enabled := true;
+  actionViewEditor.enabled := true;
+  actionViewProjectManager.enabled := true;
+  actionViewServers.enabled := true;
+  actionViewSearch.enabled := true;
+  actionViewMessages.enabled := true;
+  actionViewLog.enabled := true;
+  actionViewStack.enabled := true;
+  actionFileNew.enabled := true;
+  actionFileOpen.enabled := true;
+  actionFileOpenUrl.enabled := true;
+  actionFileExit.enabled := true;
+
+  // enabled if there's an open file:
+  actionCopyFileTitle.enabled := context.hasFocus;
+  actionEditCopyFilename.enabled := context.hasFocus;
+  actionFileManageFolder.enabled := context.hasFocus;
+  actionCopyFilePath.enabled := context.hasFocus;
+  actionCopyFile.enabled := context.hasFocus;
+  actionFileClose.enabled := context.hasFocus;
+  actionFileSave.enabled := context.hasFocus;
+  actionFileSaveAll.enabled := context.hasFocus;
+  actionFileManageRename.enabled := context.hasFocus;
+  actionFileManageCopy.enabled := context.hasFocus;
+  actionFileManageDelete.enabled := context.hasFocus;
+  actionFileManageReload.enabled := context.hasFocus;
+  actionFileSaveAs1.enabled := context.hasFocus;
+
+  // enabled if there's a text selectable
+  actionEditCopy.enabled := context.hasFocus and context.Focus.hasText;
+  actionEditSelectAll.enabled := context.hasFocus and context.Focus.hasText;
+
+  // enabled if the text is writable
+  actionEditUndo.enabled := context.hasFocus and context.Focus.canUndo;
+  actionEditRedo.enabled := context.hasFocus and context.Focus.canRedo;
+  actionEditCut.enabled := context.hasFocus and context.Focus.canCut;
+  actionEditPasteSpecial.enabled := context.hasFocus and context.Focus.canPaste;
+  actionEditDelete.enabled := context.hasFocus and context.Focus.canCut;
+  actionEditPaste.enabled := context.hasFocus and context.Focus.canPaste;
+
+  // enabled if we're in source mode
+  actionEditBeginEnd.enabled := context.hasFocus and context.Focus.inSource;
+  actionZoomIn.enabled := context.hasFocus and context.Focus.inSource;
+  actionZoomOut.enabled := context.hasFocus and context.Focus.inSource;
+  actionFilePrint.enabled := context.hasFocus and context.Focus.inSource;
 end;
 
 procedure TForm1.actionViewEditorExecute(Sender: TObject);
@@ -394,6 +460,11 @@ begin
 end;
 
 procedure TForm1.MenuItem34Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.PageControl1Change(Sender: TObject);
 begin
 
 end;
