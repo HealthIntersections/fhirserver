@@ -48,9 +48,11 @@ Type
     procedure TearDown; override;
   published
     procedure testIndyJson;
-    procedure testIEJson;
     procedure testIndyXml;
+    {$IFNDEF FPC}
+    procedure testIEJson;
     procedure testIEXml;
+    {$ENDIF}
   end;
 
 procedure registerTests;
@@ -120,6 +122,7 @@ begin
   assertTrue(ok);
 end;
 
+{$IFNDEF FPC}
 procedure TFhirHTTPClientTests4.testIEJson;
 var
   http: TFHIRHTTPCommunicator;
@@ -159,6 +162,7 @@ begin
     http.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TFhirHTTPClientTests4.testIndyJson;
 var

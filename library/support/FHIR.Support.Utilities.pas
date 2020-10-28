@@ -162,13 +162,6 @@ Function RemoveRemainder(Const iValue : Int64; Const iRange : Int64) : Int64; Ov
 
 Function GreatestCommonDivisor(Const iA, iB : Integer) : Integer;
 
-type
-  {$IFDEF FPC}
-  TUCharArray = SysUtils.TUnicodeCharArray;
-  {$ELSE}
-  TUCharArray = SysUtils.TCharArray;
-  {$ENDIF}
-
 
 Type
   TCharArray = Array Of WideChar;
@@ -14518,40 +14511,39 @@ end;
 
 function FormatTextToXML(AStr: String; mode : TXmlEncodingMode): String;
 var
-  i: Integer;
   b : TFslStringBuilder;
+  c : UnicodeChar;
 begin
   b := TFslStringBuilder.Create;
   try
-    i := 1;
-    while i <= Length(AStr) do
-      begin
-      case AStr[i] of
+    for c in unicodeChars(aStr) do
+    begin
+      case c of
         '"':
           case mode of
             xmlAttribute : b.append('&quot;');
-            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
-            xmlText : b.append(AStr[i]);
+            xmlCanonical : b.append('&#' + IntToStr(Ord(c)) + ';');
+            xmlText : b.append('"');
           end;
         '''':
           case mode of
             xmlAttribute : b.append('&apos;');
-            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
-            xmlText : b.append(AStr[i]);
+            xmlCanonical : b.append('&#' + IntToStr(Ord(c)) + ';');
+            xmlText : b.append('''');
           end;
         '&':
           if mode = xmlCanonical then
-            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+            b.append('&#' + IntToStr(Ord(c)) + ';')
           else
             b.append('&amp;');
         '<':
           if mode = xmlCanonical then
-            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+            b.append('&#' + IntToStr(Ord(c)) + ';')
           else
             b.append('&lt;');
         '>':
           if mode = xmlCanonical then
-            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+            b.append('&#' + IntToStr(Ord(c)) + ';')
           else
             b.append('&gt;');
         #32:
@@ -14559,25 +14551,17 @@ begin
         #13, #10:
           begin
           case mode of
-            xmlAttribute : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
-            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
-            xmlText : b.append(AStr[i]);
+            xmlAttribute : b.append('&#' + IntToStr(Ord(c)) + ';');
+            xmlCanonical : b.append('&#' + IntToStr(Ord(c)) + ';');
+            xmlText : b.append(char(c));
           end;
-//        canonical?
-//          if i < length(AStr) then
-//            if AStr[i + 1] = #10 then
-//              Inc(i);
-//          b.append(' ');
           end;
         else
-          begin
-          if CharInSet(AStr[i], [' '..'~']) then
-            b.append(AStr[i])
+          if (ord(c) < 127) and (Ord(c) >= 32) then
+            b.append(char(c))
           else
-            b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
-          end;
+            b.append('&#x' + IntToHex(Ord(c), 2) + ';');
         end;
-      Inc(i);
       end;
     result := b.ToString;
   finally
@@ -14587,44 +14571,32 @@ end;
 
 function FormatXMLForTextArea(AStr: String): String;
 var
-  i: Integer;
+  c : UnicodeChar;
+  b : TStringBuilder;
 begin
-  Result := '';
   if Length(AStr) <= 0 then
-    exit;
-  i := 1;
-  while i <= Length(AStr) do
+    exit('');
+
+  b := TStringBuilder.create;
+  try
+    for c in unicodeChars(AStr) do
     begin
-    case AStr[i] of
-      '''':
-        Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
-      '"':
-        Result := Result + '&quot;';
-      '&':
-        Result := Result + '&amp;';
-      '<':
-        Result := Result + '&lt;';
-      '>':
-        Result := Result + '&gt;';
-      #32:
-        Result := Result + ' ';
-      #13:
-        begin
-        if i < length(AStr) then
-          if AStr[i + 1] = #10 then
-            Inc(i);
-        Result := Result + #13#10;
-        end;
+      case c of
+        '''': b.append('&#' + IntToStr(Ord(c)) + ';');
+        '"':  b.append('&quot;');
+        '&':  b.append('&amp;');
+        '<':  b.append('&lt;');
+        '>':  b.append('&gt;');
+      else if (c = #10) or (c = #13) or ((ord(c) < 128) and (Ord(c) >= 32)) then
+        b.append(char(c))
       else
-        begin
-        if CharInSet(AStr[i], [' '..'~', #10]) then
-          Result := Result + AStr[i]
-        else
-          Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
-        end;
+        b.append('&#x' + IntToHex(Ord(c), 2) + ';');
       end;
-    Inc(i);
     end;
+    Result := b.toString();
+  finally
+    b.free;
+  end;
 end;
 
 function FormatXMLToHTML(AStr : String):String;

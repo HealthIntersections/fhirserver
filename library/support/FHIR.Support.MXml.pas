@@ -164,6 +164,7 @@ Type
     function GetAllText: String;
     procedure fixChildren;
     function GetHasAttribute(name: String): boolean;
+    function GetAllChildrenAreText: boolean;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -176,6 +177,7 @@ Type
     property HasAttribute[name : String]  : boolean read GetHasAttribute;
     property Children : TFslList<TMXmlElement> read GetChildren;
     property HasChildren : boolean read GetHasChildren;
+    property AllChildrenAreText : boolean read GetAllChildrenAreText;
     property Text : string read GetText write SetText;
     property HasText : boolean read GetHasText;
     property Next : TMXmlElement read FNext write SetNext;
@@ -583,6 +585,16 @@ begin
   end;
 end;
 
+function TMXmlElement.GetAllChildrenAreText: boolean;
+var
+  child : TMXmlElement;
+begin
+  result := true;
+  for child in Children do
+    if (child.NodeType <> ntText) then
+      exit(false);
+end;
+
 function TMXmlElement.GetAllText: String;
 var
   b : TStringBuilder;
@@ -910,7 +922,6 @@ begin
       else
       begin
         b.Append(FormaTXmlForTextArea(Text.trim));
-        b.Append(#13#10);
       end;
     ntComment:
       begin

@@ -42,10 +42,18 @@ uses
   Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib
   {$IFDEF FPC}, dateutils, upascaltz {$ENDIF};
 
+type
+  {$IFDEF FPC}
+  TUCharArray = SysUtils.TUnicodeCharArray;
+  {$ELSE}
+  TUCharArray = SysUtils.TCharArray;
+  {$ENDIF}
+
 {$IFNDEF FPC}
 type
   UnicodeChar = char;
 {$ELSE}
+
 
 {$IFDEF WINDOWS}
 // missing from windows.pas
@@ -63,8 +71,9 @@ function RGB(r,g,b : longint) : DWORD; inline;
 {$ENDIF}
 
 // unicode helpers - make life easier for shared fpc/delphi code
-function unicodeChars(s : String) : TArray<UnicodeChar>;
+function unicodeChars(s : String) : TUCharArray;
 function strToWideString(s : String): WideString; {$IFDEF DELPHI} inline; {$ENDIF} // in delphi, this does nothing.
+function UCharArrayToString(chars : TUCharArray) : String;
 
 {$IFDEF FPC}
 
@@ -238,7 +247,7 @@ function RGB(r,g,b : longint) : DWORD;
   end;
 {$ENDIF}
 
-function unicodeChars(s : String) : TArray<UnicodeChar>;
+function unicodeChars(s : String) : TUCharArray;
 var
   i, c, l, cl : integer;
   ch : UnicodeChar;
@@ -282,6 +291,15 @@ begin
   SetLength(result, i);
 end;
 
+function UCharArrayToString(chars : TUCharArray) : String;
+var
+  bytes : TBytes;
+begin
+  bytes := TEncoding.UTF8.GetBytes(chars);
+  result := TEncoding.UTF8.GetString(bytes);
+end;
+
+
 
 {$ELSE}
 
@@ -298,6 +316,12 @@ function strToWideString(s : String): WideString;
 begin
   result := s;
 end;
+
+function UCharArrayToString(chars : TUCharArray) : String;
+begin
+  SetString(Result, PChar(chars), Length(chars));
+end;
+
 {$ENDIF}
 
 {$IFDEF FPC}

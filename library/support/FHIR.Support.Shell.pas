@@ -229,8 +229,12 @@ End;
 
 Function ExecuteLaunch(Const sVerb, sFilename, sParameters : String; bShow, bErrors : Boolean) : THandle;
 Var
-  aInfo : TShellExecuteInfo;
-Begin 
+  aInfo : TSHELLEXECUTEINFOW;
+  wV, wF, wp : WideString;
+Begin
+  wV := sVerb;
+  wF := sFilename;
+  wp := sParameters;
   FillChar(aInfo, SizeOf(aInfo), 0);
 
   aInfo.cbSize := SizeOf(aInfo);
@@ -252,9 +256,9 @@ Begin
     aInfo.fMask := aInfo.fMask Or SEE_MASK_FLAG_NO_UI;
   End;
 
-  aInfo.lpVerb := PChar(sVerb);
-  aInfo.lpFile := PChar(sFilename);
-  aInfo.lpParameters := PChar(sParameters);
+  aInfo.lpVerb := PWideChar(wV);
+  aInfo.lpFile := PWideChar(wF);
+  aInfo.lpParameters := PWideChar(wp);
 
   If ShellExecuteExW(@aInfo) Then
     Result := aInfo.hProcess

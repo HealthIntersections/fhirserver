@@ -83,7 +83,7 @@ type
 		//Password hashing
 		procedure Test_PasswordHashing; //Test, and verify, "correct horse battery staple"
 		procedure Test_JavaWgScrypt; //the only other example out there
-		procedure Test_RehashNeededKicksIn;
+		{$IFNDEF FPC}procedure Test_RehashNeededKicksIn;{$ENDIF}
 	end;
 
 	TSHA1Tester = class(TObject)
@@ -459,6 +459,7 @@ begin
   {$ENDIF}
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_RehashNeededKicksIn;
 var
 	passwordRehashNeeded: Boolean;
@@ -475,6 +476,7 @@ begin
 	CheckTrue(passwordRehashNeeded);
   assertPass();
 end;
+{$ENDIF}
 
 { TSHA256Tester }
 

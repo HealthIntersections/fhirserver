@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Interface
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 
 Uses
   Windows, SysUtils, Generics.Collections,
@@ -143,7 +143,7 @@ Type
 
 Implementation
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 
 Const
   DLL_WININET = 'wininet.dll';
@@ -223,17 +223,6 @@ Var
 Procedure LoadDLL;
 Begin
   GHandle := LoadLibrary(DLL_WININET);
-{$IFDEF VER130}
-  If GHandle >= 32 Then
-    @mInternetOpen := GetProcAddress(GHandle, 'InternetOpenA');
-  @mInternetConnect := GetProcAddress(GHandle, 'InternetConnectA');
-  @mHttpQueryInfo := GetProcAddress(GHandle, 'HttpQueryInfoA');
-  @mHttpOpenRequest := GetProcAddress(GHandle, 'HttpOpenRequestA');
-  @mHttpSendRequest := GetProcAddress(GHandle, 'HttpSendRequestA');
-  @mInternetQueryOption := GetProcAddress(GHandle, 'InternetQueryOptionA');
-  @mInternetSetOption := GetProcAddress(GHandle, 'InternetSetOptionA');
-  @mInternetGetLastResponseInfo := GetProcAddress(GHandle, 'InternetGetLastResponseInfoA');
-{$ELSE}
   If GHandle >= 32 Then
     @mInternetOpen := GetProcAddress(GHandle, 'InternetOpenW');
   @mInternetConnect := GetProcAddress(GHandle, 'InternetConnectW');
@@ -243,7 +232,6 @@ Begin
   @mInternetQueryOption := GetProcAddress(GHandle, 'InternetQueryOptionW');
   @mInternetSetOption := GetProcAddress(GHandle, 'InternetSetOptionW');
   @mInternetGetLastResponseInfo := GetProcAddress(GHandle, 'InternetGetLastResponseInfoW');
-{$ENDIF}
   @mInternetCloseHandle := GetProcAddress(GHandle, 'InternetCloseHandle');
   @mInternetQueryDataAvailable := GetProcAddress(GHandle, 'InternetQueryDataAvailable');
   @mInternetReadFile := GetProcAddress(GHandle, 'InternetReadFile');
@@ -362,20 +350,11 @@ Begin
 
 
 
-{$IFDEF VER130}
-  Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);
-  Check(@mInternetConnect <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectA', 0);
-  Check(@mHttpQueryInfo <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoA', 0);
-  Check(@mHttpOpenRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestA', 0);
-  Check(@mHttpSendRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestA', 0);
-{$ELSE}
   Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenW', 0);
   Check(@mInternetConnect <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectW', 0);
   Check(@mHttpQueryInfo <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoW', 0);
   Check(@mHttpOpenRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestW', 0);
   Check(@mHttpSendRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestW', 0);
-
-{$ENDIF}
   Check(GHandle >= 32, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_DLL, DLL_WININET, 0);
   Check(@mInternetCloseHandle <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetCloseHandle', 0);
   Check(@mInternetQueryDataAvailable <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetQueryDataAvailable', 0);

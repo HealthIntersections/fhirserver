@@ -3758,7 +3758,6 @@ Function TFslStringList.GetAsCSV : String;
 Var
   oStream : TFslStringStream;
   oFormatter : TFslCSVFormatter;
-  chars: TUCharArray;
 Begin
   oStream := TFslStringStream.Create;
   Try
@@ -3771,8 +3770,7 @@ Begin
       oFormatter.Free;
     End;
 
-    chars := TEncoding.UTF8.GetChars(oStream.Bytes);
-    SetString(Result, PChar(chars), Length(chars));
+    result := TEncoding.UTF8.GetString(oStream.Bytes);
   Finally
     oStream.Free;
   End;

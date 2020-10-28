@@ -2274,11 +2274,8 @@ End;
 {$IFNDEF VER130}
 
 function TFslBuffer.GetAsUnicode: String;
-var
-  chars: TUCharArray;
 begin
-  chars := FEncoding.GetChars(AsBytes);
-  SetString(Result, PChar(chars), Length(chars));
+  result := FEncoding.GetString(AsBytes);
 end;
 
 function TFslBuffer.GetHasFormat: boolean;
