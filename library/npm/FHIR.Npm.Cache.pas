@@ -129,7 +129,7 @@ type
 
     procedure clear;
 
-    procedure import(content : TBytes); overload;
+    function import(content : TBytes) : TNpmPackage; overload;
     function install(url : String) : boolean;
 
     procedure remove(id : String); overload;
@@ -403,7 +403,7 @@ begin
 end;
 
 
-procedure TFHIRPackageManager.import(content : TBytes);
+function TFHIRPackageManager.import(content : TBytes) : TNpmPackage;
 var
   npm : TJsonObject;
   id, ver, dir, fn, fver, s : String;
@@ -465,6 +465,9 @@ begin
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
       work(100, true, 'Installing');
+      result := TNpmPackage.fromFolderQuick(dir);
+      result.size := size;
+      result.installed := now;
     finally
       indexer.free;
     end;

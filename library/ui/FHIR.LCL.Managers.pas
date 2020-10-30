@@ -84,7 +84,8 @@ type
     procedure SetList(AValue: TListView);
     procedure updateStatus;
     procedure updateControls(op : TControlOperation; allowed : boolean);
-    procedure doListCompare)();
+    procedure doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
+    procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -112,8 +113,9 @@ type
     function getImageIndex(item : T) : integer; virtual; abstract;
     function getCellText(item : T; col : integer) : String; virtual; abstract;
     function getSummaryText(item : T) : String; virtual;
-    function compare(left, right : T) : integer; virtual;
+    function compare(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
 
+    function AddItem(mode : String) : T; virtual;
     procedure DeleteItem(item : T); virtual;
   end;
 
@@ -187,15 +189,20 @@ procedure TListManager<T>.SetList(AValue: TListView);
 begin
   FList := AValue;
   List.OnCompare := doListCompare;
+  List.OnSelectItem := doListChange;
   if canSort then
   begin
-
-    //!
-
+    List.AutoSort := true;
+    List.AutoSortIndicator := true;
+    List.SortColumn := 0;
+    List.SortDirection := sdAscending;
+    List.SortType := stData;
   end
   else
   begin
-   // !
+    List.AutoSort := false;
+    List.AutoSortIndicator := false;
+    List.SortType := stNone;
   end;
 end;
 
@@ -228,9 +235,67 @@ begin
       entry.control.enabled := allowed;
 end;
 
-procedure TListManager<T>.doAdd(mode : String);
+procedure TListManager<T>.doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
+var
+  left, right : T;
 begin
-  raise Exception.create('not done yet');
+  left := T(item1.data);
+  right := T(item2.data);
+  result := Compare(left, right, List.SortColumn);
+  if List.SortDirection = sdDescending then
+    result := - result;
+end;
+
+procedure TListManager<T>.doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
+begin
+  updateStatus;
+end;
+
+procedure TListManager<T>.doAdd(mode : String);
+var
+  item, itemT, itemN : T;
+  entry : TListItem;
+  i, c : integer;
+begin
+  item := addItem(mode);
+  if (item <> nil) then
+  begin
+    try
+      // so, does this replace and existing item?
+      itemN := nil;
+      for itemT in FData do
+      begin
+        if (compare(item, itemT, -1) = 0) then
+          itemN := itemT;
+      end;
+
+      if itemN = nil then
+      begin
+        entry := FList.items.add;
+        entry.Data := pointer(item);
+        entry.caption := getCellText(item, 0);
+        for c := 1 to FList.columnCount - 1 do
+          entry.subItems.add(getCellText(item, c));
+        FData.add(item.link);
+        FList.ItemIndex := FList.items.count - 1;
+      end
+      else
+      begin
+        i := FData.indexOf(itemn);
+        entry := FList.items[i];
+        entry.Data := pointer(item);
+        entry.caption := getCellText(item, 0);
+        entry.subItems.Clear;
+        for c := 1 to FList.columnCount - 1 do
+          entry.subItems.add(getCellText(item, c));
+        FData[i] := item.link;
+        FList.ItemIndex := i;
+      end;
+      updateStatus;
+    finally
+      item.Free;
+    end;
+  end;
 end;
 
 procedure TListManager<T>.doEdit(mode : String);
@@ -242,12 +307,16 @@ procedure TListManager<T>.doDelete(mode : String);
 var
   f : T;
   s : String;
+  i : integer;
 begin
   f := focus;
-  if (QuestionDlg('Delete', 'Delete '+getSummaryText(f), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if (QuestionDlg('Delete', 'Delete '+getSummaryText(f)+'?', mtConfirmation, [mrYes, mrNo], '') = mrYes) then
   begin
     DeleteItem(f);
-    doLoad;
+    i := FList.itemIndex;
+    FData.Delete(i);
+    FList.Items.Delete(i);
+    updateStatus;
   end;
 end;
 
@@ -282,10 +351,11 @@ begin
         for item in FData do
         begin
           entry := FList.items.add;
+          entry.Data := pointer(item);
           entry.caption := getCellText(item, 0);
           for c := 1 to FList.columnCount - 1 do
             entry.subItems.add(getCellText(item, c));
-          if (f <> nil) and (compare(f, item) = 0) then
+          if (f <> nil) and (compare(f, item, -1) = 0) then
             FList.ItemIndex := i;
           inc(i);
         end;
@@ -316,14 +386,19 @@ begin
   result := getCellText(item, 0);
 end;
 
-function TListManager<T>.compare(left, right: T): integer;
+function TListManager<T>.compare(left, right: T; col : integer): integer;
 begin
   result := NativeUInt(left) - NativeUInt(right);
 end;
 
+function TListManager<T>.AddItem(mode : String): T;
+begin
+  result := nil;
+end;
+
 procedure TListManager<T>.DeleteItem(item: T);
 begin
-  raise Exception.create('Not Done yet');
+  raise Exception.create('Delete is not supported here');
 end;
 
 End.
