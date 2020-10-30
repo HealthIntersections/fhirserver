@@ -4803,6 +4803,7 @@ object Form1: TForm1
       Caption = '&Package Manager'
       Hint = 'Manage Local FHIR Packages'
       ImageIndex = 50
+      OnExecute = actionToolsPackageManagerExecute
     end
     object actionToolsOptions: TAction
       Category = 'Tools'

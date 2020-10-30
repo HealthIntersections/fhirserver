@@ -1,6 +1,6 @@
 unit FHIR.Toolkit.Context;
 
-{$mode objfpc}{$H+}
+{$i fhir.inc}
 
 interface
 
@@ -25,6 +25,7 @@ type
 
   TToolkitEditor = class (TToolkitContextObject)
   private
+    FGuid : String;
     FCanCut: boolean;
     FCanPaste: boolean;
     FCanRedo: boolean;
@@ -32,6 +33,8 @@ type
     FHasText: boolean;
     FInSource: boolean;
   public
+    constructor create(context : TToolkitContext; guid : String);
+    property Guid : String read FGuid;
     property hasText : boolean read FHasText write FHasText;
     property canUndo : boolean read FCanUndo write FCanUndo;
     property canRedo : boolean read FCanRedo write FCanRedo;
@@ -66,6 +69,14 @@ type
   end;
 
 implementation
+
+{ TToolkitEditor }
+
+constructor TToolkitEditor.create(context : TToolkitContext; guid: String);
+begin
+  inherited create(context);
+  FGuid := guid;
+end;
 
 { TToolkitContextObject }
 

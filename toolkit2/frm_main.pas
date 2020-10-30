@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd,
-  FHIR.Toolkit.Context;
+  FHIR.Toolkit.Context, frm_fhir_manager;
 
 type
 
@@ -182,6 +182,7 @@ type
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
+    procedure actionToolsPackageManagerExecute(Sender: TObject);
     procedure actionViewEditorExecute(Sender: TObject);
     procedure actionViewExpressionEditorExecute(Sender: TObject);
     procedure actionViewInspectorExecute(Sender: TObject);
@@ -437,8 +438,6 @@ begin
   showView(pnlRight, pgRight, tbVariables);
 end;
 
-
-
 procedure TForm1.actionFileManageRenameExecute(Sender: TObject);
 begin
 
@@ -457,6 +456,16 @@ end;
 procedure TForm1.actionToolsOptionsExecute(Sender: TObject);
 begin
 
+end;
+
+procedure TForm1.actionToolsPackageManagerExecute(Sender: TObject);
+begin
+  PackageCacheForm := TPackageCacheForm.create(self);
+  try
+    PackageCacheForm.showModal;
+  finally
+    PackageCacheForm.free;
+  end;
 end;
 
 procedure TForm1.MenuItem34Click(Sender: TObject);
