@@ -9,10 +9,9 @@ see https://github.com/JackTrapper/scrypt-for-delphi
 interface
 
 uses
-  Windows,
-	SysUtils,
-  FHIR.Support.Testing,
-  FHIR.Support.Scrypt;
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils,
+  FHIR.Support.Testing, FHIR.Support.Scrypt;
 
 type
 	TScryptTests = class (TFslTestCase)
@@ -338,9 +337,10 @@ begin
 	inherited;
 
 	FScrypt := TScryptCracker.Create;
-
+        {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(FFreq) then //it's documented to never fail, but it can (see SO).
 		FFreq := -1;
+        {$ENDIF}
 end;
 
 procedure TScryptTests.TearDown;
@@ -361,26 +361,9 @@ begin
 	begin
 		SetLength(Result, 0);
 		Exit;
-	end;
-
-	// Determine real size of destination string, in bytes
-	strLen := WideCharToMultiByte(CP_UTF8, 0, PWideChar(s), Length(s), nil, 0, nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('Could not get length of destination string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
-
-	// Allocate memory for destination string
-	SetLength(Result, strLen);
-
-	// Convert source UTF-16 string (UnicodeString) to the destination using the code-page
-	strLen := WideCharToMultiByte(CP_UTF8, 0, PWideChar(s), Length(s), PAnsiChar(@Result[0]), strLen, nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('Could not convert utf16 to utf8 string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
+	end
+        else
+          result := TEncoding.UTF8.getBytes(s);
 end;
 
 procedure TScryptTests.Test_JavaWgScrypt;
@@ -775,7 +758,6 @@ begin
 	hash := TScryptCracker.CreateObject('SHA1.PurePascal') as IHashAlgorithm;
 
 	best := 0;
-	OutputDebugString('SAMPLING ON');
 	for i := 1 to 60 do
 	begin
 		t1 := GetTimestamp;
@@ -784,7 +766,6 @@ begin
 		if (((t2-t1) < best) or (best = 0)) then
 			best := (t2-t1);
 	end;
-	OutputDebugString('SAMPLING OFF');
 
 	Status(Format('%s: %.3f MB/s', ['TSHA1', (Length(data)/1024/1024) / (best/FFreq)]));
 end;
@@ -803,7 +784,6 @@ begin
 	//Benchmark SHA256PurePascal with the test data
 	best := 0;
 	hash := TScryptCracker.CreateObject('SHA256.PurePascal') as IHashAlgorithm;
-	OutputDebugString('SAMPLING ON');
 	for i := 1 to 60 do
 	begin
 		t1 := GetTimestamp;
@@ -812,15 +792,18 @@ begin
 		if (((t2-t1) < best) or (best = 0)) then
 			best := (t2-t1);
 	end;
-	OutputDebugString('SAMPLING OFF');
 
 	Status(Format('%s: %.3f MB/s', ['SHA256', (Length(data)/1024/1024) / (best/FFreq)]));
 end;
 
 function TScryptTests.GetTimestamp: Int64;
 begin
-	if not QueryPerformanceCounter(Result) then //it's documented to never fail; but it can. See SO
-		Result := 0;
+  {$IFDEF FPC}
+  result := GetTickCount64;
+  {$ELSE}
+  if not QueryPerformanceCounter(Result) then //it's documented to never fail; but it can. See SO
+    Result := 0;
+  {$ENDIF}
 end;
 
 procedure TScryptTests.ScryptBenchmarks;
@@ -835,7 +818,7 @@ var
 	var
 		endTicks: Int64;
 	begin
-		if not QueryPerformanceCounter(endTicks) then endTicks := 0;
+		endTicks := GetTimestamp;
 		Result := (endTicks - StartTicks);
 	end;
 
@@ -856,8 +839,9 @@ const
 const
 	STestPassword = 'correct horse battery staple';
 begin
+   {$IFDEF WINDPWS}
 	QueryPerformanceFrequency(freq);
-
+   {$ENDIF}
 	if UseTsv then
 	begin
 		RowLeader := TsvRowLeader;
@@ -895,7 +879,7 @@ begin
 			if (N < 16*r) and ((1 shl N)*r*Int(128) < $7FFFFFFF) then
 			begin
 				try
-					QueryPerformanceCounter(t1);
+					t1 := GetTimestamp;
 					TScrypt.HashPassword(STestPassword, N, r, 1);
 					t2 := ElapsedTicks(t1);
 					s := s+Format(ColumnSeparator+'%.1f', [t2/freq*1000]);
@@ -1305,13 +1289,15 @@ begin
 	{
 		Test round trip of generating a hash, and then verifying it
 	}
+   {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(freq) then freq := -1;
+   {$ENDIF}
 
 	password := 'correct horse battery staple';
 
-	if not QueryPerformanceCounter(t1) then t1 := 0;
+	t1 := GetTimestamp;
 	hash := TScrypt.HashPassword(password);
-	if not QueryPerformanceCounter(t2) then t2 := 0;
+	t2 := GetTimestamp;
 
 	Status('Password: "'+password+'"');
 	Status('Hash: "'+hash+'"');
@@ -1319,9 +1305,9 @@ begin
 
 	Self.CheckFalse(hash='');
 
-	if not QueryPerformanceCounter(t1) then t1 := 0;
+	t1 := GetTimestamp;
 	Self.CheckTrue(TScrypt.CheckPassword('correct horse battery staple', hash, {out}passwordRehashNeeded));
-	if not QueryPerformanceCounter(t2) then t2 := 0;
+	t2 := GetTimestamp;
 	Status(Format('Time to verify password: %.4f ms', [(t2-t1)/freq*1000]));
   assertPass();
 end;
@@ -1787,9 +1773,9 @@ var
 		//p = parallelization parameter
 		expected := HexToBytes(ExpectedHexString);
 
-		QueryPerformanceCounter(t1);
+		t1 := GetTimestamp;
 		actual := FScrypt.GetBytes(password, salt, CostFactor, r, p, DesiredBytes);
-		QueryPerformanceCounter(t2);
+	        t2 := GetTimestamp;
 
 		Self.Status(Format('Test "%s" duration: %.4f ms', [password, (t2-t1)/freq*1000]));
 
@@ -1810,8 +1796,10 @@ begin
 		the password and salt strings are passed as sequences of ASCII bytes without a
 		terminating NUL
 	}
+   {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(freq) then
 		freq := -1;
+   {$ENDIF}
 
 	//uses 512 bytes
 	test('', '', {N=16=2^}4, {r=}1, {p=}1, 64,
@@ -1830,12 +1818,11 @@ begin
 
 	if FindCmdLineSwitch('IncludeSlowTests', ['-','/'], True) then
 	begin
-		OutputDebugString('SAMPLING ON');
 		//uses 1 GB
 		test('pleaseletmein', 'SodiumChloride', {N=1048576=2^}20, {r=}8, {p=}1, 64,
 				'21 01 cb 9b 6a 51 1a ae ad db be 09 cf 70 f8 81 ec 56 8d 57 4a 2f fd 4d ab e5 ee 98 20 ad aa 47'+
 				'8e 56 fd 8f 4b a5 d0 9f fa 1c 6d 92 7c 40 f4 c3 37 30 40 49 e8 a9 52 fb cb f4 5c 6f a7 7a 41 a4');
-		OutputDebugString('SAMPLING OFF');
+
 	end
 	else
 		Status('1 GB slow test skipped. Use -IncludeSlowTests');

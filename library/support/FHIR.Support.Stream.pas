@@ -38,7 +38,7 @@ Uses
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
   {$IFNDEF FPC} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  IdHeaderList, idGlobal, IdGlobalProtocols,
+  IdHeaderList, IdGlobal, IdGlobalProtocols,
   FHIR.Support.Fpc, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
 type

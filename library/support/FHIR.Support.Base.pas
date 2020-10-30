@@ -33,7 +33,6 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}    // Interlocked* API and HResult
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections;
 

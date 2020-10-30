@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 2737
+  Left = 2858
   Height = 797
-  Top = -369
+  Top = -257
   Width = 1288
   Caption = 'FHIR Toolkit'
   ClientHeight = 777
@@ -3310,13 +3310,31 @@ object Form1: TForm1
             }
           end
         end
-        object ListView1: TListView
+        object lvTasks: TListView
           Left = 32
           Height = 94
           Top = 0
           Width = 1208
           Align = alClient
-          Columns = <>
+          AutoSort = False
+          AutoWidthLastColumn = True
+          Columns = <          
+            item
+              Caption = 'Name'
+              Width = 200
+            end          
+            item
+              Caption = 'Status'
+              Width = 150
+            end          
+            item
+              Caption = '%'
+              Width = 40
+            end          
+            item
+              Caption = 'Message'
+              Width = 864
+            end>
           TabOrder = 2
           ViewStyle = vsReport
         end
@@ -3443,6 +3461,7 @@ object Form1: TForm1
       Align = alClient
       ParentFont = False
       TabOrder = 4
+      OnChange = PageControl1Change
     end
     object ToolBar1: TToolBar
       Left = 1
@@ -3488,121 +3507,121 @@ object Form1: TForm1
         Style = tbsSeparator
       end
       object ToolButton7: TToolButton
-        Left = 121
+        Left = 124
         Top = 2
         Action = actionEditUndo
       end
       object ToolButton8: TToolButton
-        Left = 144
+        Left = 147
         Top = 2
         Action = actionEditRedo
       end
       object ToolButton9: TToolButton
-        Left = 167
+        Left = 170
         Top = 2
         Action = actionEditCut
       end
       object ToolButton10: TToolButton
-        Left = 190
+        Left = 193
         Top = 2
         Action = actionEditCopy
       end
       object ToolButton11: TToolButton
-        Left = 213
+        Left = 216
         Top = 2
         Action = actionEditPaste
       end
       object ToolButton12: TToolButton
-        Left = 236
+        Left = 239
         Height = 22
         Top = 2
         Caption = 'ToolButton12'
         Style = tbsSeparator
       end
       object ToolButton13: TToolButton
-        Left = 241
+        Left = 247
         Top = 2
         Action = actionZoomIn
       end
       object ToolButton14: TToolButton
-        Left = 264
+        Left = 270
         Top = 2
         Action = actionZoomOut
       end
       object ToolButton15: TToolButton
-        Left = 287
+        Left = 293
         Top = 2
         Action = actionViewEditor
       end
       object ToolButton16: TToolButton
-        Left = 310
+        Left = 316
         Top = 2
         Action = actionViewProjectManager
       end
       object ToolButton17: TToolButton
-        Left = 333
+        Left = 339
         Top = 2
         Action = actionViewServers
       end
       object ToolButton18: TToolButton
-        Left = 356
+        Left = 362
         Top = 2
         Action = actionViewSearch
       end
       object ToolButton19: TToolButton
-        Left = 379
+        Left = 385
         Top = 2
         Action = actionViewMessages
       end
       object ToolButton20: TToolButton
-        Left = 402
+        Left = 408
         Top = 2
         Action = actionViewLog
       end
       object ToolButton21: TToolButton
-        Left = 425
+        Left = 431
         Top = 2
         Action = actionViewStack
       end
       object ToolButton22: TToolButton
-        Left = 448
+        Left = 454
         Top = 2
         Action = actionViewVariables
       end
       object ToolButton23: TToolButton
-        Left = 471
+        Left = 477
         Top = 2
         Action = actionViewInspector
       end
       object ToolButton24: TToolButton
-        Left = 494
+        Left = 500
         Top = 2
         Action = actionViewPackages
       end
       object ToolButton25: TToolButton
-        Left = 517
+        Left = 523
         Top = 2
         Action = actionViewTasks
       end
       object ToolButton26: TToolButton
-        Left = 540
+        Left = 546
         Top = 2
         Action = actionViewExpressionEditor
       end
       object ToolButton27: TToolButton
-        Left = 563
+        Left = 569
         Height = 22
         Top = 2
         Caption = 'ToolButton27'
         Style = tbsSeparator
       end
       object ToolButton28: TToolButton
-        Left = 568
+        Left = 577
         Top = 2
         Action = actionHelpContent
       end
       object ToolButton29: TToolButton
-        Left = 591
+        Left = 600
         Top = 2
         Action = actionToolsPackageManager
       end
@@ -4876,6 +4895,7 @@ object Form1: TForm1
       Caption = '&Package Manager'
       Hint = 'Manage Local FHIR Packages'
       ImageIndex = 50
+      OnExecute = actionToolsPackageManagerExecute
     end
     object actionToolsOptions: TAction
       Category = 'Tools'

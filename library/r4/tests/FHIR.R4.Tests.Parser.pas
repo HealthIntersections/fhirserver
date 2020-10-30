@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, IOUtils,
+  SysUtils, Classes, IOUtils,
   FHIR.Support.Testing,
   IdGlobalProtocols,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Support.Comparisons,

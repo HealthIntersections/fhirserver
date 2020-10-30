@@ -179,11 +179,11 @@ Type
 
   TFslThreadClass = Class Of TFslThread;
 
-  TBackgroundTaskPackage = TFslObject;
+  TBackgroundTaskPackage = class;
   TBackgroundTaskEngine = class;
 
   TBackgroundTaskEvent = procedure (id : integer; response : TBackgroundTaskPackage) of object;
-  TBackgroundTaskStatus = (btsWaiting, btsProcessing, btsCancelling, btsReady, btsClosed,  btsWaitingForUIResponse, btwRespondingOnUI, btsUIResponded);
+  TBackgroundTaskStatus = (btsWaiting, btsProcessing, btsCancelling, btsClosed, btsWaitingForUIResponse, btwRespondingOnUI, btsUIResponded);
 
   TBackgroundTaskThread = class(TThread)
   private
@@ -194,17 +194,62 @@ Type
     constructor Create(engine : TBackgroundTaskEngine); // no link
   end;
 
-  TBackgroundTaskUIRequest = class (TFslObject)
+  { TBackgroundTaskPackage }
+
+  TBackgroundTaskPackage = class (TFslObject)
+  public
+    function link : TBackgroundTaskPackage; overload;
+  end;
+
+  { TBackgroundTaskRequestPackage }
+
+  TBackgroundTaskRequestPackage = class (TBackgroundTaskPackage)
+  public
+    function link : TBackgroundTaskRequestPackage; overload;
+  end;
+
+  { TBackgroundTaskResponsePackage }
+
+  TBackgroundTaskResponsePackage = class (TBackgroundTaskPackage)
   private
+    FException : String;
+    FExceptionClass : ExceptClass;
+  public
+    function link : TBackgroundTaskResponsePackage; overload;
+    property Exception : String read FException write FException;
+    property ExceptionClass : ExceptClass read FExceptionClass write FExceptionClass;
+  end;
+
+  { TBackgroundTaskPackagePair }
+
+  TBackgroundTaskPackagePair = class (TFslObject)
+  private
+    FOnNotify: TBackgroundTaskEvent;
+    FRequest: TBackgroundTaskRequestPackage;
+    FResponse: TBackgroundTaskResponsePackage;
+  public
+    constructor Create(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
+    destructor Destroy; override;
+    function link : TBackgroundTaskPackagePair; overload;
+    property request : TBackgroundTaskRequestPackage read FRequest;
+    property response : TBackgroundTaskResponsePackage read FResponse;
+    property OnNotify : TBackgroundTaskEvent read FOnNotify write FOnNotify;
+  end;
+
+  { TBackgroundTaskUIRequest }
+
+  TBackgroundTaskUIRequest = class (TBackgroundTaskPackage)
   public
     function link : TBackgroundTaskUIRequest; overload;
   end;
 
-  TBackgroundTaskUIResponse = class (TFslObject)
+  TBackgroundTaskUIResponse = class (TBackgroundTaskPackage)
   private
   public
     function link : TBackgroundTaskUIResponse; overload;
   end;
+
+  { TBackgroundTaskStatusInfo }
 
   TBackgroundTaskStatusInfo = class (TFslObject)
   private
@@ -221,22 +266,24 @@ Type
     property status : TBackgroundTaskStatus read FStatus write FStatus;
     property message : String read FMessage write FMessage;
     property pct : integer read FPct write FPct;
+
+    function StatusDisplay : string;
+    function PctDisplay : String;
   end;
+
+  { TBackgroundTaskEngine }
 
   TBackgroundTaskEngine = class abstract (TFslObject)
   private
-    FRequest: TBackgroundTaskPackage;
-    FResponse: TBackgroundTaskPackage;
     FOnNotify : TBackgroundTaskEvent;
-    procedure SetRequest(const Value: TBackgroundTaskPackage);
-    procedure SetResponse(const Value: TBackgroundTaskPackage);
   private
     { private thread management section }
     FId : integer;
     FThread : TBackgroundTaskThread; // owned...
     FWantBreak : boolean;
     FWantStop : boolean;
-    FWaiting : TBackgroundTaskPackage;
+    FWaiting : TFslList<TBackgroundTaskPackagePair>;
+    FDone : TFslList<TBackgroundTaskPackagePair>;
     FStatus : TBackgroundTaskStatus;
     FUIRequest : TBackgroundTaskUIRequest;
     FUIResponse : TBackgroundTaskUIResponse;
@@ -245,7 +292,7 @@ Type
     procedure break;
     procedure stop;
     procedure threadProc;
-    procedure doExec(pck : TBackgroundTaskPackage);
+    procedure doExec(pck : TBackgroundTaskPackagePair);
     procedure setStatus(v : TBackgroundTaskStatus);
   protected
     FUIException : String;
@@ -253,7 +300,8 @@ Type
 
     function reportStatus : TBackgroundTaskStatusInfo;
   public
-    constructor Create(notify : TBackgroundTaskEvent);
+    constructor Create; overload; override;
+    constructor Create(notify : TBackgroundTaskEvent); overload;
     destructor Destroy; override;
 
     property OnNotify : TBackgroundTaskEvent read FOnNotify write FOnNotify;
@@ -262,9 +310,7 @@ Type
     // properties of interest to subclasses:
     // execute is called. There is a request, create a response, calling
     // progress regularly (which allows the task to get killed
-    property request : TBackgroundTaskPackage read FRequest write SetRequest;
-    property response : TBackgroundTaskPackage read FResponse write SetResponse;
-    procedure execute; virtual; abstract;
+    procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); virtual; abstract;
     procedure progress(state : String; pct : integer); // -1 for no pct. may throw EAbort
 
     // ask for an interaction with the user, passing request and getting response (or an exception)
@@ -274,6 +320,8 @@ Type
     // override this if the engine will call uiInteraction. It will happen on the main UI thread so is blocking for that thread
     procedure performUIInteraction(request : TBackgroundTaskUIRequest; response : TBackgroundTaskUIResponse); virtual;
   end;
+
+  { TBackgroundTaskManager }
 
   TBackgroundTaskManager = class (TFslObject)
   private
@@ -286,14 +334,19 @@ Type
     destructor Destroy; override;
 
     function registerTaskEngine(engine : TBackgroundTaskEngine) : integer;
-    procedure queueTask(id : integer; package : TBackgroundTaskPackage); // where id was return value from registerTaskEngine
+
+    // id is return value from registerTaskEngine
+    procedure queueTask(id : integer; request : TBackgroundTaskRequestPackage); overload;
+    procedure queueTask(id : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); overload;
+    procedure queueTask(id : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage; onNotify : TBackgroundTaskEvent); overload;
     procedure killTask(id : integer);
 
     procedure stopAll; // shut down preparation
 
     procedure primaryThreadCheck;
 
-    procedure report(list : TFslList<TBackgroundTaskStatusInfo>);
+    procedure report(list : TFslList<TBackgroundTaskStatusInfo>); overload;
+    function report(taskId : integer) : TBackgroundTaskStatusInfo; overload;
   end;
 
 var
@@ -610,6 +663,48 @@ begin
   {$ENDIF}
   GBackgroundTasks.Free;
   DeleteCriticalSection(GCritSct);
+end;
+
+{ TBackgroundTaskPackagePair }
+
+constructor TBackgroundTaskPackagePair.Create(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
+begin
+  inherited Create;
+  FRequest := request;
+  FResponse := response;
+end;
+
+destructor TBackgroundTaskPackagePair.Destroy;
+begin
+  FRequest.Free;
+  FResponse.Free;
+  inherited Destroy;
+end;
+
+function TBackgroundTaskPackagePair.link: TBackgroundTaskPackagePair;
+begin
+  result := TBackgroundTaskPackagePair(inherited link);
+end;
+
+{ TBackgroundTaskResponsePackage }
+
+function TBackgroundTaskResponsePackage.link: TBackgroundTaskResponsePackage;
+begin
+  result := TBackgroundTaskResponsePackage(inherited link);
+end;
+
+{ TBackgroundTaskRequestPackage }
+
+function TBackgroundTaskRequestPackage.link: TBackgroundTaskRequestPackage;
+begin
+  result := TBackgroundTaskRequestPackage(inherited link);
+end;
+
+{ TBackgroundTaskPackage }
+
+function TBackgroundTaskPackage.link: TBackgroundTaskPackage;
+begin
+  result := TBackgroundTaskPackage(inherited link);
 end;
 
 { TFslLock }
@@ -1000,40 +1095,42 @@ end;
 
 { TBackgroundTaskEngine }
 
+constructor TBackgroundTaskEngine.Create;
+begin
+  inherited Create;
+  FWaiting := TFslList<TBackgroundTaskPackagePair>.create;
+  FDone := TFslList<TBackgroundTaskPackagePair>.create;
+  FStatus := btsWaiting;
+end;
+
 constructor TBackgroundTaskEngine.Create(notify : TBackgroundTaskEvent);
 begin
-  inherited create;
+  Create;
   FOnNotify := notify;
-  FStatus := btsWaiting;
 end;
 
 destructor TBackgroundTaskEngine.Destroy;
 begin
-  FRequest.Free;
-  FResponse.Free;
+  FWaiting.Free;
+  FDone.Free;
   inherited;
 end;
 
-procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackage);
+procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackagePair);
 begin
   try
     SetStatus(btsProcessing);
-    request := pck.Link;
-    response := nil;
     GBackgroundTasks.log('Task '+name+' go');
-    execute;
+    execute(pck.request, pck.response);
     GBackgroundTasks.log('Task '+name+' done');
-    if response <> nil then
-      setStatus(btsReady)
-    else
-      setStatus(btsWaiting);
+    setStatus(btsWaiting);
   except
     on e : Exception do
     begin
       GBackgroundTasks.log('Task '+name+' error: '+e.Message);
       SetStatus(btsWaiting);
-      request := nil;
-      response := nil;
+      pck.response.ExceptionClass := ExceptClass(e.ClassType);
+      pck.response.Exception := e.message;
     end;
   end;
 end;
@@ -1061,18 +1158,6 @@ begin
   result.pct := FPct;
 end;
 
-procedure TBackgroundTaskEngine.SetRequest(const Value: TBackgroundTaskPackage);
-begin
-  FRequest.Free;
-  FRequest := Value;
-end;
-
-procedure TBackgroundTaskEngine.SetResponse(const Value: TBackgroundTaskPackage);
-begin
-  FResponse.Free;
-  FResponse := Value;
-end;
-
 procedure TBackgroundTaskEngine.setStatus(v: TBackgroundTaskStatus);
 begin
   GBackgroundTasks.FLock.Lock;
@@ -1091,7 +1176,7 @@ end;
 
 procedure TBackgroundTaskEngine.threadProc;
 var
-  pck : TBackgroundTaskPackage;
+  pck : TBackgroundTaskPackagePair;
 begin
   SetThreadName(name);
   try
@@ -1101,10 +1186,10 @@ begin
       pck := nil;
       GBackgroundTasks.FLock.Lock;
       try
-        if FWaiting <> nil then
+        if FWaiting.Count > 0 then
         begin
-          pck := FWaiting;
-          FWaiting := nil;
+          pck := FWaiting[0].link;
+          FWaiting.delete(0);
           GBackgroundTasks.log('Found request for '+name);
         end;
       finally
@@ -1116,6 +1201,7 @@ begin
         try
           GBackgroundTasks.log('exec for '+name);
           doExec(pck);
+          FDone.add(pck.link);
         finally
           pck.Free;
         end;
@@ -1132,8 +1218,8 @@ end;
 
 procedure TBackgroundTaskEngine.uiInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-  FRequest := request;
-  FResponse := response;
+  FUIRequest := request;
+  FUIResponse := response;
   FStatus := btsWaitingForUIResponse;
   while FStatus <> btsUIResponded do
     sleep(50);
@@ -1213,6 +1299,16 @@ begin
   end;
 end;
 
+function TBackgroundTaskManager.report(taskId: integer): TBackgroundTaskStatusInfo;
+begin
+  FLock.Lock;
+  try
+    result := FEngines[taskid].reportStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TBackgroundTaskManager.stopAll;
 var
   e : TBackgroundTaskEngine;
@@ -1236,101 +1332,122 @@ end;
 procedure TBackgroundTaskManager.primaryThreadCheck;
 var
   e : TBackgroundTaskEngine;
-  resp : TBackgroundTaskPackage;
+  pck : TBackgroundTaskPackagePair;
   uReq : TBackgroundTaskUIRequest;
   uResp : TBackgroundTaskUIResponse;
 begin
   // first round: are any tasks complete
   for e in FEngines do
   begin
-    resp := nil;
+    pck := nil;
     FLock.Lock;
     try
-      if e.FStatus = btsReady then
+      if e.FDone.count > 0 then
       begin
         log('found response for '+e.name);
-        e.FStatus := btsWaiting;
-        resp := e.Response.Link;
-        e.Response := nil;
+        pck := e.FDone[0].link;
+        e.FDone.delete(0);
       end;
     finally
       FLock.Unlock;
     end;
-    if resp <> nil then
+    if pck <> nil then
     begin
       try
         log('notify response for '+e.name);
-        e.OnNotify(e.FId, resp);
+        if (assigned(pck.OnNotify)) then
+          pck.OnNotify(e.FId, pck.response)
+        else
+          e.OnNotify(e.FId, pck.response);
         log('notified response for '+e.name);
       finally
-        resp.Free;
+        pck.Free;
       end;
       exit; // only one outcome per iteration - don't tie up the pimary thread
     end;
   end;
-  // second round: any tasks want user interaction
-  for e in FEngines do
-  begin
-    resp := nil;
+  //// second round: any tasks want user interaction
+  //for e in FEngines do
+  //begin
+  //  resp := nil;
+  //  FLock.Lock;
+  //  try
+  //    if e.FStatus = btsWaitingForUIResponse then
+  //    begin
+  //      log('UI Response needed for '+e.name);
+  //      e.FStatus := btsWaitingForUIResponse;
+  //      uReq := e.FUIRequest.Link;
+  //      uResp := e.FUIResponse.Link;
+  //    end
+  //    else
+  //    begin
+  //      uReq := nil;
+  //      uResp := nil;
+  //    end;
+  //  finally
+  //    FLock.Unlock;
+  //  end;
+  //
+  //  if uReq <> nil then
+  //  begin
+  //    try
+  //      e.FUIExceptionClass := nil;
+  //      e.FUIException := '';
+  //      log('get UI response for '+e.name);
+  //      try
+  //        e.OnNotify(e.FId, resp);
+  //      except
+  //        on ex : Exception do
+  //        begin
+  //          e.FUIException := ex.Message;
+  //          e.FUIExceptionClass := ExceptClass(ex.ClassType);
+  //        end;
+  //      end;
+  //      FLock.Lock;
+  //      try
+  //        e.FStatus := btsUIResponded;
+  //      finally
+  //        FLock.Unlock;
+  //      end;
+  //      log('finished getting UI Response for '+e.name);
+  //    finally
+  //      uReq.Free;
+  //      uResp.Free;
+  //    end;
+  //    exit; // only one outcome per iteration - don't tie up the pimary thread
+  //  end;
+  //end;
+  //
+end;
+
+procedure TBackgroundTaskManager.queueTask(id : integer; request : TBackgroundTaskRequestPackage);
+begin
+  queueTask(id, request, TBackgroundTaskResponsePackage.create, nil);
+end;
+
+procedure TBackgroundTaskManager.queueTask(id : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
+begin
+  queueTask(id, request, response, nil);
+end;
+
+procedure TBackgroundTaskManager.queueTask(id : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage; onNotify : TBackgroundTaskEvent);
+var
+  engine : TBackgroundTaskEngine;
+  pck : TBackgroundTaskPackagePair;
+begin
+  log('queue task for '+inttostr(id)+' ('+FEngines[id].name+')');
+  pck := TBackgroundTaskPackagePair.create(request, response);
+  try
+    pck.onNotify := onNotify;
     FLock.Lock;
     try
-      if e.FStatus = btsWaitingForUIResponse then
-      begin
-        log('UI Response needed for '+e.name);
-        e.FStatus := btsWaitingForUIResponse;
-        uReq := e.FUIRequest.Link;
-        uResp := e.FUIResponse.Link;
-      end
-      else
-      begin
-        uReq := nil;
-        uResp := nil;
-      end;
+      engine := FEngines[id];
+      engine.FWaiting.add(pck.link);
     finally
       FLock.Unlock;
     end;
-
-    if uReq <> nil then
-    begin
-      try
-        e.FUIExceptionClass := nil;
-        e.FUIException := '';
-        log('get UI response for '+e.name);
-        try
-          e.OnNotify(e.FId, resp);
-        except
-          on ex : Exception do
-          begin
-            e.FUIException := ex.Message;
-            e.FUIExceptionClass := ExceptClass(ex.ClassType);
-          end;
-        end;
-        FLock.Lock;
-        try
-          e.FStatus := btsUIResponded;
-        finally
-          FLock.Unlock;
-        end;
-        log('finished getting UI Response for '+e.name);
-      finally
-        uReq.Free;
-        uResp.Free;
-      end;
-      exit; // only one outcome per iteration - don't tie up the pimary thread
-    end;
-  end;
-
-end;
-
-procedure TBackgroundTaskManager.queueTask(id: integer; package: TBackgroundTaskPackage);
-begin
-  log('queue task for '+inttostr(id)+' ('+FEngines[id].name+')');
-  FLock.Lock;
-  try
-    FEngines[id].FWaiting.Free;
-    FEngines[id].FWaiting := package;
   finally
-    FLock.Unlock;
+    pck.free;
   end;
 end;
 
@@ -1399,6 +1516,27 @@ end;
 function TBackgroundTaskStatusInfo.link: TBackgroundTaskStatusInfo;
 begin
   result := TBackgroundTaskStatusInfo(inherited link);
+end;
+
+function TBackgroundTaskStatusInfo.StatusDisplay: string;
+begin
+  case FStatus of
+    btsWaiting : result := 'Waiting';
+    btsProcessing : result := 'Working';
+    btsCancelling : result := 'Stopping';
+    btsClosed : result := 'Closed';
+    btsWaitingForUIResponse : result := 'Waiting (UI)';
+    btwRespondingOnUI : result := 'Responding';
+    btsUIResponded : result := 'Responded';
+  end;
+end;
+
+function TBackgroundTaskStatusInfo.PctDisplay: String;
+begin
+  if FPct < 0 then
+    result := ''
+  else
+    result := inttostr(pct);
 end;
 
 Initialization

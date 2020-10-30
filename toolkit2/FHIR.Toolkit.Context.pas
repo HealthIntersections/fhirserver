@@ -1,16 +1,57 @@
 unit FHIR.Toolkit.Context;
 
-{$mode objfpc}{$H+}
+{$i fhir.inc}
 
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils,
+  FHIR.Support.Base;
 
 type
+  TToolkitContext = class;
 
-  TToolkitContext = class
+  { TToolkitContextObject }
+
+  TToolkitContextObject = class (TFslObject)
+  private
+    FContext : TToolkitContext; // no ownership
   public
+    constructor create(context : TToolkitContext); virtual;
+    property Context : TToolkitContext read FContext write FContext;
+  end;
+
+  { TToolkitEditor }
+
+  TToolkitEditor = class (TToolkitContextObject)
+  private
+    FGuid : String;
+    FCanCut: boolean;
+    FCanPaste: boolean;
+    FCanRedo: boolean;
+    FCanUndo: boolean;
+    FHasText: boolean;
+    FInSource: boolean;
+  public
+    constructor create(context : TToolkitContext; guid : String);
+    property Guid : String read FGuid;
+    property hasText : boolean read FHasText write FHasText;
+    property canUndo : boolean read FCanUndo write FCanUndo;
+    property canRedo : boolean read FCanRedo write FCanRedo;
+    property canCut : boolean read FCanCut write FCanCut;
+    property canPaste : boolean read FCanPaste write FCanPaste;
+    property inSource : boolean read FInSource write FInSource;
+  end;
+
+  { TToolkitContext }
+
+  TToolkitContext = class (TFslObject)
+  private
+    function GetFocus: TToolkitEditor;
+    function GetHasFocus: boolean;
+  public
+    property hasFocus : boolean read GetHasFocus;
+    property focus : TToolkitEditor read GetFocus;
 //    property persistenceServices : TToolkitPersistenceServices;
 //    property EditorList : TToolkitEditorList;
 ////
@@ -28,6 +69,34 @@ type
   end;
 
 implementation
+
+{ TToolkitEditor }
+
+constructor TToolkitEditor.create(context : TToolkitContext; guid: String);
+begin
+  inherited create(context);
+  FGuid := guid;
+end;
+
+{ TToolkitContextObject }
+
+constructor TToolkitContextObject.create(context: TToolkitContext);
+begin
+  inherited create;
+  FContext := context;
+end;
+
+{ TToolkitContext }
+
+function TToolkitContext.GetFocus: TToolkitEditor;
+begin
+  result := nil;
+end;
+
+function TToolkitContext.GetHasFocus: boolean;
+begin
+  result := false;
+end;
 
 end.
 
