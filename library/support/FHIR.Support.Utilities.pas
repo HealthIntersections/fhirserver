@@ -236,6 +236,7 @@ Function StringArrayIndexOfInsensitive(Const aNames : Array Of String; Const sNa
 Function StringArrayIndexOfSensitive(Const aNames : Array Of String; Const sName : String): Integer; Overload;
 Function StringArrayIndexOf(Const aNames : Array Of String; Const sName: String) : Integer; Overload;
 Function StringArrayToString(Const aNames : Array Of String): String; Overload;
+Function CommaText(Const aNames : Array Of String): String; Overload;
 Function StringExists(Const sValue, sFind : String) : Boolean; Overload;
 Function StringExists(Const sValue : String; Const aFind : TCharSet) : Boolean; Overload;
 Function StringExistsInsensitive(Const sValue, sFind : String): Boolean; Overload;
@@ -5056,6 +5057,16 @@ Begin
 End;
 
 Function StringArrayToString(Const aNames : Array Of String): String;
+var
+  s : String;
+begin
+  result := '';
+  for s in aNames do
+    result := ', '+s;
+  result := result.Substring(1).trim;
+end;
+
+Function CommaText(Const aNames : Array Of String): String;
 var
   s : String;
 begin

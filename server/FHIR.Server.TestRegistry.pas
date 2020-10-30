@@ -35,10 +35,9 @@ interface
 (*
 
 
-FHIR.R4.Tests.Liquid
 FHIR.R4.Tests.Maps
 
-FHIR.R4.Tests.PathEngine
+
 
 
 FHIR.Tools.GraphQL.Tests
@@ -57,7 +56,7 @@ uses
   FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests, FHIR.Support.SCrypt.Tests,
   FHIR.Npm.Tests,
   {$IFNDEF NO_JS} FHIR.Javascript.Tests, {$ENDIF}
-  FHIR.R4.Tests.Parser, FHIR.R4.Tests.Context, FHIR.R4.Tests.Utilities, FHIR.R4.Tests.Client;
+  FHIR.R4.Tests.Parser, FHIR.R4.Tests.Context, FHIR.R4.Tests.Utilities, FHIR.R4.Tests.Client, FHIR.R4.Tests.Liquid, FHIR.R4.Tests.PathEngine;
 
 procedure registerTests;
 
@@ -150,6 +149,8 @@ begin
   FHIR.R4.Tests.Context.registerTests;
   FHIR.R4.Tests.Utilities.registerTests;
   FHIR.R4.Tests.Client.registerTests;
+  FHIR.R4.Tests.Liquid.registerTests;
+  FHIR.R4.Tests.PathEngine.registerTests;
 end;
 
 end.

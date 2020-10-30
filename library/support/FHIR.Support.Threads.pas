@@ -35,7 +35,6 @@ interface
 {$OVERFLOWCHECKS OFF}
 
 uses
-  {$IFDEF OSX} FHIR.Support.Osx, {$ENDIF}
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
   SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc;
@@ -207,6 +206,23 @@ Type
     function link : TBackgroundTaskUIResponse; overload;
   end;
 
+  TBackgroundTaskStatusInfo = class (TFslObject)
+  private
+    FName: String;
+    FId: integer;
+    FStatus: TBackgroundTaskStatus;
+    FPct: integer;
+    FMessage: String;
+  public
+    function link : TBackgroundTaskStatusInfo; overload;
+
+    property id : integer read FId write FId;
+    property name : String read FName write FName;
+    property status : TBackgroundTaskStatus read FStatus write FStatus;
+    property message : String read FMessage write FMessage;
+    property pct : integer read FPct write FPct;
+  end;
+
   TBackgroundTaskEngine = class abstract (TFslObject)
   private
     FRequest: TBackgroundTaskPackage;
@@ -224,6 +240,8 @@ Type
     FStatus : TBackgroundTaskStatus;
     FUIRequest : TBackgroundTaskUIRequest;
     FUIResponse : TBackgroundTaskUIResponse;
+    FState : String;
+    FPct : Integer;
     procedure break;
     procedure stop;
     procedure threadProc;
@@ -232,6 +250,8 @@ Type
   protected
     FUIException : String;
     FUIExceptionClass : ExceptClass;
+
+    function reportStatus : TBackgroundTaskStatusInfo;
   public
     constructor Create(notify : TBackgroundTaskEvent);
     destructor Destroy; override;
@@ -272,6 +292,8 @@ Type
     procedure stopAll; // shut down preparation
 
     procedure primaryThreadCheck;
+
+    procedure report(list : TFslList<TBackgroundTaskStatusInfo>);
   end;
 
 var
@@ -1023,8 +1045,20 @@ end;
 
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
 begin
+  FState := state;
+  FPct := pct;
   if FWantStop or FWantBreak then
     abort;
+end;
+
+function TBackgroundTaskEngine.reportStatus: TBackgroundTaskStatusInfo;
+begin
+  result := TBackgroundTaskStatusInfo.Create;
+  result.id := FId;
+  result.name := name;
+  result.status := FStatus;
+  result.message := FState;
+  result.pct := FPct;
 end;
 
 procedure TBackgroundTaskEngine.SetRequest(const Value: TBackgroundTaskPackage);
@@ -1164,6 +1198,19 @@ begin
     FLock.Unlock;
   end;
   engine.FThread := TBackgroundTaskThread.Create(engine);
+end;
+
+procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>);
+var
+  engine : TBackgroundTaskEngine;
+begin
+  FLock.Lock;
+  try
+    for engine in FEngines do
+      list.Add(engine.reportStatus);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TBackgroundTaskManager.stopAll;
@@ -1345,6 +1392,13 @@ end;
 function TBackgroundTaskUIResponse.link: TBackgroundTaskUIResponse;
 begin
   result := TBackgroundTaskUIResponse(inherited link);
+end;
+
+{ TBackgroundTaskStatusInfo }
+
+function TBackgroundTaskStatusInfo.link: TBackgroundTaskStatusInfo;
+begin
+  result := TBackgroundTaskStatusInfo(inherited link);
 end;
 
 Initialization

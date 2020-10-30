@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniFiles;
+  ComCtrls, ActnList, StdActns, StdCtrls, Buttons, IniFiles,
+  FHIR.Support.Threads;
 
 type
 
@@ -60,7 +61,9 @@ type
     actionFileOpen: TFileOpen;
     actionFileSaveAs1: TFileSaveAs;
     actionHelpContent: THelpContents;
+    chkTaskInactive: TCheckBox;
     ImageList1: TImageList;
+    ListView1: TListView;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -125,6 +128,8 @@ type
     N7: TMenuItem;
     N8: TMenuItem;
     PageControl1: TPageControl;
+    Panel1: TPanel;
+    Panel3: TPanel;
     pgLeft: TPageControl;
     pgBottom: TPageControl;
     pgRight: TPageControl;
@@ -132,6 +137,7 @@ type
     Panel2: TPanel;
     pnlLeft: TPanel;
     pnlRight: TPanel;
+    SpeedButton1: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
@@ -147,6 +153,7 @@ type
     tbSearch: TTabSheet;
     tbBreakpoints: TTabSheet;
     tbTasks: TTabSheet;
+    Timer1: TTimer;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
@@ -199,6 +206,7 @@ type
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     FIni : TIniFile;
     FSourceMaximised : boolean;
@@ -207,6 +215,8 @@ type
     procedure maximiseSource;
     procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
     procedure unmaximiseSource;
+    procedure updateUI;
+    procedure updateTasks;
   public
 
   end;
@@ -269,6 +279,11 @@ begin
   saveLayout;
 end;
 
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  updateUI;
+end;
+
 procedure TForm1.Splitter1Moved(Sender: TObject);
 begin
   saveLayout;
@@ -299,6 +314,16 @@ begin
   Splitter2.enabled := true;
   Splitter3.enabled := true;
   FSourceMaximised := false;
+end;
+
+procedure TForm1.updateUI;
+begin
+  updateTasks;
+end;
+
+procedure TForm1.updateTasks;
+begin
+  !
 end;
 
 procedure TForm1.actionViewEditorExecute(Sender: TObject);

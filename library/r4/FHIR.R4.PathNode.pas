@@ -53,6 +53,7 @@ type
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
     pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
+    pfAbs,
     pfForHtml,
     pfCustom);
 
@@ -72,7 +73,7 @@ const
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'hasExtension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
     'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToTime',
-    'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime', 'forHtml',
+    'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime', 'abs', 'forHtml',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
@@ -704,7 +705,7 @@ begin
   else if (s.contains('.')) then
     result := FHIR_SD_NS+s.substring(0, s.indexof('.'))+'#'+s
   else
-    result := FHIR_SD_NS+s;
+    result := FHIR_SD_NS+StringTitleCase(s);
 end;
 
 { TFHIRTypeDetails }
