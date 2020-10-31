@@ -6,7 +6,20 @@ interface
 
 uses
   Classes, SysUtils,
-  FHIR.Support.Base;
+  FHIR.Support.Base, FHIR.Support.Stream;
+
+// supported formats:
+// ini
+// xml - plain, schema, xslt
+// json
+// hl7 v2 vertical bar
+// cda
+// dicom
+// javascript
+// map
+// liquid
+// markdown
+// resource
 
 type
   TToolkitContext = class;
@@ -25,6 +38,7 @@ type
 
   TToolkitEditor = class (TToolkitContextObject)
   private
+    FAddress: String;
     FGuid : String;
     FCanCut: boolean;
     FCanPaste: boolean;
@@ -32,9 +46,26 @@ type
     FCanUndo: boolean;
     FHasText: boolean;
     FInSource: boolean;
+    FLoadState: boolean;
+    function GetBytes: TBytes;
+    function GetCanBeSaved: boolean;
+    procedure SetBytes(AValue: TBytes);
   public
     constructor create(context : TToolkitContext; guid : String);
+    property Context : TToolkitContext read FContext;
+
+    // storage related properties
     property Guid : String read FGuid;
+    property Address : String read FAddress;
+    property LoadState : boolean read FLoadState write FLoadState;
+
+    property AsBytes : TBytes read GetBytes write SetBytes;
+
+    // editing related functionality
+    procedure local(location : TSourceLocation);
+
+    // status for actions
+    property CanBeSaved : boolean read GetCanBeSaved;
     property hasText : boolean read FHasText write FHasText;
     property canUndo : boolean read FCanUndo write FCanUndo;
     property canRedo : boolean read FCanRedo write FCanRedo;
@@ -72,10 +103,30 @@ implementation
 
 { TToolkitEditor }
 
+function TToolkitEditor.GetBytes: TBytes;
+begin
+
+end;
+
+function TToolkitEditor.GetCanBeSaved: boolean;
+begin
+
+end;
+
+procedure TToolkitEditor.SetBytes(AValue: TBytes);
+begin
+
+end;
+
 constructor TToolkitEditor.create(context : TToolkitContext; guid: String);
 begin
   inherited create(context);
   FGuid := guid;
+end;
+
+procedure TToolkitEditor.local(location: TSourceLocation);
+begin
+
 end;
 
 { TToolkitContextObject }

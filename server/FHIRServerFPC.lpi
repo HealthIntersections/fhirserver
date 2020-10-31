@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -9,9 +9,9 @@
         <MainUnitHasTitleStatement Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
         <AlwaysBuild Value="True"/>
+        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="FHIRServer"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
@@ -178,7 +178,6 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="5">
       <Item1>
@@ -197,7 +196,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="483">
+    <Units Count="484">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -783,7 +782,6 @@
       <Unit145>
         <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Support.JSON"/>
       </Unit145>
       <Unit146>
         <Filename Value="..\library\support\FHIR.Support.Logging.pas"/>
@@ -2140,6 +2138,10 @@
         <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Context.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit482>
+      <Unit483>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Liquid.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit483>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

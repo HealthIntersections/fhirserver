@@ -397,6 +397,7 @@ uses
   FHIR.R4.Tests.Client in '..\library\r4\tests\FHIR.R4.Tests.Client.pas',
   FHIR.R4.Tests.Context in '..\library\r4\tests\FHIR.R4.Tests.Context.pas',
   FHIR.R4.Tests.Liquid in '..\library\r4\tests\FHIR.R4.Tests.Liquid.pas',
+  FHIR.R4.Tests.PathEngine in '..\library\r4\tests\FHIR.R4.Tests.PathEngine.pas',
   FHIR.R4.Tests.Worker in '..\library\r4\tests\FHIR.R4.Tests.Worker.pas',
   FHIR.Support.SCrypt.Tests in '..\library\support\FHIR.Support.SCrypt.Tests.pas';
 

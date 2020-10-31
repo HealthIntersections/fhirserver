@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls,
+  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
   frm_npm_manager,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Toolkit.Context;
 
@@ -114,6 +114,19 @@ type
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
+    MenuItem67: TMenuItem;
+    MenuItem68: TMenuItem;
+    MenuItem69: TMenuItem;
+    MenuItem70: TMenuItem;
+    MenuItem71: TMenuItem;
+    MenuItem72: TMenuItem;
+    MenuItem73: TMenuItem;
+    MenuItem74: TMenuItem;
+    MenuItem75: TMenuItem;
+    MenuItem76: TMenuItem;
+    MenuItem77: TMenuItem;
+    MenuItem78: TMenuItem;
+    MenuItem79: TMenuItem;
     N9: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -138,10 +151,13 @@ type
     Panel2: TPanel;
     pnlLeft: TPanel;
     pnlRight: TPanel;
+    pmNew: TPopupMenu;
     SpeedButton1: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
+    SynEdit1: TSynEdit;
+    TabSheet1: TTabSheet;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -156,6 +172,7 @@ type
     tbTasks: TTabSheet;
     Timer1: TTimer;
     ToolBar1: TToolBar;
+    ToolBar2: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -186,6 +203,7 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     procedure actionFileManageRenameExecute(Sender: TObject);
+    procedure actionFileNewExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
@@ -205,11 +223,14 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure NewFromFormatClick(Sender: TObject);
+    procedure MenuItem79Click(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure ToolButton1Click(Sender: TObject);
   private
     FIni : TIniFile;
     FSourceMaximised : boolean;
@@ -294,6 +315,16 @@ begin
     GBackgroundTasks.primaryThreadCheck;
   except
   end;
+end;
+
+procedure TForm1.ToolButton1Click(Sender: TObject);
+var
+  pt, pt2: TPoint;
+begin
+  pt.x := ToolBar1.left+ToolButton1.Left;
+  pt.y := ToolBar1.top+ToolButton1.Top + ToolButton1.Height;
+  pt2 := ClientToScreen(pt);
+  pmNew.PopUp(pt2.x, pt2.y);
 end;
 
 procedure TForm1.Splitter1Moved(Sender: TObject);
@@ -496,6 +527,11 @@ begin
 
 end;
 
+procedure TForm1.actionFileNewExecute(Sender: TObject);
+begin
+  ShowMessage('not done yet '+sender.className);
+end;
+
 procedure TForm1.actionHelpCheckUpgradeExecute(Sender: TObject);
 begin
 
@@ -523,6 +559,16 @@ begin
 end;
 
 procedure TForm1.MenuItem34Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.NewFromFormatClick(Sender: TObject);
+begin
+  ShowMessage('New File for format '+(sender as TMenuItem).caption+' not implemented yet');
+end;
+
+procedure TForm1.MenuItem79Click(Sender: TObject);
 begin
 
 end;

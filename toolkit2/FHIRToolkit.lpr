@@ -8,7 +8,7 @@ uses
   {$ENDIF}
   FastMM4,
   Interfaces, // this includes the LCL widgetset
-  Forms, frm_main, frm_npm_manager, frm_fhir_browser,
+  Forms, frm_main, frm_npm_manager, frm_npm_browser,
   { you can add units after this }
   FHIR.Toolkit.Context, FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Support.Logging, FHIR.Support.Utilities, 
