@@ -66,6 +66,7 @@ Type
 
     class function compare(n1, n2 : TJsonNode) : boolean; overload;
   end;
+  TJsonNodeClass = class of TJsonNode;
 
   TJsonArrayEnumerator = class (TFslObject)
   private
@@ -1231,7 +1232,7 @@ begin
   FLastLocationAWS := FLocation;
 
   FValue.Clear;
-  If Not More Then
+  If (CharInSet(ch, [#0, ' ', #13, #10, #9]) and Not More) Then
     FLexType := jltEof
   Else case ch of
     '{' : FLexType := jltOpen;
@@ -1335,6 +1336,8 @@ end;
 
 procedure TJSONLexer.Push(ch: Char);
 begin
+  if (FLocation.Col > 0) then
+    FLocation.Col := FLocation.Col - 1;
   insert(ch, FPeek, 1);
 end;
 
@@ -1728,11 +1731,10 @@ begin
   case FLex.LexType of
     jltOpen :
       begin
-        FLex.Next;
-        FLex.FStates.InsertObject(0, '', nil);
         result := TJsonObject.Create('$');
         try
           result.LocationStart := FLex.FLastLocationBWS;
+          Next;
           readObject(result as TJsonObject, true);
           result.link;
         finally
@@ -1743,11 +1745,12 @@ begin
     jltNumber : raise EJsonTodo.Create('Not implemented yet');
     jltOpenArray :
       begin
-        FLex.Next;
+        FItemType := jpitArray;
         result := TJsonArray.Create('$');
         try
           FLex.FStates.InsertObject(0, '', result);
           result.LocationStart := FLex.FLastLocationBWS;
+          Next;
           readArray(result as TJsonArray, true);
           result.link;
         finally

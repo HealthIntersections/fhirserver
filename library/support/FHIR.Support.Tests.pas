@@ -235,14 +235,19 @@ Type
   end;
 
 Type
+
+  { TJsonTests }
+
   TJsonTests = Class (TFslTestCase)
   Private
     procedure jsonUnicodeTest(fn : String);
+    procedure jsonTest(src : String; clss : TJsonNodeClass);
   Published
     procedure TestResource;
     procedure TestCustomDoc2;
     procedure TestCustomDoc2Loose;
     procedure TestCustomDecimal;
+    procedure testSimple;
     procedure testUtf8n;
     procedure testUtf8;
     procedure testUtf16;
@@ -4209,6 +4214,32 @@ begin
   finally
     f.Free;
   end;
+end;
+
+procedure TJsonTests.jsonTest(src : String; clss : TJsonNodeClass);
+var
+  n : TJsonNode;
+begin
+  n := TJsonParser.ParseNode(src);
+  try
+    assertTrue(n is clss);
+  finally
+    n.free;
+  end;
+end;
+
+procedure TJsonTests.testSimple;
+begin
+  jsonTest('{"t" : "t"}', TJsonObject);
+  jsonTest('{"t" : 1}', TJsonObject);
+  jsonTest('{"t" : true}', TJsonObject);
+  jsonTest('{"t" : null}', TJsonObject);
+  jsonTest('{"t" : ["t"]}', TJsonObject);
+  jsonTest('{}', TJsonObject);
+  jsonTest('[]', TJsonArray);
+  jsonTest('[{}]', TJsonArray);
+  jsonTest('[{"t" : []}]', TJsonArray);
+  jsonTest('["", 1, null, true, {"t" : []}]', TJsonArray);
 end;
 
 procedure TJsonTests.TestCustomDoc2;

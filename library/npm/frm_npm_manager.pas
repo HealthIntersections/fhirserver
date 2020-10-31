@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, DateUtils,
   StdCtrls, IniFiles, Clipbrd, Menus,
-  frm_progress,
+  frm_progress, frm_npm_browser,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging,
   FHIR.Web.Fetcher,
   FHIR.Npm.Package, FHIR.Npm.Cache, FHIR.LCL.Managers;
@@ -25,12 +25,10 @@ type
 
     function canSort : boolean; override;
     function allowedOperations(item : TNpmPackage) : TNodeOperationSet; override;
-    function ShowLoadingProgress : boolean; override;
     function loadList : boolean; override;
 
-    function getImageIndex(item : TNpmPackage) : integer; override;
     function getCellText(item : TNpmPackage; col : integer) : String; override;
-    function compare(left, right : TNpmPackage; col : integer) : integer; override;
+    function compareItem(left, right : TNpmPackage; col : integer) : integer; override;
 
     function addItem(mode : String) : TNpmPackage; override;
     procedure DeleteItem(item : TNpmPackage); override;
@@ -68,6 +66,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure btnCommonClick(Sender: TObject);
     procedure btnCopyReportClick(Sender: TObject);
+    procedure btnFindPackagesClick(Sender: TObject);
     procedure FHIRR21Click(Sender: TObject);
     procedure FHIRR31Click(Sender: TObject);
     procedure FHIRR41Click(Sender: TObject);
@@ -117,11 +116,6 @@ begin
   result := [opAdd, opDelete];
 end;
 
-function TPackageListManager.ShowLoadingProgress: boolean;
-begin
-  Result:= inherited ShowLoadingProgress;
-end;
-
 function TPackageListManager.loadList : boolean;
 var
   resp : TFHIRLoadPackagesTaskResponse;
@@ -134,11 +128,6 @@ begin
   finally
     resp.free;
   end;
-end;
-
-function TPackageListManager.getImageIndex(item: TNpmPackage): integer;
-begin
-  result := -1;
 end;
 
 function TPackageListManager.getCellText(item: TNpmPackage; col: integer): String;
@@ -154,7 +143,7 @@ begin
   end;
 end;
 
-function TPackageListManager.compare(left, right: TNpmPackage; col : integer): integer;
+function TPackageListManager.compareItem(left, right: TNpmPackage; col : integer): integer;
 begin
   case col of
     -1: if left.name = right.name then
@@ -242,7 +231,17 @@ begin
   Clipboard.Open;
   Clipboard.AsText := FManager.FCache.Report;
   Clipboard.Close;
+end;
 
+procedure TPackageCacheForm.btnFindPackagesClick(Sender: TObject);
+begin
+  PackageRegistryForm := TPackageRegistryForm.create(self);
+  try
+    PackageRegistryForm.Ini := FIni;
+    PackageRegistryForm.showModal;
+  finally
+    PackageRegistryForm.free;
+  end;
 end;
 
 procedure TPackageCacheForm.FHIRR21Click(Sender: TObject);

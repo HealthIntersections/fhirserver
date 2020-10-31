@@ -1,12 +1,11 @@
 object PackageCacheForm: TPackageCacheForm
   Left = 814
-  Height = 942
+  Height = 538
   Top = 417
-  Width = 1911
+  Width = 1092
   Caption = 'Package Cache Manager'
-  ClientHeight = 942
-  ClientWidth = 1911
-  DesignTimePPI = 168
+  ClientHeight = 538
+  ClientWidth = 1092
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -14,30 +13,30 @@ object PackageCacheForm: TPackageCacheForm
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 100
-    Top = 842
-    Width = 1911
+    Height = 57
+    Top = 481
+    Width = 1092
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 100
-    ClientWidth = 1911
+    ClientHeight = 57
+    ClientWidth = 1092
     ParentFont = False
     TabOrder = 0
     object lblProgress: TLabel
-      Left = 16
-      Height = 30
-      Top = 9
-      Width = 101
+      Left = 9
+      Height = 15
+      Top = 5
+      Width = 58
       Caption = 'lblProgress'
       ParentColor = False
       ParentFont = False
       Visible = False
     end
     object Button1: TButton
-      Left = 1647
-      Height = 56
-      Top = 32
-      Width = 243
+      Left = 941
+      Height = 32
+      Top = 18
+      Width = 139
       Anchors = [akTop, akRight]
       Caption = 'Close'
       ModalResult = 8
@@ -45,20 +44,20 @@ object PackageCacheForm: TPackageCacheForm
       TabOrder = 0
     end
     object pbDownload: TProgressBar
-      Left = 16
-      Height = 32
-      Top = 47
-      Width = 1353
+      Left = 9
+      Height = 18
+      Top = 27
+      Width = 773
       Anchors = [akTop, akLeft, akRight]
       ParentFont = False
       TabOrder = 1
       Visible = False
     end
     object btnCancel: TButton
-      Left = 1384
-      Height = 56
-      Top = 32
-      Width = 243
+      Left = 791
+      Height = 32
+      Top = 18
+      Width = 139
       Anchors = [akTop, akRight]
       Caption = 'Cancel'
       OnClick = btnCancelClick
@@ -69,28 +68,28 @@ object PackageCacheForm: TPackageCacheForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 65
+    Height = 37
     Top = 0
-    Width = 1911
+    Width = 1092
     Align = alTop
-    ClientHeight = 65
-    ClientWidth = 1911
+    ClientHeight = 37
+    ClientWidth = 1092
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
-      Left = 24
-      Height = 30
-      Top = 18
-      Width = 69
+      Left = 14
+      Height = 15
+      Top = 10
+      Width = 39
       Caption = 'Files in '
       ParentColor = False
       ParentFont = False
     end
     object rbUserMode: TRadioButton
-      Left = 112
-      Height = 34
-      Top = 16
-      Width = 138
+      Left = 64
+      Height = 19
+      Top = 9
+      Width = 79
       Caption = 'User Cache'
       Checked = True
       OnChange = rbUserModeChange
@@ -99,10 +98,10 @@ object PackageCacheForm: TPackageCacheForm
       TabStop = True
     end
     object rbSystem: TRadioButton
-      Left = 280
-      Height = 34
-      Top = 18
-      Width = 163
+      Left = 160
+      Height = 19
+      Top = 10
+      Width = 94
       Caption = 'System Cache'
       OnChange = rbSystemChange
       ParentFont = False
@@ -110,78 +109,79 @@ object PackageCacheForm: TPackageCacheForm
     end
   end
   object Panel3: TPanel
-    Left = 1631
-    Height = 777
-    Top = 65
-    Width = 280
+    Left = 932
+    Height = 444
+    Top = 37
+    Width = 160
     Align = alRight
     BevelOuter = bvNone
-    ClientHeight = 777
-    ClientWidth = 280
+    ClientHeight = 444
+    ClientWidth = 160
     ParentFont = False
     TabOrder = 2
     object btnImportFile: TButton
-      Left = 16
-      Height = 56
-      Top = 88
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 50
+      Width = 139
       Caption = 'Import File'
       ParentFont = False
       TabOrder = 0
     end
     object btnImportUrl: TButton
-      Left = 16
-      Height = 56
-      Top = 159
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 91
+      Width = 139
       Caption = 'Import URL'
       ParentFont = False
       TabOrder = 1
     end
     object btnDelete: TButton
-      Left = 16
-      Height = 56
-      Top = 304
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 174
+      Width = 139
       Caption = 'Delete'
       Enabled = False
       ParentFont = False
       TabOrder = 2
     end
     object btnFindPackages: TButton
-      Left = 16
-      Height = 56
-      Top = 16
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 9
+      Width = 139
       Caption = 'Package Registry'
+      OnClick = btnFindPackagesClick
       ParentFont = False
       TabOrder = 3
     end
     object btnCommon: TButton
-      Left = 16
-      Height = 56
-      Top = 233
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 133
+      Width = 139
       Caption = 'Common'
       OnClick = btnCommonClick
       ParentFont = False
       TabOrder = 4
     end
     object btnReload: TButton
-      Left = 16
-      Height = 56
-      Top = 625
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 357
+      Width = 139
       Anchors = [akLeft, akBottom]
       Caption = 'Reload'
       ParentFont = False
       TabOrder = 5
     end
     object btnCopyReport: TButton
-      Left = 16
-      Height = 56
-      Top = 697
-      Width = 243
+      Left = 9
+      Height = 32
+      Top = 398
+      Width = 139
       Anchors = [akLeft, akBottom]
       Caption = 'Copy Report'
       OnClick = btnCopyReportClick
@@ -191,45 +191,45 @@ object PackageCacheForm: TPackageCacheForm
   end
   object ListView1: TListView
     Left = 0
-    Height = 777
-    Top = 65
-    Width = 1631
+    Height = 444
+    Top = 37
+    Width = 932
     Align = alClient
     AutoSort = False
     AutoWidthLastColumn = True
     Columns = <    
       item
         Caption = 'Name'
-        MinWidth = 100
-        Width = 280
+        MinWidth = 57
+        Width = 160
       end    
       item
         Caption = 'Version'
-        MinWidth = 80
-        Width = 140
+        MinWidth = 46
+        Width = 80
       end    
       item
         Caption = 'FHIR Version'
-        MinWidth = 80
-        Width = 175
+        MinWidth = 46
+        Width = 100
       end    
       item
         Caption = 'Age'
-        MinWidth = 121
-        Width = 159
+        MinWidth = 69
+        Width = 91
       end    
       item
         Caption = 'Size'
-        MinWidth = 100
-        Width = 200
+        MinWidth = 57
+        Width = 114
       end    
       item
         Caption = 'Canonical URL'
-        Width = 175
+        Width = 100
       end    
       item
         Caption = 'Dependencies'
-        Width = 498
+        Width = 283
       end>
     HideSelection = False
     ParentFont = False
@@ -239,8 +239,8 @@ object PackageCacheForm: TPackageCacheForm
     ViewStyle = vsReport
   end
   object ImageList1: TImageList
-    Left = 166
-    Top = 439
+    Left = 95
+    Top = 251
     Bitmap = {
       4C7A080000001000000010000000B81000000000000078DAD5990B349759F7C7
       4F35F3EF7E9969664C51881894249790747349942E949A504D4AC6AD346E45E8
@@ -385,12 +385,12 @@ object PackageCacheForm: TPackageCacheForm
     FileName = 'package.tgz'
     Filter = 'FHIR Packages|*.tgz|All Files|*.*'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
-    Left = 110
-    Top = 439
+    Left = 63
+    Top = 251
   end
   object pmImport: TPopupMenu
-    Left = 238
-    Top = 438
+    Left = 136
+    Top = 250
     object FHIRR21: TMenuItem
       Caption = 'FHIR R2'
       OnClick = FHIRR21Click
