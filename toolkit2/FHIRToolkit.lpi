@@ -87,6 +87,27 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="fhir.toolkit.tempstorage.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.TempStorage"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_file_format.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileFormatChooser"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\fhir.toolkit.inieditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.IniEditor"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\fhir.toolkit.texteditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.TextEditor"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -97,7 +118,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

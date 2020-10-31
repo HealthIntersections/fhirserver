@@ -7,8 +7,9 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
-  frm_npm_manager,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Toolkit.Context;
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
+  frm_npm_manager, frm_file_format,
+  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor;
 
 type
 
@@ -114,6 +115,16 @@ type
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
+    MenuItem54: TMenuItem;
+    MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
+    MenuItem58: TMenuItem;
+    MenuItem59: TMenuItem;
+    MenuItem60: TMenuItem;
+    MenuItem61: TMenuItem;
+    MenuItem62: TMenuItem;
+    mnuRecent: TMenuItem;
+    MenuItem55: TMenuItem;
     MenuItem67: TMenuItem;
     MenuItem68: TMenuItem;
     MenuItem69: TMenuItem;
@@ -141,7 +152,7 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
-    PageControl1: TPageControl;
+    pgEditors: TPageControl;
     Panel1: TPanel;
     Panel3: TPanel;
     pgLeft: TPageControl;
@@ -152,6 +163,7 @@ type
     pnlLeft: TPanel;
     pnlRight: TPanel;
     pmNew: TPopupMenu;
+    pmPages: TPopupMenu;
     SpeedButton1: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
@@ -223,9 +235,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure mnuRecentClick(Sender: TObject);
     procedure NewFromFormatClick(Sender: TObject);
     procedure MenuItem79Click(Sender: TObject);
-    procedure PageControl1Change(Sender: TObject);
+    procedure pgEditorsChange(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
@@ -233,6 +246,7 @@ type
     procedure ToolButton1Click(Sender: TObject);
   private
     FIni : TIniFile;
+    FTempStore : TFHIRToolkitTemporaryStorage;
     FSourceMaximised : boolean;
     FContext : TToolkitContext;
     procedure saveLayout;
@@ -243,6 +257,7 @@ type
     procedure updateActionStatus;
     procedure updateUI;
     procedure updateTasks;
+    procedure createNewFile(id : integer);
   public
     property Context : TToolkitContext read FContext;
   end;
@@ -259,6 +274,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
+  FTempStore := TFHIRToolkitTemporaryStorage.create;
   loadLayout;
   FContext := TToolkitContext.create;
   updateActionStatus;
@@ -266,6 +282,7 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
+  FTempStore.Free;
   FContext.Free;
   saveLayout;
   FIni.Free;
@@ -391,6 +408,62 @@ begin
   finally
     list.free;
   end;
+end;
+
+procedure TForm1.createNewFile(id: integer);
+var
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  editorClass : TToolkitEditorClass;
+begin
+  if (id = 0) then
+  begin
+    FileFormatChooser := TFileFormatChooser.create(self);
+    try
+      if FileFormatChooser.ShowModal = mrOK then
+        id := FileFormatChooser.ListBox1.ItemIndex + 1
+      else
+       abort;
+    finally
+      FileFormatChooser.free;
+    end;
+  end;
+
+  case id of
+   1: // '&Resource'
+      raise Exception.create('This format is not supported yet');
+   2: //  'HL7 v&2 Message'
+      raise Exception.create('This format is not supported yet');
+   3: // '&CDA Document'
+      raise Exception.create('This format is not supported yet');
+   4: // '&XML File'
+      raise Exception.create('This format is not supported yet');
+   5: // '&JSON File'
+      raise Exception.create('This format is not supported yet');
+   6: // '&Liquid Template'
+      raise Exception.create('This format is not supported yet');
+   7: //  'Structure &Map'
+      raise Exception.create('This format is not supported yet');
+   8: // '&Ini File'
+      editorClass := TIniEditor;
+   9: // '&Text File'
+      raise Exception.create('This format is not supported yet');
+   10: //  'Mar&kdown'
+      raise Exception.create('This format is not supported yet');
+   11: //  'Java&script'
+      raise Exception.create('This format is not supported yet');
+   12: // '&HTML'
+      raise Exception.create('This format is not supported yet');
+   13: // '&DICOM Image'
+      raise Exception.create('This format is not supported yet');
+  end;
+
+  editor := FContext.addEditor(editorClass, TToolkitEditSession.makeNew());
+  tab := pgEditors.AddTabSheet;
+  editor.newContent;
+  editor.bindToTab(tab);
+  pgEditors.ActivePage := tab;
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
 end;
 
 procedure TForm1.updateActionStatus;
@@ -529,7 +602,7 @@ end;
 
 procedure TForm1.actionFileNewExecute(Sender: TObject);
 begin
-  ShowMessage('not done yet '+sender.className);
+  createNewFile(0);
 end;
 
 procedure TForm1.actionHelpCheckUpgradeExecute(Sender: TObject);
@@ -563,9 +636,38 @@ begin
 
 end;
 
+procedure TForm1.mnuRecentClick(Sender: TObject);
+var
+  ts : TStringList;
+  i : integer;
+  item : TMenuItem;
+begin
+  ts := TStringList.create;
+  try
+    FTempStore.getMRUList(ts);
+    mnuRecent.Clear;
+    for i := 0 to ts.count - 1 do
+    begin
+      item := TMenuItem.create(nil);
+      item.Caption := ts[i];
+      item.Tag := i;
+      mnuRecent.Add(item);
+    end;
+    if (ts.count = 0) then
+    begin
+      item := TMenuItem.create(nil);
+      item.Caption := '(none)';
+      item.Enabled := false;
+      mnuRecent.Add(item);
+    end;
+  finally
+    ts.free;
+  end;
+end;
+
 procedure TForm1.NewFromFormatClick(Sender: TObject);
 begin
-  ShowMessage('New File for format '+(sender as TMenuItem).caption+' not implemented yet');
+  createNewFile((Sender as TMenuItem).tag);
 end;
 
 procedure TForm1.MenuItem79Click(Sender: TObject);
@@ -573,7 +675,7 @@ begin
 
 end;
 
-procedure TForm1.PageControl1Change(Sender: TObject);
+procedure TForm1.pgEditorsChange(Sender: TObject);
 begin
 
 end;

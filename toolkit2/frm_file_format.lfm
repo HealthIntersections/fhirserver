@@ -1,0 +1,79 @@
+object FileFormatChooser: TFileFormatChooser
+  Left = 598
+  Height = 615
+  Top = 348
+  Width = 736
+  Caption = 'FileFormatChooser'
+  ClientHeight = 615
+  ClientWidth = 736
+  DesignTimePPI = 168
+  Position = poOwnerFormCenter
+  LCLVersion = '2.1.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 80
+    Top = 535
+    Width = 736
+    Align = alBottom
+    ClientHeight = 80
+    ClientWidth = 736
+    TabOrder = 0
+    object Button1: TButton
+      Left = 448
+      Height = 44
+      Top = 23
+      Width = 131
+      Caption = 'OK'
+      Default = True
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object Button2: TButton
+      Left = 595
+      Height = 44
+      Top = 23
+      Width = 131
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 535
+    Top = 0
+    Width = 736
+    Align = alClient
+    BorderWidth = 6
+    ClientHeight = 535
+    ClientWidth = 736
+    TabOrder = 1
+    object ListBox1: TListBox
+      Left = 7
+      Height = 521
+      Top = 7
+      Width = 722
+      Align = alClient
+      Items.Strings = (
+        'FHIR Resource'
+        'HL7 v&2 Message'
+        'CDA Document'
+        'XML File'
+        'JSON File'
+        'Liquid Template'
+        'Structure Map'''
+        'Ini File'
+        'Text File'
+        '''Markdown'
+        'Javascript'
+        'HTML'
+        'DICOM Image'
+      )
+      ItemHeight = 30
+      ItemIndex = 0
+      OnDblClick = ListBox1DblClick
+      TabOrder = 0
+    end
+  end
+end
