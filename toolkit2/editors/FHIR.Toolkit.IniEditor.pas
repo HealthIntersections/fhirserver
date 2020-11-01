@@ -17,7 +17,7 @@ type
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
   public
-    procedure newContent(info : TStringList); override;
+    procedure newContent(); override;
     function FileExtension : String; override;
   end;
 

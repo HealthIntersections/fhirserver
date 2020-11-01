@@ -90,7 +90,7 @@ procedure TFHIRToolkitTemporaryStorage.fetchOpenList(sessions: TFslList<TToolkit
 var
   arr : TJsonArray;
   n : TJsonNode;
-  fn, fnn, cnt, s : String;
+  fn, fnn, cnt, s, g : String;
   session : TToolkitEditSession;
 begin
   fn := FFolder+'editor-sessions.json';
@@ -113,8 +113,12 @@ begin
   end;
   try
     for s in TDirectory.GetFiles(FFolder, '*.cnt') do
-      if (not hasGuid(s, sessions)) then
+    begin
+      g := ExtractFileName(s);
+      g := g.subString(0, g.IndexOf('.'));
+      if (not hasGuid(g, sessions)) then
         deleteFile(s);
+    end;
 
     if (FileExists(fnn)) then
     begin
@@ -130,9 +134,8 @@ end;
 procedure TFHIRToolkitTemporaryStorage.storeContent(guid: String; original : boolean; bytes: TBytes);
 begin
   if original then
-    BytesToFile(bytes, FFolder+guid+'.original.cnt')
-  else
-    BytesToFile(bytes, FFolder+guid+'.cnt');
+    BytesToFile(bytes, FFolder+guid+'.original.cnt');
+  BytesToFile(bytes, FFolder+guid+'.cnt');
 end;
 
 
@@ -143,17 +146,29 @@ end;
 
 
 function TFHIRToolkitTemporaryStorage.sessionToJson(session: TToolkitEditSession): TJsonObject;
+var
+  params : TJsonObject;
+  i : integer;
 begin
   result := TJsonObject.create;
   try
     result.str['guid'] := session.guid;
-    result.str['address'] := session.Address;
+    if session.Address <> '' then
+      result.str['address'] := session.Address;
     result.str['caption'] := session.Caption;
-    result.bool['needs-saving'] := session.NeedsSaving;
-
-    result.int['encoding'] := ord(session.Encoding);
-    result.int['eoln'] := ord(session.EndOfLines);
-    result.bool['bom'] := session.HasBOM;
+    if session.NeedsSaving then
+      result.bool['needs-saving'] := session.NeedsSaving;
+    result.str['type'] := CODES_TSourceEditorKind[session.kind];
+    result.str['encoding'] := CODES_TSourceEncoding[session.Encoding];
+    result.str['eoln'] := CODES_TSourceLineMarker[session.EndOfLines];
+    if session.HasBOM then
+      result.bool['bom'] := session.HasBOM;
+    if (session.Info.Count > 0) then
+    begin
+      params := result.forceObj['params'];
+      for i := 0 to session.Info.count - 1 do
+        params.str[session.info.Names[i]] := session.info.ValueFromIndex[i];
+    end;
     result.link;
   finally
     result.free;
@@ -161,6 +176,8 @@ begin
 end;
 
 function TFHIRToolkitTemporaryStorage.jsonToSession(json: TJsonObject): TToolkitEditSession;
+var
+  n : String;
 begin
   result := TToolkitEditSession.create;
   try
@@ -168,10 +185,15 @@ begin
     result.Address := json.str['address'];
     result.Caption := json.str['caption'];
     result.NeedsSaving := json.bool['needs-saving'];
-
-    result.Encoding := TSourceEncoding(json.int['encoding']);
-    result.EndOfLines := TSourceLineMarker(json.int['eoln']);
+    result.kind := TSourceEditorKind(StringArrayIndexOfInsensitive(CODES_TSourceEditorKind, json.str['type']));
+    result.Encoding := TSourceEncoding(StringArrayIndexOfInsensitive(CODES_TSourceEncoding, json.str['encoding']));
+    result.EndOfLines := TSourceLineMarker(StringArrayIndexOfInsensitive(CODES_TSourceLineMarker, json.str['eoln']));
     result.HasBOM := json.bool['bom'];
+    if json.has('params') then
+    begin
+      for n in json.obj['params'].properties.Keys do
+        result.info.AddPair(n, json.obj['params'].str[n]);
+    end;
     result.link;
   finally
     result.free;

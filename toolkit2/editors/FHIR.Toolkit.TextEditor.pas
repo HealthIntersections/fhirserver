@@ -59,7 +59,7 @@ type
     function MustBeUnicode : boolean; virtual;
   public
     function GetBytes: TBytes; override;
-    procedure LoadBytes(bytes: TBytes; info : TStringList); override;
+    procedure LoadBytes(bytes: TBytes); override;
     procedure bindToTab(tab : TTabSheet); override;
     procedure locate(location : TSourceLocation); override;
     function location : String; override;
@@ -164,7 +164,7 @@ begin
   end;
 end;
 
-procedure TTextEditor.LoadBytes(bytes: TBytes; info : TStringList);
+procedure TTextEditor.LoadBytes(bytes: TBytes);
 var
   encoding: TEncoding;
   start : integer;
@@ -442,6 +442,8 @@ procedure TTextEditor.DoTextEditorChange(sender: TObject);
 begin
   canRedo := TextEditor.CanRedo;
   Session.NeedsSaving := true;
+  lastChange := GetTickCount64;
+  lastChangeChecked := false;
   Context.OnUpdateActions(self);;
 end;
 

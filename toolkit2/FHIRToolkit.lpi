@@ -95,6 +95,7 @@
         <Filename Value="frm_file_format.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FileFormatChooser"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>

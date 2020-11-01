@@ -5,7 +5,7 @@ unit FHIR.Toolkit.Context;
 interface
 
 uses
-  Classes, SysUtils, ComCtrls, Dialogs,
+  Classes, SysUtils, ComCtrls,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
 
 // supported formats:
@@ -22,15 +22,21 @@ uses
 // resource
 
 type
+  TSourceEditorKind = (sekNull, sekFHIR, sekv2, sekCDA, sekXML, sekJson, sekLiquid, sekMap, sekIni, sekText, sekMD, sekJS, sekHTML, sekDicom);
   TSourceEncoding = (senUnknown, senBinary, senUTF8, senASCII, senUTF16BE, senUTF16LE);
   TSourceLineMarker = (slUnknown, slCRLF, slCR, slLF);
 
 const
-  {$IFDEF WINODWS}
+  {$IFDEF WINDOWS}
   PLATFORM_DEFAULT_EOLN = slCRLF;
   {$ELSE}
   PLATFORM_DEFAULT_EOLN = slLF;
   {$ENDIF}
+
+  CODES_TSourceEditorKind : Array [TSourceEditorKind] of String = ('Unknown', 'FHIR', 'v2', 'CDA', 'XML', 'Json', 'Liquid', 'Map', 'Ini', 'Text', 'MD', 'JS', 'HTML', 'Dicom');
+  CODES_TSourceEncoding : Array [TSourceEncoding] of String = ('Unknown', 'Binary', 'UTF8', 'ASCII', 'UTF16BE', 'UTF16LE');
+  CODES_TSourceLineMarker : Array [TSourceLineMarker] of String = ('Unknown', 'CRLF', 'CR', 'LF');
+
 
 type
   TToolkitContext = class;
@@ -56,24 +62,23 @@ type
     FGuid : String;
     FHasBOM: boolean;
     FInfo: TStringList;
+    FKind: TSourceEditorKind;
     FNeedsSaving: boolean;
   public
     constructor Create; override;
     destructor Destroy; override;
-
     function link : TToolkitEditSession; overload;
 
     property Guid : String read FGuid write FGuid;
     property Address : String read FAddress write FAddress;
     property Caption : String read FCaption write FCaption;
+    property kind : TSourceEditorKind read FKind write FKind;
     property Encoding : TSourceEncoding read FEncoding write FEncoding;
     property EndOfLines : TSourceLineMarker read FEndOfLines write FEndOfLines;
     property HasBOM : boolean read FHasBOM write FHasBOM;
     property NeedsSaving : boolean read FNeedsSaving write FNeedsSaving;
 
     property Info : TStringList read FInfo;
-
-    class function makeNew : TToolkitEditSession;
   end;
 
   { TToolkitEditor }
@@ -81,6 +86,8 @@ type
   TToolkitEditor = class abstract (TToolkitContextObject)
   private
     FIsFile: boolean;
+    FLastChange: int64;
+    FLastChangeChecked: boolean;
     FSession : TToolkitEditSession;
     FCanCut: boolean;
     FCanPaste: boolean;
@@ -96,6 +103,7 @@ type
   public
     constructor create(context : TToolkitContext; session : TToolkitEditSession);
     destructor Destroy; override;
+    function link : TToolkitEditor; overload;
 
     property Context : TToolkitContext read FContext;
     property Session : TToolkitEditSession read FSession;
@@ -108,11 +116,12 @@ type
 
     // editing related functionality
     procedure bindToTab(tab : TTabSheet); virtual; // set up the UI - caleed before either newContent or LoadBytes is called
-    procedure newContent(info : TStringList); virtual; abstract; // create new content
-    procedure loadBytes(bytes : TBytes; info : TStringList); virtual; abstract;
+    procedure newContent(); virtual; abstract; // create new content
+    procedure loadBytes(bytes : TBytes); virtual; abstract;
     procedure locate(location : TSourceLocation); virtual; abstract;
     function location : String; virtual; abstract;
     procedure redo; virtual;
+    procedure editPause; virtual;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -124,8 +133,9 @@ type
     property inSource : boolean read FInSource write FInSource;
     property isFile : boolean read FIsFile write FIsFile;
     property hasAddress : boolean read GetHasAddress;
+    property lastChange : int64 read FLastChange write FLastChange;
+    property lastChangeChecked : boolean read FLastChangeChecked write FLastChangeChecked;
   end;
-  TToolkitEditorClass = class of TToolkitEditor;
 
   TStorageService = class abstract (TFslObject)
   public
@@ -149,6 +159,8 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TToolkitContext; overload;
+
     property hasFocus : boolean read GetHasFocus;
     property focus : TToolkitEditor read FFocus write FFocus;
 
@@ -172,10 +184,9 @@ type
 //    property CallStack : TToolkitEditorCallStackView;
 //    property FHIRPath : TToolkitFHIRPathView;
 
-    function addEditor(editorClass : TToolkitEditorClass; session : TToolkitEditSession) : TToolkitEditor;
+    procedure addEditor(editor : TToolkitEditor);
     function EditorForTab(tab : TTabSheet) : TToolkitEditor;
     function EditorForAddress(address : String) : TToolkitEditor;
-    function examineFile(handle : TComponent; filename : String; const bytes : TBytes; info : TStringList) : TToolkitEditorClass;
     function anyDirtyEditors : boolean;
 
     property OnUpdateActions : TNotifyEvent read FOnUpdateActions write FOnUpdateActions;
@@ -205,12 +216,6 @@ begin
   result := TToolkitEditSession(inherited link);
 end;
 
-class function TToolkitEditSession.makeNew: TToolkitEditSession;
-begin
-  result := TToolkitEditSession.create;
-  result.Guid := NewGuidId;
-end;
-
 { TToolkitEditor }
 
 function TToolkitEditor.GetHasAddress: boolean;
@@ -231,6 +236,11 @@ begin
   inherited Destroy;
 end;
 
+function TToolkitEditor.link: TToolkitEditor;
+begin
+  result := TToolkitEditor(inherited Link);
+end;
+
 procedure TToolkitEditor.bindToTab(tab: TTabSheet);
 begin
   FTab := tab;
@@ -244,6 +254,11 @@ end;
 procedure TToolkitEditor.redo;
 begin
   raise Exception.create('not implemented');
+end;
+
+procedure TToolkitEditor.editPause;
+begin
+  FLastChangeChecked := true;
 end;
 
 { TToolkitContextObject }
@@ -282,6 +297,11 @@ begin
   inherited Destroy;
 end;
 
+function TToolkitContext.link: TToolkitContext;
+begin
+  result := TToolkitContext(inherited Link);
+end;
+
 function TToolkitContext.StorageForAddress(address: String): TStorageService;
 var
   scheme : String;
@@ -294,7 +314,7 @@ begin
       exit(storage);
 end;
 
-function TToolkitContext.addEditor(editorClass: TToolkitEditorClass; session: TToolkitEditSession) : TToolkitEditor;
+procedure TToolkitContext.addEditor(editor : TToolkitEditor);
   function hasCaption(s : String) : boolean;
   var ss : TToolkitEditSession;
   begin
@@ -306,16 +326,15 @@ function TToolkitContext.addEditor(editorClass: TToolkitEditorClass; session: TT
 var
   i : integer;
 begin
-  result := editorClass.create(self, session);
-  FEditors.add(result);
-  FEditorSessions.add(session.link);
+  FEditors.add(editor);
+  FEditorSessions.add(editor.Session.link);
 
-  if session.Address = '' then
+  if (editor.session.Address = '') and (editor.session.caption = '')  then
   begin
     i := 1;
-    while hasCaption('new_file '+inttostr(i)) do
+    while hasCaption('new_file_'+inttostr(i)) do
       inc(i);
-    session.Caption := 'new_file '+inttostr(i);
+    editor.session.Caption := 'new_file_'+inttostr(i);
   end;
 end;
 
@@ -337,18 +356,6 @@ begin
   for editor in FEditors do
     if editor.session.Address = address then
       exit(editor);
-end;
-
-function TToolkitContext.examineFile(handle: TComponent; filename: String; const bytes: TBytes; info : TStringList): TToolkitEditorClass;
-var
-  ext : String;
-begin
-  result := nil;
-  ext := Lowercase(ExtractFileExt(filename));
-  if (ext = '.ini') then
-    result := TIniEditor
-  else
-    ShowMessage('The file '+filename+' isn''t recognised by this application');
 end;
 
 function TToolkitContext.anyDirtyEditors: boolean;

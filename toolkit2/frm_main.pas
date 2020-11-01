@@ -7,14 +7,18 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
+
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
-  frm_npm_manager, frm_file_format,
-  FHIR.Toolkit.FileStore,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor;
+  FHIR.Toolkit.FileStore, FHIR.Toolkit.Factory,
+
+  frm_npm_manager, frm_file_format;
+
+const
+  PAUSE_SECONDS = 2; // move to settings?
 
 type
-  { TMainToolkitForm }
 
+  { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
     actionToolsPackageManager: TAction;
     actionHelpCheckUpgrade: TAction;
@@ -243,6 +247,7 @@ type
     procedure actionViewVariablesExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
     procedure mnuRecentClick(Sender: TObject);
     procedure NewFromFormatClick(Sender: TObject);
@@ -261,6 +266,7 @@ type
     FTempStore : TFHIRToolkitTemporaryStorage;
     FSourceMaximised : boolean;
     FContext : TToolkitContext;
+    FFactory : TToolkitFactory;
     procedure SaveFile(editor: TToolkitEditor; address : String; updateStatus : boolean);
     procedure saveLayout;
     procedure loadLayout;
@@ -271,8 +277,9 @@ type
     procedure updateUI;
     procedure updateTasks;
     procedure updateActions;
+    procedure checkLastUpdated;
     procedure updateStatusBar;
-    procedure createNewFile(id : integer);
+    procedure createNewFile(kind : TSourceEditorKind);
     procedure openFile(filename : String);
     function ChooseFileName(editor : TToolkitEditor; out address : String): boolean;
   public
@@ -296,15 +303,57 @@ begin
   FContext := TToolkitContext.create;
   FContext.OnUpdateActions := updateActionStatus;
   FContext.storages.add(TFileStorageService.create);
+  FFactory := TToolkitFactory.create(FContext.link, self);
   updateActionStatus(nil);
 end;
 
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
 begin
+  FFactory.free;
   FTempStore.Free;
   FContext.Free;
   saveLayout;
   FIni.Free;
+end;
+
+procedure TMainToolkitForm.FormShow(Sender: TObject);
+var
+  sessions : TFslList<TToolkitEditSession>;
+  session : TToolkitEditSession;
+  editor : TToolkitEditor;
+  tab : TTabSheet;
+  //    var
+  //address : String;
+  //bytes : TBytes;
+  //info : TStringList;
+  //clss : TToolkitEditorClass;
+  //;
+  //store : TStorageService;
+begin
+  sessions := TFslList<TToolkitEditSession>.create;
+  try
+    FTempStore.fetchOpenList(sessions);
+    for session in sessions do
+    begin
+      editor := FFactory.makeEditor(session.link);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      editor.LoadBytes(FTempStore.fetchContent(session.Guid));
+      editor.session.NeedsSaving := false;
+      editor.lastChangeChecked := true;
+  end;
+  finally
+    sessions.free;
+  end;
+
+  if pgEditors.PageCount > 0 then
+  begin
+    tab := pgEditors.Pages[0];
+    pgEditors.ActivePage := tab;
+    FContext.Focus := FContext.EditorForTab(tab);
+    updateActionStatus(editor);
+  end;
 end;
 
 procedure TMainToolkitForm.loadLayout;
@@ -351,6 +400,7 @@ begin
     GBackgroundTasks.primaryThreadCheck;
   except
   end;
+  checkLastUpdated;
 end;
 
 procedure TMainToolkitForm.ToolButton1Click(Sender: TObject);
@@ -440,6 +490,20 @@ procedure TMainToolkitForm.updateActions;
 begin
 end;
 
+procedure TMainToolkitForm.checkLastUpdated;
+var
+  editor : TToolkitEditor;
+begin
+  for editor in FContext.Editors do
+  begin
+    if not editor.lastChangeChecked and (editor.lastChange + (PAUSE_SECONDS*1000) < GetTickCount64) then
+    begin
+      FTempStore.storeContent(editor.session.guid, false, editor.GetBytes);
+      editor.editPause;
+    end;
+  end;
+end;
+
 procedure TMainToolkitForm.updateStatusBar;
 var
   focus : TToolkitEditor;
@@ -462,18 +526,18 @@ begin
   end;
 end;
 
-procedure TMainToolkitForm.createNewFile(id: integer);
+procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind);
 var
+  session : TToolkitEditSession;
   editor : TToolkitEditor;
   tab : TTabSheet;
-  editorClass : TToolkitEditorClass;
 begin
-  if (id = 0) then
+  if (kind = sekNull) then
   begin
     FileFormatChooser := TFileFormatChooser.create(self);
     try
       if FileFormatChooser.ShowModal = mrOK then
-        id := FileFormatChooser.ListBox1.ItemIndex + 1
+        kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
       else
        abort;
     finally
@@ -481,40 +545,14 @@ begin
     end;
   end;
 
-  case id of
-   1: // '&Resource'
-      raise Exception.create('This format is not supported yet');
-   2: //  'HL7 v&2 Message'
-      raise Exception.create('This format is not supported yet');
-   3: // '&CDA Document'
-      raise Exception.create('This format is not supported yet');
-   4: // '&XML File'
-      raise Exception.create('This format is not supported yet');
-   5: // '&JSON File'
-      raise Exception.create('This format is not supported yet');
-   6: // '&Liquid Template'
-      raise Exception.create('This format is not supported yet');
-   7: //  'Structure &Map'
-      raise Exception.create('This format is not supported yet');
-   8: // '&Ini File'
-      editorClass := TIniEditor;
-   9: // '&Text File'
-      raise Exception.create('This format is not supported yet');
-   10: //  'Mar&kdown'
-      raise Exception.create('This format is not supported yet');
-   11: //  'Java&script'
-      raise Exception.create('This format is not supported yet');
-   12: // '&HTML'
-      raise Exception.create('This format is not supported yet');
-   13: // '&DICOM Image'
-      raise Exception.create('This format is not supported yet');
-  end;
-
-  editor := FContext.addEditor(editorClass, TToolkitEditSession.makeNew());
+  session := FFactory.makeNewSession(kind);
+  editor := FFactory.makeEditor(session);
+  FContext.addEditor(editor);
   tab := pgEditors.AddTabSheet;
   editor.bindToTab(tab);
-  editor.newContent(nil);
+  editor.newContent;
   editor.session.NeedsSaving := false;
+  editor.lastChangeChecked := true;
   pgEditors.ActivePage := tab;
   FTempStore.storeOpenFileList(FContext.EditorSessions);
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
@@ -527,10 +565,10 @@ var
   address : String;
   bytes : TBytes;
   info : TStringList;
-  clss : TToolkitEditorClass;
   editor : TToolkitEditor;
   tab : TTabSheet;
   store : TStorageService;
+  session : TToolkitEditSession;
 begin
   address := 'file:'+filename;
   editor := Context.EditorForAddress(address);
@@ -538,26 +576,25 @@ begin
     pgEditors.ActivePage := editor.tab
   else
   begin
-    info := TStringList.create;
-    try
-      bytes := FileToBytes(filename);
-      clss := FContext.examineFile(self, filename, bytes, info);
-      if clss <> nil then
-      begin
-        store := Context.StorageForAddress(address);
-        editor := FContext.addEditor(clss, store.makeSession(address));
-        tab := pgEditors.AddTabSheet;
-        editor.bindToTab(tab);
-        editor.LoadBytes(bytes, info);
-        editor.session.NeedsSaving := false;
-        pgEditors.ActivePage := tab;
-        FTempStore.storeOpenFileList(FContext.EditorSessions);
-        FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
-        FContext.Focus := editor;
-        updateActionStatus(editor);
-      end;
-    finally
-      info.free;
+    bytes := FileToBytes(filename);
+    session := FFactory.examineFile(filename, bytes);
+    if session <> nil then
+    begin
+      session.address := address;
+      store := Context.StorageForAddress(address);
+      session.caption := store.CaptionForAddress(session.address);
+      editor := FFactory.makeEditor(session);
+      FContext.addEditor(editor);
+      tab := pgEditors.AddTabSheet;
+      editor.bindToTab(tab);
+      editor.LoadBytes(bytes);
+      editor.session.NeedsSaving := false;
+      pgEditors.ActivePage := tab;
+      FTempStore.storeOpenFileList(FContext.EditorSessions);
+      FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      editor.lastChangeChecked := true;
+      FContext.Focus := editor;
+      updateActionStatus(editor);
     end;
   end;
 end;
@@ -733,7 +770,7 @@ end;
 
 procedure TMainToolkitForm.actionFileNewExecute(Sender: TObject);
 begin
-  createNewFile(0);
+  createNewFile(sekNull);
 end;
 
 procedure TMainToolkitForm.actionFileOpenExecute(Sender: TObject);
@@ -855,7 +892,7 @@ end;
 
 procedure TMainToolkitForm.NewFromFormatClick(Sender: TObject);
 begin
-  createNewFile((Sender as TMenuItem).tag);
+  createNewFile(TSourceEditorKind((Sender as TMenuItem).tag));
 end;
 
 procedure TMainToolkitForm.MenuItem79Click(Sender: TObject);
