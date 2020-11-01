@@ -29,7 +29,7 @@ type
     procedure storeOpenFileList(sessions : TFslList<TToolkitEditSession>);
 
     // this is called regularly on any open file
-    procedure storeContent(guid : String; bytes : TBytes);
+    procedure storeContent(guid : String; original : boolean; bytes : TBytes);
 
     // this is called at start up to reload what was open
     procedure fetchOpenList(sessions : TFslList<TToolkitEditSession>);
@@ -127,9 +127,12 @@ begin
   end;
 end;
 
-procedure TFHIRToolkitTemporaryStorage.storeContent(guid: String; bytes: TBytes);
+procedure TFHIRToolkitTemporaryStorage.storeContent(guid: String; original : boolean; bytes: TBytes);
 begin
-  BytesToFile(bytes, FFolder+guid+'.cnt');
+  if original then
+    BytesToFile(bytes, FFolder+guid+'.original.cnt')
+  else
+    BytesToFile(bytes, FFolder+guid+'.cnt');
 end;
 
 
@@ -145,7 +148,12 @@ begin
   try
     result.str['guid'] := session.guid;
     result.str['address'] := session.Address;
+    result.str['caption'] := session.Caption;
+    result.bool['needs-saving'] := session.NeedsSaving;
+
     result.int['encoding'] := ord(session.Encoding);
+    result.int['eoln'] := ord(session.EndOfLines);
+    result.bool['bom'] := session.HasBOM;
     result.link;
   finally
     result.free;
@@ -158,7 +166,12 @@ begin
   try
     result.guid := json.str['guid'];
     result.Address := json.str['address'];
+    result.Caption := json.str['caption'];
+    result.NeedsSaving := json.bool['needs-saving'];
+
     result.Encoding := TSourceEncoding(json.int['encoding']);
+    result.EndOfLines := TSourceLineMarker(json.int['eoln']);
+    result.HasBOM := json.bool['bom'];
     result.link;
   finally
     result.free;

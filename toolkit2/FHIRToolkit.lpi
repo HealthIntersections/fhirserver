@@ -46,7 +46,7 @@
       <Unit>
         <Filename Value="frm_main.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="MainToolkitForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
@@ -88,9 +88,8 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="fhir.toolkit.tempstorage.pas"/>
+        <Filename Value="FHIR.Toolkit.TempStorage.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.TempStorage"/>
       </Unit>
       <Unit>
         <Filename Value="frm_file_format.pas"/>
@@ -99,14 +98,16 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="editors\fhir.toolkit.inieditor.pas"/>
+        <Filename Value="editors\FHIR.Toolkit.IniEditor.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.IniEditor"/>
       </Unit>
       <Unit>
-        <Filename Value="editors\fhir.toolkit.texteditor.pas"/>
+        <Filename Value="editors\FHIR.Toolkit.TextEditor.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.TextEditor"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\FHIR.Toolkit.FileStore.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -118,7 +119,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
