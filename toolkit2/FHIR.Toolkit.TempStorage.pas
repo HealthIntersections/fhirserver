@@ -36,6 +36,7 @@ type
     function fetchContent(guid : String) : TBytes;
 
     procedure getMRUList(list : TStrings);
+    function getMRU(index : integer) : String;
     procedure addToMru(address, description : String);
     procedure removeFromMRU(address : String);
 
@@ -161,6 +162,8 @@ begin
     result.str['type'] := CODES_TSourceEditorKind[session.kind];
     result.str['encoding'] := CODES_TSourceEncoding[session.Encoding];
     result.str['eoln'] := CODES_TSourceLineMarker[session.EndOfLines];
+    if session.Timestamp <> 0 then
+      result.str['timestamp'] := TFslDateTime.make(session.Timestamp, dttzLocal).toHL7;
     if session.HasBOM then
       result.bool['bom'] := session.HasBOM;
     if (session.Info.Count > 0) then
@@ -189,6 +192,8 @@ begin
     result.Encoding := TSourceEncoding(StringArrayIndexOfInsensitive(CODES_TSourceEncoding, json.str['encoding']));
     result.EndOfLines := TSourceLineMarker(StringArrayIndexOfInsensitive(CODES_TSourceLineMarker, json.str['eoln']));
     result.HasBOM := json.bool['bom'];
+    if (json.has('timestamp')) then
+      result.Timestamp := TFslDateTime.fromHL7(json.str['timestamp']).DateTime;
     if json.has('params') then
     begin
       for n in json.obj['params'].properties.Keys do
@@ -222,6 +227,22 @@ begin
       ts.LoadFromFile(FFolder+'mrulist.cfg');
     for s in ts do
       list.add(s.Substring(s.IndexOf('|')+1));
+  finally
+    ts.free;
+  end;
+end;
+
+function TFHIRToolkitTemporaryStorage.getMRU(index: integer): String;
+var
+  ts : TStringList;
+  s : String;
+begin
+  ts := TStringList.create;
+  try
+    if FileExists(FFolder+'mrulist.cfg') then
+      ts.LoadFromFile(FFolder+'mrulist.cfg');
+    s := ts[index];
+    result := s.Substring(0, s.IndexOf('|'));
   finally
     ts.free;
   end;

@@ -110,6 +110,10 @@
         <Filename Value="stores\FHIR.Toolkit.FileStore.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="stores\FHIR.Toolkit.Store.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

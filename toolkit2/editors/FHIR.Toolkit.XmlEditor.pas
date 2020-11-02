@@ -1,18 +1,21 @@
-unit FHIR.Toolkit.IniEditor;
+unit FHIR.Toolkit.XmlEditor;
 
 {$i fhir.inc}
 
 interface
 
 uses
-  Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
+  Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
+  FHIR.Support.MXml,
   FHIR.Toolkit.Context, FHIR.Toolkit.TextEditor;
 
 type
 
-  { TIniEditor }
+  { TXmlEditor }
 
-  TIniEditor = class (TTextEditor)
+  TXmlEditor = class (TTextEditor)
+  private
+    FParser : TMXmlParser;
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
@@ -25,12 +28,12 @@ type
 
 implementation
 
-function TIniEditor.makeHighlighter: TSynCustomHighlighter;
+function TXmlEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynIniSyn.create(nil);
+  Result := TSynXmlSyn.create(nil);
 end;
 
-procedure TIniEditor.getNavigationList(navpoints: TStringList);
+procedure TXmlEditor.getNavigationList(navpoints: TStringList);
 var
   i : integer;
   s : String;
@@ -43,25 +46,26 @@ begin
   end;
 end;
 
-procedure TIniEditor.newContent();
+procedure TXmlEditor.newContent();
 begin
   Session.HasBOM := false;
   Session.EndOfLines := slCRLF;
   Session.Encoding := senASCII;
 
-  TextEditor.Text := '[Section]'+#13#10+'; comments here'+#13#10+'name=value'+#13#10;
+  TextEditor.Text := '<xml>'+#13#10+'</xml>'+#13#10;
   updateToolbarButtons;
 end;
 
-function TIniEditor.FileExtension: String;
+function TXmlEditor.FileExtension: String;
 begin
-  result := 'ini';
+  result := 'xml';
 end;
 
-procedure TIniEditor.validate;
+procedure TXmlEditor.validate;
 var
   i : integer;
   s : String;
+  xml : TMxmlParser;
 begin
   StartValidating;
   try
@@ -69,17 +73,6 @@ begin
     begin
       s := TextEditor.lines[i];
       checkForEncoding(s, i);
-      if (s <> '') and not s.StartsWith(';') then
-      begin
-        s := s.trim;
-        if s.StartsWith('[') then
-        begin
-          if not s.EndsWith(']') then
-            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]');
-        end
-        else if not s.contains('=') then
-          validationWarning(i+1, 1, 'No = found on non-comment line');
-      end;
     end;
   finally
     finishValidating;

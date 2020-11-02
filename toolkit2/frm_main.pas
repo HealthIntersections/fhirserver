@@ -6,10 +6,12 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
+  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit, lclintf,
 
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
-  FHIR.Toolkit.FileStore, FHIR.Toolkit.Factory,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc,
+  FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
+  FHIR.Toolkit.Store, FHIR.Toolkit.FileStore,
+  FHIR.Toolkit.Factory,
 
   frm_npm_manager, frm_file_format;
 
@@ -20,6 +22,13 @@ type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actionPagesMoveRight: TAction;
+    actionPagesMoveLeft: TAction;
+    actionPagesMoveFarleft: TAction;
+    actionPagesMoveFarRIght: TAction;
+    actionPagesCloseRight: TAction;
+    actionPagesCloseAll: TAction;
+    actionPagesCloseLeft: TAction;
     actionToolsPackageManager: TAction;
     actionHelpCheckUpgrade: TAction;
     actionhelpAbout: TAction;
@@ -67,12 +76,12 @@ type
     actionFileOpen: TAction;
     actionFileSaveAs1: TAction;
     actionHelpContent: THelpContents;
+    chkhideHintsAndWarnings: TCheckBox;
     chkTaskInactive: TCheckBox;
     chkCurrrentFileOnly: TCheckBox;
     imgMain: TImageList;
-    imgContext: TImageList;
     lvTasks: TListView;
-    lvTasks1: TListView;
+    lvMessages: TListView;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -107,7 +116,10 @@ type
     MenuItem37: TMenuItem;
     MenuItem38: TMenuItem;
     MenuItem39: TMenuItem;
-    MenuItem4: TMenuItem;
+    mnuLVGo: TMenuItem;
+    mnuLVCopy: TMenuItem;
+    mnuLVCopyAll: TMenuItem;
+    mnuContent: TMenuItem;
     MenuItem40: TMenuItem;
     MenuItem41: TMenuItem;
     MenuItem42: TMenuItem;
@@ -126,10 +138,11 @@ type
     MenuItem56: TMenuItem;
     MenuItem57: TMenuItem;
     MenuItem58: TMenuItem;
-    MenuItem59: TMenuItem;
-    MenuItem60: TMenuItem;
-    MenuItem61: TMenuItem;
-    MenuItem62: TMenuItem;
+    MenuItem63: TMenuItem;
+    MenuItem64: TMenuItem;
+    MenuItem65: TMenuItem;
+    MenuItem66: TMenuItem;
+    MenuItem80: TMenuItem;
     mnuRecent: TMenuItem;
     MenuItem55: TMenuItem;
     MenuItem67: TMenuItem;
@@ -159,7 +172,6 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
-    dlgOpen: TOpenDialog;
     Panel4: TPanel;
     pgEditors: TPageControl;
     Panel1: TPanel;
@@ -168,12 +180,12 @@ type
     pgBottom: TPageControl;
     pgRight: TPageControl;
     pnlBottom: TPanel;
-    Panel2: TPanel;
+    pnlMain: TPanel;
     pnlLeft: TPanel;
     pnlRight: TPanel;
     pmNew: TPopupMenu;
     pmPages: TPopupMenu;
-    dlgSave: TSaveDialog;
+    pmMessageView: TPopupMenu;
     SpeedButton1: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
@@ -223,14 +235,27 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     procedure actionEditRedoExecute(Sender: TObject);
+    procedure actionFileCloseExecute(Sender: TObject);
+    procedure actionFileManageCopyExecute(Sender: TObject);
+    procedure actionFileManageDeleteExecute(Sender: TObject);
+    procedure actionFileManageFolderExecute(Sender: TObject);
+    procedure actionFileManageReloadExecute(Sender: TObject);
     procedure actionFileManageRenameExecute(Sender: TObject);
     procedure actionFileNewExecute(Sender: TObject);
     procedure actionFileOpenExecute(Sender: TObject);
+    procedure actionFileOpenUrlExecute(Sender: TObject);
     procedure actionFileSaveAllExecute(Sender: TObject);
     procedure actionFileSaveAs1Execute(Sender: TObject);
     procedure actionFileSaveExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
+    procedure actionPagesCloseAllExecute(Sender: TObject);
+    procedure actionPagesCloseLeftExecute(Sender: TObject);
+    procedure actionPagesCloseRightExecute(Sender: TObject);
+    procedure actionPagesMoveFarleftExecute(Sender: TObject);
+    procedure actionPagesMoveFarRIghtExecute(Sender: TObject);
+    procedure actionPagesMoveLeftExecute(Sender: TObject);
+    procedure actionPagesMoveRightExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
     procedure actionToolsPackageManagerExecute(Sender: TObject);
     procedure actionViewEditorExecute(Sender: TObject);
@@ -245,28 +270,41 @@ type
     procedure actionViewStackExecute(Sender: TObject);
     procedure actionViewTasksExecute(Sender: TObject);
     procedure actionViewVariablesExecute(Sender: TObject);
+    procedure chkCurrrentFileOnlyChange(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure lvMessagesDblClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure mnuLVCopyAllClick(Sender: TObject);
+    procedure mnuLVCopyClick(Sender: TObject);
+    procedure mnuLVGoClick(Sender: TObject);
     procedure mnuRecentClick(Sender: TObject);
     procedure NewFromFormatClick(Sender: TObject);
     procedure MenuItem79Click(Sender: TObject);
     procedure pgEditorsChange(Sender: TObject);
     procedure pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure pmMessageViewPopup(Sender: TObject);
+    procedure pmPagesPopup(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure updateMessages(sender : TObject);
   private
     FIni : TIniFile;
     FTempStore : TFHIRToolkitTemporaryStorage;
+    FFileSystem : TStorageService;
     FSourceMaximised : boolean;
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
+    FFinishedLoading : boolean;
+    function checkDoSave(editor : TToolkitEditor): boolean;
     procedure SaveFile(editor: TToolkitEditor; address : String; updateStatus : boolean);
     procedure saveLayout;
     procedure loadLayout;
@@ -274,13 +312,20 @@ type
     procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
     procedure unmaximiseSource;
     procedure updateActionStatus(Sender : TObject);
+    procedure DoAppActivate(Sender : TObject);
+    procedure DoAppException(Sender : TObject; E : Exception);
     procedure updateUI;
     procedure updateTasks;
     procedure updateActions;
+    procedure checkActiveTabCurrency;
     procedure checkLastUpdated;
     procedure updateStatusBar;
+    procedure openMRUItem(sender: TObject);
     procedure createNewFile(kind : TSourceEditorKind);
-    procedure openFile(filename : String);
+    procedure openFile(address : String);
+    procedure onChangeFocus(sender : TObject);
+    procedure closeFile(tab : TTabSheet; store : boolean);
+    procedure locateOnTab(sender : TObject; x, y: integer; var point : TPoint);
     function ChooseFileName(editor : TToolkitEditor; out address : String): boolean;
   public
     property Context : TToolkitContext read FContext;
@@ -297,12 +342,20 @@ implementation
 
 procedure TMainToolkitForm.FormCreate(Sender: TObject);
 begin
+  Application.OnActivate := DoAppActivate;
+  Application.OnException := DoAppException;
+  initialiseTZData(partnerFile('tzdata.tar.gz'));
+
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FTempStore := TFHIRToolkitTemporaryStorage.create;
   loadLayout;
-  FContext := TToolkitContext.create;
+  FContext := TToolkitContext.create(imgMain, ActionList1);
   FContext.OnUpdateActions := updateActionStatus;
-  FContext.storages.add(TFileStorageService.create);
+  FContext.OnLocate := locateOnTab;
+  FContext.OnChangeFocus := onChangeFocus;
+  FContext.MessageView.OnChange := updateMessages;
+  FFileSystem := TFileStorageService.create(self, FIni);
+  FContext.storages.add(FFileSystem.link);
   FFactory := TToolkitFactory.create(FContext.link, self);
   updateActionStatus(nil);
 end;
@@ -310,6 +363,7 @@ end;
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
 begin
   FFactory.free;
+  FFileSystem.Free;
   FTempStore.Free;
   FContext.Free;
   saveLayout;
@@ -322,26 +376,22 @@ var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
   tab : TTabSheet;
-  //    var
-  //address : String;
-  //bytes : TBytes;
-  //info : TStringList;
-  //clss : TToolkitEditorClass;
-  //;
-  //store : TStorageService;
+  ns : boolean;
 begin
   sessions := TFslList<TToolkitEditSession>.create;
   try
     FTempStore.fetchOpenList(sessions);
     for session in sessions do
     begin
+      ns := session.NeedsSaving;
       editor := FFactory.makeEditor(session.link);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
       editor.LoadBytes(FTempStore.fetchContent(session.Guid));
-      editor.session.NeedsSaving := false;
+      editor.session.NeedsSaving := ns;
       editor.lastChangeChecked := true;
+      editor.editPause;
   end;
   finally
     sessions.free;
@@ -352,8 +402,15 @@ begin
     tab := pgEditors.Pages[0];
     pgEditors.ActivePage := tab;
     FContext.Focus := FContext.EditorForTab(tab);
+    FContext.focus.getFocus(mnuContent);
     updateActionStatus(editor);
   end;
+end;
+
+procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
+begin
+  if lvMessages.Selected <> nil then
+    mnuLVGoClick(sender);
 end;
 
 procedure TMainToolkitForm.loadLayout;
@@ -395,6 +452,7 @@ end;
 
 procedure TMainToolkitForm.Timer1Timer(Sender: TObject);
 begin
+  FFinishedLoading := true;
   updateUI;
   try
     GBackgroundTasks.primaryThreadCheck;
@@ -490,6 +548,21 @@ procedure TMainToolkitForm.updateActions;
 begin
 end;
 
+procedure TMainToolkitForm.checkActiveTabCurrency;
+var
+  loaded : TLoadedBytes;
+begin
+  if FFinishedLoading and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes then
+  begin
+    loaded := Context.focus.Store.load(Context.focus.session.address);
+    if loaded.timestamp <> Context.focus.session.Timestamp then
+    begin
+      if (MessageDlg(Context.focus.session.caption, Context.focus.describe+' has been changed since you loaded it. Reload?', mtConfirmation, mbYesNo, 0) = mrYes) then
+        actionFileManageReloadExecute(self);
+    end;
+  end;
+end;
+
 procedure TMainToolkitForm.checkLastUpdated;
 var
   editor : TToolkitEditor;
@@ -526,6 +599,11 @@ begin
   end;
 end;
 
+procedure TMainToolkitForm.openMRUItem(sender: TObject);
+begin
+  openFile(FTempStore.getMRU((sender as TMenuItem).tag));
+end;
+
 procedure TMainToolkitForm.createNewFile(kind : TSourceEditorKind);
 var
   session : TToolkitEditSession;
@@ -557,70 +635,128 @@ begin
   FTempStore.storeOpenFileList(FContext.EditorSessions);
   FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
   FContext.Focus := editor;
+  FContext.Focus.getFocus(mnuContent);
   updateActionStatus(editor);
 end;
 
-procedure TMainToolkitForm.openFile(filename: String);
+procedure TMainToolkitForm.openFile(address: String);
 var
-  address : String;
-  bytes : TBytes;
-  info : TStringList;
+  loaded : TLoadedBytes;
   editor : TToolkitEditor;
   tab : TTabSheet;
   store : TStorageService;
   session : TToolkitEditSession;
 begin
-  address := 'file:'+filename;
   editor := Context.EditorForAddress(address);
   if (editor <> nil) then
     pgEditors.ActivePage := editor.tab
   else
   begin
-    bytes := FileToBytes(filename);
-    session := FFactory.examineFile(filename, bytes);
+    store := Context.StorageForAddress(address);
+    loaded := store.load(address);
+    session := FFactory.examineFile(address, loaded.content);
     if session <> nil then
     begin
       session.address := address;
-      store := Context.StorageForAddress(address);
-      session.caption := store.CaptionForAddress(session.address);
+      session.Timestamp := loaded.timestamp;
       editor := FFactory.makeEditor(session);
       FContext.addEditor(editor);
       tab := pgEditors.AddTabSheet;
       editor.bindToTab(tab);
-      editor.LoadBytes(bytes);
+      editor.LoadBytes(loaded.content);
       editor.session.NeedsSaving := false;
       pgEditors.ActivePage := tab;
       FTempStore.storeOpenFileList(FContext.EditorSessions);
       FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+      FTempStore.removeFromMRU(editor.session.address);
       editor.lastChangeChecked := true;
       FContext.Focus := editor;
+      FContext.Focus.getFocus(mnuContent);
       updateActionStatus(editor);
     end;
   end;
 end;
 
-function TMainToolkitForm.ChooseFileName(editor: TToolkitEditor; out address : String): boolean;
-var
-  fn : String;
+procedure TMainToolkitForm.onChangeFocus(sender: TObject);
 begin
-  // for now, only a local file:
-  if editor.hasAddress and editor.session.address.startsWith('file:') then
+  if chkCurrrentFileOnly.Checked then
+    updateMessages(sender);
+end;
+
+function TMainToolkitForm.checkDoSave(editor : TToolkitEditor) : boolean;
+var
+  address : String;
+begin
+  if editor.Session.NeedsSaving then
   begin
-    fn := editor.session.address.Substring(5);
-    dlgSave.InitialDir := ExtractFilePath(fn);
-    dlgSave.FileName := ChangeFileExt(ExtractFileName(fn), '.'+editor.FileExtension);
-  end
+    case MessageDlg(editor.session.caption, editor.describe+' has changed. Save it?', mtConfirmation, mbYesNoCancel, 0) of
+      mrYes :
+        if editor.hasAddress then
+          SaveFile(editor, editor.Session.Address, true)
+        else if ChooseFileName(editor, address) then
+        begin
+          editor.Session.Address := address;
+          SaveFile(editor, editor.Session.Address, true);
+        end
+        else
+          abort;
+      mrNo : {ignore};
+      mrCancel: abort;
+    end;
+  end;
+end;
+
+procedure TMainToolkitForm.closeFile(tab: TTabSheet; store : boolean);
+var
+  editor : TToolkitEditor;
+begin
+  editor := Context.EditorForTab(tab);
+  if (editor.CanBeSaved) then
+    checkDoSave(editor);
+  if editor.session.Address <> '' then
+    FTempStore.addToMru(editor.session.Address, editor.session.caption);
+  Context.removeEditor(editor);
+  tab.free;
+  if (store) then
+    FTempStore.storeOpenFileList(FContext.EditorSessions);
+end;
+
+procedure TMainToolkitForm.locateOnTab(sender: TObject; x, y: integer; var point: TPoint);
+var
+  p : TPoint;
+  h : integer;
+begin
+  p.X := pnlMain.left+pgEditors.left + x;
+  h := pgEditors.ActivePage.Height;
+  p.Y := pnlMain.top+pgEditors.top + y + (pgEditors.height - h);
+  point := ClientToScreen(p);
+end;
+
+procedure TMainToolkitForm.updateMessages(sender: TObject);
+var
+  msg : TToolkitMessage;
+  entry : TListItem;
+begin
+  lvMessages.Items.clear;
+  for msg in Context.MessageView.messages do
+    if (not chkCurrrentFileOnly.checked or (Context.focus = msg.Editor)) and
+       (not chkhideHintsAndWarnings.checked or (msg.level = msgError)) then
+    begin
+      entry := lvMessages.items.add;
+      entry.Data := msg;
+      entry.caption := msg.editor.Session.Caption;
+      entry.SubItems.add(CODES_TToolkitMessageLevel[msg.level]);
+      entry.SubItems.add('Line '+inttostr(msg.Location.line));
+      entry.SubItems.add(msg.Content);
+    end;
+end;
+
+function TMainToolkitForm.ChooseFileName(editor: TToolkitEditor; out address : String): boolean;
+begin
+  if editor.Store <> nil then
+    result := editor.Store.saveDlg(editor.session.Address, editor.FileExtension, address)
   else
-  begin
-    dlgSave.InitialDir := FIni.ReadString('folders', 'last-save', '');
-    dlgSave.FileName := 'filename.'+editor.FileExtension;
-  end;
-  result := dlgSave.Execute;
-  if result then
-  begin
-    address := 'file:'+dlgSave.filename;
-    FIni.WriteString('folders', 'last-save', ExtractFilePath(dlgSave.fileName));
-  end;
+    result := FFileSystem.saveDlg(editor.session.Address, editor.FileExtension, address);
 end;
 
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
@@ -656,7 +792,7 @@ begin
   actionFileSaveAll.enabled := context.anyDirtyEditors;
 
   // enabled if there's an open file:
-  actionCopyFileTitle.enabled := context.hasFocus and context.Focus.hasAddress;
+  actionCopyFileTitle.enabled := context.hasFocus and context.Focus.isFile;
   actionEditCopyFilename.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileManageFolder.enabled := context.hasFocus and context.Focus.isFile;
   actionCopyFilePath.enabled := context.hasFocus and context.Focus.hasAddress;
@@ -668,6 +804,14 @@ begin
   actionFileManageDelete.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageReload.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileSaveAs1.enabled := context.hasFocus and context.Focus.CanBeSaved;
+
+  actionPagesCloseAll.enabled := context.hasFocus and (context.Editors.count > 0);
+  actionPagesCloseLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
+  actionPagesCloseRight.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex < pgEditors.PageCount - 1);
+  actionPagesMoveFarleft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 1);
+  actionPagesMoveLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
+  actionPagesMoveRight.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex < pgEditors.PageCount - 1);
+  actionPagesMoveFarRIght.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex < pgEditors.PageCount - 2);
 
   // enabled if there's a text selectable
   actionEditCopy.enabled := context.hasFocus and context.Focus.hasText;
@@ -686,6 +830,16 @@ begin
   actionZoomIn.enabled := context.hasFocus and context.Focus.inSource;
   actionZoomOut.enabled := context.hasFocus and context.Focus.inSource;
   actionFilePrint.enabled := context.hasFocus and context.Focus.inSource;
+end;
+
+procedure TMainToolkitForm.DoAppActivate(Sender: TObject);
+begin
+  checkActiveTabCurrency;
+end;
+
+procedure TMainToolkitForm.DoAppException(Sender: TObject; E: Exception);
+begin
+  showmessage('Exception: '+e.message);
 end;
 
 procedure TMainToolkitForm.actionViewEditorExecute(Sender: TObject);
@@ -758,14 +912,97 @@ begin
   showView(pnlRight, pgRight, tbVariables);
 end;
 
-procedure TMainToolkitForm.actionFileManageRenameExecute(Sender: TObject);
+procedure TMainToolkitForm.chkCurrrentFileOnlyChange(Sender: TObject);
 begin
 
+end;
+
+procedure TMainToolkitForm.FormActivate(Sender: TObject);
+begin
+  checkActiveTabCurrency;
+end;
+
+procedure TMainToolkitForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var
+  editor : TToolkitEditor;
+begin
+  GBackgroundTasks.stopAll;
+  FTempStore.storeOpenFileList(Context.editorSessions);
+  for editor in FContext.Editors do
+  begin
+    if not editor.lastChangeChecked then
+      FTempStore.storeContent(editor.session.guid, false, editor.GetBytes);
+  end;
+  CanClose := true;
+end;
+
+procedure TMainToolkitForm.actionFileManageRenameExecute(Sender: TObject);
+var
+  address, old : String;
+begin
+  if ChooseFileName(Context.Focus, address) then
+  begin
+    old := Context.Focus.Session.Address;
+    Context.Focus.Session.Address := address;
+    SaveFile(Context.Focus, Context.Focus.Session.Address, true);
+    Context.Focus.Session.Caption := Context.StorageForAddress(address).CaptionForAddress(address);
+    Context.Focus.Tab.Caption := Context.Focus.Session.Caption;
+    FTempStore.removeFromMRU(address);
+    FTempStore.storeOpenFileList(Context.editorSessions);
+    Context.StorageForAddress(old).delete(old);
+    updateMessages(self);
+  end;
 end;
 
 procedure TMainToolkitForm.actionEditRedoExecute(Sender: TObject);
 begin
   Context.focus.redo;
+end;
+
+procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
+begin
+  closeFile(pgEditors.ActivePage, true);
+end;
+
+procedure TMainToolkitForm.actionFileManageCopyExecute(Sender: TObject);
+var
+  address : String;
+begin
+  if ChooseFileName(Context.Focus, address) then
+    SaveFile(Context.Focus, address, true);
+end;
+
+procedure TMainToolkitForm.actionFileManageDeleteExecute(Sender: TObject);
+begin
+  if MessageDlg(context.Focus.session.caption, context.Focus.describe+' will be deleted. Really delete it?', mtConfirmation, mbYesNo, 0) = mrYes then
+  begin
+    context.Focus.Session.NeedsSaving := false;
+    context.Focus.Store.delete(Context.focus.Session.Address);
+    actionFileCloseExecute(self);
+  end;
+end;
+
+procedure TMainToolkitForm.actionFileManageFolderExecute(Sender: TObject);
+var
+  editor : TToolkitEditor;
+  path : String;
+begin
+  editor := Context.Focus;
+  path := ExtractFilePath(editor.session.address.substring(5));
+  OpenDocument(path);
+end;
+
+procedure TMainToolkitForm.actionFileManageReloadExecute(Sender: TObject);
+var
+  loaded : TLoadedBytes;
+begin
+  loaded := Context.Focus.Store.load(Context.Focus.Session.Address);
+  Context.Focus.LoadBytes(loaded.content);
+  Context.Focus.session.NeedsSaving := false;
+  Context.Focus.session.Timestamp := loaded.timestamp;
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  FTempStore.storeContent(Context.Focus.session.Guid, true, Context.Focus.getBytes);
+  Context.Focus.lastChangeChecked := true;
 end;
 
 procedure TMainToolkitForm.actionFileNewExecute(Sender: TObject);
@@ -774,9 +1011,16 @@ begin
 end;
 
 procedure TMainToolkitForm.actionFileOpenExecute(Sender: TObject);
+var
+  address : String;
 begin
-  if (dlgOpen.execute) then
-    OpenFile(dlgOpen.filename);
+  if FFileSystem.openDlg(address) then
+    OpenFile(address);
+end;
+
+procedure TMainToolkitForm.actionFileOpenUrlExecute(Sender: TObject);
+begin
+
 end;
 
 procedure TMainToolkitForm.actionFileSaveAllExecute(Sender: TObject);
@@ -785,7 +1029,13 @@ var
 begin
   for editor in Context.editors do
     if editor.session.NeedsSaving then
-       actionFileSaveExecute(sender);
+      if editor.session.hasAddress then
+         actionFileSaveExecute(sender);
+
+  for editor in Context.editors do
+    if editor.session.NeedsSaving then
+      if not editor.session.hasAddress then
+         actionFileSaveAs1Execute(sender);
 end;
 
 procedure TMainToolkitForm.actionFileSaveAs1Execute(Sender: TObject);
@@ -796,11 +1046,14 @@ begin
     if ChooseFileName(Context.Focus, address) then
     begin
       Context.Focus.Session.Address := address;
+      Context.Focus.Store := Context.StorageForAddress(address).link;
       SaveFile(Context.Focus, Context.Focus.Session.Address, true);
-      Context.Focus.Session.Caption := Context.StorageForAddress(address).CaptionForAddress(address);
+      Context.Focus.Session.Caption := Context.Focus.Store.CaptionForAddress(address);
       Context.Focus.Tab.Caption := Context.Focus.Session.Caption;
-      Context.Focus.Tab.Hint := address;
       FTempStore.removeFromMRU(address);
+      FTempStore.storeOpenFileList(Context.editorSessions);
+      updateMessages(self);
+      updateActionStatus(self);
     end
     else
       abort;
@@ -818,6 +1071,7 @@ end;
 procedure TMainToolkitForm.SaveFile(editor : TToolkitEditor; address : String; updateStatus : boolean);
 var
   store : TStorageService;
+  dt : TDateTime;
 begin
   store := Context.StorageForAddress(address);
   if (store = nil) then
@@ -825,9 +1079,12 @@ begin
     pgEditors.ActivePage := editor.tab;
     raise Exception.Create('Unable to save to '+address);
   end;
-  store.Save(address, editor.getBytes);
+  dt := store.Save(address, editor.getBytes);
   if updateStatus then
+  begin
+    editor.Session.Timestamp := dt;
     editor.Session.NeedsSaving := false;
+  end;
 end;
 
 procedure TMainToolkitForm.actionHelpCheckUpgradeExecute(Sender: TObject);
@@ -838,6 +1095,68 @@ end;
 procedure TMainToolkitForm.actionHelpContentExecute(Sender: TObject);
 begin
 
+end;
+
+procedure TMainToolkitForm.actionPagesCloseAllExecute(Sender: TObject);
+var
+  i, c : integer;
+begin
+  c := pgEditors.ActivePageIndex;
+  for i := pgEditors.PageCount - 1 downto 0 do
+    if i <> c then
+      closeFile(pgEditors.Pages[i], false);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  updateActionStatus(self);
+end;
+
+procedure TMainToolkitForm.actionPagesCloseLeftExecute(Sender: TObject);
+var
+  i, c : integer;
+begin
+  c := pgEditors.ActivePageIndex;
+  for i := c - 1 downto 0 do
+    closeFile(pgEditors.Pages[i], false);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  updateActionStatus(self);
+end;
+
+procedure TMainToolkitForm.actionPagesCloseRightExecute(Sender: TObject);
+var
+  i, c : integer;
+begin
+  c := pgEditors.ActivePageIndex;
+  for i := pgEditors.PageCount - 1 downto c+1 do
+    closeFile(pgEditors.Pages[i], false);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+  updateActionStatus(self);
+end;
+
+procedure TMainToolkitForm.actionPagesMoveFarleftExecute(Sender: TObject);
+begin
+  pgEditors.ActivePage.PageIndex := 0;
+  updateActionStatus(self);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+end;
+
+procedure TMainToolkitForm.actionPagesMoveFarRIghtExecute(Sender: TObject);
+begin
+  pgEditors.ActivePage.PageIndex := pgEditors.PageCount - 1;
+  updateActionStatus(self);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+end;
+
+procedure TMainToolkitForm.actionPagesMoveLeftExecute(Sender: TObject);
+begin
+  pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex - 1;
+  updateActionStatus(self);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
+end;
+
+procedure TMainToolkitForm.actionPagesMoveRightExecute(Sender: TObject);
+begin
+  pgEditors.ActivePage.PageIndex := pgEditors.ActivePage.PageIndex + 1;
+  updateActionStatus(self);
+  FTempStore.storeOpenFileList(FContext.EditorSessions);
 end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
@@ -861,6 +1180,42 @@ begin
 
 end;
 
+procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);
+var
+  i : integer;
+  msg : TToolkitMessage;
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.create;
+  try
+    for i := 0 to lvMessages.items.count - 1 do
+    begin
+      msg := TToolkitMessage(lvMessages.items[i].Data);
+      b.append(msg.Summary);
+      b.append(EOLN);
+    end;
+  finally
+    b.Free;
+  end;
+end;
+
+procedure TMainToolkitForm.mnuLVCopyClick(Sender: TObject);
+var
+  msg : TToolkitMessage;
+begin
+  msg := TToolkitMessage(lvMessages.Selected.Data);
+  Clipboard.AsText := msg.Summary;
+end;
+
+procedure TMainToolkitForm.mnuLVGoClick(Sender: TObject);
+var
+  msg : TToolkitMessage;
+begin
+  msg := TToolkitMessage(lvMessages.Selected.Data);
+  pgEditors.ActivePage := msg.editor.tab;
+  msg.editor.locate(msg.Location);
+end;
+
 procedure TMainToolkitForm.mnuRecentClick(Sender: TObject);
 var
   ts : TStringList;
@@ -876,6 +1231,7 @@ begin
       item := TMenuItem.create(nil);
       item.Caption := ts[i];
       item.Tag := i;
+      item.OnClick := openMRUItem;
       mnuRecent.Add(item);
     end;
     if (ts.count = 0) then
@@ -903,27 +1259,54 @@ end;
 procedure TMainToolkitForm.pgEditorsChange(Sender: TObject);
 begin
   FContext.Focus := FContext.EditorForTab(pgEditors.ActivePage);
+  FContext.Focus.getFocus(mnuContent);
+  checkActiveTabCurrency;
+  updateActionStatus(self);
+  updateStatusBar;
 end;
 
 procedure TMainToolkitForm.pgEditorsMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 var
-  tabindex: integer;
+  index: integer;
+  tab : TTabsheet;
+  editor : TToolkitEditor;
+  hint : String;
 begin
-  tabindex := pgEditors.IndexOfTabAt(X, Y);
-  if (tabindex >= 0)  then
+  hint := '';
+  index := pgEditors.IndexOfTabAt(X, Y);
+  if (index >= 0)  then
   begin
-    if (pgEditors.Hint <> pgEditors.Pages[tabindex].Hint) then
+    tab := pgEditors.Pages[index];
+    editor := Context.EditorForTab(tab);
+    if (editor <> nil) then
+      hint := editor.Hint;
+  end;
+  if (pgEditors.Hint <> hint) then
+  begin
+    if (hint <> '') then
     begin
       Application.CancelHint;
-      pgEditors.Hint := pgEditors.Pages[tabindex].Hint;
+      pgEditors.Hint := Hint;
       pgEditors.ShowHint := true;
+    end
+    else
+    begin
+      pgEditors.Hint := '';
+      pgEditors.ShowHint := false;
     end;
-  end
-  else
-  begin
-    pgEditors.Hint := '';
-    pgEditors.ShowHint := false;
   end;
+end;
+
+procedure TMainToolkitForm.pmMessageViewPopup(Sender: TObject);
+begin
+  mnuLVGo.enabled := lvMessages.Selected <> nil;
+  mnuLVCopy.enabled := lvMessages.Selected <> nil;
+  mnuLVCopyAll.enabled := lvMessages.Items.count > 0;
+end;
+
+procedure TMainToolkitForm.pmPagesPopup(Sender: TObject);
+begin
+
 end;
 
 end.

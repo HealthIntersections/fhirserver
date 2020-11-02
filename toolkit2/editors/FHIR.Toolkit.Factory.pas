@@ -10,7 +10,7 @@ uses
 
   FHIR.Support.Base, FHIR.Support.Utilities,
 
-  FHIR.Toolkit.Context,
+  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor;
 
 type
@@ -54,15 +54,6 @@ begin
   result.kind := kind;
 end;
 
-function TToolkitFactory.makeEditor(session : TToolkitEditSession): TToolkitEditor;
-begin
-  case session.kind of
-    sekIni : result := TIniEditor.create(FContext{.link}, session);
-  else
-    raise Exception.create('not supported yet');
-  end;
-end;
-
 function TToolkitFactory.examineFile(filename: String; const bytes: TBytes): TToolkitEditSession;
 var
   ext : String;
@@ -77,6 +68,18 @@ begin
   end
   else
     ShowMessage('The file '+filename+' isn''t recognised by this application');
+end;
+
+function TToolkitFactory.makeEditor(session : TToolkitEditSession): TToolkitEditor;
+var
+  store : TStorageService;
+begin
+  store := FContext.StorageForAddress(session.address);
+  case session.kind of
+    sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
+  else
+    raise Exception.create('not supported yet');
+  end;
 end;
 
 

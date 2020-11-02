@@ -8,55 +8,38 @@ uses
   Classes, SysUtils,
   Controls, ComCtrls, Menus, SynEdit, SynEditHighlighter,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Toolkit.Context;
+  FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
 
 type
 
   { TTextEditor }
 
-  TTextEditor = class (TToolkitEditor)
+  TTextEditor = class (TBaseEditor)
   private
-    btnNavigate : TToolButton;
-    btnEncoding : TToolButton;
-    btnLineMarkers : TToolButton;
-    btnBOM : TToolButton;
-    pmEncoding : TPopupMenu;
-    mnAscii : TMenuItem;
-    mnUtf8 : TMenuItem;
-    mnUtf16L : TMenuItem;
-    mnUtf16R : TMenuItem;
-    pmLineMarkers : TPopupMenu;
-    mnCRLF : TMenuItem;
-    mnLF : TMenuItem;
-    mnCR : TMenuItem;
-    pmBOM : TPopupMenu;
-    mnNoBOM : TMenuItem;
-    mnBOM : TMenuItem;
-    pmNavigation : TPopupMenu;
+    actNavigate : TContentAction;
+    actEncoding : TContentAction;
+    actLineMarkers : TContentAction;
+    actBOM : TContentAction;
 
-    procedure DoBtnNavigation(sender : TObject);
-    procedure DoBtnEncoding(sender : TObject);
-    procedure DoBtnLineMarkers(sender : TObject);
-    procedure DoBtnBOM(sender : TObject);
+    procedure MakeNavigationItems(sender : TObject);
     procedure DoMnuEncoding(sender : TObject);
     procedure DoMnuLineMarkers(sender : TObject);
     procedure DoMnuBOM(sender : TObject);
     procedure DoMnuNavigate(sender : TObject);
-    procedure ShowPopup(btn: TToolButton; mnu: TPopupMenu);
     procedure DoTextEditorChange(sender : TObject);
   protected
     TextEditor : TSynEdit;
     HighLighter : TSynCustomHighlighter;
-
+    FEditorPopup : TPopupMenu;
 
     function GetCanBeSaved: boolean; override;
-
     procedure GotoLine(line : integer);
-
-    function AddToolbarButtons : boolean; virtual;
+    function AddActions : boolean; virtual;
     function makeHighlighter : TSynCustomHighlighter; virtual;
     procedure getNavigationList(ts : TStringList); virtual;
     function MustBeUnicode : boolean; virtual;
+    procedure validate; virtual;
+    procedure checkForEncoding(s : String; line : integer);
   public
     function GetBytes: TBytes; override;
     procedure LoadBytes(bytes: TBytes); override;
@@ -65,12 +48,15 @@ type
     function location : String; override;
     procedure redo; override;
     procedure updateToolbarButtons; virtual;
+    procedure getFocus(content : TMenuItem); override;
+    procedure loseFocus(); override;
+    procedure EditPause; override;
   end;
 
 implementation
-
-uses
-  frm_main;
+//
+//uses
+//  frm_main;
 
 { TTextEditor }
 
@@ -297,7 +283,7 @@ begin
   TextEditor.CaretXY := Point(1,line+1);
 end;
 
-function TTextEditor.AddToolbarButtons: boolean;
+function TTextEditor.AddActions: boolean;
 begin
   result := false;
 end;
@@ -305,32 +291,49 @@ end;
 procedure TTextEditor.updateToolbarButtons;
 begin
   case Session.EndOfLines of
-    slUnknown : btnLineMarkers.ImageIndex := 0;
-    slCRLF: btnLineMarkers.ImageIndex := 0;
-    slLF : btnLineMarkers.ImageIndex := 2;
-    slCR : btnLineMarkers.ImageIndex := 3;
+    slUnknown : actLineMarkers.ImageIndex := 51;
+    slCRLF: actLineMarkers.ImageIndex := 51;
+    slLF : actLineMarkers.ImageIndex := 53;
+    slCR : actLineMarkers.ImageIndex := 54;
   end;
   case Session.Encoding of
-    senUnknown: btnEncoding.ImageIndex := 4;
-    senBinary: btnEncoding.ImageIndex := 5;
-    senUTF8: btnEncoding.ImageIndex := 7;
-    senASCII: btnEncoding.ImageIndex := 6;
-    senUTF16BE: btnEncoding.ImageIndex := 8;
-    senUTF16LE: btnEncoding.ImageIndex := 9;
+    senUnknown: actEncoding.ImageIndex := 55;
+    senBinary: actEncoding.ImageIndex := 56;
+    senUTF8: actEncoding.ImageIndex := 58;
+    senASCII: actEncoding.ImageIndex := 57;
+    senUTF16BE: actEncoding.ImageIndex := 59;
+    senUTF16LE: actEncoding.ImageIndex := 60;
   end;
   if Session.Encoding in [senUnknown, senBinary, senASCII] then
   begin
-    btnBOM.Enabled := false;
-    btnBOM.ImageIndex := 10;
+    actBOM.Enabled := false;
+    actBOM.ImageIndex := 61;
   end
   else
   begin
-    btnBOM.Enabled := true;
+    actBOM.Enabled := true;
     if Session.HasBOM then
-      btnBOM.ImageIndex := 11
+      actBOM.ImageIndex := 62
     else
-      btnBOM.ImageIndex := 10;
+      actBOM.ImageIndex := 61;
   end;
+end;
+
+procedure TTextEditor.getFocus(content: TMenuItem);
+begin
+  inherited getFocus(content);
+  TextEditor.SetFocus;
+end;
+
+procedure TTextEditor.loseFocus();
+begin
+  inherited loseFocus();
+end;
+
+procedure TTextEditor.EditPause;
+begin
+  inherited EditPause;
+  validate;
 end;
 
 function TTextEditor.makeHighlighter: TSynCustomHighlighter;
@@ -347,70 +350,67 @@ begin
   result := false;
 end;
 
-function addButtonToToolbar(bar: TToolBar; imgIndex : integer; event : TNotifyEvent) : TToolButton;
-var
-  index : integer;
+procedure TTextEditor.validate;
 begin
-  result := TToolButton.Create(bar);
-  result.ImageIndex := imgIndex;
-  index := bar.ButtonCount - 1;
-  if index > -1 then
-    result.Left := bar.Buttons[index].Left + bar.Buttons[index].Width
-  else
-    result.Left := 0;
-  result.Parent := bar;
-  result.OnClick := event;
+  // nothing
 end;
 
-function addMenuItem(pm : TPopupMenu; s : String; imgIndex : integer; event : TNotifyEvent) : TMenuItem;
+procedure TTextEditor.checkForEncoding(s: String; line: integer);
 begin
-  result := TMenuItem.create(nil);
-  result.Caption := s;
-  result.ImageIndex := imgIndex;
-  result.OnClick := event;
-  pm.Items.Add(result);
+
 end;
+
 
 procedure TTextEditor.bindToTab(tab: TTabSheet);
 var
   tb : TToolBar;
-  tbtn : TToolButton;
+  mnu : TMenuItem;
 begin
   inherited bindToTab(tab);
 
-  // 1. the content toolbar...
+  FEditorPopup := TPopupMenu.create(tab);
+  FEditorPopup.Images := Context.images;
+
+  mnu := TMenuItem.create(tab);
+  mnu.Action := Context.actions.ActionByName('actionEditUndo');
+  FEditorPopup.Items.Add(mnu);
+
+  mnu := TMenuItem.create(tab);
+  mnu.Action := Context.actions.ActionByName('actionEditCut');
+  FEditorPopup.Items.Add(mnu);
+
+  mnu := TMenuItem.create(tab);
+  mnu.Action := Context.actions.ActionByName('actionEditCopy');
+  FEditorPopup.Items.Add(mnu);
+
+  mnu := TMenuItem.create(tab);
+  mnu.Action := Context.actions.ActionByName('actionEditPaste');
+  FEditorPopup.Items.Add(mnu);
+
   tb := TToolBar.create(tab);
   tb.parent := tab;
   tb.align := alTop;
-  tb.Images := MainToolkitForm.imgContext;
+  tb.Images := Context.Images;
 
-  btnNavigate := addButtonToToolbar(tb, 12, DoBtnNavigation);
-  addButtonToToolbar(tb, 0, nil).Style := tbsDivider;
-  if AddToolbarButtons then
-    addButtonToToolbar(tb, 0, nil).Style := tbsDivider;
-  btnEncoding := addButtonToToolbar(tb, 0, DoBtnEncoding);
-  btnLineMarkers := addButtonToToolbar(tb, 4, DoBtnLineMarkers);
-  btnBOM := addButtonToToolbar(tb, 10, DoBtnBOM);
+  actNavigate := makeAction(tb, '&Navigate', 63);
+  actNavigate.OnPopulate := MakeNavigationItems;
+  makeDivider(tb);
+  if AddActions then
+    makeDivider(tb);
+  actEncoding := makeAction(tb, 'Encoding', 0);
+  makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
+  makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
+  makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
+  makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
 
-  pmLineMarkers := TPopupMenu.create(tab);
-  pmLineMarkers.Images := MainToolkitForm.imgContext;
-  mnCRLF := addMenuItem(pmLineMarkers, 'Windows', 0, DoMnuLineMarkers);
-  mnLF := addMenuItem(pmLineMarkers, 'Unix', 2, DoMnuLineMarkers);
-  mnCR := addMenuItem(pmLineMarkers, 'Macintosh', 3, DoMnuLineMarkers);
+  actLineMarkers := makeAction(tb, 'End of Lines', 4);
+  makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
+  makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
+  makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
 
-  pmEncoding := TPopupMenu.create(tab);
-  pmEncoding.Images := MainToolkitForm.imgContext;
-  mnAscii := addMenuItem(pmEncoding, 'ASCII', 6, DoMnuEncoding);
-  mnUtf8 := addMenuItem(pmEncoding, 'UTF8 (Unicode)', 7, DoMnuEncoding);
-  mnUtf16L := addMenuItem(pmEncoding, 'UTF16 BE', 8, DoMnuEncoding);
-  mnUtf16R := addMenuItem(pmEncoding, 'UTF16 LE', 9, DoMnuEncoding);
-
-  pmBOM := TPopupMenu.create(tab);
-  pmBOM.Images := MainToolkitForm.imgContext;
-  mnNoBOM := addMenuItem(pmBOM, 'No BOM', 10, DoMnuBOM);
-  mnBOM := addMenuItem(pmBOM, 'BOM', 11, DoMnuBOM);
-
-  pmNavigation := TPopupMenu.create(tab);
+  actBOM := makeAction(tb, 'Byte Order Mark', 10);
+  makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
+  makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
@@ -419,23 +419,8 @@ begin
   TextEditor.align := alClient;
   TextEditor.Highlighter := HighLighter;
   TextEditor.OnChange := DoTextEditorChange;
+  TextEditor.PopupMenu := FEditorPopup;
 
-
-  // add the tool bar
-  // add the syn edit
-  // set up the high lighting
-  //
-
-end;
-
-procedure TTextEditor.ShowPopup(btn : TToolButton; mnu : TPopupMenu);
-var
-  pt, pt2: TPoint;
-begin
-  pt.x := MainToolkitForm.pgEditors.Left + btn.Left;
-  pt.y := MainToolkitForm.pgEditors.top + (MainToolkitForm.pgEditors.height - Tab.height)  + btn.top + btn.Height;
-  pt2 := MainToolkitForm.ClientToScreen(pt);
-  mnu.PopUp(pt2.x, pt2.y);
 end;
 
 procedure TTextEditor.DoTextEditorChange(sender: TObject);
@@ -447,56 +432,40 @@ begin
   Context.OnUpdateActions(self);;
 end;
 
-procedure TTextEditor.DoBtnNavigation(sender: TObject);
+procedure TTextEditor.MakeNavigationItems(sender: TObject);
 var
   ts : TStringList;
   i : integer;
 begin
-  pmNavigation.Items.clear;
+  actNavigate.subItems.clear;
+  makeSubAction(actNavigate, 'Start', -1, 0, DoMnuNavigate);
   ts := TStringList.create;
   try
-    ts.addObject('Start', TObject(0));
     getNavigationList(ts);
-    ts.addObject('End', TObject($FFFFFFF));
     for i := 0 to ts.count - 1 do
-      addMenuItem(pmNavigation, ts[i], -1, DoMnuNavigate).Tag := integer(ts.objects[i]);
+      makeSubAction(actNavigate, ts[i], -1, integer(ts.objects[i]), DoMnuNavigate);
   finally
     ts.free;
   end;
-  ShowPopup(btnNavigate, pmNavigation);
-end;
-
-procedure TTextEditor.DoBtnEncoding(sender : TObject);
-begin
-  ShowPopup(btnEncoding, pmEncoding);
-end;
-
-procedure TTextEditor.DoBtnLineMarkers(sender : TObject);
-begin
-  ShowPopup(btnLineMarkers, pmLineMarkers);
-end;
-
-procedure TTextEditor.DoBtnBOM(sender : TObject);
-begin
-  ShowPopup(btnBOM, pmBOM);
+  makeSubAction(actNavigate, 'End', -1, $FFFFFFF, DoMnuNavigate);
 end;
 
 procedure TTextEditor.DoMnuEncoding(sender: TObject);
 begin
-  case (Sender as TMenuItem).ImageIndex of
-    4: Session.Encoding := senUnknown;
-    5: Session.Encoding := senBinary;
-    6: Session.Encoding := senASCII;
-    7: Session.Encoding := senUTF8;
-    8: Session.Encoding := senUTF16BE;
-    9: Session.Encoding := senUTF16LE;
+  case (Sender as TMenuItem).Tag of
+    10: Session.Encoding := senUnknown;
+    11: Session.Encoding := senBinary;
+    0: Session.Encoding := senASCII;
+    1: Session.Encoding := senUTF8;
+    2: Session.Encoding := senUTF16BE;
+    3: Session.Encoding := senUTF16LE;
   end;
   updateToolbarButtons;
 end;
 
 procedure TTextEditor.DoMnuLineMarkers(sender: TObject);
 begin
-  case (Sender as TMenuItem).ImageIndex of
+  case (Sender as TMenuItem).Tag of
     0: Session.EndOfLines := slCRLF;
     1: Session.EndOfLines := slLF;
     2: Session.EndOfLines := slLF;
@@ -507,9 +476,9 @@ end;
 
 procedure TTextEditor.DoMnuBOM(sender: TObject);
 begin
-  case (Sender as TMenuItem).ImageIndex of
-    10: Session.HasBOM := false;
-    11: Session.HasBOM := true;
+  case (Sender as TMenuItem).Tag of
+    0: Session.HasBOM := false;
+    1: Session.HasBOM := true;
   end;
   updateToolbarButtons;
 end;
@@ -523,11 +492,14 @@ begin
     GotoLine(TextEditor.lines.count - 1)
   else
     GotoLine(mnu.tag);
+  TextEditor.SetFocus;
 end;
 
 procedure TTextEditor.locate(location: TSourceLocation);
 begin
-
+  TextEditor.CaretY := location.line;
+  TextEditor.CaretX := location.col;
+  TextEditor.SetFocus;
 end;
 
 function TTextEditor.location: String;
