@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
+  FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.TextEditor;
 
 type
@@ -62,7 +63,9 @@ procedure TIniEditor.validate;
 var
   i : integer;
   s : String;
+  t : QWord;
 begin
+  t := GetTickCount64;
   StartValidating;
   try
     for i := 0 to TextEditor.lines.count - 1 do
@@ -84,6 +87,7 @@ begin
   finally
     finishValidating;
   end;
+  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 

@@ -11,7 +11,8 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
 
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor;
+  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor,
+  FHIR.Toolkit.PlainTextEditor, FHIR.Toolkit.HtmlEditor;
 
 type
 
@@ -66,6 +67,30 @@ begin
     result.guid := NewGuidId;
     result.kind := sekIni;
   end
+  else if (ext = '.xml') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekXml;
+  end
+  else if (ext = '.json') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekJson;
+  end
+  else if (ext = '.html') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekHtml;
+  end
+  else if (ext = '.txt') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekText;
+  end
   else
     ShowMessage('The file '+filename+' isn''t recognised by this application');
 end;
@@ -76,7 +101,11 @@ var
 begin
   store := FContext.StorageForAddress(session.address);
   case session.kind of
-    sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
+  sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
+  sekText : result := TPlainTextEditor.create(FContext{.link}, session, store.link);
+  sekXml : result := TXmlEditor.create(FContext{.link}, session, store.link);
+  sekJson : result := TJsonEditor.create(FContext{.link}, session, store.link);
+  sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;

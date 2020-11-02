@@ -1,22 +1,22 @@
-unit FHIR.Toolkit.XmlEditor;
+unit FHIR.Toolkit.JsonEditor;
 
 {$i fhir.inc}
 
 interface
 
 uses
-  Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
-  FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging,
+  Classes, SysUtils, SynEditHighlighter, SynHighlighterJScript,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.TextEditor;
 
 type
 
-  { TXmlEditor }
+  { TJsonEditor }
 
-  TXmlEditor = class (TTextEditor)
+  TJsonEditor = class (TTextEditor)
   private
-    FParser : TMXmlParser;
+    FParser : TJsonParser;
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
@@ -32,47 +32,47 @@ type
 
 implementation
 
-function TXmlEditor.makeHighlighter: TSynCustomHighlighter;
+function TJsonEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynXmlSyn.create(nil);
+  Result := TSynJScriptSyn.create(nil);
 end;
 
-procedure TXmlEditor.getNavigationList(navpoints: TStringList);
+procedure TJsonEditor.getNavigationList(navpoints: TStringList);
 begin
 end;
 
-constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
+constructor TJsonEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TMXmlParser.create;
+  FParser := TJsonParser.create;
 end;
 
-destructor TXmlEditor.Destroy;
+destructor TJsonEditor.Destroy;
 begin
   FParser.free;
   inherited Destroy;
 end;
 
-procedure TXmlEditor.newContent();
+procedure TJsonEditor.newContent();
 begin
   Session.HasBOM := false;
   Session.EndOfLines := PLATFORM_DEFAULT_EOLN;
   Session.Encoding := senUTF8;
 
-  TextEditor.Text := '<xml>'+#13#10+'</xml>'+#13#10;
+  TextEditor.Text := '{'+#13#10+'  "name": "value'+#13#10+'}'+#13#10;
   updateToolbarButtons;
 end;
 
-function TXmlEditor.FileExtension: String;
+function TJsonEditor.FileExtension: String;
 begin
-  result := 'xml';
+  result := 'Json';
 end;
 
-procedure TXmlEditor.validate;
+procedure TJsonEditor.validate;
 var
   i : integer;
   s : String;
-  xml : TMXmlDocument;
+  Json : TJsonNode;
   t : QWord;
 begin
   t := GetTickCount64;
@@ -84,11 +84,11 @@ begin
       checkForEncoding(s, i);
     end;
     try
-      xml := FParser.parse(TextEditor.text, [xpResolveNamespaces]);
+      Json := FParser.parseNode(TextEditor.text);
       try
         // todo: any semantic validation?
       finally
-        xml.free;
+        Json.free;
       end;
     except
       on e : EParserException do
@@ -97,7 +97,7 @@ begin
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing XML: '+e.message);
+        validationError(1, 1, 'Error Parsing Json: '+e.message);
       end;
     end;
   finally

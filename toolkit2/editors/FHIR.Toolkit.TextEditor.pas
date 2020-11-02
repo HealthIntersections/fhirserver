@@ -31,6 +31,8 @@ type
     TextEditor : TSynEdit;
     HighLighter : TSynCustomHighlighter;
     FEditorPopup : TPopupMenu;
+    FPageControl : TPageControl;
+    FTextTab : TTabSheet;
 
     function GetCanBeSaved: boolean; override;
     procedure GotoLine(line : integer);
@@ -40,6 +42,7 @@ type
     function MustBeUnicode : boolean; virtual;
     procedure validate; virtual;
     procedure checkForEncoding(s : String; line : integer);
+    procedure makeOtherPages; virtual;
   public
     function GetBytes: TBytes; override;
     procedure LoadBytes(bytes: TBytes); override;
@@ -361,12 +364,31 @@ begin
 end;
 
 
+procedure TTextEditor.makeOtherPages;
+begin
+  // nothing here
+end;
+
+
 procedure TTextEditor.bindToTab(tab: TTabSheet);
 var
   tb : TToolBar;
   mnu : TMenuItem;
+  parent : TWinControl;
 begin
   inherited bindToTab(tab);
+
+  if (hasPages) then
+  begin
+    FPageControl := TPageControl.create(tab);
+    FPageControl.Parent := tab;
+    FPageControl.ShowTabs := false;
+    FPageControl.Align := alClient;
+    FTextTab := FPageControl.AddTabSheet;
+    parent := FTextTab;
+  end
+  else
+    parent := tab;
 
   FEditorPopup := TPopupMenu.create(tab);
   FEditorPopup.Images := Context.images;
@@ -388,7 +410,7 @@ begin
   FEditorPopup.Items.Add(mnu);
 
   tb := TToolBar.create(tab);
-  tb.parent := tab;
+  tb.parent := parent;
   tb.align := alTop;
   tb.Images := Context.Images;
 
@@ -415,12 +437,14 @@ begin
   // 2. the Synedit
   Highlighter := makeHighlighter;
   TextEditor := TSynEdit.create(tab);
-  TextEditor.parent := tab;
+  TextEditor.parent := parent;
   TextEditor.align := alClient;
+  TextEditor.Font.Size := 10;
   TextEditor.Highlighter := HighLighter;
   TextEditor.OnChange := DoTextEditorChange;
   TextEditor.PopupMenu := FEditorPopup;
 
+  makeOtherPages;
 end;
 
 procedure TTextEditor.DoTextEditorChange(sender: TObject);

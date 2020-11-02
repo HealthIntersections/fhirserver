@@ -172,6 +172,7 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
+    Panel2: TPanel;
     Panel4: TPanel;
     pgEditors: TPageControl;
     Panel1: TPanel;
@@ -191,6 +192,7 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     pnlStatus: TStatusBar;
+    mConsole: TSynEdit;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -316,6 +318,7 @@ type
     procedure DoAppException(Sender : TObject; E : Exception);
     procedure updateUI;
     procedure updateTasks;
+    procedure updateConsole;
     procedure updateActions;
     procedure checkActiveTabCurrency;
     procedure checkLastUpdated;
@@ -511,6 +514,7 @@ end;
 procedure TMainToolkitForm.updateUI;
 begin
   updateStatusBar;
+  updateConsole;
   updateActions;
   updateTasks;
 end;
@@ -542,6 +546,36 @@ begin
   finally
     list.free;
   end;
+end;
+
+procedure TMainToolkitForm.updateConsole;
+var
+  ts : TStringList;
+  s : String;
+  l : integer;
+begin
+  ts := TStringList.create;
+  try
+    Context.Console.GetIncoming(ts);
+    l := 0;
+    if (ts.count > 0) then
+    begin
+      mConsole.BeginUpdate(false);
+      try
+        for s in ts do
+          mConsole.lines.add(s);
+        while mConsole.lines.count > 1000 do
+          mConsole.lines.delete(0);
+        mConsole.CaretX := 1;
+        mConsole.CaretY := mConsole.lines.count-1;
+      finally
+        mConsole.EndUpdate;
+      end;
+    end;
+  finally
+    ts.free;
+  end;
+
 end;
 
 procedure TMainToolkitForm.updateActions;

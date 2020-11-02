@@ -14,7 +14,8 @@ uses
   FHIR.Support.Logging, FHIR.Support.Utilities, FHIR.LCL.Managers,
   FHIR.Base.Lang, FHIR.Web.Parsers, frm_progress, FHIR.Toolkit.TempStorage,
   frm_file_format, FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor,
-  FHIR.Toolkit.TextEditor;
+  FHIR.Toolkit.TextEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory,
+  FHIR.Toolkit.JsonEditor, FHIR.Toolkit.PlainTextEditor;
 
 {$R *.res}
 

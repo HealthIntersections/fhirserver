@@ -94,7 +94,7 @@ begin
     result := dlg.execute;
     if result then
     begin
-      newName := dlg.FileName;
+      newName := 'file:'+dlg.FileName;
       FIni.WriteString('file-store', 'folder', ExtractFilePath(newName));
     end;
   finally

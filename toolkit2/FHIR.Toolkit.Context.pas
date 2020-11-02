@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Controls, ComCtrls, Menus, ActnList,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Toolkit.Store;
+  FHIR.Toolkit.Store, FHIR.Toolkit.Console;
 
 // supported formats:
 // ini
@@ -163,6 +163,7 @@ type
     procedure editPause; virtual;
     procedure getFocus(content : TMenuItem); virtual;
     procedure loseFocus(); virtual;
+    function hasPages : boolean; virtual;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -204,6 +205,7 @@ type
   TToolkitContext = class (TFslObject)
   private
     FActions: TActionList;
+    FConsole: TToolkitConsole;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
     FOnLocate : TLocateEvent;
@@ -235,12 +237,9 @@ type
     property Editors : TFslList<TToolkitEditor> read FEditors;
 
 
-//    property persistenceServices : TToolkitPersistenceServices;
-//    property EditorList : TToolkitEditorList;
-////
 //    property ProjectManager : TToolkitProjectManagerView;
     property MessageView : TToolkitMessagesView read FMessageView;
-//    property Console : TToolkitConsoleView;
+    property Console : TToolkitConsole read FConsole;
 //    property Search : TToolkitSearchView;
 //    property Inspector : TToolkitEditorInspectorView;
 //    property MetadataView : TToolkitEditorMetadataView;
@@ -482,6 +481,11 @@ begin
   // nothing
 end;
 
+function TToolkitEditor.hasPages: boolean;
+begin
+  result := false;
+end;
+
 { TToolkitContextObject }
 
 constructor TToolkitContextObject.create(context: TToolkitContext);
@@ -515,6 +519,7 @@ begin
   FEditors := TFslList<TToolkitEditor>.create;
   FStorages := TFslList<TStorageService>.create;
   FMessageView := TToolkitMessagesView.create;
+  FConsole := TToolkitConsole.create;
   FImages := images;
   FActions := actions;
 end;
@@ -522,6 +527,7 @@ end;
 destructor TToolkitContext.Destroy;
 begin
   FMessageView.Free;
+  FConsole.Free;
   FStorages.Free;
   FEditors.Free;
   FEditorSessions.Free;
