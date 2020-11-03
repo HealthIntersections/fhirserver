@@ -20,7 +20,7 @@ type
   public
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate; override;
+    procedure validate(ts : TStringList; line, col : integer); override;
   end;
 
 
@@ -60,11 +60,12 @@ begin
   result := 'ini';
 end;
 
-procedure TIniEditor.validate;
+procedure TIniEditor.validate(ts : TStringList; line, col : integer);
 var
   i : integer;
   s : String;
   t : QWord;
+  section : String;
 begin
   t := GetTickCount64;
   updateToContent;
@@ -80,11 +81,15 @@ begin
         if s.StartsWith('[') then
         begin
           if not s.EndsWith(']') then
-            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]');
+            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]')
+          else
+            section := s.Substring(1, length(s)-1);
         end
         else if not s.contains('=') then
           validationWarning(i+1, 1, 'No = found on non-comment line');
       end;
+      if (i = line) then
+        ts.AddPair('Section', section);
     end;
   finally
     finishValidating;

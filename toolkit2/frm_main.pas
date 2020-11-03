@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit, lclintf,
+  ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
+  lclintf, ValEdit,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc,
   FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
@@ -16,7 +17,7 @@ uses
   frm_npm_manager, frm_file_format, frm_settings;
 
 const
-  PAUSE_SECONDS = 2; // move to settings?
+  PAUSE_MILLISECONDS = 1000; // move to settings?
 
 type
 
@@ -240,6 +241,7 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    ValueListEditor1: TValueListEditor;
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
@@ -611,7 +613,7 @@ var
 begin
   for editor in FContext.Editors do
   begin
-    if not editor.lastChangeChecked and (editor.lastChange + (PAUSE_SECONDS*1000) < GetTickCount64) then
+    if not editor.lastChangeChecked and (editor.lastChange + PAUSE_MILLISECONDS < GetTickCount64) then
     begin
       FTempStore.storeContent(editor.session.guid, false, editor.GetBytes);
       editor.editPause;

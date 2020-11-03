@@ -207,12 +207,28 @@ type
     property OnChange : TNotifyEvent read FOnChange write FOnChange;
   end;
 
+  { TToolkitEditorInspectorView }
+
+  TToolkitEditorInspectorView = class (TFslObject)
+  private
+    FOnChange: TNotifyEvent;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    procedure populate(ts : TStringList);
+    procedure clear;
+
+    property OnChange : TNotifyEvent read FOnChange write FOnChange;
+  end;
+
   { TToolkitContext }
 
   TToolkitContext = class (TFslObject)
   private
     FActions: TActionList;
     FConsole: TToolkitConsole;
+    FInspector: TToolkitEditorInspectorView;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
     FOnLocate : TLocateEvent;
@@ -252,7 +268,7 @@ type
     property MessageView : TToolkitMessagesView read FMessageView;
     property Console : TToolkitConsole read FConsole;
 //    property Search : TToolkitSearchView;
-//    property Inspector : TToolkitEditorInspectorView;
+    property Inspector : TToolkitEditorInspectorView read FInspector;
 //    property MetadataView : TToolkitEditorMetadataView;
 //    property Tasks : TToolkitEditorTasksView;
 //    property Variables : TToolkitEditorVariablesView;
@@ -272,6 +288,28 @@ type
   end;
 
 implementation
+
+{ TToolkitEditorInspectorView }
+
+constructor TToolkitEditorInspectorView.Create;
+begin
+  inherited Create;
+end;
+
+destructor TToolkitEditorInspectorView.Destroy;
+begin
+  inherited Destroy;
+end;
+
+procedure TToolkitEditorInspectorView.populate(ts: TStringList);
+begin
+
+end;
+
+procedure TToolkitEditorInspectorView.clear;
+begin
+
+end;
 
 { TToolkitMessage }
 
@@ -506,7 +544,7 @@ begin
   begin
     FSideBySide := AValue;
     for editor in Editors do
-      editor.ChangeSideBySide;
+      editor.ChangeSideBySideMode;
   end;
 end;
 

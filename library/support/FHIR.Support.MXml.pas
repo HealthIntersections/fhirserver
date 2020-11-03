@@ -107,6 +107,8 @@ Type
 
   TMXmlElementType = (ntElement, ntText, ntComment, ntDocument, ntAttribute, ntProcessingInstruction, ntDocumentDeclaration, ntCData);
 
+  { TMXmlNamedNode }
+
   TMXmlNamedNode = class (TMXmlNode)
   private
     FNodeType : TMXmlElementType;
@@ -115,6 +117,7 @@ Type
     FLocalName : String;
     FStart : TSourceLocation;
     FStop : TSourceLocation;
+    function containsLocation(loc : TSourceLocation) : boolean;
   public
     constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
@@ -165,6 +168,7 @@ Type
     procedure fixChildren;
     function GetHasAttribute(name: String): boolean;
     function GetAllChildrenAreText: boolean;
+    function findLocation(loc : TSourceLocation; path : TFslList<TMXmlNode>) : boolean;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -325,6 +329,8 @@ Type
     function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
     function evaluateBoolean(nodes : TFslList<TMXmlNode>): boolean;
     property NamespaceAbbreviations : TFslStringDictionary read FNamespaceAbbreviations;
+
+    function findLocation(loc : TSourceLocation) : TFslList<TMXmlNode>;
   end;
 
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities);
@@ -421,6 +427,11 @@ begin
 end;
 
 { TMXmlNamedNode }
+
+function TMXmlNamedNode.containsLocation(loc : TSourceLocation): boolean;
+begin
+  result := locInSpan(loc, FStart, FStop);
+end;
 
 constructor TMXmlNamedNode.Create(nodeType: TMXmlElementType);
 begin
@@ -593,6 +604,20 @@ begin
   for child in Children do
     if (child.NodeType <> ntText) then
       exit(false);
+end;
+
+function TMXmlElement.findLocation(loc : TSourceLocation; path : TFslList<TMXmlNode>) : boolean;
+var
+  child : TMXmlElement;
+begin
+  result := containsLocation(loc);
+  if result then
+  begin
+    path.add(self.link);
+    for child in FChildren do
+      if child.findLocation(loc, path) then
+        exit;
+  end;
 end;
 
 function TMXmlElement.GetAllText: String;
@@ -2254,6 +2279,17 @@ begin
     end;
   finally
     vars.Free;
+  end;
+end;
+
+function TMXmlDocument.findLocation(loc : TSourceLocation) : TFslList<TMXmlNode>;
+begin
+  result := TFslList<TMXmlNode>.create;
+  try
+    docElement.findLocation(loc, result);
+    result.link;
+  finally
+    result.free;
   end;
 end;
 

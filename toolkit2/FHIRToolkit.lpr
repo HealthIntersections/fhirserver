@@ -11,12 +11,14 @@ uses
   Forms, frm_main, frm_npm_manager, frm_npm_browser,
   { you can add units after this }
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Logging,
-  FHIR.Support.Utilities, FHIR.LCL.Managers, FHIR.Base.Lang, FHIR.Web.Parsers,
-  frm_progress, frm_file_format, FHIR.Toolkit.Context, FrameViewer09,
-  FHIR.Toolkit.Console, FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory,
-  FHIR.Toolkit.JsonEditor, FHIR.Toolkit.PlainTextEditor,
-  FHIR.Toolkit.BaseEditor, FHIR.Toolkit.HtmlEditor, frm_settings;
+  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.LCL.Managers,
+  FHIR.Base.Lang, FHIR.Web.Parsers, frm_progress, SynHighlighterHL7,
+  FHIR.v2.Objects, FHIR.V2.Base, FHIR.V2.Dictionary, frm_file_format,
+  FHIR.Toolkit.Context, FrameViewer09, FHIR.Toolkit.Console,
+  FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor, FHIR.Toolkit.TextEditor,
+  FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory, FHIR.Toolkit.JsonEditor,
+  FHIR.Toolkit.PlainTextEditor, FHIR.Toolkit.BaseEditor,
+  FHIR.Toolkit.HtmlEditor, FHIR.Toolkit.JavascriptEditor, frm_settings;
 
 {$R *.res}
 

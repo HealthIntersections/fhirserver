@@ -155,6 +155,33 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.JavascriptEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ui\SynHighlighterHL7.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.V2.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.v2.Objects"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Base"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Collections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -165,7 +192,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

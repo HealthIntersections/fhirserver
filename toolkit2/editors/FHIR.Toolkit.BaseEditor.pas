@@ -11,6 +11,7 @@ uses
   FHIR.Toolkit.Context, FHIR.Toolkit.Store;
 
 type
+  TCurrentViewMode = (vmText, vmDesigner);
 
   { TContentSubAction }
 
@@ -121,6 +122,7 @@ type
     // text & designer may be side by side or a binary choice, but only one can have focus
     FTextPanelWork : TPanel;
     FDesignerPanelWork : TPanel;
+    FMode : TCurrentViewMode;
 
 
     TextEditor : TSynEdit;
@@ -133,7 +135,11 @@ type
     function makeHighlighter : TSynCustomHighlighter; virtual;
     procedure getNavigationList(ts : TStringList); virtual;
     function MustBeUnicode : boolean; virtual;
-    procedure validate; virtual;
+
+    // the kind of operations required to populate the inspector are generally those already required for validation, so we do both at the same time.
+    // some validations are a 3 phase process: syntax parse, minimal check and populate the properties, and then a slower full check
+    procedure validate(ts : TStringList; line, col : integer); virtual;
+
     procedure checkForEncoding(s : String; line : integer);
 
     function makeSubAction(action : TContentAction; caption : String; imageIndex, tag : integer; event : TNotifyEvent) : TContentSubAction;
@@ -167,7 +173,6 @@ type
     procedure ChangeSideBySideMode; override;
     function hasTextTab : boolean; override;
     function hasDesigner : boolean; override;
-    procedure ChangeSideBySide; override;
     function IsShowingDesigner : boolean; override;
     procedure showDesigner; override;
     procedure showTextTab; override;
@@ -803,22 +808,45 @@ begin
 end;
 
 procedure TBaseEditor.EditPause;
+var
+  ts : TStringList;
 begin
   LastChangeChecked := true;
+  updateToContent;
   if Context.SideBySide then
     updateDesigner;
-  validate;
+
+  ts := TStringList.create;
+  try
+    validate(ts, TextEditor.CaretY-1, TextEditor.CaretX-1);
+    Context.Inspector.Populate(ts);
+  finally
+    ts.free;
+  end;
 end;
 
 procedure TBaseEditor.ChangeSideBySideMode;
 begin
-  if Context.SideBySide then
+  if (Context.SideBySide and hasTextTab and hasDesigner) then
   begin
-    !
+    FTextPanelBase.parent := Tab;
+    FSplitter.parent := Tab;
+    FDesignerPanelBase.parent := Tab;
+    FTextPanelWork.parent := FTextPanelBase;
+    FDesignerPanelWork.parent := FDesignerPanelBase;
+    FPageControl.Parent := nil;
   end
   else
   begin
-    !
+    FPageControl.Parent := tab;
+    FTextPanelBase.parent := nil;
+    FSplitter.parent := nil;
+    FDesignerPanelBase.parent := nil;
+
+    if hasTextTab then
+      FTextPanelWork.parent := FTextTab;
+    if hasDesigner then
+      FDesignerPanelWork.parent := FDesignTab;
   end;
 end;
 
@@ -830,11 +858,6 @@ end;
 function TBaseEditor.hasDesigner: boolean;
 begin
   result := false;
-end;
-
-procedure TBaseEditor.ChangeSideBySide;
-begin
-  // nothing
 end;
 
 function TBaseEditor.makeHighlighter: TSynCustomHighlighter;
@@ -878,63 +901,73 @@ end;
 procedure TBaseEditor.bindToTab(tab: TTabSheet);
 begin
   inherited bindToTab(tab);
+
+  // create the pages
+  FPageControl := TPageControl.create(tab);
+  FPageControl.ShowTabs := false;
+  FPageControl.Align := alClient;
+  FTextTab := FPageControl.AddTabSheet;
+  FDesignTab := FPageControl.AddTabSheet;
+
+  // create the side by side
+  FTextPanelBase := TPanel.create(tab);
+  FTextPanelBase.BevelWidth := 0;
+  FTextPanelBase.BorderWidth := 2;
+  FTextPanelBase.Align := alLeft;
+  FTextPanelBase.Width := (tab.width div 2) - 4;
+  FTextPanelBase.Color := clLime;
+  FTextPanelBase.ShowHint := false;
+  FSplitter := TSplitter.create(tab);
+  FSplitter.Width := 8;
+  FSplitter.Align := alLeft;
+  FSplitter.ResizeControl := FTextPanelBase;
+  FDesignerPanelBase := TPanel.create(tab);
+  FDesignerPanelBase.BevelWidth := 0;
+  FDesignerPanelBase.BorderWidth := 2;
+  FDesignerPanelBase.Align := alClient;
+  FDesignerPanelBase.Color := clGray;
+  FDesignerPanelBase.ShowHint := false;
   tab.OnResize := doResize;
-  if (Context.SideBySide and hasTextTab and hasDesigner) then
+
+  // create the panels
+  if hasTextTab then
   begin
-    FTextPanelBase := TPanel.create(tab);
-    FTextPanelBase.parent := Tab;
-    FTextPanelBase.BevelWidth := 0;
-    FTextPanelBase.BorderWidth := 2;
-    FTextPanelBase.Align := alLeft;
-    FTextPanelBase.Width := (tab.width div 2) - 4;
-    FTextPanelBase.Color := clLime;
-    FTextPanelBase.ShowHint := false;
     FTextPanelWork := TPanel.create(tab);
-    FTextPanelWork.parent := FTextPanelBase;
     FTextPanelWork.BevelWidth := 0;
     FTextPanelWork.Align := alClient;
     FTextPanelWork.Color := clBtnFace;
-    FSplitter := TSplitter.create(tab);
-    FSplitter.parent := Tab;
-    FSplitter.Width := 8;
-    FSplitter.Align := alLeft;
-    FSplitter.ResizeControl := FTextPanelBase;
-    FDesignerPanelBase := TPanel.create(tab);
-    FDesignerPanelBase.parent := Tab;
-    FDesignerPanelBase.BevelWidth := 0;
-    FDesignerPanelBase.BorderWidth := 2;
-    FDesignerPanelBase.Align := alClient;
-    FDesignerPanelBase.Color := clGray;
-    FDesignerPanelBase.ShowHint := false;
+  end;
+  if hasDesigner then
+  begin
     FDesignerPanelWork := TPanel.create(tab);
-    FDesignerPanelWork.parent := FDesignerPanelBase;
     FDesignerPanelWork.BevelWidth := 0;
     FDesignerPanelWork.Align := alClient;
     FDesignerPanelWork.Color := clBtnFace;
+  end;
+
+
+  // bind mode
+  if (Context.SideBySide and hasTextTab and hasDesigner) then
+  begin
+    FTextPanelBase.parent := Tab;
+    FSplitter.parent := Tab;
+    FDesignerPanelBase.parent := Tab;
+    FTextPanelWork.parent := FTextPanelBase;
+    FDesignerPanelWork.parent := FDesignerPanelBase;
+    FPageControl.Parent := nil;
   end
   else
   begin
-    FPageControl := TPageControl.create(tab);
     FPageControl.Parent := tab;
-    FPageControl.ShowTabs := false;
-    FPageControl.Align := alClient;
+    FTextPanelBase.parent := nil;
+    FSplitter.parent := nil;
+    FDesignerPanelBase.parent := nil;
 
     if hasTextTab then
-    begin
-      FTextTab := FPageControl.AddTabSheet;
-      FTextPanelWork := TPanel.create(tab);
       FTextPanelWork.parent := FTextTab;
-      FTextPanelWork.BevelWidth := 0;
-      FTextPanelWork.Align := alClient;
-    end;
     if hasDesigner then
-    begin
-      FDesignTab := FPageControl.AddTabSheet;
-      FDesignerPanelWork := TPanel.create(tab);
       FDesignerPanelWork.parent := FDesignTab;
-      FDesignerPanelWork.BevelWidth := 0;
-      FDesignerPanelWork.Align := alClient;
-    end;
+
     if hasTextTab then
       FPageControl.ActivePage := FTextTab
     else
@@ -946,6 +979,8 @@ begin
 
   if hasDesigner then
     makeDesigner;
+
+  FMode := vmText;
 end;
 
 procedure TBaseEditor.makeTextTab;
@@ -1041,10 +1076,7 @@ end;
 
 procedure TBaseEditor.doResize(sender: TObject);
 begin
-  if context.SideBySide then
-  begin
-    FTextPanelBase.Width := (tab.width div 2) - 4;
-  end;
+  FTextPanelBase.Width := (tab.width div 2) - 4;
 end;
 
 procedure TBaseEditor.DoTextEditorChange(sender: TObject);
@@ -1053,6 +1085,7 @@ begin
   Session.NeedsSaving := true;
   lastChange := GetTickCount64;
   lastChangeChecked := false;
+  Context.Inspector.Clear;
   Context.OnUpdateActions(self);;
 end;
 
@@ -1148,7 +1181,7 @@ end;
 
 function TBaseEditor.IsShowingDesigner: boolean;
 begin
-  result := (FPageControl <> nil) and (FPageControl.ActivePage = FDesignTab);
+  result := (FMode = vmDesigner)
 end;
 
 procedure TBaseEditor.showDesigner;
@@ -1163,6 +1196,7 @@ begin
   end
   else
     FPageControl.ActivePage := FDesignTab;
+  FMode := vmDesigner;
 end;
 
 procedure TBaseEditor.showTextTab;
@@ -1176,6 +1210,7 @@ begin
   end
   else
     FPageControl.ActivePage := FTextTab;
+  FMode := vmText;
 end;
 
 

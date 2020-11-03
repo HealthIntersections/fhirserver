@@ -426,7 +426,7 @@ function nullLoc : TSourceLocation;
 function isNullLoc(src : TSourceLocation) : boolean;
 function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
 function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
-
+function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
 
 (*
 Type
@@ -4947,7 +4947,10 @@ begin
     result := src1.col >= src2.col;
 end;
 
-
+function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
+begin
+  result := locGreatorOrEqual(tgt, lower) and locLessOrEqual(tgt, upper);
+end;
 
 Constructor TFslZipWorker.Create;
 Begin

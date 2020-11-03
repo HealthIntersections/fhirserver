@@ -11,7 +11,9 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
 
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor, FHIR.Toolkit.MarkdownEditor;
+  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor,
+  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor,
+  SynHighlighterHL7;
 
 type
 
@@ -90,6 +92,12 @@ begin
     result.guid := NewGuidId;
     result.kind := sekMD;
   end
+  else if (ext = '.js') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekJS;
+  end
   else if (ext = '.txt') then
   begin
     result := TToolkitEditSession.create;
@@ -112,6 +120,7 @@ begin
   sekJson : result := TJsonEditor.create(FContext{.link}, session, store.link);
   sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);
   sekMD : result := TMarkdownEditor.create(FContext{.link}, session, store.link);
+  sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;

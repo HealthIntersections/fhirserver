@@ -20,7 +20,7 @@ type
   public
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate; override;
+    procedure validate(ts : TStringList; line, col : integer); override;
   end;
 
 
@@ -46,7 +46,7 @@ begin
   result := 'txt';
 end;
 
-procedure TTextEditor.validate;
+procedure TTextEditor.validate(ts : TStringList; line, col : integer);
 var
   i : integer;
   s : String;

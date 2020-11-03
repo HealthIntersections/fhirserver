@@ -26,7 +26,7 @@ type
 
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate; override;
+    procedure validate(ts : TStringList; line, col : integer); override;
   end;
 
 
@@ -68,7 +68,7 @@ begin
   result := 'xml';
 end;
 
-procedure TXmlEditor.validate;
+procedure TXmlEditor.validate(ts : TStringList; line, col : integer);
 var
   i : integer;
   s : String;
@@ -87,7 +87,12 @@ begin
     try
       xml := FParser.parse(FContent.text, [xpResolveNamespaces]);
       try
-        // todo: any semantic validation?
+        // namespaces
+        // current path
+        // total number of nodes
+
+
+        ts.AddPair('Path', xml.pathForPoint(line, col));
       finally
         xml.free;
       end;

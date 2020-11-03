@@ -1919,6 +1919,8 @@ Function DecodeXML(Const sValue : String) : String; Overload;
 Function EncodePercent(Const sValue : String) : String; Overload;
 Function DecodePercent(Const sValue : String) : String; Overload;
 
+function AllContentHex(s: String): Boolean;
+
 
 Type
 //
@@ -16669,6 +16671,15 @@ begin
     else
       result := result + ' '+s;
   end
+end;
+
+function AllContentHex(s: String): Boolean;
+var
+  i: Integer;
+begin
+  Result := True;
+  for i := 1 to length(s) do
+    Result := Result and ((Upcase(s[i]) >= '0') and (Upcase(s[i]) <= '9')) or ((s[i] >= 'A') and (s[i] <= 'F'));
 end;
 
 Initialization
