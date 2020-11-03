@@ -90,7 +90,7 @@
         <UWP_DelphiLogo150>..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png</UWP_DelphiLogo150>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\32\</DCC_ExeOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d32\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\jcl;C:\work\fhirserver\dependencies\d32\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
@@ -163,7 +163,6 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Xml.pas"/>
         <DCCReference Include="..\library\smart\FHIR.Smart.Utilities.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Comparisons.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Fpc.pas"/>
@@ -175,10 +174,8 @@
         <DCCReference Include="..\library\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Ole.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Printing.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Utilities.pas"/>
@@ -282,6 +279,8 @@
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Clinical.pas"/>
         <DCCReference Include="..\library\r4\FHIR.R4.Resources.Canonical.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.Crypto.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.OpenSSL.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -308,10 +307,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -321,10 +320,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-57-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\ico\apple-touch-icon-144-precomposed.png" Configuration="Debug" Class="UWP_DelphiLogo150">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
+                        <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

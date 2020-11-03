@@ -73,7 +73,6 @@ uses
   FHIR.Database.SQLite3.Objects in '..\library\database\FHIR.Database.SQLite3.Objects.pas',
   FHIR.Database.SQLite3.Utilities in '..\library\database\FHIR.Database.SQLite3.Utilities.pas',
   FHIR.Database.SQLite3.Wrapper in '..\library\database\FHIR.Database.SQLite3.Wrapper.pas',
-  FHIR.Database.Utilities in '..\library\database\FHIR.Database.Utilities.pas',
   FHIR.Loinc.Importer in '..\library\loinc\FHIR.Loinc.Importer.pas',
   FHIR.Loinc.Publisher in '..\library\loinc\FHIR.Loinc.Publisher.pas',
   FHIR.Loinc.Services in '..\library\loinc\FHIR.Loinc.Services.pas',

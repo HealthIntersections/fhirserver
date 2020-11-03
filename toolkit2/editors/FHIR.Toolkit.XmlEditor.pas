@@ -8,13 +8,13 @@ uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
   FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor;
+  FHIR.Toolkit.BaseEditor;
 
 type
 
   { TXmlEditor }
 
-  TXmlEditor = class (TTextEditor)
+  TXmlEditor = class (TBaseEditor)
   private
     FParser : TMXmlParser;
   protected
@@ -76,15 +76,16 @@ var
   t : QWord;
 begin
   t := GetTickCount64;
+  updateToContent;
   StartValidating;
   try
-    for i := 0 to TextEditor.lines.count - 1 do
+    for i := 0 to FContent.count - 1 do
     begin
       s := TextEditor.lines[i];
       checkForEncoding(s, i);
     end;
     try
-      xml := FParser.parse(TextEditor.text, [xpResolveNamespaces]);
+      xml := FParser.parse(FContent.text, [xpResolveNamespaces]);
       try
         // todo: any semantic validation?
       finally

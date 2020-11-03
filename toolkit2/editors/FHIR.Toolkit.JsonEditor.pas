@@ -5,16 +5,16 @@ unit FHIR.Toolkit.JsonEditor;
 interface
 
 uses
-  Classes, SysUtils, SynEditHighlighter, SynHighlighterJScript,
+  Classes, SysUtils, SynEditHighlighter, SynHighlighterJson,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor;
+  FHIR.Toolkit.BaseEditor;
 
 type
 
   { TJsonEditor }
 
-  TJsonEditor = class (TTextEditor)
+  TJsonEditor = class (TBaseEditor)
   private
     FParser : TJsonParser;
   protected
@@ -34,7 +34,7 @@ implementation
 
 function TJsonEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynJScriptSyn.create(nil);
+  Result := TSynJSonSyn.create(nil);
 end;
 
 procedure TJsonEditor.getNavigationList(navpoints: TStringList);
@@ -65,7 +65,7 @@ end;
 
 function TJsonEditor.FileExtension: String;
 begin
-  result := 'Json';
+  result := 'json';
 end;
 
 procedure TJsonEditor.validate;
@@ -76,15 +76,16 @@ var
   t : QWord;
 begin
   t := GetTickCount64;
+  updateToContent;
   StartValidating;
   try
-    for i := 0 to TextEditor.lines.count - 1 do
+    for i := 0 to FContent.count - 1 do
     begin
       s := TextEditor.lines[i];
       checkForEncoding(s, i);
     end;
     try
-      Json := FParser.parseNode(TextEditor.text);
+      Json := FParser.parseNode(FContent.text);
       try
         // todo: any semantic validation?
       finally

@@ -13,7 +13,7 @@ uses
   FHIR.Toolkit.Store, FHIR.Toolkit.FileStore,
   FHIR.Toolkit.Factory,
 
-  frm_npm_manager, frm_file_format;
+  frm_npm_manager, frm_file_format, frm_settings;
 
 const
   PAUSE_SECONDS = 2; // move to settings?
@@ -22,6 +22,8 @@ type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actionViewFormDesigner: TAction;
+    actionViewsClearLog: TAction;
     actionPagesMoveRight: TAction;
     actionPagesMoveLeft: TAction;
     actionPagesMoveFarleft: TAction;
@@ -64,7 +66,7 @@ type
     actionFileManageCopy: TAction;
     actionFileManageDelete: TAction;
     actionFileManageReload: TAction;
-    ActionList1: TActionList;
+    actList: TActionList;
     actionEditCopy: TEditCopy;
     actionEditCut: TEditCut;
     actionEditDelete: TEditDelete;
@@ -83,6 +85,7 @@ type
     lvTasks: TListView;
     lvMessages: TListView;
     MainMenu1: TMainMenu;
+    mConsole: TMemo;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
@@ -116,6 +119,7 @@ type
     MenuItem37: TMenuItem;
     MenuItem38: TMenuItem;
     MenuItem39: TMenuItem;
+    MenuItem4: TMenuItem;
     mnuLVGo: TMenuItem;
     mnuLVCopy: TMenuItem;
     mnuLVCopyAll: TMenuItem;
@@ -188,11 +192,11 @@ type
     pmPages: TPopupMenu;
     pmMessageView: TPopupMenu;
     SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     pnlStatus: TStatusBar;
-    mConsole: TSynEdit;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -262,11 +266,13 @@ type
     procedure actionToolsPackageManagerExecute(Sender: TObject);
     procedure actionViewEditorExecute(Sender: TObject);
     procedure actionViewExpressionEditorExecute(Sender: TObject);
+    procedure actionViewFormDesignerExecute(Sender: TObject);
     procedure actionViewInspectorExecute(Sender: TObject);
     procedure actionViewLogExecute(Sender: TObject);
     procedure actionViewMessagesExecute(Sender: TObject);
     procedure actionViewPackagesExecute(Sender: TObject);
     procedure actionViewProjectManagerExecute(Sender: TObject);
+    procedure actionViewsClearLogExecute(Sender: TObject);
     procedure actionViewSearchExecute(Sender: TObject);
     procedure actionViewServersExecute(Sender: TObject);
     procedure actionViewStackExecute(Sender: TObject);
@@ -352,11 +358,14 @@ begin
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FTempStore := TFHIRToolkitTemporaryStorage.create;
   loadLayout;
-  FContext := TToolkitContext.create(imgMain, ActionList1);
+  FContext := TToolkitContext.create(imgMain, actList);
   FContext.OnUpdateActions := updateActionStatus;
   FContext.OnLocate := locateOnTab;
   FContext.OnChangeFocus := onChangeFocus;
   FContext.MessageView.OnChange := updateMessages;
+
+  FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
+
   FFileSystem := TFileStorageService.create(self, FIni);
   FContext.storages.add(FFileSystem.link);
   FFactory := TToolkitFactory.create(FContext.link, self);
@@ -560,22 +569,21 @@ begin
     l := 0;
     if (ts.count > 0) then
     begin
-      mConsole.BeginUpdate(false);
+      mConsole.Lines.BeginUpdate;
       try
         for s in ts do
           mConsole.lines.add(s);
         while mConsole.lines.count > 1000 do
           mConsole.lines.delete(0);
-        mConsole.CaretX := 1;
-        mConsole.CaretY := mConsole.lines.count-1;
+        mConsole.SelStart := Length(mConsole.Text) - mConsole.lines[mConsole.lines.count - 1].length;
       finally
-        mConsole.EndUpdate;
+        mConsole.Lines.EndUpdate;
       end;
+      actionViewsClearLog.enabled := true;
     end;
   finally
     ts.free;
   end;
-
 end;
 
 procedure TMainToolkitForm.updateActions;
@@ -847,6 +855,18 @@ begin
   actionPagesMoveRight.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex < pgEditors.PageCount - 1);
   actionPagesMoveFarRIght.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex < pgEditors.PageCount - 2);
 
+  actionViewFormDesigner.enabled := context.hasFocus and context.Focus.hasDesigner;
+  if context.hasFocus and context.focus.IsShowingDesigner then
+  begin
+    actionViewFormDesigner.Caption := 'Text E&ditor';
+    actionViewFormDesigner.ImageIndex := 77;
+  end
+  else
+  begin
+    actionViewFormDesigner.Caption := '&Designer';
+    actionViewFormDesigner.ImageIndex := 76;
+  end;
+
   // enabled if there's a text selectable
   actionEditCopy.enabled := context.hasFocus and context.Focus.hasText;
   actionEditSelectAll.enabled := context.hasFocus and context.Focus.hasText;
@@ -896,6 +916,15 @@ begin
   showView(pnlLeft, pgLeft, tbExpression);
 end;
 
+procedure TMainToolkitForm.actionViewFormDesignerExecute(Sender: TObject);
+begin
+  if Context.Focus.IsShowingDesigner then
+    Context.Focus.ShowTextTab
+  else
+    Context.Focus.ShowDesigner;
+  updateActionStatus(self);
+end;
+
 procedure TMainToolkitForm.actionViewInspectorExecute(Sender: TObject);
 begin
   showView(pnlRight, pgRight, tbInspector);
@@ -919,6 +948,13 @@ end;
 procedure TMainToolkitForm.actionViewProjectManagerExecute(Sender: TObject);
 begin
   showView(pnlLeft, pgLeft, tbProjects);
+end;
+
+procedure TMainToolkitForm.actionViewsClearLogExecute(Sender: TObject);
+begin
+  mConsole.Clear;
+  actionViewsClearLog.enabled := false;
+
 end;
 
 procedure TMainToolkitForm.actionViewSearchExecute(Sender: TObject);
@@ -1195,7 +1231,17 @@ end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
 begin
-
+  ToolkitSettingsForm := TToolkitSettingsForm.create(self);
+  try
+    ToolkitSettingsForm.chkSideBySide.Checked := Context.SideBySide;
+    if ToolkitSettingsForm.ShowModal = mrOk then
+    begin
+      Context.SideBySide := ToolkitSettingsForm.chkSideBySide.Checked;
+      FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
+    end;
+  finally
+    ToolkitSettingsForm.Free;
+  end;
 end;
 
 procedure TMainToolkitForm.actionToolsPackageManagerExecute(Sender: TObject);
@@ -1307,6 +1353,8 @@ var
   hint : String;
 begin
   hint := '';
+  if (y > 0) then
+    exit;
   index := pgEditors.IndexOfTabAt(X, Y);
   if (index >= 0)  then
   begin

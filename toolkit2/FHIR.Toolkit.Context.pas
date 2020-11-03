@@ -5,7 +5,7 @@ unit FHIR.Toolkit.Context;
 interface
 
 uses
-  Classes, SysUtils, Controls, ComCtrls, Menus, ActnList,
+  Classes, SysUtils, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Toolkit.Store, FHIR.Toolkit.Console;
 
@@ -124,12 +124,14 @@ type
     FHasText: boolean;
     FInSource: boolean;
     FLoadState: boolean;
-    FTab: TTabSheet;
+
     function GetHasAddress: boolean;
     function GetHint: String;
     function getIsFile: boolean;
     procedure SetStore(AValue: TStorageService);
   protected
+    FTab: TTabSheet;
+
     function GetCanBeSaved: boolean; virtual; abstract;
 
     procedure StartValidating;
@@ -154,16 +156,21 @@ type
     function describe : String;
 
     // editing related functionality
-    procedure bindToTab(tab : TTabSheet); virtual; // set up the UI - caleed before either newContent or LoadBytes is called
+    procedure bindToTab(tab : TTabSheet); virtual;  // set up the UI - caleed before either newContent or LoadBytes is called
     procedure newContent(); virtual; abstract; // create new content
     procedure loadBytes(bytes : TBytes); virtual; abstract;
     procedure locate(location : TSourceLocation); virtual; abstract;
     function location : String; virtual; abstract;
-    procedure redo; virtual;
-    procedure editPause; virtual;
-    procedure getFocus(content : TMenuItem); virtual;
-    procedure loseFocus(); virtual;
-    function hasPages : boolean; virtual;
+    procedure redo; virtual; abstract;
+    procedure editPause; virtual; abstract;
+    procedure getFocus(content : TMenuItem); virtual; abstract;
+    procedure loseFocus(); virtual; abstract;
+    procedure ChangeSideBySideMode; virtual; abstract;
+    function hasDesigner : boolean; virtual; abstract;
+    function hasTextTab : boolean; virtual; abstract;
+    function IsShowingDesigner : boolean; virtual; abstract;
+    procedure showDesigner; virtual; abstract;
+    procedure showTextTab; virtual; abstract;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -214,10 +221,12 @@ type
     FEditors : TFslList<TToolkitEditor>;
     FFocus: TToolkitEditor;
     FOnUpdateActions: TNotifyEvent;
+    FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
     procedure SetFocus(AValue: TToolkitEditor);
+    procedure SetSideBySide(AValue: boolean);
   public
     constructor Create(images : TImageList; actions : TActionList);
     destructor Destroy; override;
@@ -236,6 +245,8 @@ type
     function StorageForAddress(address : String) : TStorageService;
     property Editors : TFslList<TToolkitEditor> read FEditors;
 
+    // global settings
+    property SideBySide : boolean read FSideBySide write SetSideBySide;
 
 //    property ProjectManager : TToolkitProjectManagerView;
     property MessageView : TToolkitMessagesView read FMessageView;
@@ -422,10 +433,10 @@ begin
         inc(i);
         ok := true;
         for ss in context.FEditorSessions do
-          if (ss.Caption = 'new_file_'+inttostr(i)) then
+          if (ss.Caption = 'new_file_'+inttostr(i)+'.'+FileExtension) then
             ok := false;
       until ok;
-      session.Caption := 'new_file_'+inttostr(i);
+      session.Caption := 'new_file_'+inttostr(i)+'.'+FileExtension;
     end;
   end;
 end;
@@ -461,31 +472,6 @@ begin
   tab.Caption := FSession.Caption;
 end;
 
-procedure TToolkitEditor.redo;
-begin
-  raise Exception.create('not implemented');
-end;
-
-procedure TToolkitEditor.editPause;
-begin
-  FLastChangeChecked := true;
-end;
-
-procedure TToolkitEditor.getFocus(content: TMenuItem);
-begin
-  // nothing
-end;
-
-procedure TToolkitEditor.loseFocus();
-begin
-  // nothing
-end;
-
-function TToolkitEditor.hasPages: boolean;
-begin
-  result := false;
-end;
-
 { TToolkitContextObject }
 
 constructor TToolkitContextObject.create(context: TToolkitContext);
@@ -510,6 +496,18 @@ procedure TToolkitContext.SetFocus(AValue: TToolkitEditor);
 begin
   FFocus := AValue;
   FOnChangeFocus(self);
+end;
+
+procedure TToolkitContext.SetSideBySide(AValue: boolean);
+var
+  editor : TToolkitEditor;
+begin
+  if FSideBySide <> AValue then
+  begin
+    FSideBySide := AValue;
+    for editor in Editors do
+      editor.ChangeSideBySide;
+  end;
 end;
 
 constructor TToolkitContext.Create(images: TImageList; actions : TActionList);

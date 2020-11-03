@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.HtmlEditor;
+unit FHIR.Toolkit.MarkdownEditor;
 
 {$i fhir.inc}
 
@@ -7,15 +7,16 @@ interface
 uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
+  MarkdownProcessor,
   FHIR.Support.Base, FHIR.Base.XHtml, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
 
 type
 
-  { THtmlEditor }
+  { TMarkdownEditor }
 
-  THtmlEditor = class (TBaseEditor)
+  TMarkdownEditor = class (TBaseEditor)
   private
     FHtml : THtmlViewer;
   protected
@@ -31,22 +32,22 @@ type
 
     function hasDesigner : boolean; override;
     procedure makeDesigner; override;
-    procedure updateDesigner; override;
+    procedure showDesigner; override;
   end;
 
 
 implementation
 
-function THtmlEditor.makeHighlighter: TSynCustomHighlighter;
+function TMarkdownEditor.makeHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynHtmlSyn.create(nil);
 end;
 
-procedure THtmlEditor.getNavigationList(navpoints: TStringList);
+procedure TMarkdownEditor.getNavigationList(navpoints: TStringList);
 begin
 end;
 
-procedure THtmlEditor.makeDesigner;
+procedure TMarkdownEditor.makeDesigner;
 begin
   inherited makeDesigner;
   FHtml := THtmlViewer.create(FDesignerPanelWork);
@@ -54,34 +55,34 @@ begin
   FHtml.align := alClient;
 end;
 
-constructor THtmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
+constructor TMarkdownEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
 //  FParser := TMHtmlParser.create;
 end;
 
-destructor THtmlEditor.Destroy;
+destructor TMarkdownEditor.Destroy;
 begin
 //  FParser.free;
   inherited Destroy;
 end;
 
-procedure THtmlEditor.newContent();
+procedure TMarkdownEditor.newContent();
 begin
   Session.HasBOM := false;
   Session.EndOfLines := PLATFORM_DEFAULT_EOLN;
   Session.Encoding := senUTF8;
 
-  TextEditor.Text := '<html>'+#13#10+'<head></head>'+#13#10+'<body></body>'+#13#10+'</html>'+#13#10;
+  TextEditor.Text := '# Heading'+#13#10+'Some Markdown content'+#13#10+''+#13#10+'* Item 1'+#13#10+'* Item 2'+#13#10+''+#13#10;
   updateToolbarButtons;
 end;
 
-function THtmlEditor.FileExtension: String;
+function TMarkdownEditor.FileExtension: String;
 begin
-  result := 'html';
+  result := 'md';
 end;
 
-procedure THtmlEditor.validate;
+procedure TMarkdownEditor.validate;
 var
   i : integer;
   s : String;
@@ -97,37 +98,32 @@ begin
       s := TextEditor.lines[i];
       checkForEncoding(s, i);
     end;
-    //try
-    //  Html := FParser.parse(FContent.text, [xpResolveNamespaces]);
-    //  try
-    //    // todo: any semantic validation?
-    //  finally
-    //    Html.free;
-    //  end;
-    //except
-    //  on e : EParserException do
-    //  begin
-    //    validationError(e.Line, e.Col, e.message);
-    //  end;
-    //  on e : Exception do
-    //  begin
-    //    validationError(1, 1, 'Error Parsing Html: '+e.message);
-    //  end;
-    //end;
   finally
     finishValidating;
   end;
   Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
-function THtmlEditor.hasDesigner : boolean;
+function TMarkdownEditor.hasDesigner : boolean;
 begin
   Result := true;
 end;
 
-procedure THtmlEditor.updateDesigner;
+procedure TMarkdownEditor.showDesigner;
+var
+  html : String;
+  proc : TMarkdownProcessor;
 begin
-  FHtml.LoadFromString(FContent.Text);
+  inherited showDesigner;
+
+  proc := TMarkdownProcessor.createDialect(mdCommonMark); // or flavor of your choice
+  try
+    proc.unsafe := false;
+    html := proc.process(FContent.text);
+  finally
+    proc.free;
+  end;
+  FHtml.LoadFromString(html);
 end;
 
 

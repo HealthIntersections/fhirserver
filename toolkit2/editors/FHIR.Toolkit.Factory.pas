@@ -11,8 +11,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
 
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor,
-  FHIR.Toolkit.PlainTextEditor, FHIR.Toolkit.HtmlEditor;
+  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor, FHIR.Toolkit.MarkdownEditor;
 
 type
 
@@ -85,6 +84,12 @@ begin
     result.guid := NewGuidId;
     result.kind := sekHtml;
   end
+  else if (ext = '.md') then
+  begin
+    result := TToolkitEditSession.create;
+    result.guid := NewGuidId;
+    result.kind := sekMD;
+  end
   else if (ext = '.txt') then
   begin
     result := TToolkitEditSession.create;
@@ -102,10 +107,11 @@ begin
   store := FContext.StorageForAddress(session.address);
   case session.kind of
   sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
-  sekText : result := TPlainTextEditor.create(FContext{.link}, session, store.link);
+  sekText : result := TTextEditor.create(FContext{.link}, session, store.link);
   sekXml : result := TXmlEditor.create(FContext{.link}, session, store.link);
   sekJson : result := TJsonEditor.create(FContext{.link}, session, store.link);
   sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);
+  sekMD : result := TMarkdownEditor.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;

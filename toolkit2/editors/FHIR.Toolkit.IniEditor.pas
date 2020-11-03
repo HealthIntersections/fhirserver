@@ -7,13 +7,13 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
   FHIR.Support.Logging,
-  FHIR.Toolkit.Context, FHIR.Toolkit.TextEditor;
+  FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
 
 type
 
   { TIniEditor }
 
-  TIniEditor = class (TTextEditor)
+  TIniEditor = class (TBaseEditor)
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
@@ -36,9 +36,10 @@ var
   i : integer;
   s : String;
 begin
-  for i := 0 to TextEditor.Lines.count - 1 do
+  updateToContent;
+  for i := 0 to FContent.count - 1 do
   begin
-    s := TextEditor.Lines[i];
+    s := FContent[i];
     if (s.StartsWith('[') and s.EndsWith(']')) then
      navpoints.AddObject(s, TObject(i));
   end;
@@ -66,11 +67,12 @@ var
   t : QWord;
 begin
   t := GetTickCount64;
+  updateToContent;
   StartValidating;
   try
-    for i := 0 to TextEditor.lines.count - 1 do
+    for i := 0 to FContent.count - 1 do
     begin
-      s := TextEditor.lines[i];
+      s := FContent[i];
       checkForEncoding(s, i);
       if (s <> '') and not s.StartsWith(';') then
       begin

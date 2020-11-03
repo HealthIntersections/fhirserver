@@ -196,7 +196,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="484">
+    <Units Count="485">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -2142,6 +2142,10 @@
         <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Liquid.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit483>
+      <Unit484>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.PathEngine.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit484>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

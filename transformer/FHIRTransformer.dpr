@@ -56,7 +56,6 @@ uses
   FHIR.R4.Xml in '..\library\r4\FHIR.R4.Xml.pas',
   FHIR.Smart.Utilities in '..\library\smart\FHIR.Smart.Utilities.pas',
   FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
-  FHIR.Support.Certs in '..\library\support\FHIR.Support.Certs.pas',
   FHIR.Support.Collections in '..\library\support\FHIR.Support.Collections.pas',
   FHIR.Support.Comparisons in '..\library\support\FHIR.Support.Comparisons.pas',
   FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
@@ -68,10 +67,8 @@ uses
   FHIR.Support.Logging in '..\library\support\FHIR.Support.Logging.pas',
   FHIR.Support.MXml in '..\library\support\FHIR.Support.MXml.pas',
   FHIR.Support.Ole in '..\library\support\FHIR.Support.Ole.pas',
-  FHIR.Support.Osx in '..\library\support\FHIR.Support.Osx.pas',
   FHIR.Support.Printing in '..\library\support\FHIR.Support.Printing.pas',
   FHIR.Support.Shell in '..\library\support\FHIR.Support.Shell.pas',
-  FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
   FHIR.Support.Turtle in '..\library\support\FHIR.Support.Turtle.pas',
   FHIR.Support.Utilities in '..\library\support\FHIR.Support.Utilities.pas',
@@ -144,7 +141,7 @@ uses
   VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
   VirtualTrees.HeaderPopup in '..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
   FHIR.Npm.VersionBrowser in '..\library\npm\FHIR.Npm.VersionBrowser.pas' {PackageVersionChooserForm},
-  FHIR.Npm.Manager in '..\library\npm\FHIR.Npm.Manager.pas',
+  FHIR.Npm.Manager in '..\library\npm\FHIR.Npm.Manager.pas' {PackageVersionChooserForm},
   FHIR.R4.Resources.Base in '..\library\r4\FHIR.R4.Resources.Base.pas',
   FHIR.R4.Resources.Admin in '..\library\r4\FHIR.R4.Resources.Admin.pas',
   FHIR.R4.Resources.Other in '..\library\r4\FHIR.R4.Resources.Other.pas',
@@ -152,7 +149,9 @@ uses
   FHIR.R4.Resources.Financial in '..\library\r4\FHIR.R4.Resources.Financial.pas',
   FHIR.R4.Resources.Clinical in '..\library\r4\FHIR.R4.Resources.Clinical.pas',
   FHIR.R4.Resources.Canonical in '..\library\r4\FHIR.R4.Resources.Canonical.pas',
-  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas';
+  MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  FHIR.Web.Crypto in '..\library\web\FHIR.Web.Crypto.pas',
+  FHIR.Web.OpenSSL in '..\library\web\FHIR.Web.OpenSSL.pas';
 
 {$R *.res}
 
