@@ -1221,14 +1221,14 @@ type
     out result: JsValueRef): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsPointerToString(
-    const stringValue: PChar;
+    const stringValue: PWideChar;
     stringLength: size_t;
     var value: JsValueRef
   ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 
   function JsStringToPointer(
     value: JsValueRef;
-    var stringValue: PChar;
+    var stringValue: PWideChar;
     var stringLength: size_t
   ): JsErrorCode; {$IFDEF MSWINDOWS}stdcall;{$else}cdecl;{$endif}
 

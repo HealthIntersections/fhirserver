@@ -969,15 +969,17 @@ var
   pl : PJsValueRefArray;
   i : integer;
   sn : AnsiString;
+  scriptW :WideString;
   vType : JsValueType;
 begin
   sn := ansiString(scriptName);
+  scriptW := script;
   if FStrict then
     script := '"use strict"; '+script;
 
   // parse + initialise the script
   jsCheck(JsCreateString(PAnsiChar(sn), Length(scriptName), scriptNameJ));
-  jsCheck(JsCreateExternalArrayBuffer(PChar(script), Length(script) * SizeOf(WideChar), nil, nil, scriptJ));
+  jsCheck(JsCreateExternalArrayBuffer(PWideChar(scriptW), Length(scriptW) * SizeOf(WideChar), nil, nil, scriptJ));
   jsCheck(JsRun(scriptJ, 0, scriptNameJ, [JsParseScriptAttributeArrayBufferIsUtf16Encoded], res));
 
   // look up the name on the global object
@@ -1003,11 +1005,16 @@ begin
 end;
 
 function TJavascript.wrap(s: String): JsValueRef;
+var
+  sw : WideString;
 begin
   if s = '' then
     result := getNull
   else
-    jsCheck(JsPointerToString(pchar(s), length(s), result));
+  begin
+    sw := s;
+    jsCheck(JsPointerToString(PWidechar(sw), length(sw), result));
+  end;
 end;
 
 function TJavascript.wrap(i: integer): JsValueRef;
@@ -1089,7 +1096,7 @@ end;
 
 function TJavascript.asString(val: JsValueRef) : String;
 var
-  p : PChar;
+  p : PWideChar;
   str : JsValueRef;
   l : NativeUInt;
 begin

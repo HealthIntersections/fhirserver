@@ -45,7 +45,7 @@ Type
 
   public
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [Fixture] procedure testSingleNoVersion;
   end;
@@ -59,7 +59,7 @@ procedure TFhirHTTPMetadataResourceManagerTests.setup;
 begin
 end;
 
-procedure TFhirHTTPMetadataResourceManagerTests.teardown;
+procedure TFhirHTTPMetadataResourceManagerTests.TearDown;
 begin
 end;
 

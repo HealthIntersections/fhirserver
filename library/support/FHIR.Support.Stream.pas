@@ -38,7 +38,7 @@ Uses
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
   {$IFNDEF FPC} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  IdHeaderList, idGlobal, IdGlobalProtocols,
+  IdHeaderList, IdGlobal, IdGlobalProtocols,
   FHIR.Support.Fpc, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
 type
@@ -407,8 +407,12 @@ type
   TStream = Classes.TStream;
 
 type
+
+  { TSourceLocation }
+
   TSourceLocation = record
     line, col : integer;
+    class function make(l, c : integer) : TSourceLocation; static;
   end;
 
   TSourceLocationObject = class (TFslObject)
@@ -426,7 +430,7 @@ function nullLoc : TSourceLocation;
 function isNullLoc(src : TSourceLocation) : boolean;
 function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
 function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
-
+function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
 
 (*
 Type
@@ -1506,6 +1510,14 @@ Type
 
 Implementation
 
+{ TSourceLocation }
+
+class function TSourceLocation.make(l, c: integer): TSourceLocation;
+begin
+  result.line := l;
+  result.col := c;
+end;
+
 
 Function TFslStream.Link : TFslStream;
 Begin
@@ -2274,11 +2286,8 @@ End;
 {$IFNDEF VER130}
 
 function TFslBuffer.GetAsUnicode: String;
-var
-  chars: TUCharArray;
 begin
-  chars := FEncoding.GetChars(AsBytes);
-  SetString(Result, PChar(chars), Length(chars));
+  result := FEncoding.GetString(AsBytes);
 end;
 
 function TFslBuffer.GetHasFormat: boolean;
@@ -4950,7 +4959,10 @@ begin
     result := src1.col >= src2.col;
 end;
 
-
+function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
+begin
+  result := locGreatorOrEqual(tgt, lower) and locLessOrEqual(tgt, upper);
+end;
 
 Constructor TFslZipWorker.Create;
 Begin

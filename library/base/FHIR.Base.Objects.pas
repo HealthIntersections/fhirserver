@@ -210,6 +210,7 @@ type
   TFHIRObjectList = class;
   TFHIRPropertyList = class;
   TFHIRSelection = class;
+  TFHIRLocation = class;
   TFHIRSelectionList = class;
 
   TFHIRProperty = class (TFslObject)
@@ -289,6 +290,23 @@ type
   End;
 
   {$M+}
+
+  { TFHIRLocation }
+
+  TFHIRLocation = class (TFslObject)
+  private
+    FProp: TFHIRProperty;
+    FValue: TFHIRObject;
+  public
+    constructor create(prop : TFHIRProperty; value : TFHIRObject);
+    destructor Destroy; override;
+
+    property prop : TFHIRProperty read FProp;
+    property value : TFHIRObject read FValue;
+  end;
+
+  { TFHIRObject }
+
   TFHIRObject = class (TFslObject)
   private
     FTags : TFslStringDictionary;
@@ -307,6 +325,7 @@ type
     procedure SetTag(const Value: TFslObject);
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
+    function findLocation(loc : TSourceLocation; propFrom : TFHIRProperty; path : TFslList<TFHIRLocation>) : boolean; overload;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Virtual;
@@ -371,6 +390,7 @@ type
     // populated by some parsers when parsing
     property LocationStart : TSourceLocation read FLocationStart write FLocationStart;
     property LocationEnd : TSourceLocation read FLocationEnd write FLocationEnd;
+    function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocation>; overload;
 
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
@@ -536,6 +556,8 @@ type
     function hasExtensions : boolean; override;
   end;
 
+  { TFHIRSelectionList }
+
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
   private
     FOneBased : boolean;
@@ -551,6 +573,7 @@ type
     procedure addAll(parent : TFHIRObject; name : String; value : TFHIRObjectList); overload;
 
     function asValues : TFHIRObjectList;
+    function describeAsPath : String;
 
     property OneBased : boolean read FOneBased write FOneBased;
 
@@ -636,6 +659,22 @@ Implementation
 
 Uses
   FHIR.Base.Lang;
+
+{ TFHIRLocation }
+
+constructor TFHIRLocation.create(prop: TFHIRProperty; value: TFHIRObject);
+begin
+  inherited Create;
+  FProp := prop;
+  FValue := value;
+end;
+
+destructor TFHIRLocation.Destroy;
+begin
+  FProp.Free;
+  FValue.Free;
+  inherited Destroy;
+end;
 
 { TFHIRObject }
 
@@ -748,6 +787,45 @@ begin
     result := '';
 end;
 
+function TFHIRObject.findLocation(loc: TSourceLocation; propFrom : TFHIRProperty; path: TFslList<TFHIRLocation>): boolean;
+var
+  properties : TFHIRPropertyList;
+  prop : TFHIRProperty;
+  i : integer;
+  n : String;
+begin
+  result := locInSpan(loc, LocationStart, LocationEnd);
+  if result then
+  begin
+    path.add(TFHIRLocation.create(propFrom.Link, self.link));
+
+    properties := createPropertyList(true);
+    try
+      for prop in properties do
+      begin
+        for i := 0 to prop.Values.count - 1 do
+        begin
+          if prop.values[i].findLocation(loc, prop, path) then
+            exit;
+        end;
+      end;
+    finally
+      properties.Free;
+    end;
+  end;
+end;
+
+function TFHIRObject.findLocation(loc: TSourceLocation): TFslList<TFHIRLocation>;
+begin
+  result := TFslList<TFHIRLocation>.create;
+  try
+    findLocation(loc, nil, result);
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFHIRObject.getTypesForProperty(propName: string): String;
 begin
   raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (getting types for property)"');
@@ -815,7 +893,7 @@ begin
     result := result + ': '+primitiveValue;
 end;
 
-function TFHIRObject.equals(other : TObject): boolean;
+function TFHIRObject.Equals(other: TObject): boolean;
 begin
   result := (other <> nil) and (other.className = className);
 end;
@@ -885,7 +963,8 @@ begin
   result := false;
 end;
 
-function TFHIRObject.isMatchingName(given, expected : String; types : Array of String): boolean;
+function TFHIRObject.isMatchingName(given, expected: String;
+  types: array of String): boolean;
 var
   s : String;
 begin
@@ -1448,7 +1527,8 @@ begin
   raise EFHIRException.create('The property "'+propName+'" is unknown or not a list reordering the property"');
 end;
 
-procedure TFHIRObject.replaceProperty(propName: string; existing, new: TFHIRObject);
+procedure TFHIRObject.replaceProperty(propName: string; existing: TFHIRObject;
+  new: TFHIRObject);
 begin
   raise EFHIRException.create('The property "'+propName+'" is unknown replacing the property"');
 end;
@@ -1473,7 +1553,7 @@ begin
   raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (setting property)"');
 end;
 
-function TFHIRObject.toString: String;
+function TFHIRObject.ToString: String;
 begin
   if isPrimitive then
     result := fhirType+'[''' + primitiveValue + ''']'
@@ -1640,6 +1720,20 @@ begin
     result.Link;
   finally
     result.Free;
+  end;
+end;
+
+function TFHIRSelectionList.describeAsPath: String;
+var
+  sel : TFHIRSelection;
+begin
+  result := '';
+  for sel in self do
+  begin
+    if result = '' then
+      result := sel.name
+    else
+      result := result + '.'+sel.name;
   end;
 end;
 

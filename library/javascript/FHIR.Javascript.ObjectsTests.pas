@@ -48,7 +48,7 @@ Type
     procedure JSLog(sender : TJavascript; message : String);
   Published
     [SetUp]    Procedure SetUp;
-    [TearDown] Procedure TearDown;
+    [TearDown] procedure TearDown;
     [TestCase] Procedure TestPatient;
     [TestCase] Procedure TestPatientUnknownProperty;
     [TestCase] Procedure TestPatient2;

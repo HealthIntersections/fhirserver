@@ -42,9 +42,13 @@ const
   PACKAGE_SERVER_CIBUILD = 'https://build.fhir.org/ig/qas.json';
 
 type
+
+  { TFHIRPackageInfo }
+
   TFHIRPackageInfo = class (TFslObject)
   private
     FId : String;
+    FSize: integer;
     FVersion : String;
     FFhirVersion : String;
     FDescription : String;
@@ -63,6 +67,7 @@ type
     property canonical : String read FCanonical;
     property date : TDateTime read FDate write FDate;
     function presentDate : String;
+    property size : integer read FSize write FSize;
   end;
 
   TFHIRPackageClient = class (TFslObject)
@@ -262,7 +267,7 @@ begin
       begin
         obj := e as TJsonObject;
         result.add(TFHIRPackageInfo.create(obj.str2('Name', 'name'), obj.str2('Version', 'version'), obj.str2('FhirVersion', 'fhirVersion'),
-          obj.str2('Description', 'description'), obj['canonical'], obj['url']));
+                   obj.str2('Description', 'description'), obj['canonical'], obj['url']));
       end;
       result.link;
     finally

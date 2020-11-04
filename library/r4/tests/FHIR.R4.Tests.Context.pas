@@ -58,7 +58,7 @@ procedure TFhirHTTPMetadataResourceManagerTests4.setup;
 begin
 end;
 
-procedure TFhirHTTPMetadataResourceManagerTests4.teardown;
+procedure TFhirHTTPMetadataResourceManagerTests4.TearDown;
 begin
 end;
 

@@ -122,7 +122,6 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dODBC"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -197,7 +196,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="480">
+    <Units Count="485">
       <Unit0>
         <Filename Value="FHIRServerFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -783,7 +782,6 @@
       <Unit145>
         <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Support.JSON"/>
       </Unit145>
       <Unit146>
         <Filename Value="..\library\support\FHIR.Support.Logging.pas"/>
@@ -2113,9 +2111,8 @@
         <IsPartOfProject Value="True"/>
       </Unit475>
       <Unit476>
-        <Filename Value="..\library\npm\fhir.npm.tests.pas"/>
+        <Filename Value="..\library\npm\FHIR.Npm.Tests.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Npm.Tests"/>
       </Unit476>
       <Unit477>
         <Filename Value="..\library\support\FHIR.Support.SCrypt.Tests.pas"/>
@@ -2129,6 +2126,26 @@
         <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Worker.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit479>
+      <Unit480>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit480>
+      <Unit481>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Client.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit481>
+      <Unit482>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit482>
+      <Unit483>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.Liquid.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit483>
+      <Unit484>
+        <Filename Value="..\library\r4\tests\FHIR.R4.Tests.PathEngine.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit484>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -71,6 +71,7 @@ type
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
+    procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); override;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
@@ -406,6 +407,29 @@ end;
 function TFHIRFactoryR2.makeValueSetContains: TFhirValueSetExpansionContainsW;
 begin
   result := TFhirValueSetExpansionContains2.Create(TFhirValueSetExpansionContains.create);
+end;
+
+procedure TFHIRFactoryR2.markWithTag(r: TFHIRResourceV; systemUri, code, display: String);
+var
+  res : TFHIRResource;
+  tag : TFHIRCoding;
+begin
+  res := r as TFhirResource;
+  if (res.meta = nil) then
+    res.meta := TFHIRMeta.create;
+  for tag in res.meta.tagList do
+    if (tag.system = systemUri) and (tag.code = code) then
+    begin
+      if (display <> '') then
+      begin
+        tag.display := display;
+      end;
+      exit;
+    end;
+  tag := res.meta.tagList.Append;
+  tag.system := systemUri;
+  tag.code := code;
+  tag.display := display;
 end;
 
 function TFHIRFactoryR2.resCategory(name: String): TTokenCategory;

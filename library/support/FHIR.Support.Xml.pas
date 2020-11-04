@@ -2765,9 +2765,9 @@ procedure TMXmlBuilder.Build(oStream: TStream);
 Var
   b : TBytes;
 begin
-  assert(FAttributes = nil);
+  assert(FAttributes.empty);
   assert(not FExternal);
-  b := TEncoding.UTF8.GetBytes(FStack[0].ToXml(true));
+  b := TEncoding.UTF8.GetBytes(FStack[0].ToXml(false));
   oStream.Write(b[0], length(b));
 end;
 
@@ -2793,7 +2793,7 @@ begin
     oParent := FStack.Last;
     if IsPretty and (oParent.NodeType = ntElement) Then
       oParent.addChild(TMXmlElement.createText(ReadTextLength(#13#10+pad)), true);
-    oParent.addChild(oElem, true);
+    oParent.addChild(oElem.Link, true);
     inc(FSourceLocation.col, len+2);
     for iLoop := 0 to FAttributes.Count - 1 Do
       oElem.attributes.addAll(FAttributes);
@@ -2810,7 +2810,7 @@ procedure TMXmlBuilder.Close(const sName: String);
 begin
   if IsPretty Then
   Begin
-    If FStack.Last.HasChildren Then
+    If FStack.Last.HasChildren and not FStack.Last.allChildrenAreText Then
       FStack.Last.addChild(TMXmlElement.createText(readTextLength(#13#10+pad(-1))), true);
   End;
   FStack.Delete(FStack.Count - 1)
@@ -2902,13 +2902,13 @@ begin
       inc(FSourceLocation.col);
     inc(i);
   end;
+  result := s;
 end;
 
 function TMXmlBuilder.ReadTextLengthWithEscapes(pfx, s, sfx: string): String;
 begin
-  ReadTextLength(pfx);
-  ReadTextLength(FormatTextToXML(s, xmlText));
-  ReadTextLength(sfx);
+ ReadTextLength(pfx + FormatTextToXML(s, xmlText) + sfx);
+  result := pfx + s + sfx;
 end;
 
 Procedure TMXmlBuilder.Comment(Const sContent : String);

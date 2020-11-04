@@ -35,11 +35,11 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.PathEngine,
-  FHIR.R4.Types;
+  FHIR.Base.Objects, FHIR.Base.PathEngine;
 
 type
   TV2ContentKind = (ckString, ckNull, ckBinary, ckEscape);
+  TV2Location = class;
 
   // inherit from TFHIRObject so we can use FHIRPath on the objects
   // the underlying framework insists that this has a version.
@@ -152,6 +152,8 @@ type
     function fhirType : String; override;
   end;
 
+  { TV2Message }
+
   TV2Message = class (TV2Object)
   private
     FSegmentList: TFSLList<TV2Segment>;
@@ -168,14 +170,17 @@ type
     property segment[index : integer] : TV2Segment read GetSegment; // 1 based
     function isEmpty : boolean; override;
     function fhirType : String; override;
+
+    function findLocation(loc : TSourceLocation): TV2Location;
   end;
 
-  TV2ParserOption = (v2doPreventOddBinaryLengths, v2doMessageHeaderOnly, v2doIgnoreXmlErrors);
+  TV2ParserOption = (v2doPreventOddBinaryLengths, v2doMessageHeaderOnly, v2doIgnoreXmlErrors, v2Validating);
   TV2ParserOptions = set of TV2ParserOption;
 
   TV2Parser = class (TFSLObject)
   private
     FSource : TBytes;
+    FLine : integer;
     FOptions : TV2ParserOptions;
     FEscapeCharacter: Char;
     FRepetitionDelimiter: Char;
@@ -186,6 +191,7 @@ type
     procedure ReadDelimiters;
     Function isDelimiterEscape(ch : Char) : Boolean;
     Function getDelimiterEscapeChar(ch : Char) : Char;
+    Function cleanPacket(packet : TBytes) : TBytes;
 
     procedure generateIds(cell : TV2Cell); overload;
     procedure generateIds(fld : TV2Field); overload;
@@ -196,8 +202,8 @@ type
     Procedure readEscape(cell : TV2Cell; Const cnt : String; var iCursor : integer);
     procedure parseContent(cell: TV2Cell; const cnt: String; bNoEscape: Boolean);
     procedure parseCell(cell : TV2Cell; const cnt : String; bNoEscape : Boolean; cBreak, cSubBreak : char);
-    procedure parseField(ofield: TV2Field; var iCursor: Integer);
-    procedure parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer);
+    procedure parseField(ofield: TV2Field; var iCursor: Integer; iCursorStart : integer);
+    procedure parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer; iStart : integer);
     procedure parseSegment(oMessage : TV2Message; var iCursor : Integer);
     Procedure DecodeMessage(msg : TV2Message; options : TV2ParserOptions); Overload; Virtual;
   public
@@ -247,10 +253,91 @@ type
     function execute(context : TFHIRPathExecutionContext; focus: TFHIRObject; name : String; params : TFslList<TFHIRPathExpressionNodeV>; engine : TFHIRPathEngineV): TFHIRSelectionList; override;
   end;
 
+  { TV2Location }
+
+  TV2Location = class (TFslObject)
+  private
+    FComponent: TV2Cell;
+    FComponentIndex: integer;
+    FElement: TV2Cell;
+    FElementIndex: integer;
+    FField: TV2Field;
+    FFieldIndex: integer;
+    FSegment: TV2Segment;
+    FSegmentIndex: integer;
+    FSubComponent: TV2Cell;
+    FSubComponentIndex: integer;
+    procedure SetComponent(AValue: TV2Cell);
+    procedure SetElement(AValue: TV2Cell);
+    procedure SetField(AValue: TV2Field);
+    procedure SetSegment(AValue: TV2Segment);
+    procedure SetSubComponent(AValue: TV2Cell);
+
+  public
+    destructor Destroy; override;
+
+    property Segment : TV2Segment read FSegment write SetSegment;
+    property SegmentIndex : integer read FSegmentIndex write FSegmentIndex;
+
+    property Field : TV2Field read FField write SetField;
+    property FieldIndex : integer read FFieldIndex write FFieldIndex;
+
+    property Element : TV2Cell read FElement write SetElement;
+    property ElementIndex : integer read FElementIndex write FElementIndex;
+
+    property Component : TV2Cell read FComponent write SetComponent;
+    property ComponentIndex : integer read FComponentIndex write FComponentIndex;
+
+    property SubComponent : TV2Cell read FSubComponent write SetSubComponent;
+    property SubComponentIndex : integer read FSubComponentIndex write FSubComponentIndex;
+  end;
+
 const
   CODES_TV2ContentKind : Array [TV2ContentKind] of String = ('string', 'null', 'binary', 'escape');
 
 implementation
+
+{ TV2Location }
+
+destructor TV2Location.Destroy;
+begin
+  FComponent.Free;
+  FElement.Free;
+  FField.Free;
+  FSegment.Free;
+  FSubComponent.Free;
+  inherited Destroy;
+end;
+
+procedure TV2Location.SetComponent(AValue: TV2Cell);
+begin
+  FComponent.Free;
+  FComponent:=AValue;
+end;
+
+procedure TV2Location.SetElement(AValue: TV2Cell);
+begin
+  FElement.Free;
+  FElement:=AValue;
+end;
+
+procedure TV2Location.SetField(AValue: TV2Field);
+begin
+  FField.Free;
+  FField:=AValue;
+end;
+
+procedure TV2Location.SetSegment(AValue: TV2Segment);
+begin
+  FSegment.Free;
+  FSegment:=AValue;
+end;
+
+procedure TV2Location.SetSubComponent(AValue: TV2Cell);
+begin
+  FSubComponent.Free;
+  FSubComponent:=AValue;
+end;
 
 { TV2Object }
 
@@ -264,7 +351,7 @@ begin
   inherited;
   if (name = 'id') Then
     if id <> '' then
-      list.add(self.link, 'id', TFhirString.create(id))
+      list.add(self.link, 'id', TFHIRObjectText.create(id))
     else
       list.add(self.link, 'id', nil)
 end;
@@ -288,22 +375,22 @@ procedure TV2Object.ListProperties(oList: TFHIRPropertyList; bInheritedPropertie
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFhirId, TFhirId.Create(FId)));
+  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFHIRObjectText, TFHIRObjectText.Create(FId)));
 end;
 
 function TV2Object.makeCodeValue(v: String): TFHIRObject;
 begin
-  result := TFhirCode.Create(v).noExtensions;
+  result := TFHIRObjectText.Create(v);
 end;
 
 function TV2Object.makeIntValue(v: String): TFHIRObject;
 begin
-  result := TFhirInteger.Create(v).noExtensions;
+  result := TFHIRObjectText.Create(v);
 end;
 
 function TV2Object.makeStringValue(v: String): TFHIRObject;
 begin
-  result := TFhirString.Create(v).noExtensions;
+  result := TFHIRObjectText.Create(v);
 end;
 
 procedure TV2Object.setIdValue(id: String);
@@ -339,10 +426,10 @@ procedure TV2Content.GetChildrenByName(name: string; list: TFHIRSelectionList);
 begin
   inherited;
   if (name = 'kind') Then
-     list.add(self.link, 'kind', TFhirCode.Create(CODES_TV2ContentKind[kind]));
+     list.add(self.link, 'kind', TFHIRObjectText.Create(CODES_TV2ContentKind[kind]));
   if (name = 'value') Then
     if id <> '' then
-      list.add(self.link, 'value', TFhirString.create(value))
+      list.add(self.link, 'value', TFHIRObjectText.create(value))
     else
       list.add(self.link, 'value', nil)
 end;
@@ -361,8 +448,8 @@ procedure TV2Content.ListProperties(oList: TFHIRPropertyList; bInheritedProperti
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, TFhirString.Create(FValue)));
-  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFhirCode, TFhirCode.Create(CODES_TV2ContentKind[FKind])));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFHIRObjectText, TFHIRObjectText.Create(FValue)));
+  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFHIRObjectText, TFHIRObjectText.Create(CODES_TV2ContentKind[FKind])));
 end;
 
 { TV2Cell }
@@ -588,7 +675,7 @@ var
 begin
   inherited;
   if (name = 'code') Then
-    list.add(self.link, 'code', TFhirCode.create(code));
+    list.add(self.link, 'code', TFHIRObjectText.create(code));
   if (name = 'field') Then
   begin
     list.OneBased :=  true;
@@ -643,6 +730,73 @@ begin
   result := 'Message';
 end;
 
+function TV2Message.findLocation(loc: TSourceLocation): TV2Location;
+var
+  seg : TV2Segment;
+  field : TV2Field;
+  cell : TV2Cell;
+begin
+  result := TV2Location.create;
+  try
+    for seg in FSegmentList do
+    begin
+      if (locInSpan(loc, seg.LocationStart, seg.LocationEnd)) then
+      begin
+        result.Segment := seg.link;
+        break;
+      end;
+    end;
+    if (result.Segment <> nil) then
+    begin
+      for field in result.segment.FFieldList do
+      begin
+        if (locInSpan(loc, field.LocationStart, field.LocationEnd)) then
+        begin
+          result.Field := field.link;
+          break;
+        end;
+      end;
+    end;
+    if (result.Field <> nil) then
+    begin
+      for cell in result.Field.FElementList do
+      begin
+        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        begin
+          result.Element := cell.link;
+          break;
+        end;
+      end;
+    end;
+    if (result.Element <> nil) then
+    begin
+      for cell in result.Element.FComponentList do
+      begin
+        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        begin
+          result.Component := cell.link;
+          break;
+        end;
+      end;
+    end;
+    if (result.Component <> nil) then
+    begin
+      for cell in result.Component.FComponentList do
+      begin
+        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        begin
+          result.SubComponent := cell.link;
+          break;
+        end;
+      end;
+    end;
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 procedure TV2Message.GetChildrenByName(name: string; list: TFHIRSelectionList);
 var
   seg : TV2Segment;
@@ -685,7 +839,7 @@ end;
 
 { TV2Parser }
 
-Function cleanPacket(packet : TBytes) : TBytes;
+Function TV2Parser.cleanPacket(packet : TBytes) : TBytes;
 begin
   // some systems are somewhat careless about how they wrap a packet
   // some systems prepend a #13 to the message
@@ -695,7 +849,10 @@ begin
   if length(result) > 0 then
   begin
     while result[0] = TByte(13) do
+    begin
       result := copy(result, 1, length(result) -1);
+      inc(FLine);
+    end;
     while result[length(result)-1] = TByte(13) do
       SetLength(result, length(result) - 1);
     result := BytesAdd(result, TByte(13));
@@ -710,7 +867,7 @@ begin
   try
     result := TV2Message.Create;
     try
-      this.FSource := cleanPacket(msg);
+      this.FSource := this.cleanPacket(msg);
       this.FOptions := options;
       this.decodeMessage(result, options);
       result.link;
@@ -835,7 +992,11 @@ procedure TV2Parser.ParseSegment(oMessage: TV2Message; var iCursor: Integer);
 var
   sSegCode : String;
   oSegment : TV2Segment;
+  loc : TSourceLocation;
+  iStart : integer;
 begin
+  loc := TSourceLocation.make(FLine, 0);
+  iStart :=  iCursor;
   if (iCursor + 3 > length(FSource)) then //we are either missing a #13 or have an invalid segment code
     raise EER7Exception.create('Remaining length in message too short for a valid segment.' + #13 +
                          'Remainder of packet: ' + StringReplace(copy(BytesAsString(FSource), iCursor, length(FSource)), #13, '<CR>'));
@@ -852,31 +1013,46 @@ begin
 
   oSegment := TV2Segment.Create;
   try
+    oSegment.LocationStart := loc;
     oSegment.Code := sSegCode;
     oMessage.SegmentList.Add(oSegment.Link); // do this to provide a model before setting the code
-    parseSegmentInner(oSegment, iCursor);
+    parseSegmentInner(oSegment, iCursor, iStart);
+    oSegment.LocationEnd := TSourceLocation.make(FLine, iCursor - iStart);
   finally
     oSegment.Free;
   end;
+  inc(FLine);
 end;
 
-procedure TV2Parser.parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer);
+procedure TV2Parser.parseSegmentInner(oSegment: TV2Segment; var iCursor: Integer; iStart : integer);
 var
   oField : TV2Field;
+  first : boolean;
 begin
   while FSource[iCursor] <> 13 do
   begin
     oField := TV2Field.create;
     try
+      oField.LocationStart := TSourceLocation.make(FLine, iCursor - iStart);
       oSegment.FieldList.Add(oField.Link);
-      ParseField(oField, iCursor);
+      ParseField(oField, iCursor, iStart);
+      oField.LocationEnd := TSourceLocation.make(FLine, iCursor - iStart - 1);
     finally
       oField.Free;
     end;
   end;
 
+  first := true;
   while (iCursor < Length(FSource)) and (FSource[iCursor] = 13) do
-    inc(iCursor);
+  begin
+    if not first and (v2Validating in FOptions) then
+      raise EParserException.create('Unexpected line break', FLine+2, 0)
+    else
+    begin
+      inc(iCursor);
+      first := false;
+    end;
+  end;
 end;
 
 Function BytesSlice(Const sValue : TBytes; iBegin, iEnd : Integer) : TBytes;
@@ -944,7 +1120,7 @@ begin
     end;
 end;
 
-procedure TV2Parser.parseField(ofield: TV2Field; var iCursor : Integer);
+procedure TV2Parser.parseField(ofield: TV2Field; var iCursor : Integer; iCursorStart : integer);
 var
   cell : Tv2Cell;
   iStart : Integer;
@@ -962,6 +1138,8 @@ begin
     End;
     cell := TV2Cell.Create;
     try
+      cell.LocationStart := TSourceLocation.make(FLine, iStart - iCursorStart);
+      cell.LocationEnd   := TSourceLocation.make(FLine, iCursor - iCursorStart);
       parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
       ofield.elementList.Add(cell.link);
     finally
@@ -979,18 +1157,24 @@ var
   child : TV2Cell;
   sLeft : String;
   sRight : String;
+  i : integer;
 begin
   // if children are defined or a seperator is found, then we will break content up into children
   if (pos(cBreak, cnt) > 0) or ((cSubBreak <> #0) and (pos(cSubBreak, cnt) > 0)) then
   begin
+    i := 0;
     sRight := cnt;
     while sRight <> '' do
     begin
       StringSplit(sRight, cBreak, sLeft, sRight);
       child := TV2Cell.Create;
       try
+        child.LocationStart := TSourceLocation.make(cell.LocationStart.line, cell.LocationStart.col + i);
+        inc(i, sLeft.length);
+        child.LocationEnd := TSourceLocation.make(cell.LocationStart.line, cell.LocationStart.col + i);
         cell.componentList.Add(child.link);
         parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
+        inc(i);
       finally
         child.Free;
       end;
@@ -1463,9 +1647,9 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus is TV2Cell) and (name = 'text') then
-      result.add(TFHIRString.Create(TV2Cell(focus).text));
+      result.add(TFHIRObjectText.Create(TV2Cell(focus).text));
     if (focus is TV2Cell) and (name = 'simple') then
-      result.add(TFHIRString.Create(TV2Cell(focus).simple));
+      result.add(TFHIRObjectText.Create(TV2Cell(focus).simple));
     if (focus is TV2Segment) and (name = 'element') then
     begin
       sel := engine.evaluate(context.appInfo, context.resource, params[0]);

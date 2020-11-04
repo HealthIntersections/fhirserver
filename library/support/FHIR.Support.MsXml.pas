@@ -15323,8 +15323,11 @@ end;
 Class function TMsXmlParser.Parse(const sFilename: String; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oFile : TFileStream;
+  {$IFNDEF FPC}
   oWeb : TFslWinInetClient;
+  {$ENDIF}
 begin
+  {$IFNDEF FPC}
   if StringStartsWith(sFilename, 'http:') or StringStartsWith(sFilename, 'https:') or StringStartsWith(sFilename, 'ftp:')  Then
   Begin
     oWeb := TFslWinInetClient.Create;
@@ -15342,6 +15345,7 @@ begin
     End;
   End
   Else
+  {$ENDIF}
   Begin
     oFile := TFileStream.Create(sFilename, fmOpenRead + fmShareDenyWrite);
     Try
@@ -15534,8 +15538,11 @@ end;
 class procedure TMsXmlParser.ParseByHandler(const sFilename: String; handler: TMsXmlSaxHandler);
 var
   oFile : TFileStream;
+  {$IFNDEF FPC}
   oWeb : TFslWinInetClient;
+  {$ENDIF}
 begin
+  {$IFNDEF FPC}
   if StringStartsWith(sFilename, 'http:') or StringStartsWith(sFilename, 'https:') or StringStartsWith(sFilename, 'ftp:')  Then
   Begin
     oWeb := TFslWinInetClient.Create;
@@ -15553,6 +15560,7 @@ begin
     End;
   End
   Else
+  {$ENDIF}
   Begin
     oFile := TFileStream.Create(sFilename, fmOpenRead + fmShareDenyWrite);
     Try

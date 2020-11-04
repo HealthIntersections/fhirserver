@@ -41,6 +41,7 @@ uses
   {$ENDIF}
   Classes, SysUtils,
   Interfaces,
+  IdGlobal,
   RegularExpressions in '..\library\support\RegularExpressions.pas',
   IOUtils in '..\library\support\IOUtils.pas',
   FHIR.Base.Common in '..\library\base\FHIR.Base.Common.pas',
@@ -72,7 +73,6 @@ uses
   FHIR.Database.SQLite3.Objects in '..\library\database\FHIR.Database.SQLite3.Objects.pas',
   FHIR.Database.SQLite3.Utilities in '..\library\database\FHIR.Database.SQLite3.Utilities.pas',
   FHIR.Database.SQLite3.Wrapper in '..\library\database\FHIR.Database.SQLite3.Wrapper.pas',
-  FHIR.Database.Utilities in '..\library\database\FHIR.Database.Utilities.pas',
   FHIR.Loinc.Importer in '..\library\loinc\FHIR.Loinc.Importer.pas',
   FHIR.Loinc.Publisher in '..\library\loinc\FHIR.Loinc.Publisher.pas',
   FHIR.Loinc.Services in '..\library\loinc\FHIR.Loinc.Services.pas',
@@ -395,6 +395,8 @@ uses
   FHIR.R4.Tests.Utilities in '..\library\r4\tests\FHIR.R4.Tests.Utilities.pas',
   FHIR.R4.Tests.Client in '..\library\r4\tests\FHIR.R4.Tests.Client.pas',
   FHIR.R4.Tests.Context in '..\library\r4\tests\FHIR.R4.Tests.Context.pas',
+  FHIR.R4.Tests.Liquid in '..\library\r4\tests\FHIR.R4.Tests.Liquid.pas',
+  FHIR.R4.Tests.PathEngine in '..\library\r4\tests\FHIR.R4.Tests.PathEngine.pas',
   FHIR.R4.Tests.Worker in '..\library\r4\tests\FHIR.R4.Tests.Worker.pas',
   FHIR.Support.SCrypt.Tests in '..\library\support\FHIR.Support.SCrypt.Tests.pas';
 

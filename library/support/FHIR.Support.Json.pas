@@ -42,8 +42,11 @@ Function UnJSONString(const value : String) : String;
 Type
   TJsonObject = class;
   TJsonArray = class;
+  TJsonPointerMatch = class;
 
   TJsonNodeKind = (jnkNull, jnkBoolean, jnkString, jnkNumber, jnkObject, jnkArray);
+
+  { TJsonNode }
 
   TJsonNode = class abstract (TFslObject)
   private
@@ -53,6 +56,7 @@ Type
     function nodeType : String; virtual;
     function compare(other : TJsonNode) : boolean; overload; virtual; abstract;
     function evaluatePointer(path : String) : TJsonNode; virtual;
+    function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; virtual; overload;
   public
     LocationStart : TSourceLocation;
     LocationInner : TSourceLocation; // where inner content starts
@@ -65,7 +69,11 @@ Type
     property path : String read FPath write FPath;
 
     class function compare(n1, n2 : TJsonNode) : boolean; overload;
+
+    function findLocation(loc : TSourceLocation) : TFslList<TJsonPointerMatch>; overload;
+    function describePath(path : TFslList<TJsonPointerMatch>) : string;
   end;
+  TJsonNodeClass = class of TJsonNode;
 
   TJsonArrayEnumerator = class (TFslObject)
   private
@@ -77,6 +85,8 @@ Type
     function MoveNext() : boolean;
     Property Current : TJsonNode read GetCurrent;
   end;
+
+  { TJsonArray }
 
   TJsonArray = class (TJsonNode)
   private
@@ -92,6 +102,7 @@ Type
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
+    function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -165,6 +176,8 @@ Type
     property value : String read FValue write FValue;
   end;
 
+  { TJsonObject }
+
   TJsonObject = class (TJsonNode)
   private
     FName : String;
@@ -185,10 +198,12 @@ Type
     procedure setNode(name: String; const Value: TJsonNode);
     function GetInteger(name: String): Integer;
 
-    procedure SetInteger(name: String; const Value: Integer);  protected
+    procedure SetInteger(name: String; const Value: Integer);
+  protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
+    function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -1231,7 +1246,7 @@ begin
   FLastLocationAWS := FLocation;
 
   FValue.Clear;
-  If Not More Then
+  If (CharInSet(ch, [#0, ' ', #13, #10, #9]) and Not More) Then
     FLexType := jltEof
   Else case ch of
     '{' : FLexType := jltOpen;
@@ -1335,6 +1350,8 @@ end;
 
 procedure TJSONLexer.Push(ch: Char);
 begin
+  if (FLocation.Col > 0) then
+    FLocation.Col := FLocation.Col - 1;
   insert(ch, FPeek, 1);
 end;
 
@@ -1728,11 +1745,10 @@ begin
   case FLex.LexType of
     jltOpen :
       begin
-        FLex.Next;
-        FLex.FStates.InsertObject(0, '', nil);
         result := TJsonObject.Create('$');
         try
           result.LocationStart := FLex.FLastLocationBWS;
+          Next;
           readObject(result as TJsonObject, true);
           result.link;
         finally
@@ -1743,11 +1759,12 @@ begin
     jltNumber : raise EJsonTodo.Create('Not implemented yet');
     jltOpenArray :
       begin
-        FLex.Next;
+        FItemType := jpitArray;
         result := TJsonArray.Create('$');
         try
           FLex.FStates.InsertObject(0, '', result);
           result.LocationStart := FLex.FLastLocationBWS;
+          Next;
           readArray(result as TJsonArray, true);
           result.link;
         finally
@@ -1858,7 +1875,7 @@ end;
 
 { TJsonNode }
 
-constructor TJsonNode.create(path: String);
+constructor TJsonNode.Create(path: String);
 begin
   Create;
   self.path := path;
@@ -1874,7 +1891,32 @@ begin
   result := n1.compare(n2);
 end;
 
-constructor TJsonNode.create(path: String; locStart, locEnd: TSourceLocation);
+function TJsonNode.findLocation(loc: TSourceLocation): TFslList<TJsonPointerMatch>;
+begin
+  result := TFslList<TJsonPointerMatch>.create;
+  try
+    findLocation(loc, '$', result);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TJsonNode.describePath(path: TFslList<TJsonPointerMatch>): string;
+var
+  p : TJsonPointerMatch;
+begin
+  result := '';
+  for p in path do
+  begin
+    if result = '' then
+      result := p.name
+    else
+      result := result + '.' + p.name;
+  end;
+end;
+
+constructor TJsonNode.Create(path: String; locStart, locEnd: TSourceLocation);
 begin
   Create;
   self.path := path;
@@ -1885,6 +1927,13 @@ end;
 function TJsonNode.evaluatePointer(path: String): TJsonNode;
 begin
   result := nil;
+end;
+
+function TJsonNode.findLocation(loc: TSourceLocation; name : String; path: TFslList<TJsonPointerMatch>) : boolean;
+begin
+  result := locInSpan(loc, LocationStart, LocationEnd);
+  if result then
+    path.add(TJsonPointerMatch.create(name, self.link));
 end;
 
 function TJsonNode.Link: TJsonNode;
@@ -1962,13 +2011,13 @@ begin
   result := true;
 end;
 
-constructor TJsonArray.create;
+constructor TJsonArray.Create;
 begin
   inherited Create;
   FItems := TFslObjectList.Create;
 end;
 
-destructor TJsonArray.destroy;
+destructor TJsonArray.Destroy;
 begin
   FItems.Free;
   inherited;
@@ -1980,6 +2029,22 @@ begin
     result := GetItem(StrToInt(path))
   else
     result := nil;
+end;
+
+function TJsonArray.findLocation(loc: TSourceLocation; name: String; path: TFslList<TJsonPointerMatch>): boolean;
+var
+  n : TJsonNode;
+  i : integer;
+begin
+  Result := inherited findLocation(loc, name, path);
+  if result then
+  begin
+    for i := 0 to FItems.count - 1 do
+    begin
+      if (FItems[i] as TJsonNode).findLocation(loc, '['+inttostr(i)+']', path) then
+        exit;
+    end;
+  end;
 end;
 
 function TJsonArray.GetCount: integer;
@@ -2178,14 +2243,14 @@ begin
   result := true;
 end;
 
-constructor TJsonObject.create;
+constructor TJsonObject.Create;
 begin
   inherited Create;
   FProperties := TFslMap<TJsonNode>.Create('Json Properties');
   FProperties.trackOrder;
 end;
 
-destructor TJsonObject.destroy;
+destructor TJsonObject.Destroy;
 begin
   FProperties.Free;
   inherited;
@@ -2197,6 +2262,19 @@ begin
     result := properties[path]
   else
     result := nil;
+end;
+
+function TJsonObject.findLocation(loc: TSourceLocation; name: String; path: TFslList<TJsonPointerMatch>): boolean;
+var
+  s : String;
+begin
+  result := inherited findLocation(loc, name, path);
+  if result then
+  begin
+    for s in FProperties.Keys do
+      if FProperties[s].findLocation(loc, s, path) then
+        exit;
+  end;
 end;
 
 function TJsonObject.GetArray(name: String): TJsonArray;

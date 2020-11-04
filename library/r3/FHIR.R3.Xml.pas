@@ -3357,7 +3357,7 @@ Procedure TFHIRXmlComposer.ComposeResourceChildren(xml : TXmlBuilder; elem : TFh
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeId(xml, 'id', elem.idElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('meta') then
+  if (true) {(SummaryOption in [soFull, soSummary, soData]) and doCompose('meta')} then
     ComposeMeta(xml, 'meta', elem.meta);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('implicitRules') then
     ComposeUri(xml, 'implicitRules', elem.implicitRulesElement);{x.2b}
@@ -5594,8 +5594,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.securityList.Count - 1 do
       ComposeCoding(xml, 'security', elem.securityList[i]);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    for i := 0 to elem.tagList.Count - 1 do
+  for i := 0 to elem.tagList.Count - 1 do
+    if (SummaryOption in [soFull, soSummary, soData]) or isSubsettedTag(elem.tagList[i]) then
       ComposeCoding(xml, 'tag', elem.tagList[i]);
 end;
 

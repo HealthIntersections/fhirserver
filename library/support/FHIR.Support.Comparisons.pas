@@ -297,7 +297,7 @@ begin
     StringToFile(x2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
     {$IFDEF WINDOWS}
-    ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+    ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', cmd, true);
     {$ELSE}
     raise Exception.create('to do');
     {$ENDIF}

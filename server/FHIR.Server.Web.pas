@@ -75,8 +75,8 @@
 Interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF}
-  SysUtils, Classes, IniFiles, Generics.Collections, {JCL JclDebug,} {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ENDIF}
+  SysUtils, Classes, IniFiles, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
@@ -2684,8 +2684,8 @@ begin
             begin
               meta := factory.wrapMeta(res);
               try
-                if not meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
-                   meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
+                if (res.fhirType <> 'Bundle') and not meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
+                  meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
               finally
                 meta.Free;
               end;

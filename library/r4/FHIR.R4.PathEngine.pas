@@ -41,6 +41,7 @@ uses
 
 const
   FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');
+  FHIR_TYPES_NUMERIC : Array[0..3] of String = ('integer', 'positiveInt', 'unsignedInt', 'decimal');
 
 type
   TEqualityTriState = (eqFalse, eqTrue, eqNull);
@@ -134,7 +135,7 @@ type
   private
     worker : TFHIRWorkerContext;
     FLog : TStringBuilder;
-    primitiveTypes, allTypes : TStringList;
+    allTypes, primitiveTypes : TStringList;
     FOnResolveConstant: TFHIRResolveConstantEvent;
     FUcum : TUcumServiceInterface;
 
@@ -242,6 +243,7 @@ type
     function funcIsDateTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcIsTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
     function funcForHtml(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcAbs(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 
     function qtyToCanonical(q : TFHIRQuantity) : TFhirDecimal;
     function pairToQty(p: TUcumPair): TFHIRQuantity;
@@ -615,6 +617,7 @@ begin
     pfToBoolean: checkParamCount(lexer, location, exp, 0);
     pfToDateTime: checkParamCount(lexer, location, exp, 0);
     pfToTime: checkParamCount(lexer, location, exp, 0);
+    pfAbs: checkParamCount(lexer, location, exp, 0);
     pfConvertsToInteger: checkParamCount(lexer, location, exp, 0);
     pfConvertsToDecimal: checkParamCount(lexer, location, exp, 0);
     pfConvertsToString: checkParamCount(lexer, location, exp, 0);
@@ -2929,6 +2932,37 @@ begin
   raise EFHIRTodo.create('TFHIRPathEngine.funcConformsTo');
 end;
 
+function TFHIRPathEngine.funcAbs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
+var
+  base : TFHIRObject;
+  qty : TFHIRQuantity;
+begin
+  if (focus.count <> 1) then
+    raise EFHIRPath.Create('Error evaluating FHIRPath expression: focus for abs has more than one value');
+
+  base := focus[0].Value;
+  result := TFHIRSelectionList.Create;
+  try
+    if (base.hasType(FHIR_TYPES_NUMERIC)) then
+      result.add(TFhirDecimal.Create(TFslDecimal.Create(base.primitiveValue).Abs.AsString))
+    else if (base.hasType('Quantity')) then
+    begin
+      qty := (base as TFhirQuantity).Clone;
+      try
+        qty.value := TFslDecimal.Create(qty.value).Abs.AsString;
+        result.add(qty.Link);
+      finally
+        qty.Free;
+      end;
+    end
+    else
+      raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for abs.focus. expecting integer, decimal or quantity');
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TFHIRPathEngine.funcAggregate(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   total, work, pc : TFHIRSelectionList;
@@ -4843,6 +4877,7 @@ begin
     pfToQuantity : result := funcToQuantity(context, focus, exp);
     pfToDateTime : result := funcToDateTime(context, focus, exp);
     pfToTime : result := funcToTime(context, focus, exp);
+    pfAbs : result := funcAbs(context, focus, exp);
     pfConvertsToInteger : result := funcIsInteger(context, focus, exp);
     pfConvertsToDecimal : result := funcIsDecimal(context, focus, exp);
     pfConvertsToString : result := funcIsString(context, focus, exp);
@@ -5349,9 +5384,15 @@ begin
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_Time]);
         end;
+      pfAbs :
+        begin
+        if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
+          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+        result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
+        end;
       pfConvertsToString, pfConvertsToQuantity :
         begin
-        if (not focus.hasType(self.context, primitiveTypes) and not focus.hasType(self.context, 'Quantity')) then
+        if (not focus.hasType(self.context, primitiveTypes)) then
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
         end;

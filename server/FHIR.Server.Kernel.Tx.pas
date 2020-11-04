@@ -900,7 +900,8 @@ begin
     try
       if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
       begin
-        res.id := inttostr(FData.FCodeSystems.Count+1);
+        if FData.FCodeSystems.ContainsKey(res.id) then
+          res.id := inttostr(FData.FCodeSystems.Count+1);
         FData.FCodeSystems.Add(res.id, cs.link);
         FServerContext.ValidatorContext.seeResource(res);
       end;
@@ -910,19 +911,22 @@ begin
   end
   else if res.fhirType = 'ConceptMap' then
   begin
-    res.id := inttostr(FData.FConceptMaps.Count+1);
+    if FData.FConceptMaps.ContainsKey(res.id) then
+      res.id := inttostr(FData.FConceptMaps.Count+1);
     FData.FConceptMaps.Add(res.id, factory.wrapConceptMap(res.link));
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'NamingSystem' then
   begin
-    res.id := inttostr(FData.FNamingSystems.Count+1);
+    if FData.FNamingSystems.ContainsKey(res.id) then
+      res.id := inttostr(FData.FNamingSystems.Count+1);
     FData.FNamingSystems.Add(res.id, factory.wrapNamingSystem(res.link));
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'ValueSet' then
   begin
-    res.id := inttostr(FData.FValueSets.Count+1);
+    if FData.FValueSets.ContainsKey(res.id) then
+      res.id := inttostr(FData.FValueSets.Count+1);
     FData.FValueSets.Add(res.id, factory.wrapValueSet(res.link));
     FServerContext.ValidatorContext.seeResource(res);
   end;

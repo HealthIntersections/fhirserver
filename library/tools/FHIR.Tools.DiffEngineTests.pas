@@ -77,7 +77,7 @@ Type
     procedure execCase(name : String; mode : String; input : TFhirResource; diff : TFhirParameters; output : TFhirResource);
   Published
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [DifferenceEngineTestCase]
     procedure DifferenceEngineTest(Name : String);
@@ -276,7 +276,7 @@ begin
   tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'patch', 'fhir-path-tests.xml'), [xpResolveNamespaces]);
 end;
 
-procedure TDifferenceEngineTest.teardown;
+procedure TDifferenceEngineTest.TearDown;
 begin
   tests.Free;
 end;

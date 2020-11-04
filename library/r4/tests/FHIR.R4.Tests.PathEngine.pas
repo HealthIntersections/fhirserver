@@ -35,91 +35,58 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Version.Parser,
+  FHIR.Base.Objects, FHIR.R4.Parser, FHIR.R4.Xml,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
-  {$IFNDEF SIMPLETEST}
   FHIR.Ucum.Services,
-  {$ENDIF}
   FHIR.Support.MXml, FHIR.Support.Tests;
 
-{$IFNDEF FPC}
-
 Type
-  FHIRPathTestCase4Attribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  TFHIRPathTests4 = Class (TObject)
+  TFHIRPathTest4 = Class (TFslTestSuiteCase)
   private
     engine : TFHIRPathEngine;
     resources : TFslMap<TFHIRResource>;
-    {$IFNDEF SIMPLETEST}
     ucum : TUcumServices;
-    {$ENDIF}
     function findTest(path : String) : TMXmlElement;
-  Published
-    [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
-
-    [FHIRPathTestCase4]
-    procedure FHIRPathTest(Name : String);
+  Public
+    Procedure SetUp; override;
+    procedure TearDown; override;
+    procedure TestCase(Name : String); override;
   End;
-{$ENDIF}
+
+  TFHIRPathTest4Suite  = class (TFslTestSuite)
+  public
+    constructor Create; override;
+  end;
+
+procedure registerTests;
 
 implementation
-
-{$IFNDEF FPC}
 
 var
   gtests : TMXmlElement;
 
-{ FHIRPathTestCase4Attribute }
+{ TFHIRPathTest4 }
 
-function FHIRPathTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  group, test : TMXmlElement;
-  i, g, t : integer;
-  gn, s : String;
+procedure TFHIRPathTest4.setup;
 begin
+  resources := TFslMap<TFHIRResource>.create('resources');
   if gTests = nil then
-    gTests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'fhirpath', 'tests-fhir-r4.xml'), [xpDropWhitespace, xpDropComments]);
-  group := gtests.document.first;
-  i := 0;
-  g := 0;
-  while group <> nil do
-  begin
-    inc(g);
-    test := group.first;
-    gn := group.attribute['name'];
-    t := 0;
-    while test <> nil do
-    begin
-      inc(t);
-      s := VarToStrDef(test.attribute['name'], '');
-      if (s = '') then
-        s := gn+' '+inttostr(t);
-
-      s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
-
-      SetLength(result, i+1);
-      result[i].Name := s;
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := s;
-      inc(i);
-      test := test.Next;
-    end;
-    group := group.Next;
-  end;
+    gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r5', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
+  ucum := TUcumServices.Create;
+  ucum.Import('ucum-essence.xml');
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext4.Use, TUcumServiceImplementation.Create(ucum.link));
 end;
 
+procedure TFHIRPathTest4.TearDown;
+begin
+  ucum.free;
+  engine.Free;
+  resources.Free;
+end;
 
-{ TFHIRPathTests4 }
-
-function TFHIRPathTests4.findTest(path: String): TMXmlElement;
+function TFHIRPathTest4.findTest(path: String): TMXmlElement;
 var
   l, r : String;
   gs, ts, g, t : integer;
@@ -154,7 +121,7 @@ begin
   end;
 end;
 
-procedure TFHIRPathTests4.FHIRPathTest(Name: String);
+procedure TFHIRPathTest4.TestCase(Name: String);
 var
   test : TMXmlElement;
   input, expression, s, tn : String;
@@ -187,7 +154,7 @@ begin
           begin
             p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
             try
-              f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', input), fmOpenRead);
+              f := TFileStream.Create(TestSettings.fhirTestFile(['r5', 'examples', input]), fmOpenRead);
               try
                 p.source := f;
                 p.parse;
@@ -211,12 +178,12 @@ begin
         on e:Exception do
         begin
           ok := false;
-          Assert.IsTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
+          assertTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
           outcome := TFHIRSelectionList.create;
         end;
       end;
       if ok then
-        Assert.IsTrue(not fail, StringFormat('Expected exception parsing %s', [expression]));
+        assertTrue(not fail, StringFormat('Expected exception parsing %s', [expression]));
       if (test.attribute['predicate'] = 'true') then
       begin
         ok := engine.convertToBoolean(outcome);
@@ -230,22 +197,22 @@ begin
       expected := TFslList<TMXmlElement>.Create;
       try
         test.listElements('output', expected);
-        Assert.isTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d for %s', [expected.count, outcome.count, expression]));
+        assertTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d for %s', [expected.count, outcome.count, expression]));
         if test.attribute['ordered'] <> 'false' then
         begin
           for i := 0 to outcome.count- 1 do
           begin
             tn := TMXmlElement(expected[i]).attribute['type'];
             if (tn <> '') then
-              Assert.isTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s for %s', [i, tn, outcome[i].value.fhirType(), expression]));
+              assertTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s for %s', [i, tn, outcome[i].value.fhirType(), expression]));
             s := TMXmlElement(expected[i]).Text;
             if (s <> '') then
             begin
-              Assert.isTrue((outcome[i].value is TFHIRPrimitiveType) or (outcome[i].value is TFhirQuantity), StringFormat('Outcome %d: Value should be a primitive type but was %s for %s', [i, outcome[i].value.fhirType(), expression]));
+              assertTrue((outcome[i].value is TFHIRPrimitiveType) or (outcome[i].value is TFhirQuantity), StringFormat('Outcome %d: Value should be a primitive type but was %s for %s', [i, outcome[i].value.fhirType(), expression]));
               if outcome[i].value is TFhirQuantity then
-                Assert.isTrue(s = engine.convertToString(outcome[i].value), StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]))
+                assertTrue(s = engine.convertToString(outcome[i].value), StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]))
               else
-                Assert.isTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]));
+                assertTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]));
             end;
           end;
         end
@@ -265,7 +232,7 @@ begin
                 ((TMXmlElement(expected[j]).Text = '') or (TMXmlElement(expected[j]).Text = s)) then
                 found := true;
             end;
-            Assert.isTrue(found, StringFormat('Outcome %d: Value %s of type %s not expected for %s', [i, s, tn, expression]));
+            assertTrue(found, StringFormat('Outcome %d: Value %s of type %s not expected for %s', [i, s, tn, expression]));
           end;
         end;
       finally
@@ -280,32 +247,46 @@ begin
   end;
 end;
 
-procedure TFHIRPathTests4.setup;
+{ TFHIRPathTest4Suite }
+
+constructor TFHIRPathTest4Suite.Create;
+var
+  group, test : TMXmlElement;
+  g, t : integer;
+  gn, s : String;
 begin
-  resources := TFslMap<TFHIRResource>.create('resources');
+  inherited create;
   if gTests = nil then
-    gTests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'fhirpath', 'tests-fhir-r4.xml'), [xpDropWhitespace, xpDropComments]);
-  {$IFNDEF SIMPLETEST}
-  ucum := TUcumServices.Create;
-  ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext4.Use, TUcumServiceImplementation.Create(ucum.link));
-  {$ELSE}
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);
-  {$ENDIF}
+    gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
+  group := gtests.document.first;
+  g := 0;
+  while group <> nil do
+  begin
+    inc(g);
+    test := group.first;
+    gn := group.attribute['name'];
+    t := 0;
+    while test <> nil do
+    begin
+      inc(t);
+      s := VarToStrDef(test.attribute['name'], '');
+      if (s = '') then
+        s := gn+' '+inttostr(t);
+
+      s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
+      AddTest(TFHIRPathTest4.Create(s));
+      test := test.Next;
+    end;
+    group := group.Next;
+  end;
 end;
 
-procedure TFHIRPathTests4.teardown;
+procedure registerTests;
 begin
-  {$IFNDEF SIMPLETEST}
-  ucum.free;
-  {$ENDIF}
-  engine.Free;
-  resources.Free;
+  RegisterTest('R4', TFHIRPathTest4Suite.Create);
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRPathTests4);
 finalization
   gTests.Free;
-{$ENDIF}
 end.

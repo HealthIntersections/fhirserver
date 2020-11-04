@@ -4737,7 +4737,7 @@ begin
     ComposeIdValue(json, 'id', elem.idElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdProps(json, 'id', elem.idElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('meta') then
+  // we always compose meta - special case. if (SummaryOption in [soFull, soSummary, soData]) and doCompose('meta') then
     ComposeMeta(json, 'meta', elem.meta); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('implicitRules') then
     ComposeUriValue(json, 'implicitRules', elem.implicitRulesElement, false);
@@ -7678,11 +7678,12 @@ begin
       ComposeCoding(json, '', elem.securityList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.tagList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.tagList.Count > 0) or (hasSubsettedTag(elem.tagList)) then
   begin
     json.valueArray('tag');
     for i := 0 to elem.tagList.Count - 1 do
-      ComposeCoding(json, '', elem.tagList[i]); {z - Coding}
+      if (SummaryOption in [soFull, soSummary, soText, soData]) or (isSubsettedTag(elem.tagList[i])) then
+        ComposeCoding(json, '', elem.tagList[i]); {z - Coding}
     json.FinishArray;
   end;
   if not noObj then json.finishObject;

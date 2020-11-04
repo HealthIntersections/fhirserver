@@ -1449,7 +1449,7 @@ begin
             type_ := conn.colStringByName['ResourceName'];
             first := isPrimaryResource(request, type_, sId);
 
-              entry := native(manager).AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, false, type_, patIds, first);
+              entry := native(manager).AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, false, request.parameters.has('_summary'), type_, patIds, first);
             keys.Add(TKeyPair.create(type_, conn.ColStringByName['ResourceKey']));
 
             if request.Parameters.has('_include') then
@@ -2776,7 +2776,7 @@ begin
           conn.Execute;
           while conn.FetchNext do
           Begin
-            native(manager).AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, false, type_, patIds);
+            native(manager).AddResourceTobundle(request, bundle, request.secure, request.baseUrl, field, prsrFmt, smUnknown, false, request.parameters.has('_summary'), type_, patIds);
             keys.Add(TKeyPair.Create(type_, conn.ColStringByName['ResourceKey']));
           end;
         finally

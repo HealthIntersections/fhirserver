@@ -20,6 +20,11 @@
           <Mode Name="win64-release"/>
         </BuildModes>
       </Target>
+      <Target FileName="toolkit2\FHIRToolkit.lpi">
+        <BuildModes>
+          <Mode Name="Default"/>
+        </BuildModes>
+      </Target>
     </Targets>
   </ProjectGroup>
 </CONFIG>

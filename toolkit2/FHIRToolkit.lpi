@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <PathDelim Value="\"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <Title Value="FHIRToolkit"/>
+      <Scaled Value="True"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
+      <Icon Value="0"/>
+    </General>
+    <BuildModes>
+      <Item Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+    </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="ExtraHighlighters"/>
+      </Item>
+      <Item>
+        <PackageName Value="FrameViewer09"/>
+      </Item>
+      <Item>
+        <PackageName Value="MarkdownEngine"/>
+      </Item>
+      <Item>
+        <PackageName Value="PascalTZ"/>
+      </Item>
+      <Item>
+        <PackageName Value="SynEdit"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+    </RequiredPackages>
+    <Units>
+      <Unit>
+        <Filename Value="FHIRToolkit.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainToolkitForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="FHIR.Toolkit.Context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\npm\frm_npm_browser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PackageRegistryForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\npm\frm_npm_manager.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PackageCacheForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ui\FHIR.LCL.Managers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Threads.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ui\frm_progress.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ProgressForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_file_format.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileFormatChooser"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.IniEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.TextEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\FHIR.Toolkit.FileStore.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\FHIR.Toolkit.Store.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.XmlEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.Factory.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.JsonEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\FHIR.Toolkit.TempStorage.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.BaseEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.HtmlEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="views\FHIR.Toolkit.Console.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ToolkitSettingsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\FHIR.Toolkit.JavascriptEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ui\SynHighlighterHL7.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Base"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Collections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.MXml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Xhtml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\fhir.toolkit.hl7editor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.HL7Editor"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v231"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Lang.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ucum\FHIR.Ucum.IFace.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\client\FHIR.Client.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Xml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Json.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Turtle.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Narrative.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\smart\FHIR.Smart.Utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\exec\64\FHIRToolkit"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\ucum;..\library\client;..\library\r4;..\library\cda;..\library\smart"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions>
+      <Item>
+        <Name Value="EAbort"/>
+      </Item>
+      <Item>
+        <Name Value="ECodetoolError"/>
+      </Item>
+      <Item>
+        <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="EParserException"/>
+      </Item>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

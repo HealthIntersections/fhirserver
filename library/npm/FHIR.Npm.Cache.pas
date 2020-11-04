@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
-  FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Fpc,
+  FHIR.Support.Base, FHIR.Base.Lang, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Fpc, FHIR.Support.Threads,
   FHIR.Support.Stream, FHIR.Web.Fetcher,
   FHIR.Npm.Package, FHIR.Npm.Client,
   FHIR.Base.Utilities;
@@ -116,6 +116,7 @@ type
     procedure ListPackageIds(list : TStrings);
     procedure ListPackages(list : TStrings); overload;
     procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TNpmPackage>); overload;
+    procedure ListAllPackages(list : TFslList<TNpmPackage>); overload;
 
     function packageExists(id, ver : String) : boolean; overload;
     function autoInstallPackage(id, ver : String) : boolean; overload;
@@ -128,7 +129,7 @@ type
 
     procedure clear;
 
-    procedure import(content : TBytes); overload;
+    function import(content : TBytes) : TNpmPackage; overload;
     function install(url : String) : boolean;
 
     procedure remove(id : String); overload;
@@ -140,6 +141,40 @@ type
     function report : String;
   end;
 
+  { TFHIRLoadPackagesTaskRequest }
+
+  TFHIRLoadPackagesTaskRequest = class (TBackgroundTaskRequestPackage)
+  private
+    FManager: TFHIRPackageManager;
+  public
+    constructor Create(manager : TFHIRPackageManager);
+    destructor Destroy; override;
+
+    property Manager : TFHIRPackageManager read FManager;
+  end;
+
+  { TFHIRLoadPackagesTaskResponse }
+
+  TFHIRLoadPackagesTaskResponse = class (TBackgroundTaskResponsePackage)
+  private
+    FPackages : TFslList<TNpmPackage>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Packages :  TFslList<TNpmPackage> read FPackages;
+  end;
+
+  { TFHIRLoadPackagesTaskEngine }
+
+  TFHIRLoadPackagesTaskEngine  = class abstract (TBackgroundTaskEngine)
+  private
+    procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
+  public
+    function name : String; override;
+    procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
+  end;
+
 const
 //  NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
@@ -148,6 +183,8 @@ const
 
 var
   MustBeUserMode : boolean = false;
+  GPackageLoaderTaskId : integer;
+
 
 implementation
 
@@ -182,6 +219,58 @@ function isCoreName(s : String) : boolean;
 begin
   result := StringArrayExistsInsensitive(['hl7.fhir.core', 'hl7.fhir.r2.core','hl7.fhir.r2b.core','hl7.fhir.r3.core',
     'hl7.fhir.r4.core','hl7.fhir.r5.core','hl7.fhir.r6.core'], s);
+end;
+
+{ TFHIRLoadPackagesTaskEngine }
+
+procedure TFHIRLoadPackagesTaskEngine.doWork(sender: TObject; pct: integer; done: boolean; desc: String);
+begin
+  progress(desc, pct);
+end;
+
+function TFHIRLoadPackagesTaskEngine.name: String;
+begin
+  result := 'Load Packages';
+end;
+
+procedure TFHIRLoadPackagesTaskEngine.execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
+var
+  req : TFHIRLoadPackagesTaskRequest;
+  resp : TFHIRLoadPackagesTaskResponse;
+begin
+  req := request as TFHIRLoadPackagesTaskRequest;
+  resp := response as TFHIRLoadPackagesTaskResponse;
+  req.Manager.OnWork := doWork;
+  req.Manager.ListAllPackages(resp.Packages);
+end;
+
+
+{ TFHIRLoadPackagesTaskResponse }
+
+constructor TFHIRLoadPackagesTaskResponse.Create;
+begin
+  inherited Create;
+  FPackages := TFslList<TNpmPackage>.create;
+end;
+
+destructor TFHIRLoadPackagesTaskResponse.Destroy;
+begin
+  FPackages.Free;
+  inherited Destroy;
+end;
+
+{ TFHIRLoadPackagesTaskRequest }
+
+constructor TFHIRLoadPackagesTaskRequest.Create(manager: TFHIRPackageManager);
+begin
+  inherited Create;
+  FManager := manager;
+end;
+
+destructor TFHIRLoadPackagesTaskRequest.Destroy;
+begin
+  FManager.free;
+  inherited Destroy;
 end;
 
 { TFHIRPackageManager }
@@ -314,7 +403,7 @@ begin
 end;
 
 
-procedure TFHIRPackageManager.import(content : TBytes);
+function TFHIRPackageManager.import(content : TBytes) : TNpmPackage;
 var
   npm : TJsonObject;
   id, ver, dir, fn, fver, s : String;
@@ -376,6 +465,9 @@ begin
       Fini.WriteInteger('package-sizes', id+'#'+ver, size);
       Fini.WriteString('packages', id+'#'+ver, FormatDateTime('yyyymmddhhnnss', now));
       work(100, true, 'Installing');
+      result := TNpmPackage.fromFolderQuick(dir);
+      result.size := size;
+      result.installed := now;
     finally
       indexer.free;
     end;
@@ -493,6 +585,51 @@ begin
   end;
 end;
 
+procedure TFHIRPackageManager.ListAllPackages(list: TFslList<TNpmPackage>);
+var
+  ts : TStringList;
+  s : String;
+  id, n, ver : String;
+  npm : TNpmPackage;
+  i : integer;
+begin
+  ts := TStringList.Create;
+  try
+    for s in TDirectory.GetDirectories(FFolder) do
+      ts.Add(s);
+    ts.Sort;
+    i := 0;
+    for s in ts do
+    begin
+      work(trunc(1/ts.count * 100), false, 'Package '+ExtractFileName(s));
+      if s.Contains('#') and FileExists(Path([s, 'package', 'package.json'])) then
+      begin
+        npm := TNpmPackage.fromFolderQuick(s);
+        try
+          n := ExtractFileName(s);
+          id := n.Substring(0, n.IndexOf('#'));
+          ver := n.Substring(n.LastIndexOf('#')+1);
+          list.add(npm.link);
+          if Fini.ReadString('packages', ExtractFileName(s), '') <> '' then
+            npm.installed := TFslDateTime.fromFormat('yyyymmddhhnnss', Fini.ReadString('packages', ExtractFileName(s), '')).DateTime
+          else
+            npm.installed := 0;
+          npm.size := Fini.ReadInteger('package-sizes', ExtractFileName(s), 0);
+          if (npm.size = 0) then
+          begin
+            npm.size := checkPackageSize(s);
+            Fini.WriteInteger('package-sizes', ExtractFileName(s), npm.size);
+          end;
+        finally
+          npm.free;
+        end;
+      end;
+    end;
+    work(100, true, '');
+  finally
+    ts.Free;
+  end;
+end;
 
 procedure TFHIRPackageManager.clear;
 var
@@ -925,5 +1062,7 @@ begin
   result := TPackageDefinition(inherited link);
 end;
 
+initialization
+  GPackageLoaderTaskId := GBackgroundTasks.registerTaskEngine(TFHIRLoadPackagesTaskEngine.create);
 end.
 

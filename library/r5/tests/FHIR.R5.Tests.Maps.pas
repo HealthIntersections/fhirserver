@@ -71,7 +71,7 @@ type
     procedure loadMaps(folder : String);
   public
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [TestCase] procedure testCD;
   end;
@@ -88,7 +88,7 @@ type
     utils : TFHIRStructureMapUtilities;
   Published
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [MapParserTest2Case]
     procedure Test(filename : String);
@@ -169,7 +169,7 @@ begin
   loadMaps(FHIR_SRC_FILE(['guides', 'ccda', 'maps']));
 end;
 
-procedure TMapTransformTests.teardown;
+procedure TMapTransformTests.TearDown;
 begin
   utils.Free;
   ctxt.free;
@@ -288,7 +288,7 @@ begin
   utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create, nil);
 end;
 
-procedure TMapParserTests2.teardown;
+procedure TMapParserTests2.TearDown;
 begin
   // todo
 

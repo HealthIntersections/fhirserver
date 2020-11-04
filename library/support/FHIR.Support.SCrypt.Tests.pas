@@ -9,10 +9,9 @@ see https://github.com/JackTrapper/scrypt-for-delphi
 interface
 
 uses
-  Windows,
-	SysUtils,
-  FHIR.Support.Testing,
-  FHIR.Support.Scrypt;
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  SysUtils,
+  FHIR.Support.Testing, FHIR.Support.Scrypt;
 
 type
 	TScryptTests = class (TFslTestCase)
@@ -45,32 +44,34 @@ type
 		//Even though we don't use SHA-1, we implemented it because PBKDF2_SHA1 is the only one with published test vectors
 		procedure Test_SHA1;
 		procedure Test_SHA1_PurePascal;
+		{$IFNDEF FPC}
 		procedure Test_SHA1_Csp;
-		procedure Test_SHA1_Cng;
+                procedure Test_SHA1_Cng;
+                {$ENDIF}
 
 		//Scrypt uses PBKDF2_SHA256. We fallback through Cng -> Csp -> PurePascal
 		procedure Test_SHA256;
 		procedure Test_SHA256_PurePascal;
-		procedure Test_SHA256_Csp;
-		procedure Test_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_SHA256_Csp;{$ENDIF}
+		{$IFNDEF FPC}procedure Test_SHA256_Cng;{$ENDIF}
 
 		//PBKDF2 uses HMAC. Test our implementation with known SHA1 and SHA256 test vectors
 		procedure Test_HMAC_SHA1;
 		procedure Test_HMAC_SHA1_PurePascal;
-		procedure Test_HMAC_SHA1_Cng;
+		{$IFNDEF FPC}procedure Test_HMAC_SHA1_Cng;{$ENDIF}
 
 		procedure Test_HMAC_SHA256;
 		procedure Test_HMAC_SHA256_PurePascal;
-		procedure Test_HMAC_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_HMAC_SHA256_Cng;{$ENDIF}
 
 		//Test PBKDF implementations; test with known SHA1 and SHA256 test vectors
 		procedure Test_PBKDF2_SHA1;
 		procedure Test_PBKDF2_SHA1_PurePascal;
-		procedure Test_PBKDF2_SHA1_Cng;
+		{$IFNDEF FPC}procedure Test_PBKDF2_SHA1_Cng;{$ENDIF}
 
 		procedure Test_PBKDF2_SHA256;
 		procedure Test_PBKDF2_SHA256_PurePascal;
-		procedure Test_PBKDF2_SHA256_Cng;
+		{$IFNDEF FPC}procedure Test_PBKDF2_SHA256_Cng;{$ENDIF}
 
 		//Salsa 20/8, BlockMix, and ROMix are the heart of scrypt. PBKDF2 is for key derivation. These are used for expensive salt
 		procedure Test_Salsa208Core;
@@ -81,7 +82,7 @@ type
 		//Password hashing
 		procedure Test_PasswordHashing; //Test, and verify, "correct horse battery staple"
 		procedure Test_JavaWgScrypt; //the only other example out there
-		procedure Test_RehashNeededKicksIn;
+		{$IFNDEF FPC}procedure Test_RehashNeededKicksIn;{$ENDIF}
 	end;
 
 	TSHA1Tester = class(TObject)
@@ -302,6 +303,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_SHA256_Cng;
 var
 	sha256: IHashAlgorithm;
@@ -319,6 +321,7 @@ begin
   TSHA256Tester.Test(sha256);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_SHA256_PurePascal;
 var
@@ -333,10 +336,11 @@ procedure TScryptTests.SetUp;
 begin
 	inherited;
 
-	FScrypt := TScrypt.Create;
-
+	FScrypt := TScryptCracker.Create;
+        {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(FFreq) then //it's documented to never fail, but it can (see SO).
 		FFreq := -1;
+        {$ENDIF}
 end;
 
 procedure TScryptTests.TearDown;
@@ -357,26 +361,9 @@ begin
 	begin
 		SetLength(Result, 0);
 		Exit;
-	end;
-
-	// Determine real size of destination string, in bytes
-	strLen := WideCharToMultiByte(CP_UTF8, 0, PWideChar(s), Length(s), nil, 0, nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('Could not get length of destination string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
-
-	// Allocate memory for destination string
-	SetLength(Result, strLen);
-
-	// Convert source UTF-16 string (UnicodeString) to the destination using the code-page
-	strLen := WideCharToMultiByte(CP_UTF8, 0, PWideChar(s), Length(s), PAnsiChar(@Result[0]), strLen, nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('Could not convert utf16 to utf8 string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
+	end
+        else
+          result := TEncoding.UTF8.getBytes(s);
 end;
 
 procedure TScryptTests.Test_JavaWgScrypt;
@@ -455,6 +442,7 @@ begin
   {$ENDIF}
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_RehashNeededKicksIn;
 var
 	passwordRehashNeeded: Boolean;
@@ -471,6 +459,7 @@ begin
 	CheckTrue(passwordRehashNeeded);
   assertPass();
 end;
+{$ENDIF}
 
 { TSHA256Tester }
 
@@ -769,7 +758,6 @@ begin
 	hash := TScryptCracker.CreateObject('SHA1.PurePascal') as IHashAlgorithm;
 
 	best := 0;
-	OutputDebugString('SAMPLING ON');
 	for i := 1 to 60 do
 	begin
 		t1 := GetTimestamp;
@@ -778,7 +766,6 @@ begin
 		if (((t2-t1) < best) or (best = 0)) then
 			best := (t2-t1);
 	end;
-	OutputDebugString('SAMPLING OFF');
 
 	Status(Format('%s: %.3f MB/s', ['TSHA1', (Length(data)/1024/1024) / (best/FFreq)]));
 end;
@@ -797,7 +784,6 @@ begin
 	//Benchmark SHA256PurePascal with the test data
 	best := 0;
 	hash := TScryptCracker.CreateObject('SHA256.PurePascal') as IHashAlgorithm;
-	OutputDebugString('SAMPLING ON');
 	for i := 1 to 60 do
 	begin
 		t1 := GetTimestamp;
@@ -806,15 +792,18 @@ begin
 		if (((t2-t1) < best) or (best = 0)) then
 			best := (t2-t1);
 	end;
-	OutputDebugString('SAMPLING OFF');
 
 	Status(Format('%s: %.3f MB/s', ['SHA256', (Length(data)/1024/1024) / (best/FFreq)]));
 end;
 
 function TScryptTests.GetTimestamp: Int64;
 begin
-	if not QueryPerformanceCounter(Result) then //it's documented to never fail; but it can. See SO
-		Result := 0;
+  {$IFDEF FPC}
+  result := GetTickCount64;
+  {$ELSE}
+  if not QueryPerformanceCounter(Result) then //it's documented to never fail; but it can. See SO
+    Result := 0;
+  {$ENDIF}
 end;
 
 procedure TScryptTests.ScryptBenchmarks;
@@ -829,7 +818,7 @@ var
 	var
 		endTicks: Int64;
 	begin
-		if not QueryPerformanceCounter(endTicks) then endTicks := 0;
+		endTicks := GetTimestamp;
 		Result := (endTicks - StartTicks);
 	end;
 
@@ -850,8 +839,9 @@ const
 const
 	STestPassword = 'correct horse battery staple';
 begin
+   {$IFDEF WINDPWS}
 	QueryPerformanceFrequency(freq);
-
+   {$ENDIF}
 	if UseTsv then
 	begin
 		RowLeader := TsvRowLeader;
@@ -889,7 +879,7 @@ begin
 			if (N < 16*r) and ((1 shl N)*r*Int(128) < $7FFFFFFF) then
 			begin
 				try
-					QueryPerformanceCounter(t1);
+					t1 := GetTimestamp;
 					TScrypt.HashPassword(STestPassword, N, r, 1);
 					t2 := ElapsedTicks(t1);
 					s := s+Format(ColumnSeparator+'%.1f', [t2/freq*1000]);
@@ -1023,6 +1013,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_HMAC_SHA1_Cng;
 var
 	hash: IHmacAlgorithm;
@@ -1032,6 +1023,7 @@ begin
 	hash := nil;
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_HMAC_SHA1_PurePascal;
 var
@@ -1052,6 +1044,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_HMAC_SHA256_Cng;
 var
 	hmac: IHmacAlgorithm;
@@ -1060,6 +1053,7 @@ begin
 	Tester_HMAC_SHA256(hmac);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_HMAC_SHA256_PurePascal;
 var
@@ -1295,13 +1289,15 @@ begin
 	{
 		Test round trip of generating a hash, and then verifying it
 	}
+   {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(freq) then freq := -1;
+   {$ENDIF}
 
 	password := 'correct horse battery staple';
 
-	if not QueryPerformanceCounter(t1) then t1 := 0;
+	t1 := GetTimestamp;
 	hash := TScrypt.HashPassword(password);
-	if not QueryPerformanceCounter(t2) then t2 := 0;
+	t2 := GetTimestamp;
 
 	Status('Password: "'+password+'"');
 	Status('Hash: "'+hash+'"');
@@ -1309,9 +1305,9 @@ begin
 
 	Self.CheckFalse(hash='');
 
-	if not QueryPerformanceCounter(t1) then t1 := 0;
+	t1 := GetTimestamp;
 	Self.CheckTrue(TScrypt.CheckPassword('correct horse battery staple', hash, {out}passwordRehashNeeded));
-	if not QueryPerformanceCounter(t2) then t2 := 0;
+	t2 := GetTimestamp;
 	Status(Format('Time to verify password: %.4f ms', [(t2-t1)/freq*1000]));
   assertPass();
 end;
@@ -1714,6 +1710,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA1_Cng;
 var
 	db: IPBKDF2Algorithm;
@@ -1722,6 +1719,7 @@ begin
 	Tester_PBKDF2_SHA1(db);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA1_PurePascal;
 var
@@ -1741,6 +1739,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_PBKDF2_SHA256_Cng;
 var
 	db: IPBKDF2Algorithm;
@@ -1749,6 +1748,7 @@ begin
 	Tester_PBKDF2_SHA256(db);
   assertPass();
 end;
+{$ENDIF}
 
 procedure TScryptTests.Test_PBKDF2_SHA256_PurePascal;
 var
@@ -1773,9 +1773,9 @@ var
 		//p = parallelization parameter
 		expected := HexToBytes(ExpectedHexString);
 
-		QueryPerformanceCounter(t1);
+		t1 := GetTimestamp;
 		actual := FScrypt.GetBytes(password, salt, CostFactor, r, p, DesiredBytes);
-		QueryPerformanceCounter(t2);
+	        t2 := GetTimestamp;
 
 		Self.Status(Format('Test "%s" duration: %.4f ms', [password, (t2-t1)/freq*1000]));
 
@@ -1796,8 +1796,10 @@ begin
 		the password and salt strings are passed as sequences of ASCII bytes without a
 		terminating NUL
 	}
+   {$IFDEF WINDOWS}
 	if not QueryPerformanceFrequency(freq) then
 		freq := -1;
+   {$ENDIF}
 
 	//uses 512 bytes
 	test('', '', {N=16=2^}4, {r=}1, {p=}1, 64,
@@ -1816,12 +1818,11 @@ begin
 
 	if FindCmdLineSwitch('IncludeSlowTests', ['-','/'], True) then
 	begin
-		OutputDebugString('SAMPLING ON');
 		//uses 1 GB
 		test('pleaseletmein', 'SodiumChloride', {N=1048576=2^}20, {r=}8, {p=}1, 64,
 				'21 01 cb 9b 6a 51 1a ae ad db be 09 cf 70 f8 81 ec 56 8d 57 4a 2f fd 4d ab e5 ee 98 20 ad aa 47'+
 				'8e 56 fd 8f 4b a5 d0 9f fa 1c 6d 92 7c 40 f4 c3 37 30 40 49 e8 a9 52 fb cb f4 5c 6f a7 7a 41 a4');
-		OutputDebugString('SAMPLING OFF');
+
 	end
 	else
 		Status('1 GB slow test skipped. Use -IncludeSlowTests');
@@ -1846,6 +1847,7 @@ begin
   assertPass();
 end;
 
+{$IFNDEF FPC}
 procedure TScryptTests.Test_SHA1_Cng;
 var
 	sha1: IHashAlgorithm;
@@ -1863,7 +1865,7 @@ begin
 	TSHA1Tester.Test(sha1);
   assertPass();
 end;
-
+{$ENDIF}
 procedure registerTests;
 begin
 	RegisterTest('Library.Scrypt', TScryptTests.Suite);

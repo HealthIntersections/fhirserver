@@ -156,6 +156,17 @@ Type
     constructor Create; override;
   end;
 
+  { TXmlParserTest2 }
+
+  TXmlParserTest2 = Class (TFslTestCase)
+  private
+    procedure runTest(fn : String);
+  published
+    procedure testUnicode;
+    procedure testUtf8;
+    procedure testUtf16;
+  end;
+
   TXmlUtilsTest = Class (TFslTestCase)
   Published
     procedure TestUnPretty;
@@ -171,7 +182,7 @@ Type
     procedure collectFunctionNames(xp : TMXPathExpressionNode);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -194,7 +205,7 @@ Type
     procedure runXTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -213,7 +224,7 @@ Type
     procedure doExecute;
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure TestCase(Name : String); override;
   End;
@@ -224,14 +235,23 @@ Type
   end;
 
 Type
+
+  { TJsonTests }
+
   TJsonTests = Class (TFslTestCase)
   Private
+    procedure jsonUnicodeTest(fn : String);
+    procedure jsonTest(src : String; clss : TJsonNodeClass);
   Published
     procedure TestResource;
     procedure TestCustomDoc2;
     procedure TestCustomDoc2Loose;
     procedure TestCustomDecimal;
-  End;
+    procedure testSimple;
+    procedure testUtf8n;
+    procedure testUtf8;
+    procedure testUtf16;
+  end;
 
   TJsonPatchTest = Class (TFslTestSuiteCase)
   Private
@@ -241,7 +261,7 @@ Type
     procedure execute;
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   Published
     procedure PatchTest(Name : String);
   End;
@@ -657,6 +677,88 @@ procedure registerTests;
 
 implementation
 
+{ TXmlParserTest2 }
+
+procedure TXmlParserTest2.testUnicode;
+begin
+  runtest('xml-unicode.xml');
+end;
+
+procedure TXmlParserTest2.testUtf8;
+begin
+  runtest('xml-utf8.xml');
+end;
+
+procedure TXmlParserTest2.testUtf16;
+begin
+  runtest('xml-utf16.xml');
+end;
+
+procedure TXmlParserTest2.runTest(fn : String);
+var
+  xml : TMXmlDocument;
+  e : TMXmlElement;
+  b : TXmlBuilder;
+  fnSrc, fnDst : string;
+  s : String;
+  ok : boolean;
+begin
+  fnSrc := TestSettings.serverTestFile(['testcases', 'xml', fn]);
+  fnDst := MakeTempFilename();
+  xml := TMXmlParser.parseFile(fnSrc, []);
+  try
+    assertTrue(xml <> nil);
+    s := xml.ToXml();
+    StringToFile(s, fnDst, TEncoding.UTF8);
+    ok := CheckXMLIsSame(fnSrc, fnDst, s);
+    assertTrue(ok, s);
+
+    b := TMXmlBuilder.Create;
+    try
+      b.CurrentNamespaces.DefaultNS := '';
+      b.IsPretty := true;
+      b.Start;
+      b.open('base');
+      e := xml.docElement.firstElement;
+      b.AddAttribute('value', e.attribute['value']);
+      b.Tag('attr');
+      e := e.nextElement;
+      b.TagText('text', e.Text);
+      b.close('base');
+      b.Finish;
+      s := b.Build();
+    finally
+      b.Free;
+    end;
+    StringToFile(s, fnDst, TEncoding.UTF8);
+    ok := CheckXMLIsSame(fnSrc, fnDst, s);
+    assertTrue(ok, s);
+
+    b := TFslXmlBuilder.Create;
+    try
+      b.CurrentNamespaces.DefaultNS := '';
+      b.IsPretty := true;
+      b.Start;
+      b.open('base');
+      e := xml.docElement.firstElement;
+      b.AddAttribute('value', e.attribute['value']);
+      b.Tag('attr');
+      e := e.nextElement;
+      b.TagText('text', e.Text);
+      b.close('base');
+      b.Finish;
+      s := b.Build();
+    finally
+      b.Free;
+    end;
+    StringToFile(s, fnDst, TEncoding.UTF8);
+    ok := CheckXMLIsSame(fnSrc, fnDst, s);
+    assertTrue(ok, s);
+  finally
+    xml.free;
+  end;
+end;
+
 
 {$IFDEF FPC}
 { TFslRegexTests }
@@ -904,7 +1006,7 @@ begin
   engine := TXmlPatchEngine.Create;
 end;
 
-procedure TXmlPatchTest.teardown;
+procedure TXmlPatchTest.TearDown;
 begin
   engine.Free;
   tests.Free;
@@ -1050,7 +1152,7 @@ begin
   functionNames := TStringList.Create;
 end;
 
-procedure TXPathParserTest.teardown;
+procedure TXPathParserTest.TearDown;
 begin
   functionNames.Free;
   tests.Free;
@@ -1304,7 +1406,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TXPathEngineTest.teardown;
+procedure TXPathEngineTest.TearDown;
 begin
   tests.Free;
 end;
@@ -4075,6 +4177,27 @@ end;
 
 { TJsonTests }
 
+procedure TJsonTests.jsonUnicodeTest(fn: String);
+var
+  json : TJsonObject;
+  fnSrc, fnDst, s : string;
+  cnt : TBytes;
+  ok : boolean;
+begin
+  fnSrc := TestSettings.serverTestFile(['testcases', 'json', fn]);
+  fnDst := MakeTempFilename();
+  json := TJSONParser.ParseFile(fnSrc);
+  try
+    assertTrue(json <> nil);
+    cnt := TJSONWriter.writeObject(json, true);
+    bytesToFile(cnt, fnDst);
+    ok := CheckJsonIsSame(fnSrc, fnDst, s);
+    assertTrue(ok, s);
+  finally
+    json.Free;
+  end;
+end;
+
 procedure TJsonTests.TestCustomDecimal;
 var
   json : TJsonObject;
@@ -4091,6 +4214,32 @@ begin
   finally
     f.Free;
   end;
+end;
+
+procedure TJsonTests.jsonTest(src : String; clss : TJsonNodeClass);
+var
+  n : TJsonNode;
+begin
+  n := TJsonParser.ParseNode(src);
+  try
+    assertTrue(n is clss);
+  finally
+    n.free;
+  end;
+end;
+
+procedure TJsonTests.testSimple;
+begin
+  jsonTest('{"t" : "t"}', TJsonObject);
+  jsonTest('{"t" : 1}', TJsonObject);
+  jsonTest('{"t" : true}', TJsonObject);
+  jsonTest('{"t" : null}', TJsonObject);
+  jsonTest('{"t" : ["t"]}', TJsonObject);
+  jsonTest('{}', TJsonObject);
+  jsonTest('[]', TJsonArray);
+  jsonTest('[{}]', TJsonArray);
+  jsonTest('[{"t" : []}]', TJsonArray);
+  jsonTest('["", 1, null, true, {"t" : []}]', TJsonArray);
 end;
 
 procedure TJsonTests.TestCustomDoc2;
@@ -4153,6 +4302,21 @@ begin
   finally
     f.Free;
   end;
+end;
+
+procedure TJsonTests.testUtf16;
+begin
+  jsonUnicodeTest('json-utf16.json');
+end;
+
+procedure TJsonTests.testUtf8;
+begin
+  jsonUnicodeTest('json-utf8.json');
+end;
+
+procedure TJsonTests.testUtf8n;
+begin
+  jsonUnicodeTest('json-utf8n.json');
 end;
 
 constructor TJsonPatchTests.Create;
@@ -4220,7 +4384,7 @@ begin
   engine := TJsonPatchEngine.Create;
 end;
 
-procedure TJsonPatchTest.teardown;
+procedure TJsonPatchTest.TearDown;
 begin
   engine.Free;
   tests.Free;
@@ -4557,6 +4721,7 @@ begin
   {$ENDIF}
 
   RegisterTest('Formats.XML Tests', TXmlParserTests.create);
+  RegisterTest('Formats.XML Tests', TXmlParserTest2.Suite);
   RegisterTest('Formats.XML Utility Tests', TXmlUtilsTest.Suite);
   RegisterTest('Formats.XPath Tests', TXPathParserTests.create);
   RegisterTest('Formats.XPath Engine Tests', TXPathEngineTests.create);

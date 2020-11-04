@@ -50,7 +50,7 @@ Type
     procedure checkStatusMissing(name : String); overload;
   Published
     [SetupFixture]    Procedure SetUp;
-    [TearDownFixture] Procedure TearDown;
+    [TearDownFixture] procedure TearDown;
     [TestCase]        Procedure TestStatus;
     [TestCase]        Procedure TestSeeResource;
     [TestCase]        Procedure TestDropResource;

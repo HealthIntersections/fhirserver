@@ -107,6 +107,8 @@ Type
 
   TMXmlElementType = (ntElement, ntText, ntComment, ntDocument, ntAttribute, ntProcessingInstruction, ntDocumentDeclaration, ntCData);
 
+  { TMXmlNamedNode }
+
   TMXmlNamedNode = class (TMXmlNode)
   private
     FNodeType : TMXmlElementType;
@@ -115,6 +117,7 @@ Type
     FLocalName : String;
     FStart : TSourceLocation;
     FStop : TSourceLocation;
+    function containsLocation(loc : TSourceLocation) : boolean;
   public
     constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
@@ -164,6 +167,8 @@ Type
     function GetAllText: String;
     procedure fixChildren;
     function GetHasAttribute(name: String): boolean;
+    function GetAllChildrenAreText: boolean;
+    function findLocation(loc : TSourceLocation; path : TFslList<TMXmlNamedNode>) : boolean;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -176,6 +181,7 @@ Type
     property HasAttribute[name : String]  : boolean read GetHasAttribute;
     property Children : TFslList<TMXmlElement> read GetChildren;
     property HasChildren : boolean read GetHasChildren;
+    property AllChildrenAreText : boolean read GetAllChildrenAreText;
     property Text : string read GetText write SetText;
     property HasText : boolean read GetHasText;
     property Next : TMXmlElement read FNext write SetNext;
@@ -323,6 +329,9 @@ Type
     function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
     function evaluateBoolean(nodes : TFslList<TMXmlNode>): boolean;
     property NamespaceAbbreviations : TFslStringDictionary read FNamespaceAbbreviations;
+
+    function findLocation(loc : TSourceLocation) : TFslList<TMXmlNamedNode>;
+    function describePath(path : TFslList<TMXmlNamedNode>) : string;
   end;
 
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities);
@@ -419,6 +428,11 @@ begin
 end;
 
 { TMXmlNamedNode }
+
+function TMXmlNamedNode.containsLocation(loc : TSourceLocation): boolean;
+begin
+  result := locInSpan(loc, FStart, FStop);
+end;
 
 constructor TMXmlNamedNode.Create(nodeType: TMXmlElementType);
 begin
@@ -579,6 +593,43 @@ begin
         inc(i);
       result := 'n'+inttostr(i);
       attribute['xmlns:'+result] := ns;
+    end;
+  end;
+end;
+
+function TMXmlElement.GetAllChildrenAreText: boolean;
+var
+  child : TMXmlElement;
+begin
+  result := true;
+  for child in Children do
+    if (child.NodeType <> ntText) then
+      exit(false);
+end;
+
+function TMXmlElement.findLocation(loc : TSourceLocation; path : TFslList<TMXmlNamedNode>) : boolean;
+var
+  child : TMXmlElement;
+  attr : TMXmlAttribute;
+begin
+  result := containsLocation(loc);
+  if result then
+  begin
+    path.add(self.link);
+    if FAttributes <> nil then
+    begin
+      for attr in FAttributes do
+        if (attr.containsLocation(loc)) then
+        begin
+          path.add(attr.link);
+          exit;
+        end;
+    end;
+    if (FChildren <> nil) then
+    begin
+      for child in FChildren do
+        if child.findLocation(loc, path) then
+          exit;
     end;
   end;
 end;
@@ -910,7 +961,6 @@ begin
       else
       begin
         b.Append(FormaTXmlForTextArea(Text.trim));
-        b.Append(#13#10);
       end;
     ntComment:
       begin
@@ -1369,6 +1419,16 @@ begin
         s := readToken(true);
       s := ReadToken(true);
     end;
+    if (xpHTMLEntities in options) then
+    begin
+      If s = '<!' Then
+      begin
+        while (s <> '>') do
+          s := readToken(true);
+        s := ReadToken(true);
+      end;
+    end;
+
     rule(s.StartsWith('<'), 'Unable to read XML  - starts with "'+s+'"');
     result := TMXmlDocument.Create;
     try
@@ -2243,6 +2303,45 @@ begin
     end;
   finally
     vars.Free;
+  end;
+end;
+
+function TMXmlDocument.findLocation(loc : TSourceLocation) : TFslList<TMXmlNamedNode>;
+begin
+  result := TFslList<TMXmlNamedNode>.create;
+  try
+    docElement.findLocation(loc, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TMXmlDocument.describePath(path : TFslList<TMXmlNamedNode>) : string;
+var
+  n : TMXmlNamedNode;
+  e : TMXmlElement;
+begin
+  result := '';
+  for n in path do
+  begin
+    if n is TMXmlElement then
+    begin
+      e := n as TMXmlElement;
+      case e.NodeType of
+        ntDocument, ntElement : result := result + '/' + n.FName;
+        ntText : result := result + '/text()';
+        ntComment : result := result + '/comment()';
+        ntAttribute : result := result + '/@' + n.FName;
+        ntProcessingInstruction : result := result + '/pi()';
+        ntDocumentDeclaration : result := result + '/decl()';
+        ntCData : result := result + '/cdata()';
+      end
+    end
+    else if n is TMXmlAttribute then
+      result := result + '/@' + n.FName
+    else
+      raise Exception.create('unexpected');
   end;
 end;
 

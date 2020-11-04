@@ -106,7 +106,7 @@ begin
   end;
 end;
 
-procedure tearDown;
+procedure TearDown;
 var
   i : integer;
   p : PTheadRecord;

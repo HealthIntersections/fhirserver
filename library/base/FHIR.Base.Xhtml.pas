@@ -110,6 +110,7 @@ Type
   }
   TFhirXHtmlNode = class (TFHIRObject)
   private
+    FLocation : TSourceLocation;
     FNodeType : TFHIRHtmlNodeType;
     FName : String;
     FAttributes : TFHIRAttributeList;
@@ -146,6 +147,7 @@ Type
     function NsDecl : String; virtual;
     function hasAttribute(name : String): boolean;
     procedure attribute(name, value : String);
+    property Location : TSourceLocation read FLocation write FLocation;
 
     {
       plain text content of html
@@ -297,7 +299,7 @@ Type
 
   TFHIRXhtmlParser = class
   private
-	  class Function checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
+    class Function checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
     class procedure doCompose(node: TFhirXHtmlNode; xml : TXmlBuilder);
     class function doParse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode; static;
   public
@@ -964,7 +966,7 @@ end;
 
 function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+   result := TFHIRObjectText.create(TFHIRXhtmlParser.Compose(self));
 end;
 
 function TFhirXHtmlNode.NsDecl: String;
@@ -1070,6 +1072,7 @@ var
 begin
   result := TFhirXHtmlNode.create(fhntElement);
   try
+    result.Location := node.Start;
     result.Name := node.localName;
     defaultNS := checkNS(options, result, node, defaultNS);
     path := path + '/h:'+result.Name;

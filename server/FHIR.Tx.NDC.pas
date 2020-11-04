@@ -83,6 +83,8 @@ type
   private
     FDb : TFslDBManager;
     FVersion : string;
+    FPackageCount : integer;
+    FProductCount : integer;
 
     FTypes : TDictionary<integer, String>;
     FOrgs : TDictionary<integer, String>;
@@ -501,6 +503,8 @@ begin
     loadDict(conn, FOrgs, 'select NDCKey, Name from NDCOrganizations');
     loadDict(conn, FRoutes, 'select NDCKey, Name from NDCRoutes');
     loadDict(conn, FDoseforms, 'select NDCKey, Name from NDCDoseForms');
+    FPackageCount := conn.countSql('Select count(*) from NDCPackages');
+    FProductCount := conn.countSql('Select count(*) from NDCProducts');
     conn.release;
   except
     on e : Exception do
@@ -726,7 +730,15 @@ end;
 
 function TNDCServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
 begin
-  result := nil;
+  if (context = nil) then
+  begin
+    if ndx <= FProductCount then
+      result := TNDCProviderContext.create(false, ndx + 1)
+    else
+      result := TNDCProviderContext.create(true, ndx - FProductCount + 1)
+  end
+  else
+    raise ETerminologyError.create('No nested children in NDC');
 end;
 
 function TNDCServices.getDefinition(code: String): String;
@@ -838,23 +850,8 @@ begin
 end;
 
 function TNDCServices.TotalCount: integer;
-var
-  count : cardinal;
-  conn : TFslDBConnection;
 begin
-  conn := FDB.getconnection('ChildCount');
-  try
-    count := conn.CountSQL('select count(*) from NDCPackages');
-    count := count + conn.CountSQL('select count(*) from NDCProducts');
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
-  end;
-  result := count;
+  result := FProductCount + FPackageCount;
 end;
 
 { TNDCProviderContext }

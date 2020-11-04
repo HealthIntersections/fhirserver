@@ -45,12 +45,14 @@ Type
     procedure testClient(client: TFhirClient4);
   public
     Procedure SetUp; override;
-    procedure teardown; override;
+    procedure TearDown; override;
   published
     procedure testIndyJson;
-    procedure testIEJson;
     procedure testIndyXml;
+    {$IFNDEF FPC}
+    procedure testIEJson;
     procedure testIEXml;
+    {$ENDIF}
   end;
 
 procedure registerTests;
@@ -64,7 +66,7 @@ begin
   FWorker := TTestingWorkerContext4.Use;
 end;
 
-procedure TFhirHTTPClientTests4.teardown;
+procedure TFhirHTTPClientTests4.TearDown;
 begin
   FWorker.Free;
 end;
@@ -120,6 +122,7 @@ begin
   assertTrue(ok);
 end;
 
+{$IFNDEF FPC}
 procedure TFhirHTTPClientTests4.testIEJson;
 var
   http: TFHIRHTTPCommunicator;
@@ -159,6 +162,7 @@ begin
     http.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TFhirHTTPClientTests4.testIndyJson;
 var

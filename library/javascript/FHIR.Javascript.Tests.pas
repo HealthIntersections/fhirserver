@@ -64,7 +64,7 @@ Type
     procedure execException;
   public
     Procedure SetUp; override;
-    Procedure TearDown; override;
+    procedure TearDown; override;
   Published
     Procedure TestHelloWorld;
     Procedure TestConsoleLog;

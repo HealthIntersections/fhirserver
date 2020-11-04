@@ -239,3 +239,9 @@ testcases/snomed/
 
 .DS_Store
 /dependencies/Indy10/OpenSSL/backup
+/toolkit2/backup
+/toolkit2/lib/x86_64-win64
+/library/ui/backup
+/toolkit2/editors/backup
+/toolkit2/stores/backup
+/toolkit2/stores/backup/FHIR.Toolkit.FileStore.pas

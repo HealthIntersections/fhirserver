@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 Interface
 
 Uses
@@ -5387,7 +5389,7 @@ End;
 
 
 Initialization
-  FillChar(gTable, SizeOf(gTable), ahtNull);
+  FillChar(gTable, SizeOf(gTable), 0);
 
   gTable['!'] := ahtExclamation;
   gTable['?'] := ahtQuery;

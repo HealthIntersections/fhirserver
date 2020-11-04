@@ -34,72 +34,60 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Xml,
-  FHIR.Support.Tests, FHIR.R4.Tests.Worker;
+  FHIR.Support.Testing, FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Tests,
+  FHIR.R4.Tests.Worker,
+  FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Xml;
 
-{$IFNDEF FPC}
 type
-  LiquidTestCase4Attribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  TLiquidEngineTest4 = Class (TObject)
+  TLiquidEngineTest4 = Class (TFslTestSuiteCase)
   private
     engine : TFHIRLiquidEngine;
     test : TJsonObject;
     function findTest(name : String) : TJsonObject;
     function FetchInclude(sender : TFHIRLiquidEngine; name : String; var content : String) : boolean;
     function loadResource : TFhirResource;
+  Public
+    Procedure SetUp; override;
+    procedure TearDown; override;
   Published
-    [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
-
-    [LiquidTestCase4]
-    procedure FHIRPathTest(Name : String);
+    procedure TestCase(Name : String); override;
   End;
-{$ENDIF}
+
+  TLiquidEngineTest4Suite = class (TFslTestSuite)
+  public
+    constructor Create; override;
+  end;
+
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 var
   gTestDoc : TJsonObject;
   gResources : TFslMap<TFHIRResource>;
 
-{ LiquidTestCase4Attribute }
+{ TLiquidEngineTest4Suite }
 
-function LiquidTestCase4Attribute.GetCaseInfoArray: TestCaseInfoArray;
+constructor TLiquidEngineTest4Suite.Create;
 var
   tests : TJsonArray;
   test : TJsonObject;
   i : integer;
 begin
+  inherited Create;
   if gResources = nil then
     gResources := TFslMap<TFHIRResource>.create('resources');
   if gTestDoc = nil then
-    gTestDoc := TJSONParser.ParseFile(FHIR_TESTING_FILE(4, 'liquid', 'liquid-tests.json'));
+    gTestDoc := TJSONParser.ParseFile(TestSettings.fhirTestFile(['r4', 'liquid', 'liquid-tests.json']));
   tests := gTestDoc.arr['tests'];
-  SetLength(result, tests.Count);
   for i := 0 to tests.Count - 1 do
   begin
     test := tests[i] as TJsonObject;
-    result[i].Name := test.str['name'];
-    SetLength(result[i].Values, 1);
-    result[i].Values[0] := test.str['name'];
+    AddTest(TLiquidEngineTest4.Create(test.str['name']));
   end;
 end;
 
-
-function TLiquidEngineTest4.FetchInclude(sender : TFHIRLiquidEngine; name: String; var content: String): boolean;
-begin
-  result := test.has('includes') and test.obj['includes'].has(name);
-  if result then
-    content := test.obj['includes'].str[name];
-end;
+{ TLiquidEngineTest4 }
 
 function TLiquidEngineTest4.findTest(name: String): TJsonObject;
 var
@@ -117,6 +105,13 @@ begin
   end;
 end;
 
+function TLiquidEngineTest4.FetchInclude(sender : TFHIRLiquidEngine; name: String; var content: String): boolean;
+begin
+  result := test.has('includes') and test.obj['includes'].has(name);
+  if result then
+    content := test.obj['includes'].str[name];
+end;
+
 function TLiquidEngineTest4.loadResource : TFhirResource;
 var
   fn : String;
@@ -125,7 +120,7 @@ var
 begin
   if not gResources.ContainsKey(test.str['focus']) then
   begin
-    fn := FHIR_TESTING_FILE(4, 'examples', test.str['focus'].replace('/', '-')+'.xml');
+    fn := TestSettings.fhirTestFile(['r4', 'examples', test.str['focus'].replace('/', '-')+'.xml']);
     p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, engine.engine.context.lang);
     try
       f := TFileStream.Create(fn, fmOpenRead);
@@ -154,7 +149,7 @@ begin
   engine.Free;
 end;
 
-procedure TLiquidEngineTest4.FHIRPathTest(Name: String);
+procedure TLiquidEngineTest4.TestCase(Name: String);
 var
   doc : TFHIRLiquidDocument;
   output : String;
@@ -163,17 +158,20 @@ begin
   doc := engine.parse(test.str['template'], 'test-script');
   try
     output := engine.evaluate(doc, loadResource, nil);
-    Assert.IsTrue(test.str['output'] = output);
+    assertTrue(test.str['output'] = output);
   finally
     doc.Free;
   end;
 end;
 
+procedure registerTests;
+begin
+  RegisterTest('R4', TLiquidEngineTest4Suite.create);
+end;
+
 initialization
-  TDUnitX.RegisterTestFixture(TLiquidEngineTest4);
 finalization
   gTestDoc.Free;
   gResources.Free;
-{$ENDIF}
 end.
 

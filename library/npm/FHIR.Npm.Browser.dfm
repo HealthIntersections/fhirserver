@@ -150,6 +150,8 @@ object PackageFinderForm: TPackageFinderForm
       OnGetText = gridGetText
       OnHeaderClick = gridHeaderClick
       OnRemoveFromSelection = gridRemoveFromSelection
+      ExplicitLeft = 12
+      ExplicitTop = 16
       Columns = <
         item
           Position = 0

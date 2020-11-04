@@ -59,7 +59,7 @@ Type
     function findTest(path : String) : IXMLDOMElement;
   Published
     [SetupFixture] Procedure SetUp;
-    [TearDownFixture] procedure teardown;
+    [TearDownFixture] procedure TearDown;
 
     [FluentPathTestCase]
     procedure FluentPathTest(Name : String);
@@ -283,7 +283,7 @@ begin
   engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);
 end;
 
-procedure TFluentPathTest.teardown;
+procedure TFluentPathTest.TearDown;
 begin
   engine.Free;
 end;

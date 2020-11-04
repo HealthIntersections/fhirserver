@@ -37,7 +37,7 @@ uses
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdComponent,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
-  {$IFDEF WINDOWS}FHIR.Web.WinInet, {$ENDIF}
+  {$IFNDEF FPC}FHIR.Web.WinInet, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang,
   FHIR.Smart.Utilities;
 
@@ -61,13 +61,13 @@ type
 
     indy : TIdHTTP;
     ssl : TIdOpenSSLIOHandlerClient;
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
     http : TFslWinInetClient;
     {$ENDIF}
 
     procedure createClient;
     function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
     function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
     {$ENDIF}
     function makeMultipart(stream: TStream; streamName: string; params: TStringList; var mp : TStream) : String;
@@ -169,7 +169,7 @@ constructor TFHIRHTTPCommunicator.Create(url: String);
 begin
   inherited create;
   FUrl := url;
-  {$IFNDEF WINDOWS}
+  {$IFDEF FPC}
   FUseIndy := true;
   {$ENDIF}
 end;
@@ -178,7 +178,7 @@ destructor TFHIRHTTPCommunicator.destroy;
 begin
   ssl.Free;
   indy.free;
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   http.Free;
   {$ENDIF}
   inherited;
@@ -196,10 +196,11 @@ end;
 
 procedure TFHIRHTTPCommunicator.SetUseIndy(const Value: boolean);
 begin
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   FUseIndy := Value;
   {$ELSE}
-  // ignore...?
+  if not Value then
+    raise Exception.create('must use indy when not in windows');
   {$ENDIF}
 end;
 
@@ -219,7 +220,7 @@ begin
   FCertFile := Value;
   indy.free;
   indy := nil;
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   http.Free;
   http := nil;
   {$ENDIF}
@@ -230,7 +231,7 @@ begin
   FCertKey := Value;
   indy.free;
   indy := nil;
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   http.Free;
   http := nil;
   {$ENDIF}
@@ -241,7 +242,7 @@ begin
   FCertPWord := Value;
   indy.free;
   indy := nil;
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   http.Free;
   http := nil;
   {$ENDIF}
@@ -311,7 +312,7 @@ begin
   try
     if FUseIndy then
       result := exchangeIndy(url, verb, source, headers, mtStated)
-    {$IFDEF WINDOWS}
+    {$IFNDEF FPC}
     else
       result := exchangeHTTP(url, verb, source, headers, mtStated)
     {$ENDIF}
@@ -358,7 +359,7 @@ begin
       end;
     end;
   end
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   else if http = nil then
   begin
     if certFile <> '' then
@@ -513,7 +514,7 @@ begin
   end;
 end;
 
-{$IFDEF WINDOWS}
+{$IFNDEF FPC}
 function TFHIRHTTPCommunicator.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders; mtStated : String = ''): TStream;
 var
   op : TFhirOperationOutcomeW;
@@ -670,7 +671,7 @@ begin
   createClient;
   if FUseIndy then
     indy.Request.RawHeaders.Values[name] := value
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   else
     http.Headers.AddOrSetValue(name, value);
   {$ENDIF}
@@ -681,7 +682,7 @@ begin
   createClient;
   if FUseIndy then
     result := indy.Response.RawHeaders.Values[name]
-  {$IFDEF WINDOWS}
+  {$IFNDEF FPC}
   else
     result := http.getResponseHeader(name);
   {$ENDIF}
