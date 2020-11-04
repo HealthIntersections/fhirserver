@@ -1382,11 +1382,6 @@ type
     Property Dictionary : THL7V2Dictionary Read FDictionary Write SetDictionary;
   End;
 
-{ this is global, but you do need to initialize it somewhere early.... }
-
-var
-  GHL7Dict: THL7V2Dictionary = NIL;
-
 implementation
 
 Constructor THL7V2ModelDataType.Create;
@@ -6057,9 +6052,4 @@ begin
   FDictionary := Value;
 end;
 
-initialization
-  GHL7Dict := NIL;
-finalization
-  GHL7Dict.Free;
-  GHL7Dict := NIL;
 end.

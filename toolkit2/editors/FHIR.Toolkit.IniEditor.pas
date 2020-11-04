@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
-  FHIR.Support.Logging,
+  FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
 
 type
@@ -20,7 +20,7 @@ type
   public
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate(ts : TStringList; line, col : integer); override;
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
   end;
 
 
@@ -60,41 +60,40 @@ begin
   result := 'ini';
 end;
 
-procedure TIniEditor.validate(ts : TStringList; line, col : integer);
+procedure TIniEditor.validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList);
 var
   i : integer;
   s : String;
   t : QWord;
   section : String;
 begin
-  t := GetTickCount64;
   updateToContent;
-  StartValidating;
+  t := StartValidating;
   try
     for i := 0 to FContent.count - 1 do
     begin
       s := FContent[i];
-      checkForEncoding(s, i);
+      if (validate) then
+        checkForEncoding(s, i);
       if (s <> '') and not s.StartsWith(';') then
       begin
         s := s.trim;
         if s.StartsWith('[') then
         begin
-          if not s.EndsWith(']') then
-            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]')
-          else
-            section := s.Substring(1, length(s)-1);
+          if s.EndsWith(']') then
+            section := s.Substring(1, length(s)-2)
+          else if validate then
+            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]');
         end
-        else if not s.contains('=') then
+        else if (validate) and (not s.contains('=')) then
           validationWarning(i+1, 1, 'No = found on non-comment line');
       end;
-      if (i = line) then
-        ts.AddPair('Section', section);
+      if (i = cursor.line) then
+        inspection.AddPair('Section', section);
     end;
   finally
-    finishValidating;
+    finishValidating(validate, t);
   end;
-  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 

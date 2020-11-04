@@ -407,8 +407,12 @@ type
   TStream = Classes.TStream;
 
 type
+
+  { TSourceLocation }
+
   TSourceLocation = record
     line, col : integer;
+    class function make(l, c : integer) : TSourceLocation; static;
   end;
 
   TSourceLocationObject = class (TFslObject)
@@ -1505,6 +1509,14 @@ Type
 
 
 Implementation
+
+{ TSourceLocation }
+
+class function TSourceLocation.make(l, c: integer): TSourceLocation;
+begin
+  result.line := l;
+  result.col := c;
+end;
 
 
 Function TFslStream.Link : TFslStream;

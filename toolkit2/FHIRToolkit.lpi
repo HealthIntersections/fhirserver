@@ -129,10 +129,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="editors\FHIR.Toolkit.PlainTextEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="stores\FHIR.Toolkit.TempStorage.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -164,9 +160,8 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\v2\FHIR.V2.Objects.pas"/>
+        <Filename Value="..\library\v2\FHIR.v2.Objects.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.v2.Objects"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\v2\FHIR.v2.Base.pas"/>
@@ -181,6 +176,32 @@
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="FHIR.V2.Dictionary"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.MXml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Xhtml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\fhir.toolkit.hl7editor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.HL7Editor"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.V2.Dictionary.v231"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -216,6 +237,9 @@
       </Item>
       <Item>
         <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="EParserException"/>
       </Item>
     </Exceptions>
   </Debugging>

@@ -20,7 +20,7 @@ type
   public
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate(ts : TStringList; line, col : integer); override;
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
   end;
 
 
@@ -46,25 +46,26 @@ begin
   result := 'txt';
 end;
 
-procedure TTextEditor.validate(ts : TStringList; line, col : integer);
+procedure TTextEditor.validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList);
 var
   i : integer;
   s : String;
   t : QWord;
 begin
-  t := GetTickCount64;
-  updateToContent;
-  StartValidating;
-  try
-    for i := 0 to TextEditor.lines.count - 1 do
-    begin
-      s := TextEditor.lines[i];
-      checkForEncoding(s, i);
+  if validate then
+  begin
+    updateToContent;
+    t := StartValidating;
+    try
+      for i := 0 to TextEditor.lines.count - 1 do
+      begin
+        s := TextEditor.lines[i];
+        checkForEncoding(s, i);
+      end;
+    finally
+      finishValidating(validate, t);
     end;
-  finally
-    finishValidating;
   end;
-  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 end.

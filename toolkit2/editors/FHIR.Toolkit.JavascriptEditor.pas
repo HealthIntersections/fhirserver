@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJscript,
-  FHIR.Support.Base, FHIR.Support.Logging,
+  FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
 
@@ -24,7 +24,7 @@ type
 
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate; override;
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
   end;
 
 
@@ -64,25 +64,26 @@ begin
   result := 'Javascript';
 end;
 
-procedure TJavascriptEditor.validate;
+procedure TJavascriptEditor.validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList);
 var
   i : integer;
   s : String;
   t : QWord;
 begin
-  t := GetTickCount64;
   updateToContent;
-  StartValidating;
+  t := StartValidating;
   try
-    for i := 0 to FContent.count - 1 do
+    if (validate) then
     begin
-      s := TextEditor.lines[i];
-      checkForEncoding(s, i);
+      for i := 0 to FContent.count - 1 do
+      begin
+        s := TextEditor.lines[i];
+        checkForEncoding(s, i);
+      end;
     end;
   finally
-    finishValidating;
+    finishValidating(validate, t);
   end;
-  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 

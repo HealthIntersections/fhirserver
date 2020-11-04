@@ -16,13 +16,11 @@ uses
 
   frm_npm_manager, frm_file_format, frm_settings;
 
-const
-  PAUSE_MILLISECONDS = 1000; // move to settings?
-
 type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actionToolsSideBySideMode: TAction;
     actionViewFormDesigner: TAction;
     actionViewsClearLog: TAction;
     actionPagesMoveRight: TAction;
@@ -235,13 +233,14 @@ type
     ToolButton28: TToolButton;
     ToolButton29: TToolButton;
     ToolButton3: TToolButton;
+    ToolButton30: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
-    ValueListEditor1: TValueListEditor;
+    vlInspector: TValueListEditor;
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
@@ -266,6 +265,7 @@ type
     procedure actionPagesMoveRightExecute(Sender: TObject);
     procedure actionToolsOptionsExecute(Sender: TObject);
     procedure actionToolsPackageManagerExecute(Sender: TObject);
+    procedure actionToolsSideBySideModeExecute(Sender: TObject);
     procedure actionViewEditorExecute(Sender: TObject);
     procedure actionViewExpressionEditorExecute(Sender: TObject);
     procedure actionViewFormDesignerExecute(Sender: TObject);
@@ -335,6 +335,7 @@ type
     procedure createNewFile(kind : TSourceEditorKind);
     procedure openFile(address : String);
     procedure onChangeFocus(sender : TObject);
+    procedure updateInspector(sender : TObject);
     procedure closeFile(tab : TTabSheet; store : boolean);
     procedure locateOnTab(sender : TObject; x, y: integer; var point : TPoint);
     function ChooseFileName(editor : TToolkitEditor; out address : String): boolean;
@@ -360,13 +361,16 @@ begin
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FTempStore := TFHIRToolkitTemporaryStorage.create;
   loadLayout;
+
   FContext := TToolkitContext.create(imgMain, actList);
   FContext.OnUpdateActions := updateActionStatus;
   FContext.OnLocate := locateOnTab;
   FContext.OnChangeFocus := onChangeFocus;
   FContext.MessageView.OnChange := updateMessages;
+  FContext.Inspector.OnChange := updateInspector;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
+  actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
   FFileSystem := TFileStorageService.create(self, FIni);
   FContext.storages.add(FFileSystem.link);
@@ -391,6 +395,7 @@ var
   editor : TToolkitEditor;
   tab : TTabSheet;
   ns : boolean;
+  i : integer;
 begin
   sessions := TFslList<TToolkitEditSession>.create;
   try
@@ -405,11 +410,18 @@ begin
       editor.LoadBytes(FTempStore.fetchContent(session.Guid));
       editor.session.NeedsSaving := ns;
       editor.lastChangeChecked := true;
+      editor.lastMoveChecked := true;
       editor.editPause;
-  end;
+    end;
   finally
     sessions.free;
   end;
+
+  for i := 1 to ParamCount do
+    if (FileExists(ParamStr(i))) then
+      openFile('file:'+ParamStr(i))
+    else
+      openFile(ParamStr(i));
 
   if pgEditors.PageCount > 0 then
   begin
@@ -613,11 +625,15 @@ var
 begin
   for editor in FContext.Editors do
   begin
-    if not editor.lastChangeChecked and (editor.lastChange + PAUSE_MILLISECONDS < GetTickCount64) then
+    if not editor.lastChangeChecked and (editor.lastChange + editor.Pause < GetTickCount64) then
     begin
       FTempStore.storeContent(editor.session.guid, false, editor.GetBytes);
       editor.editPause;
-    end;
+    end
+    else if not editor.lastMoveChecked and (editor.lastMove + editor.Pause < GetTickCount64) then
+    begin
+      editor.movePause;
+    end
   end;
 end;
 
@@ -716,6 +732,9 @@ begin
       editor.lastChangeChecked := true;
       FContext.Focus := editor;
       FContext.Focus.getFocus(mnuContent);
+      editor.lastChangeChecked := true;
+      editor.lastMoveChecked := true;
+      editor.editPause;
       updateActionStatus(editor);
     end;
   end;
@@ -725,6 +744,26 @@ procedure TMainToolkitForm.onChangeFocus(sender: TObject);
 begin
   if chkCurrrentFileOnly.Checked then
     updateMessages(sender);
+end;
+
+procedure TMainToolkitForm.updateInspector(sender: TObject);
+begin
+  if Context.Inspector.active then
+  begin
+    vlInspector.Enabled := true;
+    vlInspector.Color := clWhite;
+    vlInspector.FixedColor := clBtnFace;
+    vlInspector.FixedCols := 1;
+    vlInspector.Strings.Assign(Context.Inspector.Content);
+  end
+  else
+  begin
+    vlInspector.Enabled := false;
+    if Context.hasFocus and (context.focus.Pause > 500) then
+      vlInspector.Color := $fcf3f5;
+    vlInspector.FixedColor := clBtnFace;
+    vlInspector.FixedCols := 1;
+  end;
 end;
 
 function TMainToolkitForm.checkDoSave(editor : TToolkitEditor) : boolean;
@@ -1239,6 +1278,7 @@ begin
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
       Context.SideBySide := ToolkitSettingsForm.chkSideBySide.Checked;
+      actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
       FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
     end;
   finally
@@ -1255,6 +1295,13 @@ begin
   finally
     PackageCacheForm.free;
   end;
+end;
+
+procedure TMainToolkitForm.actionToolsSideBySideModeExecute(Sender: TObject);
+begin
+  actionToolsSideBySideMode.Checked := not actionToolsSideBySideMode.Checked;
+  Context.SideBySide := actionToolsSideBySideMode.Checked;
+  FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
 end;
 
 procedure TMainToolkitForm.MenuItem34Click(Sender: TObject);
@@ -1342,6 +1389,7 @@ procedure TMainToolkitForm.pgEditorsChange(Sender: TObject);
 begin
   FContext.Focus := FContext.EditorForTab(pgEditors.ActivePage);
   FContext.Focus.getFocus(mnuContent);
+  FContext.Focus.editPause;
   checkActiveTabCurrency;
   updateActionStatus(self);
   updateStatusBar;

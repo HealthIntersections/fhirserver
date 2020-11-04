@@ -11,14 +11,15 @@ uses
   Forms, frm_main, frm_npm_manager, frm_npm_browser,
   { you can add units after this }
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Logging,
-  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.LCL.Managers,
-  FHIR.Base.Lang, FHIR.Web.Parsers, frm_progress, SynHighlighterHL7,
-  FHIR.v2.Objects, FHIR.V2.Base, FHIR.V2.Dictionary, frm_file_format,
-  FHIR.Toolkit.Context, FrameViewer09, FHIR.Toolkit.Console,
+  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.MXml,
+  FHIR.Support.Json, FHIR.LCL.Managers, FHIR.Base.Lang, FHIR.Base.Objects,
+  FHIR.Base.Xhtml, FHIR.Web.Parsers, frm_progress, SynHighlighterHL7,
+  FHIR.v2.Objects, FHIR.V2.Base, FHIR.V2.Dictionary, FHIR.V2.Dictionary.v231,
+  frm_file_format, FHIR.Toolkit.Context, FrameViewer09, FHIR.Toolkit.Console,
   FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor, FHIR.Toolkit.TextEditor,
   FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory, FHIR.Toolkit.JsonEditor,
-  FHIR.Toolkit.PlainTextEditor, FHIR.Toolkit.BaseEditor,
-  FHIR.Toolkit.HtmlEditor, FHIR.Toolkit.JavascriptEditor, frm_settings;
+  FHIR.Toolkit.BaseEditor, FHIR.Toolkit.HtmlEditor,
+  FHIR.Toolkit.JavascriptEditor, frm_settings, fhir.toolkit.hl7editor;
 
 {$R *.res}
 

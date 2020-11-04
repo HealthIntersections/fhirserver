@@ -26,8 +26,12 @@ type
     tkUnknown,     // not described in dictionary
     tkNull);
 
+  { TSynHL7Syn }
+
   TSynHL7Syn = class(TSynCustomHighlighter)
   private
+    FDictionary : THL7V2Dictionary;
+
     FStatus : Integer;
     fLine: pchar;
     FLen : Integer;
@@ -83,6 +87,7 @@ type
     procedure NextField;
     procedure NextComp;
     procedure NextSubComp;
+    procedure SetDictionary(AValue: THL7V2Dictionary);
     procedure SetSegment(ACode : String);
     function InMSHControl : Boolean;
     procedure ParseEscape;
@@ -97,9 +102,11 @@ type
     function GetTable: THL7V2ModelTable;
   protected
     function GetIdentChars: TSynIdentChars; override;
+    procedure GetTokenEx(out TokenStart: PChar; out TokenLength: integer); override;
     function GetSampleSource : String; override;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes; override;
     function GetEol: Boolean; override;
     function GetRange: Pointer; override;
@@ -118,6 +125,7 @@ type
     function DescribePoint(ALine : String; AOffset : integer) : String;
     function inID(ALine : String; AOffset : integer; AList1, AList2 : TStrings) : Boolean;
 
+    property Dictionary : THL7V2Dictionary  read FDictionary write SetDictionary;
     property FldChar : Char read FFldChar;
     property CompChar : Char read FCompChar;
     property RepChar : Char read FRepChar;
@@ -227,6 +235,12 @@ begin
   fDefaultFilter := 'HL7 Message (*.hl7)|*.hl7';
 end;
 
+destructor TSynHL7Syn.Destroy;
+begin
+  FDictionary.Free;
+  inherited Destroy;
+end;
+
 function TSynHL7Syn.GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
 begin
   Result := FDefAttr;
@@ -244,6 +258,12 @@ begin
   result := result - [FRepChar];
   result := result - [FCompChar];
   result := result - [FSCompChar];
+end;
+
+procedure TSynHL7Syn.GetTokenEx(out TokenStart: PChar; out TokenLength: integer);
+begin
+  TokenLength := FRun-fTokenPos;
+  TokenStart := fLine + fTokenPos;
 end;
 
 class function TSynHL7Syn.GetLanguageName: string;
@@ -537,6 +557,12 @@ begin
   SetDictSubComp;
 end;
 
+procedure TSynHL7Syn.SetDictionary(AValue: THL7V2Dictionary);
+begin
+  FDictionary.Free;
+  FDictionary := AValue;
+end;
+
 function TSynHL7Syn.EscapeIsValid : Boolean;
 var
   s : String;
@@ -623,8 +649,9 @@ begin
   FHL7Model := nil;
   LOldVer := FVersion;
   FVersion := GetStringCell(GetStringCell(GetStringCell(GetStringCell(FLine, 0, #13), 11, FFldChar), 0, FCompChar), 0, FSCompChar);
-  if StringArrayExists(NAMES_HL7V2_VERSION, FVersion) and (FromVersionCode(FVersion) in GHL7Dict.Versions) then
-    FHL7Model := GHL7Dict.Model[FromVersionCode(FVersion)];
+  if (FDictionary <> nil) then
+    if StringArrayExists(NAMES_HL7V2_VERSION, FVersion) and (FromVersionCode(FVersion) in FDictionary.Versions) then
+      FHL7Model := FDictionary.Model[FromVersionCode(FVersion)];
   if LOldVer <> FVersion then
     inc(FStatus);
 end;

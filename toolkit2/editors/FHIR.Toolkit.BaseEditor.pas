@@ -6,12 +6,16 @@ interface
 
 uses
   Classes, SysUtils,
-  Graphics, Controls, ExtCtrls, ComCtrls, Menus, SynEdit, SynEditHighlighter,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus,
+  SynEdit, SynEditHighlighter, SynEditTypes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store;
 
 type
   TCurrentViewMode = (vmText, vmDesigner);
+
+  TValidationMode = (vmInspect, vmValidate);
+  TValidationModes = set of TValidationMode;
 
   { TContentSubAction }
 
@@ -114,6 +118,7 @@ type
     procedure DoMnuBOM(sender : TObject);
     procedure DoMnuNavigate(sender : TObject);
     procedure DoTextEditorChange(sender : TObject);
+    procedure DoTextEditorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure DoShowDesigner(sender : TObject);
     procedure DoShowTextTab(sender : TObject);
   protected
@@ -137,8 +142,8 @@ type
     function MustBeUnicode : boolean; virtual;
 
     // the kind of operations required to populate the inspector are generally those already required for validation, so we do both at the same time.
-    // some validations are a 3 phase process: syntax parse, minimal check and populate the properties, and then a slower full check
-    procedure validate(ts : TStringList; line, col : integer); virtual;
+    // some validations are a 3 phase process: syntax parse, minimal check and populate the inspection, and then a slower full check
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); virtual;
 
     procedure checkForEncoding(s : String; line : integer);
 
@@ -147,6 +152,7 @@ type
     function makeAction(bar: TToolBar; caption : String; imageIndex, tag : integer; event : TNotifyEvent; dontAddToContextMenu : boolean = false) : TContentAction; overload;
     procedure makeDivider(bar: TToolBar);
 
+    procedure ContentChanged; virtual;
     procedure updateToContent;
     procedure updateFromContent;
 
@@ -170,6 +176,7 @@ type
     procedure getFocus(content : TMenuItem); override;
     procedure loseFocus(); override;
     procedure EditPause; override;
+    procedure MovePause; override;
     procedure ChangeSideBySideMode; override;
     function hasTextTab : boolean; override;
     function hasDesigner : boolean; override;
@@ -509,6 +516,11 @@ begin
   end;
 end;
 
+procedure TBaseEditor.ContentChanged;
+begin
+  // nothing
+end;
+
 procedure TBaseEditor.updateToContent;
 begin
   if HasTextTab then
@@ -787,6 +799,7 @@ begin
   inc(FFocusCount);
   if FFocusCount = 1 then
     bindToContentMenu(content);
+  EditPause;
   TextEditor.SetFocus;
 end;
 
@@ -810,18 +823,47 @@ end;
 procedure TBaseEditor.EditPause;
 var
   ts : TStringList;
+  loc : TSourceLocation;
+  t : QWord;
 begin
+  t := GetTickCount64;
   LastChangeChecked := true;
+  LastMoveChecked := true;
   updateToContent;
   if Context.SideBySide then
     updateDesigner;
 
+  loc.col := TextEditor.CaretX-1;
+  loc.line := TextEditor.CaretY-1;
   ts := TStringList.create;
   try
-    validate(ts, TextEditor.CaretY-1, TextEditor.CaretX-1);
-    Context.Inspector.Populate(ts);
+    validate(true, true, loc, ts);
+    if (Context.Focus = self) then
+      Context.Inspector.Populate(ts);
   finally
     ts.free;
+  end;
+  Pause := (GetTickCount64 - t) * 4;
+end;
+
+procedure TBaseEditor.MovePause;
+var
+  ts : TStringList;
+  loc : TSourceLocation;
+begin
+  LastMoveChecked := true;
+
+  if (Context.Focus = self) then
+  begin
+    loc.col := TextEditor.CaretX-1;
+    loc.line := TextEditor.CaretY-1;
+    ts := TStringList.create;
+    try
+      validate(false, true, loc, ts);
+        Context.Inspector.Populate(ts);
+    finally
+      ts.free;
+    end;
   end;
 end;
 
@@ -835,6 +877,13 @@ begin
     FTextPanelWork.parent := FTextPanelBase;
     FDesignerPanelWork.parent := FDesignerPanelBase;
     FPageControl.Parent := nil;
+    actViewTextTab.Caption := '&Activate';
+    actViewTextTab.ImageIndex := 76;
+    actViewTextTab.Event := DoShowDesigner;
+    actViewDesigner.Caption := '&Activate';
+    actViewDesigner.ImageIndex := 77;
+    actViewDesigner.Event := DoShowTextTab;
+    updateDesigner;
   end
   else
   begin
@@ -847,6 +896,15 @@ begin
       FTextPanelWork.parent := FTextTab;
     if hasDesigner then
       FDesignerPanelWork.parent := FDesignTab;
+    if hasTextTab and hasDesigner then
+    begin
+      actViewTextTab.Caption := 'Text E&ditor';
+      actViewTextTab.ImageIndex := 77;
+      actViewTextTab.Event := DoShowTextTab;
+      actViewDesigner.Caption := '&Designer';
+      actViewDesigner.ImageIndex := 76;
+      actViewDesigner.Event := DoShowDesigner;
+    end;
   end;
 end;
 
@@ -874,7 +932,8 @@ begin
   result := false;
 end;
 
-procedure TBaseEditor.validate;
+procedure TBaseEditor.validate(validate: boolean; inspect: boolean;
+  cursor: TSourceLocation; inspection: TStringList);
 begin
   // nothing
 end;
@@ -1045,6 +1104,7 @@ begin
   TextEditor.Font.Size := 10;
   TextEditor.Highlighter := HighLighter;
   TextEditor.OnChange := DoTextEditorChange;
+  TextEditor.OnStatusChange := DoTextEditorStatusChange;
   TextEditor.PopupMenu := FEditorPopup;
 end;
 
@@ -1061,7 +1121,7 @@ begin
     if Context.SideBySide then
       actViewTextTab := makeAction(tb, '&Activate', 76, 0, DoShowDesigner, true)
     else
-      actViewTextTab := makeAction(tb, '&Text Tab', 77, 0, DoShowTextTab, true)
+      actViewTextTab := makeAction(tb, 'Text E&ditor', 77, 0, DoShowTextTab, true)
 end;
 
 procedure TBaseEditor.updateDesigner;
@@ -1085,8 +1145,19 @@ begin
   Session.NeedsSaving := true;
   lastChange := GetTickCount64;
   lastChangeChecked := false;
-  Context.Inspector.Clear;
+  ContentChanged;
+  Context.Inspector.Active := false;
   Context.OnUpdateActions(self);;
+end;
+
+procedure TBaseEditor.DoTextEditorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+begin
+  if (scCaretX in changes) or (scCaretY in changes) or (scSelection in changes) then
+  begin
+    lastMove := GetTickCount64;
+    lastMoveChecked := false;
+    Context.Inspector.Active := false;
+  end;
 end;
 
 procedure TBaseEditor.DoShowDesigner(sender: TObject);
@@ -1195,7 +1266,10 @@ begin
     FDesignerPanelBase.color := clLime;
   end
   else
+  begin
     FPageControl.ActivePage := FDesignTab;
+    updateDesigner;;
+  end;
   FMode := vmDesigner;
 end;
 

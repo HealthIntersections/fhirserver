@@ -7608,9 +7608,6 @@ Procedure THL7V2ModelProvider.SetVersion(aValue: THL7V2Version);
 Begin
   If Not Assigned(FModel) Or (FModel.Version <> aValue) Then
     Begin
-    If Not Assigned(FModel) And Not Assigned(FDictionary) Then
-      FDictionary := GHL7Dict.Link;
-
     If Not Assigned(FDictionary) Then
       ErrorUnsVersion('SetVersion', 'No support for changing the version as no dictionary has been created');
 

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
-  FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging,
+  FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
 
@@ -17,6 +17,7 @@ type
   TXmlEditor = class (TBaseEditor)
   private
     FParser : TMXmlParser;
+    FXml : TMXmlDocument;
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
@@ -24,9 +25,10 @@ type
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
 
+    procedure ContentChanged; override;
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate(ts : TStringList; line, col : integer); override;
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
   end;
 
 
@@ -38,7 +40,41 @@ begin
 end;
 
 procedure TXmlEditor.getNavigationList(navpoints: TStringList);
+var
+  de, e : TMXmlElement;
+  c : integer;
 begin
+  if (FXml = nil) then
+  try
+    FXml := FParser.parse(FContent.text, [xpResolveNamespaces]);
+  except
+  end;
+  if FXml <> nil then
+  begin
+    de := FXml.docElement;
+    if (de.HasChildren) then
+    begin
+      c := 0;
+      for e in de.children do
+        if e.NodeType = ntElement then
+          inc(c);
+      if (c < 20) then
+      begin
+        for e in de.children do
+        begin
+          if e.NodeType = ntElement then
+          begin
+            if (e.HasAttribute['name']) then
+              navpoints.AddObject(e.Name+' ('+e.attribute['name']+')', TObject(e.Start.line-1))
+            else if (e.HasAttribute['id']) then
+              navpoints.AddObject(e.Name+' ('+e.attribute['id']+')', TObject(e.Start.line-1))
+            else
+              navpoints.AddObject(e.Name, TObject(e.Start.line-1));
+          end;
+        end;
+      end;
+    end;
+  end;
 end;
 
 constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
@@ -50,7 +86,14 @@ end;
 destructor TXmlEditor.Destroy;
 begin
   FParser.free;
+  FXml.Free;
   inherited Destroy;
+end;
+
+procedure TXmlEditor.ContentChanged;
+begin
+  FXml.Free;
+  FXml := nil;
 end;
 
 procedure TXmlEditor.newContent();
@@ -68,33 +111,35 @@ begin
   result := 'xml';
 end;
 
-procedure TXmlEditor.validate(ts : TStringList; line, col : integer);
+procedure TXmlEditor.validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList);
 var
   i : integer;
   s : String;
-  xml : TMXmlDocument;
   t : QWord;
+  path : TFslList<TMXmlNamedNode>;
 begin
-  t := GetTickCount64;
   updateToContent;
-  StartValidating;
+  t := StartValidating;
   try
-    for i := 0 to FContent.count - 1 do
+    if (validate) then
     begin
-      s := TextEditor.lines[i];
-      checkForEncoding(s, i);
+      for i := 0 to FContent.count - 1 do
+      begin
+        s := TextEditor.lines[i];
+        checkForEncoding(s, i);
+      end;
     end;
+    FXml.Free;
+    FXml := nil;
     try
-      xml := FParser.parse(FContent.text, [xpResolveNamespaces]);
+      FXml := FParser.parse(FContent.text, [xpResolveNamespaces]);
+      inc(cursor.line);
+      inc(cursor.col);
+      path := FXml.findLocation(cursor);
       try
-        // namespaces
-        // current path
-        // total number of nodes
-
-
-        ts.AddPair('Path', xml.pathForPoint(line, col));
+        inspection.AddPair('Path', FXml.describePath(path));
       finally
-        xml.free;
+        path.free;
       end;
     except
       on e : EParserException do
@@ -107,9 +152,8 @@ begin
       end;
     end;
   finally
-    finishValidating;
+    finishValidating(validate, t);
   end;
-  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 

@@ -8,12 +8,11 @@ uses
   SysUtils, Classes,
   Dialogs,
 
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json,
 
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor,
-  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor,
-  SynHighlighterHL7;
+  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor, FHIR.Toolkit.HL7Editor;
 
 type
 
@@ -56,56 +55,145 @@ begin
   result.kind := kind;
 end;
 
+function loadJson(bytes : TBytes) : TJsonObject;
+var
+  parser : TJSONParser;
+begin
+  parser := TJSONParser.create;
+  try
+    result := parser.Parse(bytes, 0, false);
+  finally
+    parser.free;
+  end;
+end;
+
+function loadXml(bytes : TBytes) : TMXmlDocument;
+var
+  parser : TMXmlParser;
+begin
+  parser := TMXmlParser.create;
+  try
+    result := parser.parse(bytes, [xpHTMLEntities]);
+  finally
+    parser.free;
+  end;
+end;
+
+procedure readNamespace(xml : TMXmlElement; var ns, name : String);
+var
+  p : String;
+  a : TMXmlAttribute;
+begin
+  name := xml.Name;
+  if (name.contains(':')) then
+  begin
+    StringSplit(name, ':', p, name);
+    for a in xml.Attributes do
+      if a.Name = 'xmlns:'+p then
+        ns := a.Value;
+  end
+  else
+  begin
+    for a in xml.Attributes do
+      if a.Name = 'xmlns' then
+        ns := a.Value;
+  end;
+end;
+
+function examineXml(xml : TMXmlDocument) : TToolkitEditSession;
+var
+  ns, name : String;
+begin
+  readNamespace(xml.docElement, ns, name);
+  if (ns = 'http://hl7.org/fhir') then
+    result := TToolkitEditSession.create(sekFHIR, 'resourceType', name)
+  else if (ns = 'urn:hl7-org:v3') and (name = 'ClinicalDocument') then
+    result := TToolkitEditSession.create(sekCDA)
+  else
+    result := TToolkitEditSession.create(sekXml);
+end;
+
+function examineJson(json : TJsonObject) : TToolkitEditSession;
+var
+  rt : String;
+begin
+  rt := json.str['resourceType'];
+  if (rt <> '') then
+    result := TToolkitEditSession.create(sekFHIR, 'resourceType', rt)
+  else
+    result := TToolkitEditSession.create(sekJson);
+end;
+
 function TToolkitFactory.examineFile(filename: String; const bytes: TBytes): TToolkitEditSession;
 var
   ext : String;
+  xml : TMXmlDocument;
+  json : TJsonObject;
 begin
   result := nil;
   ext := Lowercase(ExtractFileExt(filename));
   if (ext = '.ini') then
-  begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekIni;
-  end
+    result := TToolkitEditSession.create(sekIni)
+  else if (ext = '.html') then
+    result := TToolkitEditSession.create(sekHTML)
+  else if (ext = '.md') then
+    result := TToolkitEditSession.create(sekMD)
+  else if (ext = '.js') then
+    result := TToolkitEditSession.create(sekJS)
+  else if (ext = '.hl7') or (ext = '.msg') then
+    result := TToolkitEditSession.create(sekv2)
+  else if (ext = '.txt') then
+    result := TToolkitEditSession.create(sekText)
   else if (ext = '.xml') then
   begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekXml;
+    try
+      xml := loadXml(bytes);
+      try
+        exit(examineXml(xml));
+      finally
+        xml.free;
+      end;
+    except
+      // right, we'll just treat it as plain XML
+    end;
+    result := TToolkitEditSession.create(sekXml);
   end
   else if (ext = '.json') then
   begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekJson;
-  end
-  else if (ext = '.html') then
-  begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekHtml;
-  end
-  else if (ext = '.md') then
-  begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekMD;
-  end
-  else if (ext = '.js') then
-  begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekJS;
-  end
-  else if (ext = '.txt') then
-  begin
-    result := TToolkitEditSession.create;
-    result.guid := NewGuidId;
-    result.kind := sekText;
+    try
+      json := loadJson(bytes);
+      try
+        exit(examineJson(json));
+      finally
+        xml.free;
+      end;
+    except
+      // right, we'll just treat it as plain JSON
+    end;
+    result := TToolkitEditSession.create(sekJson);
   end
   else
-    ShowMessage('The file '+filename+' isn''t recognised by this application');
+  begin
+    try
+      xml := loadXml(bytes);
+      try
+        exit(examineXml(xml));
+      finally
+        xml.free;
+      end;
+    except
+    end;
+    try
+      json := loadJson(bytes);
+      try
+        exit(examineJson(json));
+      finally
+        xml.free;
+      end;
+    except
+    end;
+    ShowMessage('The file '+filename+' isn''t recognised by this application (unknown extension, and not xml or json)');
+  end;
 end;
 
 function TToolkitFactory.makeEditor(session : TToolkitEditSession): TToolkitEditor;
@@ -121,6 +209,7 @@ begin
   sekHtml : result := THtmlEditor.create(FContext{.link}, session, store.link);
   sekMD : result := TMarkdownEditor.create(FContext{.link}, session, store.link);
   sekJS : result := TJavascriptEditor.create(FContext{.link}, session, store.link);
+  sekv2 : result := THL7Editor.create(FContext{.link}, session, store.link);
   else
     raise Exception.create('not supported yet');
   end;

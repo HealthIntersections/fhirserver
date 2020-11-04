@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
   FHIR.Toolkit.Store, FHIR.Toolkit.Console;
 
 // supported formats:
@@ -90,6 +90,8 @@ type
     FTimestamp: TDateTime;
   public
     constructor Create; override;
+    constructor Create(kind : TSourceEditorKind); overload;
+    constructor Create(kind : TSourceEditorKind; name, value : string); overload;
     destructor Destroy; override;
     function link : TToolkitEditSession; overload;
 
@@ -111,6 +113,9 @@ type
 
   TToolkitEditor = class abstract (TToolkitContextObject)
   private
+    FLastMove: int64;
+    FLastMoveChecked: boolean;
+    FPause: integer;
     FStore : TStorageService;
     FValidationIssues : TFslList<TToolkitMessage>;
     FIsFile: boolean;
@@ -134,10 +139,10 @@ type
 
     function GetCanBeSaved: boolean; virtual; abstract;
 
-    procedure StartValidating;
+    function StartValidating : QWord;
     procedure validationError(line, char : integer; msg: String);
     procedure validationWarning(line, char : integer; msg: String);
-    procedure finishValidating;
+    procedure finishValidating(validating : boolean; start : QWord);
   public
     constructor create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); virtual;
     destructor Destroy; override;
@@ -156,6 +161,7 @@ type
     function describe : String;
 
     // editing related functionality
+    property Pause : integer read FPause write FPause;
     procedure bindToTab(tab : TTabSheet); virtual;  // set up the UI - caleed before either newContent or LoadBytes is called
     procedure newContent(); virtual; abstract; // create new content
     procedure loadBytes(bytes : TBytes); virtual; abstract;
@@ -163,6 +169,7 @@ type
     function location : String; virtual; abstract;
     procedure redo; virtual; abstract;
     procedure editPause; virtual; abstract;
+    procedure MovePause; virtual; abstract;
     procedure getFocus(content : TMenuItem); virtual; abstract;
     procedure loseFocus(); virtual; abstract;
     procedure ChangeSideBySideMode; virtual; abstract;
@@ -182,8 +189,12 @@ type
     property inSource : boolean read FInSource write FInSource;
     property isFile : boolean read getIsFile;
     property hasAddress : boolean read GetHasAddress;
+
     property lastChange : int64 read FLastChange write FLastChange;
     property lastChangeChecked : boolean read FLastChangeChecked write FLastChangeChecked;
+    property lastMove : int64 read FLastMove write FLastMove;
+    property lastMoveChecked : boolean read FLastMoveChecked write FLastMoveChecked;
+
     property Hint : String read GetHint;
   end;
 
@@ -211,7 +222,10 @@ type
 
   TToolkitEditorInspectorView = class (TFslObject)
   private
+    FActive: boolean;
     FOnChange: TNotifyEvent;
+    FSource : TStringList;
+    procedure SetActive(AValue: boolean);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -219,6 +233,8 @@ type
     procedure populate(ts : TStringList);
     procedure clear;
 
+    property active : boolean read FActive write SetActive;
+    property content : TStringList read FSource;
     property OnChange : TNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -291,24 +307,37 @@ implementation
 
 { TToolkitEditorInspectorView }
 
+procedure TToolkitEditorInspectorView.SetActive(AValue: boolean);
+begin
+  FActive:=AValue;
+  OnChange(self);
+end;
+
 constructor TToolkitEditorInspectorView.Create;
 begin
   inherited Create;
+  FSource := TStringList.Create;
 end;
 
 destructor TToolkitEditorInspectorView.Destroy;
 begin
+  FSource.Free;
   inherited Destroy;
 end;
 
 procedure TToolkitEditorInspectorView.populate(ts: TStringList);
 begin
-
+  FSource.Clear;
+  FSource.Assign(ts);
+  Active := true;
+  OnChange(self);
 end;
 
 procedure TToolkitEditorInspectorView.clear;
 begin
-
+  FSource.Clear;
+  Active := false;
+  OnChange(self);
 end;
 
 { TToolkitMessage }
@@ -379,6 +408,21 @@ begin
   FInfo := TStringList.create;
 end;
 
+constructor TToolkitEditSession.Create(kind: TSourceEditorKind);
+begin
+  Create;
+  self.guid := NewGuidId;
+  self.kind := kind;
+end;
+
+constructor TToolkitEditSession.Create(kind: TSourceEditorKind; name, value: string);
+begin
+  Create;
+  self.guid := NewGuidId;
+  self.kind := kind;
+  FInfo.AddPair(name, value);
+end;
+
 destructor TToolkitEditSession.Destroy;
 begin
   FInfo.Free;
@@ -421,9 +465,10 @@ begin
   FStore:=AValue;
 end;
 
-procedure TToolkitEditor.StartValidating;
+function TToolkitEditor.StartValidating : QWord;
 begin
   FValidationIssues := TFslList<TToolkitMessage>.create;
+  result := GetTickCount64;
 end;
 
 procedure TToolkitEditor.validationError(line, char: integer; msg: String);
@@ -444,9 +489,13 @@ begin
   FValidationIssues.add(TToolkitMessage.create(self, loc, msgWarning, msg));
 end;
 
-procedure TToolkitEditor.finishValidating;
+procedure TToolkitEditor.finishValidating(validating: boolean; start: QWord);
 begin
-  Context.MessageView.SetMessagesForEditor(self, FValidationIssues);
+  if (validating) then
+  begin
+    Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - start)+'ms');
+    Context.MessageView.SetMessagesForEditor(self, FValidationIssues);
+  end;
   FValidationIssues.Free;
   FValidationIssues := nil;
 end;
@@ -458,6 +507,7 @@ var
   ok : boolean;
 begin
   inherited create(context);
+  FPause := 1000;
   FSession := session;
   FStore := store;
   if (session.caption = '') then
@@ -555,6 +605,7 @@ begin
   FEditors := TFslList<TToolkitEditor>.create;
   FStorages := TFslList<TStorageService>.create;
   FMessageView := TToolkitMessagesView.create;
+  FInspector := TToolkitEditorInspectorView.create;
   FConsole := TToolkitConsole.create;
   FImages := images;
   FActions := actions;
@@ -562,6 +613,7 @@ end;
 
 destructor TToolkitContext.Destroy;
 begin
+  FInspector.Free;
   FMessageView.Free;
   FConsole.Free;
   FStorages.Free;

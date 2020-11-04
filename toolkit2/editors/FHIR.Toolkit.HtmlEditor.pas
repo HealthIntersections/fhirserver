@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
-  FHIR.Support.Base, FHIR.Base.XHtml, FHIR.Support.Logging,
+  FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Web.Parsers,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
 
@@ -17,17 +17,20 @@ type
 
   THtmlEditor = class (TBaseEditor)
   private
-    FHtml : THtmlViewer;
+    FHtmlViewer : THtmlViewer;
+    FParser : TMXmlParser;
+    FXml : TMXmlDocument;
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
+    procedure ContentChanged; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
 
     procedure newContent(); override;
     function FileExtension : String; override;
-    procedure validate; override;
+    procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
 
     function hasDesigner : boolean; override;
     procedure makeDesigner; override;
@@ -42,27 +45,47 @@ begin
   Result := TSynHtmlSyn.create(nil);
 end;
 
+procedure listHeadings(navpoints: TStringList; element : TMXmlElement);
+var
+  e : TMXmlElement;
+begin
+  if (element.Name.ToLower = 'h1') or (element.Name.ToLower = 'h2') then
+    navpoints.AddObject(element.Name+' '+element.allText, TObject(element.Start.line-1));
+  for e in element.Children do
+    listHeadings(navpoints, e);
+end;
+
 procedure THtmlEditor.getNavigationList(navpoints: TStringList);
 begin
+  if (FXml = nil) then
+  try
+    FXml := FParser.parse(FContent.text, [xpResolveNamespaces, xpHTMLEntities]);
+  except
+  end;
+  if (FXml <> nil) then
+  begin
+    listHeadings(navPoints, FXml);
+  end;
 end;
 
 procedure THtmlEditor.makeDesigner;
 begin
   inherited makeDesigner;
-  FHtml := THtmlViewer.create(FDesignerPanelWork);
-  FHtml.parent := FDesignerPanelWork;
-  FHtml.align := alClient;
+  FHtmlViewer := THtmlViewer.create(FDesignerPanelWork);
+  FHtmlViewer.parent := FDesignerPanelWork;
+  FHtmlViewer.align := alClient;
 end;
 
 constructor THtmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-//  FParser := TMHtmlParser.create;
+  FParser := TMXmlParser.create;
 end;
 
 destructor THtmlEditor.Destroy;
 begin
-//  FParser.free;
+  FParser.free;
+  FXml.free;
   inherited Destroy;
 end;
 
@@ -81,43 +104,49 @@ begin
   result := 'html';
 end;
 
-procedure THtmlEditor.validate;
+procedure THtmlEditor.validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList);
 var
   i : integer;
   s : String;
-  //Html : TMHtmlDocument;
   t : QWord;
+  path : TFslList<TMXmlNamedNode>;
 begin
-  t := GetTickCount64;
   updateToContent;
-  StartValidating;
+  t := StartValidating;
   try
-    for i := 0 to FContent.count - 1 do
-    begin
-      s := TextEditor.lines[i];
-      checkForEncoding(s, i);
-    end;
-    //try
-    //  Html := FParser.parse(FContent.text, [xpResolveNamespaces]);
-    //  try
-    //    // todo: any semantic validation?
-    //  finally
-    //    Html.free;
-    //  end;
-    //except
-    //  on e : EParserException do
-    //  begin
-    //    validationError(e.Line, e.Col, e.message);
-    //  end;
-    //  on e : Exception do
-    //  begin
-    //    validationError(1, 1, 'Error Parsing Html: '+e.message);
-    //  end;
-    //end;
+    if (validate) then
+     begin
+       for i := 0 to FContent.count - 1 do
+       begin
+         s := TextEditor.lines[i];
+         checkForEncoding(s, i);
+       end;
+     end;
+     FXml.Free;
+     FXml := nil;
+     try
+       FXml := FParser.parse(FContent.text, [xpResolveNamespaces, xpHTMLEntities]);
+       inc(cursor.line);
+       inc(cursor.col);
+       path := FXml.findLocation(cursor);
+       try
+         inspection.AddPair('Path', FXml.describePath(path));
+       finally
+         path.free;
+       end;
+     except
+       on e : EParserException do
+       begin
+         validationError(e.Line, e.Col, e.message);
+       end;
+       on e : Exception do
+       begin
+         validationError(1, 1, 'Error Parsing XHTML: '+e.message);
+       end;
+     end;
   finally
-    finishValidating;
+    finishValidating(validate, t);
   end;
-  Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - t)+'ms');
 end;
 
 function THtmlEditor.hasDesigner : boolean;
@@ -127,9 +156,14 @@ end;
 
 procedure THtmlEditor.updateDesigner;
 begin
-  FHtml.LoadFromString(FContent.Text);
+  FHtmlViewer.LoadFromString(FContent.Text);
 end;
 
+procedure THtmlEditor.ContentChanged;
+begin
+  FXml.Free;
+  FXml := nil;
+end;
 
 end.
 
