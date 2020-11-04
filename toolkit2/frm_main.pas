@@ -669,34 +669,53 @@ var
   session : TToolkitEditSession;
   editor : TToolkitEditor;
   tab : TTabSheet;
+  info : TStringList;
 begin
-  if (kind = sekNull) then
-  begin
-    FileFormatChooser := TFileFormatChooser.create(self);
-    try
-      if FileFormatChooser.ShowModal = mrOK then
-        kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
-      else
-       abort;
-    finally
-      FileFormatChooser.free;
+  info := TStringList.create;
+  try
+    if (kind = sekNull) then
+    begin
+      FileFormatChooser := TFileFormatChooser.create(self);
+      try
+        if FileFormatChooser.ShowModal = mrOK then
+          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+        else
+          abort;
+      finally
+        FileFormatChooser.free;
+      end;
+    end
+    else if kind = sekFHIR then
+    begin
+      FileFormatChooser := TFileFormatChooser.create(self);
+      try
+        FileFormatChooser.setFHIRResource;
+        if FileFormatChooser.ShowModal = mrOK then
+          kind := TSourceEditorKind(FileFormatChooser.ListBox1.ItemIndex + 1)
+        else
+          abort;
+      finally
+        FileFormatChooser.free;
+      end;
     end;
-  end;
 
-  session := FFactory.makeNewSession(kind);
-  editor := FFactory.makeEditor(session);
-  FContext.addEditor(editor);
-  tab := pgEditors.AddTabSheet;
-  editor.bindToTab(tab);
-  editor.newContent;
-  editor.session.NeedsSaving := false;
-  editor.lastChangeChecked := true;
-  pgEditors.ActivePage := tab;
-  FTempStore.storeOpenFileList(FContext.EditorSessions);
-  FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
-  FContext.Focus := editor;
-  FContext.Focus.getFocus(mnuContent);
-  updateActionStatus(editor);
+    session := FFactory.makeNewSession(kind);
+    editor := FFactory.makeEditor(session);
+    FContext.addEditor(editor);
+    tab := pgEditors.AddTabSheet;
+    editor.bindToTab(tab);
+    editor.newContent;
+    editor.session.NeedsSaving := false;
+    editor.lastChangeChecked := true;
+    pgEditors.ActivePage := tab;
+    FTempStore.storeOpenFileList(FContext.EditorSessions);
+    FTempStore.storeContent(editor.session.Guid, true, editor.getBytes);
+    FContext.Focus := editor;
+    FContext.Focus.getFocus(mnuContent);
+    updateActionStatus(editor);
+  finally
+    info.free;
+  end;
 end;
 
 procedure TMainToolkitForm.openFile(address: String);

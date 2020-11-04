@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
+  FHIR.Base.Objects,
   FHIR.Toolkit.Store, FHIR.Toolkit.Console;
 
 // supported formats:
@@ -91,7 +92,7 @@ type
   public
     constructor Create; override;
     constructor Create(kind : TSourceEditorKind); overload;
-    constructor Create(kind : TSourceEditorKind; name, value : string); overload;
+    constructor CreateResource(format : TFHIRFormat; name, value : string); overload;
     destructor Destroy; override;
     function link : TToolkitEditSession; overload;
 
@@ -415,11 +416,12 @@ begin
   self.kind := kind;
 end;
 
-constructor TToolkitEditSession.Create(kind: TSourceEditorKind; name, value: string);
+constructor TToolkitEditSession.CreateResource(format: TFHIRFormat; name, value: string);
 begin
   Create;
   self.guid := NewGuidId;
-  self.kind := kind;
+  self.kind := sekFHIR;
+  FInfo.AddPair('Format', CODES_TFHIRFormat[format]);
   FInfo.AddPair(name, value);
 end;
 

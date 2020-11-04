@@ -203,6 +203,66 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="FHIR.V2.Dictionary.v231"/>
       </Unit>
+      <Unit>
+        <Filename Value="..\library\base\FHIR.Base.Lang.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\ucum\FHIR.Ucum.IFace.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\client\FHIR.Client.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Parser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Resources.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Xml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Json.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Turtle.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\r4\FHIR.R4.Context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Narrative.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\cda\FHIR.Cda.Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\library\smart\FHIR.Smart.Utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -213,7 +273,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\ucum;..\library\client;..\library\r4;..\library\cda;..\library\smart"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

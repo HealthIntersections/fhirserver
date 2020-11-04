@@ -1,79 +1,132 @@
 object FileFormatChooser: TFileFormatChooser
   Left = 598
-  Height = 615
+  Height = 785
   Top = 348
-  Width = 736
+  Width = 742
   Caption = 'FileFormatChooser'
-  ClientHeight = 615
-  ClientWidth = 736
+  ClientHeight = 785
+  ClientWidth = 742
   DesignTimePPI = 168
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 80
-    Top = 535
-    Width = 736
+    Top = 705
+    Width = 742
     Align = alBottom
     ClientHeight = 80
-    ClientWidth = 736
+    ClientWidth = 742
     TabOrder = 0
-    object Button1: TButton
+    object btnOk: TButton
       Left = 448
       Height = 44
       Top = 23
       Width = 131
+      Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
+      Enabled = False
       ModalResult = 1
+      OnClick = btnOkClick
       TabOrder = 0
     end
-    object Button2: TButton
+    object btnCancel: TButton
       Left = 595
       Height = 44
       Top = 23
       Width = 131
+      Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2
+      OnClick = btnCancelClick
       TabOrder = 1
     end
   end
-  object Panel2: TPanel
+  object PageControl1: TPageControl
     Left = 0
-    Height = 535
+    Height = 705
     Top = 0
-    Width = 736
+    Width = 742
+    ActivePage = TabSheet1
     Align = alClient
-    BorderWidth = 6
-    ClientHeight = 535
-    ClientWidth = 736
+    ShowTabs = False
+    TabIndex = 0
     TabOrder = 1
-    object ListBox1: TListBox
-      Left = 7
-      Height = 521
-      Top = 7
-      Width = 722
-      Align = alClient
-      Items.Strings = (
-        'FHIR Resource'
-        'HL7 v&2 Message'
-        'CDA Document'
-        'XML File'
-        'JSON File'
-        'Liquid Template'
-        'Structure Map'''
-        'Ini File'
-        'Text File'
-        '''Markdown'
-        'Javascript'
-        'HTML'
-        'DICOM Image'
-      )
-      ItemHeight = 30
-      ItemIndex = 0
-      OnDblClick = ListBox1DblClick
-      TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'TabSheet1'
+      ClientHeight = 697
+      ClientWidth = 734
+      object Panel2: TPanel
+        Left = 0
+        Height = 697
+        Top = 0
+        Width = 734
+        Align = alClient
+        BorderWidth = 6
+        ClientHeight = 697
+        ClientWidth = 734
+        TabOrder = 0
+        object ListBox1: TListBox
+          Left = 7
+          Height = 683
+          Top = 7
+          Width = 720
+          Align = alClient
+          Items.Strings = (
+            'FHIR Resource'
+            'HL7 v2 Message'
+            'CDA Document'
+            'XML File'
+            'JSON File'
+            'Liquid Template'
+            'Structure Map'
+            'Ini File'
+            'Text File'
+            '''Markdown'
+            'Javascript'
+            'HTML'
+            'DICOM Image'
+          )
+          ItemHeight = 30
+          OnClick = ListBox1Click
+          OnDblClick = ListBox1DblClick
+          TabOrder = 0
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+      ClientHeight = 697
+      ClientWidth = 734
+      object Panel3: TPanel
+        Left = 0
+        Height = 72
+        Top = 0
+        Width = 734
+        Align = alTop
+        ClientHeight = 72
+        ClientWidth = 734
+        TabOrder = 0
+        object Label1: TLabel
+          Left = 16
+          Height = 30
+          Top = 16
+          Width = 123
+          Caption = 'FHIR Version:'
+          ParentColor = False
+        end
+        object ComboBox1: TComboBox
+          Left = 160
+          Height = 38
+          Top = 16
+          Width = 247
+          ItemHeight = 30
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
     end
   end
 end

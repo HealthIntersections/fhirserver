@@ -966,7 +966,7 @@ end;
 
 function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+   result := TFHIRObjectText.create(TFHIRXhtmlParser.Compose(self));
 end;
 
 function TFhirXHtmlNode.NsDecl: String;

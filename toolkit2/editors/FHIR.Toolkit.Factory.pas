@@ -9,10 +9,11 @@ uses
   Dialogs,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json,
+  FHIR.Base.Objects,
 
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor,
-  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor, FHIR.Toolkit.HL7Editor;
+  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor, FHIR.Toolkit.HL7Editor, FHIR.Toolkit.FHIREditor;
 
 type
 
@@ -106,7 +107,7 @@ var
 begin
   readNamespace(xml.docElement, ns, name);
   if (ns = 'http://hl7.org/fhir') then
-    result := TToolkitEditSession.create(sekFHIR, 'resourceType', name)
+    result := TToolkitEditSession.createResource(ffXml, 'resourceType', name)
   else if (ns = 'urn:hl7-org:v3') and (name = 'ClinicalDocument') then
     result := TToolkitEditSession.create(sekCDA)
   else
@@ -119,7 +120,7 @@ var
 begin
   rt := json.str['resourceType'];
   if (rt <> '') then
-    result := TToolkitEditSession.create(sekFHIR, 'resourceType', rt)
+    result := TToolkitEditSession.createResource(ffJson, 'resourceType', rt)
   else
     result := TToolkitEditSession.create(sekJson);
 end;
@@ -202,6 +203,7 @@ var
 begin
   store := FContext.StorageForAddress(session.address);
   case session.kind of
+  sekFHIR : result := TFHIREditor.create(FContext{.link}, session, store.link);
   sekIni : result := TIniEditor.create(FContext{.link}, session, store.link);
   sekText : result := TTextEditor.create(FContext{.link}, session, store.link);
   sekXml : result := TXmlEditor.create(FContext{.link}, session, store.link);
