@@ -166,7 +166,7 @@ begin
       try
         exit(examineJson(json));
       finally
-        xml.free;
+        json.free;
       end;
     except
       // right, we'll just treat it as plain JSON
@@ -189,7 +189,7 @@ begin
       try
         exit(examineJson(json));
       finally
-        xml.free;
+        json.free;
       end;
     except
     end;

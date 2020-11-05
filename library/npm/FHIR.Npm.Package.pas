@@ -34,13 +34,12 @@ interface
 
 uses
   SysUtils, Classes, Types, IOUtils, zlib,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Fpc,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Fpc, FHIR.Support.Threads,
   FHIR.Base.Lang;
 
 Type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
   TFHIRPackageKindSet = set of TFHIRPackageKind;
-  TWorkProgressEvent = procedure (sender : TObject; pct : integer; done : boolean; desc : String) of object;
 
  TNpmPackageIndexBuilder = class (TFslObject)
   private

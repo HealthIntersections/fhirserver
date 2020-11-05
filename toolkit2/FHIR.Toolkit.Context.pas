@@ -182,6 +182,7 @@ type
     procedure showTextTab; virtual; abstract;
     procedure BeginEndSelect; virtual; abstract;
     procedure updateFont; virtual; abstract;
+    function getSource : String; virtual; abstract;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -693,8 +694,12 @@ var
 begin
   result := nil;
   for editor in FEditors do
+  begin
     if editor.session.Address = address then
       exit(editor);
+    if editor.session.Guid = address then
+      exit(editor);
+  end;
 end;
 
 function TToolkitContext.anyDirtyEditors: boolean;

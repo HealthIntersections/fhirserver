@@ -187,6 +187,7 @@ type
     procedure showTextTab; override;
     procedure BeginEndSelect; override;
     procedure updateFont; override;
+    function getSource : String; override;
   end;
 
 implementation
@@ -1313,6 +1314,11 @@ procedure TBaseEditor.updateFont;
 begin
   if TextEditor <> nil then
     TextEditor.font.assign(Context.Font);
+end;
+
+function TBaseEditor.getSource: String;
+begin
+  result := TextEditor.Text;
 end;
 
 

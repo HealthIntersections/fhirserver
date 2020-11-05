@@ -262,6 +262,11 @@
         <Filename Value="..\library\smart\FHIR.Smart.Utilities.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="fhir.toolkit.search.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Toolkit.Search"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
