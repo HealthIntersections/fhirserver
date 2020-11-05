@@ -25,7 +25,7 @@ uses
   FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory, FHIR.Toolkit.JsonEditor,
   FHIR.Toolkit.BaseEditor, FHIR.Toolkit.HtmlEditor,
   FHIR.Toolkit.JavascriptEditor, frm_settings, FHIR.Toolkit.HL7Editor,
-  fhir.toolkit.search;
+  FHIR.Toolkit.Search;
 
 {$R *.res}
 
