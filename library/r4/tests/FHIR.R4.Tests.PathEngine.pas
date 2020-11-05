@@ -34,7 +34,9 @@ interface
 
 uses
   SysUtils, classes,
+  {$IFDEF WINDOWS}
   ActiveX, ComObj, Variants,
+  {$ENDIF}
   FHIR.Support.Testing,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.R4.Parser, FHIR.R4.Xml,
@@ -269,7 +271,7 @@ begin
     while test <> nil do
     begin
       inc(t);
-      s := VarToStrDef(test.attribute['name'], '');
+      s := test.attribute['name'];
       if (s = '') then
         s := gn+' '+inttostr(t);
 
@@ -290,3 +292,4 @@ initialization
 finalization
   gTests.Free;
 end.
+

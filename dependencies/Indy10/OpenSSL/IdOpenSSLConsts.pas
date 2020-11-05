@@ -21,6 +21,11 @@ const
   CLibSSL = 'libssl.so';
   {$ENDIF}
 
+  {$IFDEF DARWIN}
+  CLibCrypto = 'libcrypto.dylib';
+  CLibSSL = 'libssl.dylib';
+  {$ENDIF}
+
 implementation
 
 end.
