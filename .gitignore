@@ -245,3 +245,4 @@ testcases/snomed/
 /toolkit2/editors/backup
 /toolkit2/stores/backup
 /toolkit2/stores/backup/FHIR.Toolkit.FileStore.pas
+/testcases/v2dict/*.ldb

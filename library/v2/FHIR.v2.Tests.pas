@@ -70,9 +70,11 @@ type
 
   THL7v2ParserTests = Class (TFslTestCase)
   private
+    FHL7Dict : THL7V2Dictionary;
     function parse(msg : String; fmt : THL7V2Format) : THL7v2Message;
   public
     Procedure SetUp; override;
+    Procedure TearDown; override;
   published
     Procedure TestDictionaryParse;
   end;
@@ -567,21 +569,23 @@ procedure THL7v2ParserTests.Setup;
 var
   fn : String;
 begin
-  if GHL7Dict = nil then
-  begin
-    fn := TestSettings.serverTestFile(['testcases', 'v2dict', 'hl7_94Jul2018.mdb']);
-    if (FileExists(fn)) then
-      GHL7Dict := THL7V2AccessDictionary.Create(fn);
-  end;
+  fn := TestSettings.serverTestFile(['testcases', 'v2dict', 'hl7_94Jul2018.mdb']);
+  if (FileExists(fn)) then
+    FHL7Dict := THL7V2AccessDictionary.Create(fn);
   if GHL7V2DecoderFactory = nil then
-    GHL7V2DecoderFactory := THL7V2DecoderFactory.Create(GHL7Dict.link);
+    GHL7V2DecoderFactory := THL7V2DecoderFactory.Create(FHL7Dict.link);
+end;
+
+Procedure THL7v2ParserTests.TearDown;
+begin
+  FHL7Dict.Free;
 end;
 
 procedure THL7v2ParserTests.TestDictionaryParse;
 var
   msg : THL7V2Message;
 begin
-  if GHL7Dict = nil then
+  if FHL7Dict = nil then
     assertNotTested
   else
   begin

@@ -20,6 +20,7 @@ type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actionViewReset: TAction;
     actionToolsSideBySideMode: TAction;
     actionViewFormDesigner: TAction;
     actionViewsClearLog: TAction;
@@ -119,6 +120,8 @@ type
     MenuItem38: TMenuItem;
     MenuItem39: TMenuItem;
     MenuItem4: TMenuItem;
+    MenuItem59: TMenuItem;
+    MenuItem60: TMenuItem;
     mnuLVGo: TMenuItem;
     mnuLVCopy: TMenuItem;
     mnuLVCopyAll: TMenuItem;
@@ -196,6 +199,7 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     pnlStatus: TStatusBar;
+    SynEdit1: TSynEdit;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -241,6 +245,7 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
+    procedure actionEditBeginEndExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
@@ -274,12 +279,15 @@ type
     procedure actionViewMessagesExecute(Sender: TObject);
     procedure actionViewPackagesExecute(Sender: TObject);
     procedure actionViewProjectManagerExecute(Sender: TObject);
+    procedure actionViewResetExecute(Sender: TObject);
     procedure actionViewsClearLogExecute(Sender: TObject);
     procedure actionViewSearchExecute(Sender: TObject);
     procedure actionViewServersExecute(Sender: TObject);
     procedure actionViewStackExecute(Sender: TObject);
     procedure actionViewTasksExecute(Sender: TObject);
     procedure actionViewVariablesExecute(Sender: TObject);
+    procedure actionZoomInExecute(Sender: TObject);
+    procedure actionZoomOutExecute(Sender: TObject);
     procedure chkCurrrentFileOnlyChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -288,6 +296,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure lvMessagesDblClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure MenuItem60Click(Sender: TObject);
     procedure mnuLVCopyAllClick(Sender: TObject);
     procedure mnuLVCopyClick(Sender: TObject);
     procedure mnuLVGoClick(Sender: TObject);
@@ -314,8 +323,12 @@ type
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
     FFinishedLoading : boolean;
+    FScale : integer;
     function checkDoSave(editor : TToolkitEditor): boolean;
+    procedure copyFonts;
+    procedure loadFont(font: TFont; sname: String);
     procedure SaveFile(editor: TToolkitEditor; address : String; updateStatus : boolean);
+    procedure saveFont(font: TFont; sname : String);
     procedure saveLayout;
     procedure loadLayout;
     procedure maximiseSource;
@@ -339,6 +352,7 @@ type
     procedure closeFile(tab : TTabSheet; store : boolean);
     procedure locateOnTab(sender : TObject; x, y: integer; var point : TPoint);
     function ChooseFileName(editor : TToolkitEditor; out address : String): boolean;
+    procedure setScale(pct : integer);
   public
     property Context : TToolkitContext read FContext;
   end;
@@ -368,6 +382,7 @@ begin
   FContext.OnChangeFocus := onChangeFocus;
   FContext.MessageView.OnChange := updateMessages;
   FContext.Inspector.OnChange := updateInspector;
+  FContext.Font := SynEdit1.Font;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
@@ -441,34 +456,79 @@ end;
 
 procedure TMainToolkitForm.loadLayout;
 begin
-  if FIni.readBool('window', 'maximised', false) then
-    WindowState := wsMaximized;
-  Top := FIni.readInteger('window', 'top', Top);
-  Left := FIni.readInteger('window', 'left', Left);
-  Height := FIni.readInteger('window', 'height', Height);
-  Width := FIni.readInteger('window', 'width', Width);
-  pnlLeft.Width := FIni.readInteger('window', 'panel.left.width', pnlLeft.Width);
-  pnlRight.Width := FIni.readInteger('window', 'panel.right.width', pnlRight.Width);
-  pnlBottom.Width := FIni.ReadInteger('window', 'panel.bottom.width', pnlBottom.Width);
-  if FIni.readBool('window', 'source.maximised', false) then
+  FScale := FIni.ReadInteger('main-form', 'scale', 100);
+  if FIni.readBool('main-form', 'maximised', false) then
+    WindowState := wsMaximized
+  else
+  begin
+    Top := FIni.readInteger('main-form', 'top', Top);
+    Left := FIni.readInteger('main-form', 'left', Left);
+    Height := FIni.readInteger('main-form', 'height', Height);
+    Width := FIni.readInteger('main-form', 'width', Width);
+  end;
+  pnlLeft.Width := FIni.readInteger('main-form', 'left.width', pnlLeft.Width);
+  pnlRight.Width := FIni.readInteger('main-form', 'right.width', pnlRight.Width);
+  pnlBottom.Height := FIni.ReadInteger('main-form', 'bottom.height', pnlBottom.Height);
+  if FIni.readBool('main-form', 'source.maximised', false) then
     maximiseSource;
+
+  loadFont(SynEdit1.font, 'font-editor');
+  loadFont(lvMessages.font, 'font-view');
+  loadFont(mConsole.font, 'font-log');
+  copyFonts;
+end;
+
+procedure TMainToolkitForm.copyFonts;
+begin
+  vlInspector.Font.assign(lvMessages.Font);
+  lvTasks.Font.assign(lvMessages.Font);
+end;
+
+procedure TMainToolkitForm.loadFont(font : TFont; sname : String);
+begin
+  font.Name := FIni.ReadString(sname, 'name', font.Name);
+  font.Size := FIni.ReadInteger(sname, 'size', font.Size);
+  font.Color := FIni.ReadInteger(sname, 'color', font.Color);
+  if FIni.readBool(sname, 'bold', false) then
+    font.Style := font.Style + [fsBold];
+  if FIni.readBool(sname, 'italic', false) then
+    font.Style := font.Style + [fsItalic];
+  if FIni.readBool(sname, 'underline', false) then
+    font.Style := font.Style + [fsUnderline];
+end;
+
+procedure TMainToolkitForm.saveFont(font : TFont; sname : String);
+begin
+  FIni.WriteString(sname, 'name', font.Name);
+  FIni.WriteInteger(sname, 'size', font.Size);
+  FIni.WriteInteger(sname, 'color', font.Color);
+  if fsBold in font.Style then
+    FIni.WriteBool(sname, 'bold', true);
+  if fsItalic in font.Style then
+    FIni.WriteBool(sname, 'italic', true);
+  if fsUnderline in font.Style then
+    FIni.WriteBool(sname, 'underline', true);
 end;
 
 procedure TMainToolkitForm.saveLayout;
 begin
-  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
-  if WindowState = wsMaximized then
+  FIni.WriteInteger('main-form', 'scale', FScale);
+  FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
+  if WindowState <> wsMaximized then
   begin
-    FIni.WriteInteger('window', 'top', Top);
-    FIni.WriteInteger('window', 'left', Left);
-    FIni.WriteInteger('window', 'height', Height);
-    FIni.WriteInteger('window', 'width', Width);
+    FIni.WriteInteger('main-form', 'top', Top);
+    FIni.WriteInteger('main-form', 'left', Left);
+    FIni.WriteInteger('main-form', 'height', Height);
+    FIni.WriteInteger('main-form', 'width', Width);
   end;
-  FIni.WriteInteger('window', 'panel.left.width', pnlLeft.Width);
-  FIni.WriteInteger('window', 'panel.right.width', pnlRight.Width);
-  FIni.WriteInteger('window', 'panel.bottom.width', pnlBottom.Width);
-  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
-  FIni.WriteBool('window', 'source.maximised', FSourceMaximised);
+  FIni.WriteInteger('main-form', 'panel.left.width', pnlLeft.Width);
+  FIni.WriteInteger('main-form', 'panel.right.width', pnlRight.Width);
+  FIni.WriteInteger('main-form', 'panel.bottom.height', pnlBottom.Height);
+  FIni.WriteBool('main-form', 'source.maximised', FSourceMaximised);
+
+  saveFont(SynEdit1.font, 'font-editor');
+  saveFont(lvMessages.font, 'font-view');
+  saveFont(mConsole.font, 'font-log');
 end;
 
 procedure TMainToolkitForm.Splitter3Moved(Sender: TObject);
@@ -861,6 +921,17 @@ begin
     result := FFileSystem.saveDlg(editor.session.Address, editor.FileExtension, address);
 end;
 
+procedure TMainToolkitForm.setScale(pct: integer);
+begin
+  pnlMain.ScaleBy(100, FScale);
+  Splitter1.ScaleBy(100, FScale);
+  pnlBottom.ScaleBy(100, FScale);
+  FScale := pct;
+  pnlMain.ScaleBy(FScale, 100);
+  Splitter1.ScaleBy(FScale, 100);
+  pnlBottom.ScaleBy(FScale, 100);
+end;
+
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
   if context.hasFocus then
@@ -940,10 +1011,10 @@ begin
   actionEditPaste.enabled := context.hasFocus and context.Focus.canPaste;
 
   // enabled if we're in source mode
-  actionEditBeginEnd.enabled := context.hasFocus and context.Focus.inSource;
-  actionZoomIn.enabled := context.hasFocus and context.Focus.inSource;
-  actionZoomOut.enabled := context.hasFocus and context.Focus.inSource;
-  actionFilePrint.enabled := context.hasFocus and context.Focus.inSource;
+  actionEditBeginEnd.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
+  actionZoomIn.enabled := true;
+  actionZoomOut.enabled := true;
+  actionFilePrint.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
 end;
 
 procedure TMainToolkitForm.DoAppActivate(Sender: TObject);
@@ -1010,11 +1081,28 @@ begin
   showView(pnlLeft, pgLeft, tbProjects);
 end;
 
+procedure TMainToolkitForm.actionViewResetExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(100);
+    pnlLeft.Width := 170;
+    pgLeft.ActivePage := tbProjects;
+    pnlRight.Width := 200;
+    pgRight.ActivePage := tbInspector;
+    pnlBottom.Height := 130;
+    pgBottom.ActivePage := tbMessages;
+    if FSourceMaximised then
+      unmaximiseSource
+  finally
+    EndFormUpdate;
+  end;
+end;
+
 procedure TMainToolkitForm.actionViewsClearLogExecute(Sender: TObject);
 begin
   mConsole.Clear;
   actionViewsClearLog.enabled := false;
-
 end;
 
 procedure TMainToolkitForm.actionViewSearchExecute(Sender: TObject);
@@ -1040,6 +1128,26 @@ end;
 procedure TMainToolkitForm.actionViewVariablesExecute(Sender: TObject);
 begin
   showView(pnlRight, pgRight, tbVariables);
+end;
+
+procedure TMainToolkitForm.actionZoomInExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(trunc(FScale * 1.2));
+  finally
+    EndFormUpdate;
+  end;
+end;
+
+procedure TMainToolkitForm.actionZoomOutExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(trunc(FScale / 1.2));
+  finally
+    EndFormUpdate;
+  end;
 end;
 
 procedure TMainToolkitForm.chkCurrrentFileOnlyChange(Sender: TObject);
@@ -1087,6 +1195,11 @@ end;
 procedure TMainToolkitForm.actionEditRedoExecute(Sender: TObject);
 begin
   Context.focus.redo;
+end;
+
+procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
+begin
+  Context.Focus.BeginEndSelect;
 end;
 
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
@@ -1293,12 +1406,17 @@ procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
 begin
   ToolkitSettingsForm := TToolkitSettingsForm.create(self);
   try
-    ToolkitSettingsForm.chkSideBySide.Checked := Context.SideBySide;
+    ToolkitSettingsForm.lblEditorFont.Font.assign(SynEdit1.font);
+    ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
+    ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
-      Context.SideBySide := ToolkitSettingsForm.chkSideBySide.Checked;
-      actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
-      FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
+      SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
+      Context.updateFont;
+      mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
+      lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
+      copyFonts;
+      saveLayout;
     end;
   finally
     ToolkitSettingsForm.Free;
@@ -1326,6 +1444,11 @@ end;
 procedure TMainToolkitForm.MenuItem34Click(Sender: TObject);
 begin
 
+end;
+
+procedure TMainToolkitForm.MenuItem60Click(Sender: TObject);
+begin
+  openFile('file:'+FIni.FileName);
 end;
 
 procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);

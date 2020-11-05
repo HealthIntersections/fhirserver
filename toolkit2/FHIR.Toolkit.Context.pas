@@ -5,7 +5,8 @@ unit FHIR.Toolkit.Context;
 interface
 
 uses
-  Classes, SysUtils, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
+  Classes, SysUtils,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
   FHIR.Base.Objects,
   FHIR.Toolkit.Store, FHIR.Toolkit.Console;
@@ -179,6 +180,8 @@ type
     function IsShowingDesigner : boolean; virtual; abstract;
     procedure showDesigner; virtual; abstract;
     procedure showTextTab; virtual; abstract;
+    procedure BeginEndSelect; virtual; abstract;
+    procedure updateFont; virtual; abstract;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -187,7 +190,6 @@ type
     property canRedo : boolean read FCanRedo write FCanRedo;
     property canCut : boolean read FCanCut write FCanCut;
     property canPaste : boolean read FCanPaste write FCanPaste;
-    property inSource : boolean read FInSource write FInSource;
     property isFile : boolean read getIsFile;
     property hasAddress : boolean read GetHasAddress;
 
@@ -245,6 +247,7 @@ type
   private
     FActions: TActionList;
     FConsole: TToolkitConsole;
+    FFont: TFont;
     FInspector: TToolkitEditorInspectorView;
     FMessageView : TToolkitMessagesView;
     FOnChangeFocus: TNotifyEvent;
@@ -269,6 +272,8 @@ type
     property images : TImageList read FImages;
     property actions : TActionList read FActions;
     function locateOnScreen(x, y : Integer) : TPoint;
+    property Font : TFont read FFont write FFont;
+    procedure updateFont;
 
     property hasFocus : boolean read GetHasFocus;
     property focus : TToolkitEditor read FFocus write SetFocus;
@@ -632,6 +637,14 @@ end;
 function TToolkitContext.locateOnScreen(x, y: Integer): TPoint;
 begin
   OnLocate(self, x, y, result);
+end;
+
+procedure TToolkitContext.updateFont;
+var
+  editor : TToolkitEditor;
+begin
+  for editor in Editors do
+    editor.updateFont;
 end;
 
 function TToolkitContext.StorageForAddress(address: String): TStorageService;

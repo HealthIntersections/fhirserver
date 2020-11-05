@@ -194,9 +194,8 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="editors\fhir.toolkit.hl7editor.pas"/>
+        <Filename Value="editors\FHIR.Toolkit.HL7Editor.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.HL7Editor"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
