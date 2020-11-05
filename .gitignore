@@ -247,3 +247,5 @@ testcases/snomed/
 /toolkit2/stores/backup/FHIR.Toolkit.FileStore.pas
 /testcases/v2dict/*.ldb
 toolkit2/lib/x86_64-darwin/
+
+toolkit2/lib/x86_64-linux/
