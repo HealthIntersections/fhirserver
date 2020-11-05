@@ -1,24 +1,25 @@
 object ToolkitSettingsForm: TToolkitSettingsForm
   Left = 3423
-  Height = 285
+  Height = 169
   Top = -24
-  Width = 349
+  Width = 421
   Caption = 'FHIRToolkit Settings'
-  ClientHeight = 285
-  ClientWidth = 349
+  ClientHeight = 169
+  ClientWidth = 421
+  OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
-    Top = 245
-    Width = 349
+    Top = 129
+    Width = 421
     Align = alBottom
     ClientHeight = 40
-    ClientWidth = 349
+    ClientWidth = 421
     TabOrder = 0
     object Button1: TButton
-      Left = 181
+      Left = 253
       Height = 25
       Top = 8
       Width = 75
@@ -29,7 +30,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       TabOrder = 0
     end
     object Button2: TButton
-      Left = 261
+      Left = 333
       Height = 25
       Top = 8
       Width = 75
@@ -40,36 +41,115 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       TabOrder = 1
     end
   end
-  object chkSideBySide: TCheckBox
-    Left = 24
-    Height = 19
-    Top = 24
-    Width = 169
-    Caption = 'Side by Side for the designer'
+  object Panel2: TPanel
+    Left = 8
+    Height = 117
+    Top = 11
+    Width = 404
+    Anchors = [akTop, akLeft, akRight]
+    BevelOuter = bvLowered
+    ClientHeight = 117
+    ClientWidth = 404
     TabOrder = 1
+    object Label1: TLabel
+      Left = 4
+      Height = 15
+      Top = 4
+      Width = 32
+      Caption = 'Fonts:'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 16
+      Height = 15
+      Top = 24
+      Width = 37
+      Caption = 'Editor: '
+      ParentColor = False
+    end
+    object lblEditorFont: TLabel
+      Left = 88
+      Height = 15
+      Top = 24
+      Width = 236
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'lblEditorFont'
+      ParentColor = False
+    end
+    object Button3: TButton
+      Left = 332
+      Height = 25
+      Top = 19
+      Width = 60
+      Anchors = [akTop, akRight]
+      Caption = 'Change'
+      OnClick = Button3Click
+      TabOrder = 0
+    end
+    object Label4: TLabel
+      Left = 16
+      Height = 15
+      Top = 53
+      Width = 23
+      Caption = 'Log:'
+      ParentColor = False
+    end
+    object lblLogFont: TLabel
+      Left = 88
+      Height = 15
+      Top = 53
+      Width = 236
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'lblLogFont'
+      ParentColor = False
+    end
+    object Button4: TButton
+      Left = 332
+      Height = 25
+      Top = 48
+      Width = 60
+      Anchors = [akTop, akRight]
+      Caption = 'Change'
+      OnClick = Button4Click
+      TabOrder = 1
+    end
+    object Label6: TLabel
+      Left = 16
+      Height = 15
+      Top = 85
+      Width = 33
+      Caption = 'Views:'
+      ParentColor = False
+    end
+    object lblViewFont: TLabel
+      Left = 88
+      Height = 15
+      Top = 85
+      Width = 252
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'lblViewFont'
+      ParentColor = False
+    end
+    object Button5: TButton
+      Left = 332
+      Height = 25
+      Top = 80
+      Width = 60
+      Anchors = [akTop, akRight]
+      Caption = 'Change'
+      OnClick = Button5Click
+      TabOrder = 2
+    end
   end
-  object Label1: TLabel
+  object dlgFont: TFontDialog
+    Title = 'Choose Font Details'
+    MinFontSize = 0
+    MaxFontSize = 0
+    Options = []
     Left = 24
-    Height = 15
-    Top = 88
-    Width = 32
-    Caption = 'Fonts:'
-    ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 40
-    Height = 15
-    Top = 111
-    Width = 67
-    Caption = 'Main Editor: '
-    ParentColor = False
-  end
-  object Button3: TButton
-    Left = 32
-    Height = 25
-    Top = 208
-    Width = 123
-    Caption = 'Forget Layout'
-    TabOrder = 2
+    Top = 112
   end
 end
