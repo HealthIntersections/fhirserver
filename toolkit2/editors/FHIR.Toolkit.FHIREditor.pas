@@ -208,6 +208,7 @@ begin
       inc(cursor.col);
       path := FResource.findLocation(cursor);
       try
+        inspection.AddPair('Version', FFactory.versionString);
         inspection.AddPair('Path', asPathExpression(path));
         if (path.count > 0) then
         begin

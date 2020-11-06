@@ -182,7 +182,6 @@ Type
   TBackgroundTaskPackage = class;
   TBackgroundTaskEngine = class;
 
-  TBackgroundTaskEvent = procedure (id : integer; response : TBackgroundTaskPackage) of object;
   TBackgroundTaskStatus = (btsWaiting, btsProcessing, btsCancelling, btsClosed, btsWaitingForUIResponse, btwRespondingOnUI, btsUIResponded);
 
   TBackgroundTaskThread = class(TThread)
@@ -219,6 +218,9 @@ Type
     property Exception : String read FException write FException;
     property ExceptionClass : ExceptClass read FExceptionClass write FExceptionClass;
   end;
+
+  TWorkProgressEvent = procedure (sender : TObject; pct : integer; done : boolean; desc : String) of object;
+  TBackgroundTaskEvent = procedure (id : integer; response : TBackgroundTaskResponsePackage) of object;
 
   { TBackgroundTaskPackagePair }
 
@@ -344,6 +346,7 @@ Type
     procedure stopAll; // shut down preparation
 
     procedure primaryThreadCheck;
+    function TasksAreWorking : boolean;
 
     procedure report(list : TFslList<TBackgroundTaskStatusInfo>); overload;
     function report(taskId : integer) : TBackgroundTaskStatusInfo; overload;
@@ -1418,6 +1421,21 @@ begin
   //  end;
   //end;
   //
+end;
+
+function TBackgroundTaskManager.TasksAreWorking: boolean;
+var
+  engine : TBackgroundTaskEngine;
+begin
+  result := false;
+  FLock.Lock;
+  try
+    for engine in FEngines do
+      if engine.FStatus in [btsProcessing, btsWaitingForUIResponse, btwRespondingOnUI, btsUIResponded] then
+        exit(true);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TBackgroundTaskManager.queueTask(id : integer; request : TBackgroundTaskRequestPackage);

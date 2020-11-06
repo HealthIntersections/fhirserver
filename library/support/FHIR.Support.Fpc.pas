@@ -680,6 +680,8 @@ begin
 
         Exit;
       end;
+      if (length(FBuffer) = 0) then
+        raise Exception.create('read File returned an empty buffer but claimed it wasn''t');
 
       FZStream.next_in := @FBuffer[0];
       FStreamPos := FStream.Position;

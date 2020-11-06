@@ -215,7 +215,11 @@ begin
       try
       {$ENDIF}
         if not getCommandLineParam('ini', iniName) then
+        {$IFDEF OSX}
+          iniName := GetAppConfigDir(false)+'fhirserver.ini';
+        {$ELSE}
           iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
+        {$ENDIF}
 
         ini := TFHIRServerIniFile.create(iniName);
         try

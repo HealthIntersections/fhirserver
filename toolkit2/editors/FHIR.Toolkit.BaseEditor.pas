@@ -5,7 +5,7 @@ unit FHIR.Toolkit.BaseEditor;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, Math,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus,
   SynEdit, SynEditHighlighter, SynEditTypes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
@@ -134,6 +134,8 @@ type
     HighLighter : TSynCustomHighlighter;
     FEditorPopup : TPopupMenu;
 
+    FSelectCursor : integer;
+
     function GetCanBeSaved: boolean; override;
     procedure GotoLine(line : integer);
     function AddActions(tb : TToolBar) : boolean; virtual;
@@ -183,6 +185,9 @@ type
     function IsShowingDesigner : boolean; override;
     procedure showDesigner; override;
     procedure showTextTab; override;
+    procedure BeginEndSelect; override;
+    procedure updateFont; override;
+    function getSource : String; override;
   end;
 
 implementation
@@ -343,6 +348,7 @@ begin
   inherited Create(context, session, store);
   FActions := TFslList<TContentAction>.create;
   FContent := TStringList.create;
+  FSelectCursor := -1;
 end;
 
 destructor TBaseEditor.Destroy;
@@ -1271,6 +1277,7 @@ begin
     updateDesigner;;
   end;
   FMode := vmDesigner;
+  updateToolbarButtons;
 end;
 
 procedure TBaseEditor.showTextTab;
@@ -1285,6 +1292,33 @@ begin
   else
     FPageControl.ActivePage := FTextTab;
   FMode := vmText;
+  updateToolbarButtons;
+end;
+
+procedure TBaseEditor.BeginEndSelect;
+var
+  iEnd : integer;
+begin
+  if FSelectCursor = -1 then
+    FSelectCursor := TextEditor.SelStart
+  else if FSelectCursor <> TextEditor.SelStart then
+  begin
+    iEnd := TextEditor.SelStart;
+    TextEditor.SelStart := Math.Min(FSelectCursor, iEnd);
+    TextEditor.SelEnd := Math.Max(FSelectCursor, iEnd);
+    FSelectCursor := -1;
+  end;
+end;
+
+procedure TBaseEditor.updateFont;
+begin
+  if TextEditor <> nil then
+    TextEditor.font.assign(Context.Font);
+end;
+
+function TBaseEditor.getSource: String;
+begin
+  result := TextEditor.Text;
 end;
 
 

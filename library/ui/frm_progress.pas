@@ -22,7 +22,7 @@ type
   private
     taskid : integer;
     finished : boolean;
-    procedure done(id : integer; response : TBackgroundTaskPackage);
+    procedure done(id : integer; response : TBackgroundTaskResponsePackage);
   public
   end;
 
@@ -70,7 +70,7 @@ begin
   end;
 end;
 
-procedure TProgressForm.done(id : integer; response : TBackgroundTaskPackage);
+procedure TProgressForm.done(id : integer; response : TBackgroundTaskResponsePackage);
 begin
   finished := true;
   close;

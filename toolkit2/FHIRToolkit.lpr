@@ -4,9 +4,11 @@ program FHIRToolkit;
 
 uses
   {$IFDEF UNIX}
-  cthreads,
+  cthreads, cmem,
   {$ENDIF}
+  {$IFDEF WINDOWS}
   FastMM4,
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frm_main, frm_npm_manager, frm_npm_browser,
   { you can add units after this }
@@ -14,15 +16,16 @@ uses
   FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.MXml,
   FHIR.Support.Json, FHIR.LCL.Managers, FHIR.Base.Lang, FHIR.Base.Objects,
   FHIR.Base.Xhtml, FHIR.Web.Parsers, frm_progress, SynHighlighterHL7,
-  FHIR.v2.Objects, FHIR.V2.Base, FHIR.V2.Dictionary, FHIR.V2.Dictionary.v231,
-  FHIR.Ucum.IFace, FHIR.Client.Base, FHIR.R4.Parser, FHIR.R4.Types,
-  FHIR.R4.Base, FHIR.R4.Resources, FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Turtle,
-  FHIR.R4.Context, FHIR.Cda.Narrative, FHIR.Cda.Base, FHIR.Cda.Types,
-  FHIR.Smart.Utilities, frm_file_format, FHIR.Toolkit.Context, FrameViewer09,
-  FHIR.Toolkit.Console, FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory,
-  FHIR.Toolkit.JsonEditor, FHIR.Toolkit.BaseEditor, FHIR.Toolkit.HtmlEditor,
-  FHIR.Toolkit.JavascriptEditor, frm_settings, fhir.toolkit.hl7editor;
+  FHIR.v2.Objects, FHIR.v2.Base, FHIR.v2.Dictionary, FHIR.Ucum.IFace,
+  FHIR.Client.Base, FHIR.R4.Parser, FHIR.R4.Types, FHIR.R4.Base,
+  FHIR.R4.Resources, FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Turtle, FHIR.R4.Context,
+  FHIR.Cda.Narrative, FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Smart.Utilities,
+  frm_file_format, FHIR.Toolkit.Context, FrameViewer09, FHIR.Toolkit.Console,
+  FHIR.Toolkit.FileStore, FHIR.Toolkit.IniEditor, FHIR.Toolkit.TextEditor,
+  FHIR.Toolkit.XmlEditor, FHIR.Toolkit.Factory, FHIR.Toolkit.JsonEditor,
+  FHIR.Toolkit.BaseEditor, FHIR.Toolkit.HtmlEditor,
+  FHIR.Toolkit.JavascriptEditor, frm_settings, FHIR.Toolkit.HL7Editor,
+  FHIR.Toolkit.Search;
 
 {$R *.res}
 

@@ -5,14 +5,14 @@ unit frm_main;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls, Math,
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
   lclintf, ValEdit,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
   FHIR.Toolkit.Store, FHIR.Toolkit.FileStore,
-  FHIR.Toolkit.Factory,
+  FHIR.Toolkit.Factory, FHIR.Toolkit.Search,
 
   frm_npm_manager, frm_file_format, frm_settings;
 
@@ -20,6 +20,10 @@ type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actionEditFindNext: TAction;
+    actionEditFindPrev: TAction;
+    actionEditFind: TAction;
+    actionViewReset: TAction;
     actionToolsSideBySideMode: TAction;
     actionViewFormDesigner: TAction;
     actionViewsClearLog: TAction;
@@ -77,10 +81,19 @@ type
     actionFileOpen: TAction;
     actionFileSaveAs1: TAction;
     actionHelpContent: THelpContents;
+    btnSearch: TBitBtn;
+    chkCase: TCheckBox;
+    chkWholeWord: TCheckBox;
     chkhideHintsAndWarnings: TCheckBox;
     chkTaskInactive: TCheckBox;
     chkCurrrentFileOnly: TCheckBox;
+    cbxSearch: TComboBox;
+    cbxSearchType: TComboBox;
+    cbxSearchScope: TComboBox;
     imgMain: TImageList;
+    Label1: TLabel;
+    Label2: TLabel;
+    lvSearch: TListView;
     lvTasks: TListView;
     lvMessages: TListView;
     MainMenu1: TMainMenu;
@@ -119,6 +132,15 @@ type
     MenuItem38: TMenuItem;
     MenuItem39: TMenuItem;
     MenuItem4: TMenuItem;
+    MenuItem59: TMenuItem;
+    MenuItem60: TMenuItem;
+    N10: TMenuItem;
+    MenuItem82: TMenuItem;
+    MenuItem83: TMenuItem;
+    MenuItem84: TMenuItem;
+    mnuSearchGo: TMenuItem;
+    MenuItem62: TMenuItem;
+    MenuItem81: TMenuItem;
     mnuLVGo: TMenuItem;
     mnuLVCopy: TMenuItem;
     mnuLVCopyAll: TMenuItem;
@@ -177,6 +199,9 @@ type
     N8: TMenuItem;
     Panel2: TPanel;
     Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
     pgEditors: TPageControl;
     Panel1: TPanel;
     Panel3: TPanel;
@@ -190,12 +215,16 @@ type
     pmNew: TPopupMenu;
     pmPages: TPopupMenu;
     pmMessageView: TPopupMenu;
+    pmSearch: TPopupMenu;
+    dlgFolder: TSelectDirectoryDialog;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
+    btnSearchFolder: TSpeedButton;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     pnlStatus: TStatusBar;
+    SynEdit1: TSynEdit;
     tbMessages: TTabSheet;
     tbStack: TTabSheet;
     tbExpression: TTabSheet;
@@ -241,6 +270,10 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
+    procedure actionEditBeginEndExecute(Sender: TObject);
+    procedure actionEditFindExecute(Sender: TObject);
+    procedure actionEditFindNextExecute(Sender: TObject);
+    procedure actionEditFindPrevExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
@@ -274,12 +307,19 @@ type
     procedure actionViewMessagesExecute(Sender: TObject);
     procedure actionViewPackagesExecute(Sender: TObject);
     procedure actionViewProjectManagerExecute(Sender: TObject);
+    procedure actionViewResetExecute(Sender: TObject);
     procedure actionViewsClearLogExecute(Sender: TObject);
     procedure actionViewSearchExecute(Sender: TObject);
     procedure actionViewServersExecute(Sender: TObject);
     procedure actionViewStackExecute(Sender: TObject);
     procedure actionViewTasksExecute(Sender: TObject);
     procedure actionViewVariablesExecute(Sender: TObject);
+    procedure actionZoomInExecute(Sender: TObject);
+    procedure actionZoomOutExecute(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnSearchFolderClick(Sender: TObject);
+    procedure cbxSearchEditingDone(Sender: TObject);
+    procedure cbxSearchTypeChange(Sender: TObject);
     procedure chkCurrrentFileOnlyChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -287,11 +327,15 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lvMessagesDblClick(Sender: TObject);
+    procedure lvSearchClick(Sender: TObject);
+    procedure lvSearchDblClick(Sender: TObject);
     procedure MenuItem34Click(Sender: TObject);
+    procedure MenuItem60Click(Sender: TObject);
     procedure mnuLVCopyAllClick(Sender: TObject);
     procedure mnuLVCopyClick(Sender: TObject);
     procedure mnuLVGoClick(Sender: TObject);
     procedure mnuRecentClick(Sender: TObject);
+    procedure mnuSearchGoClick(Sender: TObject);
     procedure NewFromFormatClick(Sender: TObject);
     procedure MenuItem79Click(Sender: TObject);
     procedure pgEditorsChange(Sender: TObject);
@@ -302,6 +346,7 @@ type
     procedure Splitter1Moved(Sender: TObject);
     procedure Splitter2Moved(Sender: TObject);
     procedure Splitter3Moved(Sender: TObject);
+    procedure tbLogShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
@@ -314,10 +359,19 @@ type
     FContext : TToolkitContext;
     FFactory : TToolkitFactory;
     FFinishedLoading : boolean;
+    FScale : integer;
+    FSearchTask : integer;
+    FSearch : TFslList<TToolkitSearchMatch>;
+    FHasUnreadLogMessages : boolean;
     function checkDoSave(editor : TToolkitEditor): boolean;
+    procedure copyFonts;
+    procedure loadFont(font: TFont; sname: String);
     procedure SaveFile(editor: TToolkitEditor; address : String; updateStatus : boolean);
+    procedure saveFont(font: TFont; sname : String);
     procedure saveLayout;
     procedure loadLayout;
+    procedure loadSearch;
+    procedure saveSearch;
     procedure maximiseSource;
     procedure showView(pnl: TPanel; pg: TPageControl; tab: TTabSheet);
     procedure unmaximiseSource;
@@ -333,12 +387,16 @@ type
     procedure updateStatusBar;
     procedure openMRUItem(sender: TObject);
     procedure createNewFile(kind : TSourceEditorKind);
-    procedure openFile(address : String);
+    function openFile(address : String) : TToolkitEditor;
     procedure onChangeFocus(sender : TObject);
     procedure updateInspector(sender : TObject);
     procedure closeFile(tab : TTabSheet; store : boolean);
     procedure locateOnTab(sender : TObject; x, y: integer; var point : TPoint);
     function ChooseFileName(editor : TToolkitEditor; out address : String): boolean;
+    procedure setScale(pct : integer);
+    procedure doSearch;
+    procedure doProcessSearchResults(id : integer; response : TBackgroundTaskResponsePackage);
+    procedure processSearchResults(results : TFslList<TToolkitSearchMatch>; goFirst : boolean);
   public
     property Context : TToolkitContext read FContext;
   end;
@@ -358,9 +416,11 @@ begin
   Application.OnException := DoAppException;
   initialiseTZData(partnerFile('tzdata.tar.gz'));
 
+  FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FTempStore := TFHIRToolkitTemporaryStorage.create;
   loadLayout;
+  loadSearch;
 
   FContext := TToolkitContext.create(imgMain, actList);
   FContext.OnUpdateActions := updateActionStatus;
@@ -368,18 +428,21 @@ begin
   FContext.OnChangeFocus := onChangeFocus;
   FContext.MessageView.OnChange := updateMessages;
   FContext.Inspector.OnChange := updateInspector;
+  FContext.Font := SynEdit1.Font;
 
   FContext.SideBySide := FIni.readBool('Settings', 'SideBySide', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
   FFileSystem := TFileStorageService.create(self, FIni);
   FContext.storages.add(FFileSystem.link);
+  FSearch := TFslList<TToolkitSearchMatch>.create;
   FFactory := TToolkitFactory.create(FContext.link, self);
   updateActionStatus(nil);
 end;
 
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
 begin
+  FSearch.Free;
   FFactory.free;
   FFileSystem.Free;
   FTempStore.Free;
@@ -439,41 +502,137 @@ begin
     mnuLVGoClick(sender);
 end;
 
+procedure TMainToolkitForm.lvSearchClick(Sender: TObject);
+begin
+end;
+
+procedure TMainToolkitForm.lvSearchDblClick(Sender: TObject);
+begin
+  if lvSearch.Selected <> nil then
+    mnuSearchGoClick(sender);
+end;
+
 procedure TMainToolkitForm.loadLayout;
 begin
-  if FIni.readBool('window', 'maximised', false) then
-    WindowState := wsMaximized;
-  Top := FIni.readInteger('window', 'top', Top);
-  Left := FIni.readInteger('window', 'left', Left);
-  Height := FIni.readInteger('window', 'height', Height);
-  Width := FIni.readInteger('window', 'width', Width);
-  pnlLeft.Width := FIni.readInteger('window', 'panel.left.width', pnlLeft.Width);
-  pnlRight.Width := FIni.readInteger('window', 'panel.right.width', pnlRight.Width);
-  pnlBottom.Width := FIni.ReadInteger('window', 'panel.bottom.width', pnlBottom.Width);
-  if FIni.readBool('window', 'source.maximised', false) then
+  FScale := FIni.ReadInteger('main-form', 'scale', 100);
+  if FIni.readBool('main-form', 'maximised', false) then
+    WindowState := wsMaximized
+  else
+  begin
+    Top := FIni.readInteger('main-form', 'top', Top);
+    Left := FIni.readInteger('main-form', 'left', Left);
+    Height := FIni.readInteger('main-form', 'height', Height);
+    Width := FIni.readInteger('main-form', 'width', Width);
+  end;
+  pnlLeft.Width := FIni.readInteger('main-form', 'left.width', pnlLeft.Width);
+  pnlRight.Width := FIni.readInteger('main-form', 'right.width', pnlRight.Width);
+  pnlBottom.Height := FIni.ReadInteger('main-form', 'bottom.height', pnlBottom.Height);
+  if FIni.readBool('main-form', 'source.maximised', false) then
     maximiseSource;
+
+  loadFont(SynEdit1.font, 'font-editor');
+  loadFont(lvMessages.font, 'font-view');
+  loadFont(mConsole.font, 'font-log');
+  copyFonts;
+end;
+
+procedure TMainToolkitForm.loadSearch;
+var
+  i : integer;
+begin
+  cbxSearch.text := FIni.readString('Search', 'current', '');
+  for i := 0 to Math.min(20, FIni.readInteger('Search', 'count', 0)) - 1 do
+    cbxSearch.items.add(FIni.readString('Search', 'item'+inttostr(i), ''));
+  chkCase.checked := FIni.readBool('Search', 'case', false);
+  chkWholeWord.checked := FIni.readBool('Search', 'whole-word', false);
+  cbxSearchType.itemIndex := FIni.readInteger('Search', 'type', 0);
+  cbxSearchTypeChange(self);
+end;
+
+procedure TMainToolkitForm.saveSearch;
+var
+  i : integer;
+  s : String;
+begin
+  FIni.writeString('Search', 'current', cbxSearch.text);
+  FIni.writeInteger('Search', 'count', cbxSearch.items.count);
+  for i := 0 to cbxSearch.items.count - 1 do
+    FIni.writeString('Search', 'item'+inttostr(i), cbxSearch.items[i]);
+  FIni.writeBool('Search', 'case', chkCase.checked);
+  FIni.writeBool('Search', 'whole-word', chkWholeWord.checked);
+  FIni.writeInteger('Search', 'type', cbxSearchType.itemIndex);
+
+  if (cbxSearchType.itemIndex in [3..4]) then
+  begin
+    FIni.writeInteger('Search', 'folder-count', cbxSearchScope.items.count);
+    for i := 0 to cbxSearchScope.items.count - 1 do
+      FIni.writeString('Search', 'folder-item'+inttostr(i), cbxSearchScope.items[i]);
+  end;
+end;
+
+
+procedure TMainToolkitForm.copyFonts;
+begin
+  vlInspector.Font.assign(lvMessages.Font);
+  lvTasks.Font.assign(lvMessages.Font);
+  lvSearch.Font.assign(lvMessages.Font);
+end;
+
+procedure TMainToolkitForm.loadFont(font : TFont; sname : String);
+begin
+  font.Name := FIni.ReadString(sname, 'name', font.Name);
+  font.Size := FIni.ReadInteger(sname, 'size', font.Size);
+  font.Color := FIni.ReadInteger(sname, 'color', font.Color);
+  if FIni.readBool(sname, 'bold', false) then
+    font.Style := font.Style + [fsBold];
+  if FIni.readBool(sname, 'italic', false) then
+    font.Style := font.Style + [fsItalic];
+  if FIni.readBool(sname, 'underline', false) then
+    font.Style := font.Style + [fsUnderline];
+end;
+
+procedure TMainToolkitForm.saveFont(font : TFont; sname : String);
+begin
+  FIni.WriteString(sname, 'name', font.Name);
+  FIni.WriteInteger(sname, 'size', font.Size);
+  FIni.WriteInteger(sname, 'color', font.Color);
+  if fsBold in font.Style then
+    FIni.WriteBool(sname, 'bold', true);
+  if fsItalic in font.Style then
+    FIni.WriteBool(sname, 'italic', true);
+  if fsUnderline in font.Style then
+    FIni.WriteBool(sname, 'underline', true);
 end;
 
 procedure TMainToolkitForm.saveLayout;
 begin
-  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
-  if WindowState = wsMaximized then
+  FIni.WriteInteger('main-form', 'scale', FScale);
+  FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
+  if WindowState <> wsMaximized then
   begin
-    FIni.WriteInteger('window', 'top', Top);
-    FIni.WriteInteger('window', 'left', Left);
-    FIni.WriteInteger('window', 'height', Height);
-    FIni.WriteInteger('window', 'width', Width);
+    FIni.WriteInteger('main-form', 'top', Top);
+    FIni.WriteInteger('main-form', 'left', Left);
+    FIni.WriteInteger('main-form', 'height', Height);
+    FIni.WriteInteger('main-form', 'width', Width);
   end;
-  FIni.WriteInteger('window', 'panel.left.width', pnlLeft.Width);
-  FIni.WriteInteger('window', 'panel.right.width', pnlRight.Width);
-  FIni.WriteInteger('window', 'panel.bottom.width', pnlBottom.Width);
-  FIni.WriteBool('window', 'maximised', WindowState = wsMaximized);
-  FIni.WriteBool('window', 'source.maximised', FSourceMaximised);
+  FIni.WriteInteger('main-form', 'panel.left.width', pnlLeft.Width);
+  FIni.WriteInteger('main-form', 'panel.right.width', pnlRight.Width);
+  FIni.WriteInteger('main-form', 'panel.bottom.height', pnlBottom.Height);
+  FIni.WriteBool('main-form', 'source.maximised', FSourceMaximised);
+
+  saveFont(SynEdit1.font, 'font-editor');
+  saveFont(lvMessages.font, 'font-view');
+  saveFont(mConsole.font, 'font-log');
 end;
 
 procedure TMainToolkitForm.Splitter3Moved(Sender: TObject);
 begin
   saveLayout;
+end;
+
+procedure TMainToolkitForm.tbLogShow(Sender: TObject);
+begin
+  FHasUnreadLogMessages := false;
 end;
 
 procedure TMainToolkitForm.Timer1Timer(Sender: TObject);
@@ -598,6 +757,8 @@ begin
   finally
     ts.free;
   end;
+  if not mConsole.IsVisible then
+    FHasUnreadLogMessages := true;
 end;
 
 procedure TMainToolkitForm.updateActions;
@@ -657,6 +818,14 @@ begin
     else
       pnlStatus.Panels[1].Text := 'Saved';
   end;
+  if FHasUnreadLogMessages then
+    pnlStatus.Panels[4].Text := 'New Log Entries'
+  else
+    pnlStatus.Panels[4].Text := '';
+  if GBackgroundTasks.TasksAreWorking then
+    pnlStatus.Panels[5].Text := 'Tasks Active'
+  else
+    pnlStatus.Panels[5].Text := '';
 end;
 
 procedure TMainToolkitForm.openMRUItem(sender: TObject);
@@ -718,7 +887,7 @@ begin
   end;
 end;
 
-procedure TMainToolkitForm.openFile(address: String);
+function TMainToolkitForm.openFile(address: String) : TToolkitEditor;
 var
   loaded : TLoadedBytes;
   editor : TToolkitEditor;
@@ -755,6 +924,7 @@ begin
       editor.lastMoveChecked := true;
       editor.editPause;
       updateActionStatus(editor);
+      result := editor;
     end;
   end;
 end;
@@ -861,6 +1031,120 @@ begin
     result := FFileSystem.saveDlg(editor.session.Address, editor.FileExtension, address);
 end;
 
+procedure TMainToolkitForm.setScale(pct: integer);
+begin
+  pnlMain.ScaleBy(100, FScale);
+  Splitter1.ScaleBy(100, FScale);
+  pnlBottom.ScaleBy(100, FScale);
+  FScale := pct;
+  pnlMain.ScaleBy(FScale, 100);
+  Splitter1.ScaleBy(FScale, 100);
+  pnlBottom.ScaleBy(FScale, 100);
+end;
+
+procedure TMainToolkitForm.doSearch;
+var
+  i : integer;
+  spec : TToolkitSearchSpecification;
+  engine : TToolkitSearchEngine;
+  req : TToolkitSearchTaskRequest;
+  resp : TToolkitSearchTaskResponse;
+  editor : TToolkitEditor;
+begin
+  if cbxSearch.text = '' then
+    MessageDlg('Search', 'Please enter some text to search for', mtError, [mbok], 0)
+  else
+  begin
+    i := cbxSearch.items.indexof(cbxSearch.text);
+    if i > -1 then
+      cbxSearch.items.Delete(i);
+    cbxSearch.items.insert(0, cbxSearch.text);
+    if cbxSearchScope.text <> '' then
+    begin
+      i := cbxSearchScope.items.indexof(cbxSearchScope.text);
+      if i > -1 then
+        cbxSearchScope.items.Delete(i);
+      cbxSearchScope.items.insert(0, cbxSearchScope.text);
+    end;
+    saveSearch;
+    spec := TToolkitSearchSpecification.create;
+    try
+      spec.text := cbxSearch.text;
+      spec.caseSensitive := chkCase.checked;
+      spec.wholeWords := chkWholeWord.checked;
+      spec.kind := TToolkitSearchKind(cbxSearchType.itemIndex);
+      spec.scope := cbxSearchScope.text;
+      case spec.kind of
+        tskCurrent : if not Context.hasFocus then abort;
+        tskAllOpen : if not Context.hasFocus then abort;
+        tskProject : abort;
+        tskFolder : if not FolderExists(spec.scope) then raise Exception.create('Folder "'+spec.scope+'" not found');
+        tskFolderTree : if not FolderExists(spec.scope) then raise Exception.create('Folder "'+spec.scope+'" not found');
+      end;
+
+      FSearch.Clear;
+      lvSearch.items.clear;
+      if spec.kind = tskCurrent then // we do this one in thread
+      begin
+        spec.sources.add(TToolkitSearchSource.create( Context.Focus.Session.Caption, context.focus.Session.Guid, Context.Focus.getSource));
+        engine := TToolkitSearchEngine.create;
+        try
+          engine.context := context.link;
+          engine.spec := spec.link;
+          engine.results := TFslList<TToolkitSearchMatch>.create;
+          engine.go;
+          processSearchResults(engine.results, true);
+        finally
+          engine.free;
+        end;
+      end
+      else
+      begin
+        if spec.kind = tskAllOpen then
+          for editor in Context.Editors do
+            spec.sources.add(TToolkitSearchSource.create(editor.Session.Caption, editor.Session.Guid, editor.getSource));
+        GBackgroundTasks.queueTask(FSearchTask, TToolkitSearchTaskRequest.create(spec.link, context.link), TToolkitSearchTaskResponse.create, doProcessSearchResults);
+      end;
+    finally
+      spec.Free;
+    end;
+  end;
+end;
+
+procedure TMainToolkitForm.doProcessSearchResults(id : integer; response : TBackgroundTaskResponsePackage);
+begin
+  if response.Exception <> '' then
+    Logging.log('Search Failed: '+response.Exception);
+
+  processSearchResults((response as TToolkitSearchTaskResponse).results, false);
+end;
+
+procedure TMainToolkitForm.processSearchResults(results: TFslList<TToolkitSearchMatch>; goFirst: boolean);
+var
+  m : TToolkitSearchMatch;
+  entry : TListItem;
+begin
+  FSearch.Clear;
+  FSearch.AddAll(results);
+  lvSearch.BeginUpdate;
+  try
+    lvSearch.Items.Clear;
+    for m in FSearch do
+    begin
+      entry := lvSearch.Items.add;
+      entry.caption := m.name;
+      entry.SubItems.add(inttostr(m.location.line));
+      entry.SubItems.add(m.fragment);
+      entry.Data := m;
+    end;
+  finally
+    lvSearch.EndUpdate;
+  end;
+  lvSearch.ItemIndex := -1;
+  if (goFirst and (lvSearch.items.count > 0)) then
+    actionEditFindNextExecute(self);
+end;
+
 procedure TMainToolkitForm.updateActionStatus(Sender: TObject);
 begin
   if context.hasFocus then
@@ -940,10 +1224,10 @@ begin
   actionEditPaste.enabled := context.hasFocus and context.Focus.canPaste;
 
   // enabled if we're in source mode
-  actionEditBeginEnd.enabled := context.hasFocus and context.Focus.inSource;
-  actionZoomIn.enabled := context.hasFocus and context.Focus.inSource;
-  actionZoomOut.enabled := context.hasFocus and context.Focus.inSource;
-  actionFilePrint.enabled := context.hasFocus and context.Focus.inSource;
+  actionEditBeginEnd.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
+  actionZoomIn.enabled := true;
+  actionZoomOut.enabled := true;
+  actionFilePrint.enabled := context.hasFocus and not context.Focus.IsShowingDesigner;
 end;
 
 procedure TMainToolkitForm.DoAppActivate(Sender: TObject);
@@ -1010,16 +1294,34 @@ begin
   showView(pnlLeft, pgLeft, tbProjects);
 end;
 
+procedure TMainToolkitForm.actionViewResetExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(100);
+    pnlLeft.Width := 170;
+    pgLeft.ActivePage := tbProjects;
+    pnlRight.Width := 200;
+    pgRight.ActivePage := tbInspector;
+    pnlBottom.Height := 130;
+    pgBottom.ActivePage := tbMessages;
+    if FSourceMaximised then
+      unmaximiseSource
+  finally
+    EndFormUpdate;
+  end;
+end;
+
 procedure TMainToolkitForm.actionViewsClearLogExecute(Sender: TObject);
 begin
   mConsole.Clear;
   actionViewsClearLog.enabled := false;
-
 end;
 
 procedure TMainToolkitForm.actionViewSearchExecute(Sender: TObject);
 begin
   showView(pnlBottom, pgBottom, tbSearch);
+  cbxSearch.SetFocus;
 end;
 
 procedure TMainToolkitForm.actionViewServersExecute(Sender: TObject);
@@ -1040,6 +1342,59 @@ end;
 procedure TMainToolkitForm.actionViewVariablesExecute(Sender: TObject);
 begin
   showView(pnlRight, pgRight, tbVariables);
+end;
+
+procedure TMainToolkitForm.actionZoomInExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(trunc(FScale * 1.2));
+  finally
+    EndFormUpdate;
+  end;
+end;
+
+procedure TMainToolkitForm.actionZoomOutExecute(Sender: TObject);
+begin
+  BeginFormUpdate;
+  try
+    setScale(trunc(FScale / 1.2));
+  finally
+    EndFormUpdate;
+  end;
+end;
+
+procedure TMainToolkitForm.btnSearchClick(Sender: TObject);
+begin
+  doSearch;
+end;
+
+procedure TMainToolkitForm.btnSearchFolderClick(Sender: TObject);
+begin
+  if dlgFolder.execute then
+    cbxSearchScope.text := dlgFolder.FileName;
+end;
+
+procedure TMainToolkitForm.cbxSearchEditingDone(Sender: TObject);
+begin
+  doSearch;
+end;
+
+procedure TMainToolkitForm.cbxSearchTypeChange(Sender: TObject);
+var
+  i : integer;
+begin
+  cbxSearchScope.Text := '';
+  cbxSearchScope.Enabled := false;
+  btnSearchFolder.Enabled := false;
+  if cbxSearchType.ItemIndex in [3..4] then
+  begin
+    cbxSearchScope.Text := FIni.ReadString('Search', 'folder-text', '');
+    for i := 0 to Math.min(20, FIni.readInteger('Search', 'folder-count', 0)) - 1 do
+      cbxSearchScope.items.add(FIni.readString('Search', 'folder-item'+inttostr(i), ''));
+    cbxSearchScope.Enabled := true;
+    btnSearchFolder.Enabled := true;
+  end;
 end;
 
 procedure TMainToolkitForm.chkCurrrentFileOnlyChange(Sender: TObject);
@@ -1087,6 +1442,35 @@ end;
 procedure TMainToolkitForm.actionEditRedoExecute(Sender: TObject);
 begin
   Context.focus.redo;
+end;
+
+procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
+begin
+  Context.Focus.BeginEndSelect;
+end;
+
+procedure TMainToolkitForm.actionEditFindExecute(Sender: TObject);
+begin
+  showView(pnlBottom, pgBottom, tbSearch);
+  cbxSearch.SetFocus;
+end;
+
+procedure TMainToolkitForm.actionEditFindNextExecute(Sender: TObject);
+begin
+  if lvSearch.itemIndex < lvSearch.Items.count - 1 then
+  begin
+    lvSearch.itemIndex := lvSearch.itemIndex + 1;
+    mnuSearchGoClick(self);
+  end;
+end;
+
+procedure TMainToolkitForm.actionEditFindPrevExecute(Sender: TObject);
+begin
+  if lvSearch.itemIndex > 0 then
+  begin
+    lvSearch.itemIndex := lvSearch.itemIndex - 1;
+    mnuSearchGoClick(self);
+  end;
 end;
 
 procedure TMainToolkitForm.actionFileCloseExecute(Sender: TObject);
@@ -1293,12 +1677,17 @@ procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
 begin
   ToolkitSettingsForm := TToolkitSettingsForm.create(self);
   try
-    ToolkitSettingsForm.chkSideBySide.Checked := Context.SideBySide;
+    ToolkitSettingsForm.lblEditorFont.Font.assign(SynEdit1.font);
+    ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
+    ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
-      Context.SideBySide := ToolkitSettingsForm.chkSideBySide.Checked;
-      actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
-      FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
+      SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
+      Context.updateFont;
+      mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
+      lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
+      copyFonts;
+      saveLayout;
     end;
   finally
     ToolkitSettingsForm.Free;
@@ -1326,6 +1715,11 @@ end;
 procedure TMainToolkitForm.MenuItem34Click(Sender: TObject);
 begin
 
+end;
+
+procedure TMainToolkitForm.MenuItem60Click(Sender: TObject);
+begin
+  openFile('file:'+FIni.FileName);
 end;
 
 procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);
@@ -1392,6 +1786,19 @@ begin
   finally
     ts.free;
   end;
+end;
+
+procedure TMainToolkitForm.mnuSearchGoClick(Sender: TObject);
+var
+  msg : TToolkitSearchMatch;
+  editor : TToolkitEditor;
+begin
+  msg := TToolkitSearchMatch(lvSearch.Selected.Data);
+  editor := FContext.EditorForAddress(msg.address);
+  if (editor = nil) then
+    editor := openFile(msg.address);
+  pgEditors.ActivePage := editor.tab;
+  editor.locate(msg.Location);
 end;
 
 procedure TMainToolkitForm.NewFromFormatClick(Sender: TObject);
