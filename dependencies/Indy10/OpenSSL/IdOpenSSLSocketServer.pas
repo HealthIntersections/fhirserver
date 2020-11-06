@@ -51,8 +51,7 @@ uses
 
 { TIdOpenSSLSocketServer }
 
-function TIdOpenSSLSocketServer.Accept(
-  const AHandle: TIdStackSocketHandle): Boolean;
+function TIdOpenSSLSocketServer.Accept(const AHandle: TIdStackSocketHandle): Boolean;
 var
   LReturnCode: TIdC_INT;
   LShouldRetry: Boolean;

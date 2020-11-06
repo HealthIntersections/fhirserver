@@ -44,6 +44,7 @@ type
     FOpenSSLLoaded: Boolean;
     function GetTargetHost: string;
     function GetClientSocket: TIdOpenSSLSocketClient; {$IFDEF USE_INLINE}inline;{$ENDIF}
+    procedure EnsureOpenSSLLoaded;
   protected
     FOptions: TIdOpenSSLOptionsClient;
     function GetOptionClass: TIdOpenSSLOptionsClientClass; virtual;
@@ -64,9 +65,11 @@ type
 implementation
 
 uses
+  Classes,
   IdCustomTransparentProxy,
   IdOpenSSLContextClient,
   IdOpenSSLExceptions,
+  IdOpenSSLHeaders_ssl,
   IdOpenSSLLoader,
   IdURI,
   SysUtils;
@@ -77,17 +80,11 @@ type
 { TIdOpenSSLIOHandlerClient }
 
 procedure TIdOpenSSLIOHandlerClient.EnsureContext;
-var
-  LLoader: IOpenSSLLoader;
 begin
-  if Assigned(FContext) then
-    Exit;
+  if not Assigned(FContext) then
   FContext := TIdOpenSSLContextClient.Create();
 
-  LLoader := GetOpenSSLLoader();
-  if not FOpenSSLLoaded and Assigned(LLoader) and not LLoader.Load() then
-    raise EIdOpenSSLLoadError.Create('Failed to load OpenSSL');
-  FOpenSSLLoaded := True;
+  EnsureOpenSSLLoaded();
   try
     BeforeInitContext(FContext);
     TIdOpenSSLContextClient(FContext).Init(FOptions);
@@ -105,6 +102,19 @@ begin
   end;
 end;
 
+procedure TIdOpenSSLIOHandlerClient.EnsureOpenSSLLoaded;
+var
+  LLoader: IOpenSSLLoader;
+begin
+  if not FOpenSSLLoaded then
+  begin
+    LLoader := GetOpenSSLLoader();
+    if Assigned(LLoader) and not LLoader.Load() then
+      raise EIdOpenSSLLoadError.Create('Failed to load OpenSSL');
+    FOpenSSLLoaded := True;
+  end;
+end;
+
 procedure TIdOpenSSLIOHandlerClient.AfterInitContext(
   const AContext: TIdOpenSSLContext);
 begin
@@ -116,12 +126,17 @@ begin
 end;
 
 function TIdOpenSSLIOHandlerClient.Clone: TIdSSLIOHandlerSocketBase;
+var
+  LSessionCopies: TList;
+  i: Integer;
 begin
-  Result := inherited;
+  Result := inherited Clone();
   Options.AssignTo(TIdOpenSSLIOHandlerClient(Result).Options);
   TIdOpenSSLIOHandlerClient(Result).EnsureContext();
-  TIdOpenSSLContextClientAccessor(TIdOpenSSLIOHandlerClient(Result).FContext).FSession :=
-    TIdOpenSSLContextClientAccessor(TIdOpenSSLIOHandlerClient(Self).FContext).FSession;
+  LSessionCopies := TIdOpenSSLContextClientAccessor(TIdOpenSSLIOHandlerClient(Result).FContext).FSessionList;
+  LSessionCopies.Assign(TIdOpenSSLContextClientAccessor(TIdOpenSSLIOHandlerClient(Self).FContext).FSessionList);
+  for i := 0 to LSessionCopies.Count-1 do
+    SSL_SESSION_up_ref(LSessionCopies[i]);
 end;
 
 destructor TIdOpenSSLIOHandlerClient.Destroy;

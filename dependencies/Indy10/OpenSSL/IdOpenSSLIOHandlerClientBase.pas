@@ -153,7 +153,7 @@ begin
     Exit;
   FTLSSocket := FContext.CreateSocket();
 
-  {$IFDEF MSWINDOWS}
+  {$IFDEF WIN32_OR_WIN64}
   if IndyCheckWindowsVersion(6) then
   begin
     // Note: Fix needed to allow SSL_Read and SSL_Write to timeout under

@@ -5,26 +5,19 @@ interface
 {$i IdCompilerDefines.inc}
 
 const
-  {$IFDEF MSWINDOWS}
+  CLibCryptoRaw = 'libcrypto';
+  CLibSSLRaw = 'libssl';
+
+  SSLDLLVers: array [0..1] of string = ('', '.1.1');
+
   CLibCrypto =
-    {$IFDEF CPU32}'libcrypto-1_1.dll'{$ENDIF}
-    {$IFDEF CPU64}'libcrypto-1_1-x64.dll'{$ENDIF}
+    {$IFDEF CPU32}CLibCryptoRaw + '-1_1.dll'{$ENDIF}
+    {$IFDEF CPU64}CLibCryptoRaw + '-1_1-x64.dll'{$ENDIF}
     ;
   CLibSSL =
-    {$IFDEF CPU32}'libssl-1_1.dll'{$ENDIF}
-    {$IFDEF CPU64}'libssl-1_1-x64.dll'{$ENDIF}
+    {$IFDEF CPU32}CLibSSLRaw + '-1_1.dll'{$ENDIF}
+    {$IFDEF CPU64}CLibSSLRaw + '-1_1-x64.dll'{$ENDIF}
     ;
-  {$ENDIF}
-
-  {$IFDEF LINUX}
-  CLibCrypto = 'libcrypto.so';
-  CLibSSL = 'libssl.so';
-  {$ENDIF}
-
-  {$IFDEF DARWIN}
-  CLibCrypto = 'libcrypto.dylib';
-  CLibSSL = 'libssl.dylib';
-  {$ENDIF}
 
 implementation
 
