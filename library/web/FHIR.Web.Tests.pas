@@ -70,14 +70,16 @@ type
   private
     FServer : TIdHTTPServer;
     FIOHandler : TIdOpenSSLIOHandlerServer;
-    procedure startServer;
+    procedure startServer100;
+    procedure startServer110;
     procedure stopServer;
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
     Procedure DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   published
     procedure testWebFetcher;
     procedure testSendEmail;
-    procedure testWebServer;
+    procedure testWebServer_100;  // openssl 1.0.2
+    procedure testWebServer_110;  // openssl 1.1.0
   End;
 
 procedure registerTests;
@@ -364,7 +366,38 @@ begin
   Password := TestSettings.SSLPassword;
 end;
 
-procedure TOpenSSLTests.startServer;
+procedure TOpenSSLTests.startServer110;
+begin
+  FServer := TIdHTTPServer.Create(Nil);
+  FServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+  TIdSchedulerOfThreadPool(FServer.Scheduler).PoolSize := 20;
+  FServer.DefaultPort := 17456;
+  FServer.KeepAlive := false;
+  FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
+  FServer.IOHandler := FIOHandler;
+
+  FIOHandler.Options.CertFile := TestSettings.SSLCertFile;
+  FIOHandler.Options.OnGetPassword := SSLPassword;
+  FIOHandler.Options.CertKey := TestSettings.SSLKeyFile;
+  FIOHandler.Options.VerifyCertificate := TestSettings.SSLCAFile;
+
+  FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
+//    FIOHandler.Options.UseServerCipherPreferences := true;
+//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
+//    FIOHandler.Options.UseLegacyServerConnect := true;
+//
+//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+//   FIOHandler.Options.CipherSuites := '';
+//    FIOHandler.Options.RequestCertificate := true;
+//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
+//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
+//    FIOHandler.Options.OnVerify := DoVerifyPeer;
+  FServer.OnCommandGet := DoServe;
+  FServer.active := true;
+end;
+
+procedure TOpenSSLTests.startServer100;
 begin
   FServer := TIdHTTPServer.Create(Nil);
   FServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
@@ -408,14 +441,33 @@ begin
   FServer.Free;
 end;
 
-procedure TOpenSSLTests.testWebServer;
+procedure TOpenSSLTests.testWebServer_110;
 begin
   assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
   assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
   assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
   assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
 
-  startServer;
+  startServer110;
+  try
+    assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17456/test')) = 8);
+  finally
+    try
+      stopServer;
+    except
+      // nothing
+    end;
+  end;
+end;
+
+procedure TOpenSSLTests.testWebServer_100;
+begin
+  assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
+  assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
+  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
+  assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
+
+  startServer100;
   try
     assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17456/test')) = 8);
   finally

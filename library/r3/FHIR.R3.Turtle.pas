@@ -2077,8 +2077,11 @@ procedure TFHIRTurtleParser.ParseElementProperties(obj : TTurtleComplex; element
 var
   item : TTurtleComplex;
 begin
-  element.LocationStart := obj.Start;
-  element.LocationEnd := obj.Stop;
+  if KeepParseLocations then
+  begin
+    element.LocationData.ParseStart := obj.Start;
+    element.LocationData.ParseFinish := obj.Stop;
+  end;
   element.idElement := ParseId(obj.complex('http://hl7.org/fhir/Element.id'));{q1}
   for item in obj.complexes('http://hl7.org/fhir/Element.extension') do
     element.extensionList.Add(parseExtension(item));
@@ -2670,8 +2673,11 @@ end;
 
 procedure TFHIRTurtleParser.ParseResourceProperties(obj : TTurtleComplex; resource : TFhirResource);
 begin
-  resource.LocationStart := obj.Start;
-  resource.LocationEnd := obj.Stop;
+  if KeepParseLocations then
+  begin
+    resource.LocationData.ParseStart := obj.Start;
+    resource.LocationData.ParseFinish := obj.Stop;
+  end;
   resource.idElement := ParseId(obj.complex('http://hl7.org/fhir/Resource.id'));{q1}
   resource.meta := ParseMeta(obj.complex('http://hl7.org/fhir/Resource.meta'));{q3b}
   resource.implicitRulesElement := ParseUri(obj.complex('http://hl7.org/fhir/Resource.implicitRules'));{q1}

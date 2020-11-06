@@ -2425,8 +2425,9 @@ begin
   	if (node.NodeType = fhntElement) then
     begin
       rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path,  TFHIRXhtmlParser.elementIsOk(xppDrop, [], node.Name), 'Illegal element name in the XHTML("'+node.name+'")');
-      for attr in node.Attributes do
-        rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path,  TFHIRXhtmlParser.attributeIsOk(xppDrop, [], node.Name, attr.Name, attr.Value), 'Illegal attribute name in the XHTML("'+node.name+'.@'+attr.name+'")');
+      if node.HasAttributes then
+        for attr in node.Attributes do
+          rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path,  TFHIRXhtmlParser.attributeIsOk(xppDrop, [], node.Name, attr.Name, attr.Value), 'Illegal attribute name in the XHTML("'+node.name+'.@'+attr.name+'")');
       checkInnerNS(ctxt, e, path, node.ChildNodes);
 end;
   end;

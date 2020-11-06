@@ -314,6 +314,10 @@ type
     FComposeFinish: TSourceLocation;
     FParseStart: TSourceLocation;
     FParseFinish: TSourceLocation;
+    FParseFinish2: TSourceLocation;
+    FParseStart2: TSourceLocation;
+    FComposeFinish2: TSourceLocation;
+    FComposeStart2: TSourceLocation;
   public
     function inSpan(loc : TSourceLocation) : boolean;
 
@@ -321,6 +325,12 @@ type
     property parseFinish : TSourceLocation read FParseFinish write FParseFinish;
     property composeStart : TSourceLocation read FComposeStart write FComposeStart;
     property composeFinish : TSourceLocation read FComposeFinish write FComposeFinish;
+
+    // json primitive support
+    property parseStart2 : TSourceLocation read FParseStart2 write FParseStart2;
+    property parseFinish2 : TSourceLocation read FParseFinish2 write FParseFinish2;
+    property composeStart2 : TSourceLocation read FComposeStart2 write FComposeStart2;
+    property composeFinish2 : TSourceLocation read FComposeFinish2 write FComposeFinish2;
   end;
 
   { TFHIRObject }

@@ -839,9 +839,9 @@ const
 const
 	STestPassword = 'correct horse battery staple';
 begin
-   {$IFDEF WINDPWS}
+  {$IFDEF WINDOWS}
 	QueryPerformanceFrequency(freq);
-   {$ENDIF}
+  {$ENDIF}
 	if UseTsv then
 	begin
 		RowLeader := TsvRowLeader;

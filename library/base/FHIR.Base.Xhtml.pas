@@ -139,6 +139,7 @@ Type
     function getTypesForProperty(propName : string): String; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
 
+    function HasAttributes : boolean;
     property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
@@ -754,7 +755,7 @@ begin
   NodeType := TFhirXHtmlNode(oSource).FNodeType;
   FName := TFhirXHtmlNode(oSource).FName;
   FContent := TFhirXHtmlNode(oSource).FContent;
-  if TFhirXHtmlNode(oSource).Attributes <> nil Then
+  if TFhirXHtmlNode(oSource).HasAttributes Then
     Attributes.assign(TFhirXHtmlNode(oSource).Attributes);
   if TFhirXHtmlNode(oSource).FChildNodes <> nil then
     ChildNodes.assign(TFhirXHtmlNode(oSource).FChildNodes);
@@ -806,7 +807,7 @@ end;
 
 destructor TFhirXHtmlNode.Destroy;
 begin
-   FChildNodes.Free;
+  FChildNodes.Free;
   FAttributes.Free;
   inherited;
 end;
@@ -829,7 +830,7 @@ begin
       exit(false);
     if (FAttributes <> nil) then
     begin
-      if Attributes.Count <> o.FAttributes.Count then
+      if FAttributes.Count <> o.FAttributes.Count then
         exit(false);
       for i := 0 to FAttributes.Count - 1 do
         if FAttributes[i].Value <> o.FAttributes.Get(FAttributes[i].Name) then
@@ -920,6 +921,11 @@ begin
         exit(true);
 end;
 
+function TFhirXHtmlNode.HasAttributes: boolean;
+begin
+  result := (FAttributes <> nil) and (FAttributes.Count > 0);
+end;
+
 function TFhirXHtmlNode.hasExtensions: boolean;
 begin
   result := false;
@@ -975,7 +981,7 @@ var
 begin
   result := '';
   if FAttributes <> nil then
-   	for attr in Attributes do
+   	for attr in FAttributes do
  	  	if attr.Name = 'xmlns' then
  		  	exit(attr.value);
 end;
@@ -1076,10 +1082,13 @@ begin
     result.Name := node.localName;
     defaultNS := checkNS(options, result, node, defaultNS);
     path := path + '/h:'+result.Name;
-    for attr in node.Attributes do
+    if node.HasAttributes then
     begin
-      if not attr.Name.startsWith('xmlns') and attributeIsOk(policy, options, result.Name, attr.Name, attr.Value) then
-        result.Attributes.add(attr.Name, attr.value);
+      for attr in node.Attributes do
+      begin
+        if not attr.Name.startsWith('xmlns') and attributeIsOk(policy, options, result.Name, attr.Name, attr.Value) then
+          result.Attributes.add(attr.Name, attr.value);
+      end;
     end;
     child := node.First;
     while (child <> nil) do
@@ -1246,11 +1255,14 @@ begin
     fhntElement :
       begin
       s.append('<'+node.name);
-      for i := 0 to node.Attributes.count - 1 do
-        if (node.name = 'a') and (node.Attributes[i].Name = 'href') and isRelativeReference(node.Attributes[i].Value) then
-          s.append(' '+node.Attributes[i].Name+'="'+FixRelativeReference(node.Attributes[i].Value, relativeReferenceAdjustment)+'"')
-        else
-          s.append(' '+node.Attributes[i].Name+'="'+FormatTexttoXml(node.Attributes[i].Value, xmlAttribute)+'"');
+      if node.HasAttributes then
+      begin
+        for i := 0 to node.Attributes.count - 1 do
+          if (node.name = 'a') and (node.Attributes[i].Name = 'href') and isRelativeReference(node.Attributes[i].Value) then
+            s.append(' '+node.Attributes[i].Name+'="'+FixRelativeReference(node.Attributes[i].Value, relativeReferenceAdjustment)+'"')
+          else
+            s.append(' '+node.Attributes[i].Name+'="'+FormatTexttoXml(node.Attributes[i].Value, xmlAttribute)+'"');
+      end;
       if node.ChildNodes.Count > 0 then
       begin
         s.append('>');
@@ -1278,8 +1290,9 @@ begin
     fhntComment : xml.Comment(node.Content);
     fhntElement :
       begin
-      for i := 0 to node.Attributes.count - 1 do
-        xml.AddAttribute(node.Attributes[i].Name, node.Attributes[i].Value);
+      if node.HasAttributes then
+        for i := 0 to node.Attributes.count - 1 do
+          xml.AddAttribute(node.Attributes[i].Name, node.Attributes[i].Value);
       xml.Open(node.name);
       for i := 0 to node.ChildNodes.count - 1 do
         docompose(node.ChildNodes[i], xml);

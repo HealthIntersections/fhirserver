@@ -547,8 +547,9 @@ begin
     fhntElement, fhntDocument:
       begin
         FBuilder.Append('<'+node.Name);
-        for i := 0 to node.Attributes.Count - 1 do
-          FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
+        if node.HasAttributes then
+          for i := 0 to node.Attributes.Count - 1 do
+            FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
         if node.ChildNodes.Count = 0 then
           FBuilder.Append('/>')
         else

@@ -3700,15 +3700,21 @@ implementation
 procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirBase); 
 begin
   parseComments(value, jsn);
-  value.LocationStart := jsn.LocationStart;
-  value.LocationEnd := jsn.LocationEnd;
+  if KeepParseLocations then
+  begin
+    value.LocationData.ParseStart := jsn.LocationStart;
+    value.LocationData.ParseFinish := jsn.LocationEnd;
+  end;
 end;
 
-procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirResource); 
+procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirResource);
 begin
   parseComments(value, jsn);
-  value.LocationStart := jsn.LocationStart;
-  value.LocationEnd := jsn.LocationEnd;
+  if KeepParseLocations then
+  begin
+    value.LocationData.ParseStart := jsn.LocationStart;
+    value.LocationData.ParseFinish := jsn.LocationEnd;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBaseProperties(json : TJSONWriter; value : TFhirBase); 
@@ -3826,8 +3832,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     result.system := aSystems[i];
@@ -3881,8 +3890,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -3935,8 +3947,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -3989,8 +4004,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4043,8 +4061,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4097,8 +4118,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4151,8 +4175,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -4205,8 +4232,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4259,8 +4289,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := StringToBoolean(JsonToString(value));
     if (jsn <> nil) then
@@ -4313,8 +4346,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTBytes(JsonToString(value));
     if (jsn <> nil) then
@@ -4367,8 +4403,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4421,8 +4460,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4475,8 +4517,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4529,8 +4574,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4583,8 +4631,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4637,8 +4688,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4691,8 +4745,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4745,8 +4802,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4799,8 +4859,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4853,8 +4916,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4907,8 +4973,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -4961,8 +5030,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then

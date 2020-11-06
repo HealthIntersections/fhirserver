@@ -159,7 +159,7 @@ type
   private
     FPackages : TFslList<TNpmPackage>;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
 
     property Packages :  TFslList<TNpmPackage> read FPackages;
@@ -426,7 +426,7 @@ begin
     end;
     if packageExists(id, ver) then
       if not check('Replace existing copy of '+id+' version '+ver+'?') then
-        exit;
+        exit(nil);
     work(0, false, 'Installing');
     dir := path([FFolder, id+'#'+ver]);
     if FolderExists(dir) then

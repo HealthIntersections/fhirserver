@@ -56,7 +56,7 @@ Type
     function nodeType : String; virtual;
     function compare(other : TJsonNode) : boolean; overload; virtual; abstract;
     function evaluatePointer(path : String) : TJsonNode; virtual;
-    function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; virtual; overload;
+    function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; overload; virtual;
   public
     LocationStart : TSourceLocation;
     LocationInner : TSourceLocation; // where inner content starts

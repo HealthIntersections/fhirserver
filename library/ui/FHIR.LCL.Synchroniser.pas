@@ -29,10 +29,10 @@ type
     FFormat: TFHIRFormat;
     FResource: TFHIRResourceV;
 
-    FOpInProgress : boolean;
+    FOpInProgress : TFHIRSynEditSynchroniserOpStatus;
     FFocus : TFHIRObject;
     FStart : TPoint;
-    FStop : TPoint;
+    FFinish : TPoint;
 
     procedure SetFactory(AValue: TFHIRFactory);
 
@@ -140,7 +140,7 @@ end;
 
 procedure TFHIRSynEditSynchroniser.finishOpChange;
 begin
-  !
+  // todo...
 
   // delete the old range
   SynEdit.CaretXY;
@@ -162,8 +162,8 @@ end;
 procedure TFHIRSynEditSynchroniser.changeProperty(obj: TFHIRObject);
 begin
   FOpInProgress := opChange;
-  FStart := obj.LocationStart;
-  FEnd := obj.LocationStop;
+  FStart := TPoint.Create(obj.LocationData.ParseStart.col, obj.LocationData.ParseStart.Line);
+  FFinish := TPoint.Create(obj.LocationData.parseFinish.col, obj.LocationData.parseFinish.Line);
   FFocus := obj.link;
 end;
 

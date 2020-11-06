@@ -303,12 +303,12 @@ end;
 
 function TElementInfo.locationStart: TSourceLocation;
 begin
-  result := element.LocationStart;
+  result := element.LocationData.ParseStart;
 end;
 
 function TElementInfo.locationEnd: TSourceLocation;
 begin
-  result := element.LocationEnd;
+  result := element.LocationData.ParseFinish;
 end;
 
 function codeInExpansion(cnt: TFhirValueSetExpansionContains; System, code: String): boolean; overload;
@@ -1057,15 +1057,15 @@ begin
       defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
       ctxt.owned.Add(defn);
     end;
-    rule(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
+    rule(ctxt, IssueTypeINVALID, element.locationData.ParseStart, element.locationData.ParseFinish, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
   end;
   if (profiles <> nil) then
     for p in profiles.FCanonical do
     begin
       sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p));
       try
-        if (warning(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
-          if (rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+        if (warning(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
+          if (rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
             resource.profiles.addProfile(sd.link);
       finally
         sd.Free;
@@ -1094,9 +1094,9 @@ begin
   if (ok) then
   begin
     if (idRule = risRequired) and ((element.getNamedChild('id') = nil)) then
-      rule(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, false, 'Resource requires an id, but none is present')
+      rule(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, false, 'Resource requires an id, but none is present')
     else if (idRule = risProhibited) and ((element.getNamedChild('id') <> nil)) then
-      rule(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, false, 'Resource has an id, but none is allowed');
+      rule(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, false, 'Resource has an id, but none is allowed');
     start(ctxt, resource, element, defn, stack); // root is both definition and type
   end;
 end;
@@ -1113,7 +1113,7 @@ begin
   begin
     checkDeclaredProfiles(ctxt, resource, element, stack);
     resource.profiles.isProcessed := true;
-    if (resource.profiles.isEmpty and rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.LiteralPath, defn.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+    if (resource.profiles.isEmpty and rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.LiteralPath, defn.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
         // Don't need to validate against the resource if there's a profile because the profile snapshot will include the relevant parts of the resources
       validateElement(ctxt, defn, defn.snapshot.ElementList[0], nil, nil, resource, element, element.Name, stack, false);
 
@@ -1154,12 +1154,12 @@ begin
       begin
         ref := profile.value;
         p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
-        if (rule(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, p, ref <> '', 'StructureDefinition reference invalid')) then
+        if (rule(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
           sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref));
           try
-            if (warning(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
-              if (rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+            if (warning(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
+              if (rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
                 resource.profiles.addProfile(sd.Link);
           finally
             sd.Free;
@@ -1205,7 +1205,7 @@ begin
           try
             resource := res.children[0];
             id := resource.getNamedChildValue('id');
-            if (rule(ctxt, IssueTypeINVALID, firstEntry.locationStart, firstEntry.locationEnd, stack.addToLiteralPath(['entry', ':0']), res <> nil, 'No resource on first entry')) then
+            if (rule(ctxt, IssueTypeINVALID, firstEntry.locationData.parseStart, firstEntry.locationData.parseFinish, stack.addToLiteralPath(['entry', ':0']), res <> nil, 'No resource on first entry')) then
               validateDocument(ctxt, entries, res, localStack, fullUrl, id);
           finally
             localstack.free;
@@ -1232,11 +1232,11 @@ var
   elem : TFHIRMMElement;
 begin
   // first entry must be a composition
-  if (rule(ctxt, IssueTypeINVALID, composition.locationStart, composition.locationEnd, stack.literalPath, composition.Type_ = 'Composition',
+  if (rule(ctxt, IssueTypeINVALID, composition.locationData.parseStart, composition.locationData.parseFinish, stack.literalPath, composition.Type_ = 'Composition',
     'The first entry in a document must be a composition')) then
   begin
     elem := composition.getNamedChild('subject');
-    if rule(ctxt, IssueTypeINVALID, composition.locationStart, composition.locationEnd, stack.literalPath, elem <> nil, 'In a document, a compsosition must have a subject') then
+    if rule(ctxt, IssueTypeINVALID, composition.locationData.parseStart, composition.locationData.parseFinish, stack.literalPath, elem <> nil, 'In a document, a compsosition must have a subject') then
     begin
     // the composition subject and section references must resolve in the bundle
       ns := stack.push(elem, -1, nil, nil);
@@ -1249,9 +1249,9 @@ begin
   end;
 end;
 end;
-// rule(ctxt, IssueTypeINVALID, bundle.locationStart, bundle.locationEnd, 'Bundle', !'urn:guid:' = base), 'The base "urn:guid:" is not valid (use urn:uuid:)');
-// rule(ctxt, IssueTypeINVALID, entry.locationStart, entry.locationEnd, localStack.literalPath, !'urn:guid:' = ebase), 'The base "urn:guid:" is not valid');
-// rule(ctxt, IssueTypeINVALID, entry.locationStart, entry.locationEnd, localStack.literalPath, !Utilities.noString(base) ) or ( !Utilities.noString(ebase), 'entry does not have a base');
+// rule(ctxt, IssueTypeINVALID, bundle.locationData.parseStart, bundle.locationData.parseFinish, 'Bundle', !'urn:guid:' = base), 'The base "urn:guid:" is not valid (use urn:uuid:)');
+// rule(ctxt, IssueTypeINVALID, entry.locationData.parseStart, entry.locationData.parseFinish, localStack.literalPath, !'urn:guid:' = ebase), 'The base "urn:guid:" is not valid');
+// rule(ctxt, IssueTypeINVALID, entry.locationData.parseStart, entry.locationData.parseFinish, localStack.literalPath, !Utilities.noString(base) ) or ( !Utilities.noString(ebase), 'entry does not have a base');
 // String firstBase := nil;
 // firstBase := ebase = nil ? base : ebase;
 
@@ -1288,7 +1288,7 @@ begin
   if (ref <> nil) and (ref.getNamedChildValue('reference') <> '') then
   begin
     target := resolveInBundle(entries, ref.getNamedChildValue('reference'), fullUrl, type_, id);
-    rule(ctxt, IssueTypeINVALID, ref.locationStart, ref.locationEnd, stack.addToLiteralPath(['reference']), target <> nil,
+    rule(ctxt, IssueTypeINVALID, ref.locationData.parseStart, ref.locationData.parseFinish, stack.addToLiteralPath(['reference']), target <> nil,
       'Unable to resolve the target of the reference in the bundle (' + name + ')');
   end;
 end;
@@ -1358,9 +1358,9 @@ end;
 procedure TFHIRValidator4.validateObservation(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
 begin
   // all observations should have a subject, a performer, and a time
-  bpCheck(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, element.getNamedChild('subject') <> nil, 'All observations should have a subject');
-  bpCheck(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, element.getNamedChild('performer') <> nil, 'All observations should have a performer');
-  bpCheck(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.literalPath, (element.getNamedChild('effectiveDateTime') <> nil) or
+  bpCheck(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, element.getNamedChild('subject') <> nil, 'All observations should have a subject');
+  bpCheck(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, element.getNamedChild('performer') <> nil, 'All observations should have a performer');
+  bpCheck(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, (element.getNamedChild('effectiveDateTime') <> nil) or
     (element.getNamedChild('effectivePeriod') <> nil), 'All observations should have an effectiveDateTime or an effectivePeriod');
 end;
 
@@ -1673,14 +1673,14 @@ begin
           location := 'Profile ' + profile.Url + ', Element "' + stack.LiteralPath + '.' + tail(ed.path) + '" (' + ed.id+')';
           if (ed.Min <> '0') then
             if (problematicPaths.indexOf(ed.path) > -1) then
-              hint(ctxt, IssueTypeNOTSUPPORTED, element.locationStart, element.locationEnd, stack.literalPath, count >= StrToInt(ed.Min), location + ': Unable to check minimum required (" + Integer.toString(ed.getMin()) + ") due to lack of slicing validation')
+              hint(ctxt, IssueTypeNOTSUPPORTED, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, count >= StrToInt(ed.Min), location + ': Unable to check minimum required (" + Integer.toString(ed.getMin()) + ") due to lack of slicing validation')
             else
-              rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, count >= StrToInt(ed.Min), location+': minimum required = ' + ed.Min + ', but only found ' + inttostr(count));
+              rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, count >= StrToInt(ed.Min), location+': minimum required = ' + ed.Min + ', but only found ' + inttostr(count));
           if (ed.max <> '*') then
             if (problematicPaths.indexOf(ed.path) > -1) then
-              hint(ctxt, IssueTypeNOTSUPPORTED, element.locationStart, element.locationEnd, stack.literalPath, count <= StrToInt(ed.max), location + ': Unable to check minimum required (" + Integer.toString(ed.getMin()) + ") due to lack of slicing validation')
+              hint(ctxt, IssueTypeNOTSUPPORTED, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, count <= StrToInt(ed.max), location + ': Unable to check minimum required (" + Integer.toString(ed.getMin()) + ") due to lack of slicing validation')
             else
-              rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, count <= StrToInt(ed.max), 'Element ' + tail(ed.path) + ' @ ' + stack.literalPath+ ': max allowed = ' + ed.max + ', but found ' + inttostr(count));
+              rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, count <= StrToInt(ed.max), 'Element ' + tail(ed.path) + ' @ ' + stack.literalPath+ ': max allowed = ' + ed.max + ', but found ' + inttostr(count));
 
         end;
       end;
@@ -2046,7 +2046,7 @@ begin
   if (ref = '') then
   begin
     // todo - what should we do in this case?
-    hint(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, element.getNamedChildValue('display') <> '',
+    hint(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, element.getNamedChildValue('display') <> '',
       'A Reference without an actual reference should have a display');
     exit;
   end;
@@ -2056,7 +2056,7 @@ begin
     ft := we.Type_
   else
     ft := tryParse(ctxt, ref);
-  if (hint(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, ft <> '', 'Unable to determine type of target resource')) then
+  if (hint(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, ft <> '', 'Unable to determine type of target resource')) then
   begin
     ok := false;
     b := '';
@@ -2071,7 +2071,7 @@ begin
         begin
           pr := ty.profile;
           bt := getBaseType(ctxt, profile, pr);
-          if (rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, bt <> '', 'Unable to resolve the profile reference "' + pr + '"')) then
+          if (rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, bt <> '', 'Unable to resolve the profile reference "' + pr + '"')) then
           begin
             if (b <> '') then
               b := b + ', ';
@@ -2087,7 +2087,7 @@ begin
         ok := true; // can refer to anything
       end;
     end;
-    rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, ok, 'Invalid Resource target type. Found ' + ft + ', but expected one of (' + b + ')');
+    rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, ok, 'Invalid Resource target type. Found ' + ft + ', but expected one of (' + b + ')');
   end;
 end;
 
@@ -2253,18 +2253,18 @@ begin
   ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
   if (ex = nil) then
   begin
-    if (not rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, allowUnknownExtension(ctxt, url), 'The extension ' + url + ' is unknown, and not allowed here'))
+    if (not rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, allowUnknownExtension(ctxt, url), 'The extension ' + url + ' is unknown, and not allowed here'))
     then
-      warning(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path, allowUnknownExtension(ctxt, url), 'Unknown extension ' + url);
+      warning(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path, allowUnknownExtension(ctxt, url), 'Unknown extension ' + url);
   end
   else
   begin
     ctxt.Owned.add(ex);
     if (def.isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is labelled as a modifier, but the underlying extension is not')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is not labelled as a modifier, but the underlying extension is');
 
     // two questions
@@ -2272,10 +2272,10 @@ begin
     checkExtensionContext(ctxt, element, { path+'[url:="'+url+'"]', } ex, stack, ex.url);
 
     if (isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must be used as a modifierExtension')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must not be used as an extension (it"s a modifierExtension)');
 
     // 2. is the content of the extension valid?
@@ -2353,7 +2353,7 @@ begin
       if (ct.value = '*') or (stack.logicalPaths.indexOf(ct.value + pe) > -1) then
         ok := true;
     end;
-    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, ok,
+    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, ok,
       'The extension ' + extUrl + ' is not allowed to be used on the logical path set [' + p + '] (allowed: datatype:=' + b + ')');
   end
   else if (definition.ContextType = ExtensionContextEXTENSION) then
@@ -2362,7 +2362,7 @@ begin
     for ct in definition.contextList do
       if (ct.value = '*') or (ct.value = extensionParent) then
         ok := true;
-    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, ok,
+    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, ok,
       'The extension ' + extUrl + ' is not allowed to be used with the extension "' + extensionParent + '"');
   end
   else if (definition.ContextType = ExtensionContextRESOURCE) then
@@ -2385,7 +2385,7 @@ begin
       if (c = '*') or (stack.logicalPaths.indexOf(c + pe) >= 0) or (c.startsWith('@') and (stack.logicalPaths.indexOf(c.substring(1) + pe) >= 0)) then
         ok := true;
     end;
-    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationStart, element.locationEnd, stack.literalPath, ok,
+    result := rule(ctxt, IssueTypeSTRUCTURE, element.locationData.parseStart, element.locationData.parseFinish, stack.literalPath, ok,
       'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource:=' + b + ')');
   end
   else
@@ -2450,7 +2450,7 @@ begin
   ctxt.Owned.add(profile);
   if (element.Special in [fsecBUNDLE_ENTRY, fsecBUNDLE_OUTCOME, fsecPARAMETER]) then
     resource := element;
-  if (rule(ctxt, IssueTypeINVALID, element.locationStart, element.locationEnd, stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for contained resource of type "' + resourceName + '"')) then
+  if (rule(ctxt, IssueTypeINVALID, element.locationData.parseStart, element.locationData.parseFinish, stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for contained resource of type "' + resourceName + '"')) then
     validateResource(ctxt, resource, element, profile, nil, idRule, stack);
 end;
 
@@ -2518,37 +2518,37 @@ var
   ns : String;
 begin
   if (ty = 'boolean') then
-  	rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, (e.primitiveValue() ='true') or (e.primitiveValue() = 'false'), 'boolean values must be "true" or "false"');
+  	rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, (e.primitiveValue() ='true') or (e.primitiveValue() = 'false'), 'boolean values must be "true" or "false"');
   if (ty = 'uri') then
   begin
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, not e.primitiveValue.startsWith('oid:'), 'URI values cannot start with oid:');
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, not e.primitiveValue.startsWith('uuid:'), 'URI values cannot start with uuid:');
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, e.primitiveValue = e.primitiveValue.trim(), 'URI values cannot have leading or trailing whitespace');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, not e.primitiveValue.startsWith('oid:'), 'URI values cannot start with oid:');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, not e.primitiveValue.startsWith('uuid:'), 'URI values cannot start with uuid:');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, e.primitiveValue = e.primitiveValue.trim(), 'URI values cannot have leading or trailing whitespace');
   end;
   if (not SameText(ty, 'string')) and (e.hasPrimitiveValue) then
   begin
-    if (rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, e.primitiveValue.length > 0, '@value cannot be empty')) then
-      warning(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, e.primitiveValue.trim() = e.primitiveValue, 'value should not start or finish with whitespace');
+    if (rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, e.primitiveValue.length > 0, '@value cannot be empty')) then
+      warning(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, e.primitiveValue.trim() = e.primitiveValue, 'value should not start or finish with whitespace');
   end;
   if (ty = 'dateTime') then
   begin
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
     regex := TRegEx.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
       'if a date has a time, it must have a timezone');
   end;
   if (ty = 'instant') then
   begin
     regex := TRegEx.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
   end;
 
   if (ty = 'code') then
   begin
     // Technically, a code is restricted to string which has at least one character and no leading or trailing whitespace, and where there is no whitespace other than single spaces in the contents
-    rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, passesCodeWhitespaceRules(e.primitiveValue),
+    rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, passesCodeWhitespaceRules(e.primitiveValue),
       'The code "' + e.primitiveValue + '" is not valid (whitespace rules)');
   end;
 
@@ -2565,10 +2565,10 @@ begin
      // if it is null, this is an error already noted in the parsers
       // check that the namespace is there and correct.
       ns := xhtml.NsDecl;
-      rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, XHTML_NS = ns, 'Wrong namespace on the XHTML ("'+ns+'")');
+      rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, XHTML_NS = ns, 'Wrong namespace on the XHTML ("'+ns+'")');
       // check that inner namespaces are all correct
       checkInnerNS(ctxt, e, path, xhtml.ChildNodes);
-      rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, 'div' = xhtml.Name, 'Wrong name on the XHTML ("'+xhtml.name+'") - must start with "div"');
+      rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, 'div' = xhtml.Name, 'Wrong name on the XHTML ("'+xhtml.name+'") - must start with "div"');
       // check that no illegal elements and attributes have been used
       checkInnerNames(ctxt, e, path, xhtml.ChildNodes);
     end;
@@ -2584,9 +2584,10 @@ begin
   begin
   	if (node.NodeType = fhntElement) then
     begin
-      rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path,  TFHIRXhtmlParser.elementIsOk(xppDrop, [], node.Name), 'Illegal element name in the XHTML("'+node.name+'")');
-      for attr in node.Attributes do
-        rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path,  TFHIRXhtmlParser.attributeIsOk(xppDrop, [], node.Name, attr.Name, attr.Value), 'Illegal attribute name in the XHTML("'+node.name+'.@'+attr.name+'")');
+      rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path,  TFHIRXhtmlParser.elementIsOk(xppDrop, [], node.Name), 'Illegal element name in the XHTML("'+node.name+'")');
+      if node.HasAttributes then
+        for attr in node.Attributes do
+          rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path,  TFHIRXhtmlParser.attributeIsOk(xppDrop, [], node.Name, attr.Name, attr.Value), 'Illegal attribute name in the XHTML("'+node.name+'.@'+attr.name+'")');
       checkInnerNS(ctxt, e, path, node.ChildNodes);
     end;
   end;
@@ -2602,7 +2603,7 @@ begin
   	if (node.NodeType = fhntElement) then
     begin
       ns := node.NsDecl;
-      rule(ctxt, IssueTypeINVALID, e.locationStart, e.locationEnd, path, (ns = '') or (XHTML_NS = ns), 'Wrong namespace on the XHTML ("'+ns+'")');
+      rule(ctxt, IssueTypeINVALID, e.locationData.parseStart, e.locationData.parseFinish, path, (ns = '') or (XHTML_NS = ns), 'Wrong namespace on the XHTML ("'+ns+'")');
       checkInnerNS(ctxt, e, path, node.ChildNodes);
     end;
   end;
@@ -2629,20 +2630,20 @@ begin
   if (Binding.ValueSet <> '') then
   begin
     vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-    if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
+    if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
     begin
       res := ValContext.validateCode(SYSTEM_NOT_APPLICABLE, '', value, vs);
       try
         if (not res.isOk()) then
         begin
           if (Binding.Strength = BindingStrengthREQUIRED) then
-            rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+value+') is not in the value set ' +
+            rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+value+') is not in the value set ' +
               Binding.ValueSet + ' (' + vs.url + ', and a code is required from this value set')
           else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-            warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+value+') is not in the value set ' +
+            warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+value+') is not in the value set ' +
               Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
           else if (Binding.Strength = BindingStrengthPREFERRED) then
-            hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+value+') is not in the value set ' + Binding.ValueSet
+            hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+value+') is not in the value set ' + Binding.ValueSet
               + ' (' + vs.url + ', and a code is recommended to come from this value set');
         end;
       finally
@@ -2651,7 +2652,7 @@ begin
     end;
   end
   else
-    hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, ty <> 'code', 'Binding has no source, so can''t be checked');
+    hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, ty <> 'code', 'Binding has no source, so can''t be checked');
 end;
 
 function isValidFHIRUrn(uri: String): boolean;
@@ -2670,7 +2671,7 @@ var
   System: String;
 begin
   System := element.getNamedChildValue('system');
-  rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference ('+system+')');
+  rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference ('+system+')');
 end;
 
 procedure TFHIRValidator4.checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
@@ -2703,7 +2704,7 @@ begin
   version := element.getNamedChildValue('version');
   display := element.getNamedChildValue('display');
 
-  rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, isAbsolute(System), 'Coding.system must be an absolute reference, not a local reference ('+system+')');
+  rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, isAbsolute(System), 'Coding.system must be an absolute reference, not a local reference ('+system+')');
 
   if (System <> '') and (code <> '') then
   begin
@@ -2711,12 +2712,12 @@ begin
       if (context <> nil) and (context.Binding <> nil) then
       begin
         Binding := context.Binding;
-        if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, Binding <> nil, 'Binding for ' + path + ' missing')) then
+        if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, Binding <> nil, 'Binding for ' + path + ' missing')) then
         begin
           if (Binding.ValueSet <> '') then
           begin
             vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-            if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
+            if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
             begin
               try
                 c := readAsCoding(element);
@@ -2725,13 +2726,13 @@ begin
                   try
                     if (not res.isOk()) then
                       if (Binding.Strength = BindingStrengthREQUIRED) then
-                        warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
+                        warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           Binding.ValueSet + ' (' + vs.url + ', and a code is required from this value set')
                       else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                        warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
+                        warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
                       else if (Binding.Strength = BindingStrengthPREFERRED) then
-                        hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
+                        hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
                           Binding.ValueSet + ' (' + vs.url + ', and a code is recommended to come from this value set');
                   finally
                     res.free;
@@ -2741,11 +2742,11 @@ begin
                 end;
               except
                 on e: Exception do
-                  warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'Error ' + e.message + ' validating Coding');
+                  warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'Error ' + e.message + ' validating Coding');
               end;
             end
             else 
-              hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'Binding has no value set, so can''t be checked');
+              hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'Binding has no value set, so can''t be checked');
           end;
         end;
       end;
@@ -2802,12 +2803,12 @@ begin
   if (context <> nil) and (context.Binding <> nil) then
   begin
     Binding := context.Binding;
-    if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, Binding <> nil, 'Binding for ' + path + ' missing (cc)')) then
+    if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, Binding <> nil, 'Binding for ' + path + ' missing (cc)')) then
     begin
       if (Binding.ValueSet <> '') then
       begin
         vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-        if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
+        if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
         begin
           cc := readAsCodeableConcept(element);
           try
@@ -2815,10 +2816,10 @@ begin
               if (cc.CodingList.IsEmpty) then
               begin
                 if (Binding.Strength = BindingStrengthREQUIRED) then
-                  rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'No code provided, and a code is required from the value set ' +
+                  rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'No code provided, and a code is required from the value set ' +
                     Binding.ValueSet + ' (' + vs.url)
                 else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                  warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'No code provided, and a code should be provided from the value set ' +
+                  warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'No code provided, and a code should be provided from the value set ' +
                     Binding.ValueSet + ' (' + vs.url);
               end
               else
@@ -2828,13 +2829,13 @@ begin
                   if (not res.isOk) then
                   begin
                     if (Binding.Strength = BindingStrengthREQUIRED) then
-                      rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'None of the codes provided are in the value set ' +
+                      rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'None of the codes provided are in the value set ' +
                         Binding.ValueSet + ' (' + vs.url + ', and a code from this value set is required')
                     else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
-                      warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'None of the codes provided are in the value set ' +
+                      warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'None of the codes provided are in the value set ' +
                         Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
                     else if (Binding.Strength = BindingStrengthPREFERRED) then
-                      hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'None of the codes provided are in the value set ' +
+                      hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'None of the codes provided are in the value set ' +
                         Binding.ValueSet + ' (' + vs.url + ', and a code is recommended to come from this value set');
                   end;
                 finally
@@ -2843,7 +2844,7 @@ begin
               end;
             except
               on e: Exception do
-                warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'Error ' + e.message + ' validating CodeableConcept');
+                warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'Error ' + e.message + ' validating CodeableConcept');
             end;
           finally
             cc.free;
@@ -2851,7 +2852,7 @@ begin
         end;
       end
       else
-        hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, false, 'Binding has no valueSet, so can''t be checked');
+        hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, false, 'Binding has no valueSet, so can''t be checked');
     end
   end;
 end;
@@ -2868,11 +2869,11 @@ begin
       if (s = nil) or (s.isOk()) then
         result := true
       else if (s.severity = isInformation) then
-        hint(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, s = nil, s.message)
+        hint(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, s = nil, s.message)
       else if (s.severity = isWarning) then
-        warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, s = nil, s.message)
+        warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, s = nil, s.message)
       else
-        result := rule(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, s = nil, s.message);
+        result := rule(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, s = nil, s.message);
     finally
       s.Free;
     end;
@@ -2886,11 +2887,11 @@ begin
   // vs := ValContext.fetchCodeSystem(system);
   // if (vs <> nil) then
   // check vlaue set uri hasn't been used directly
-  // if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, vs <> nil, 'Unknown Code System '+system))
+  // if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, vs <> nil, 'Unknown Code System '+system))
   // else begin
   // ConceptDefinitionComponent def := getCodeDefinition(vs, code);
-  // if (warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, def <> nil, 'Unknown Code ('+system+'#'+code+')'))
-  // return warning(ctxt, IssueTypeCODEINVALID, element.locationStart, element.locationEnd, path, display = nil ) or ( display = def.getDisplay()), 'Display should be "'+def.getDisplay()+'"');
+  // if (warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, def <> nil, 'Unknown Code ('+system+'#'+code+')'))
+  // return warning(ctxt, IssueTypeCODEINVALID, element.locationData.parseStart, element.locationData.parseFinish, path, display = nil ) or ( display = def.getDisplay()), 'Display should be "'+def.getDisplay()+'"');
   // end;
   // return false;
   // end;
@@ -2986,7 +2987,7 @@ end;
 // if (elementDefn.Path.endsWith('[x]')) begin
 // String tail := elementDefn.Path.substring(elementDefn.Path.lastIndexOf('.')+1, elementDefn.Path.length()-3);
 // type := focus.name.substring(tail.length());
-// rule(ctxt, IssueTypeSTRUCTURE, focus.locationStart, focus.locationEnd, path, typeAllowed(type, elementDefn.Type_List), 'The type "'+type+'" is not allowed at this point (must be one of "'+typeSummary(elementDefn)+')');
+// rule(ctxt, IssueTypeSTRUCTURE, focus.locationData.parseStart, focus.locationData.parseFinish, path, typeAllowed(type, elementDefn.Type_List), 'The type "'+type+'" is not allowed at this point (must be one of "'+typeSummary(elementDefn)+')');
 // end; else begin
 // if (elementDefn.Type_List.Count = 1) begin
 // type := elementDefn.Type_List.Count = 0 ? nil : elementDefn.Type_List[0].Code;
@@ -3017,12 +3018,12 @@ end;
 // if (children.Count = 0) begin
 // // well, there"s no children - should there be?
 // for (TFHIRElementDefinition defn : childset) begin
-// if (not rule(ctxt, IssueTypeREQUIRED, focus.locationStart, focus.locationEnd, path, defn.getMin() = 0, 'Required Element "'+walker.name()+'" missing'))
+// if (not rule(ctxt, IssueTypeREQUIRED, focus.locationData.parseStart, focus.locationData.parseFinish, path, defn.getMin() = 0, 'Required Element "'+walker.name()+'" missing'))
 // break; // no point complaining about missing ones after the first one
 // end;
 // end; else if (childset.Count = 1) begin
 // // simple case: one possible definition, and one or more children.
-// rule(ctxt, IssueTypeSTRUCTURE, focus.locationStart, focus.locationEnd, path, childset[0).Max = '*') ) or ( StrToInt(childset[0).Max) >= children.Count,
+// rule(ctxt, IssueTypeSTRUCTURE, focus.locationData.parseStart, focus.locationData.parseFinish, path, childset[0).Max = '*') ) or ( StrToInt(childset[0).Max) >= children.Count,
 // 'Too many elements for "'+walker.name()+'"'); // todo: sort out structure
 // for (TFHIRMMElement child : children) begin
 // checkByProfile(ctxt, childset[0).Path, child, profile, childset[0));
@@ -3041,7 +3042,7 @@ end;
 // String url := ((TFHIRReference) bc.ValueSet).getReference();
 // vs : TFHIRValueSet := resolveValueSetReference(profile, (TFHIRReference) bc.ValueSet);
 // if (vs = nil) begin
-// rule(ctxt, IssueTypeSTRUCTURE, focus.locationStart, focus.locationEnd, path, false, 'Cannot check binding on type "'+type+'" as the value set "'+url+'" could not be located');
+// rule(ctxt, IssueTypeSTRUCTURE, focus.locationData.parseStart, focus.locationData.parseFinish, path, false, 'Cannot check binding on type "'+type+'" as the value set "'+url+'" could not be located');
 // end; else if (ty = 'code'))
 // checkBindingCode(ctxt, path, focus, vs);
 // else if (ty = 'Coding'))
@@ -3049,7 +3050,7 @@ end;
 // else if (ty = 'CodeableConcept'))
 // checkBindingCodeableConcept(ctxt, path, focus, vs);
 // else
-// rule(ctxt, IssueTypeSTRUCTURE, focus.locationStart, focus.locationEnd, path, false, 'Cannot check binding on type "'+type+'"');
+// rule(ctxt, IssueTypeSTRUCTURE, focus.locationData.parseStart, focus.locationData.parseFinish, path, false, 'Cannot check binding on type "'+type+'"');
 // end;
 // end;
 //
@@ -3121,7 +3122,7 @@ end;
 // // two things to check - length, and fixed value
 // String value := focus.primitiveValue;
 // if (elementDefn.hasMaxLengthElement()) begin
-// rule(ctxt, IssueTypeTOOLONG, focus.locationStart, focus.locationEnd, path, value.length() <= elementDefn.getMaxLength(), 'The value "'+value+'" exceeds the allow length limit of '+inttostr(elementDefn.getMaxLength()));
+// rule(ctxt, IssueTypeTOOLONG, focus.locationData.parseStart, focus.locationData.parseFinish, path, value.length() <= elementDefn.getMaxLength(), 'The value "'+value+'" exceeds the allow length limit of '+inttostr(elementDefn.getMaxLength()));
 // end;
 // if (elementDefn.hasFixed()) begin
 // checkFixedValue(ctxt, path, focus, elementDefn.getFixed(), '');
@@ -3140,50 +3141,50 @@ begin
     exit; // this is all good
 
   if (fixed = nil) and (focus <> nil) then
-    rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, false, 'Unexpected element ' + focus.name)
+    rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, false, 'Unexpected element ' + focus.name)
   else if (fixed <> nil) and (focus = nil) then
-    rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, false, 'Mising element ' + propName)
+    rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, false, 'Mising element ' + propName)
   else
   begin
     value := focus.primitiveValue;
     if (fixed is TFHIRBoolean) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRBoolean(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRBoolean(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRBoolean(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRBoolean(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRInteger) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRInteger(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRInteger(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRInteger(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRInteger(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRDecimal) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRDecimal(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDecimal(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRDecimal(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDecimal(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRBase64Binary) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRBase64Binary(fixed).StringValue = value,
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRBase64Binary(fixed).StringValue = value,
         'Value is "' + value + '" but must be "' + TFHIRBase64Binary(fixed).StringValue + '"')
     else if (fixed is TFHIRInstant) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRInstant(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRInstant(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRInstant(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRInstant(fixed)
         .StringValue + '"')
     else if (fixed is TFhirString) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFhirString(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFhirString(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFhirString(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFhirString(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRUri) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRUri(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRUri(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRUri(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRUri(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRDate) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRDate(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDate(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRDate(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDate(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRDateTime) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRDateTime(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDateTime(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRDateTime(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRDateTime(fixed)
         .StringValue + '"')
     else if (fixed is TFHIROid) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIROid(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIROid(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIROid(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIROid(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRUuid) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRUuid(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRUuid(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRUuid(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRUuid(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRCode) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRCode(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRCode(fixed)
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRCode(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRCode(fixed)
         .StringValue + '"')
     else if (fixed is TFHIRId) then
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, TFHIRId(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRId(fixed).StringValue + '"')
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, TFHIRId(fixed).StringValue = value, 'Value is "' + value + '" but must be "' + TFHIRId(fixed).StringValue + '"')
     else if (fixed is TFHIRQuantity) then
       checkQuantityValue(ctxt, path, focus, TFHIRQuantity(fixed))
     else if (fixed is TFHIRAddress) then
@@ -3211,21 +3212,21 @@ begin
     else if (fixed is TFHIRSampledData) then
       checkSampledDataValue(ctxt, path, focus, TFHIRSampledData(fixed))
     else
-      rule(ctxt, IssueTypeException, focus.locationStart, focus.locationEnd, path, false, 'Unhandled fixed value type ' + fixed.ClassName);
+      rule(ctxt, IssueTypeException, focus.locationData.parseStart, focus.locationData.parseFinish, path, false, 'Unhandled fixed value type ' + fixed.ClassName);
     extensions := TFslList<TFHIRMMElement>.Create();
     try
       focus.getNamedChildren('extension', extensions);
       if (fixed.extensionList.count = 0) then
       begin
-        rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, extensions.count = 0, 'No extensions allowed');
+        rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, extensions.count = 0, 'No extensions allowed');
       end
-      else if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, extensions.count = fixed.extensionList.count,
+      else if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, extensions.count = fixed.extensionList.count,
         'Extensions count mismatch: expected ' + inttostr(fixed.extensionList.count) + ' but found ' + inttostr(extensions.count))) then
       begin
         for e in fixed.extensionList do
         begin
           ex := getExtensionByUrl(extensions, e.url);
-          if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, ex <> nil, 'Extension count mismatch: unable to find extension: ' + e.url)) then
+          if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, ex <> nil, 'Extension count mismatch: unable to find extension: ' + e.url)) then
             checkFixedValue(ctxt, path, ex.getNamedChild('extension').getNamedChild('value'), e.value, 'extension.value');
         end;
       end;
@@ -3250,7 +3251,7 @@ begin
   lines := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('line', lines);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, lines.count = fixed.lineList.count, 'Expected ' + inttostr(fixed.lineList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, lines.count = fixed.lineList.count, 'Expected ' + inttostr(fixed.lineList.count) + ' but found ' +
       inttostr(lines.count) + ' line elements')) then
     begin
       for i := 0 to lines.count - 1 do
@@ -3319,8 +3320,8 @@ begin
       end;
       if not ok then
         case inv.severity of
-          ConstraintSeverityError: rule(ctxt, IssueTypeInvariant, element.locationStart, element.locationEnd, path, ok, inv.human+FPathEngine.UseLog+' ('+msg+') '+inv.expression);
-          ConstraintSeverityWarning: warning(ctxt, IssueTypeInvariant, element.locationStart, element.locationEnd, path, ok, inv.human+FPathEngine.UseLog+' ('+msg+') '+inv.expression);
+          ConstraintSeverityError: rule(ctxt, IssueTypeInvariant, element.locationData.parseStart, element.locationData.parseFinish, path, ok, inv.human+FPathEngine.UseLog+' ('+msg+') '+inv.expression);
+          ConstraintSeverityWarning: warning(ctxt, IssueTypeInvariant, element.locationData.parseStart, element.locationData.parseFinish, path, ok, inv.human+FPathEngine.UseLog+' ('+msg+') '+inv.expression);
         end;
     end;
 end;
@@ -3347,27 +3348,27 @@ begin
     focus.getNamedChildren('family', parts);
     if fixed.family <> '' then
     begin
-      if rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, parts.count.Size = 1, 'Expected a family name, but found none') then
+      if rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, parts.count.Size = 1, 'Expected a family name, but found none') then
         checkFixedValue(ctxt, path + '.family', parts[0], fixed.familyElement, 'family');
     end
     else
-      rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, parts.count.Size = 0, 'Expected no family name, but found one');
+      rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, parts.count.Size = 0, 'Expected no family name, but found one');
     focus.getNamedChildren('given', parts);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, parts.count = fixed.GivenList.count, 'Expected ' + inttostr(fixed.GivenList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, parts.count = fixed.GivenList.count, 'Expected ' + inttostr(fixed.GivenList.count) + ' but found ' +
       inttostr(parts.count) + ' given elements')) then
     begin
       for i := 0 to parts.count - 1 do
         checkFixedValue(ctxt, path + '.given', parts[i], fixed.GivenList[i], 'given');
     end;
     focus.getNamedChildren('prefix', parts);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, parts.count = fixed.prefixList.count, 'Expected ' + inttostr(fixed.prefixList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, parts.count = fixed.prefixList.count, 'Expected ' + inttostr(fixed.prefixList.count) + ' but found ' +
       inttostr(parts.count) + ' prefix elements')) then
     begin
       for i := 0 to parts.count - 1 do
         checkFixedValue(ctxt, path + '.prefix', parts[i], fixed.prefixList[i], 'prefix');
     end;
     focus.getNamedChildren('suffix', parts);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, parts.count = fixed.suffixList.count, 'Expected ' + inttostr(fixed.suffixList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, parts.count = fixed.suffixList.count, 'Expected ' + inttostr(fixed.suffixList.count) + ' but found ' +
       inttostr(parts.count) + ' suffix elements')) then
     begin
       for i := 0 to parts.count - 1 do
@@ -3387,7 +3388,7 @@ begin
   codings := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('coding', codings);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, codings.count = fixed.CodingList.count, 'Expected ' + inttostr(fixed.CodingList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, codings.count = fixed.CodingList.count, 'Expected ' + inttostr(fixed.CodingList.count) + ' but found ' +
       inttostr(codings.count) + ' coding elements')) then
     begin
       for i := 0 to codings.count - 1 do
@@ -3408,7 +3409,7 @@ begin
   events := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('event', events);
-    if (rule(ctxt, IssueTypeVALUE, focus.locationStart, focus.locationEnd, path, events.count = fixed.eventList.count, 'Expected ' + inttostr(fixed.eventList.count) + ' but found ' +
+    if (rule(ctxt, IssueTypeVALUE, focus.locationData.parseStart, focus.locationData.parseFinish, path, events.count = fixed.eventList.count, 'Expected ' + inttostr(fixed.eventList.count) + ' but found ' +
       inttostr(events.count) + ' event elements')) then
     begin
       for i := 0 to events.count - 1 do

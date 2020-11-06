@@ -34,7 +34,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, Vcl.ExtCtrls, UITypes, Vcl.Clipbrd,
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Shell,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Shell, FHIR.Support.Threads,
   FHIR.Web.Fetcher,
   System.ImageList, Vcl.ImgList, Vcl.Menus,
   FHIR.Ui.TextPresentation,

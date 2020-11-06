@@ -1036,8 +1036,8 @@ end;
 
 function TFHIRMMElement.markLocation(start, end_: TSourceLocation): TFHIRMMElement;
 begin
-  LocationStart := start;
-  LocationEnd := end_;
+  LocationData.ParseStart := start;
+  LocationData.ParseFinish := end_;
   result := self;
 end;
 

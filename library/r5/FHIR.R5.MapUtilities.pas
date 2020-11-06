@@ -965,7 +965,7 @@ begin
     lexer.token('map');
     result := TFHIRStructureMap.Create;
     try
-      result.LocationStart := lexer.CurrentStartLocation;
+      result.LocationData.ParseStart := lexer.CurrentStartLocation;
       result.Url := lexer.readConstant('url');
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
@@ -987,7 +987,7 @@ begin
       result.text := TFhirNarrative.Create;
       result.text.status := NarrativeStatusGenerated;
       result.text.div_ := TFHIRXhtmlParser.parse(FWorker.lang, xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
-      result.LocationEnd := lexer.CurrentLocation;
+      result.LocationData.ParseFinish := lexer.CurrentLocation;
       result.link;
     finally
       result.free;
@@ -1189,7 +1189,7 @@ begin
   loc := lexer.CurrentStartLocation;
   lexer.token('group');
   group := result.GroupList.Append;
-  group.LocationStart := loc;
+  group.LocationData.ParseStart := loc;
   newFmt := false;
   if (lexer.hasToken('for')) then
   begin
@@ -1274,7 +1274,7 @@ begin
   if (newFmt and lexer.hasToken(';')) then
     lexer.next();
   lexer.skipComments();
-  group.LocationEnd := lexer.CurrentLocation;
+  group.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer; newFmt : boolean);
@@ -1309,7 +1309,7 @@ var
   done : boolean;
 begin
   rule := list.Append;
-  rule.LocationStart := lexer.CurrentStartLocation;
+  rule.LocationData.ParseStart := lexer.CurrentStartLocation;
   if not newFMt then
   begin
     rule.Name := lexer.takeDottedToken();
@@ -1402,7 +1402,7 @@ begin
   if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
   lexer.skipComments();
-  rule.LocationEnd := lexer.CurrentLocation;
+  rule.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -1430,7 +1430,7 @@ var
   node : TFHIRPathExpressionNode;
 begin
   source := rule.sourceList.Append;
-  source.LocationStart := lexer.CurrentStartLocation;
+  source.LocationData.ParseStart := lexer.CurrentStartLocation;
   source.Context := lexer.take();
 
   if (source.Context = 'search') and lexer.hasToken('(') then
@@ -1492,7 +1492,7 @@ begin
     source.logMessage := node.toString();
     source.logMessageElement.Tag := node;
   end;
-  source.LocationEnd := lexer.CurrentLocation;
+  source.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
 procedure TFHIRStructureMapUtilities.parseTarget(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -1504,7 +1504,7 @@ var
   p : TFhirStructureMapGroupRuleTargetParameter;
 begin
   target := rule.targetList.Append;
-  target.LocationStart := lexer.CurrentStartLocation;
+  target.LocationData.ParseStart := lexer.CurrentStartLocation;
   start := lexer.take();
   if (lexer.hasToken('.')) then
   begin
@@ -1594,7 +1594,7 @@ begin
       target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
   end;
-  target.LocationEnd := lexer.CurrentLocation;
+  target.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
 
@@ -2800,13 +2800,13 @@ end;
 function TFHIRStructureMapDebugContext.GetLine: integer;
 begin
   if target <> nil then
-    result := FTarget.LocationStart.line
+    result := FTarget.LocationData.ParseStart.line
   else if rule <> nil then
-    result := rule.LocationStart.line
+    result := rule.LocationData.ParseStart.line
   else if group <> nil then
-    result := group.LocationStart.line
+    result := group.LocationData.ParseStart.line
   else
-    result := map.LocationStart.line;
+    result := map.LocationData.ParseStart.line;
 end;
 
 function TFHIRStructureMapDebugContext.GetName: String;

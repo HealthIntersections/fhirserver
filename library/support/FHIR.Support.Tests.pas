@@ -160,7 +160,7 @@ Type
 
   TXmlParserTest2 = Class (TFslTestCase)
   private
-    procedure runTest(fn : String);
+    procedure runXmlTest(fn : String);
   published
     procedure testUnicode;
     procedure testUtf8;
@@ -681,20 +681,20 @@ implementation
 
 procedure TXmlParserTest2.testUnicode;
 begin
-  runtest('xml-unicode.xml');
+  runXmlTest('xml-unicode.xml');
 end;
 
 procedure TXmlParserTest2.testUtf8;
 begin
-  runtest('xml-utf8.xml');
+  runXmlTest('xml-utf8.xml');
 end;
 
 procedure TXmlParserTest2.testUtf16;
 begin
-  runtest('xml-utf16.xml');
+  runXmlTest('xml-utf16.xml');
 end;
 
-procedure TXmlParserTest2.runTest(fn : String);
+procedure TXmlParserTest2.runXmlTest(fn : String);
 var
   xml : TMXmlDocument;
   e : TMXmlElement;
