@@ -12,6 +12,7 @@ uses
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
+  FHIR.LCL.Synchroniser,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
 
@@ -71,13 +72,30 @@ begin
 end;
 
 procedure TFHIREditor.DoTestEncoding(sender: TObject);
+var
+  sync : TFHIRSynEditSynchroniser;
+  cs : TFHIRCodeSystem;
 begin
-  raise Exception.create('not done yet');
+  sync := TFHIRSynEditSynchroniser.create;
+  try
+    sync.SynEdit := TextEditor;
+    sync.Format := ffJson;
+    sync.Factory := FFactory.link;
+
+    sync.load;
+    cs := sync.resource as TFHIRCodeSystem;
+    sync.changeProperty(cs.nameElement);
+    cs.name := 'My Test';
+    sync.commit;
+
+  finally
+    syn.free;
+  end;
 end;
 
 function TFHIREditor.AddActions(tb : TToolBar): boolean;
 begin
-  actTestEditing := makeAction(tb, 'Test Editing', 11, 0, DoTestEncoding);
+  actTestEditing := makeAction(tb, 'Test Editing', 11, 0, DoTestEditing);
   Result:= true;
 end;
 

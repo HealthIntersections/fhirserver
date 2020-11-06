@@ -174,7 +174,7 @@ type
     function findLocation(loc : TSourceLocation): TV2Location;
   end;
 
-  TV2ParserOption = (v2doPreventOddBinaryLengths, v2doMessageHeaderOnly, v2doIgnoreXmlErrors, v2Validating);
+  TV2ParserOption = (v2doPreventOddBinaryLengths, v2doMessageHeaderOnly, v2doIgnoreXmlErrors, v2Validating, v2LocationData);
   TV2ParserOptions = set of TV2ParserOption;
 
   TV2Parser = class (TFSLObject)
@@ -740,7 +740,7 @@ begin
   try
     for seg in FSegmentList do
     begin
-      if (locInSpan(loc, seg.LocationStart, seg.LocationEnd)) then
+      if (seg.LocationData.InSpan(loc)) then
       begin
         result.Segment := seg.link;
         break;
@@ -750,7 +750,7 @@ begin
     begin
       for field in result.segment.FFieldList do
       begin
-        if (locInSpan(loc, field.LocationStart, field.LocationEnd)) then
+        if (field.LocationData.InSpan(loc)) then
         begin
           result.Field := field.link;
           break;
@@ -761,7 +761,7 @@ begin
     begin
       for cell in result.Field.FElementList do
       begin
-        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        if (cell.LocationData.InSpan(loc)) then
         begin
           result.Element := cell.link;
           break;
@@ -772,7 +772,7 @@ begin
     begin
       for cell in result.Element.FComponentList do
       begin
-        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        if (cell.LocationData.InSpan(loc)) then
         begin
           result.Component := cell.link;
           break;
@@ -783,7 +783,7 @@ begin
     begin
       for cell in result.Component.FComponentList do
       begin
-        if (locInSpan(loc, cell.LocationStart, cell.LocationEnd)) then
+        if (cell.LocationData.InSpan(loc)) then
         begin
           result.SubComponent := cell.link;
           break;
@@ -1013,11 +1013,13 @@ begin
 
   oSegment := TV2Segment.Create;
   try
-    oSegment.LocationStart := loc;
+    if v2LocationData in FOptions then
+      oSegment.LocationData.parseStart := loc;
     oSegment.Code := sSegCode;
     oMessage.SegmentList.Add(oSegment.Link); // do this to provide a model before setting the code
     parseSegmentInner(oSegment, iCursor, iStart);
-    oSegment.LocationEnd := TSourceLocation.make(FLine, iCursor - iStart);
+    if v2LocationData in FOptions then
+      oSegment.LocationData.parseFinish := TSourceLocation.make(FLine, iCursor - iStart);
   finally
     oSegment.Free;
   end;
@@ -1033,10 +1035,12 @@ begin
   begin
     oField := TV2Field.create;
     try
-      oField.LocationStart := TSourceLocation.make(FLine, iCursor - iStart);
+      if v2LocationData in FOptions then
+        oField.LocationData.ParseStart := TSourceLocation.make(FLine, iCursor - iStart);
       oSegment.FieldList.Add(oField.Link);
       ParseField(oField, iCursor, iStart);
-      oField.LocationEnd := TSourceLocation.make(FLine, iCursor - iStart - 1);
+      if v2LocationData in FOptions then
+        oField.LocationData.ParseFinish := TSourceLocation.make(FLine, iCursor - iStart - 1);
     finally
       oField.Free;
     end;
@@ -1138,8 +1142,10 @@ begin
     End;
     cell := TV2Cell.Create;
     try
-      cell.LocationStart := TSourceLocation.make(FLine, iStart - iCursorStart);
-      cell.LocationEnd   := TSourceLocation.make(FLine, iCursor - iCursorStart);
+      if v2LocationData in FOptions then
+        cell.LocationData.ParseStart := TSourceLocation.make(FLine, iStart - iCursorStart);
+      if v2LocationData in FOptions then
+        cell.LocationData.ParseFinish := TSourceLocation.make(FLine, iCursor - iCursorStart);
       parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
       ofield.elementList.Add(cell.link);
     finally
@@ -1169,9 +1175,11 @@ begin
       StringSplit(sRight, cBreak, sLeft, sRight);
       child := TV2Cell.Create;
       try
-        child.LocationStart := TSourceLocation.make(cell.LocationStart.line, cell.LocationStart.col + i);
+        if v2LocationData in FOptions then
+          child.LocationData.ParseStart := TSourceLocation.make(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
         inc(i, sLeft.length);
-        child.LocationEnd := TSourceLocation.make(cell.LocationStart.line, cell.LocationStart.col + i);
+        if v2LocationData in FOptions then
+          child.LocationData.ParseFinish := TSourceLocation.make(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
         cell.componentList.Add(child.link);
         parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
         inc(i);

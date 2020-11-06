@@ -305,14 +305,31 @@ type
     property value : TFHIRObject read FValue;
   end;
 
+  { TFHIRObjectLocationData }
+
+  // we keep both parse and compose for help when editing content live.
+  TFHIRObjectLocationData = class (TFslObject)
+  private
+    FComposeStart: TSourceLocation;
+    FComposeFinish: TSourceLocation;
+    FParseStart: TSourceLocation;
+    FParseFinish: TSourceLocation;
+  public
+    function inSpan(loc : TSourceLocation) : boolean;
+
+    property parseStart : TSourceLocation read FParseStart write FParseStart;
+    property parseFinish : TSourceLocation read FParseFinish write FParseFinish;
+    property composeStart : TSourceLocation read FComposeStart write FComposeStart;
+    property composeFinish : TSourceLocation read FComposeFinish write FComposeFinish;
+  end;
+
   { TFHIRObject }
 
   TFHIRObject = class (TFslObject)
   private
     FTags : TFslStringDictionary;
     FTag : TFslObject;
-    FLocationStart : TSourceLocation;
-    FLocationEnd : TSourceLocation;
+    FLocationData : TFHIRObjectLocationData;
     FCommentsStart: TFslStringList;
     FCommentsEnd: TFslStringList;
     FFormat : TFHIRFormat;
@@ -325,6 +342,8 @@ type
     procedure SetTag(const Value: TFslObject);
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
+    function GetLocationData : TFHIRObjectLocationData;
+    function GetHasLocationData : boolean;
     function findLocation(loc : TSourceLocation; propFrom : TFHIRProperty; path : TFslList<TFHIRLocation>) : boolean; overload;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); virtual;
@@ -388,8 +407,8 @@ type
     property jsHandle : pointer read FJsHandle write FJsHandle;
 
     // populated by some parsers when parsing
-    property LocationStart : TSourceLocation read FLocationStart write FLocationStart;
-    property LocationEnd : TSourceLocation read FLocationEnd write FLocationEnd;
+    property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
+    property HasLocationData : boolean read GetHasLocationData;
     function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocation>; overload;
 
     function HasXmlCommentsStart : Boolean;
@@ -660,6 +679,13 @@ Implementation
 Uses
   FHIR.Base.Lang;
 
+{ TFHIRObjectLocationData }
+
+function TFHIRObjectLocationData.inSpan(loc: TSourceLocation): boolean;
+begin
+  result := locInSpan(loc, FParseStart, FParseFinish);
+end;
+
 { TFHIRLocation }
 
 constructor TFHIRLocation.create(prop: TFHIRProperty; value: TFHIRObject);
@@ -681,12 +707,12 @@ end;
 constructor TFHIRObject.Create;
 begin
   inherited;
-  FLocationStart := nullLoc;
-  FLocationEnd := nullLoc;
+  FLocationData := nil;
 end;
 
 destructor TFHIRObject.Destroy;
 begin
+  FLocationData.Free;
   FCommentsStart.Free;
   FCommentsEnd.Free;
   FTags.Free;
@@ -787,6 +813,18 @@ begin
     result := '';
 end;
 
+function TFHIRObject.GetLocationData : TFHIRObjectLocationData;
+begin
+  if FLocationData = nil then
+    FLocationData := TFHIRObjectLocationData.create;
+  result := FLocationData;
+end;
+
+function TFHIRObject.GetHasLocationData : boolean;
+begin
+  result := FLocationData <> nil;
+end;
+
 function TFHIRObject.findLocation(loc: TSourceLocation; propFrom : TFHIRProperty; path: TFslList<TFHIRLocation>): boolean;
 var
   properties : TFHIRPropertyList;
@@ -794,7 +832,7 @@ var
   i : integer;
   n : String;
 begin
-  result := locInSpan(loc, LocationStart, LocationEnd);
+  result := GetLocationData.inSpan(loc);
   if result then
   begin
     path.add(TFHIRLocation.create(propFrom.Link, self.link));

@@ -68,7 +68,7 @@ begin
   begin
     if FMsg.segmentList.count < 20 then
       for seg in FMsg.segmentList do
-        navpoints.AddObject(seg.code, TObject(seg.LocationStart.line));
+        navpoints.AddObject(seg.code, TObject(seg.LocationData.ParseStart.line));
   end;
 end;
 

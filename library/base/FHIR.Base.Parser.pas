@@ -76,7 +76,7 @@ Type
     FSource: TStream;
     FLang : THTTPLanguages;
     FParserPolicy : TFHIRXhtmlParserPolicy;
-    FKeepLineNumbers : boolean;
+    FKeepParseLocations : boolean;
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
     FIgnoreHtml: Boolean;
@@ -107,7 +107,7 @@ Type
     Property AllowUnknownContent : Boolean read FAllowUnknownContent write FAllowUnknownContent;
     Property Lang : THTTPLanguages read FLang write FLang;
     property ParserPolicy : TFHIRXhtmlParserPolicy read FParserPolicy write FParserPolicy;
-    property KeepLineNumbers : boolean read FKeepLineNumbers write FKeepLineNumbers;
+    property KeepParseLocations : boolean read FKeepParseLocations write FKeepParseLocations;
     property timeLimit : Cardinal read FTimeLimit write FTimeLimit;
     property Format : TFHIRFormat read GetFormat;
     property IgnoreHtml : Boolean read FIgnoreHtml write FIgnoreHtml;
@@ -448,8 +448,11 @@ begin
   else
   begin
     result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], JsonToString(value));
-    result.LocationStart := value.LocationStart;
-    result.LocationEnd := value.LocationEnd;
+    if KeepParseLocations then
+    begin
+      result.LocationData.ParseStart := value.LocationStart;
+      result.LocationData.ParseFinish := value.LocationEnd;
+    end;
   end;
 end;
 
@@ -462,8 +465,11 @@ begin
   else
   begin
     result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
-    result.LocationStart := element.Start;
-    result.LocationEnd := element.Stop;
+    if KeepParseLocations then
+    begin
+      result.LocationData.ParseStart := element.Start;
+      result.LocationData.ParseFinish := element.Stop;
+    end;
   end;
 end;
 
@@ -501,8 +507,11 @@ begin
   // now, count the start and end of the array into the entry locations
   if ctxt.Count > 0 then
   begin
-    ctxt[0].LocationStart := arr.LocationStart;
-    ctxt[ctxt.Count - 1 ].LocationEnd := arr.LocationEnd;
+    if KeepParseLocations then
+    begin
+      ctxt[0].LocationData.ParseStart := arr.LocationStart;
+      ctxt[ctxt.Count - 1 ].LocationData.ParseFinish := arr.LocationEnd;
+    end;
   end;
 end;
 
@@ -520,13 +529,19 @@ begin
   begin
     if (arr1 <> nil) then
     begin
-      ctxt[0].LocationStart := arr1.LocationStart;
-      ctxt[ctxt.Count - 1 ].LocationEnd := arr1.LocationEnd;
+      if KeepParseLocations then
+      begin
+        ctxt[0].LocationData.ParseStart := arr1.LocationStart;
+        ctxt[ctxt.Count - 1 ].LocationData.ParseFinish := arr1.LocationEnd;
+      end;
     end
     else if (arr2 <> nil) then
     begin
-      ctxt[0].LocationStart := arr2.LocationStart;
-      ctxt[ctxt.Count - 1 ].LocationEnd := arr2.LocationEnd;
+      if KeepParseLocations then
+      begin
+        ctxt[0].LocationData.ParseStart := arr2.LocationStart;
+        ctxt[ctxt.Count - 1 ].LocationData.ParseFinish := arr2.LocationEnd;
+      end;
     end;
   end;
 end;
@@ -560,13 +575,19 @@ begin
   begin
     if (arr1 <> nil) then
     begin
-      ctxt[0].LocationStart := arr1.LocationStart;
-      ctxt[ctxt.Count - 1 ].LocationEnd := arr1.LocationEnd;
+      if KeepParseLocations then
+      begin
+        ctxt[0].LocationData.ParseStart := arr1.LocationStart;
+        ctxt[ctxt.Count - 1 ].LocationData.ParseFinish := arr1.LocationEnd;
+      end;
     end
     else if (arr2 <> nil) then
     begin
-      ctxt[0].LocationStart := arr2.LocationStart;
-      ctxt[ctxt.Count - 1 ].LocationEnd := arr2.LocationEnd;
+      if KeepParseLocations then
+      begin
+        ctxt[0].LocationData.ParseStart := arr2.LocationStart;
+        ctxt[ctxt.Count - 1 ].LocationData.ParseFinish := arr2.LocationEnd;
+      end;
     end;
   end;
 end;
@@ -1340,8 +1361,11 @@ end;
 
 procedure TFHIRXmlParserBase.GetObjectLocation(obj: TFHIRObject; element: TMXmlElement);
 begin
-  obj.LocationStart := element.Start;
-  obj.LocationEnd := element.Stop;
+  if KeepParseLocations then
+  begin
+    obj.LocationData.ParseStart := element.Start;
+    obj.LocationData.ParseFinish := element.Stop;
+  end;
 end;
 
 function TFHIRXmlParserBase.FirstChild(element: TMXmlElement): TMXmlElement;

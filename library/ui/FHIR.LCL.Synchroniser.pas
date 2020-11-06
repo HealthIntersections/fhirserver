@@ -18,6 +18,7 @@ made to the object (by code, usually,
 }
 
 type
+  TFHIRSynEditSynchroniserOpStatus = (opNone, opChange);
 
   { TFHIRSynEditSynchroniser }
 
@@ -27,10 +28,18 @@ type
     FFactory: TFHIRFactory;
     FFormat: TFHIRFormat;
     FResource: TFHIRResourceV;
+
+    FOpInProgress : boolean;
+    FFocus : TFHIRObject;
+    FStart : TPoint;
+    FStop : TPoint;
+
     procedure SetFactory(AValue: TFHIRFactory);
 
     procedure loadXml;
     procedure loadJson;
+
+    procedure finishOpChange;
   public
     destructor Destroy; override;
 
@@ -54,7 +63,7 @@ type
     // set the value of the provided property, which already exists. The property is an object, which may be quite extensive.
     // from a user point of view, smaller operations are better than big ones, but they are technically possible.
     // the objects maye be (typically are) primitives. The object may be in a repeating list
-    procedure setProperty(owner : TFHIRObject; name : String; obj : TFHIRObject);
+    procedure  changeProperty({owner : TFHIRObject; name : String; }obj : TFHIRObject);
 
     // add a property, not to a list
     procedure addProperty(owner : TFHIRObject; name : String);
@@ -72,6 +81,7 @@ type
     procedure moveInList(owner : TFHIRObject; name : String; obj : TFHIRObject; up : boolean);
 
     procedure commit;
+    procedure abandon;
   end;
   
   
@@ -97,6 +107,7 @@ implementation
 
 destructor TFHIRSynEditSynchroniser.Destroy;
 begin
+  FFocus.Free;  // though we really expect it to nil
   FFactory.free;
   inherited Destroy;
 end;
@@ -127,6 +138,17 @@ begin
   end;
 end;
 
+procedure TFHIRSynEditSynchroniser.finishOpChange;
+begin
+  !
+
+  // delete the old range
+  SynEdit.CaretXY;
+  // figure out the bytes for the new range
+  // insert them
+  // update all the following content
+end;
+
 procedure TFHIRSynEditSynchroniser.load;
 begin
   case format of
@@ -137,12 +159,13 @@ begin
   end;
 end;
 
-
-procedure TFHIRSynEditSynchroniser.setProperty(owner: TFHIRObject; name: String; obj: TFHIRObject);
+procedure TFHIRSynEditSynchroniser.changeProperty(obj: TFHIRObject);
 begin
-  raise Exception.create('not done yet');
+  FOpInProgress := opChange;
+  FStart := obj.LocationStart;
+  FEnd := obj.LocationStop;
+  FFocus := obj.link;
 end;
-
 
 procedure TFHIRSynEditSynchroniser.addProperty(owner: TFHIRObject; name: String);
 begin
@@ -171,7 +194,18 @@ end;
 
 procedure TFHIRSynEditSynchroniser.commit;
 begin
-  raise Exception.create('not done yet');
+  case FOpInProgress of
+    opNone : raise Exception.create('No operation in process');
+    opChange : finishOpChange;
+  else
+    raise Exception.create('not done yet');
+  end;
+end;
+
+procedure TFHIRSynEditSynchroniser.abandon;
+begin
+  FOpInProgress := opNone;
+  FFocus.Free;
 end;
 
 end.
