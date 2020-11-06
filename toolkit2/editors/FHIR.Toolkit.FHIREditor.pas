@@ -5,7 +5,9 @@ unit FHIR.Toolkit.FHIREditor;
 interface
 
 uses
-  Classes, SysUtils, SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
+  Classes, SysUtils,
+  ComCtrls,
+  SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
@@ -23,8 +25,11 @@ type
     FVersion : TFHIRVersion;
     FFactory : TFHIRFactory;
     FResource : TFHIRResourceV;
+    actTestEditing : TContentAction;
     function parseResource(source : String) : TFHirResourceV;
+    procedure DoTestEncoding(sender : TObject);
   protected
+    function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
   public
@@ -63,6 +68,17 @@ begin
   finally
     p.Free;
   end;
+end;
+
+procedure TFHIREditor.DoTestEncoding(sender: TObject);
+begin
+  raise Exception.create('not done yet');
+end;
+
+function TFHIREditor.AddActions(tb : TToolBar): boolean;
+begin
+  actTestEditing := makeAction(tb, 'Test Editing', 11, 0, DoTestEncoding);
+  Result:= true;
 end;
 
 function TFHIREditor.makeHighlighter: TSynCustomHighlighter;

@@ -136,7 +136,7 @@ type
 
     function GetCanBeSaved: boolean; override;
     procedure GotoLine(line : integer);
-    function AddActions : boolean; virtual;
+    function AddActions(tb : TToolBar) : boolean; virtual;
     function makeHighlighter : TSynCustomHighlighter; virtual;
     procedure getNavigationList(ts : TStringList); virtual;
     function MustBeUnicode : boolean; virtual;
@@ -758,7 +758,7 @@ begin
   TextEditor.CaretXY := Point(1,line+1);
 end;
 
-function TBaseEditor.AddActions: boolean;
+function TBaseEditor.AddActions(tb : TToolBar): boolean;
 begin
   result := false;
 end;
@@ -1079,7 +1079,7 @@ begin
   actNavigate := makeAction(tb, '&Navigate', 63);
   actNavigate.OnPopulate := MakeNavigationItems;
   makeDivider(tb);
-  if AddActions then
+  if AddActions(tb) then
     makeDivider(tb);
   actEncoding := makeAction(tb, 'Encoding', 0);
   makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
