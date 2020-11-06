@@ -38,7 +38,7 @@ Uses
 
 const
   {$IFDEF FPC}
-  SArgumentOutOfRange : AnsiString = 'something';
+  SArgumentOutOfRange : AnsiString = 'index out of range';
   {$ENDIF}
   EMPTY_HASH = -1;
 
@@ -132,6 +132,12 @@ Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
 
 Type
+  TGetThreadNameStatus = function : AnsiString;
+
+var
+  GetThreadNameStatusDelegate : TGetThreadNameStatus = nil;
+
+Type
   TFslObjectClass = Class Of TFslObject;
   TFslClass = TFslObjectClass;
 
@@ -146,6 +152,12 @@ Type
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
     FNamedClass : String;
+    {$ENDIF}
+    {$IFDEF OBJECT_TRACKING}
+    FTracked : boolean;
+    FSerial : integer;
+    FNext, FPrev : TFslObject; // same class type
+    FThreadName : AnsiString;
     {$ENDIF}
 
   Protected
@@ -199,6 +211,8 @@ Type
     {$IFOPT D+}
     property NamedClass : String read FNamedClass;
     {$ENDIF}
+
+    class function getReport(sep : String; full : boolean) : String;
   End;
 
   PFslObject = ^TFslObject;
@@ -669,6 +683,42 @@ Type
 
 Implementation
 
+type
+  TClassTrackingType = class (TObject)
+  private
+    first, last : TFslObject;
+    count : integer;
+    dcount : integer;
+    serial : integer;
+  end;
+
+var
+  GInited : boolean;
+  GLock : TRTLCriticalSection;
+  GClassTracker : TDictionary<String, TClassTrackingType>;
+
+procedure initUnit;
+begin
+  if not GInited then
+  begin
+    InitializeCriticalSection(GLock);
+    GClassTracker := TDictionary<String, TClassTrackingType>.create;
+    GInited := true;
+  end;
+end;
+
+procedure endUnit;
+var
+  t : TClassTrackingType;
+begin
+  for t in GClassTracker.Values do
+    t.Free;
+  GClassTracker.Free;
+  DeleteCriticalSection(GLock);
+  GInited := false;
+end;
+
+
 Function ExceptObject : Exception;
 Begin
 {$IFDEF FPC}
@@ -789,15 +839,94 @@ End;
 { TFslObject }
 
 Constructor TFslObject.Create;
+var
+  t : TClassTrackingType;
 Begin
   Inherited;
   {$IFOPT D+}
   FNamedClass := ClassName;
   {$ENDIF}
+  {$IFDEF OBJECT_TRACKING}
+  if not GInited then
+    initUnit;
+  if Assigned(GetThreadNameStatusDelegate) then
+    FThreadName := GetThreadNameStatusDelegate;
+  EnterCriticalSection(GLock);
+  try
+    if not GClassTracker.TryGetValue(FNamedClass, t) then
+    begin
+      t := TClassTrackingType.Create;
+      GClassTracker.Add(FNamedClass, t);
+    end;
+    FTracked := true;
+    inc(t.count);
+    inc(t.dcount);
+    inc(t.serial);
+    FSerial := t.serial;
+    if t.first = nil then
+    begin
+      t.first := self;
+      t.last := self;
+    end
+    else
+    begin
+      t.last.FNext := self;
+      FPrev := t.last;
+      t.last := self;
+    end;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+  {$ENDIF}
 End;
 
 Destructor TFslObject.Destroy;
+var
+  t : TClassTrackingType;
 Begin
+  {$IFDEF OBJECT_TRACKING}
+  if GInited then
+  begin
+    EnterCriticalSection(GLock);
+    try
+      if GClassTracker.TryGetValue(FNamedClass, t) then // this will succeed
+      begin
+        dec(t.Count);
+        dec(t.dCount);
+        if FTracked then
+        begin
+          if FPrev = nil then
+          begin
+            t.first := self.FNext;
+            if self.FNext <> nil then
+              self.FNext.FPrev := nil;
+          end
+          else
+          begin
+            if self.FNext <> nil then
+              self.FNext.FPrev := self.FPrev;
+            self.FPrev.FNext := self.FNext;
+          end;
+
+          if FNext = nil then
+          begin
+            t.last := self.FPrev;
+            if self.FPrev <> nil then
+              self.FPrev.FNext := nil;
+          end
+          else
+          begin
+            if self.FPrev <> nil then
+              self.FPrev.FNext := self.FNext;
+            self.FNext.FPrev := self.FPrev;
+          end;
+        end;
+      end;
+    finally
+      LeaveCriticalSection(GLock);
+    end;
+  end;
+  {$ENDIF}
   Inherited;
 End;
 
@@ -826,6 +955,65 @@ Begin
       Destroy;
   End;
 End;
+
+class function TFslObject.getReport(sep : String; full : boolean): String;
+var
+  cn : String;
+  t : TClassTrackingType;
+  ts : TStringList;
+  o : TFSLObject;
+  i : integer;
+begin
+  {$IFDEF OBJECT_TRACKING}
+  result := '';
+  EnterCriticalSection(GLock);
+  try
+    for cn in GClassTracker.Keys do
+    begin
+      t := GClassTracker[cn];
+      if full then
+      begin
+        ts := TStringList.Create;
+        try
+          if t.dcount <> 0 then
+          begin
+            o := t.first;
+            while o <> nil do
+            begin
+              i := ts.IndexOf(o.FThreadName);
+              if i = -1 then
+                i := ts.Add(o.FThreadName);
+              ts.Objects[i] := TObject(integer(ts.Objects[i])+1);
+              o.FTracked := false;
+              o.FThreadName := '';
+              o := o.FNext;
+            end;
+            t.first := nil;
+            t.last := nil;
+            result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+'. Delta = '+inttostr(t.dcount);
+            if ts.Count <> 0 then
+            begin
+              result := result + ': ';
+              for i := 0 to ts.Count - 1 do
+                result := result + ts[i]+': '+inttostr(integer(ts.objects[i]))+',';
+            end;
+            t.dcount := 0;
+            result := result + sep;
+          end;
+        finally
+          ts.Free;
+        end;
+      end
+      else
+        result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+sep;
+    end;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+  {$ELSE}
+  result := 'Object Tracking is not enable';
+  {$ENDIF}
+end;
 
 Function TFslObject.ClassType : TFslObjectClass;
 Begin
@@ -2950,9 +3138,12 @@ begin
 end;
 
 Initialization
+  initUnit;
 {$IFNDEF FPC}
   System.AbstractErrorProc := @AbstractHandler;
 {$ENDIF}
 //System.AssertErrorProc := @AssertionHandler;
+finalization
+  endUnit;
 End.
 

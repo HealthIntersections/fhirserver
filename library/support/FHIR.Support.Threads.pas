@@ -58,6 +58,7 @@ procedure SetThreadStatus(status : AnsiString);
 function GetThreadInfo : AnsiString;
 function GetThreadReport : AnsiString;
 function GetThreadCount : Integer;
+function GetThreadNameStatus : AnsiString;
 procedure closeThread;
 
 type
@@ -365,65 +366,6 @@ var
   GCount: Integer = 0;
   GTotal: Integer = 0;
 
-{$IFDEF WINDOWS}
-
-{ Thread tracking is delegated to a .dll to ensure thoroughness (because of DLL Main) }
-
-procedure THThreadName(name : PAnsiChar); stdcall; external 'threadtracker.dll';
-procedure THThreadStatus(status : PAnsiChar); stdcall; external 'threadtracker.dll';
-function THThreadInfo : PAnsiChar; stdcall; external 'threadtracker.dll';
-function THThreadCount : Cardinal; stdcall; external 'threadtracker.dll';
-function THGetReport : PAnsiChar; stdcall; external 'threadtracker.dll';
-procedure THFreeMem(rep : PAnsiChar); stdcall; external 'threadtracker.dll';
-
-procedure SetThreadName(name : AnsiString);
-begin
-  THThreadName(pAnsichar(name));
-end;
-
-procedure SetThreadStatus(status : AnsiString);
-begin
-  THThreadStatus(pAnsichar(status));
-end;
-
-function GetThreadCount : Integer;
-begin
-  result := THThreadCount;
-end;
-
-function GetThreadInfo : AnsiString;
-var
-  p : PAnsiChar;
-begin
-  p := THThreadInfo;
-  try
-    SetLength(result, length(p));
-    Move(p^, result[1], length(p));
-  finally
-    THFreeMem(p);
-  end;
-end;
-
-function GetThreadReport : AnsiString;
-var
-  p : PAnsiChar;
-begin
-  p := THGetReport;
-  try
-    SetLength(result, length(p));
-    Move(p^, result[1], length(p));
-  finally
-    THFreeMem(p);
-  end;
-end;
-
-procedure CloseThread;
-begin
-  SetThreadStatus('closed');
-end;
-
-{$ELSE}
-
 var
   GThreadList : TList;
 
@@ -495,6 +437,8 @@ var
   p : PTheadRecord;
 begin
   id := GetCurrentThreadId;
+  if not GHaveCritSect then
+    exit;
   EnterCriticalSection(GCritSct);
   try
     for i := GThreadList.Count - 1 downto 0 do
@@ -567,6 +511,32 @@ begin
     result := result + ' (born '+age(p.startTick)+')';
 end;
 
+function GetThreadNameStatus : AnsiString;
+var
+  id : TThreadId;
+  i : integer;
+  p : PTheadRecord;
+  s : AnsiString;
+begin
+  s := 'Unknown thread';
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+      begin
+        s := p.name+':'+p.state;
+        break;
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+  result := s;
+end;
+
 function GetThreadInfo : AnsiString;
 var
   id : TThreadId;
@@ -625,8 +595,6 @@ begin
   result := s;
 end;
 
-{$ENDIF}
-
 procedure CloseThreadInternal(name : AnsiString);
 begin
   closeThread;
@@ -637,25 +605,22 @@ begin
   InitializeCriticalSection(GCritSct);
   GHaveCritSect := true;
   GBackgroundTasks := TBackgroundTaskManager.Create;
-  {$IFNDEF WINDOWS}
   GThreadList := TList.Create;
-  {$ENDIF}
   IdThread.fsThreadName := SetThreadName;
   IdThread.fsThreadStatus := SetThreadStatus;
   IdThread.fsThreadClose := CloseThreadInternal;
+  GetThreadNameStatusDelegate := GetThreadNameStatus;
 end;
 
 procedure DoneUnit;
-{$IFNDEF WINDOWS}
 var
   i : integer;
   p : PTheadRecord;
-{$ENDIF}
 begin
+  GHaveCritSect := false;
   IdThread.fsThreadName := nil;
   IdThread.fsThreadStatus := nil;
   IdThread.fsThreadClose := nil;
-  {$IFNDEF WINDOWS}
   for i := GThreadList.Count - 1 downto 0 do
   begin
     p := GThreadList[i];
@@ -663,7 +628,6 @@ begin
     GThreadList.Delete(i);
   end;
   GThreadList.Free;
-  {$ENDIF}
   GBackgroundTasks.Free;
   DeleteCriticalSection(GCritSct);
 end;
