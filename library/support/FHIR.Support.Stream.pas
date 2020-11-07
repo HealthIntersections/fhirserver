@@ -413,6 +413,7 @@ type
   TSourceLocation = record
     line, col : integer;
     class function make(l, c : integer) : TSourceLocation; static;
+    class function makeNull : TSourceLocation; static;
     function nonZero : boolean;
   end;
 
@@ -893,6 +894,7 @@ Type
 
   TFslTextFormatter = Class(TFslFormatter)
     Private
+      FLocation : TSourceLocation;
       FLevel : Integer;
       FHasWhitespace : Boolean;
       FWhitespaceCharacter : Char;
@@ -912,6 +914,9 @@ Type
 
       Procedure Clear; Override;
 
+      Procedure ProduceBytes(Const aBytes : TBytes); Overload; override;
+      Procedure Produce(Const sText: String); Overload; override;
+
       Procedure ProduceNewLine; Virtual;
       Procedure ProduceLine(Const sValue : String);
       Procedure ProduceInline(Const sValue : String);
@@ -928,6 +933,7 @@ Type
       {$IFNDEF VER130}
       Property Encoding : TEncoding read FEncoding Write FEncoding;
       {$ENDIF}
+      property Location  : TSourceLocation read FLocation;
   End;
 
   TFslTextFormatterClass = Class Of TFslTextFormatter;
@@ -2775,6 +2781,11 @@ Begin
 End;
 
 
+class function TSourceLocation.makeNull: TSourceLocation;
+begin
+  result := make(-1, -1);
+end;
+
 { TFslFile }
 
 constructor TFslFile.Create(const AFileName: string; Mode: Word);
@@ -3892,6 +3903,8 @@ Begin
   {$IFNDEF VER130}
   Encoding := SysUtils.TEncoding.UTF8;
   {$ENDIF}
+  FLocation.line := 0;
+  FLocation.col := 0;
 End;
 
 
@@ -3928,6 +3941,62 @@ Begin
     Result := '';
 End;
 
+
+procedure TFslTextFormatter.Produce(const sText: String);
+var
+  i : integer;
+  nl : boolean;
+begin
+  nl := false;
+  for i := 1 to length(sText) do
+  case sText[i] of
+    #13:
+      begin
+      nl := true;
+      inc(Flocation.line);
+      FLocation.col := 0;
+      end;
+    #10:
+      if not nl then
+      begin
+      inc(Flocation.line);
+      FLocation.col := 0;
+      end;
+  else
+    nl := false;
+    inc(FLocation.col);
+  end;
+
+  inherited;
+end;
+
+procedure TFslTextFormatter.ProduceBytes(const aBytes: TBytes);
+var
+  i : integer;
+  nl : boolean;
+begin
+  nl := false;
+  // it's possible to get #10 and #13 from various unicode characters; this will cause miscounts here, but we take that risk
+  for i := 0 to length(aBytes) - 1 do
+  case aBytes[i] of
+    13:
+      begin
+      nl := true;
+      inc(Flocation.line);
+      FLocation.col := 0;
+      end;
+    10:
+      if not nl then
+      begin
+      inc(Flocation.line);
+      FLocation.col := 0;
+      end;
+  else
+    nl := false;
+    inc(FLocation.col);
+  end;
+  inherited;
+end;
 
 Procedure TFslTextFormatter.ProduceFragment(Const sValue: String);
 Begin

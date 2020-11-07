@@ -303,6 +303,10 @@ begin
     FEnhanced := true
   else if (s = '@threads') then
     send('$@threads: '+GetThreadReport)
+  else if (s = '@classes') then
+    send('$@classes: '+TFslObject.getReport('|', false))
+  else if (s = '@classes+') then
+    send('$@classes: '+TFslObject.getReport('|', true))
   else if (s = '@cache') then
   begin
     for ctxt in FServer.FContexts do

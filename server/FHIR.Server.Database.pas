@@ -3595,7 +3595,7 @@ var
 begin
   if (node <> nil) and (node.NodeType = fhntElement) then
   begin
-    if (node.Name = 'a') and (node.Attributes.Get('href') <> '') then
+    if (node.Name = 'a') and (node.HasAttributes) and (node.Attributes.Get('href') <> '') then
     begin
       s := node.Attributes.Get('href');
       url := fullResourceUri(base, s);

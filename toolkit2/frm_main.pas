@@ -362,7 +362,6 @@ type
     FScale : integer;
     FSearchTask : integer;
     FSearch : TFslList<TToolkitSearchMatch>;
-    FHasUnreadLogMessages : boolean;
     function checkDoSave(editor : TToolkitEditor): boolean;
     procedure copyFonts;
     procedure loadFont(font: TFont; sname: String);
@@ -632,7 +631,7 @@ end;
 
 procedure TMainToolkitForm.tbLogShow(Sender: TObject);
 begin
-  FHasUnreadLogMessages := false;
+  tbLog.ImageIndex := 45;
 end;
 
 procedure TMainToolkitForm.Timer1Timer(Sender: TObject);
@@ -728,6 +727,10 @@ begin
   finally
     list.free;
   end;
+  if GBackgroundTasks.TasksAreWorking then
+    tbTasks.ImageIndex := 84
+  else
+    tbTasks.ImageIndex := 46;
 end;
 
 procedure TMainToolkitForm.updateConsole;
@@ -753,12 +756,12 @@ begin
         mConsole.Lines.EndUpdate;
       end;
       actionViewsClearLog.enabled := true;
+      if not mConsole.IsVisible then
+        tbLog.ImageIndex := 85;
     end;
   finally
     ts.free;
   end;
-  if not mConsole.IsVisible then
-    FHasUnreadLogMessages := true;
 end;
 
 procedure TMainToolkitForm.updateActions;
@@ -818,14 +821,6 @@ begin
     else
       pnlStatus.Panels[1].Text := 'Saved';
   end;
-  if FHasUnreadLogMessages then
-    pnlStatus.Panels[4].Text := 'New Log Entries'
-  else
-    pnlStatus.Panels[4].Text := '';
-  if GBackgroundTasks.TasksAreWorking then
-    pnlStatus.Panels[5].Text := 'Tasks Active'
-  else
-    pnlStatus.Panels[5].Text := '';
 end;
 
 procedure TMainToolkitForm.openMRUItem(sender: TObject);
@@ -1301,7 +1296,7 @@ begin
     setScale(100);
     pnlLeft.Width := 170;
     pgLeft.ActivePage := tbProjects;
-    pnlRight.Width := 200;
+    pnlRight.Width := 230;
     pgRight.ActivePage := tbInspector;
     pnlBottom.Height := 130;
     pgBottom.ActivePage := tbMessages;

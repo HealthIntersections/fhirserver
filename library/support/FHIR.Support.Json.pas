@@ -283,6 +283,7 @@ Type
     Function Link: TJSONWriter; overload;
     function canInject : boolean; virtual;
 
+    function sourceLocation : TSourceLocation; virtual; abstract;
     Procedure Start(obj : boolean = true); virtual; abstract;
     Procedure Finish(obj : boolean = true); virtual;  abstract;
 
@@ -342,6 +343,8 @@ Type
   Public
     Function Link: TJsonWriterDirect; overload;
     function canInject : boolean; override;
+
+    function sourceLocation : TSourceLocation; override;
     Procedure Start(obj : boolean); override;
     Procedure Finish(obj : boolean); override;
 
@@ -380,6 +383,7 @@ Type
     procedure doValue(name, value : String); override;
   public
     Function Link: TJsonWriterCanonical; overload;
+    function sourceLocation : TSourceLocation; override;
     Procedure Start(obj : boolean); override;
     Procedure Finish(obj : boolean); override;
     Procedure ValueObject(Const name : String); Overload; override;
@@ -1186,6 +1190,11 @@ end;
 function TJsonWriterDirect.Link: TJsonWriterDirect;
 begin
   result := TJsonWriterDirect(inherited Link);
+end;
+
+function TJsonWriterDirect.sourceLocation: TSourceLocation;
+begin
+  result := Location;
 end;
 
 function TJsonWriterDirect.UseName: String;
@@ -3135,6 +3144,11 @@ end;
 function TJsonWriterCanonical.Link: TJsonWriterCanonical;
 begin
   result := TJsonWriterCanonical(inherited Link);
+end;
+
+function TJsonWriterCanonical.sourceLocation: TSourceLocation;
+begin
+  result := TSourceLocation.makeNull;
 end;
 
 procedure TJsonWriterCanonical.Start;

@@ -184,6 +184,8 @@ var
   s : string;
 begin
   checkResource(r);
+  if r is TFHIRDomainResource then
+    TFHIRDomainResource(r).text := nil;
   if (r.ResourceType in [frtValueSet, frtConceptMap, frtCodeSystem]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.resourceType = frtSearchParameter then

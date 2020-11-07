@@ -173,7 +173,6 @@
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Base.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Collections.pas"/>
@@ -181,7 +180,7 @@
         <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
+        <DCCReference Include="..\library\web\FHIR.Web.Crypto.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
@@ -468,15 +467,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkitR3</RemoteName>
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="OSX32">
-                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <RemoteName>FHIRToolkitR3</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -486,9 +485,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

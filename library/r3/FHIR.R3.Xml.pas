@@ -2566,10 +2566,12 @@ begin
     exit;
   composeElementAttributes(xml, elem);
   Attribute(xml, 'id', elem.id  );
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : TMXmlElement);
@@ -2649,10 +2651,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBackboneElementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseEnum(Const aNames, aSystems : Array Of String; path : String; element : TMXmlElement) : TFhirEnum;
@@ -2689,10 +2693,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDate(element : TMXmlElement; path : string) : TFhirDate;
@@ -2725,10 +2731,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDateTime(element : TMXmlElement; path : string) : TFhirDateTime;
@@ -2761,10 +2769,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseString(element : TMXmlElement; path : string) : TFhirString;
@@ -2796,10 +2806,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseInteger(element : TMXmlElement; path : string) : TFhirInteger;
@@ -2831,10 +2843,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUri(element : TMXmlElement; path : string) : TFhirUri;
@@ -2866,10 +2880,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseInstant(element : TMXmlElement; path : string) : TFhirInstant;
@@ -2902,10 +2918,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseXhtml(element : TMXmlElement; path : string) : TFhirXhtml;
@@ -2937,10 +2955,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseBoolean(element : TMXmlElement; path : string) : TFhirBoolean;
@@ -2972,10 +2992,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', LCBooleanToString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseBase64Binary(element : TMXmlElement; path : string) : TFhirBase64Binary;
@@ -3008,10 +3030,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value <> nil) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseTime(element : TMXmlElement; path : string) : TFhirTime;
@@ -3043,10 +3067,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDecimal(element : TMXmlElement; path : string) : TFhirDecimal;
@@ -3078,10 +3104,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseCode(element : TMXmlElement; path : string) : TFhirCode;
@@ -3113,10 +3141,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseOid(element : TMXmlElement; path : string) : TFhirOid;
@@ -3148,10 +3178,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUuid(element : TMXmlElement; path : string) : TFhirUuid;
@@ -3183,10 +3215,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseMarkdown(element : TMXmlElement; path : string) : TFhirMarkdown;
@@ -3218,10 +3252,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUnsignedInt(element : TMXmlElement; path : string) : TFhirUnsignedInt;
@@ -3253,10 +3289,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseId(element : TMXmlElement; path : string) : TFhirId;
@@ -3288,10 +3326,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParsePositiveInt(element : TMXmlElement; path : string) : TFhirPositiveInt;
@@ -3323,10 +3363,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 Procedure TFHIRXmlParser.ParseResourceAttributes(resource : TFhirResource; path : string; element : TMXmlElement);
@@ -3525,10 +3567,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeParametersParameterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeParametersParameterChildren(xml : TXmlBuilder; elem : TFhirParametersParameter);
@@ -3656,10 +3700,12 @@ begin
   if (elem = nil) then
     exit;
   composeResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeParametersChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeParametersChildren(xml : TXmlBuilder; elem : TFhirParameters);
@@ -3785,10 +3831,12 @@ begin
     exit;
   composeElementAttributes(xml, elem);
   Attribute(xml, 'url', elem.url  );
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExtensionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExtensionChildren(xml : TXmlBuilder; elem : TFhirExtension);
@@ -3910,10 +3958,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNarrativeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNarrativeChildren(xml : TXmlBuilder; elem : TFhirNarrative);
@@ -3963,10 +4013,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContributorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContributorChildren(xml : TXmlBuilder; elem : TFhirContributor);
@@ -4031,10 +4083,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAttachmentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAttachmentChildren(xml : TXmlBuilder; elem : TFhirAttachment);
@@ -4104,10 +4158,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDataRequirementCodeFilterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDataRequirementCodeFilterChildren(xml : TXmlBuilder; elem : TFhirDataRequirementCodeFilter);
@@ -4173,10 +4229,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDataRequirementDateFilterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDataRequirementDateFilterChildren(xml : TXmlBuilder; elem : TFhirDataRequirementDateFilter);
@@ -4235,10 +4293,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDataRequirementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDataRequirementChildren(xml : TXmlBuilder; elem : TFhirDataRequirement);
@@ -4331,10 +4391,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDosageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDosageChildren(xml : TXmlBuilder; elem : TFhirDosage);
@@ -4427,10 +4489,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeIdentifierChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeIdentifierChildren(xml : TXmlBuilder; elem : TFhirIdentifier);
@@ -4494,10 +4558,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodingChildren(xml : TXmlBuilder; elem : TFhirCoding);
@@ -4563,10 +4629,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSampledDataChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSampledDataChildren(xml : TXmlBuilder; elem : TFhirSampledData);
@@ -4622,10 +4690,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRatioChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRatioChildren(xml : TXmlBuilder; elem : TFhirRatio);
@@ -4677,10 +4747,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeReferenceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeReferenceChildren(xml : TXmlBuilder; elem : TFhirReference);
@@ -4742,10 +4814,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTriggerDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTriggerDefinitionChildren(xml : TXmlBuilder; elem : TFhirTriggerDefinition);
@@ -4804,10 +4878,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePeriodChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePeriodChildren(xml : TXmlBuilder; elem : TFhirPeriod);
@@ -4863,10 +4939,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuantityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuantityChildren(xml : TXmlBuilder; elem : TFhirQuantity);
@@ -4922,10 +5000,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRangeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRangeChildren(xml : TXmlBuilder; elem : TFhirRange);
@@ -4983,10 +5063,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRelatedArtifactChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRelatedArtifactChildren(xml : TXmlBuilder; elem : TFhirRelatedArtifact);
@@ -5047,10 +5129,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAnnotationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAnnotationChildren(xml : TXmlBuilder; elem : TFhirAnnotation);
@@ -5103,10 +5187,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContactDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContactDetailChildren(xml : TXmlBuilder; elem : TFhirContactDetail);
@@ -5163,10 +5249,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeUsageContextChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeUsageContextChildren(xml : TXmlBuilder; elem : TFhirUsageContext);
@@ -5231,10 +5319,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSignatureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSignatureChildren(xml : TXmlBuilder; elem : TFhirSignature);
@@ -5297,10 +5387,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeableConceptChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeableConceptChildren(xml : TXmlBuilder; elem : TFhirCodeableConcept);
@@ -5363,10 +5455,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeParameterDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeParameterDefinitionChildren(xml : TXmlBuilder; elem : TFhirParameterDefinition);
@@ -5430,10 +5524,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContactPointChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContactPointChildren(xml : TXmlBuilder; elem : TFhirContactPoint);
@@ -5499,10 +5595,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeHumanNameChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeHumanNameChildren(xml : TXmlBuilder; elem : TFhirHumanName);
@@ -5573,10 +5671,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMetaChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMetaChildren(xml : TXmlBuilder; elem : TFhirMeta);
@@ -5653,10 +5753,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAddressChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAddressChildren(xml : TXmlBuilder; elem : TFhirAddress);
@@ -5729,10 +5831,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionSlicingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionSlicingChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionSlicing);
@@ -5788,10 +5892,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionSlicingDiscriminatorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionSlicingDiscriminatorChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionSlicingDiscriminator);
@@ -5841,10 +5947,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionBaseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionBaseChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionBase);
@@ -5899,10 +6007,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionTypeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionTypeChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionType);
@@ -6034,10 +6144,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionExampleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionExampleChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionExample);
@@ -6170,10 +6282,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionConstraintChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionConstraintChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionConstraint);
@@ -6233,10 +6347,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionBindingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionBindingChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionBinding);
@@ -6293,10 +6409,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionMappingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionMappingChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionMapping);
@@ -6662,10 +6780,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeElementDefinitionChildren(xml : TXmlBuilder; elem : TFhirElementDefinition);
@@ -7068,10 +7188,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTimingRepeatChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTimingRepeatChildren(xml : TXmlBuilder; elem : TFhirTimingRepeat);
@@ -7158,10 +7280,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTimingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTimingChildren(xml : TXmlBuilder; elem : TFhirTiming);
@@ -7212,10 +7336,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCountChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCountChildren(xml : TXmlBuilder; elem : TFhirCount);
@@ -7257,10 +7383,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMoneyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMoneyChildren(xml : TXmlBuilder; elem : TFhirMoney);
@@ -7302,10 +7430,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAgeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAgeChildren(xml : TXmlBuilder; elem : TFhirAge);
@@ -7347,10 +7477,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDistanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDistanceChildren(xml : TXmlBuilder; elem : TFhirDistance);
@@ -7392,10 +7524,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDurationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDurationChildren(xml : TXmlBuilder; elem : TFhirDuration);
@@ -7442,10 +7576,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAccountCoverageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAccountCoverageChildren(xml : TXmlBuilder; elem : TFhirAccountCoverage);
@@ -7496,10 +7632,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAccountGuarantorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAccountGuarantorChildren(xml : TXmlBuilder; elem : TFhirAccountGuarantor);
@@ -7570,10 +7708,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAccountChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAccountChildren(xml : TXmlBuilder; elem : TFhirAccount);
@@ -7650,10 +7790,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeActivityDefinitionParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeActivityDefinitionParticipantChildren(xml : TXmlBuilder; elem : TFhirActivityDefinitionParticipant);
@@ -7706,10 +7848,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeActivityDefinitionDynamicValueChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeActivityDefinitionDynamicValueChildren(xml : TXmlBuilder; elem : TFhirActivityDefinitionDynamicValue);
@@ -7835,10 +7979,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeActivityDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeActivityDefinitionChildren(xml : TXmlBuilder; elem : TFhirActivityDefinition);
@@ -7985,10 +8131,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAdverseEventSuspectEntityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAdverseEventSuspectEntityChildren(xml : TXmlBuilder; elem : TFhirAdverseEventSuspectEntity);
@@ -8075,10 +8223,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAdverseEventChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAdverseEventChildren(xml : TXmlBuilder; elem : TFhirAdverseEvent);
@@ -8175,10 +8325,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAllergyIntoleranceReactionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAllergyIntoleranceReactionChildren(xml : TXmlBuilder; elem : TFhirAllergyIntoleranceReaction);
@@ -8275,10 +8427,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAllergyIntoleranceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAllergyIntoleranceChildren(xml : TXmlBuilder; elem : TFhirAllergyIntolerance);
@@ -8372,10 +8526,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAppointmentParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAppointmentParticipantChildren(xml : TXmlBuilder; elem : TFhirAppointmentParticipant);
@@ -8467,10 +8623,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAppointmentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAppointmentChildren(xml : TXmlBuilder; elem : TFhirAppointment);
@@ -8580,10 +8738,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAppointmentResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAppointmentResponseChildren(xml : TXmlBuilder; elem : TFhirAppointmentResponse);
@@ -8667,10 +8827,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventAgentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventAgentChildren(xml : TXmlBuilder; elem : TFhirAuditEventAgent);
@@ -8742,10 +8904,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventAgentNetworkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventAgentNetworkChildren(xml : TXmlBuilder; elem : TFhirAuditEventAgentNetwork);
@@ -8797,10 +8961,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventSourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventSourceChildren(xml : TXmlBuilder; elem : TFhirAuditEventSource);
@@ -8870,10 +9036,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventEntityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventEntityChildren(xml : TXmlBuilder; elem : TFhirAuditEventEntity);
@@ -8943,10 +9111,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventEntityDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventEntityDetailChildren(xml : TXmlBuilder; elem : TFhirAuditEventEntityDetail);
@@ -9010,10 +9180,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeAuditEventChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeAuditEventChildren(xml : TXmlBuilder; elem : TFhirAuditEvent);
@@ -9089,10 +9261,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBasicChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBasicChildren(xml : TXmlBuilder; elem : TFhirBasic);
@@ -9154,10 +9328,12 @@ begin
   if (elem = nil) then
     exit;
   composeResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBinaryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBinaryChildren(xml : TXmlBuilder; elem : TFhirBinary);
@@ -9219,10 +9395,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBodySiteChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBodySiteChildren(xml : TXmlBuilder; elem : TFhirBodySite);
@@ -9288,10 +9466,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleLinkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleLinkChildren(xml : TXmlBuilder; elem : TFhirBundleLink);
@@ -9347,10 +9527,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleEntryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleEntryChildren(xml : TXmlBuilder; elem : TFhirBundleEntry);
@@ -9411,10 +9593,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleEntrySearchChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleEntrySearchChildren(xml : TXmlBuilder; elem : TFhirBundleEntrySearch);
@@ -9472,10 +9656,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleEntryRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleEntryRequestChildren(xml : TXmlBuilder; elem : TFhirBundleEntryRequest);
@@ -9537,10 +9723,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleEntryResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleEntryResponseChildren(xml : TXmlBuilder; elem : TFhirBundleEntryResponse);
@@ -9603,10 +9791,12 @@ begin
   if (elem = nil) then
     exit;
   composeResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeBundleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeBundleChildren(xml : TXmlBuilder; elem : TFhirBundle);
@@ -9671,10 +9861,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementSoftwareChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementSoftwareChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementSoftware);
@@ -9725,10 +9917,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementImplementationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementImplementationChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementImplementation);
@@ -9789,10 +9983,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRest);
@@ -9864,10 +10060,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestSecurityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestSecurityChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestSecurity);
@@ -9925,10 +10123,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestSecurityCertificateChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestSecurityCertificateChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestSecurityCertificate);
@@ -10004,10 +10204,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestResourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestResourceChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestResource);
@@ -10088,10 +10290,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestResourceInteractionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestResourceInteractionChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestResourceInteraction);
@@ -10144,10 +10348,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestResourceSearchParamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestResourceSearchParamChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestResourceSearchParam);
@@ -10199,10 +10405,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestInteractionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestInteractionChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestInteraction);
@@ -10251,10 +10459,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementRestOperationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementRestOperationChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementRestOperation);
@@ -10308,10 +10518,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementMessagingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementMessagingChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementMessaging);
@@ -10372,10 +10584,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementMessagingEndpointChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementMessagingEndpointChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementMessagingEndpoint);
@@ -10423,10 +10637,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementMessagingSupportedMessageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementMessagingSupportedMessageChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementMessagingSupportedMessage);
@@ -10484,10 +10700,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementMessagingEventChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementMessagingEventChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementMessagingEvent);
@@ -10544,10 +10762,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementDocumentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementDocumentChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementDocument);
@@ -10647,10 +10867,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCapabilityStatementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCapabilityStatementChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatement);
@@ -10765,10 +10987,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCarePlanActivityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCarePlanActivityChildren(xml : TXmlBuilder; elem : TFhirCarePlanActivity);
@@ -10863,10 +11087,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCarePlanActivityDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCarePlanActivityDetailChildren(xml : TXmlBuilder; elem : TFhirCarePlanActivityDetail);
@@ -10991,10 +11217,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCarePlanChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCarePlanChildren(xml : TXmlBuilder; elem : TFhirCarePlan);
@@ -11098,10 +11326,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCareTeamParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCareTeamParticipantChildren(xml : TXmlBuilder; elem : TFhirCareTeamParticipant);
@@ -11175,10 +11405,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCareTeamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCareTeamChildren(xml : TXmlBuilder; elem : TFhirCareTeam);
@@ -11259,10 +11491,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeChargeItemParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeChargeItemParticipantChildren(xml : TXmlBuilder; elem : TFhirChargeItemParticipant);
@@ -11357,10 +11591,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeChargeItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeChargeItemChildren(xml : TXmlBuilder; elem : TFhirChargeItem);
@@ -11468,10 +11704,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimRelatedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimRelatedChildren(xml : TXmlBuilder; elem : TFhirClaimRelated);
@@ -11525,10 +11763,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimPayeeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimPayeeChildren(xml : TXmlBuilder; elem : TFhirClaimPayee);
@@ -11585,10 +11825,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimCareTeamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimCareTeamChildren(xml : TXmlBuilder; elem : TFhirClaimCareTeam);
@@ -11658,10 +11900,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimInformationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimInformationChildren(xml : TXmlBuilder; elem : TFhirClaimInformation);
@@ -11731,10 +11975,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimDiagnosisChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimDiagnosisChildren(xml : TXmlBuilder; elem : TFhirClaimDiagnosis);
@@ -11796,10 +12042,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimProcedureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimProcedureChildren(xml : TXmlBuilder; elem : TFhirClaimProcedure);
@@ -11860,10 +12108,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimInsuranceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimInsuranceChildren(xml : TXmlBuilder; elem : TFhirClaimInsurance);
@@ -11925,10 +12175,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimAccidentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimAccidentChildren(xml : TXmlBuilder; elem : TFhirClaimAccident);
@@ -12025,10 +12277,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimItemChildren(xml : TXmlBuilder; elem : TFhirClaimItem);
@@ -12153,10 +12407,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimItemDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimItemDetailChildren(xml : TXmlBuilder; elem : TFhirClaimItemDetail);
@@ -12249,10 +12505,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimItemDetailSubDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimItemDetailSubDetailChildren(xml : TXmlBuilder; elem : TFhirClaimItemDetailSubDetail);
@@ -12380,10 +12638,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimChildren(xml : TXmlBuilder; elem : TFhirClaim);
@@ -12506,10 +12766,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseItemChildren(xml : TXmlBuilder; elem : TFhirClaimResponseItem);
@@ -12571,10 +12833,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseItemAdjudicationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseItemAdjudicationChildren(xml : TXmlBuilder; elem : TFhirClaimResponseItemAdjudication);
@@ -12631,10 +12895,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseItemDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseItemDetailChildren(xml : TXmlBuilder; elem : TFhirClaimResponseItemDetail);
@@ -12694,10 +12960,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseItemDetailSubDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseItemDetailSubDetailChildren(xml : TXmlBuilder; elem : TFhirClaimResponseItemDetailSubDetail);
@@ -12766,10 +13034,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseAddItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseAddItemChildren(xml : TXmlBuilder; elem : TFhirClaimResponseAddItem);
@@ -12850,10 +13120,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseAddItemDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseAddItemDetailChildren(xml : TXmlBuilder; elem : TFhirClaimResponseAddItemDetail);
@@ -12922,10 +13194,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseErrorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseErrorChildren(xml : TXmlBuilder; elem : TFhirClaimResponseError);
@@ -12986,10 +13260,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponsePaymentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponsePaymentChildren(xml : TXmlBuilder; elem : TFhirClaimResponsePayment);
@@ -13051,10 +13327,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseProcessNoteChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseProcessNoteChildren(xml : TXmlBuilder; elem : TFhirClaimResponseProcessNote);
@@ -13116,10 +13394,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseInsuranceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirClaimResponseInsurance);
@@ -13219,10 +13499,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClaimResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseChildren(xml : TXmlBuilder; elem : TFhirClaimResponse);
@@ -13325,10 +13607,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClinicalImpressionInvestigationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClinicalImpressionInvestigationChildren(xml : TXmlBuilder; elem : TFhirClinicalImpressionInvestigation);
@@ -13382,10 +13666,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClinicalImpressionFindingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClinicalImpressionFindingChildren(xml : TXmlBuilder; elem : TFhirClinicalImpressionFinding);
@@ -13473,10 +13759,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeClinicalImpressionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeClinicalImpressionChildren(xml : TXmlBuilder; elem : TFhirClinicalImpression);
@@ -13577,10 +13865,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemFilterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemFilterChildren(xml : TXmlBuilder; elem : TFhirCodeSystemFilter);
@@ -13638,10 +13928,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemPropertyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemPropertyChildren(xml : TXmlBuilder; elem : TFhirCodeSystemProperty);
@@ -13701,10 +13993,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemConceptChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemConceptChildren(xml : TXmlBuilder; elem : TFhirCodeSystemConcept);
@@ -13768,10 +14062,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemConceptDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemConceptDesignationChildren(xml : TXmlBuilder; elem : TFhirCodeSystemConceptDesignation);
@@ -13832,10 +14128,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemConceptPropertyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemConceptPropertyChildren(xml : TXmlBuilder; elem : TFhirCodeSystemConceptProperty);
@@ -13940,10 +14238,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCodeSystemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCodeSystemChildren(xml : TXmlBuilder; elem : TFhirCodeSystem);
@@ -14049,10 +14349,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCommunicationPayloadChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCommunicationPayloadChildren(xml : TXmlBuilder; elem : TFhirCommunicationPayload);
@@ -14140,10 +14442,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCommunicationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCommunicationChildren(xml : TXmlBuilder; elem : TFhirCommunication);
@@ -14246,10 +14550,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCommunicationRequestPayloadChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCommunicationRequestPayloadChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequestPayload);
@@ -14301,10 +14607,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCommunicationRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCommunicationRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequestRequester);
@@ -14391,10 +14699,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCommunicationRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCommunicationRequestChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequest);
@@ -14498,10 +14808,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompartmentDefinitionResourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompartmentDefinitionResourceChildren(xml : TXmlBuilder; elem : TFhirCompartmentDefinitionResource);
@@ -14581,10 +14893,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompartmentDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompartmentDefinitionChildren(xml : TXmlBuilder; elem : TFhirCompartmentDefinition);
@@ -14665,10 +14979,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompositionAttesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompositionAttesterChildren(xml : TXmlBuilder; elem : TFhirCompositionAttester);
@@ -14724,10 +15040,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompositionRelatesToChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompositionRelatesToChildren(xml : TXmlBuilder; elem : TFhirCompositionRelatesTo);
@@ -14780,10 +15098,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompositionEventChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompositionEventChildren(xml : TXmlBuilder; elem : TFhirCompositionEvent);
@@ -14851,10 +15171,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompositionSectionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompositionSectionChildren(xml : TXmlBuilder; elem : TFhirCompositionSection);
@@ -14946,10 +15268,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCompositionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCompositionChildren(xml : TXmlBuilder; elem : TFhirComposition);
@@ -15036,10 +15360,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapGroupChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroup);
@@ -15101,10 +15427,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapGroupElementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapGroupElementChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroupElement);
@@ -15167,10 +15495,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapGroupElementTargetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapGroupElementTargetChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroupElementTarget);
@@ -15236,10 +15566,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapGroupElementTargetDependsOnChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapGroupElementTargetDependsOnChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroupElementTargetDependsOn);
@@ -15295,10 +15627,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapGroupUnmappedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapGroupUnmappedChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroupUnmapped);
@@ -15387,10 +15721,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConceptMapChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConceptMapChildren(xml : TXmlBuilder; elem : TFhirConceptMap);
@@ -15483,10 +15819,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConditionStageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConditionStageChildren(xml : TXmlBuilder; elem : TFhirConditionStage);
@@ -15539,10 +15877,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConditionEvidenceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConditionEvidenceChildren(xml : TXmlBuilder; elem : TFhirConditionEvidence);
@@ -15642,10 +15982,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConditionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConditionChildren(xml : TXmlBuilder; elem : TFhirCondition);
@@ -15749,10 +16091,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentActorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentActorChildren(xml : TXmlBuilder; elem : TFhirConsentActor);
@@ -15800,10 +16144,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentPolicyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentPolicyChildren(xml : TXmlBuilder; elem : TFhirConsentPolicy);
@@ -15853,10 +16199,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentDataChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentDataChildren(xml : TXmlBuilder; elem : TFhirConsentData);
@@ -15920,10 +16268,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentExceptChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentExceptChildren(xml : TXmlBuilder; elem : TFhirConsentExcept);
@@ -15997,10 +16347,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentExceptActorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentExceptActorChildren(xml : TXmlBuilder; elem : TFhirConsentExceptActor);
@@ -16048,10 +16400,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentExceptDataChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentExceptDataChildren(xml : TXmlBuilder; elem : TFhirConsentExceptData);
@@ -16135,10 +16489,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeConsentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeConsentChildren(xml : TXmlBuilder; elem : TFhirConsent);
@@ -16236,10 +16592,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractAgentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractAgentChildren(xml : TXmlBuilder; elem : TFhirContractAgent);
@@ -16293,10 +16651,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractSignerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractSignerChildren(xml : TXmlBuilder; elem : TFhirContractSigner);
@@ -16362,10 +16722,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractValuedItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractValuedItemChildren(xml : TXmlBuilder; elem : TFhirContractValuedItem);
@@ -16451,10 +16813,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractTermChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractTermChildren(xml : TXmlBuilder; elem : TFhirContractTerm);
@@ -16535,10 +16899,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractTermAgentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractTermAgentChildren(xml : TXmlBuilder; elem : TFhirContractTermAgent);
@@ -16604,10 +16970,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractTermValuedItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractTermValuedItemChildren(xml : TXmlBuilder; elem : TFhirContractTermValuedItem);
@@ -16671,10 +17039,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractFriendlyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractFriendlyChildren(xml : TXmlBuilder; elem : TFhirContractFriendly);
@@ -16724,10 +17094,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractLegalChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractLegalChildren(xml : TXmlBuilder; elem : TFhirContractLegal);
@@ -16777,10 +17149,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractRuleChildren(xml : TXmlBuilder; elem : TFhirContractRule);
@@ -16874,10 +17248,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeContractChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeContractChildren(xml : TXmlBuilder; elem : TFhirContract);
@@ -17010,10 +17386,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCoverageGroupingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCoverageGroupingChildren(xml : TXmlBuilder; elem : TFhirCoverageGrouping);
@@ -17111,10 +17489,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeCoverageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeCoverageChildren(xml : TXmlBuilder; elem : TFhirCoverage);
@@ -17203,10 +17583,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDataElementMappingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDataElementMappingChildren(xml : TXmlBuilder; elem : TFhirDataElementMapping);
@@ -17287,10 +17669,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDataElementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDataElementChildren(xml : TXmlBuilder; elem : TFhirDataElement);
@@ -17378,10 +17762,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDetectedIssueMitigationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDetectedIssueMitigationChildren(xml : TXmlBuilder; elem : TFhirDetectedIssueMitigation);
@@ -17450,10 +17836,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDetectedIssueChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDetectedIssueChildren(xml : TXmlBuilder; elem : TFhirDetectedIssue);
@@ -17536,10 +17924,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceUdiChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceUdiChildren(xml : TXmlBuilder; elem : TFhirDeviceUdi);
@@ -17629,10 +18019,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceChildren(xml : TXmlBuilder; elem : TFhirDevice);
@@ -17722,10 +18114,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceComponentProductionSpecificationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceComponentProductionSpecificationChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProductionSpecification);
@@ -17793,10 +18187,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceComponentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceComponentChildren(xml : TXmlBuilder; elem : TFhirDeviceComponent);
@@ -17868,10 +18264,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceMetricCalibrationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceMetricCalibrationChildren(xml : TXmlBuilder; elem : TFhirDeviceMetricCalibration);
@@ -17939,10 +18337,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceMetricChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceMetricChildren(xml : TXmlBuilder; elem : TFhirDeviceMetric);
@@ -18010,10 +18410,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirDeviceRequestRequester);
@@ -18106,10 +18508,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
@@ -18236,10 +18640,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDeviceUseStatementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDeviceUseStatementChildren(xml : TXmlBuilder; elem : TFhirDeviceUseStatement);
@@ -18315,10 +18721,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDiagnosticReportPerformerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDiagnosticReportPerformerChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReportPerformer);
@@ -18367,10 +18775,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDiagnosticReportImageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDiagnosticReportImageChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReportImage);
@@ -18451,10 +18861,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDiagnosticReportChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDiagnosticReportChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReport);
@@ -18547,10 +18959,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentManifestContentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentManifestContentChildren(xml : TXmlBuilder; elem : TFhirDocumentManifestContent);
@@ -18600,10 +19014,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentManifestRelatedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentManifestRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentManifestRelated);
@@ -18673,10 +19089,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentManifestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentManifestChildren(xml : TXmlBuilder; elem : TFhirDocumentManifest);
@@ -18753,10 +19171,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentReferenceRelatesToChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentReferenceRelatesToChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceRelatesTo);
@@ -18804,10 +19224,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentReferenceContentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentReferenceContentChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContent);
@@ -18866,10 +19288,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentReferenceContextChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentReferenceContextChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContext);
@@ -18933,10 +19357,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentReferenceContextRelatedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentReferenceContextRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContextRelated);
@@ -19016,10 +19442,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeDocumentReferenceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeDocumentReferenceChildren(xml : TXmlBuilder; elem : TFhirDocumentReference);
@@ -19132,10 +19560,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequest);
@@ -19220,10 +19650,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityResponseInsuranceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsurance);
@@ -19292,10 +19724,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityResponseInsuranceBenefitBalanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceBenefitBalanceChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceBenefitBalance);
@@ -19369,10 +19803,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityResponseInsuranceBenefitBalanceFinancialChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceBenefitBalanceFinancialChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceBenefitBalanceFinancial);
@@ -19427,10 +19863,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityResponseErrorChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseError);
@@ -19499,10 +19937,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEligibilityResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponse);
@@ -19581,10 +20021,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterStatusHistoryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterStatusHistoryChildren(xml : TXmlBuilder; elem : TFhirEncounterStatusHistory);
@@ -19632,10 +20074,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterClassHistoryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterClassHistoryChildren(xml : TXmlBuilder; elem : TFhirEncounterClassHistory);
@@ -19685,10 +20129,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterParticipantChildren(xml : TXmlBuilder; elem : TFhirEncounterParticipant);
@@ -19745,10 +20191,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterDiagnosisChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterDiagnosisChildren(xml : TXmlBuilder; elem : TFhirEncounterDiagnosis);
@@ -19813,10 +20261,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterHospitalizationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterHospitalizationChildren(xml : TXmlBuilder; elem : TFhirEncounterHospitalization);
@@ -19887,10 +20337,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterLocationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterLocationChildren(xml : TXmlBuilder; elem : TFhirEncounterLocation);
@@ -19979,10 +20431,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEncounterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEncounterChildren(xml : TXmlBuilder; elem : TFhirEncounter);
@@ -20102,10 +20556,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEndpointChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEndpointChildren(xml : TXmlBuilder; elem : TFhirEndpoint);
@@ -20190,10 +20646,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEnrollmentRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEnrollmentRequestChildren(xml : TXmlBuilder; elem : TFhirEnrollmentRequest);
@@ -20274,10 +20732,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEnrollmentResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEnrollmentResponseChildren(xml : TXmlBuilder; elem : TFhirEnrollmentResponse);
@@ -20346,10 +20806,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEpisodeOfCareStatusHistoryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEpisodeOfCareStatusHistoryChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCareStatusHistory);
@@ -20399,10 +20861,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEpisodeOfCareDiagnosisChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEpisodeOfCareDiagnosisChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCareDiagnosis);
@@ -20473,10 +20937,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeEpisodeOfCareChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeEpisodeOfCareChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCare);
@@ -20557,10 +21023,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileFixedVersionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileFixedVersionChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileFixedVersion);
@@ -20609,10 +21077,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileExcludedSystemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileExcludedSystemChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileExcludedSystem);
@@ -20661,10 +21131,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileDesignationChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignation);
@@ -20712,10 +21184,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileDesignationIncludeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileDesignationIncludeChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignationInclude);
@@ -20766,10 +21240,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileDesignationIncludeDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileDesignationIncludeDesignationChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignationIncludeDesignation);
@@ -20817,10 +21293,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileDesignationExcludeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileDesignationExcludeChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignationExclude);
@@ -20871,10 +21349,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileDesignationExcludeDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileDesignationExcludeDesignationChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignationExcludeDesignation);
@@ -20966,10 +21446,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExpansionProfileChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExpansionProfileChildren(xml : TXmlBuilder; elem : TFhirExpansionProfile);
@@ -21070,10 +21552,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitRelatedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitRelatedChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitRelated);
@@ -21127,10 +21611,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitPayeeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitPayeeChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitPayee);
@@ -21198,10 +21684,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitInformationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitInformationChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitInformation);
@@ -21271,10 +21759,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitCareTeamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitCareTeamChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitCareTeam);
@@ -21334,10 +21824,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitDiagnosisChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitDiagnosisChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitDiagnosis);
@@ -21399,10 +21891,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitProcedureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitProcedureChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitProcedure);
@@ -21455,10 +21949,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitInsuranceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitInsuranceChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitInsurance);
@@ -21515,10 +22011,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitAccidentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitAccidentChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitAccident);
@@ -21620,10 +22118,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitItemChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitItem);
@@ -21738,10 +22238,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitItemAdjudicationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitItemAdjudicationChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitItemAdjudication);
@@ -21820,10 +22322,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitItemDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitItemDetailChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitItemDetail);
@@ -21929,10 +22433,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitItemDetailSubDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitItemDetailSubDetailChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitItemDetailSubDetail);
@@ -22025,10 +22531,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitAddItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitAddItemChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitAddItem);
@@ -22109,10 +22617,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitAddItemDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitAddItemDetailChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitAddItemDetail);
@@ -22185,10 +22695,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitPaymentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitPaymentChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitPayment);
@@ -22250,10 +22762,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitProcessNoteChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitProcessNoteChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitProcessNote);
@@ -22321,10 +22835,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitBenefitBalanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitBenefitBalanceChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitBenefitBalance);
@@ -22398,10 +22914,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitBenefitBalanceFinancialChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitBenefitBalanceFinancialChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitBenefitBalanceFinancial);
@@ -22532,10 +23050,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeExplanationOfBenefitChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefit);
@@ -22684,10 +23204,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeFamilyMemberHistoryConditionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeFamilyMemberHistoryConditionChildren(xml : TXmlBuilder; elem : TFhirFamilyMemberHistoryCondition);
@@ -22797,10 +23319,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeFamilyMemberHistoryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeFamilyMemberHistoryChildren(xml : TXmlBuilder; elem : TFhirFamilyMemberHistory);
@@ -22917,10 +23441,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeFlagChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeFlagChildren(xml : TXmlBuilder; elem : TFhirFlag);
@@ -22992,10 +23518,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGoalTargetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGoalTargetChildren(xml : TXmlBuilder; elem : TFhirGoalTarget);
@@ -23081,10 +23609,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGoalChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGoalChildren(xml : TXmlBuilder; elem : TFhirGoal);
@@ -23178,10 +23708,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGraphDefinitionLinkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGraphDefinitionLinkChildren(xml : TXmlBuilder; elem : TFhirGraphDefinitionLink);
@@ -23244,10 +23776,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGraphDefinitionLinkTargetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGraphDefinitionLinkTargetChildren(xml : TXmlBuilder; elem : TFhirGraphDefinitionLinkTarget);
@@ -23308,10 +23842,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGraphDefinitionLinkTargetCompartmentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGraphDefinitionLinkTargetCompartmentChildren(xml : TXmlBuilder; elem : TFhirGraphDefinitionLinkTargetCompartment);
@@ -23389,10 +23925,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGraphDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGraphDefinitionChildren(xml : TXmlBuilder; elem : TFhirGraphDefinition);
@@ -23483,10 +24021,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGroupCharacteristicChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGroupCharacteristicChildren(xml : TXmlBuilder; elem : TFhirGroupCharacteristic);
@@ -23546,10 +24086,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGroupMemberChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGroupMemberChildren(xml : TXmlBuilder; elem : TFhirGroupMember);
@@ -23614,10 +24156,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGroupChildren(xml : TXmlBuilder; elem : TFhirGroup);
@@ -23712,10 +24256,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeGuidanceResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeGuidanceResponseChildren(xml : TXmlBuilder; elem : TFhirGuidanceResponse);
@@ -23800,10 +24346,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeHealthcareServiceAvailableTimeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeHealthcareServiceAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirHealthcareServiceAvailableTime);
@@ -23860,10 +24408,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeHealthcareServiceNotAvailableChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeHealthcareServiceNotAvailableChildren(xml : TXmlBuilder; elem : TFhirHealthcareServiceNotAvailable);
@@ -23956,10 +24506,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeHealthcareServiceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeHealthcareServiceChildren(xml : TXmlBuilder; elem : TFhirHealthcareService);
@@ -24074,10 +24626,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingManifestStudyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingManifestStudyChildren(xml : TXmlBuilder; elem : TFhirImagingManifestStudy);
@@ -24135,10 +24689,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingManifestStudySeriesChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingManifestStudySeriesChildren(xml : TXmlBuilder; elem : TFhirImagingManifestStudySeries);
@@ -24192,10 +24748,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingManifestStudySeriesInstanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingManifestStudySeriesInstanceChildren(xml : TXmlBuilder; elem : TFhirImagingManifestStudySeriesInstance);
@@ -24251,10 +24809,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingManifestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingManifestChildren(xml : TXmlBuilder; elem : TFhirImagingManifest);
@@ -24335,10 +24895,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingStudySeriesChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingStudySeriesChildren(xml : TXmlBuilder; elem : TFhirImagingStudySeries);
@@ -24415,10 +24977,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingStudySeriesInstanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingStudySeriesInstanceChildren(xml : TXmlBuilder; elem : TFhirImagingStudySeriesInstance);
@@ -24504,10 +25068,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImagingStudyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImagingStudyChildren(xml : TXmlBuilder; elem : TFhirImagingStudy);
@@ -24601,10 +25167,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationPractitionerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationPractitionerChildren(xml : TXmlBuilder; elem : TFhirImmunizationPractitioner);
@@ -24653,10 +25221,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationExplanationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationExplanationChildren(xml : TXmlBuilder; elem : TFhirImmunizationExplanation);
@@ -24712,10 +25282,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationReactionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationReactionChildren(xml : TXmlBuilder; elem : TFhirImmunizationReaction);
@@ -24779,10 +25351,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationVaccinationProtocolChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationVaccinationProtocolChildren(xml : TXmlBuilder; elem : TFhirImmunizationVaccinationProtocol);
@@ -24883,10 +25457,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationChildren(xml : TXmlBuilder; elem : TFhirImmunization);
@@ -24992,10 +25568,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationRecommendationRecommendationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationRecommendationRecommendationChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendationRecommendation);
@@ -25062,10 +25640,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationRecommendationRecommendationDateCriterionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationRecommendationRecommendationDateCriterionChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendationRecommendationDateCriterion);
@@ -25117,10 +25697,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationRecommendationRecommendationProtocolChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationRecommendationRecommendationProtocolChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendationRecommendationProtocol);
@@ -25176,10 +25758,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImmunizationRecommendationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImmunizationRecommendationChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendation);
@@ -25235,10 +25819,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuideDependencyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuideDependencyChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependency);
@@ -25288,10 +25874,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuidePackageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuidePackageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackage);
@@ -25354,10 +25942,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuidePackageResourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuidePackageResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackageResource);
@@ -25416,10 +26006,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuideGlobalChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuideGlobalChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideGlobal);
@@ -25477,10 +26069,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuidePageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuidePageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePage);
@@ -25574,10 +26168,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeImplementationGuideChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeImplementationGuideChildren(xml : TXmlBuilder; elem : TFhirImplementationGuide);
@@ -25715,10 +26311,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeLibraryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeLibraryChildren(xml : TXmlBuilder; elem : TFhirLibrary);
@@ -25828,10 +26426,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeLinkageItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeLinkageItemChildren(xml : TXmlBuilder; elem : TFhirLinkageItem);
@@ -25881,10 +26481,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeLinkageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeLinkageChildren(xml : TXmlBuilder; elem : TFhirLinkage);
@@ -25944,10 +26546,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeListEntryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeListEntryChildren(xml : TXmlBuilder; elem : TFhirListEntry);
@@ -26022,10 +26626,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeListChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeListChildren(xml : TXmlBuilder; elem : TFhirList);
@@ -26104,10 +26710,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeLocationPositionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeLocationPositionChildren(xml : TXmlBuilder; elem : TFhirLocationPosition);
@@ -26183,10 +26791,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeLocationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeLocationChildren(xml : TXmlBuilder; elem : TFhirLocation);
@@ -26276,10 +26886,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureGroupChildren(xml : TXmlBuilder; elem : TFhirMeasureGroup);
@@ -26344,10 +26956,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureGroupPopulationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureGroupPopulationChildren(xml : TXmlBuilder; elem : TFhirMeasureGroupPopulation);
@@ -26404,10 +27018,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureGroupStratifierChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureGroupStratifierChildren(xml : TXmlBuilder; elem : TFhirMeasureGroupStratifier);
@@ -26463,10 +27079,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureSupplementalDataChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureSupplementalDataChildren(xml : TXmlBuilder; elem : TFhirMeasureSupplementalData);
@@ -26593,10 +27211,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureChildren(xml : TXmlBuilder; elem : TFhirMeasure);
@@ -26735,10 +27355,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportGroupChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroup);
@@ -26799,10 +27421,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportGroupPopulationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportGroupPopulationChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroupPopulation);
@@ -26856,10 +27480,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportGroupStratifierChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportGroupStratifierChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroupStratifier);
@@ -26914,10 +27540,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportGroupStratifierStratumChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportGroupStratifierStratumChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroupStratifierStratum);
@@ -26975,10 +27603,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportGroupStratifierStratumPopulationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportGroupStratifierStratumPopulationChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroupStratifierStratumPopulation);
@@ -27048,10 +27678,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMeasureReportChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMeasureReportChildren(xml : TXmlBuilder; elem : TFhirMeasureReport);
@@ -27152,10 +27784,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMediaChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMediaChildren(xml : TXmlBuilder; elem : TFhirMedia);
@@ -27249,10 +27883,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationIngredientChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationIngredientChildren(xml : TXmlBuilder; elem : TFhirMedicationIngredient);
@@ -27308,10 +27944,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationPackageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationPackageChildren(xml : TXmlBuilder; elem : TFhirMedicationPackage);
@@ -27369,10 +28007,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationPackageContentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationPackageContentChildren(xml : TXmlBuilder; elem : TFhirMedicationPackageContent);
@@ -27424,10 +28064,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationPackageBatchChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationPackageBatchChildren(xml : TXmlBuilder; elem : TFhirMedicationPackageBatch);
@@ -27491,10 +28133,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationChildren(xml : TXmlBuilder; elem : TFhirMedication);
@@ -27564,10 +28208,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationAdministrationPerformerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationAdministrationPerformerChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministrationPerformer);
@@ -27626,10 +28272,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationAdministrationDosageChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationAdministrationDosageChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministrationDosage);
@@ -27729,10 +28377,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationAdministrationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationAdministrationChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministration);
@@ -27835,10 +28485,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationDispensePerformerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationDispensePerformerChildren(xml : TXmlBuilder; elem : TFhirMedicationDispensePerformer);
@@ -27891,10 +28543,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationDispenseSubstitutionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationDispenseSubstitutionChildren(xml : TXmlBuilder; elem : TFhirMedicationDispenseSubstitution);
@@ -27999,10 +28653,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationDispenseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationDispenseChildren(xml : TXmlBuilder; elem : TFhirMedicationDispense);
@@ -28114,10 +28770,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestRequester);
@@ -28172,10 +28830,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationRequestDispenseRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationRequestDispenseRequestChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestDispenseRequest);
@@ -28231,10 +28891,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationRequestSubstitutionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationRequestSubstitutionChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestSubstitution);
@@ -28329,10 +28991,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationRequestChildren(xml : TXmlBuilder; elem : TFhirMedicationRequest);
@@ -28476,10 +29140,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMedicationStatementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMedicationStatementChildren(xml : TXmlBuilder; elem : TFhirMedicationStatement);
@@ -28579,10 +29245,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageDefinitionFocusChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageDefinitionFocusChildren(xml : TXmlBuilder; elem : TFhirMessageDefinitionFocus);
@@ -28635,10 +29303,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageDefinitionAllowedResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageDefinitionAllowedResponseChildren(xml : TXmlBuilder; elem : TFhirMessageDefinitionAllowedResponse);
@@ -28729,10 +29399,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageDefinitionChildren(xml : TXmlBuilder; elem : TFhirMessageDefinition);
@@ -28834,10 +29506,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageHeaderDestinationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageHeaderDestinationChildren(xml : TXmlBuilder; elem : TFhirMessageHeaderDestination);
@@ -28894,10 +29568,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageHeaderSourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageHeaderSourceChildren(xml : TXmlBuilder; elem : TFhirMessageHeaderSource);
@@ -28954,10 +29630,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageHeaderResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageHeaderResponseChildren(xml : TXmlBuilder; elem : TFhirMessageHeaderResponse);
@@ -29027,10 +29705,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeMessageHeaderChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeMessageHeaderChildren(xml : TXmlBuilder; elem : TFhirMessageHeader);
@@ -29109,10 +29789,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNamingSystemUniqueIdChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNamingSystemUniqueIdChildren(xml : TXmlBuilder; elem : TFhirNamingSystemUniqueId);
@@ -29190,10 +29872,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNamingSystemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNamingSystemChildren(xml : TXmlBuilder; elem : TFhirNamingSystem);
@@ -29278,10 +29962,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderOralDietChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderOralDietChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderOralDiet);
@@ -29346,10 +30032,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderOralDietNutrientChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderOralDietNutrientChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderOralDietNutrient);
@@ -29399,10 +30087,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderOralDietTextureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderOralDietTextureChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderOralDietTexture);
@@ -29458,10 +30148,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderSupplementChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderSupplementChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderSupplement);
@@ -29534,10 +30226,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderEnteralFormulaChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderEnteralFormulaChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderEnteralFormula);
@@ -29608,10 +30302,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderEnteralFormulaAdministrationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderEnteralFormulaAdministrationChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderEnteralFormulaAdministration);
@@ -29685,10 +30381,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeNutritionOrderChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeNutritionOrderChildren(xml : TXmlBuilder; elem : TFhirNutritionOrder);
@@ -29773,10 +30471,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeObservationReferenceRangeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeObservationReferenceRangeChildren(xml : TXmlBuilder; elem : TFhirObservationReferenceRange);
@@ -29837,10 +30537,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeObservationRelatedChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeObservationRelatedChildren(xml : TXmlBuilder; elem : TFhirObservationRelated);
@@ -29913,10 +30615,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeObservationComponentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeObservationComponentChildren(xml : TXmlBuilder; elem : TFhirObservationComponent);
@@ -30052,10 +30756,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeObservationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeObservationChildren(xml : TXmlBuilder; elem : TFhirObservation);
@@ -30190,10 +30896,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationDefinitionParameterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameter);
@@ -30260,10 +30968,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationDefinitionParameterBindingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationDefinitionParameterBindingChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameterBinding);
@@ -30314,10 +31024,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationDefinitionOverloadChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationDefinitionOverloadChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionOverload);
@@ -30412,10 +31124,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationDefinitionChildren(xml : TXmlBuilder; elem : TFhirOperationDefinition);
@@ -30518,10 +31232,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationOutcomeIssueChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationOutcomeIssueChildren(xml : TXmlBuilder; elem : TFhirOperationOutcomeIssue);
@@ -30579,10 +31295,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOperationOutcomeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOperationOutcomeChildren(xml : TXmlBuilder; elem : TFhirOperationOutcome);
@@ -30638,10 +31356,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOrganizationContactChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOrganizationContactChildren(xml : TXmlBuilder; elem : TFhirOrganizationContact);
@@ -30714,10 +31434,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeOrganizationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeOrganizationChildren(xml : TXmlBuilder; elem : TFhirOrganization);
@@ -30804,10 +31526,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePatientContactChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePatientContactChildren(xml : TXmlBuilder; elem : TFhirPatientContact);
@@ -30873,10 +31597,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePatientAnimalChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePatientAnimalChildren(xml : TXmlBuilder; elem : TFhirPatientAnimal);
@@ -30927,10 +31653,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePatientCommunicationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePatientCommunicationChildren(xml : TXmlBuilder; elem : TFhirPatientCommunication);
@@ -30979,10 +31707,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePatientLinkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePatientLinkChildren(xml : TXmlBuilder; elem : TFhirPatientLink);
@@ -31064,10 +31794,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePatientChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePatientChildren(xml : TXmlBuilder; elem : TFhirPatient);
@@ -31180,10 +31912,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePaymentNoticeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePaymentNoticeChildren(xml : TXmlBuilder; elem : TFhirPaymentNotice);
@@ -31264,10 +31998,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePaymentReconciliationDetailChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePaymentReconciliationDetailChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliationDetail);
@@ -31326,10 +32062,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePaymentReconciliationProcessNoteChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePaymentReconciliationProcessNoteChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliationProcessNote);
@@ -31403,10 +32141,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePaymentReconciliationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePaymentReconciliationChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliation);
@@ -31487,10 +32227,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePersonLinkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePersonLinkChildren(xml : TXmlBuilder; elem : TFhirPersonLink);
@@ -31555,10 +32297,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePersonChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePersonChildren(xml : TXmlBuilder; elem : TFhirPerson);
@@ -31643,10 +32387,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionGoalChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionGoalChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionGoal);
@@ -31716,10 +32462,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionGoalTargetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionGoalTargetChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionGoalTarget);
@@ -31829,10 +32577,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionActionChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionAction);
@@ -31954,10 +32704,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionActionConditionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionActionConditionChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionActionCondition);
@@ -32014,10 +32766,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionActionRelatedActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionActionRelatedActionChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionActionRelatedAction);
@@ -32069,10 +32823,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionActionParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionActionParticipantChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionActionParticipant);
@@ -32125,10 +32881,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionActionDynamicValueChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionActionDynamicValueChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionActionDynamicValue);
@@ -32230,10 +32988,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePlanDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePlanDefinitionChildren(xml : TXmlBuilder; elem : TFhirPlanDefinition);
@@ -32348,10 +33108,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePractitionerQualificationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerQualificationChildren(xml : TXmlBuilder; elem : TFhirPractitionerQualification);
@@ -32423,10 +33185,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePractitionerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerChildren(xml : TXmlBuilder; elem : TFhirPractitioner);
@@ -32507,10 +33271,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePractitionerRoleAvailableTimeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerRoleAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirPractitionerRoleAvailableTime);
@@ -32567,10 +33333,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePractitionerRoleNotAvailableChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerRoleNotAvailableChildren(xml : TXmlBuilder; elem : TFhirPractitionerRoleNotAvailable);
@@ -32643,10 +33411,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composePractitionerRoleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposePractitionerRoleChildren(xml : TXmlBuilder; elem : TFhirPractitionerRole);
@@ -32735,10 +33505,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcedurePerformerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcedurePerformerChildren(xml : TXmlBuilder; elem : TFhirProcedurePerformer);
@@ -32789,10 +33561,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcedureFocalDeviceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcedureFocalDeviceChildren(xml : TXmlBuilder; elem : TFhirProcedureFocalDevice);
@@ -32891,10 +33665,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcedureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcedureChildren(xml : TXmlBuilder; elem : TFhirProcedure);
@@ -33012,10 +33788,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcedureRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcedureRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirProcedureRequestRequester);
@@ -33118,10 +33896,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcedureRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcedureRequestChildren(xml : TXmlBuilder; elem : TFhirProcedureRequest);
@@ -33235,10 +34015,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcessRequestItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcessRequestItemChildren(xml : TXmlBuilder; elem : TFhirProcessRequestItem);
@@ -33311,10 +34093,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcessRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcessRequestChildren(xml : TXmlBuilder; elem : TFhirProcessRequest);
@@ -33398,10 +34182,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcessResponseProcessNoteChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcessResponseProcessNoteChildren(xml : TXmlBuilder; elem : TFhirProcessResponseProcessNote);
@@ -33473,10 +34259,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProcessResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProcessResponseChildren(xml : TXmlBuilder; elem : TFhirProcessResponse);
@@ -33564,10 +34352,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProvenanceAgentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProvenanceAgentChildren(xml : TXmlBuilder; elem : TFhirProvenanceAgent);
@@ -33634,10 +34424,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProvenanceEntityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProvenanceEntityChildren(xml : TXmlBuilder; elem : TFhirProvenanceEntity);
@@ -33711,10 +34503,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeProvenanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeProvenanceChildren(xml : TXmlBuilder; elem : TFhirProvenance);
@@ -33835,10 +34629,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireItemChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireItem);
@@ -33964,10 +34760,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireItemEnableWhenChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireItemEnableWhenChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireItemEnableWhen);
@@ -34046,10 +34844,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireItemOptionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireItemOptionChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireItemOption);
@@ -34143,10 +34943,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireChildren(xml : TXmlBuilder; elem : TFhirQuestionnaire);
@@ -34252,10 +35054,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireResponseItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireResponseItemChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponseItem);
@@ -34338,10 +35142,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireResponseItemAnswerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireResponseItemAnswerChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponseItemAnswer);
@@ -34434,10 +35240,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeQuestionnaireResponseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeQuestionnaireResponseChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponse);
@@ -34511,10 +35319,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeReferralRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeReferralRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirReferralRequestRequester);
@@ -34607,10 +35417,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeReferralRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeReferralRequestChildren(xml : TXmlBuilder; elem : TFhirReferralRequest);
@@ -34734,10 +35546,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRelatedPersonChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRelatedPersonChildren(xml : TXmlBuilder; elem : TFhirRelatedPerson);
@@ -34853,10 +35667,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRequestGroupActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRequestGroupActionChildren(xml : TXmlBuilder; elem : TFhirRequestGroupAction);
@@ -34958,10 +35774,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRequestGroupActionConditionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRequestGroupActionConditionChildren(xml : TXmlBuilder; elem : TFhirRequestGroupActionCondition);
@@ -35018,10 +35836,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRequestGroupActionRelatedActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRequestGroupActionRelatedActionChildren(xml : TXmlBuilder; elem : TFhirRequestGroupActionRelatedAction);
@@ -35101,10 +35921,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRequestGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRequestGroupChildren(xml : TXmlBuilder; elem : TFhirRequestGroup);
@@ -35192,10 +36014,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeResearchStudyArmChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeResearchStudyArmChildren(xml : TXmlBuilder; elem : TFhirResearchStudyArm);
@@ -35282,10 +36106,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeResearchStudyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeResearchStudyChildren(xml : TXmlBuilder; elem : TFhirResearchStudy);
@@ -35399,10 +36225,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeResearchSubjectChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeResearchSubjectChildren(xml : TXmlBuilder; elem : TFhirResearchSubject);
@@ -35475,10 +36303,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRiskAssessmentPredictionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRiskAssessmentPredictionChildren(xml : TXmlBuilder; elem : TFhirRiskAssessmentPrediction);
@@ -35571,10 +36401,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeRiskAssessmentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeRiskAssessmentChildren(xml : TXmlBuilder; elem : TFhirRiskAssessment);
@@ -35673,10 +36505,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeScheduleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeScheduleChildren(xml : TXmlBuilder; elem : TFhirSchedule);
@@ -35745,10 +36579,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSearchParameterComponentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSearchParameterComponentChildren(xml : TXmlBuilder; elem : TFhirSearchParameterComponent);
@@ -35840,10 +36676,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSearchParameterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSearchParameterChildren(xml : TXmlBuilder; elem : TFhirSearchParameter);
@@ -35955,10 +36793,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSequenceReferenceSeqChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSequenceReferenceSeqChildren(xml : TXmlBuilder; elem : TFhirSequenceReferenceSeq);
@@ -36026,10 +36866,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSequenceVariantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSequenceVariantChildren(xml : TXmlBuilder; elem : TFhirSequenceVariant);
@@ -36111,10 +36953,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSequenceQualityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSequenceQualityChildren(xml : TXmlBuilder; elem : TFhirSequenceQuality);
@@ -36195,10 +37039,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSequenceRepositoryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSequenceRepositoryChildren(xml : TXmlBuilder; elem : TFhirSequenceRepository);
@@ -36281,10 +37127,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSequenceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSequenceChildren(xml : TXmlBuilder; elem : TFhirSequence);
@@ -36414,10 +37262,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeServiceDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeServiceDefinitionChildren(xml : TXmlBuilder; elem : TFhirServiceDefinition);
@@ -36543,10 +37393,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSlotChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSlotChildren(xml : TXmlBuilder; elem : TFhirSlot);
@@ -36625,10 +37477,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSpecimenCollectionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSpecimenCollectionChildren(xml : TXmlBuilder; elem : TFhirSpecimenCollection);
@@ -36692,10 +37546,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSpecimenProcessingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSpecimenProcessingChildren(xml : TXmlBuilder; elem : TFhirSpecimenProcessing);
@@ -36764,10 +37620,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSpecimenContainerChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSpecimenContainerChildren(xml : TXmlBuilder; elem : TFhirSpecimenContainer);
@@ -36850,10 +37708,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSpecimenChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSpecimenChildren(xml : TXmlBuilder; elem : TFhirSpecimen);
@@ -36936,10 +37796,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureDefinitionMappingChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureDefinitionMappingChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionMapping);
@@ -36990,10 +37852,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureDefinitionSnapshotChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureDefinitionSnapshotChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionSnapshot);
@@ -37041,10 +37905,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureDefinitionDifferentialChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureDefinitionDifferentialChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionDifferential);
@@ -37146,10 +38012,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureDefinitionChildren(xml : TXmlBuilder; elem : TFhirStructureDefinition);
@@ -37261,10 +38129,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapStructureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapStructureChildren(xml : TXmlBuilder; elem : TFhirStructureMapStructure);
@@ -37324,10 +38194,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroup);
@@ -37389,10 +38261,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupInputChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupInputChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupInput);
@@ -37452,10 +38326,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupRuleChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRule);
@@ -37607,10 +38483,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupRuleSourceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupRuleSourceChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRuleSource);
@@ -37761,10 +38639,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupRuleTargetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupRuleTargetChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRuleTarget);
@@ -37836,10 +38716,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupRuleTargetParameterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupRuleTargetParameterChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRuleTargetParameter);
@@ -37895,10 +38777,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapGroupRuleDependentChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapGroupRuleDependentChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRuleDependent);
@@ -37981,10 +38865,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeStructureMapChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeStructureMapChildren(xml : TXmlBuilder; elem : TFhirStructureMap);
@@ -38077,10 +38963,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSubscriptionChannelChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSubscriptionChannelChildren(xml : TXmlBuilder; elem : TFhirSubscriptionChannel);
@@ -38148,10 +39036,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSubscriptionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSubscriptionChildren(xml : TXmlBuilder; elem : TFhirSubscription);
@@ -38217,10 +39107,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSubstanceInstanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSubstanceInstanceChildren(xml : TXmlBuilder; elem : TFhirSubstanceInstance);
@@ -38274,10 +39166,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSubstanceIngredientChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSubstanceIngredientChildren(xml : TXmlBuilder; elem : TFhirSubstanceIngredient);
@@ -38339,10 +39233,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSubstanceChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSubstanceChildren(xml : TXmlBuilder; elem : TFhirSubstance);
@@ -38411,10 +39307,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSupplyDeliverySuppliedItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSupplyDeliverySuppliedItemChildren(xml : TXmlBuilder; elem : TFhirSupplyDeliverySuppliedItem);
@@ -38488,10 +39386,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSupplyDeliveryChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSupplyDeliveryChildren(xml : TXmlBuilder; elem : TFhirSupplyDelivery);
@@ -38572,10 +39472,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSupplyRequestOrderedItemChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSupplyRequestOrderedItemChildren(xml : TXmlBuilder; elem : TFhirSupplyRequestOrderedItem);
@@ -38626,10 +39528,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSupplyRequestRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSupplyRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirSupplyRequestRequester);
@@ -38704,10 +39608,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeSupplyRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeSupplyRequestChildren(xml : TXmlBuilder; elem : TFhirSupplyRequest);
@@ -38788,10 +39694,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTaskRequesterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTaskRequesterChildren(xml : TXmlBuilder; elem : TFhirTaskRequester);
@@ -38842,10 +39750,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTaskRestrictionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTaskRestrictionChildren(xml : TXmlBuilder; elem : TFhirTaskRestriction);
@@ -38974,10 +39884,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTaskInputChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTaskInputChildren(xml : TXmlBuilder; elem : TFhirTaskInput);
@@ -39174,10 +40086,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTaskOutputChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTaskOutputChildren(xml : TXmlBuilder; elem : TFhirTaskOutput);
@@ -39352,10 +40266,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTaskChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTaskChildren(xml : TXmlBuilder; elem : TFhirTask);
@@ -39469,10 +40385,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportParticipantChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportParticipantChildren(xml : TXmlBuilder; elem : TFhirTestReportParticipant);
@@ -39520,10 +40438,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportSetupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportSetupChildren(xml : TXmlBuilder; elem : TFhirTestReportSetup);
@@ -39573,10 +40493,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportSetupActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportSetupActionChildren(xml : TXmlBuilder; elem : TFhirTestReportSetupAction);
@@ -39628,10 +40550,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportSetupActionOperationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportSetupActionOperationChildren(xml : TXmlBuilder; elem : TFhirTestReportSetupActionOperation);
@@ -39684,10 +40608,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportSetupActionAssertChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportSetupActionAssertChildren(xml : TXmlBuilder; elem : TFhirTestReportSetupActionAssert);
@@ -39740,10 +40666,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportTestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportTestChildren(xml : TXmlBuilder; elem : TFhirTestReportTest);
@@ -39797,10 +40725,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportTestActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportTestActionChildren(xml : TXmlBuilder; elem : TFhirTestReportTestAction);
@@ -39848,10 +40778,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportTeardownChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportTeardownChildren(xml : TXmlBuilder; elem : TFhirTestReportTeardown);
@@ -39899,10 +40831,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportTeardownActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportTeardownActionChildren(xml : TXmlBuilder; elem : TFhirTestReportTeardownAction);
@@ -39969,10 +40903,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestReportChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestReportChildren(xml : TXmlBuilder; elem : TFhirTestReport);
@@ -40045,10 +40981,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptOriginChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptOriginChildren(xml : TXmlBuilder; elem : TFhirTestScriptOrigin);
@@ -40096,10 +41034,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptDestinationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptDestinationChildren(xml : TXmlBuilder; elem : TFhirTestScriptDestination);
@@ -40147,10 +41087,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptMetadataChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptMetadataChildren(xml : TXmlBuilder; elem : TFhirTestScriptMetadata);
@@ -40203,10 +41145,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptMetadataLinkChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptMetadataLinkChildren(xml : TXmlBuilder; elem : TFhirTestScriptMetadataLink);
@@ -40265,10 +41209,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptMetadataCapabilityChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptMetadataCapabilityChildren(xml : TXmlBuilder; elem : TFhirTestScriptMetadataCapability);
@@ -40333,10 +41279,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptFixtureChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptFixtureChildren(xml : TXmlBuilder; elem : TFhirTestScriptFixture);
@@ -40400,10 +41348,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptVariableChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptVariableChildren(xml : TXmlBuilder; elem : TFhirTestScriptVariable);
@@ -40464,10 +41414,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptRuleChildren(xml : TXmlBuilder; elem : TFhirTestScriptRule);
@@ -40519,10 +41471,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptRuleParamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptRuleParamChildren(xml : TXmlBuilder; elem : TFhirTestScriptRuleParam);
@@ -40571,10 +41525,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptRulesetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptRulesetChildren(xml : TXmlBuilder; elem : TFhirTestScriptRuleset);
@@ -40625,10 +41581,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptRulesetRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptRulesetRuleChildren(xml : TXmlBuilder; elem : TFhirTestScriptRulesetRule);
@@ -40680,10 +41638,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptRulesetRuleParamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptRulesetRuleParamChildren(xml : TXmlBuilder; elem : TFhirTestScriptRulesetRuleParam);
@@ -40730,10 +41690,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetup);
@@ -40783,10 +41745,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupAction);
@@ -40864,10 +41828,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionOperationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionOperationChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionOperation);
@@ -40948,10 +41914,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionOperationRequestHeaderChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionOperationRequestHeaderChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionOperationRequestHeader);
@@ -41043,10 +42011,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssert);
@@ -41140,10 +42110,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertRuleChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssertRule);
@@ -41195,10 +42167,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertRuleParamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertRuleParamChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssertRuleParam);
@@ -41246,10 +42220,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertRulesetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertRulesetChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssertRuleset);
@@ -41301,10 +42277,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertRulesetRuleChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertRulesetRuleChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssertRulesetRule);
@@ -41356,10 +42334,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptSetupActionAssertRulesetRuleParamChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptSetupActionAssertRulesetRuleParamChildren(xml : TXmlBuilder; elem : TFhirTestScriptSetupActionAssertRulesetRuleParam);
@@ -41409,10 +42389,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptTestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptTestChildren(xml : TXmlBuilder; elem : TFhirTestScriptTest);
@@ -41466,10 +42448,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptTestActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptTestActionChildren(xml : TXmlBuilder; elem : TFhirTestScriptTestAction);
@@ -41517,10 +42501,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptTeardownChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptTeardownChildren(xml : TXmlBuilder; elem : TFhirTestScriptTeardown);
@@ -41568,10 +42554,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptTeardownActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptTeardownActionChildren(xml : TXmlBuilder; elem : TFhirTestScriptTeardownAction);
@@ -41666,10 +42654,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeTestScriptChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeTestScriptChildren(xml : TXmlBuilder; elem : TFhirTestScript);
@@ -41783,10 +42773,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetComposeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetComposeChildren(xml : TXmlBuilder; elem : TFhirValueSetCompose);
@@ -41849,10 +42841,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetComposeIncludeChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetComposeIncludeChildren(xml : TXmlBuilder; elem : TFhirValueSetComposeInclude);
@@ -41915,10 +42909,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetComposeIncludeConceptChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetComposeIncludeConceptChildren(xml : TXmlBuilder; elem : TFhirValueSetComposeIncludeConcept);
@@ -41974,10 +42970,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetComposeIncludeConceptDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetComposeIncludeConceptDesignationChildren(xml : TXmlBuilder; elem : TFhirValueSetComposeIncludeConceptDesignation);
@@ -42030,10 +43028,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetComposeIncludeFilterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetComposeIncludeFilterChildren(xml : TXmlBuilder; elem : TFhirValueSetComposeIncludeFilter);
@@ -42090,10 +43090,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetExpansionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetExpansionChildren(xml : TXmlBuilder; elem : TFhirValueSetExpansion);
@@ -42163,10 +43165,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetExpansionParameterChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetExpansionParameterChildren(xml : TXmlBuilder; elem : TFhirValueSetExpansionParameter);
@@ -42237,10 +43241,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetExpansionContainsChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetExpansionContainsChildren(xml : TXmlBuilder; elem : TFhirValueSetExpansionContains);
@@ -42340,10 +43346,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeValueSetChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeValueSetChildren(xml : TXmlBuilder; elem : TFhirValueSet);
@@ -42460,10 +43468,12 @@ begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeVisionPrescriptionDispenseChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeVisionPrescriptionDispenseChildren(xml : TXmlBuilder; elem : TFhirVisionPrescriptionDispense);
@@ -42556,10 +43566,12 @@ begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
+  if KeepLocationData then elem.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeVisionPrescriptionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
+  if KeepLocationData then elem.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 procedure TFHIRXmlComposer.ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);

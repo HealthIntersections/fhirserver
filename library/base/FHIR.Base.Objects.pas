@@ -210,7 +210,7 @@ type
   TFHIRObjectList = class;
   TFHIRPropertyList = class;
   TFHIRSelection = class;
-  TFHIRLocation = class;
+  TFHIRLocatedNode = class;
   TFHIRSelectionList = class;
 
   TFHIRProperty = class (TFslObject)
@@ -291,20 +291,6 @@ type
 
   {$M+}
 
-  { TFHIRLocation }
-
-  TFHIRLocation = class (TFslObject)
-  private
-    FProp: TFHIRProperty;
-    FValue: TFHIRObject;
-  public
-    constructor create(prop : TFHIRProperty; value : TFHIRObject);
-    destructor Destroy; override;
-
-    property prop : TFHIRProperty read FProp;
-    property value : TFHIRObject read FValue;
-  end;
-
   { TFHIRNamedValue }
 
   TFHIRNamedValue = class (TFslObject)
@@ -351,6 +337,20 @@ type
     property composeFinish2 : TSourceLocation read FComposeFinish2 write FComposeFinish2;
   end;
 
+  { TFHIRLocatedNode }
+
+  TFHIRLocatedNode = class (TFslObject)
+  private
+    FProp: TFHIRProperty;
+    FValue: TFHIRObject;
+  public
+    constructor create(prop : TFHIRProperty; value : TFHIRObject);
+    destructor Destroy; override;
+
+    property prop : TFHIRProperty read FProp;
+    property value : TFHIRObject read FValue;
+  end;
+
   { TFHIRObject }
 
   TFHIRObject = class (TFslObject)
@@ -372,7 +372,7 @@ type
     function getTags(name: String): String;
     function GetLocationData : TFHIRObjectLocationData;
     function GetHasLocationData : boolean;
-    function findLocation(loc : TSourceLocation; propFrom : TFHIRProperty; path : TFslList<TFHIRLocation>) : boolean; overload;
+    function findLocation(loc : TSourceLocation; propFrom : TFHIRProperty; path : TFslList<TFHIRLocatedNode>) : boolean; overload;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Virtual;
@@ -438,7 +438,7 @@ type
     // populated by some parsers when parsing
     property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
     property HasLocationData : boolean read GetHasLocationData;
-    function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocation>; overload;
+    function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocatedNode>; overload;
 
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
@@ -744,21 +744,16 @@ begin
   result := locInSpan(loc, FParseStart, FParseFinish);
 end;
 
-function TFHIRObjectLocationData.hasLocation2: boolean;
-begin
-  result := FParseFinish2.nonZero;
-end;
+{ TFHIRLocatedNode }
 
-{ TFHIRLocation }
-
-constructor TFHIRLocation.create(prop: TFHIRProperty; value: TFHIRObject);
+constructor TFHIRLocatedNode.create(prop: TFHIRProperty; value: TFHIRObject);
 begin
   inherited Create;
   FProp := prop;
   FValue := value;
 end;
 
-destructor TFHIRLocation.Destroy;
+destructor TFHIRLocatedNode.Destroy;
 begin
   FProp.Free;
   FValue.Free;
@@ -888,7 +883,7 @@ begin
   result := FLocationData <> nil;
 end;
 
-function TFHIRObject.findLocation(loc: TSourceLocation; propFrom : TFHIRProperty; path: TFslList<TFHIRLocation>): boolean;
+function TFHIRObject.findLocation(loc: TSourceLocation; propFrom : TFHIRProperty; path: TFslList<TFHIRLocatedNode>): boolean;
 var
   properties : TFHIRPropertyList;
   prop : TFHIRProperty;
@@ -898,7 +893,7 @@ begin
   result := GetLocationData.inSpan(loc);
   if result then
   begin
-    path.add(TFHIRLocation.create(propFrom.Link, self.link));
+    path.add(TFHIRLocatedNode.create(propFrom.Link, self.link));
 
     properties := createPropertyList(true);
     try
@@ -920,9 +915,9 @@ begin
   end;
 end;
 
-function TFHIRObject.findLocation(loc: TSourceLocation): TFslList<TFHIRLocation>;
+function TFHIRObject.findLocation(loc: TSourceLocation): TFslList<TFHIRLocatedNode>;
 begin
-  result := TFslList<TFHIRLocation>.create;
+  result := TFslList<TFHIRLocatedNode>.create;
   try
     findLocation(loc, nil, result);
     result.Link;

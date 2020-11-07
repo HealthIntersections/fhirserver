@@ -12,6 +12,7 @@ uses
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
+  FHIR.R4.Resources.Canonical,
   FHIR.LCL.Synchroniser,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
@@ -75,6 +76,7 @@ var
 begin
   p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
   try
+    p.KeepParseLocations := true;
     result := p.parseResource(source);
   finally
     p.Free;
@@ -133,7 +135,7 @@ begin
   try
     FMemo.text := c.composeBase(o);
   finally
-    c.free;
+    sync.free;
   end;
 end;
 

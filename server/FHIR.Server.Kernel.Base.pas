@@ -153,6 +153,7 @@ procedure TFHIRServiceBase.postStart;
 begin
   if setup then
     StartWebServer();
+  getReport('|', true);
   Logging.log('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
   Logging.Starting := false;
 end;
