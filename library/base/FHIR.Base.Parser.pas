@@ -210,6 +210,7 @@ Type
     FNoHeader: Boolean;
     FElements : TStringList;
     FLogId: string;
+    FKeepLocationData: boolean;
   protected
     FWorker : TFHIRWorkerContextV;
     FStyle : TFHIROutputStyle;
@@ -249,6 +250,7 @@ Type
     property ElementToCompose : TStringList read FElements;
     property LogId : string read FLogId write FLogId;
     property Format : TFHIRFormat read GetFormat;
+    property KeepLocationData : boolean read FKeepLocationData write FKeepLocationData;
   End;
 
   TFHIRComposerClass = class of TFHIRComposer;
@@ -301,6 +303,9 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
     function GetFormat: TFHIRFormat; override;
+
+    procedure startElement(json : TJSONWriter; name : String; value : TFHIRObject; noObj : boolean);
+    procedure finishElement(json : TJSONWriter; name : String; value : TFHIRObject; noObj : boolean);
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload; override;
@@ -829,6 +834,27 @@ begin
   if value <> '' Then
     json.ValueNumber(name, value);
 end;
+
+procedure TFHIRJsonComposerBase.startElement(json: TJSONWriter; name: String; value: TFHIRObject; noObj: boolean);
+begin
+  if not noObj then
+  begin
+    if KeepLocationData then
+      value.LocationData.ComposeStart := json.SourceLocation;
+    json.valueObject(name);
+  end;
+end;
+
+procedure TFHIRJsonComposerBase.finishElement(json: TJSONWriter; name: String; value: TFHIRObject; noObj: boolean);
+begin
+  if not noObj then
+  begin
+    json.finishObject;
+    if KeepLocationData then
+      value.LocationData.ComposeFinish := json.SourceLocation;
+  end;
+end;
+
 
 procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; oResource: TFhirResourceV);
 begin

@@ -2593,7 +2593,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdValue(json, 'id', elem.idElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -2605,7 +2605,7 @@ begin
       ComposeExtension(json, '', elem.extensionList[i]); {z - Extension}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);
@@ -2682,7 +2682,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.modifierExtensionList.Count > 0) then
   begin
@@ -2691,7 +2691,7 @@ begin
       ComposeExtension(json, '', elem.modifierExtensionList[i]); {z - Extension}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
@@ -2731,11 +2731,19 @@ begin
   if (value = nil) or (value.Value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeEnumProps(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
@@ -2743,17 +2751,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments) }) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -2788,11 +2802,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
@@ -2800,17 +2822,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -2845,11 +2873,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDateTimeProps(json : TJSONWriter; name : String; value : TFhirDateTime; inArray : boolean);
@@ -2857,17 +2893,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -2902,11 +2944,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeStringProps(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
@@ -2914,17 +2964,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -2959,11 +3015,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeIntegerProps(json : TJSONWriter; name : String; value : TFhirInteger; inArray : boolean);
@@ -2971,17 +3035,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3016,11 +3086,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUriProps(json : TJSONWriter; name : String; value : TFhirUri; inArray : boolean);
@@ -3028,17 +3106,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3073,11 +3157,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeInstantProps(json : TJSONWriter; name : String; value : TFhirInstant; inArray : boolean);
@@ -3085,17 +3177,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3130,11 +3228,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeXhtmlProps(json : TJSONWriter; name : String; value : TFhirXhtml; inArray : boolean);
@@ -3142,17 +3248,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3187,11 +3299,19 @@ begin
   if (value = nil) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBooleanProps(json : TJSONWriter; name : String; value : TFhirBoolean; inArray : boolean);
@@ -3199,17 +3319,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3244,11 +3370,19 @@ begin
   if (value = nil) or (value.value = nil) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBase64BinaryProps(json : TJSONWriter; name : String; value : TFhirBase64Binary; inArray : boolean);
@@ -3256,17 +3390,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3301,11 +3441,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeTimeProps(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
@@ -3313,17 +3461,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3358,11 +3512,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDecimalProps(json : TJSONWriter; name : String; value : TFhirDecimal; inArray : boolean);
@@ -3370,17 +3532,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3415,11 +3583,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeCodeProps(json : TJSONWriter; name : String; value : TFhirCode; inArray : boolean);
@@ -3427,17 +3603,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3472,11 +3654,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeOidProps(json : TJSONWriter; name : String; value : TFhirOid; inArray : boolean);
@@ -3484,17 +3674,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3529,11 +3725,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUuidProps(json : TJSONWriter; name : String; value : TFhirUuid; inArray : boolean);
@@ -3541,17 +3745,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3586,11 +3796,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeMarkdownProps(json : TJSONWriter; name : String; value : TFhirMarkdown; inArray : boolean);
@@ -3598,17 +3816,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3643,11 +3867,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
@@ -3655,17 +3887,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3700,11 +3938,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeIdProps(json : TJSONWriter; name : String; value : TFhirId; inArray : boolean);
@@ -3712,17 +3958,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3757,11 +4009,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposePositiveIntProps(json : TJSONWriter; name : String; value : TFhirPositiveInt; inArray : boolean);
@@ -3769,17 +4029,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -3971,7 +4237,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -4108,7 +4374,7 @@ begin
       ComposeParametersParameter(json, '', elem.partList[i]); {z - @Parameters.parameter}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseParameters(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4254,7 +4520,7 @@ procedure TFHIRJsonComposer.ComposeExtension(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeUriValue(json, 'url', elem.urlElement, false);
   ComposeUriProps(json, 'url', elem.urlElement, false);
@@ -4382,7 +4648,7 @@ begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNarrative(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4414,12 +4680,12 @@ procedure TFHIRJsonComposer.ComposeNarrative(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirNarrativeStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirNarrativeStatusEnum, false);
   ComposeXHtmlNode(json, 'div', elem.div_); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContributor(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4455,7 +4721,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirContributorTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirContributorTypeEnum, false);
@@ -4468,7 +4734,7 @@ begin
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAttachment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4512,7 +4778,7 @@ procedure TFHIRJsonComposer.ComposeAttachment(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCodeValue(json, 'contentType', elem.contentTypeElement, false);
@@ -4546,7 +4812,7 @@ begin
     ComposeDateTimeValue(json, 'creation', elem.creationElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDateTimeProps(json, 'creation', elem.creationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDataRequirementCodeFilter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4590,7 +4856,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
@@ -4639,7 +4905,7 @@ begin
       ComposeCodeableConcept(json, '', elem.valueCodeableConceptList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDataRequirementDateFilter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4675,7 +4941,7 @@ procedure TFHIRJsonComposer.ComposeDataRequirementDateFilter(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
@@ -4688,7 +4954,7 @@ begin
     ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
     ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDataRequirement(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4730,7 +4996,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirAllTypesEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAllTypesEnum, false);
@@ -4796,7 +5062,7 @@ begin
       ComposeDataRequirementDateFilter(json, '', elem.dateFilterList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDosage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4862,7 +5128,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIntegerValue(json, 'sequence', elem.sequenceElement, false);
@@ -4914,7 +5180,7 @@ begin
     ComposeRange(json, 'rateRange', TFhirRange(elem.rate)) 
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.rate is TFhirQuantity) then 
     ComposeQuantity(json, 'rateQuantity', TFhirQuantity(elem.rate)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseIdentifier(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -4954,7 +5220,7 @@ procedure TFHIRJsonComposer.ComposeIdentifier(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirIdentifierUseEnum, false);
@@ -4974,7 +5240,7 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeReference{TFhirOrganization}(json, 'assigner', elem.assigner); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCoding(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5012,7 +5278,7 @@ procedure TFHIRJsonComposer.ComposeCoding(json : TJSONWriter; name : string; ele
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeUriValue(json, 'system', elem.systemElement, false);
@@ -5034,7 +5300,7 @@ begin
     ComposeBooleanValue(json, 'userSelected', elem.userSelectedElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanProps(json, 'userSelected', elem.userSelectedElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSampledData(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5076,7 +5342,7 @@ procedure TFHIRJsonComposer.ComposeSampledData(json : TJSONWriter; name : string
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeQuantity(json, 'origin', elem.origin); {a}
   ComposeDecimalValue(json, 'period', elem.periodElement, false);
@@ -5097,7 +5363,7 @@ begin
   ComposePositiveIntProps(json, 'dimensions', elem.dimensionsElement, false);
   ComposeStringValue(json, 'data', elem.dataElement, false);
   ComposeStringProps(json, 'data', elem.dataElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRatio(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5129,13 +5395,13 @@ procedure TFHIRJsonComposer.ComposeRatio(json : TJSONWriter; name : string; elem
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeQuantity(json, 'numerator', elem.numerator); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeQuantity(json, 'denominator', elem.denominator); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseReference(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5169,7 +5435,7 @@ procedure TFHIRJsonComposer.ComposeReference(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringValue(json, 'reference', elem.referenceElement, false);
@@ -5181,7 +5447,7 @@ begin
     ComposeStringValue(json, 'display', elem.displayElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringProps(json, 'display', elem.displayElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTriggerDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5223,7 +5489,7 @@ procedure TFHIRJsonComposer.ComposeTriggerDefinition(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirTriggerTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirTriggerTypeEnum, false);
@@ -5247,7 +5513,7 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDataRequirement(json, 'eventData', elem.eventData); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePeriod(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5279,7 +5545,7 @@ procedure TFHIRJsonComposer.ComposePeriod(json : TJSONWriter; name : string; ele
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDateTimeValue(json, 'start', elem.startElement, false);
@@ -5289,7 +5555,7 @@ begin
     ComposeDateTimeValue(json, 'end', elem.end_Element, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDateTimeProps(json, 'end', elem.end_Element, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5327,7 +5593,7 @@ procedure TFHIRJsonComposer.ComposeQuantity(json : TJSONWriter; name : string; e
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalValue(json, 'value', elem.valueElement, false);
@@ -5349,7 +5615,7 @@ begin
     ComposeCodeValue(json, 'code', elem.codeElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCodeProps(json, 'code', elem.codeElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRange(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5381,13 +5647,13 @@ procedure TFHIRJsonComposer.ComposeRange(json : TJSONWriter; name : string; elem
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeQuantity(json, 'low', elem.low); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeQuantity(json, 'high', elem.high); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRelatedArtifact(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5427,7 +5693,7 @@ procedure TFHIRJsonComposer.ComposeRelatedArtifact(json : TJSONWriter; name : st
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirRelatedArtifactTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirRelatedArtifactTypeEnum, false);
@@ -5447,7 +5713,7 @@ begin
     ComposeAttachment(json, 'document', elem.document); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAnnotation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5483,7 +5749,7 @@ procedure TFHIRJsonComposer.ComposeAnnotation(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.author is TFhirReference) then
     ComposeReference(json, 'authorReference', TFhirReference(elem.author))
@@ -5498,7 +5764,7 @@ begin
     ComposeDateTimeProps(json, 'time', elem.timeElement, false);
   ComposeStringValue(json, 'text', elem.textElement, false);
   ComposeStringProps(json, 'text', elem.textElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContactDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5532,7 +5798,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -5545,7 +5811,7 @@ begin
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseUsageContext(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5581,7 +5847,7 @@ procedure TFHIRJsonComposer.ComposeUsageContext(json : TJSONWriter; name : strin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeCoding(json, 'code', elem.code); {a}
   if (elem.value is TFhirCodeableConcept) then 
@@ -5590,7 +5856,7 @@ begin
     ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value)) 
   else if (elem.value is TFhirRange) then 
     ComposeRange(json, 'valueRange', TFhirRange(elem.value)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSignature(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5636,7 +5902,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (elem.type_List.Count > 0) then
   begin
@@ -5669,7 +5935,7 @@ begin
     ComposeBase64BinaryValue(json, 'blob', elem.blobElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBase64BinaryProps(json, 'blob', elem.blobElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeableConcept(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5703,7 +5969,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.codingList.Count > 0) then
   begin
@@ -5716,7 +5982,7 @@ begin
     ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringProps(json, 'text', elem.textElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseParameterDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5758,7 +6024,7 @@ procedure TFHIRJsonComposer.ComposeParameterDefinition(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCodeValue(json, 'name', elem.nameElement, false);
@@ -5782,7 +6048,7 @@ begin
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAllTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5820,7 +6086,7 @@ procedure TFHIRJsonComposer.ComposeContactPoint(json : TJSONWriter; name : strin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeEnumValue(json, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, false);
@@ -5840,7 +6106,7 @@ begin
     ComposePositiveIntProps(json, 'rank', elem.rankElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseHumanName(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -5886,7 +6152,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirNameUseEnum, false);
@@ -5974,7 +6240,7 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeta(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6016,7 +6282,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdValue(json, 'versionId', elem.versionIdElement, false);
@@ -6065,7 +6331,7 @@ begin
         ComposeCoding(json, '', elem.tagList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6117,7 +6383,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirAddressUseEnum, false);
@@ -6177,7 +6443,7 @@ begin
     ComposeStringProps(json, 'country', elem.countryElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionSlicing(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6215,7 +6481,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.discriminatorList.Count > 0) then
   begin
@@ -6234,7 +6500,7 @@ begin
     ComposeBooleanProps(json, 'ordered', elem.orderedElement, false);
   ComposeEnumValue(json, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRulesEnum, false);
   ComposeEnumProps(json, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRulesEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionSlicingDiscriminator(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6266,13 +6532,13 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionSlicingDiscriminator(json : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirDiscriminatorTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirDiscriminatorTypeEnum, false);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionBase(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6306,7 +6572,7 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionBase(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
@@ -6314,7 +6580,7 @@ begin
   ComposeUnsignedIntProps(json, 'min', elem.minElement, false);
   ComposeStringValue(json, 'max', elem.maxElement, false);
   ComposeStringProps(json, 'max', elem.maxElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionType(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6356,7 +6622,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeUriValue(json, 'code', elem.codeElement, false);
   ComposeUriProps(json, 'code', elem.codeElement, false);
@@ -6396,7 +6662,7 @@ begin
     ComposeEnumValue(json, 'versioning', elem.VersioningElement, CODES_TFhirReferenceVersionRulesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and (not isCanonical or (elem.versioningElement <> nil) and (elem.versioningElement.primitiveValue <> 'either')) then
     ComposeEnumProps(json, 'versioning', elem.VersioningElement, CODES_TFhirReferenceVersionRulesEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionExample(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6502,7 +6768,7 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionExample(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeStringValue(json, 'label', elem.label_Element, false);
   ComposeStringProps(json, 'label', elem.label_Element, false);
@@ -6630,7 +6896,7 @@ begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionConstraint(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6672,7 +6938,7 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionConstraint(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeIdValue(json, 'key', elem.keyElement, false);
   ComposeIdProps(json, 'key', elem.keyElement, false);
@@ -6694,7 +6960,7 @@ begin
     ComposeUriValue(json, 'source', elem.sourceElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'source', elem.sourceElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionBinding(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6730,7 +6996,7 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionBinding(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeEnumValue(json, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum, false);
   ComposeEnumProps(json, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum, false);
@@ -6745,7 +7011,7 @@ begin
     ComposeUriValue(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
     ComposeUriProps(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6781,7 +7047,7 @@ procedure TFHIRJsonComposer.ComposeElementDefinitionMapping(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   ComposeIdValue(json, 'identity', elem.identityElement, false);
   ComposeIdProps(json, 'identity', elem.identityElement, false);
@@ -6795,7 +7061,7 @@ begin
     ComposeStringValue(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseElementDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -7145,7 +7411,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
@@ -7778,7 +8044,7 @@ begin
       ComposeElementDefinitionMapping(json, '', elem.mappingList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -7844,7 +8110,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirDuration) then 
     ComposeDuration(json, 'boundsDuration', TFhirDuration(elem.bounds)) 
@@ -7968,7 +8234,7 @@ begin
     ComposeUnsignedIntValue(json, 'offset', elem.offsetElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'offset', elem.offsetElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8006,7 +8272,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeElement(json, '', elem, true);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.eventList.Count > 0) then
   begin
@@ -8036,7 +8302,7 @@ begin
     ComposeTimingRepeat(json, 'repeat', elem.repeat_); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCount(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8064,9 +8330,9 @@ procedure TFHIRJsonComposer.ComposeCount(json : TJSONWriter; name : string; elem
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeQuantity(json, '', elem, true);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMoney(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8094,9 +8360,9 @@ procedure TFHIRJsonComposer.ComposeMoney(json : TJSONWriter; name : string; elem
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeQuantity(json, '', elem, true);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAge(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8124,9 +8390,9 @@ procedure TFHIRJsonComposer.ComposeAge(json : TJSONWriter; name : string; elem :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeQuantity(json, '', elem, true);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDistance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8154,9 +8420,9 @@ procedure TFHIRJsonComposer.ComposeDistance(json : TJSONWriter; name : string; e
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeQuantity(json, '', elem, true);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDuration(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8184,9 +8450,9 @@ procedure TFHIRJsonComposer.ComposeDuration(json : TJSONWriter; name : string; e
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeQuantity(json, '', elem, true);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 {$IFDEF FHIR_ACCOUNT}
@@ -8219,14 +8485,14 @@ procedure TFHIRJsonComposer.ComposeAccountCoverage(json : TJSONWriter; name : st
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'priority', elem.priorityElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'priority', elem.priorityElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAccountGuarantor(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8260,7 +8526,7 @@ procedure TFHIRJsonComposer.ComposeAccountGuarantor(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'party', elem.party); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -8269,7 +8535,7 @@ begin
     ComposeBooleanProps(json, 'onHold', elem.onHoldElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAccount(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8402,13 +8668,13 @@ procedure TFHIRJsonComposer.ComposeActivityDefinitionParticipant(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirActionParticipantTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirActionParticipantTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseActivityDefinitionDynamicValue(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8444,7 +8710,7 @@ procedure TFHIRJsonComposer.ComposeActivityDefinitionDynamicValue(json : TJSONWr
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
@@ -8462,7 +8728,7 @@ begin
     ComposeStringValue(json, 'expression', elem.expressionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseActivityDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8779,7 +9045,7 @@ procedure TFHIRJsonComposer.ComposeAdverseEventSuspectEntity(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'instance', elem.instance); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -8798,7 +9064,7 @@ begin
     ComposeReference{Resource}(json, 'causalityAuthor', elem.causalityAuthor); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'causalityResult', elem.causalityResult); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAdverseEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -8969,7 +9235,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'substance', elem.substance); {a}
@@ -9001,7 +9267,7 @@ begin
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAllergyIntolerance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9201,7 +9467,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
@@ -9218,7 +9484,7 @@ begin
     ComposeEnumProps(json, 'required', elem.RequiredElement, CODES_TFhirParticipantrequiredEnum, false);
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirParticipationstatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirParticipationstatusEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAppointment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9527,7 +9793,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
   begin
@@ -9587,7 +9853,7 @@ begin
       ComposeCodeableConcept(json, '', elem.purposeOfUseList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAuditEventAgentNetwork(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9619,7 +9885,7 @@ procedure TFHIRJsonComposer.ComposeAuditEventAgentNetwork(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'address', elem.addressElement, false);
@@ -9629,7 +9895,7 @@ begin
     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirNetworkTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirNetworkTypeEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAuditEventSource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9665,7 +9931,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'site', elem.siteElement, false);
@@ -9679,7 +9945,7 @@ begin
       ComposeCoding(json, '', elem.type_List[i]); {z - Coding}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAuditEventEntity(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9729,7 +9995,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -9767,7 +10033,7 @@ begin
       ComposeAuditEventEntityDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAuditEventEntityDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -9799,13 +10065,13 @@ procedure TFHIRJsonComposer.ComposeAuditEventEntityDetail(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'type', elem.type_Element, false);
   ComposeStringProps(json, 'type', elem.type_Element, false);
   ComposeBase64BinaryValue(json, 'value', elem.valueElement, false);
   ComposeBase64BinaryProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseAuditEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10111,13 +10377,13 @@ procedure TFHIRJsonComposer.ComposeBundleLink(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'relation', elem.relationElement, false);
   ComposeStringProps(json, 'relation', elem.relationElement, false);
   ComposeUriValue(json, 'url', elem.urlElement, false);
   ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseBundleEntry(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10159,7 +10425,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.link_List.Count > 0) then
   begin
@@ -10180,7 +10446,7 @@ begin
     ComposeBundleEntryRequest(json, 'request', elem.request); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBundleEntryResponse(json, 'response', elem.response); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseBundleEntrySearch(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10212,7 +10478,7 @@ procedure TFHIRJsonComposer.ComposeBundleEntrySearch(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirSearchEntryModeEnum, false);
@@ -10222,7 +10488,7 @@ begin
     ComposeDecimalValue(json, 'score', elem.scoreElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalProps(json, 'score', elem.scoreElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseBundleEntryRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10262,7 +10528,7 @@ procedure TFHIRJsonComposer.ComposeBundleEntryRequest(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'method', elem.MethodElement, CODES_TFhirHttpVerbEnum, false);
   ComposeEnumProps(json, 'method', elem.MethodElement, CODES_TFhirHttpVerbEnum, false);
@@ -10284,7 +10550,7 @@ begin
     ComposeStringValue(json, 'ifNoneExist', elem.ifNoneExistElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringProps(json, 'ifNoneExist', elem.ifNoneExistElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseBundleEntryResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10322,7 +10588,7 @@ procedure TFHIRJsonComposer.ComposeBundleEntryResponse(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'status', elem.statusElement, false);
   ComposeStringProps(json, 'status', elem.statusElement, false);
@@ -10340,7 +10606,7 @@ begin
     ComposeInstantProps(json, 'lastModified', elem.lastModifiedElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeInnerResource(json, 'outcome', elem, elem.outcome); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseBundle(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10442,7 +10708,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementSoftware(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -10454,7 +10720,7 @@ begin
     ComposeDateTimeValue(json, 'releaseDate', elem.releaseDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'releaseDate', elem.releaseDateElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementImplementation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10486,7 +10752,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementImplementation(json : TJSO
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'description', elem.descriptionElement, false);
   ComposeStringProps(json, 'description', elem.descriptionElement, false);
@@ -10494,7 +10760,7 @@ begin
     ComposeUriValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10542,7 +10808,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirRestfulCapabilityModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirRestfulCapabilityModeEnum, false);
@@ -10604,7 +10870,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestSecurity(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10642,7 +10908,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'cors', elem.corsElement, false);
@@ -10666,7 +10932,7 @@ begin
       ComposeCapabilityStatementRestSecurityCertificate(json, '', elem.certificateList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestSecurityCertificate(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10698,7 +10964,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementRestSecurityCertificate(js
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'type', elem.type_Element, false);
@@ -10708,7 +10974,7 @@ begin
     ComposeBase64BinaryValue(json, 'blob', elem.blobElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeBase64BinaryProps(json, 'blob', elem.blobElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10770,7 +11036,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
@@ -10894,7 +11160,7 @@ begin
       ComposeCapabilityStatementRestResourceSearchParam(json, '', elem.searchParamList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestResourceInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10926,7 +11192,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementRestResourceInteraction(js
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirTypeRestfulInteractionEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirTypeRestfulInteractionEnum, false);
@@ -10934,7 +11200,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestResourceSearchParam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -10970,7 +11236,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementRestResourceSearchParam(js
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -10984,7 +11250,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11016,7 +11282,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementRestInteraction(json : TJS
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirSystemRestfulInteractionEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirSystemRestfulInteractionEnum, false);
@@ -11024,7 +11290,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementRestOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11056,12 +11322,12 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementRestOperation(json : TJSON
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeReference{TFhirOperationDefinition}(json, 'definition', elem.definition); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementMessaging(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11101,7 +11367,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
   begin
@@ -11132,7 +11398,7 @@ begin
       ComposeCapabilityStatementMessagingEvent(json, '', elem.eventList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementMessagingEndpoint(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11164,12 +11430,12 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementMessagingEndpoint(json : T
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'protocol', elem.protocol); {a}
   ComposeUriValue(json, 'address', elem.addressElement, false);
   ComposeUriProps(json, 'address', elem.addressElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementMessagingSupportedMessage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11201,12 +11467,12 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementMessagingSupportedMessage(
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirEventCapabilityModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirEventCapabilityModeEnum, false);
   ComposeReference{TFhirMessageDefinition}(json, 'definition', elem.definition); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementMessagingEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11248,7 +11514,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementMessagingEvent(json : TJSO
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'code', elem.code); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -11265,7 +11531,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatementDocument(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11299,7 +11565,7 @@ procedure TFHIRJsonComposer.ComposeCapabilityStatementDocument(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirDocumentModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirDocumentModeEnum, false);
@@ -11308,7 +11574,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
   ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCapabilityStatement(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11631,7 +11897,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.outcomeCodeableConceptList.Count > 0) then
   begin
@@ -11658,7 +11924,7 @@ begin
     ComposeReference{Resource}(json, 'reference', elem.reference); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCarePlanActivityDetail(json, 'detail', elem.detail); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCarePlanActivityDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -11726,7 +11992,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
@@ -11795,7 +12061,7 @@ begin
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCarePlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12011,7 +12277,7 @@ procedure TFHIRJsonComposer.ComposeCareTeamParticipant(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
@@ -12021,7 +12287,7 @@ begin
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCareTeam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12172,12 +12438,12 @@ procedure TFHIRJsonComposer.ComposeChargeItemParticipant(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseChargeItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12414,7 +12680,7 @@ procedure TFHIRJsonComposer.ComposeClaimRelated(json : TJSONWriter; name : strin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(json, 'claim', elem.claim); {a}
@@ -12422,7 +12688,7 @@ begin
     ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimPayee(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12456,14 +12722,14 @@ procedure TFHIRJsonComposer.ComposeClaimPayee(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCoding(json, 'resourceType', elem.resourceType); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'party', elem.party); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimCareTeam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12501,7 +12767,7 @@ procedure TFHIRJsonComposer.ComposeClaimCareTeam(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -12514,7 +12780,7 @@ begin
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'qualification', elem.qualification); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimInformation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12562,7 +12828,7 @@ procedure TFHIRJsonComposer.ComposeClaimInformation(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -12589,7 +12855,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'reason', elem.reason); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12629,7 +12895,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -12646,7 +12912,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimProcedure(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12682,7 +12948,7 @@ procedure TFHIRJsonComposer.ComposeClaimProcedure(json : TJSONWriter; name : str
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -12694,7 +12960,7 @@ begin
     ComposeCodeableConcept(json, 'procedureCodeableConcept', TFhirCodeableConcept(elem.procedure_)) 
   else if (elem.procedure_ is TFhirReference) then
     ComposeReference(json, 'procedureReference', TFhirReference(elem.procedure_));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12738,7 +13004,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -12775,7 +13041,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(json, 'claimResponse', elem.claimResponse); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimAccident(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12811,7 +13077,7 @@ procedure TFHIRJsonComposer.ComposeClaimAccident(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeDateValue(json, 'date', elem.dateElement, false);
   ComposeDateProps(json, 'date', elem.dateElement, false);
@@ -12821,7 +13087,7 @@ begin
     ComposeAddress(json, 'locationAddress', TFhirAddress(elem.location)) 
   else if (SummaryOption in [soFull, soData]) and (elem.location is TFhirReference) then
     ComposeReference(json, 'locationReference', TFhirReference(elem.location));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -12901,7 +13167,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -13074,7 +13340,7 @@ begin
       ComposeClaimItemDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimItemDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13128,7 +13394,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -13176,7 +13442,7 @@ begin
       ComposeClaimItemDetailSubDetail(json, '', elem.subDetailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimItemDetailSubDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13228,7 +13494,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -13269,7 +13535,7 @@ begin
       ComposeReference{TFhirDevice}(json, '', elem.udiList[i]); {z - Reference(Device)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaim(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13512,7 +13778,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
   ComposePositiveIntProps(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
@@ -13554,7 +13820,7 @@ begin
       ComposeClaimResponseItemDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseItemAdjudication(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13590,7 +13856,7 @@ procedure TFHIRJsonComposer.ComposeClaimResponseItemAdjudication(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -13601,7 +13867,7 @@ begin
     ComposeDecimalValue(json, 'value', elem.valueElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeDecimalProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseItemDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13641,7 +13907,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
   ComposePositiveIntProps(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
@@ -13683,7 +13949,7 @@ begin
       ComposeClaimResponseItemDetailSubDetail(json, '', elem.subDetailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseItemDetailSubDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13721,7 +13987,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
   ComposePositiveIntProps(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
@@ -13756,7 +14022,7 @@ begin
       ComposeClaimResponseItemAdjudication(json, '', elem.adjudicationList[i]); {z - @ClaimResponse.item.adjudication}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseAddItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13806,7 +14072,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.sequenceLinkIdList.Count > 0) then
   begin
@@ -13885,7 +14151,7 @@ begin
       ComposeClaimResponseAddItemDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseAddItemDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -13931,7 +14197,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'revenue', elem.revenue); {a}
@@ -13979,7 +14245,7 @@ begin
       ComposeClaimResponseItemAdjudication(json, '', elem.adjudicationList[i]); {z - @ClaimResponse.item.adjudication}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14015,7 +14281,7 @@ procedure TFHIRJsonComposer.ComposeClaimResponseError(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
@@ -14030,7 +14296,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntProps(json, 'subdetailSequenceLinkId', elem.subdetailSequenceLinkIdElement, false);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponsePayment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14070,7 +14336,7 @@ procedure TFHIRJsonComposer.ComposeClaimResponsePayment(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -14086,7 +14352,7 @@ begin
     ComposeMoney(json, 'amount', elem.amount); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseProcessNote(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14122,7 +14388,7 @@ procedure TFHIRJsonComposer.ComposeClaimResponseProcessNote(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'number', elem.numberElement, false);
@@ -14136,7 +14402,7 @@ begin
     ComposeStringProps(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'language', elem.language); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14180,7 +14446,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -14217,7 +14483,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(json, 'claimResponse', elem.claimResponse); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClaimResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14416,7 +14682,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   if (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
@@ -14426,7 +14692,7 @@ begin
       ComposeReference{Resource}(json, '', elem.itemList[i]); {z - Reference(Observation|QuestionnaireResponse|FamilyMemberHistory|DiagnosticReport|RiskAssessment|ImagingStudy)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClinicalImpressionFinding(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14460,7 +14726,7 @@ procedure TFHIRJsonComposer.ComposeClinicalImpressionFinding(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.item is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
@@ -14470,7 +14736,7 @@ begin
     ComposeStringValue(json, 'basis', elem.basisElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'basis', elem.basisElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseClinicalImpression(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14694,7 +14960,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'code', elem.codeElement, false);
   ComposeCodeProps(json, 'code', elem.codeElement, false);
@@ -14728,7 +14994,7 @@ begin
   end;
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeSystemProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14764,7 +15030,7 @@ procedure TFHIRJsonComposer.ComposeCodeSystemProperty(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'code', elem.codeElement, false);
   ComposeCodeProps(json, 'code', elem.codeElement, false);
@@ -14778,7 +15044,7 @@ begin
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirConceptPropertyTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirConceptPropertyTypeEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeSystemConcept(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14820,7 +15086,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'code', elem.codeElement, false);
   ComposeCodeProps(json, 'code', elem.codeElement, false);
@@ -14853,7 +15119,7 @@ begin
       ComposeCodeSystemConcept(json, '', elem.conceptList[i]); {z - @CodeSystem.concept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeSystemConceptDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14887,7 +15153,7 @@ procedure TFHIRJsonComposer.ComposeCodeSystemConceptDesignation(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'language', elem.languageElement, false);
@@ -14897,7 +15163,7 @@ begin
     ComposeCoding(json, 'use', elem.use); {a}
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeSystemConceptProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -14939,7 +15205,7 @@ procedure TFHIRJsonComposer.ComposeCodeSystemConceptProperty(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'code', elem.codeElement, false);
   ComposeCodeProps(json, 'code', elem.codeElement, false);
@@ -14970,7 +15236,7 @@ begin
     ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
     ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15198,7 +15464,7 @@ procedure TFHIRJsonComposer.ComposeCommunicationPayload(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.content is TFhirAttachment) then 
     ComposeAttachment(json, 'contentAttachment', TFhirAttachment(elem.content)) 
@@ -15209,7 +15475,7 @@ begin
     ComposeStringValue(json, 'contentString', TFhirString(elem.content), false);
     ComposeStringProps(json, 'contentString', TFhirString(elem.content), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCommunication(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15421,7 +15687,7 @@ procedure TFHIRJsonComposer.ComposeCommunicationRequestPayload(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.content is TFhirAttachment) then 
     ComposeAttachment(json, 'contentAttachment', TFhirAttachment(elem.content)) 
@@ -15432,7 +15698,7 @@ begin
     ComposeStringValue(json, 'contentString', TFhirString(elem.content), false);
     ComposeStringProps(json, 'contentString', TFhirString(elem.content), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCommunicationRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15464,12 +15730,12 @@ procedure TFHIRJsonComposer.ComposeCommunicationRequestRequester(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCommunicationRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15685,7 +15951,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirResourceTypesEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirResourceTypesEnum, false);
@@ -15717,7 +15983,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCompartmentDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15879,7 +16145,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.modeList.Count > 0) then
   begin
@@ -15911,7 +16177,7 @@ begin
     ComposeDateTimeProps(json, 'time', elem.timeElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'party', elem.party); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCompositionRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15945,7 +16211,7 @@ procedure TFHIRJsonComposer.ComposeCompositionRelatesTo(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipTypeEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipTypeEnum, false);
@@ -15953,7 +16219,7 @@ begin
     ComposeIdentifier(json, 'targetIdentifier', TFhirIdentifier(elem.target)) 
   else if (elem.target is TFhirReference) then
     ComposeReference(json, 'targetReference', TFhirReference(elem.target));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCompositionEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -15989,7 +16255,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
   begin
@@ -16007,7 +16273,7 @@ begin
       ComposeReference{TFhirReference}(json, '', elem.detailList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCompositionSection(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16053,7 +16319,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
@@ -16085,7 +16351,7 @@ begin
       ComposeCompositionSection(json, '', elem.sectionList[i]); {z - @Composition.section}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseComposition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16244,7 +16510,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'source', elem.sourceElement, false);
@@ -16271,7 +16537,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeConceptMapGroupUnmapped(json, 'unmapped', elem.unmapped); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConceptMapGroupElement(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16307,7 +16573,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'code', elem.codeElement, false);
@@ -16324,7 +16590,7 @@ begin
       ComposeConceptMapGroupElementTarget(json, '', elem.targetList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConceptMapGroupElementTarget(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16366,7 +16632,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'code', elem.codeElement, false);
@@ -16398,7 +16664,7 @@ begin
       ComposeConceptMapGroupElementTargetDependsOn(json, '', elem.productList[i]); {z - @ConceptMap.group.element.target.dependsOn}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConceptMapGroupElementTargetDependsOn(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16434,7 +16700,7 @@ procedure TFHIRJsonComposer.ComposeConceptMapGroupElementTargetDependsOn(json : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'property', elem.property_Element, false);
   ComposeUriProps(json, 'property', elem.property_Element, false);
@@ -16448,7 +16714,7 @@ begin
     ComposeStringValue(json, 'display', elem.displayElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'display', elem.displayElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConceptMapGroupUnmapped(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16484,7 +16750,7 @@ procedure TFHIRJsonComposer.ComposeConceptMapGroupUnmapped(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirConceptmapUnmappedModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirConceptmapUnmappedModeEnum, false);
@@ -16500,7 +16766,7 @@ begin
     ComposeUriValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConceptMap(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16692,7 +16958,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'summary', elem.summary); {a}
@@ -16703,7 +16969,7 @@ begin
       ComposeReference{Resource}(json, '', elem.assessmentList[i]); {z - Reference(ClinicalImpression|DiagnosticReport|Observation)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConditionEvidence(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16737,7 +17003,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
   begin
@@ -16753,7 +17019,7 @@ begin
       ComposeReference{TFhirReference}(json, '', elem.detailList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16962,11 +17228,11 @@ procedure TFHIRJsonComposer.ComposeConsentActor(json : TJSONWriter; name : strin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{Resource}(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsentPolicy(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -16998,7 +17264,7 @@ procedure TFHIRJsonComposer.ComposeConsentPolicy(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'authority', elem.authorityElement, false);
@@ -17008,7 +17274,7 @@ begin
     ComposeUriValue(json, 'uri', elem.uriElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'uri', elem.uriElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsentData(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17040,12 +17306,12 @@ procedure TFHIRJsonComposer.ComposeConsentData(json : TJSONWriter; name : string
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'meaning', elem.MeaningElement, CODES_TFhirConsentDataMeaningEnum, false);
   ComposeEnumProps(json, 'meaning', elem.MeaningElement, CODES_TFhirConsentDataMeaningEnum, false);
   ComposeReference{TFhirReference}(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsentExcept(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17095,7 +17361,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirConsentExceptTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirConsentExceptTypeEnum, false);
@@ -17152,7 +17418,7 @@ begin
       ComposeConsentExceptData(json, '', elem.dataList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsentExceptActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17184,11 +17450,11 @@ procedure TFHIRJsonComposer.ComposeConsentExceptActor(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{Resource}(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsentExceptData(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17220,12 +17486,12 @@ procedure TFHIRJsonComposer.ComposeConsentExceptData(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'meaning', elem.MeaningElement, CODES_TFhirConsentDataMeaningEnum, false);
   ComposeEnumProps(json, 'meaning', elem.MeaningElement, CODES_TFhirConsentDataMeaningEnum, false);
   ComposeReference{TFhirReference}(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseConsent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17424,7 +17690,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
   if (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
@@ -17434,7 +17700,7 @@ begin
       ComposeCodeableConcept(json, '', elem.roleList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractSigner(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17470,7 +17736,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'type', elem.type_); {a}
   ComposeReference{Resource}(json, 'party', elem.party); {a}
@@ -17481,7 +17747,7 @@ begin
       ComposeSignature(json, '', elem.signatureList[i]); {z - Signature}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractValuedItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17527,7 +17793,7 @@ procedure TFHIRJsonComposer.ComposeContractValuedItem(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.entity is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'entityCodeableConcept', TFhirCodeableConcept(elem.entity)) 
@@ -17553,7 +17819,7 @@ begin
     ComposeDecimalProps(json, 'points', elem.pointsElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'net', elem.net); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractTerm(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17609,7 +17875,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -17676,7 +17942,7 @@ begin
       ComposeContractTerm(json, '', elem.groupList[i]); {z - @Contract.term}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractTermAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17710,7 +17976,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
   if (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
@@ -17720,7 +17986,7 @@ begin
       ComposeCodeableConcept(json, '', elem.roleList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractTermValuedItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17766,7 +18032,7 @@ procedure TFHIRJsonComposer.ComposeContractTermValuedItem(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.entity is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'entityCodeableConcept', TFhirCodeableConcept(elem.entity)) 
@@ -17792,7 +18058,7 @@ begin
     ComposeDecimalProps(json, 'points', elem.pointsElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'net', elem.net); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractFriendly(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17824,13 +18090,13 @@ procedure TFHIRJsonComposer.ComposeContractFriendly(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.content is TFhirAttachment) then 
     ComposeAttachment(json, 'contentAttachment', TFhirAttachment(elem.content)) 
   else if (elem.content is TFhirReference) then
     ComposeReference(json, 'contentReference', TFhirReference(elem.content));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractLegal(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17862,13 +18128,13 @@ procedure TFHIRJsonComposer.ComposeContractLegal(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.content is TFhirAttachment) then 
     ComposeAttachment(json, 'contentAttachment', TFhirAttachment(elem.content)) 
   else if (elem.content is TFhirReference) then
     ComposeReference(json, 'contentReference', TFhirReference(elem.content));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContractRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -17900,13 +18166,13 @@ procedure TFHIRJsonComposer.ComposeContractRule(json : TJSONWriter; name : strin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.content is TFhirAttachment) then 
     ComposeAttachment(json, 'contentAttachment', TFhirAttachment(elem.content)) 
   else if (elem.content is TFhirReference) then
     ComposeReference(json, 'contentReference', TFhirReference(elem.content));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseContract(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -18165,7 +18431,7 @@ procedure TFHIRJsonComposer.ComposeCoverageGrouping(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'group', elem.groupElement, false);
@@ -18215,7 +18481,7 @@ begin
     ComposeStringValue(json, 'subClassDisplay', elem.subClassDisplayElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'subClassDisplay', elem.subClassDisplayElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -18374,7 +18640,7 @@ procedure TFHIRJsonComposer.ComposeDataElementMapping(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'identity', elem.identityElement, false);
   ComposeIdProps(json, 'identity', elem.identityElement, false);
@@ -18390,7 +18656,7 @@ begin
     ComposeStringValue(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDataElement(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -18568,7 +18834,7 @@ procedure TFHIRJsonComposer.ComposeDetectedIssueMitigation(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'action', elem.action); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -18577,7 +18843,7 @@ begin
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'author', elem.author); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDetectedIssue(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -18713,7 +18979,7 @@ procedure TFHIRJsonComposer.ComposeDeviceUdi(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'deviceIdentifier', elem.deviceIdentifierElement, false);
@@ -18743,7 +19009,7 @@ begin
     ComposeEnumValue(json, 'entryType', elem.EntryTypeElement, CODES_TFhirUdiEntryTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'entryType', elem.EntryTypeElement, CODES_TFhirUdiEntryTypeEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDevice(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -18913,7 +19179,7 @@ procedure TFHIRJsonComposer.ComposeDeviceComponentProductionSpecification(json :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'specType', elem.specType); {a}
@@ -18923,7 +19189,7 @@ begin
     ComposeStringValue(json, 'productionSpec', elem.productionSpecElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'productionSpec', elem.productionSpecElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19041,7 +19307,7 @@ procedure TFHIRJsonComposer.ComposeDeviceMetricCalibration(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirMetricCalibrationTypeEnum, false);
@@ -19055,7 +19321,7 @@ begin
     ComposeInstantValue(json, 'time', elem.timeElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'time', elem.timeElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDeviceMetric(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19166,12 +19432,12 @@ procedure TFHIRJsonComposer.ComposeDeviceRequestRequester(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19485,12 +19751,12 @@ procedure TFHIRJsonComposer.ComposeDiagnosticReportPerformer(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDiagnosticReportImage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19522,14 +19788,14 @@ procedure TFHIRJsonComposer.ComposeDiagnosticReportImage(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
   ComposeReference{TFhirMedia}(json, 'link', elem.link_); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDiagnosticReport(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19716,13 +19982,13 @@ procedure TFHIRJsonComposer.ComposeDocumentManifestContent(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.p is TFhirAttachment) then 
     ComposeAttachment(json, 'pAttachment', TFhirAttachment(elem.p)) 
   else if (elem.p is TFhirReference) then
     ComposeReference(json, 'pReference', TFhirReference(elem.p));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentManifestRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19754,13 +20020,13 @@ procedure TFHIRJsonComposer.ComposeDocumentManifestRelated(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'ref', elem.ref); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentManifest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19903,12 +20169,12 @@ procedure TFHIRJsonComposer.ComposeDocumentReferenceRelatesTo(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipTypeEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirDocumentRelationshipTypeEnum, false);
   ComposeReference{TFhirDocumentReference}(json, 'target', elem.target); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentReferenceContent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19940,12 +20206,12 @@ procedure TFHIRJsonComposer.ComposeDocumentReferenceContent(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeAttachment(json, 'attachment', elem.attachment); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'format', elem.format); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentReferenceContext(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -19989,7 +20255,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
@@ -20015,7 +20281,7 @@ begin
       ComposeDocumentReferenceContextRelated(json, '', elem.relatedList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentReferenceContextRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20047,13 +20313,13 @@ procedure TFHIRJsonComposer.ComposeDocumentReferenceContextRelated(json : TJSONW
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'ref', elem.ref); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseDocumentReference(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20329,7 +20595,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
@@ -20342,7 +20608,7 @@ begin
       ComposeEligibilityResponseInsuranceBenefitBalance(json, '', elem.benefitBalanceList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceBenefitBalance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20390,7 +20656,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -20420,7 +20686,7 @@ begin
       ComposeEligibilityResponseInsuranceBenefitBalanceFinancial(json, '', elem.financialList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceBenefitBalanceFinancial(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20460,7 +20726,7 @@ procedure TFHIRJsonComposer.ComposeEligibilityResponseInsuranceBenefitBalanceFin
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) then 
@@ -20482,7 +20748,7 @@ begin
   end
   else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) then 
     ComposeMoney(json, 'usedMoney', TFhirMoney(elem.used)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEligibilityResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20512,10 +20778,10 @@ procedure TFHIRJsonComposer.ComposeEligibilityResponseError(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20654,12 +20920,12 @@ procedure TFHIRJsonComposer.ComposeEncounterStatusHistory(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEncounterStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEncounterStatusEnum, false);
   ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounterClassHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20691,11 +20957,11 @@ procedure TFHIRJsonComposer.ComposeEncounterClassHistory(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCoding(json, 'class', elem.class_); {a}
   ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounterParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20731,7 +20997,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
@@ -20744,7 +21010,7 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'individual', elem.individual); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounterDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20778,7 +21044,7 @@ procedure TFHIRJsonComposer.ComposeEncounterDiagnosis(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'condition', elem.condition); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -20787,7 +21053,7 @@ begin
     ComposePositiveIntValue(json, 'rank', elem.rankElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntProps(json, 'rank', elem.rankElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounterHospitalization(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20835,7 +21101,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'preAdmissionIdentifier', elem.preAdmissionIdentifier); {a}
@@ -20870,7 +21136,7 @@ begin
     ComposeReference{TFhirLocation}(json, 'destination', elem.destination); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'dischargeDisposition', elem.dischargeDisposition); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounterLocation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -20904,7 +21170,7 @@ procedure TFHIRJsonComposer.ComposeEncounterLocation(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -20913,7 +21179,7 @@ begin
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEncounterLocationStatusEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEncounter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21406,12 +21672,12 @@ procedure TFHIRJsonComposer.ComposeEpisodeOfCareStatusHistory(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEpisodeOfCareStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEpisodeOfCareStatusEnum, false);
   ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEpisodeOfCareDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21445,7 +21711,7 @@ procedure TFHIRJsonComposer.ComposeEpisodeOfCareDiagnosis(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirCondition}(json, 'condition', elem.condition); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -21454,7 +21720,7 @@ begin
     ComposePositiveIntValue(json, 'rank', elem.rankElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'rank', elem.rankElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseEpisodeOfCare(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21602,7 +21868,7 @@ procedure TFHIRJsonComposer.ComposeExpansionProfileFixedVersion(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'system', elem.systemElement, false);
   ComposeUriProps(json, 'system', elem.systemElement, false);
@@ -21610,7 +21876,7 @@ begin
   ComposeStringProps(json, 'version', elem.versionElement, false);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirSystemVersionProcessingModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirSystemVersionProcessingModeEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileExcludedSystem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21642,7 +21908,7 @@ procedure TFHIRJsonComposer.ComposeExpansionProfileExcludedSystem(json : TJSONWr
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'system', elem.systemElement, false);
   ComposeUriProps(json, 'system', elem.systemElement, false);
@@ -21650,7 +21916,7 @@ begin
     ComposeStringValue(json, 'version', elem.versionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21682,13 +21948,13 @@ procedure TFHIRJsonComposer.ComposeExpansionProfileDesignation(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileDesignationInclude(json, 'include', elem.include); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileDesignationExclude(json, 'exclude', elem.exclude); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileDesignationInclude(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21720,7 +21986,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.designationList.Count > 0) then
   begin
@@ -21729,7 +21995,7 @@ begin
       ComposeExpansionProfileDesignationIncludeDesignation(json, '', elem.designationList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileDesignationIncludeDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21761,7 +22027,7 @@ procedure TFHIRJsonComposer.ComposeExpansionProfileDesignationIncludeDesignation
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'language', elem.languageElement, false);
@@ -21769,7 +22035,7 @@ begin
     ComposeCodeProps(json, 'language', elem.languageElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'use', elem.use); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileDesignationExclude(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21801,7 +22067,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.designationList.Count > 0) then
   begin
@@ -21810,7 +22076,7 @@ begin
       ComposeExpansionProfileDesignationExcludeDesignation(json, '', elem.designationList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfileDesignationExcludeDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -21842,7 +22108,7 @@ procedure TFHIRJsonComposer.ComposeExpansionProfileDesignationExcludeDesignation
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'language', elem.languageElement, false);
@@ -21850,7 +22116,7 @@ begin
     ComposeCodeProps(json, 'language', elem.languageElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'use', elem.use); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExpansionProfile(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22058,7 +22324,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitRelated(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(json, 'claim', elem.claim); {a}
@@ -22066,7 +22332,7 @@ begin
     ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'reference', elem.reference); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitPayee(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22100,7 +22366,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitPayee(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -22108,7 +22374,7 @@ begin
     ComposeCodeableConcept(json, 'resourceType', elem.resourceType); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'party', elem.party); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitInformation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22156,7 +22422,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitInformation(json : TJSONW
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22183,7 +22449,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCoding(json, 'reason', elem.reason); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitCareTeam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22221,7 +22487,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitCareTeam(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22234,7 +22500,7 @@ begin
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'qualification', elem.qualification); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22274,7 +22540,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22291,7 +22557,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitProcedure(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22327,7 +22593,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitProcedure(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22339,7 +22605,7 @@ begin
     ComposeCodeableConcept(json, 'procedureCodeableConcept', TFhirCodeableConcept(elem.procedure_)) 
   else if (elem.procedure_ is TFhirReference) then
     ComposeReference(json, 'procedureReference', TFhirReference(elem.procedure_));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22375,7 +22641,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
@@ -22403,7 +22669,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitAccident(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22439,7 +22705,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitAccident(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'date', elem.dateElement, false);
@@ -22451,7 +22717,7 @@ begin
     ComposeAddress(json, 'locationAddress', TFhirAddress(elem.location)) 
   else if (SummaryOption in [soFull, soData]) and (elem.location is TFhirReference) then
     ComposeReference(json, 'locationReference', TFhirReference(elem.location));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22535,7 +22801,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22739,7 +23005,7 @@ begin
       ComposeExplanationOfBenefitItemDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitItemAdjudication(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22775,7 +23041,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitItemAdjudication(json : T
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -22786,7 +23052,7 @@ begin
     ComposeDecimalValue(json, 'value', elem.valueElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeDecimalProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitItemDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22848,7 +23114,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -22928,7 +23194,7 @@ begin
       ComposeExplanationOfBenefitItemDetailSubDetail(json, '', elem.subDetailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitItemDetailSubDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -22988,7 +23254,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
@@ -23061,7 +23327,7 @@ begin
       ComposeExplanationOfBenefitItemAdjudication(json, '', elem.adjudicationList[i]); {z - @ExplanationOfBenefit.item.adjudication}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitAddItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23111,7 +23377,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.sequenceLinkIdList.Count > 0) then
   begin
@@ -23190,7 +23456,7 @@ begin
       ComposeExplanationOfBenefitAddItemDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitAddItemDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23236,7 +23502,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'revenue', elem.revenue); {a}
@@ -23284,7 +23550,7 @@ begin
       ComposeExplanationOfBenefitItemAdjudication(json, '', elem.adjudicationList[i]); {z - @ExplanationOfBenefit.item.adjudication}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitPayment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23324,7 +23590,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitPayment(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -23340,7 +23606,7 @@ begin
     ComposeMoney(json, 'amount', elem.amount); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitProcessNote(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23376,7 +23642,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitProcessNote(json : TJSONW
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'number', elem.numberElement, false);
@@ -23390,7 +23656,7 @@ begin
     ComposeStringProps(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'language', elem.language); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitBenefitBalance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23438,7 +23704,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -23468,7 +23734,7 @@ begin
       ComposeExplanationOfBenefitBenefitBalanceFinancial(json, '', elem.financialList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefitBenefitBalanceFinancial(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23508,7 +23774,7 @@ procedure TFHIRJsonComposer.ComposeExplanationOfBenefitBenefitBalanceFinancial(j
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) then 
@@ -23530,7 +23796,7 @@ begin
   end
   else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) then 
     ComposeMoney(json, 'usedMoney', TFhirMoney(elem.used)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseExplanationOfBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -23825,7 +24091,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -23848,7 +24114,7 @@ begin
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseFamilyMemberHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24147,7 +24413,7 @@ procedure TFHIRJsonComposer.ComposeGoalTarget(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'measure', elem.measure); {a}
@@ -24164,7 +24430,7 @@ begin
     ComposeDateValue(json, 'dueDate', TFhirDate(elem.due), false);
     ComposeDateProps(json, 'dueDate', TFhirDate(elem.due), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGoal(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24338,7 +24604,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'path', elem.pathElement, false);
   ComposeStringProps(json, 'path', elem.pathElement, false);
@@ -24365,7 +24631,7 @@ begin
       ComposeGraphDefinitionLinkTarget(json, '', elem.targetList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGraphDefinitionLinkTarget(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24403,7 +24669,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
@@ -24425,7 +24691,7 @@ begin
       ComposeGraphDefinitionLink(json, '', elem.link_List[i]); {z - @GraphDefinition.link}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGraphDefinitionLinkTargetCompartment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24461,7 +24727,7 @@ procedure TFHIRJsonComposer.ComposeGraphDefinitionLinkTargetCompartment(json : T
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirCompartmentTypeEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirCompartmentTypeEnum, false);
@@ -24475,7 +24741,7 @@ begin
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGraphDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24645,7 +24911,7 @@ procedure TFHIRJsonComposer.ComposeGroupCharacteristic(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   if (elem.value is TFhirCodeableConcept) then 
@@ -24663,7 +24929,7 @@ begin
   ComposeBooleanProps(json, 'exclude', elem.excludeElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGroupMember(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24697,7 +24963,7 @@ procedure TFHIRJsonComposer.ComposeGroupMember(json : TJSONWriter; name : string
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'entity', elem.entity); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -24706,7 +24972,7 @@ begin
     ComposeBooleanValue(json, 'inactive', elem.inactiveElement, false);
   if (SummaryOption in [soFull, soData]) and (not isCanonical or (elem.inactive <> false)) then
     ComposeBooleanProps(json, 'inactive', elem.inactiveElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -24945,7 +25211,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.daysOfWeekList.Count > 0) then
   begin
@@ -24983,7 +25249,7 @@ begin
     ComposeTimeValue(json, 'availableEndTime', elem.availableEndTimeElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeTimeProps(json, 'availableEndTime', elem.availableEndTimeElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseHealthcareServiceNotAvailable(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25015,13 +25281,13 @@ procedure TFHIRJsonComposer.ComposeHealthcareServiceNotAvailable(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'description', elem.descriptionElement, false);
   ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'during', elem.during); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseHealthcareService(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25285,7 +25551,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeOidValue(json, 'uid', elem.uidElement, false);
   ComposeOidProps(json, 'uid', elem.uidElement, false);
@@ -25305,7 +25571,7 @@ begin
       ComposeImagingManifestStudySeries(json, '', elem.seriesList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImagingManifestStudySeries(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25341,7 +25607,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeOidValue(json, 'uid', elem.uidElement, false);
   ComposeOidProps(json, 'uid', elem.uidElement, false);
@@ -25359,7 +25625,7 @@ begin
       ComposeImagingManifestStudySeriesInstance(json, '', elem.instanceList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImagingManifestStudySeriesInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25391,13 +25657,13 @@ procedure TFHIRJsonComposer.ComposeImagingManifestStudySeriesInstance(json : TJS
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeOidValue(json, 'sopClass', elem.sopClassElement, false);
   ComposeOidProps(json, 'sopClass', elem.sopClassElement, false);
   ComposeOidValue(json, 'uid', elem.uidElement, false);
   ComposeOidProps(json, 'uid', elem.uidElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImagingManifest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25515,7 +25781,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeOidValue(json, 'uid', elem.uidElement, false);
   ComposeOidProps(json, 'uid', elem.uidElement, false);
@@ -25565,7 +25831,7 @@ begin
       ComposeImagingStudySeriesInstance(json, '', elem.instanceList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImagingStudySeriesInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25601,7 +25867,7 @@ procedure TFHIRJsonComposer.ComposeImagingStudySeriesInstance(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeOidValue(json, 'uid', elem.uidElement, false);
   ComposeOidProps(json, 'uid', elem.uidElement, false);
@@ -25615,7 +25881,7 @@ begin
     ComposeStringValue(json, 'title', elem.titleElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImagingStudy(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25804,12 +26070,12 @@ procedure TFHIRJsonComposer.ComposeImmunizationPractitioner(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{TFhirPractitioner}(json, 'actor', elem.actor); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationExplanation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25843,7 +26109,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
   begin
@@ -25859,7 +26125,7 @@ begin
       ComposeCodeableConcept(json, '', elem.reasonNotGivenList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationReaction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25893,7 +26159,7 @@ procedure TFHIRJsonComposer.ComposeImmunizationReaction(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
@@ -25905,7 +26171,7 @@ begin
     ComposeBooleanValue(json, 'reported', elem.reportedElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'reported', elem.reportedElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationVaccinationProtocol(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -25951,7 +26217,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'doseSequence', elem.doseSequenceElement, false);
@@ -25981,7 +26247,7 @@ begin
   ComposeCodeableConcept(json, 'doseStatus', elem.doseStatus); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'doseStatusReason', elem.doseStatusReason); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunization(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26174,7 +26440,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeDateTimeValue(json, 'date', elem.dateElement, false);
   ComposeDateTimeProps(json, 'date', elem.dateElement, false);
@@ -26210,7 +26476,7 @@ begin
       ComposeReference{Resource}(json, '', elem.supportingPatientInformationList[i]); {z - Reference(Observation|AllergyIntolerance)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendationDateCriterion(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26242,12 +26508,12 @@ procedure TFHIRJsonComposer.ComposeImmunizationRecommendationRecommendationDateC
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   ComposeDateTimeValue(json, 'value', elem.valueElement, false);
   ComposeDateTimeProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendationProtocol(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26283,7 +26549,7 @@ procedure TFHIRJsonComposer.ComposeImmunizationRecommendationRecommendationProto
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'doseSequence', elem.doseSequenceElement, false);
@@ -26299,7 +26565,7 @@ begin
     ComposeStringValue(json, 'series', elem.seriesElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'series', elem.seriesElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImmunizationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26384,13 +26650,13 @@ procedure TFHIRJsonComposer.ComposeImplementationGuideDependency(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum, false);
   ComposeUriValue(json, 'uri', elem.uriElement, false);
   ComposeUriProps(json, 'uri', elem.uriElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImplementationGuidePackage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26426,7 +26692,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -26441,7 +26707,7 @@ begin
       ComposeImplementationGuidePackageResource(json, '', elem.resourceList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImplementationGuidePackageResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26483,7 +26749,7 @@ procedure TFHIRJsonComposer.ComposeImplementationGuidePackageResource(json : TJS
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeBooleanValue(json, 'example', elem.exampleElement, false);
   ComposeBooleanProps(json, 'example', elem.exampleElement, false);
@@ -26508,7 +26774,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirStructureDefinition}(json, 'exampleFor', elem.exampleFor); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImplementationGuideGlobal(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26540,12 +26806,12 @@ procedure TFHIRJsonComposer.ComposeImplementationGuideGlobal(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirResourceTypesEnum, false);
   ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImplementationGuidePage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -26591,7 +26857,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'source', elem.sourceElement, false);
   ComposeUriProps(json, 'source', elem.sourceElement, false);
@@ -26658,7 +26924,7 @@ begin
       ComposeImplementationGuidePage(json, '', elem.pageList[i]); {z - @ImplementationGuide.page}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseImplementationGuide(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27073,12 +27339,12 @@ procedure TFHIRJsonComposer.ComposeLinkageItem(json : TJSONWriter; name : string
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirLinkageTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirLinkageTypeEnum, false);
   ComposeReference(json, 'resource', elem.resource); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseLinkage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27165,7 +27431,7 @@ procedure TFHIRJsonComposer.ComposeListEntry(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'flag', elem.flag); {a}
@@ -27178,7 +27444,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
   ComposeReference{TFhirReference}(json, 'item', elem.item); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseList(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27315,7 +27581,7 @@ procedure TFHIRJsonComposer.ComposeLocationPosition(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeDecimalValue(json, 'longitude', elem.longitudeElement, false);
   ComposeDecimalProps(json, 'longitude', elem.longitudeElement, false);
@@ -27325,7 +27591,7 @@ begin
     ComposeDecimalValue(json, 'altitude', elem.altitudeElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeDecimalProps(json, 'altitude', elem.altitudeElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseLocation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27504,7 +27770,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -27529,7 +27795,7 @@ begin
       ComposeMeasureGroupStratifier(json, '', elem.stratifierList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureGroupPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27567,7 +27833,7 @@ procedure TFHIRJsonComposer.ComposeMeasureGroupPopulation(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -27583,7 +27849,7 @@ begin
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
   ComposeStringValue(json, 'criteria', elem.criteriaElement, false);
   ComposeStringProps(json, 'criteria', elem.criteriaElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureGroupStratifier(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27617,7 +27883,7 @@ procedure TFHIRJsonComposer.ComposeMeasureGroupStratifier(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -27629,7 +27895,7 @@ begin
     ComposeStringValue(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'path', elem.pathElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureSupplementalData(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -27667,7 +27933,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -27686,7 +27952,7 @@ begin
     ComposeStringValue(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'path', elem.pathElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasure(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28025,7 +28291,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if (SummaryOption in [soFull, soData]) and (elem.populationList.Count > 0) then
@@ -28046,7 +28312,7 @@ begin
       ComposeMeasureReportGroupStratifier(json, '', elem.stratifierList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureReportGroupPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28082,7 +28348,7 @@ procedure TFHIRJsonComposer.ComposeMeasureReportGroupPopulation(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -28094,7 +28360,7 @@ begin
     ComposeIntegerProps(json, 'count', elem.countElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirList}(json, 'patients', elem.patients); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureReportGroupStratifier(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28128,7 +28394,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -28139,7 +28405,7 @@ begin
       ComposeMeasureReportGroupStratifierStratum(json, '', elem.stratumList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureReportGroupStratifierStratum(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28175,7 +28441,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
@@ -28190,7 +28456,7 @@ begin
     ComposeDecimalValue(json, 'measureScore', elem.measureScoreElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalProps(json, 'measureScore', elem.measureScoreElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureReportGroupStratifierStratumPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28226,7 +28492,7 @@ procedure TFHIRJsonComposer.ComposeMeasureReportGroupStratifierStratumPopulation
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -28238,7 +28504,7 @@ begin
     ComposeIntegerProps(json, 'count', elem.countElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirList}(json, 'patients', elem.patients); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMeasureReport(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28489,7 +28755,7 @@ procedure TFHIRJsonComposer.ComposeMedicationIngredient(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.item is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
@@ -28501,7 +28767,7 @@ begin
     ComposeBooleanProps(json, 'isActive', elem.isActiveElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeRatio(json, 'amount', elem.amount); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationPackage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28537,7 +28803,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'container', elem.container); {a}
@@ -28555,7 +28821,7 @@ begin
       ComposeMedicationPackageBatch(json, '', elem.batchList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationPackageContent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28589,7 +28855,7 @@ procedure TFHIRJsonComposer.ComposeMedicationPackageContent(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.item is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
@@ -28597,7 +28863,7 @@ begin
     ComposeReference(json, 'itemReference', TFhirReference(elem.item));
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'amount', elem.amount); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationPackageBatch(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28629,7 +28895,7 @@ procedure TFHIRJsonComposer.ComposeMedicationPackageBatch(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
@@ -28639,7 +28905,7 @@ begin
     ComposeDateTimeValue(json, 'expirationDate', elem.expirationDateElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'expirationDate', elem.expirationDateElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedication(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28755,12 +29021,12 @@ procedure TFHIRJsonComposer.ComposeMedicationAdministrationPerformer(json : TJSO
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationAdministrationDosage(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -28802,7 +29068,7 @@ procedure TFHIRJsonComposer.ComposeMedicationAdministrationDosage(json : TJSONWr
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'text', elem.textElement, false);
@@ -28820,7 +29086,7 @@ begin
     ComposeRatio(json, 'rateRatio', TFhirRatio(elem.rate)) 
   else if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirQuantity) then 
     ComposeQuantity(json, 'rateQuantity', TFhirQuantity(elem.rate)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationAdministration(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29031,12 +29297,12 @@ procedure TFHIRJsonComposer.ComposeMedicationDispensePerformer(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationDispenseSubstitution(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29074,7 +29340,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeBooleanValue(json, 'wasSubstituted', elem.wasSubstitutedElement, false);
   ComposeBooleanProps(json, 'wasSubstituted', elem.wasSubstitutedElement, false);
@@ -29094,7 +29360,7 @@ begin
       ComposeReference{TFhirPractitioner}(json, '', elem.responsiblePartyList[i]); {z - Reference(Practitioner)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationDispense(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29320,12 +29586,12 @@ procedure TFHIRJsonComposer.ComposeMedicationRequestRequester(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationRequestDispenseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29363,7 +29629,7 @@ procedure TFHIRJsonComposer.ComposeMedicationRequestDispenseRequest(json : TJSON
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
@@ -29377,7 +29643,7 @@ begin
     ComposeDuration(json, 'expectedSupplyDuration', elem.expectedSupplyDuration); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'performer', elem.performer); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationRequestSubstitution(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29409,13 +29675,13 @@ procedure TFHIRJsonComposer.ComposeMedicationRequestSubstitution(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeBooleanValue(json, 'allowed', elem.allowedElement, false);
   ComposeBooleanProps(json, 'allowed', elem.allowedElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'reason', elem.reason); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMedicationRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29799,7 +30065,7 @@ procedure TFHIRJsonComposer.ComposeMessageDefinitionFocus(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirResourceTypesEnum, false);
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirResourceTypesEnum, false);
@@ -29813,7 +30079,7 @@ begin
     ComposeStringValue(json, 'max', elem.maxElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'max', elem.maxElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMessageDefinitionAllowedResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -29845,14 +30111,14 @@ procedure TFHIRJsonComposer.ComposeMessageDefinitionAllowedResponse(json : TJSON
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirMessageDefinition}(json, 'message', elem.message); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'situation', elem.situationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'situation', elem.situationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMessageDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30066,7 +30332,7 @@ procedure TFHIRJsonComposer.ComposeMessageHeaderDestination(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -30076,7 +30342,7 @@ begin
     ComposeReference{TFhirDevice}(json, 'target', elem.target); {a}
   ComposeUriValue(json, 'endpoint', elem.endpointElement, false);
   ComposeUriProps(json, 'endpoint', elem.endpointElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMessageHeaderSource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30114,7 +30380,7 @@ procedure TFHIRJsonComposer.ComposeMessageHeaderSource(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -30132,7 +30398,7 @@ begin
     ComposeContactPoint(json, 'contact', elem.contact); {a}
   ComposeUriValue(json, 'endpoint', elem.endpointElement, false);
   ComposeUriProps(json, 'endpoint', elem.endpointElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMessageHeaderResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30166,7 +30432,7 @@ procedure TFHIRJsonComposer.ComposeMessageHeaderResponse(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'identifier', elem.identifierElement, false);
   ComposeIdProps(json, 'identifier', elem.identifierElement, false);
@@ -30174,7 +30440,7 @@ begin
   ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirResponseCodeEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOperationOutcome}(json, 'details', elem.details); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseMessageHeader(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30300,7 +30566,7 @@ procedure TFHIRJsonComposer.ComposeNamingSystemUniqueId(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirNamingsystemIdentifierTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirNamingsystemIdentifierTypeEnum, false);
@@ -30316,7 +30582,7 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNamingSystem(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30474,7 +30740,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
@@ -30515,7 +30781,7 @@ begin
     ComposeStringValue(json, 'instruction', elem.instructionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'instruction', elem.instructionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrderOralDietNutrient(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30547,13 +30813,13 @@ procedure TFHIRJsonComposer.ComposeNutritionOrderOralDietNutrient(json : TJSONWr
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'modifier', elem.modifier); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'amount', elem.amount); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrderOralDietTexture(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30585,13 +30851,13 @@ procedure TFHIRJsonComposer.ComposeNutritionOrderOralDietTexture(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'modifier', elem.modifier); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'foodType', elem.foodType); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrderSupplement(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30631,7 +30897,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -30652,7 +30918,7 @@ begin
     ComposeStringValue(json, 'instruction', elem.instructionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'instruction', elem.instructionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrderEnteralFormula(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30700,7 +30966,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'baseFormulaType', elem.baseFormulaType); {a}
@@ -30731,7 +30997,7 @@ begin
     ComposeStringValue(json, 'administrationInstruction', elem.administrationInstructionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'administrationInstruction', elem.administrationInstructionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrderEnteralFormulaAdministration(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30767,7 +31033,7 @@ procedure TFHIRJsonComposer.ComposeNutritionOrderEnteralFormulaAdministration(js
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeTiming(json, 'schedule', elem.schedule); {a}
@@ -30777,7 +31043,7 @@ begin
     ComposeQuantity(json, 'rateQuantity', TFhirQuantity(elem.rate)) 
   else if (SummaryOption in [soFull, soData]) and (elem.rate is TFhirRatio) then 
     ComposeRatio(json, 'rateRatio', TFhirRatio(elem.rate)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseNutritionOrder(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30925,7 +31191,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'low', elem.low); {a}
@@ -30946,7 +31212,7 @@ begin
     ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'text', elem.textElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseObservationRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -30978,14 +31244,14 @@ procedure TFHIRJsonComposer.ComposeObservationRelated(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirObservationRelationshiptypesEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirObservationRelationshiptypesEnum, false);
   ComposeReference{Resource}(json, 'target', elem.target); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseObservationComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31043,7 +31309,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'code', elem.code); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.value is TFhirQuantity) then 
@@ -31086,7 +31352,7 @@ begin
       ComposeObservationReferenceRange(json, '', elem.referenceRangeList[i]); {z - @Observation.referenceRange}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseObservation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31349,7 +31615,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'name', elem.nameElement, false);
   ComposeCodeProps(json, 'name', elem.nameElement, false);
@@ -31382,7 +31648,7 @@ begin
       ComposeOperationDefinitionParameter(json, '', elem.partList[i]); {z - @OperationDefinition.parameter}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseOperationDefinitionParameterBinding(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31416,7 +31682,7 @@ procedure TFHIRJsonComposer.ComposeOperationDefinitionParameterBinding(json : TJ
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum, false);
   ComposeEnumProps(json, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum, false);
@@ -31427,7 +31693,7 @@ begin
     ComposeUriValue(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
     ComposeUriProps(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseOperationDefinitionOverload(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31463,7 +31729,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.parameterNameList.Count > 0) then
   begin
@@ -31493,7 +31759,7 @@ begin
     ComposeStringValue(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseOperationDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31728,7 +31994,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'severity', elem.SeverityElement, CODES_TFhirIssueSeverityEnum, false);
   ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirIssueSeverityEnum, false);
@@ -31788,7 +32054,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseOperationOutcome(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -31867,7 +32133,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'purpose', elem.purpose); {a}
@@ -31882,7 +32148,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeAddress(json, 'address', elem.address); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseOrganization(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32056,7 +32322,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.relationshipList.Count > 0) then
   begin
@@ -32084,7 +32350,7 @@ begin
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePatientAnimal(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32118,14 +32384,14 @@ procedure TFHIRJsonComposer.ComposePatientAnimal(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'species', elem.species); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'breed', elem.breed); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'genderStatus', elem.genderStatus); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePatientCommunication(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32157,14 +32423,14 @@ procedure TFHIRJsonComposer.ComposePatientCommunication(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'language', elem.language); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'preferred', elem.preferredElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'preferred', elem.preferredElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePatientLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32196,12 +32462,12 @@ procedure TFHIRJsonComposer.ComposePatientLink(json : TJSONWriter; name : string
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'other', elem.other); {a}
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirLinkTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirLinkTypeEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePatient(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32497,7 +32763,7 @@ procedure TFHIRJsonComposer.ComposePaymentReconciliationDetail(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) then
@@ -32514,7 +32780,7 @@ begin
     ComposeDateProps(json, 'date', elem.dateElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'amount', elem.amount); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePaymentReconciliationProcessNote(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32546,7 +32812,7 @@ procedure TFHIRJsonComposer.ComposePaymentReconciliationProcessNote(json : TJSON
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -32554,7 +32820,7 @@ begin
     ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'text', elem.textElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePaymentReconciliation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32695,14 +32961,14 @@ procedure TFHIRJsonComposer.ComposePersonLink(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'target', elem.target); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumValue(json, 'assurance', elem.AssuranceElement, CODES_TFhirIdentityAssuranceLevelEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'assurance', elem.AssuranceElement, CODES_TFhirIdentityAssuranceLevelEnum, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePerson(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32849,7 +33115,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
@@ -32879,7 +33145,7 @@ begin
       ComposePlanDefinitionGoalTarget(json, '', elem.targetList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionGoalTarget(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -32917,7 +33183,7 @@ procedure TFHIRJsonComposer.ComposePlanDefinitionGoalTarget(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'measure', elem.measure); {a}
@@ -32929,7 +33195,7 @@ begin
     ComposeCodeableConcept(json, 'detailCodeableConcept', TFhirCodeableConcept(elem.detail)) ;
   if (SummaryOption in [soFull, soData]) then
     ComposeDuration(json, 'due', elem.due); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33019,7 +33285,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'label', elem.label_Element, false);
@@ -33177,7 +33443,7 @@ begin
       ComposePlanDefinitionAction(json, '', elem.actionList[i]); {z - @PlanDefinition.action}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionActionCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33213,7 +33479,7 @@ procedure TFHIRJsonComposer.ComposePlanDefinitionActionCondition(json : TJSONWri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirActionConditionKindEnum, false);
   ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirActionConditionKindEnum, false);
@@ -33229,7 +33495,7 @@ begin
     ComposeStringValue(json, 'expression', elem.expressionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionActionRelatedAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33265,7 +33531,7 @@ procedure TFHIRJsonComposer.ComposePlanDefinitionActionRelatedAction(json : TJSO
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'actionId', elem.actionIdElement, false);
   ComposeIdProps(json, 'actionId', elem.actionIdElement, false);
@@ -33275,7 +33541,7 @@ begin
     ComposeDuration(json, 'offsetDuration', TFhirDuration(elem.offset)) 
   else if (SummaryOption in [soFull, soData]) and (elem.offset is TFhirRange) then 
     ComposeRange(json, 'offsetRange', TFhirRange(elem.offset)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionActionParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33307,13 +33573,13 @@ procedure TFHIRJsonComposer.ComposePlanDefinitionActionParticipant(json : TJSONW
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirActionParticipantTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirActionParticipantTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinitionActionDynamicValue(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33349,7 +33615,7 @@ procedure TFHIRJsonComposer.ComposePlanDefinitionActionDynamicValue(json : TJSON
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
@@ -33367,7 +33633,7 @@ begin
     ComposeStringValue(json, 'expression', elem.expressionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePlanDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33617,7 +33883,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
@@ -33631,7 +33897,7 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'issuer', elem.issuer); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePractitioner(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33784,7 +34050,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.daysOfWeekList.Count > 0) then
   begin
@@ -33822,7 +34088,7 @@ begin
     ComposeTimeValue(json, 'availableEndTime', elem.availableEndTimeElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeTimeProps(json, 'availableEndTime', elem.availableEndTimeElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePractitionerRoleNotAvailable(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -33854,13 +34120,13 @@ procedure TFHIRJsonComposer.ComposePractitionerRoleNotAvailable(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'description', elem.descriptionElement, false);
   ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'during', elem.during); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParsePractitionerRole(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34031,14 +34297,14 @@ procedure TFHIRJsonComposer.ComposeProcedurePerformer(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'role', elem.role); {a}
   ComposeReference{Resource}(json, 'actor', elem.actor); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProcedureFocalDevice(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34070,12 +34336,12 @@ procedure TFHIRJsonComposer.ComposeProcedureFocalDevice(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'action', elem.action); {a}
   ComposeReference{TFhirDevice}(json, 'manipulated', elem.manipulated); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProcedure(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34331,12 +34597,12 @@ procedure TFHIRJsonComposer.ComposeProcedureRequestRequester(json : TJSONWriter;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProcedureRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34584,11 +34850,11 @@ procedure TFHIRJsonComposer.ComposeProcessRequestItem(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIntegerValue(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
   ComposeIntegerProps(json, 'sequenceLinkId', elem.sequenceLinkIdElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProcessRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34778,7 +35044,7 @@ procedure TFHIRJsonComposer.ComposeProcessResponseProcessNote(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
@@ -34786,7 +35052,7 @@ begin
     ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'text', elem.textElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProcessResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -34938,7 +35204,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.roleList.Count > 0) then
   begin
@@ -34963,7 +35229,7 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'relatedAgentType', elem.relatedAgentType); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProvenanceEntity(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35003,7 +35269,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'role', elem.RoleElement, CODES_TFhirProvenanceEntityRoleEnum, false);
   ComposeEnumProps(json, 'role', elem.RoleElement, CODES_TFhirProvenanceEntityRoleEnum, false);
@@ -35023,7 +35289,7 @@ begin
       ComposeProvenanceAgent(json, '', elem.agentList[i]); {z - @Provenance.agent}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseProvenance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35226,7 +35492,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'linkId', elem.linkIdElement, false);
   ComposeStringProps(json, 'linkId', elem.linkIdElement, false);
@@ -35338,7 +35604,7 @@ begin
       ComposeQuestionnaireItem(json, '', elem.itemList[i]); {z - @Questionnaire.item}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuestionnaireItemEnableWhen(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35394,7 +35660,7 @@ procedure TFHIRJsonComposer.ComposeQuestionnaireItemEnableWhen(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'question', elem.questionElement, false);
   ComposeStringProps(json, 'question', elem.questionElement, false);
@@ -35450,7 +35716,7 @@ begin
     ComposeUriValue(json, 'answerUri', TFhirUri(elem.answer), false);
     ComposeUriProps(json, 'answerUri', TFhirUri(elem.answer), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuestionnaireItemOption(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35488,7 +35754,7 @@ procedure TFHIRJsonComposer.ComposeQuestionnaireItemOption(json : TJSONWriter; n
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.value is TFhirCoding) then 
     ComposeCoding(json, 'valueCoding', TFhirCoding(elem.value)) 
@@ -35512,7 +35778,7 @@ begin
     ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
     ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuestionnaire(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35748,7 +36014,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'linkId', elem.linkIdElement, false);
   ComposeStringProps(json, 'linkId', elem.linkIdElement, false);
@@ -35776,7 +36042,7 @@ begin
       ComposeQuestionnaireResponseItem(json, '', elem.itemList[i]); {z - @QuestionnaireResponse.item}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuestionnaireResponseItemAnswer(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -35832,7 +36098,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.value is TFhirAttachment) then 
     ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value)) 
@@ -35889,7 +36155,7 @@ begin
       ComposeQuestionnaireResponseItem(json, '', elem.itemList[i]); {z - @QuestionnaireResponse.item}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseQuestionnaireResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -36014,12 +36280,12 @@ procedure TFHIRJsonComposer.ComposeReferralRequestRequester(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -36390,7 +36656,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'label', elem.label_Element, false);
@@ -36487,7 +36753,7 @@ begin
       ComposeRequestGroupAction(json, '', elem.actionList[i]); {z - @RequestGroup.action}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRequestGroupActionCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -36523,7 +36789,7 @@ procedure TFHIRJsonComposer.ComposeRequestGroupActionCondition(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirActionConditionKindEnum, false);
   ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirActionConditionKindEnum, false);
@@ -36539,7 +36805,7 @@ begin
     ComposeStringValue(json, 'expression', elem.expressionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRequestGroupActionRelatedAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -36575,7 +36841,7 @@ procedure TFHIRJsonComposer.ComposeRequestGroupActionRelatedAction(json : TJSONW
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'actionId', elem.actionIdElement, false);
   ComposeIdProps(json, 'actionId', elem.actionIdElement, false);
@@ -36585,7 +36851,7 @@ begin
     ComposeDuration(json, 'offsetDuration', TFhirDuration(elem.offset)) 
   else if (SummaryOption in [soFull, soData]) and (elem.offset is TFhirRange) then 
     ComposeRange(json, 'offsetRange', TFhirRange(elem.offset)) ;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRequestGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -36749,7 +37015,7 @@ procedure TFHIRJsonComposer.ComposeResearchStudyArm(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -36759,7 +37025,7 @@ begin
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseResearchStudy(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37048,7 +37314,7 @@ procedure TFHIRJsonComposer.ComposeRiskAssessmentPrediction(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'outcome', elem.outcome); {a}
   if (SummaryOption in [soFull, soData]) and (elem.probability is TFhirRange) then 
@@ -37072,7 +37338,7 @@ begin
     ComposeStringValue(json, 'rationale', elem.rationaleElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'rationale', elem.rationaleElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseRiskAssessment(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37313,12 +37579,12 @@ procedure TFHIRJsonComposer.ComposeSearchParameterComponent(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirSearchParameter}(json, 'definition', elem.definition); {a}
   ComposeStringValue(json, 'expression', elem.expressionElement, false);
   ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSearchParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37640,7 +37906,7 @@ procedure TFHIRJsonComposer.ComposeSequenceReferenceSeq(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'chromosome', elem.chromosome); {a}
@@ -37664,7 +37930,7 @@ begin
   ComposeIntegerProps(json, 'windowStart', elem.windowStartElement, false);
   ComposeIntegerValue(json, 'windowEnd', elem.windowEndElement, false);
   ComposeIntegerProps(json, 'windowEnd', elem.windowEndElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSequenceVariant(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37704,7 +37970,7 @@ procedure TFHIRJsonComposer.ComposeSequenceVariant(json : TJSONWriter; name : st
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'start', elem.startElement, false);
@@ -37728,7 +37994,7 @@ begin
     ComposeStringProps(json, 'cigar', elem.cigarElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirObservation}(json, 'variantPointer', elem.variantPointer); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSequenceQuality(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37784,7 +38050,7 @@ procedure TFHIRJsonComposer.ComposeSequenceQuality(json : TJSONWriter; name : st
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirQualityTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirQualityTypeEnum, false);
@@ -37834,7 +38100,7 @@ begin
     ComposeDecimalValue(json, 'fScore', elem.fScore_Element, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalProps(json, 'fScore', elem.fScore_Element, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSequenceRepository(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -37874,7 +38140,7 @@ procedure TFHIRJsonComposer.ComposeSequenceRepository(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirRepositoryTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirRepositoryTypeEnum, false);
@@ -37898,7 +38164,7 @@ begin
     ComposeStringValue(json, 'readsetId', elem.readsetIdElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'readsetId', elem.readsetIdElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSequence(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38358,7 +38624,7 @@ procedure TFHIRJsonComposer.ComposeSpecimenCollection(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'collector', elem.collector); {a}
@@ -38375,7 +38641,7 @@ begin
     ComposeCodeableConcept(json, 'method', elem.method); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSpecimenProcessing(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38415,7 +38681,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
@@ -38437,7 +38703,7 @@ begin
     ComposeDateTimeValue(json, 'timeDateTime', TFhirDateTime(elem.time), false);
     ComposeDateTimeProps(json, 'timeDateTime', TFhirDateTime(elem.time), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSpecimenContainer(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38481,7 +38747,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
@@ -38504,7 +38770,7 @@ begin
     ComposeCodeableConcept(json, 'additiveCodeableConcept', TFhirCodeableConcept(elem.additive)) 
   else if (SummaryOption in [soFull, soData]) and (elem.additive is TFhirReference) then
     ComposeReference(json, 'additiveReference', TFhirReference(elem.additive));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSpecimen(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38653,7 +38919,7 @@ procedure TFHIRJsonComposer.ComposeStructureDefinitionMapping(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'identity', elem.identityElement, false);
   ComposeIdProps(json, 'identity', elem.identityElement, false);
@@ -38669,7 +38935,7 @@ begin
     ComposeStringValue(json, 'comment', elem.commentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureDefinitionSnapshot(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38701,7 +38967,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.elementList.Count > 0) then
   begin
@@ -38710,7 +38976,7 @@ begin
       ComposeElementDefinition(json, '', elem.elementList[i]); {z - ElementDefinition}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureDefinitionDifferential(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -38742,7 +39008,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.elementList.Count > 0) then
   begin
@@ -38751,7 +39017,7 @@ begin
       ComposeElementDefinition(json, '', elem.elementList[i]); {z - ElementDefinition}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39031,7 +39297,7 @@ procedure TFHIRJsonComposer.ComposeStructureMapStructure(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'url', elem.urlElement, false);
   ComposeUriProps(json, 'url', elem.urlElement, false);
@@ -39045,7 +39311,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39087,7 +39353,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'name', elem.nameElement, false);
   ComposeIdProps(json, 'name', elem.nameElement, false);
@@ -39115,7 +39381,7 @@ begin
       ComposeStructureMapGroupRule(json, '', elem.ruleList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupInput(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39151,7 +39417,7 @@ procedure TFHIRJsonComposer.ComposeStructureMapGroupInput(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'name', elem.nameElement, false);
   ComposeIdProps(json, 'name', elem.nameElement, false);
@@ -39165,7 +39431,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39207,7 +39473,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'name', elem.nameElement, false);
   ComposeIdProps(json, 'name', elem.nameElement, false);
@@ -39243,7 +39509,7 @@ begin
     ComposeStringValue(json, 'documentation', elem.documentationElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'documentation', elem.documentationElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupRuleSource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39365,7 +39631,7 @@ procedure TFHIRJsonComposer.ComposeStructureMapGroupRuleSource(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'context', elem.contextElement, false);
   ComposeIdProps(json, 'context', elem.contextElement, false);
@@ -39525,7 +39791,7 @@ begin
     ComposeStringValue(json, 'check', elem.checkElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'check', elem.checkElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupRuleTarget(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39573,7 +39839,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdValue(json, 'context', elem.contextElement, false);
@@ -39630,7 +39896,7 @@ begin
       ComposeStructureMapGroupRuleTargetParameter(json, '', elem.parameterList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupRuleTargetParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39668,7 +39934,7 @@ procedure TFHIRJsonComposer.ComposeStructureMapGroupRuleTargetParameter(json : T
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.value is TFhirId) then 
   begin
@@ -39695,7 +39961,7 @@ begin
     ComposeDecimalValue(json, 'valueDecimal', TFhirDecimal(elem.value), false);
     ComposeDecimalProps(json, 'valueDecimal', TFhirDecimal(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMapGroupRuleDependent(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39731,7 +39997,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'name', elem.nameElement, false);
   ComposeIdProps(json, 'name', elem.nameElement, false);
@@ -39759,7 +40025,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseStructureMap(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -39973,7 +40239,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSubscriptionChannelTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirSubscriptionChannelTypeEnum, false);
@@ -40009,7 +40275,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSubscription(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40120,7 +40386,7 @@ procedure TFHIRJsonComposer.ComposeSubstanceInstance(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
@@ -40130,7 +40396,7 @@ begin
     ComposeDateTimeProps(json, 'expiry', elem.expiryElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSubstanceIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40164,7 +40430,7 @@ procedure TFHIRJsonComposer.ComposeSubstanceIngredient(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(json, 'quantity', elem.quantity); {a}
@@ -40172,7 +40438,7 @@ begin
     ComposeCodeableConcept(json, 'substanceCodeableConcept', TFhirCodeableConcept(elem.substance)) 
   else if (elem.substance is TFhirReference) then
     ComposeReference(json, 'substanceReference', TFhirReference(elem.substance));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSubstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40289,7 +40555,7 @@ procedure TFHIRJsonComposer.ComposeSupplyDeliverySuppliedItem(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
@@ -40297,7 +40563,7 @@ begin
     ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
   else if (SummaryOption in [soFull, soData]) and (elem.item is TFhirReference) then
     ComposeReference(json, 'itemReference', TFhirReference(elem.item));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40435,14 +40701,14 @@ procedure TFHIRJsonComposer.ComposeSupplyRequestOrderedItem(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeQuantity(json, 'quantity', elem.quantity); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.item is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.item is TFhirReference) then
     ComposeReference(json, 'itemReference', TFhirReference(elem.item));
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSupplyRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40474,12 +40740,12 @@ procedure TFHIRJsonComposer.ComposeSupplyRequestRequester(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseSupplyRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40617,12 +40883,12 @@ procedure TFHIRJsonComposer.ComposeTaskRequester(json : TJSONWriter; name : stri
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{Resource}(json, 'agent', elem.agent); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'onBehalfOf', elem.onBehalfOf); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTaskRestriction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40658,7 +40924,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'repetitions', elem.repetitionsElement, false);
@@ -40673,7 +40939,7 @@ begin
       ComposeReference{Resource}(json, '', elem.recipientList[i]); {z - Reference(Patient|Practitioner|RelatedPerson|Group|Organization)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTaskInput(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -40779,7 +41045,7 @@ procedure TFHIRJsonComposer.ComposeTaskInput(json : TJSONWriter; name : string; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (elem.value is TFhirCode) then 
@@ -40906,7 +41172,7 @@ begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTaskOutput(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41012,7 +41278,7 @@ procedure TFHIRJsonComposer.ComposeTaskOutput(json : TJSONWriter; name : string;
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (elem.value is TFhirCode) then 
@@ -41139,7 +41405,7 @@ begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTask(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41368,7 +41634,7 @@ procedure TFHIRJsonComposer.ComposeTestReportParticipant(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirReportParticipantTypeEnum, false);
   ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirReportParticipantTypeEnum, false);
@@ -41378,7 +41644,7 @@ begin
     ComposeStringValue(json, 'display', elem.displayElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'display', elem.displayElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportSetup(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41410,7 +41676,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.actionList.Count > 0) then
   begin
@@ -41419,7 +41685,7 @@ begin
       ComposeTestReportSetupAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportSetupAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41451,13 +41717,13 @@ procedure TFHIRJsonComposer.ComposeTestReportSetupAction(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetupActionOperation(json, 'operation', elem.operation); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetupActionAssert(json, 'assert', elem.assert); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportSetupActionOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41491,7 +41757,7 @@ procedure TFHIRJsonComposer.ComposeTestReportSetupActionOperation(json : TJSONWr
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'result', elem.ResultElement, CODES_TFhirReportActionResultCodesEnum, false);
   ComposeEnumProps(json, 'result', elem.ResultElement, CODES_TFhirReportActionResultCodesEnum, false);
@@ -41503,7 +41769,7 @@ begin
     ComposeUriValue(json, 'detail', elem.detailElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'detail', elem.detailElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportSetupActionAssert(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41537,7 +41803,7 @@ procedure TFHIRJsonComposer.ComposeTestReportSetupActionAssert(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'result', elem.ResultElement, CODES_TFhirReportActionResultCodesEnum, false);
   ComposeEnumProps(json, 'result', elem.ResultElement, CODES_TFhirReportActionResultCodesEnum, false);
@@ -41549,7 +41815,7 @@ begin
     ComposeStringValue(json, 'detail', elem.detailElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'detail', elem.detailElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportTest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41585,7 +41851,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -41602,7 +41868,7 @@ begin
       ComposeTestReportTestAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportTestAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41634,13 +41900,13 @@ procedure TFHIRJsonComposer.ComposeTestReportTestAction(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetupActionOperation(json, 'operation', elem.operation); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetupActionAssert(json, 'assert', elem.assert); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportTeardown(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41672,7 +41938,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.actionList.Count > 0) then
   begin
@@ -41681,7 +41947,7 @@ begin
       ComposeTestReportTeardownAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReportTeardownAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41711,10 +41977,10 @@ procedure TFHIRJsonComposer.ComposeTestReportTeardownAction(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeTestReportSetupActionOperation(json, 'operation', elem.operation); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestReport(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41843,12 +42109,12 @@ procedure TFHIRJsonComposer.ComposeTestScriptOrigin(json : TJSONWriter; name : s
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIntegerValue(json, 'index', elem.indexElement, false);
   ComposeIntegerProps(json, 'index', elem.indexElement, false);
   ComposeCoding(json, 'profile', elem.profile); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptDestination(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41880,12 +42146,12 @@ procedure TFHIRJsonComposer.ComposeTestScriptDestination(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIntegerValue(json, 'index', elem.indexElement, false);
   ComposeIntegerProps(json, 'index', elem.indexElement, false);
   ComposeCoding(json, 'profile', elem.profile); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptMetadata(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41919,7 +42185,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
   begin
@@ -41935,7 +42201,7 @@ begin
       ComposeTestScriptMetadataCapability(json, '', elem.capabilityList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptMetadataLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -41967,7 +42233,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptMetadataLink(json : TJSONWriter; na
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'url', elem.urlElement, false);
   ComposeUriProps(json, 'url', elem.urlElement, false);
@@ -41975,7 +42241,7 @@ begin
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptMetadataCapability(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42021,7 +42287,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (not isCanonical or (elem.required <> false)) then
     ComposeBooleanValue(json, 'required', elem.requiredElement, false);
@@ -42088,7 +42354,7 @@ begin
     end;
   end;
   ComposeReference{TFhirCapabilityStatement}(json, 'capabilities', elem.capabilities); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptFixture(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42122,7 +42388,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptFixture(json : TJSONWriter; name : 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (not isCanonical or (elem.autocreate <> false)) then
     ComposeBooleanValue(json, 'autocreate', elem.autocreateElement, false);
@@ -42134,7 +42400,7 @@ begin
     ComposeBooleanProps(json, 'autodelete', elem.autodeleteElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptVariable(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42178,7 +42444,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptVariable(json : TJSONWriter; name :
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -42210,7 +42476,7 @@ begin
     ComposeIdValue(json, 'sourceId', elem.sourceIdElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeIdProps(json, 'sourceId', elem.sourceIdElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42244,7 +42510,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
   if (SummaryOption in [soFull, soData]) and (elem.paramList.Count > 0) then
@@ -42254,7 +42520,7 @@ begin
       ComposeTestScriptRuleParam(json, '', elem.paramList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptRuleParam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42286,7 +42552,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptRuleParam(json : TJSONWriter; name 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -42294,7 +42560,7 @@ begin
     ComposeStringValue(json, 'value', elem.valueElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptRuleset(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42328,7 +42594,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
   if (elem.ruleList.Count > 0) then
@@ -42338,7 +42604,7 @@ begin
       ComposeTestScriptRulesetRule(json, '', elem.ruleList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptRulesetRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42372,7 +42638,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'ruleId', elem.ruleIdElement, false);
   ComposeIdProps(json, 'ruleId', elem.ruleIdElement, false);
@@ -42383,7 +42649,7 @@ begin
       ComposeTestScriptRulesetRuleParam(json, '', elem.paramList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptRulesetRuleParam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42415,7 +42681,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptRulesetRuleParam(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -42423,7 +42689,7 @@ begin
     ComposeStringValue(json, 'value', elem.valueElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetup(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42455,7 +42721,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.actionList.Count > 0) then
   begin
@@ -42464,7 +42730,7 @@ begin
       ComposeTestScriptSetupAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42496,13 +42762,13 @@ procedure TFHIRJsonComposer.ComposeTestScriptSetupAction(json : TJSONWriter; nam
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetupActionOperation(json, 'operation', elem.operation); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetupActionAssert(json, 'assert', elem.assert); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42564,7 +42830,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCoding(json, 'type', elem.type_); {a}
@@ -42631,7 +42897,7 @@ begin
     ComposeStringValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'url', elem.urlElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionOperationRequestHeader(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42663,13 +42929,13 @@ procedure TFHIRJsonComposer.ComposeTestScriptSetupActionOperationRequestHeader(j
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'field', elem.fieldElement, false);
   ComposeStringProps(json, 'field', elem.fieldElement, false);
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssert(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42745,7 +43011,7 @@ procedure TFHIRJsonComposer.ComposeTestScriptSetupActionAssert(json : TJSONWrite
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'label', elem.label_Element, false);
@@ -42839,7 +43105,7 @@ begin
     ComposeBooleanValue(json, 'warningOnly', elem.warningOnlyElement, false);
   if (SummaryOption in [soFull, soData]) and (not isCanonical or (elem.warningOnly <> false)) then
     ComposeBooleanProps(json, 'warningOnly', elem.warningOnlyElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42873,7 +43139,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'ruleId', elem.ruleIdElement, false);
   ComposeIdProps(json, 'ruleId', elem.ruleIdElement, false);
@@ -42884,7 +43150,7 @@ begin
       ComposeTestScriptSetupActionAssertRuleParam(json, '', elem.paramList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertRuleParam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42916,13 +43182,13 @@ procedure TFHIRJsonComposer.ComposeTestScriptSetupActionAssertRuleParam(json : T
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertRuleset(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -42956,7 +43222,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'rulesetId', elem.rulesetIdElement, false);
   ComposeIdProps(json, 'rulesetId', elem.rulesetIdElement, false);
@@ -42967,7 +43233,7 @@ begin
       ComposeTestScriptSetupActionAssertRulesetRule(json, '', elem.ruleList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertRulesetRule(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43001,7 +43267,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeIdValue(json, 'ruleId', elem.ruleIdElement, false);
   ComposeIdProps(json, 'ruleId', elem.ruleIdElement, false);
@@ -43012,7 +43278,7 @@ begin
       ComposeTestScriptSetupActionAssertRulesetRuleParam(json, '', elem.paramList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertRulesetRuleParam(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43044,13 +43310,13 @@ procedure TFHIRJsonComposer.ComposeTestScriptSetupActionAssertRulesetRuleParam(j
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptTest(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43086,7 +43352,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -43103,7 +43369,7 @@ begin
       ComposeTestScriptTestAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptTestAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43135,13 +43401,13 @@ procedure TFHIRJsonComposer.ComposeTestScriptTestAction(json : TJSONWriter; name
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetupActionOperation(json, 'operation', elem.operation); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetupActionAssert(json, 'assert', elem.assert); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptTeardown(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43173,7 +43439,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (elem.actionList.Count > 0) then
   begin
@@ -43182,7 +43448,7 @@ begin
       ComposeTestScriptTeardownAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScriptTeardownAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43212,10 +43478,10 @@ procedure TFHIRJsonComposer.ComposeTestScriptTeardownAction(json : TJSONWriter; 
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeTestScriptSetupActionOperation(json, 'operation', elem.operation); {a}
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseTestScript(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43460,7 +43726,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'lockedDate', elem.lockedDateElement, false);
@@ -43484,7 +43750,7 @@ begin
       ComposeValueSetComposeInclude(json, '', elem.excludeList[i]); {z - @ValueSet.compose.include}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetComposeInclude(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43526,7 +43792,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'system', elem.systemElement, false);
@@ -43574,7 +43840,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetComposeIncludeConcept(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43610,7 +43876,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'code', elem.codeElement, false);
   ComposeCodeProps(json, 'code', elem.codeElement, false);
@@ -43625,7 +43891,7 @@ begin
       ComposeValueSetComposeIncludeConceptDesignation(json, '', elem.designationList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetComposeIncludeConceptDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43659,7 +43925,7 @@ procedure TFHIRJsonComposer.ComposeValueSetComposeIncludeConceptDesignation(json
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'language', elem.languageElement, false);
@@ -43669,7 +43935,7 @@ begin
     ComposeCoding(json, 'use', elem.use); {a}
   ComposeStringValue(json, 'value', elem.valueElement, false);
   ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetComposeIncludeFilter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43703,7 +43969,7 @@ procedure TFHIRJsonComposer.ComposeValueSetComposeIncludeFilter(json : TJSONWrit
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeValue(json, 'property', elem.property_Element, false);
   ComposeCodeProps(json, 'property', elem.property_Element, false);
@@ -43711,7 +43977,7 @@ begin
   ComposeEnumProps(json, 'op', elem.OpElement, CODES_TFhirFilterOperatorEnum, false);
   ComposeCodeValue(json, 'value', elem.valueElement, false);
   ComposeCodeProps(json, 'value', elem.valueElement, false);
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetExpansion(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43753,7 +44019,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeUriValue(json, 'identifier', elem.identifierElement, false);
   ComposeUriProps(json, 'identifier', elem.identifierElement, false);
@@ -43781,7 +44047,7 @@ begin
       ComposeValueSetExpansionContains(json, '', elem.containsList[i]); {z - }
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetExpansionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43823,7 +44089,7 @@ procedure TFHIRJsonComposer.ComposeValueSetExpansionParameter(json : TJSONWriter
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
@@ -43857,7 +44123,7 @@ begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSetExpansionContains(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -43903,7 +44169,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'system', elem.systemElement, false);
@@ -43943,7 +44209,7 @@ begin
       ComposeValueSetExpansionContains(json, '', elem.containsList[i]); {z - @ValueSet.expansion.contains}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseValueSet(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -44155,7 +44421,7 @@ var
 begin
   if (elem = nil) then
     exit;
-  if not noObj then json.valueObject(name);
+  startElement(json, name, elem, noObj);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'product', elem.product); {a}
@@ -44216,7 +44482,7 @@ begin
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
+  finishElement(json, name, elem, noObj);
 end;
 
 procedure TFHIRJsonParser.ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList);
