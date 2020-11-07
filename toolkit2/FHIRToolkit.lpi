@@ -263,9 +263,8 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="fhir.toolkit.search.pas"/>
+        <Filename Value="FHIR.Toolkit.Search.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Toolkit.Search"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\ui\FHIR.LCL.Synchroniser.pas"/>

@@ -120,6 +120,8 @@ end;
 procedure TFHIRServerWorkerContextR2.SeeResource(r : TFhirResource);
 begin
   checkResource(r);
+  if r is TFHIRDomainResource then
+    TFHIRDomainResource(r).text := nil;
   if (r.ResourceType in [frtValueSet, frtConceptMap]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.resourceType = frtQuestionnaire then

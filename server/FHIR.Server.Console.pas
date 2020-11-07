@@ -94,6 +94,8 @@ type
     btnCombineGo: TBitBtn;
     btnDeleteEdition: TSpeedButton;
     btnDestination: TSpeedButton;
+    btnFetchObjects: TButton;
+    btnFetchObjectsPlus: TButton;
     btnImportLoinc: TBitBtn;
     btnImportSnomed: TBitBtn;
     btnInternational: TSpeedButton;
@@ -266,6 +268,8 @@ type
     procedure btnCombineGoClick(Sender: TObject);
     procedure btnDeleteEditionClick(Sender: TObject);
     procedure btnDestinationClick(Sender: TObject);
+    procedure btnFetchObjectsClick(Sender: TObject);
+    procedure btnFetchObjectsPlusClick(Sender: TObject);
     procedure btnImportLoincClick(Sender: TObject);
     procedure btnImportSnomedClick(Sender: TObject);
     procedure btnInternationalClick(Sender: TObject);
@@ -306,7 +310,7 @@ type
     FTelnet: TIdTelnet;
     FConnected : boolean;
     FIncoming : TStringList;
-    FTheads : TStringList;
+    FThreads : TStringList;
     FServerStatus : String;
     FLines : TStringList;
     FStatistics : TServerSessionStatistics;
@@ -474,7 +478,7 @@ begin
   setupTerminologyPage;
   FStatus := csDiconnected;
   FIncoming := TStringList.create;
-  FTheads := TStringList.create;;
+  FThreads := TStringList.create;;
   FLines := TStringList.create;
   FStatistics := TServerSessionStatistics.create;
   FLock := TFslLock.create('incoming');
@@ -489,7 +493,7 @@ begin
     ;
   FTelnet.Free;
   FIncoming.Free;
-  FTheads.Free;
+  FThreads.Free;
   FLines.Free;
   FStatistics.Free;
   FLock.Free;
@@ -856,6 +860,24 @@ begin
     edtDestination.text := dlgSave.filename;
 end;
 
+procedure TMainConsoleForm.btnFetchObjectsClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@classes'+#10);
+  except
+  end;
+end;
+
+procedure TMainConsoleForm.btnFetchObjectsPlusClick(Sender: TObject);
+begin
+   try
+    if FConnected then
+      FTelnet.SendString('@classes+'+#10);
+  except
+  end;
+end;
+
 procedure TMainConsoleForm.btnImportLoincClick(Sender: TObject);
 var
   start : TDateTime;
@@ -1158,8 +1180,8 @@ begin
       ss := FServerStatus;
       ts.assign(FIncoming);
       FIncoming.clear;
-      tsth.assign(FTheads);
-      FTheads.clear;
+      tsth.assign(FThreads);
+      FThreads.clear;
       rs := FStatistics.report;
     finally
       FLock.Unlock;
@@ -1355,12 +1377,23 @@ begin
     begin
       FLock.Lock;
       try
-        FTheads.Text := line.subString(10).replace('|', #13#10).trim();
+        FThreads.Text := line.subString(10).replace('|', #13#10).trim();
       finally
         FLock.unLock;
       end;
       exit(true);
     end;
+  end;
+  if line.startsWith('$@classes') then
+  begin
+    FLock.Lock;
+    try
+      FThreads.Text := line.subString(10).replace('|', #13#10).trim();
+      FThreads.Sort;
+    finally
+      FLock.unLock;
+    end;
+    exit(true);
   end;
 end;
 

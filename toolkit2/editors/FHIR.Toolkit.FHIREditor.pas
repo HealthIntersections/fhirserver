@@ -12,6 +12,7 @@ uses
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
+  FHIR.R4.Resources.Canonical,
   FHIR.LCL.Synchroniser,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store,
   FHIR.Toolkit.BaseEditor;
@@ -28,7 +29,7 @@ type
     FResource : TFHIRResourceV;
     actTestEditing : TContentAction;
     function parseResource(source : String) : TFHirResourceV;
-    procedure DoTestEncoding(sender : TObject);
+    procedure DoTestEditing(sender : TObject);
   protected
     function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
@@ -65,13 +66,14 @@ var
 begin
   p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
   try
+    p.KeepParseLocations := true;
     result := p.parseResource(source);
   finally
     p.Free;
   end;
 end;
 
-procedure TFHIREditor.DoTestEncoding(sender: TObject);
+procedure TFHIREditor.DoTestEditing(sender: TObject);
 var
   sync : TFHIRSynEditSynchroniser;
   cs : TFHIRCodeSystem;
@@ -89,7 +91,7 @@ begin
     sync.commit;
 
   finally
-    syn.free;
+    sync.free;
   end;
 end;
 
@@ -131,7 +133,7 @@ begin
         begin
           if incNext then
           begin
-            navpoints.addObject(prop.Name, TObject(prop.Values[0].LocationStart.line));
+            navpoints.addObject(prop.Name, TObject(prop.Values[0].LocationData.ParseStart.line));
             incNext := false;
           end
           else if prop.Name = 'text' then
@@ -142,13 +144,13 @@ begin
           begin
             for v in prop.Values do
               if (navpoints.count < 30) then
-                navpoints.addObject(v.fhirType, TObject(v.LocationStart.line));
+                navpoints.addObject(v.fhirType, TObject(v.LocationData.ParseStart.line));
           end
           else if prop.Type_ = 'BackboneElement' then
           begin
             for v in prop.Values do;
               if (navpoints.count < 30) then
-                navpoints.addObject(prop.name, TObject(v.LocationStart.line));
+                navpoints.addObject(prop.name, TObject(v.LocationData.ParseStart.line));
           end;
         end;
       end;
