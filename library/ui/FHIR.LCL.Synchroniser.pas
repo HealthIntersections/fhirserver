@@ -119,8 +119,21 @@ begin
 end;
 
 procedure TFHIRSynEditSynchroniser.loadXml;
+var
+  p : TFHIRParser;
 begin
-  raise Exception.create('not done yet');
+  FResource.Free;
+  FResource := nil;
+
+  // todo: for the synchronizer, we require that we're using default namespaces. It's not clear what's the best way
+  // to manage this
+  p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
+  try
+    p.KeepParseLocations := true;
+    FResource := p.parseResource(SynEdit.text); // this will use UTF8, so that positions match, since we are UTF-8 internally
+  finally
+    p.free;
+  end;
 end;
 
 procedure TFHIRSynEditSynchroniser.loadJson;
@@ -132,6 +145,7 @@ begin
 
   p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
   try
+    p.KeepParseLocations := true;
     FResource := p.parseResource(SynEdit.text); // this will use UTF8, so that positions match, since we are UTF-8 internally
   finally
     p.free;

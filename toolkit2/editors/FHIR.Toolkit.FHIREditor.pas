@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  ComCtrls,
+  Controls, StdCtrls, ComCtrls,
   SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Web.Parsers,
@@ -27,8 +27,13 @@ type
     FFactory : TFHIRFactory;
     FResource : TFHIRResourceV;
     actTestEditing : TContentAction;
+    FTree : TTreeView;
+    FMemo : TMemo;
+    FSync : TFHIRSynEditSynchroniser;
     function parseResource(source : String) : TFHirResourceV;
-    procedure DoTestEncoding(sender : TObject);
+    procedure DoTestEditing(sender : TObject);
+    procedure DoTreeClick(sender : TObject);
+    procedure LoadObject(item : TTreeNode; obj : TFHIRObject);
   protected
     function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
@@ -41,6 +46,10 @@ type
     procedure newContent(); override;
     function FileExtension : String; override;
     procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
+
+    function hasDesigner : boolean; override;
+    procedure makeDesigner; override;
+    procedure updateDesigner; override;
   end;
 
 
@@ -56,6 +65,7 @@ end;
 destructor TFHIREditor.Destroy;
 begin
   FResource.Free;
+  FSync.Free;
   inherited Destroy;
 end;
 
@@ -71,25 +81,59 @@ begin
   end;
 end;
 
-procedure TFHIREditor.DoTestEncoding(sender: TObject);
-var
-  sync : TFHIRSynEditSynchroniser;
-  cs : TFHIRCodeSystem;
+procedure TFHIREditor.DoTestEditing(sender: TObject);
+//var
+//  sync : TFHIRSynEditSynchroniser;
+//  cs : TFHIRCodeSystem;
 begin
-  sync := TFHIRSynEditSynchroniser.create;
+  //sync := TFHIRSynEditSynchroniser.create;
+  //try
+  //  sync.SynEdit := TextEditor;
+  //  sync.Format := ffJson;
+  //  sync.Factory := FFactory.link;
+  //
+  //  sync.load;
+  //  cs := sync.resource as TFHIRCodeSystem;
+  //  sync.changeProperty(cs.nameElement);
+  //  cs.name := 'My Test';
+  //  sync.commit;
+  //
+  //finally
+  //  syn.free;
+  //end;
+end;
+
+function toPoint(loc : TSourceLocation) : TPoint;
+begin
+  result.x := loc.col;
+  result.y := loc.line;
+end;
+
+procedure TFHIREditor.DoTreeClick(sender: TObject);
+var
+  o : TFHIRObject;
+  c : TFHIRComposer;
+begin
+  if FTree.Selected <> nil then
+  begin
+    o := TFhirObject(FTree.Selected.Data);
+    if o.LocationData.hasLocation2 then
+    begin
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart2));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish2));
+    end
+    else
+    begin
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish));
+    end;
+  end;
+
+  c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
   try
-    sync.SynEdit := TextEditor;
-    sync.Format := ffJson;
-    sync.Factory := FFactory.link;
-
-    sync.load;
-    cs := sync.resource as TFHIRCodeSystem;
-    sync.changeProperty(cs.nameElement);
-    cs.name := 'My Test';
-    sync.commit;
-
+    FMemo.text := c.composeBase(o);
   finally
-    syn.free;
+    c.free;
   end;
 end;
 
@@ -131,7 +175,7 @@ begin
         begin
           if incNext then
           begin
-            navpoints.addObject(prop.Name, TObject(prop.Values[0].LocationStart.line));
+            navpoints.addObject(prop.Name, TObject(prop.Values[0].LocationData.ParseStart.line));
             incNext := false;
           end
           else if prop.Name = 'text' then
@@ -142,13 +186,13 @@ begin
           begin
             for v in prop.Values do
               if (navpoints.count < 30) then
-                navpoints.addObject(v.fhirType, TObject(v.LocationStart.line));
+                navpoints.addObject(v.fhirType, TObject(v.LocationData.ParseStart.line));
           end
           else if prop.Type_ = 'BackboneElement' then
           begin
             for v in prop.Values do;
               if (navpoints.count < 30) then
-                navpoints.addObject(prop.name, TObject(v.LocationStart.line));
+                navpoints.addObject(prop.name, TObject(v.LocationData.ParseStart.line));
           end;
         end;
       end;
@@ -255,6 +299,66 @@ begin
   finally
     finishValidating(validate, t);
   end;
+end;
+
+function TFHIREditor.hasDesigner: boolean;
+begin
+  Result := true;
+end;
+
+procedure TFHIREditor.makeDesigner;
+begin
+  inherited makeDesigner;
+  FSync := TFHIRSynEditSynchroniser.create;
+  FSync.SynEdit := TextEditor;
+  FSync.Factory := TFHIRFactoryR4.create;
+  FSync.Format := FFormat;
+
+  FMemo := TMemo.create(FDesignerPanelWork);
+  FMemo.parent := FDesignerPanelWork;
+  FMemo.align := alBottom;
+  FMemo.ReadOnly := true;
+  FMemo.Height := 300;
+
+  FTree := TTreeView.create(FDesignerPanelWork);
+  FTree.parent := FDesignerPanelWork;
+  FTree.align := alClient;
+  FTree.ReadOnly := true;
+  FTree.OnClick := DoTreeClick;
+end;
+
+procedure TFHIREditor.LoadObject(item : TTreeNode; obj : TFHIRObject);
+var
+  prop : TFHIRNamedValue;
+  child : TTreeNode;
+begin
+  for prop in obj.getNamedChildren.forEnum do
+  begin
+    if prop.value.isPrimitive then
+    begin
+      child := FTree.items.AddChildObject(item, prop.Name +': '+prop.value.fhirType+' = '+prop.value.primitiveValue, prop.value);
+    end
+    else
+    begin
+      child := FTree.Items.AddChildObject(item, prop.Name +': '+prop.value.fhirType, prop.value);
+      LoadObject(child, prop.value);
+    end;
+  end;
+
+end;
+
+procedure TFHIREditor.updateDesigner;
+var
+  root : TTreeNode;
+begin
+  FResource.Free;
+  FResource := nil;
+  FSync.load;
+  FResource := FSync.Resource.link;
+  FTree.items.Clear;
+  root := FTree.Items.Add (nil, 'Resource '+FResource.fhirType);
+  root.Data := FResource;
+  loadObject(root, FResource);
 end;
 
 

@@ -305,6 +305,23 @@ type
     property value : TFHIRObject read FValue;
   end;
 
+  { TFHIRNamedValue }
+
+  TFHIRNamedValue = class (TFslObject)
+  private
+    FName: String;
+    FType: String;
+    FValue: TFhirObject;
+  public
+    constructor create; override;
+    constructor Create(name, type_ : String; value : TFhirObject);
+    destructor Destroy; override;
+
+    property name : String read FName;
+    property type_ : String read FType;
+    property value : TFhirObject read FValue;
+  end;
+
   { TFHIRObjectLocationData }
 
   // we keep both parse and compose for help when editing content live.
@@ -320,6 +337,7 @@ type
     FComposeStart2: TSourceLocation;
   public
     function inSpan(loc : TSourceLocation) : boolean;
+    function hasLocation2 : boolean;
 
     property parseStart : TSourceLocation read FParseStart write FParseStart;
     property parseFinish : TSourceLocation read FParseFinish write FParseFinish;
@@ -383,6 +401,7 @@ type
     procedure addExtension(url : String; value : TFHIRObject); virtual;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
+    function getNamedChildren : TFslList<TFHIRNamedValue>;
 
     // property access API
     // getting access to the properties
@@ -474,11 +493,16 @@ type
     property Current : TFHIRObject read GetCurrent;
   end;
 
+  { TFHIRObjectList }
+
   TFHIRObjectList = class (TFslObjectList)
   private
     FTags : TFslStringDictionary;
+    FLocationData : TFHIRObjectLocationData;
     FJsHandle: pointer;
     FJsInstance: cardinal;
+    function GetLocationData : TFHIRObjectLocationData;
+    function GetHasLocationData : boolean;
     Function GetItemN(index : Integer) : TFHIRObject;
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
@@ -495,6 +519,9 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function ToString : String; override;
     function new : TFHIRObject; reintroduce; overload; virtual;
+
+    property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
+    property HasLocationData : boolean read GetHasLocationData;
 
     // javascript caching
     property jsInstance : cardinal read FJsInstance write FJsInstance;
@@ -689,11 +716,37 @@ Implementation
 Uses
   FHIR.Base.Lang;
 
+{ TFHIRNamedValue }
+
+constructor TFHIRNamedValue.create;
+begin
+  inherited create;
+end;
+
+constructor TFHIRNamedValue.Create(name, type_: String; value: TFhirObject);
+begin
+  Create;
+  FName := name;
+  FType := type_;
+  FValue := value;
+end;
+
+destructor TFHIRNamedValue.Destroy;
+begin
+  FValue.Free;
+  inherited Destroy;
+end;
+
 { TFHIRObjectLocationData }
 
 function TFHIRObjectLocationData.inSpan(loc: TSourceLocation): boolean;
 begin
   result := locInSpan(loc, FParseStart, FParseFinish);
+end;
+
+function TFHIRObjectLocationData.hasLocation2: boolean;
+begin
+  result := FParseFinish2.nonZero;
 end;
 
 { TFHIRLocation }
@@ -851,10 +904,14 @@ begin
     try
       for prop in properties do
       begin
-        for i := 0 to prop.Values.count - 1 do
+        n := prop.name;
+        if n <> '' then
         begin
-          if prop.values[i].findLocation(loc, prop, path) then
-            exit;
+          for i := 0 to prop.Values.count - 1 do
+          begin
+            if prop.values[i].findLocation(loc, prop, path) then
+              exit;
+          end;
         end;
       end;
     finally
@@ -893,6 +950,31 @@ procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRSelectionList)
 begin
   if self <> nil then
     GetChildrenByName(name, list);
+end;
+
+function TFHIRObject.getNamedChildren: TFslList<TFHIRNamedValue>;
+var
+  list : TFHIRPropertyList;
+  p : TFHIRProperty;
+  v : TFHIRObject;
+begin
+  result := TFslList<TFHIRNamedValue>.create;
+  try
+    list := createPropertyList(true);
+    try
+      for p in list do
+      begin
+        if p.hasValue then
+          for v in p.Values do
+            result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link));
+      end;
+    finally
+      list.free;
+    end;
+    result.Link;
+  finally
+    result.free;
+  end;
 end;
 
 procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -1208,6 +1290,7 @@ end;
 destructor TFHIRObjectList.Destroy;
 begin
   FTags.Free;
+  FLocationData.Free;;
   inherited;
 end;
 
@@ -1219,6 +1302,18 @@ end;
 function TFHIRObjectList.GetEnumerator: TFHIRObjectListEnumerator;
 begin
   result := TFHIRObjectListEnumerator.Create(self.link);
+end;
+
+function TFHIRObjectList.GetLocationData: TFHIRObjectLocationData;
+begin
+  if FLocationData = nil then
+    FLocationData := TFHIRObjectLocationData.create;
+  result := FLocationData;
+end;
+
+function TFHIRObjectList.GetHasLocationData: boolean;
+begin
+  result := assigned(FLocationData);
 end;
 
 function TFHIRObjectList.GetItemN(index: Integer): TFHIRObject;

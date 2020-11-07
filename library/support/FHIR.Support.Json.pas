@@ -402,6 +402,7 @@ Type
     FStates : TStringList;
     FLastLocationBWS : TSourceLocation;
     FLastLocationAWS : TSourceLocation;
+    FPrevLocation : TSourceLocation;
     FLocation : TSourceLocation;
     Function getNextChar : Char;
     Function peekNextChar : Char;
@@ -1233,7 +1234,7 @@ var
   hex : String;
   exp : boolean;
 begin
-  FLastLocationBWS := FLocation;
+  FLastLocationBWS := FPrevLocation;
   repeat
     ch := getNextChar;
     if (FLoose and (ch = '/') and (peekNextChar = '/')) then
@@ -1243,7 +1244,7 @@ begin
       until CharInSet(ch, [#13, #10]);
     end;
   Until Not More Or not (CharInSet(ch, [' ', #13, #10, #9]) or (FLoose and (ch = ',')));
-  FLastLocationAWS := FLocation;
+  FLastLocationAWS := FPrevLocation;
 
   FValue.Clear;
   If (CharInSet(ch, [#0, ' ', #13, #10, #9]) and Not More) Then
@@ -1325,6 +1326,7 @@ begin
   Else
   begin
     result := ConsumeCharacter;
+    FPrevLocation := FLocation;
     if result = #10 then
     begin
       inc(FLocation.line);
@@ -1350,6 +1352,8 @@ end;
 
 procedure TJSONLexer.Push(ch: Char);
 begin
+  if (FPrevLocation.Col > 0) then
+    FPrevLocation.Col := FPrevLocation.Col - 1;
   if (FLocation.Col > 0) then
     FLocation.Col := FLocation.Col - 1;
   insert(ch, FPeek, 1);
@@ -1361,6 +1365,7 @@ begin
   FLoose := loose;
   FLocation.line := 1;
   FLocation.col := 1;
+  FPrevLocation := FLocation;
   FStates := TStringList.Create;
   FValue := TStringBuilder.create;
 end;
@@ -1714,7 +1719,7 @@ begin
         begin
           obj := TJsonObject.Create(arr.path+'['+inttostr(i)+']');
           arr.FItems.Add(obj);
-          obj.LocationStart := FLex.FLocation;
+          obj.LocationStart := FLex.FPrevLocation;
           Next;
           readObject(obj, false);
         end;
@@ -1728,7 +1733,7 @@ begin
         begin
         child := TJsonArray.Create(arr.path+'['+inttostr(i)+']');
         arr.FItems.Add(child);
-        child.LocationStart := FLex.FLocation;
+        child.LocationStart := FLex.FPrevLocation;
         Next;
         readArray(child, false);
         end;

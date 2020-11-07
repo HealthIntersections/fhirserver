@@ -413,6 +413,7 @@ type
   TSourceLocation = record
     line, col : integer;
     class function make(l, c : integer) : TSourceLocation; static;
+    function nonZero : boolean;
   end;
 
   TSourceLocationObject = class (TFslObject)
@@ -1516,6 +1517,11 @@ class function TSourceLocation.make(l, c: integer): TSourceLocation;
 begin
   result.line := l;
   result.col := c;
+end;
+
+function TSourceLocation.nonZero: boolean;
+begin
+  result := (line > 0) or (col > 0);
 end;
 
 
