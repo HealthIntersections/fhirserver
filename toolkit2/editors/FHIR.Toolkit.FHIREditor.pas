@@ -131,12 +131,12 @@ begin
     end;
   end;
 
-  c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
-  try
-    FMemo.text := c.composeBase(o);
-  finally
-    sync.free;
-  end;
+  //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
+  //try
+  //  FMemo.text := c.composeBase(o);
+  //finally
+  //  sync.free;
+  //end;
 end;
 
 function TFHIREditor.AddActions(tb : TToolBar): boolean;
@@ -228,9 +228,9 @@ begin
     result := 'xml';
 end;
 
-function asPathExpression(path : TFslList<TFHIRLocation>) : String;
+function asPathExpression(path : TFslList<TFHIRLocatedNode>) : String;
 var
-  loc : TFHIRLocation;
+  loc : TFHIRLocatedNode;
 begin
   result := '';
   for loc in path do
@@ -251,7 +251,7 @@ var
   i : integer;
   s : String;
   t : QWord;
-  path : TFslList<TFHIRLocation>;
+  path : TFslList<TFHIRLocatedNode>;
 begin
   updateToContent;
   t := StartValidating;

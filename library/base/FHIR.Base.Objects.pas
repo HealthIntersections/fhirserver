@@ -300,7 +300,7 @@ type
     FValue: TFhirObject;
   public
     constructor create; override;
-    constructor Create(name, type_ : String; value : TFhirObject);
+    constructor Create(name, type_ : String; value : TFhirObject); overload;
     destructor Destroy; override;
 
     property name : String read FName;
@@ -738,6 +738,11 @@ begin
 end;
 
 { TFHIRObjectLocationData }
+
+function TFHIRObjectLocationData.hasLocation2: boolean;
+begin
+  result := FParseFinish2.nonZero or FComposeFinish2.nonZero;
+end;
 
 function TFHIRObjectLocationData.inSpan(loc: TSourceLocation): boolean;
 begin

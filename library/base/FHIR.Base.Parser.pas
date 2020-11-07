@@ -241,7 +241,6 @@ Type
     function ComposeBytes(oResource : TFhirResourceV) : TBytes; Overload;
     function Compose(name : String; items : TFHIRObjectList): String; Overload;
     function Compose(name : String; item : TFHIRObject): String; Overload;
-    function ComposeBase(name : Stringl item : TFHIRObject) : String; Virtual;
 
     Function MimeType : String; virtual;
     function Extension : String; virtual;
@@ -280,7 +279,6 @@ Type
     function Extension : String; Override;
     Property Comment : String read FComment write FComment;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); virtual;
-    function ComposeBase(name : Stringl item : TFHIRObject) : String; override;
   End;
 
   TFHIRJsonComposerBase = class (TFHIRComposer)
@@ -316,7 +314,6 @@ Type
     function Extension : String; Override;
     Property Comments : Boolean read FComments write FComments;
     procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRObject); virtual;
-    function ComposeBase(name : Stringl item : TFHIRObject) : String; override;
   End;
 
   TFHIRTurtleComposerBase = class (TFHIRComposer)
