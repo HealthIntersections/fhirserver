@@ -298,14 +298,16 @@ type
     FName: String;
     FType: String;
     FValue: TFhirObject;
+    FList : TFhirObjectList;
   public
     constructor create; override;
-    constructor Create(name, type_ : String; value : TFhirObject); overload;
+    constructor Create(name, type_ : String; value : TFhirObject; list : TFHIRObjectList); overload;
     destructor Destroy; override;
 
     property name : String read FName;
     property type_ : String read FType;
     property value : TFhirObject read FValue;
+    property list : TFHIRObjectList read FList;
   end;
 
   { TFHIRObjectLocationData }
@@ -723,17 +725,19 @@ begin
   inherited create;
 end;
 
-constructor TFHIRNamedValue.Create(name, type_: String; value: TFhirObject);
+constructor TFHIRNamedValue.Create(name, type_: String; value: TFhirObject; list : TFHIRObjectList);
 begin
   Create;
   FName := name;
   FType := type_;
   FValue := value;
+  FList := list;
 end;
 
 destructor TFHIRNamedValue.Destroy;
 begin
   FValue.Free;
+  FList.Free;
   inherited Destroy;
 end;
 
@@ -966,7 +970,10 @@ begin
       begin
         if p.hasValue then
           for v in p.Values do
-            result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link));
+            if p.IsList then
+              result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link, p.Values.link))
+            else
+              result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link, nil));
       end;
     finally
       list.free;
