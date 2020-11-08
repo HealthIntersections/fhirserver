@@ -4878,7 +4878,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'valueCode', elem.valueCodeList, false, true);
+      startArray(json, 'valueCode', elem.valueCodeList, true);
       for i := 0 to elem.valueCodeList.Count - 1 do
         ComposeCodeValue(json, '',elem.valueCodeList[i], true);
       finishArray(json, elem.valueCodeList);
@@ -5011,7 +5011,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'profile', elem.profileList, false, true);
+      startArray(json, 'profile', elem.profileList, true);
       for i := 0 to elem.profileList.Count - 1 do
         ComposeUriValue(json, '',elem.profileList[i], true);
       finishArray(json, elem.profileList);
@@ -5035,7 +5035,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'mustSupport', elem.mustSupportList, false, true);
+      startArray(json, 'mustSupport', elem.mustSupportList, true);
       for i := 0 to elem.mustSupportList.Count - 1 do
         ComposeStringValue(json, '',elem.mustSupportList[i], true);
       finishArray(json, elem.mustSupportList);
@@ -5906,10 +5906,10 @@ begin
   ComposeElement(json, '', elem, true);
   if (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCoding(json, '', elem.type_List[i]); {z - Coding}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   ComposeInstantValue(json, 'when', elem.whenElement, false);
   ComposeInstantProps(json, 'when', elem.whenElement, false);
@@ -6177,7 +6177,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'given', elem.givenList, false, true);
+      startArray(json, 'given', elem.givenList, true);
       for i := 0 to elem.givenList.Count - 1 do
         ComposeStringValue(json, '',elem.givenList[i], true);
       finishArray(json, elem.givenList);
@@ -6201,7 +6201,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'prefix', elem.prefixList, false, true);
+      startArray(json, 'prefix', elem.prefixList, true);
       for i := 0 to elem.prefixList.Count - 1 do
         ComposeStringValue(json, '',elem.prefixList[i], true);
       finishArray(json, elem.prefixList);
@@ -6225,7 +6225,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'suffix', elem.suffixList, false, true);
+      startArray(json, 'suffix', elem.suffixList, true);
       for i := 0 to elem.suffixList.Count - 1 do
         ComposeStringValue(json, '',elem.suffixList[i], true);
       finishArray(json, elem.suffixList);
@@ -6303,7 +6303,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'profile', elem.profileList, false, true);
+      startArray(json, 'profile', elem.profileList, true);
       for i := 0 to elem.profileList.Count - 1 do
         ComposeUriValue(json, '',elem.profileList[i], true);
       finishArray(json, elem.profileList);
@@ -6408,7 +6408,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'line', elem.lineList, false, true);
+      startArray(json, 'line', elem.lineList, true);
       for i := 0 to elem.lineList.Count - 1 do
         ComposeStringValue(json, '',elem.lineList[i], true);
       finishArray(json, elem.lineList);
@@ -6645,7 +6645,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'aggregation', elem.aggregationList, false, true);
+      startArray(json, 'aggregation', elem.aggregationList, true);
       for i := 0 to elem.aggregationList.Count - 1 do
         ComposeEnumValue(json, '', elem.aggregationList[i], CODES_TFhirResourceAggregationModeEnum, true);
       finishArray(json, elem.aggregationList);
@@ -7426,7 +7426,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'representation', elem.representationList, false, true);
+      startArray(json, 'representation', elem.representationList, true);
       for i := 0 to elem.representationList.Count - 1 do
         ComposeEnumValue(json, '', elem.representationList[i], CODES_TFhirPropertyRepresentationEnum, true);
       finishArray(json, elem.representationList);
@@ -7483,7 +7483,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'alias', elem.aliasList, false, true);
+      startArray(json, 'alias', elem.aliasList, true);
       for i := 0 to elem.aliasList.Count - 1 do
         ComposeStringValue(json, '',elem.aliasList[i], true);
       finishArray(json, elem.aliasList);
@@ -7512,10 +7512,10 @@ begin
     ComposeUriProps(json, 'contentReference', elem.contentReferenceElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeElementDefinitionType(json, '', elem.type_List[i]); {z - }
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) then 
   begin
@@ -8003,7 +8003,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'condition', elem.conditionList, false, true);
+      startArray(json, 'condition', elem.conditionList, true);
       for i := 0 to elem.conditionList.Count - 1 do
         ComposeIdValue(json, '',elem.conditionList[i], true);
       finishArray(json, elem.conditionList);
@@ -8169,7 +8169,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'dayOfWeek', elem.dayOfWeekList, false, true);
+      startArray(json, 'dayOfWeek', elem.dayOfWeekList, true);
       for i := 0 to elem.dayOfWeekList.Count - 1 do
         ComposeEnumValue(json, '', elem.dayOfWeekList[i], CODES_TFhirDaysOfWeekEnum, true);
       finishArray(json, elem.dayOfWeekList);
@@ -8193,7 +8193,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'timeOfDay', elem.timeOfDayList, false, true);
+      startArray(json, 'timeOfDay', elem.timeOfDayList, true);
       for i := 0 to elem.timeOfDayList.Count - 1 do
         ComposeTimeValue(json, '',elem.timeOfDayList[i], true);
       finishArray(json, elem.timeOfDayList);
@@ -8217,7 +8217,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'when', elem.whenList, false, true);
+      startArray(json, 'when', elem.whenList, true);
       for i := 0 to elem.whenList.Count - 1 do
         ComposeEnumValue(json, '', elem.whenList[i], CODES_TFhirEventTimingEnum, true);
       finishArray(json, elem.whenList);
@@ -8285,7 +8285,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'event', elem.eventList, false, true);
+      startArray(json, 'event', elem.eventList, true);
       for i := 0 to elem.eventList.Count - 1 do
         ComposeDateTimeValue(json, '',elem.eventList[i], true);
       finishArray(json, elem.eventList);
@@ -8942,10 +8942,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('library_') and (elem.library_List.Count > 0) then
   begin
-    startArray(json, 'library', elem.libraryList, false);
+    startArray(json, 'library', elem.library_List, false);
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
-    finishArray(json, elem.libraryList);
+    finishArray(json, elem.library_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('kind') then
     ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, false);
@@ -9366,7 +9366,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'category', elem.categoryList, false, true);
+      startArray(json, 'category', elem.categoryList, true);
       for i := 0 to elem.categoryList.Count - 1 do
         ComposeEnumValue(json, '', elem.categoryList[i], CODES_TFhirAllergyIntoleranceCategoryEnum, true);
       finishArray(json, elem.categoryList);
@@ -9471,10 +9471,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'actor', elem.actor); {a}
@@ -9829,7 +9829,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'policy', elem.policyList, false, true);
+      startArray(json, 'policy', elem.policyList, true);
       for i := 0 to elem.policyList.Count - 1 do
         ComposeUriValue(json, '',elem.policyList[i], true);
       finishArray(json, elem.policyList);
@@ -9940,10 +9940,10 @@ begin
   ComposeIdentifier(json, 'identifier', elem.identifier); {a}
   if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCoding(json, '', elem.type_List[i]); {z - Coding}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   finishElement(json, name, elem, noObj);
 end;
@@ -10429,10 +10429,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposeBundleLink(json, '', elem.link_List[i]); {z - @Bundle.link}
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeUriValue(json, 'fullUrl', elem.fullUrlElement, false);
@@ -10659,10 +10659,10 @@ begin
     ComposeUnsignedIntProps(json, 'total', elem.totalElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposeBundleLink(json, '', elem.link_List[i]); {z - }
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.entryList.Count > 0) then
   begin
@@ -10857,7 +10857,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'compartment', elem.compartmentList, false, true);
+      startArray(json, 'compartment', elem.compartmentList, true);
       for i := 0 to elem.compartmentList.Count - 1 do
         ComposeUriValue(json, '',elem.compartmentList[i], true);
       finishArray(json, elem.compartmentList);
@@ -11092,7 +11092,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'referencePolicy', elem.referencePolicyList, false, true);
+      startArray(json, 'referencePolicy', elem.referencePolicyList, true);
       for i := 0 to elem.referencePolicyList.Count - 1 do
         ComposeEnumValue(json, '', elem.referencePolicyList[i], CODES_TFhirReferenceHandlingPolicyEnum, true);
       finishArray(json, elem.referencePolicyList);
@@ -11116,7 +11116,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'searchInclude', elem.searchIncludeList, false, true);
+      startArray(json, 'searchInclude', elem.searchIncludeList, true);
       for i := 0 to elem.searchIncludeList.Count - 1 do
         ComposeStringValue(json, '',elem.searchIncludeList[i], true);
       finishArray(json, elem.searchIncludeList);
@@ -11140,7 +11140,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'searchRevInclude', elem.searchRevIncludeList, false, true);
+      startArray(json, 'searchRevInclude', elem.searchRevIncludeList, true);
       for i := 0 to elem.searchRevIncludeList.Count - 1 do
         ComposeStringValue(json, '',elem.searchRevIncludeList[i], true);
       finishArray(json, elem.searchRevIncludeList);
@@ -11735,7 +11735,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'instantiates', elem.instantiatesList, false, true);
+      startArray(json, 'instantiates', elem.instantiatesList, true);
       for i := 0 to elem.instantiatesList.Count - 1 do
         ComposeUriValue(json, '',elem.instantiatesList[i], true);
       finishArray(json, elem.instantiatesList);
@@ -11767,7 +11767,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'format', elem.formatList, false, true);
+      startArray(json, 'format', elem.formatList, true);
       for i := 0 to elem.formatList.Count - 1 do
         ComposeCodeValue(json, '',elem.formatList[i], true);
       finishArray(json, elem.formatList);
@@ -11791,7 +11791,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'patchFormat', elem.patchFormatList, false, true);
+      startArray(json, 'patchFormat', elem.patchFormatList, true);
       for i := 0 to elem.patchFormatList.Count - 1 do
         ComposeCodeValue(json, '',elem.patchFormatList[i], true);
       finishArray(json, elem.patchFormatList);
@@ -11815,7 +11815,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'implementationGuide', elem.implementationGuideList, false, true);
+      startArray(json, 'implementationGuide', elem.implementationGuideList, true);
       for i := 0 to elem.implementationGuideList.Count - 1 do
         ComposeUriValue(json, '',elem.implementationGuideList[i], true);
       finishArray(json, elem.implementationGuideList);
@@ -12539,7 +12539,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'definition', elem.definitionList, false, true);
+      startArray(json, 'definition', elem.definitionList, true);
       for i := 0 to elem.definitionList.Count - 1 do
         ComposeUriValue(json, '',elem.definitionList[i], true);
       finishArray(json, elem.definitionList);
@@ -12905,10 +12905,10 @@ begin
     ComposeReference(json, 'diagnosisReference', TFhirReference(elem.diagnosis));
   if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
@@ -13026,7 +13026,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'preAuthRef', elem.preAuthRefList, false, true);
+      startArray(json, 'preAuthRef', elem.preAuthRefList, true);
       for i := 0 to elem.preAuthRefList.Count - 1 do
         ComposeStringValue(json, '',elem.preAuthRefList[i], true);
       finishArray(json, elem.preAuthRefList);
@@ -13182,7 +13182,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'careTeamLinkId', elem.careTeamLinkIdList, false, true);
+      startArray(json, 'careTeamLinkId', elem.careTeamLinkIdList, true);
       for i := 0 to elem.careTeamLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.careTeamLinkIdList[i], true);
       finishArray(json, elem.careTeamLinkIdList);
@@ -13206,7 +13206,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'diagnosisLinkId', elem.diagnosisLinkIdList, false, true);
+      startArray(json, 'diagnosisLinkId', elem.diagnosisLinkIdList, true);
       for i := 0 to elem.diagnosisLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.diagnosisLinkIdList[i], true);
       finishArray(json, elem.diagnosisLinkIdList);
@@ -13230,7 +13230,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'procedureLinkId', elem.procedureLinkIdList, false, true);
+      startArray(json, 'procedureLinkId', elem.procedureLinkIdList, true);
       for i := 0 to elem.procedureLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.procedureLinkIdList[i], true);
       finishArray(json, elem.procedureLinkIdList);
@@ -13254,7 +13254,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'informationLinkId', elem.informationLinkIdList, false, true);
+      startArray(json, 'informationLinkId', elem.informationLinkIdList, true);
       for i := 0 to elem.informationLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.informationLinkIdList[i], true);
       finishArray(json, elem.informationLinkIdList);
@@ -13710,10 +13710,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('procedure_') and (elem.procedure_List.Count > 0) then
   begin
-    startArray(json, 'procedure', elem.procedureList, false);
+    startArray(json, 'procedure', elem.procedure_List, false);
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeClaimProcedure(json, '', elem.procedure_List[i]); {z - }
-    finishArray(json, elem.procedureList);
+    finishArray(json, elem.procedure_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
   begin
@@ -13793,7 +13793,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -13922,7 +13922,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -14002,7 +14002,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -14085,7 +14085,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'sequenceLinkId', elem.sequenceLinkIdList, false, true);
+      startArray(json, 'sequenceLinkId', elem.sequenceLinkIdList, true);
       for i := 0 to elem.sequenceLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.sequenceLinkIdList[i], true);
       finishArray(json, elem.sequenceLinkIdList);
@@ -14124,7 +14124,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -14225,7 +14225,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -14468,7 +14468,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'preAuthRef', elem.preAuthRefList, false, true);
+      startArray(json, 'preAuthRef', elem.preAuthRefList, true);
       for i := 0 to elem.preAuthRefList.Count - 1 do
         ComposeStringValue(json, '',elem.preAuthRefList[i], true);
       finishArray(json, elem.preAuthRefList);
@@ -14867,7 +14867,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'protocol', elem.protocolList, false, true);
+      startArray(json, 'protocol', elem.protocolList, true);
       for i := 0 to elem.protocolList.Count - 1 do
         ComposeUriValue(json, '',elem.protocolList[i], true);
       finishArray(json, elem.protocolList);
@@ -14979,7 +14979,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'operator', elem.operatorList, false, true);
+      startArray(json, 'operator', elem.operatorList, true);
       for i := 0 to elem.operatorList.Count - 1 do
         ComposeEnumValue(json, '', elem.operatorList[i], CODES_TFhirFilterOperatorEnum, true);
       finishArray(json, elem.operatorList);
@@ -15107,10 +15107,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and (elem.property_List.Count > 0) then
   begin
-    startArray(json, 'property', elem.propertyList, false);
+    startArray(json, 'property', elem.property_List, false);
     for i := 0 to elem.property_List.Count - 1 do
       ComposeCodeSystemConceptProperty(json, '', elem.property_List[i]); {z - }
-    finishArray(json, elem.propertyList);
+    finishArray(json, elem.property_List);
   end;
   if (SummaryOption in [soFull, soData]) and (elem.conceptList.Count > 0) then
   begin
@@ -15417,10 +15417,10 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('property_') and (elem.property_List.Count > 0) then
   begin
-    startArray(json, 'property', elem.propertyList, false);
+    startArray(json, 'property', elem.property_List, false);
     for i := 0 to elem.property_List.Count - 1 do
       ComposeCodeSystemProperty(json, '', elem.property_List[i]); {z - }
-    finishArray(json, elem.propertyList);
+    finishArray(json, elem.property_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('concept') and (elem.conceptList.Count > 0) then
   begin
@@ -15966,7 +15966,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'param', elem.paramList, false, true);
+      startArray(json, 'param', elem.paramList, true);
       for i := 0 to elem.paramList.Count - 1 do
         ComposeStringValue(json, '',elem.paramList[i], true);
       finishArray(json, elem.paramList);
@@ -16158,7 +16158,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'mode', elem.modeList, false, true);
+      startArray(json, 'mode', elem.modeList, true);
       for i := 0 to elem.modeList.Count - 1 do
         ComposeEnumValue(json, '', elem.modeList[i], CODES_TFhirCompositionAttestationModeEnum, true);
       finishArray(json, elem.modeList);
@@ -17397,10 +17397,10 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.class_List.Count > 0) then
   begin
-    startArray(json, 'class', elem.classList, false);
+    startArray(json, 'class', elem.class_List, false);
     for i := 0 to elem.class_List.Count - 1 do
       ComposeCoding(json, '', elem.class_List[i]); {z - Coding}
-    finishArray(json, elem.classList);
+    finishArray(json, elem.class_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
   begin
@@ -17650,10 +17650,10 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('except_') and (elem.except_List.Count > 0) then
   begin
-    startArray(json, 'except', elem.exceptList, false);
+    startArray(json, 'except', elem.except_List, false);
     for i := 0 to elem.except_List.Count - 1 do
       ComposeConsentExcept(json, '', elem.except_List[i]); {z - }
-    finishArray(json, elem.exceptList);
+    finishArray(json, elem.except_List);
   end;
 end;
 
@@ -21001,10 +21001,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
@@ -21279,10 +21279,10 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('priority') then
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
@@ -21448,7 +21448,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'payloadMimeType', elem.payloadMimeTypeList, false, true);
+      startArray(json, 'payloadMimeType', elem.payloadMimeTypeList, true);
       for i := 0 to elem.payloadMimeTypeList.Count - 1 do
         ComposeCodeValue(json, '',elem.payloadMimeTypeList[i], true);
       finishArray(json, elem.payloadMimeTypeList);
@@ -21474,7 +21474,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'header', elem.headerList, false, true);
+      startArray(json, 'header', elem.headerList, true);
       for i := 0 to elem.headerList.Count - 1 do
         ComposeStringValue(json, '',elem.headerList[i], true);
       finishArray(json, elem.headerList);
@@ -21793,10 +21793,10 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diagnosis') and (elem.diagnosisList.Count > 0) then
   begin
@@ -22550,10 +22550,10 @@ begin
     ComposeReference(json, 'diagnosisReference', TFhirReference(elem.diagnosis));
   if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
@@ -22656,7 +22656,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'preAuthRef', elem.preAuthRefList, false, true);
+      startArray(json, 'preAuthRef', elem.preAuthRefList, true);
       for i := 0 to elem.preAuthRefList.Count - 1 do
         ComposeStringValue(json, '',elem.preAuthRefList[i], true);
       finishArray(json, elem.preAuthRefList);
@@ -22816,7 +22816,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'careTeamLinkId', elem.careTeamLinkIdList, false, true);
+      startArray(json, 'careTeamLinkId', elem.careTeamLinkIdList, true);
       for i := 0 to elem.careTeamLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.careTeamLinkIdList[i], true);
       finishArray(json, elem.careTeamLinkIdList);
@@ -22840,7 +22840,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'diagnosisLinkId', elem.diagnosisLinkIdList, false, true);
+      startArray(json, 'diagnosisLinkId', elem.diagnosisLinkIdList, true);
       for i := 0 to elem.diagnosisLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.diagnosisLinkIdList[i], true);
       finishArray(json, elem.diagnosisLinkIdList);
@@ -22864,7 +22864,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'procedureLinkId', elem.procedureLinkIdList, false, true);
+      startArray(json, 'procedureLinkId', elem.procedureLinkIdList, true);
       for i := 0 to elem.procedureLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.procedureLinkIdList[i], true);
       finishArray(json, elem.procedureLinkIdList);
@@ -22888,7 +22888,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'informationLinkId', elem.informationLinkIdList, false, true);
+      startArray(json, 'informationLinkId', elem.informationLinkIdList, true);
       for i := 0 to elem.informationLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.informationLinkIdList[i], true);
       finishArray(json, elem.informationLinkIdList);
@@ -22978,7 +22978,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -23167,7 +23167,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -23307,7 +23307,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -23390,7 +23390,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'sequenceLinkId', elem.sequenceLinkIdList, false, true);
+      startArray(json, 'sequenceLinkId', elem.sequenceLinkIdList, true);
       for i := 0 to elem.sequenceLinkIdList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.sequenceLinkIdList[i], true);
       finishArray(json, elem.sequenceLinkIdList);
@@ -23429,7 +23429,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -23530,7 +23530,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'noteNumber', elem.noteNumberList, false, true);
+      startArray(json, 'noteNumber', elem.noteNumberList, true);
       for i := 0 to elem.noteNumberList.Count - 1 do
         ComposePositiveIntValue(json, '',elem.noteNumberList[i], true);
       finishArray(json, elem.noteNumberList);
@@ -23991,10 +23991,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('procedure_') and (elem.procedure_List.Count > 0) then
   begin
-    startArray(json, 'procedure', elem.procedureList, false);
+    startArray(json, 'procedure', elem.procedure_List, false);
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeExplanationOfBenefitProcedure(json, '', elem.procedure_List[i]); {z - }
-    finishArray(json, elem.procedureList);
+    finishArray(json, elem.procedure_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('precedence') then
     ComposePositiveIntValue(json, 'precedence', elem.precedenceElement, false);
@@ -24686,10 +24686,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposeGraphDefinitionLink(json, '', elem.link_List[i]); {z - @GraphDefinition.link}
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
   finishElement(json, name, elem, noObj);
 end;
@@ -24863,10 +24863,10 @@ begin
     ComposeUriProps(json, 'profile', elem.profileElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('link_') and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposeGraphDefinitionLink(json, '', elem.link_List[i]); {z - }
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
 end;
 
@@ -25224,7 +25224,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'daysOfWeek', elem.daysOfWeekList, false, true);
+      startArray(json, 'daysOfWeek', elem.daysOfWeekList, true);
       for i := 0 to elem.daysOfWeekList.Count - 1 do
         ComposeEnumValue(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeekEnum, true);
       finishArray(json, elem.daysOfWeekList);
@@ -25385,10 +25385,10 @@ begin
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('specialty') and (elem.specialtyList.Count > 0) then
   begin
@@ -25456,7 +25456,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'programName', elem.programNameList, false, true);
+      startArray(json, 'programName', elem.programNameList, true);
       for i := 0 to elem.programNameList.Count - 1 do
         ComposeStringValue(json, '',elem.programNameList[i], true);
       finishArray(json, elem.programNameList);
@@ -26876,17 +26876,17 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'type', elem.typeList, false, true);
+      startArray(json, 'type', elem.type_List, true);
       for i := 0 to elem.type_.Count - 1 do
         ComposeEnumValue(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
-      finishArray(json, elem.typeList);
+      finishArray(json, elem.type_List);
     end;
     if ext then
     begin
-      startArray(json, '_type', elem.typeList, false);
+      startArray(json, '_type', elem.type_List, false);
       for i := 0 to elem.type_.Count - 1 do
         ComposeEnumProps(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
-      finishArray(json, elem.typeList);
+      finishArray(json, elem.type_List);
     end;
   end;
   if (SummaryOption in [soFull, soData]) and (elem.packageList.Count > 0) then
@@ -26900,7 +26900,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'package', elem.packageList, false, true);
+      startArray(json, 'package', elem.packageList, true);
       for i := 0 to elem.packageList.Count - 1 do
         ComposeStringValue(json, '',elem.packageList[i], true);
       finishArray(json, elem.packageList);
@@ -27080,7 +27080,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'binary', elem.binaryList, false, true);
+      startArray(json, 'binary', elem.binaryList, true);
       for i := 0 to elem.binaryList.Count - 1 do
         ComposeUriValue(json, '',elem.binaryList[i], true);
       finishArray(json, elem.binaryList);
@@ -27682,7 +27682,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'alias', elem.aliasList, false, true);
+      startArray(json, 'alias', elem.aliasList, true);
       for i := 0 to elem.aliasList.Count - 1 do
         ComposeStringValue(json, '',elem.aliasList[i], true);
       finishArray(json, elem.aliasList);
@@ -28166,10 +28166,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('library_') and (elem.library_List.Count > 0) then
   begin
-    startArray(json, 'library', elem.libraryList, false);
+    startArray(json, 'library', elem.library_List, false);
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
-    finishArray(json, elem.libraryList);
+    finishArray(json, elem.library_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('disclaimer') then
     ComposeMarkdownValue(json, 'disclaimer', elem.disclaimerElement, false);
@@ -28181,10 +28181,10 @@ begin
     ComposeCodeableConcept(json, 'compositeScoring', elem.compositeScoring); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('riskAdjustment') then
     ComposeStringValue(json, 'riskAdjustment', elem.riskAdjustmentElement, false);
@@ -28217,7 +28217,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'definition', elem.definitionList, false, true);
+      startArray(json, 'definition', elem.definitionList, true);
       for i := 0 to elem.definitionList.Count - 1 do
         ComposeMarkdownValue(json, '',elem.definitionList[i], true);
       finishArray(json, elem.definitionList);
@@ -30744,10 +30744,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soData]) and (elem.scheduleList.Count > 0) then
   begin
@@ -31742,7 +31742,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'parameterName', elem.parameterNameList, false, true);
+      startArray(json, 'parameterName', elem.parameterNameList, true);
       for i := 0 to elem.parameterNameList.Count - 1 do
         ComposeStringValue(json, '',elem.parameterNameList[i], true);
       finishArray(json, elem.parameterNameList);
@@ -31916,7 +31916,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'resource', elem.resourceList, false, true);
+      startArray(json, 'resource', elem.resourceList, true);
       for i := 0 to elem.resource.Count - 1 do
         ComposeEnumValue(json, '', elem.resource[i], CODES_TFhirResourceTypesEnum, true);
       finishArray(json, elem.resourceList);
@@ -32017,7 +32017,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'location', elem.locationList, false, true);
+      startArray(json, 'location', elem.locationList, true);
       for i := 0 to elem.locationList.Count - 1 do
         ComposeStringValue(json, '',elem.locationList[i], true);
       finishArray(json, elem.locationList);
@@ -32041,7 +32041,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'expression', elem.expressionList, false, true);
+      startArray(json, 'expression', elem.expressionList, true);
       for i := 0 to elem.expressionList.Count - 1 do
         ComposeStringValue(json, '',elem.expressionList[i], true);
       finishArray(json, elem.expressionList);
@@ -32214,10 +32214,10 @@ begin
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
   begin
-    startArray(json, 'type', elem.typeList, false);
+    startArray(json, 'type', elem.type_List, false);
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    finishArray(json, elem.typeList);
+    finishArray(json, elem.type_List);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
     ComposeStringValue(json, 'name', elem.nameElement, false);
@@ -32234,7 +32234,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'alias', elem.aliasList, false, true);
+      startArray(json, 'alias', elem.aliasList, true);
       for i := 0 to elem.aliasList.Count - 1 do
         ComposeStringValue(json, '',elem.aliasList[i], true);
       finishArray(json, elem.aliasList);
@@ -32632,10 +32632,10 @@ begin
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('link_') and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposePatientLink(json, '', elem.link_List[i]); {z - }
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
 end;
 
@@ -33065,10 +33065,10 @@ begin
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('link_') and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposePersonLink(json, '', elem.link_List[i]); {z - }
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
 end;
 
@@ -33335,7 +33335,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'goalId', elem.goalIdList, false, true);
+      startArray(json, 'goalId', elem.goalIdList, true);
       for i := 0 to elem.goalIdList.Count - 1 do
         ComposeIdValue(json, '',elem.goalIdList[i], true);
       finishArray(json, elem.goalIdList);
@@ -33825,10 +33825,10 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('library_') and (elem.library_List.Count > 0) then
   begin
-    startArray(json, 'library', elem.libraryList, false);
+    startArray(json, 'library', elem.library_List, false);
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
-    finishArray(json, elem.libraryList);
+    finishArray(json, elem.library_List);
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('goal') and (elem.goalList.Count > 0) then
   begin
@@ -34063,7 +34063,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'daysOfWeek', elem.daysOfWeekList, false, true);
+      startArray(json, 'daysOfWeek', elem.daysOfWeekList, true);
       for i := 0 to elem.daysOfWeekList.Count - 1 do
         ComposeEnumValue(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeekEnum, true);
       finishArray(json, elem.daysOfWeekList);
@@ -34972,7 +34972,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'include', elem.includeList, false, true);
+      startArray(json, 'include', elem.includeList, true);
       for i := 0 to elem.includeList.Count - 1 do
         ComposeStringValue(json, '',elem.includeList[i], true);
       finishArray(json, elem.includeList);
@@ -34996,7 +34996,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'exclude', elem.excludeList, false, true);
+      startArray(json, 'exclude', elem.excludeList, true);
       for i := 0 to elem.excludeList.Count - 1 do
         ComposeStringValue(json, '',elem.excludeList[i], true);
       finishArray(json, elem.excludeList);
@@ -35364,7 +35364,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'policy', elem.policyList, false, true);
+      startArray(json, 'policy', elem.policyList, true);
       for i := 0 to elem.policyList.Count - 1 do
         ComposeUriValue(json, '',elem.policyList[i], true);
       finishArray(json, elem.policyList);
@@ -35951,7 +35951,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'subjectType', elem.subjectTypeList, false, true);
+      startArray(json, 'subjectType', elem.subjectTypeList, true);
       for i := 0 to elem.subjectType.Count - 1 do
         ComposeEnumValue(json, '', elem.subjectType[i], CODES_TFhirResourceTypesEnum, true);
       finishArray(json, elem.subjectTypeList);
@@ -37725,7 +37725,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'base', elem.baseList, false, true);
+      startArray(json, 'base', elem.baseList, true);
       for i := 0 to elem.base.Count - 1 do
         ComposeEnumValue(json, '', elem.base[i], CODES_TFhirResourceTypesEnum, true);
       finishArray(json, elem.baseList);
@@ -37769,7 +37769,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'target', elem.targetList, false, true);
+      startArray(json, 'target', elem.targetList, true);
       for i := 0 to elem.target.Count - 1 do
         ComposeEnumValue(json, '', elem.target[i], CODES_TFhirResourceTypesEnum, true);
       finishArray(json, elem.targetList);
@@ -37793,7 +37793,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'comparator', elem.comparatorList, false, true);
+      startArray(json, 'comparator', elem.comparatorList, true);
       for i := 0 to elem.comparatorList.Count - 1 do
         ComposeEnumValue(json, '', elem.comparatorList[i], CODES_TFhirSearchComparatorEnum, true);
       finishArray(json, elem.comparatorList);
@@ -37817,7 +37817,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'modifier', elem.modifierList, false, true);
+      startArray(json, 'modifier', elem.modifierList, true);
       for i := 0 to elem.modifierList.Count - 1 do
         ComposeEnumValue(json, '', elem.modifierList[i], CODES_TFhirSearchModifierCodeEnum, true);
       finishArray(json, elem.modifierList);
@@ -37841,7 +37841,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'chain', elem.chainList, false, true);
+      startArray(json, 'chain', elem.chainList, true);
       for i := 0 to elem.chainList.Count - 1 do
         ComposeStringValue(json, '',elem.chainList[i], true);
       finishArray(json, elem.chainList);
@@ -39209,7 +39209,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'context', elem.contextList, false, true);
+      startArray(json, 'context', elem.contextList, true);
       for i := 0 to elem.contextList.Count - 1 do
         ComposeStringValue(json, '',elem.contextList[i], true);
       finishArray(json, elem.contextList);
@@ -39233,7 +39233,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'contextInvariant', elem.contextInvariantList, false, true);
+      startArray(json, 'contextInvariant', elem.contextInvariantList, true);
       for i := 0 to elem.contextInvariantList.Count - 1 do
         ComposeStringValue(json, '',elem.contextInvariantList[i], true);
       finishArray(json, elem.contextInvariantList);
@@ -39868,7 +39868,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'listMode', elem.listModeList, false, true);
+      startArray(json, 'listMode', elem.listModeList, true);
       for i := 0 to elem.listModeList.Count - 1 do
         ComposeEnumValue(json, '', elem.listModeList[i], CODES_TFhirMapTargetListModeEnum, true);
       finishArray(json, elem.listModeList);
@@ -40012,7 +40012,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'variable', elem.variableList, false, true);
+      startArray(json, 'variable', elem.variableList, true);
       for i := 0 to elem.variableList.Count - 1 do
         ComposeStringValue(json, '',elem.variableList[i], true);
       finishArray(json, elem.variableList);
@@ -40178,7 +40178,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'import', elem.importList, false, true);
+      startArray(json, 'import', elem.importList, true);
       for i := 0 to elem.importList.Count - 1 do
         ComposeUriValue(json, '',elem.importList[i], true);
       finishArray(json, elem.importList);
@@ -40262,7 +40262,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'header', elem.headerList, false, true);
+      startArray(json, 'header', elem.headerList, true);
       for i := 0 to elem.headerList.Count - 1 do
         ComposeStringValue(json, '',elem.headerList[i], true);
       finishArray(json, elem.headerList);
@@ -42189,10 +42189,10 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
   begin
-    startArray(json, 'link', elem.linkList, false);
+    startArray(json, 'link', elem.link_List, false);
     for i := 0 to elem.link_List.Count - 1 do
       ComposeTestScriptMetadataLink(json, '', elem.link_List[i]); {z - }
-    finishArray(json, elem.linkList);
+    finishArray(json, elem.link_List);
   end;
   if (elem.capabilityList.Count > 0) then
   begin
@@ -42312,7 +42312,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'origin', elem.originList, false, true);
+      startArray(json, 'origin', elem.originList, true);
       for i := 0 to elem.originList.Count - 1 do
         ComposeIntegerValue(json, '',elem.originList[i], true);
       finishArray(json, elem.originList);
@@ -42340,17 +42340,17 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'link', elem.linkList, false, true);
+      startArray(json, 'link', elem.link_List, true);
       for i := 0 to elem.link_List.Count - 1 do
         ComposeUriValue(json, '',elem.link_List[i], true);
-      finishArray(json, elem.linkList);
+      finishArray(json, elem.link_List);
     end;
     if ext then
     begin
-      startArray(json, '_link', elem.linkList, false);
+      startArray(json, '_link', elem.link_List, false);
       for i := 0 to elem.link_List.Count - 1 do
         ComposeUriProps(json, '',elem.link_List[i], true);
-      finishArray(json, elem.linkList);
+      finishArray(json, elem.link_List);
     end;
   end;
   ComposeReference{TFhirCapabilityStatement}(json, 'capabilities', elem.capabilities); {a}
@@ -43827,7 +43827,7 @@ begin
     end;
     if val then
     begin
-      startArray(json, 'valueSet', elem.valueSetList, false, true);
+      startArray(json, 'valueSet', elem.valueSetList, true);
       for i := 0 to elem.valueSetList.Count - 1 do
         ComposeUriValue(json, '',elem.valueSetList[i], true);
       finishArray(json, elem.valueSetList);
