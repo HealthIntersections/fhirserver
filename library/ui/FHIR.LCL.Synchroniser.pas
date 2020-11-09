@@ -42,6 +42,7 @@ type
 
     function writeToSource : String;
     function extractFromLines(lines : TStringList; start, finish : TSourceLocation) : String;
+    function measure(source : String) : TSourceLocation;
 
     procedure finishOpChange;
   public
@@ -189,7 +190,36 @@ begin
     result :=  lines[start.line].subString(start.col);
     for i := start.line +1 to finish.line - 1 do
       result := result + #13#10 + lines[i];
-    result := lines[finish.line].subString(0, finish.col);
+    result := result + #13#10 + lines[finish.line].subString(0, finish.col);
+  end;
+end;
+
+function TFHIRSynEditSynchroniser.measure(source: String): TSourceLocation;
+var
+  i : integer;
+begin
+  result.line := 0;
+  result.col := 0;
+  i := 1;
+  while i <= source.length do
+  begin
+    case source[i] of
+      #10:
+        begin
+          inc(result.line);
+          result.Col := 0;
+        end;
+      #13:
+        begin
+          inc(result.line);
+          result.Col := 0;
+          if (i < source.Length) and (source[i + 1] = #10) then
+            inc(i);
+        end;
+      else
+        inc(result.Line);
+    end;
+    inc(i);
   end;
 end;
 
@@ -198,6 +228,7 @@ var
   src : String;
   lines : TStringList;
   span : TSourceLocation;
+  ps, pf : TPoint;
 begin
   lines := TStringList.create;
   try
@@ -205,8 +236,8 @@ begin
     lines.Text := writeToSource; // for more efficiency, try just the immediate parent (not ready yet)
 
     // figure out the new text to insert
-    src := extractFromLines(lines, FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish);
-    span := locSpan(FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish); // if line = 0, col is relative
+    src := extractFromLines(lines, FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish).Trim;
+    span := measure(src);
   finally
     lines.Free;
   end;
@@ -214,9 +245,12 @@ begin
   // start a transaction
   SynEdit.BeginUndoBlock;
   // replace the existing content
-  SynEdit.SetTextBetweenPoints(FFocus.LocationData.parseStart.toPoint, FFocus.LocationData.parseFinish.toPoint, src, [setSelect], scamIgnore, smaMoveUp, smNormal);
-  // update remaining content for new content
+  ps := FFocus.LocationData.parseStart.toPoint;
+  pf := FFocus.LocationData.parseFinish.toPoint;
+  SynEdit.SetTextBetweenPoints(ps, pf, src, [setSelect], scamIgnore, smaMoveUp, smNormal);
   SynEdit.EndUndoBlock;
+
+  // update remaining content for new content metrics
 
   // todo: update locations
 end;

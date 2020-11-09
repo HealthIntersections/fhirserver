@@ -88,28 +88,32 @@ var
   cs : TFHIRCodeSystem;
 begin
   cs := FSync.resource as TFHIRCodeSystem;
-  FSync.changeProperty(cs, cs.nameElement);
+  Fsync.changeProperty(cs, cs.nameElement);
   cs.name := 'My Test';
-  FSync.commit;
+  Fsync.commit;
 end;
 
 procedure TFHIREditor.DoTreeClick(sender: TObject);
 var
-  o : TFHIRObject;
+  loc : TFHIRObjectLocationData;
   c : TFHIRComposer;
 begin
   if FTree.Selected <> nil then
   begin
-    o := TFhirObject(FTree.Selected.Data);
-    if o.LocationData.hasLocation2 then
+    if (TObject(FTree.Selected.Data) is TFHIRObjectList) then
+      loc := TFHIRObjectList(FTree.Selected.Data).LocationData
+    else
+      loc := TFhirObject(FTree.Selected.Data).LocationData;
+
+    if loc.hasLocation2 then
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(o.LocationData.parseStart2.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(o.LocationData.parseFinish2.toPoint);
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart2.toPoint);
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish2.toPoint);
     end
     else
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(o.LocationData.parseStart.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(o.LocationData.parseFinish.toPoint);
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart.toPoint);
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish.toPoint);
     end;
   end;
 
@@ -325,6 +329,8 @@ begin
     else
     begin
       child := FTree.Items.AddChildObject(item, prop.Name +': '+prop.value.fhirType, prop.value);
+      if prop.list <> nil then
+        FTree.Items.AddChildObject(child, '(list)', prop.list);
       LoadObject(child, prop.value);
     end;
   end;

@@ -3849,8 +3849,8 @@ Begin
   {$IFNDEF VER130}
   Encoding := SysUtils.TEncoding.UTF8;
   {$ENDIF}
-  FLocation.line := 0;
-  FLocation.col := 0;
+  FLocation.line := 1;
+  FLocation.col := 1;
 End;
 
 
@@ -3900,13 +3900,13 @@ begin
       begin
       nl := true;
       inc(Flocation.line);
-      FLocation.col := 0;
+      FLocation.col := 1;
       end;
     #10:
       if not nl then
       begin
       inc(Flocation.line);
-      FLocation.col := 0;
+      FLocation.col := 1;
       end;
   else
     nl := false;
@@ -3929,13 +3929,13 @@ begin
       begin
       nl := true;
       inc(Flocation.line);
-      FLocation.col := 0;
+      FLocation.col := 1;
       end;
     10:
       if not nl then
       begin
       inc(Flocation.line);
-      FLocation.col := 0;
+      FLocation.col := 1;
       end;
   else
     nl := false;
@@ -4987,9 +4987,9 @@ end;
 
 function locSpan(start, finish : TSourceLocation) : TSourceLocation;
 begin
-  if start.line < finish.line then
+  if start.line > finish.line then
     result := TSourceLocation.makeNull
-  else if start.line > finish.line then
+  else if start.line < finish.line then
     result := TSourceLocation.make(finish.line - start.line, finish.col)
   else if start.col > finish.col then
     result := TSourceLocation.makeNull

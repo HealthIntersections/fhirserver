@@ -459,18 +459,19 @@ Type
       Procedure ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
   End;
 
+  { TFslXMLFormatter }
+
   TFslXMLFormatter = Class(TFslTextFormatter)
     Private
       FAttributes : TFslXMLAttributeList;
       FBuilder : TFslStringBuilder;
-      FLine : integer;
-      FCol : integer;
+      FLocation : TSourceLocation;
       FLastText : boolean;
       FPending : string;
       FNoDense : Boolean;
-    FCanonicalEntities: boolean;
+      FCanonicalEntities: boolean;
 
-      procedure updateForText(s : String);
+      function updateForText(curr : TSourceLocation; s : String) : TSourceLocation;
       procedure commitPending;
     Protected
       Function UseAttributes : String;
@@ -500,8 +501,8 @@ Type
       Procedure AddNamespace(Const sAbbreviation, sURI : String);
 
       Property Attributes : TFslXMLAttributeList Read FAttributes;
-      property Line : integer read FLine;
-      property Col : integer read FCol;
+      property Location : TSourceLocation read FLocation;
+      function sourceLocationForPending : TSourceLocation;
       property NoDense : Boolean read FNoDense write FNoDense;
       property CanonicalEntities : boolean read FCanonicalEntities write FCanonicalEntities;
   End;
@@ -778,8 +779,8 @@ end;
 
 Function TFslXmlBuilder.SourceLocation : TSourceLocation;
 begin
-  result.line := 0; //xml.line;
-  result.col := 0; //xml.col;
+  result := xml.sourceLocationForPending;
+  dec(result.line);
 end;
 
 Procedure TFslXmlBuilder.Comment(Const sContent : String);
@@ -1270,19 +1271,21 @@ begin
 end;
 
 
-Constructor TFslXMLFormatter.Create;
+constructor TFslXMLFormatter.Create;
+var
+  FCol: Integer;
 Begin
   Inherited;
 
   FBuilder := TFslStringBuilder.Create;
   FAttributes := TFslXMLAttributeList.Create;
-  FLine := 1;
-  FCol := 0;
+  FLocation.Line := 1;
+  FCol := 1;
   FLastText := true;
 End;
 
 
-Destructor TFslXMLFormatter.Destroy;
+destructor TFslXMLFormatter.Destroy;
 Begin
   FAttributes.Free;
   FBuilder.Free;
@@ -1291,7 +1294,7 @@ Begin
 End;  
 
 
-Function TFslXMLFormatter.Clone : TFslXMLFormatter;
+function TFslXMLFormatter.Clone: TFslXMLFormatter;
 Begin 
   Result := TFslXMLFormatter(Inherited Clone);
 End;  
@@ -1308,20 +1311,20 @@ begin
   end;
 end;
 
-Function TFslXMLFormatter.Link : TFslXMLFormatter;
+function TFslXMLFormatter.Link: TFslXMLFormatter;
 Begin 
   Result := TFslXMLFormatter(Inherited Link);
 End;  
 
 
-Procedure TFslXMLFormatter.ProduceHeader;
+procedure TFslXMLFormatter.ProduceHeader;
 Begin 
   ProducePretty('<?xml version="1.0"' + UseAttributes + '?>');
   ProducePretty('');
 End;  
 
 
-Procedure TFslXMLFormatter.ProduceOpen(Const sName : String);
+procedure TFslXMLFormatter.ProduceOpen(const sName: String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceOpen', 'Open tag name must be specified.'));
 
@@ -1352,7 +1355,7 @@ begin
   ProducePretty('<![CDATA[' + sText + ']]>');
 end;
 
-Procedure TFslXMLFormatter.ProduceClose(Const sName: String);
+procedure TFslXMLFormatter.ProduceClose(const sName: String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceClose', 'Close tag name must be specified.'));
 
@@ -1369,7 +1372,7 @@ Begin
 End;  
 
 
-Procedure TFslXMLFormatter.ProduceTextNoEscapeEoln(Const sName, sValue: String);
+procedure TFslXMLFormatter.ProduceTextNoEscapeEoln(const sName, sValue: String);
 Begin
   Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
   commitPending;
@@ -1379,28 +1382,29 @@ Begin
 End;
 
 
-procedure TFslXMLFormatter.updateForText(s: String);
+function TFslXMLFormatter.updateForText(curr : TSourceLocation; s : String) : TSourceLocation;
 var
   i : integer;
 begin
   i := 1;
+  result := curr;;
   while i <= length(s) do
   begin
     if CharInSet(s[i], [#10, #13]) then
     begin
-      inc(Fline);
-      Fcol := 0;
+      inc(result.line);
+      result.col := 1;
       if (i < length(s)) and (s[i+1] <> s[i]) and CharInSet(s[i+1], [#10, #13]) then
         inc(i);
     end
     else
-      inc(Fcol);
+      inc(result.col);
     inc(i);
   end;
 End;
 
 
-Procedure TFslXMLFormatter.ProduceText(Const sName, sValue: String);
+procedure TFslXMLFormatter.ProduceText(const sName, sValue: String);
 Begin
   Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
 
@@ -1410,7 +1414,8 @@ Begin
 End;
 
 
-Procedure TFslXMLFormatter.ProduceText(Const sValue: String; processing : TEolnOption = eolnEscape);
+procedure TFslXMLFormatter.ProduceText(const sValue: String;
+  processing: TEolnOption);
 var
   s : String;
 Begin
@@ -1424,12 +1429,12 @@ Begin
   else
     s := FormatTextToXML(sValue, xmlText{, processing});
   Produce(s); // no pretty - might be a sequence of text
-  updateForText(s);
+  FLocation := updateForText(FLocation, s);
   FLastText := true;
 End;  
 
 
-Procedure TFslXMLFormatter.ProduceTag(Const sName: String);
+procedure TFslXMLFormatter.ProduceTag(const sName: String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceTag', 'Tag name must be specified.'));
   commitPending;
@@ -1440,7 +1445,7 @@ Begin
 End;  
 
 
-Procedure TFslXMLFormatter.ProduceComment(Const sComment: String);
+procedure TFslXMLFormatter.ProduceComment(const sComment: String);
 Begin
   commitPending;
 
@@ -1452,7 +1457,7 @@ Begin
 End;
 
 
-Function TFslXMLFormatter.UseAttributes : String;
+function TFslXMLFormatter.UseAttributes: String;
 Var
   iLoop : Integer;
 Begin
@@ -1466,7 +1471,7 @@ Begin
 End;
 
 
-Procedure TFslXMLFormatter.AddAttribute(Const sName, sValue : String; sNs : String = '');
+procedure TFslXMLFormatter.AddAttribute(const sName, sValue: String; sNs: String);
 var
   attr : TFslXMLAttribute;
 Begin
@@ -1483,13 +1488,31 @@ Begin
 End;
 
 
-Procedure TFslXMLFormatter.AddNamespace(Const sAbbreviation, sURI : String);
+procedure TFslXMLFormatter.AddNamespace(const sAbbreviation, sURI: String);
 Begin
   If sAbbreviation = '' Then
     AddAttribute('xmlns', sURI, #0)
   Else
     AddAttribute('xmlns:' + sAbbreviation, sURI, #0);
 End;
+
+function TFslXMLFormatter.sourceLocationForPending: TSourceLocation;
+var
+  s : String;
+begin
+  if FPending <> '' then
+  begin
+    LevelUp;
+    if HasWhitespace and not FLastText then
+      s := #13#10 + BeforeWhitespace+'<'+FPending+'>'
+    else
+      s := '<'+FPending+'>';
+    LevelDown;
+  end
+  else
+    s := '';
+  result := updateForText(FLocation, s);
+end;
 
 procedure TFslXMLFormatter.ProducePI(const sName, sText: String);
 begin
@@ -1515,7 +1538,7 @@ begin
   if (s <> '') then
   begin
     Produce(s);
-    UpdateForText(s);
+    FLocation := UpdateForText(FLocation, s);
   end;
 end;
 

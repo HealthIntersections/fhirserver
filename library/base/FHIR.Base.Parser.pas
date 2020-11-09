@@ -281,6 +281,8 @@ Type
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); virtual;
   End;
 
+  { TFHIRJsonComposerBase }
+
   TFHIRJsonComposerBase = class (TFHIRComposer)
   private
     FComments : Boolean;
@@ -306,6 +308,8 @@ Type
 
     procedure startElement(json : TJSONWriter; name : String; value : TFHIRObject; noObj : boolean);
     procedure finishElement(json : TJSONWriter; name : String; value : TFHIRObject; noObj : boolean);
+    procedure startArray(json : TJSONWriter; name : String; list : TFHIRObjectList; loc2 : boolean = false);
+    procedure finishArray(json : TJSONWriter; list : TFHIRObjectList);
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload; override;
@@ -852,6 +856,26 @@ begin
   end;
 end;
 
+procedure TFHIRJsonComposerBase.startArray(json: TJSONWriter; name: String; list: TFHIRObjectList; loc2: boolean);
+begin
+  if KeepLocationData then
+    if loc2 then
+      list.LocationData.composeStart2 := json.sourceLocation
+    else
+      list.LocationData.composeStart := json.sourceLocation;
+  json.valueArray(name);
+end;
+
+procedure TFHIRJsonComposerBase.finishArray(json: TJSONWriter; list: TFHIRObjectList);
+begin
+  json.finishArray;
+  if KeepLocationData then
+    if list.LocationData.hasLocation2 then
+      list.LocationData.composeFinish2 := json.sourceLocation
+    else
+      list.LocationData.composeFinish := json.sourceLocation;
+end;
+
 
 procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; oResource: TFhirResourceV);
 begin
@@ -914,7 +938,8 @@ begin
   end;
 end;
 
-procedure TFHIRJsonComposerBase.composeByProperties(json: TJSONWriter; base: TFHIRObject);
+procedure TFHIRJsonComposerBase.ComposeByProperties(json: TJSONWriter;
+  base: TFHIRObject);
 var
   pl : TFHIRPropertyList;
   p : TFHIRProperty;
@@ -985,7 +1010,8 @@ end;
 
 
 
-procedure TFHIRJsonComposerBase.composeDomainResource(json: TJSONWriter; name: String; oResource: TFhirResourceV);
+procedure TFHIRJsonComposerBase.ComposeDomainResource(json: TJSONWriter;
+  name: String; oResource: TFhirResourceV);
 begin
   json.ValueObject('');
   ComposeResourceV(json, oResource);
@@ -1044,7 +1070,8 @@ begin
   end;
 end;
 
-procedure TFHIRJsonComposerBase.composeInnerResource(json: TJSONWriter; name: String; holder : TFHIRObject; oResource: TFhirResourceV);
+procedure TFHIRJsonComposerBase.ComposeInnerResource(json: TJSONWriter;
+  name: String; holder: TFHIRObject; oResource: TFhirResourceV);
 var
   blob : TFslBuffer;
   bytes : TBytes;

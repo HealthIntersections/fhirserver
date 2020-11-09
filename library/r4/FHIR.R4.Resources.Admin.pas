@@ -205,6 +205,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -318,6 +319,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -432,6 +434,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -544,6 +547,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -685,6 +689,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -831,6 +836,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -969,6 +975,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1143,6 +1150,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1268,6 +1276,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1371,6 +1380,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1477,6 +1487,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1588,6 +1599,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1772,6 +1784,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1995,6 +2008,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2125,6 +2139,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2268,6 +2283,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2369,6 +2385,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2474,6 +2491,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2584,6 +2602,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2708,6 +2727,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2848,6 +2868,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3017,6 +3038,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3244,6 +3266,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3391,6 +3414,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3496,6 +3520,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3633,6 +3658,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3787,6 +3813,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3903,6 +3930,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4040,6 +4068,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4184,6 +4213,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4299,6 +4329,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4412,6 +4443,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4587,6 +4619,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4795,6 +4828,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4915,6 +4949,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5073,6 +5108,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5251,6 +5287,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5390,6 +5427,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5560,6 +5598,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5722,6 +5761,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5848,6 +5888,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5952,6 +5993,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6097,6 +6139,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6265,6 +6308,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6394,6 +6438,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6539,6 +6584,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6680,6 +6726,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6831,6 +6878,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6944,6 +6992,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7084,6 +7133,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7243,6 +7293,7 @@ Type
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7379,6 +7430,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7549,6 +7601,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7713,6 +7766,7 @@ Type
     function GetResourceType : TFhirResourceType; override;
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7994,6 +8048,14 @@ end;
 function TFhirBiologicallyDerivedProductCollection.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FCollector) and isEmptyProp(FSource) and isEmptyProp(FCollected);
+end;
+
+procedure TFhirBiologicallyDerivedProductCollection.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('collector');
+  fields.add('source');
+  fields.add('collected[x]');
 end;
 
 { TFhirBiologicallyDerivedProductCollection }
@@ -8292,6 +8354,15 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FProcedure_) and isEmptyProp(FAdditive) and isEmptyProp(FTime);
 end;
 
+procedure TFhirBiologicallyDerivedProductProcessing.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('procedure');
+  fields.add('additive');
+  fields.add('time[x]');
+end;
+
 { TFhirBiologicallyDerivedProductProcessing }
 
 Procedure TFhirBiologicallyDerivedProductProcessing.SetDescription(value : TFhirString);
@@ -8583,6 +8654,13 @@ end;
 function TFhirBiologicallyDerivedProductManipulation.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FTime);
+end;
+
+procedure TFhirBiologicallyDerivedProductManipulation.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('time[x]');
 end;
 
 { TFhirBiologicallyDerivedProductManipulation }
@@ -8892,6 +8970,15 @@ end;
 function TFhirBiologicallyDerivedProductStorage.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FTemperature) and isEmptyProp(FScale) and isEmptyProp(FDuration);
+end;
+
+procedure TFhirBiologicallyDerivedProductStorage.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('temperature');
+  fields.add('scale');
+  fields.add('duration');
 end;
 
 { TFhirBiologicallyDerivedProductStorage }
@@ -9418,6 +9505,22 @@ begin
   result := TFhirBiologicallyDerivedProduct(inherited Clone);
 end;
 
+procedure TFhirBiologicallyDerivedProduct.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('productCategory');
+  fields.add('productCode');
+  fields.add('status');
+  fields.add('request');
+  fields.add('quantity');
+  fields.add('parent');
+  fields.add('collection');
+  fields.add('processing');
+  fields.add('manipulation');
+  fields.add('storage');
+end;
+
 { TFhirBiologicallyDerivedProduct }
 
 Function TFhirBiologicallyDerivedProduct.GetIdentifierList : TFhirIdentifierList;
@@ -9817,6 +9920,13 @@ end;
 function TFhirCatalogEntryRelatedEntry.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FRelationtype) and isEmptyProp(FItem);
+end;
+
+procedure TFhirCatalogEntryRelatedEntry.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('relationtype');
+  fields.add('item');
 end;
 
 { TFhirCatalogEntryRelatedEntry }
@@ -10334,6 +10444,24 @@ begin
   result := TFhirCatalogEntry(inherited Clone);
 end;
 
+procedure TFhirCatalogEntry.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('type');
+  fields.add('orderable');
+  fields.add('referencedItem');
+  fields.add('additionalIdentifier');
+  fields.add('classification');
+  fields.add('status');
+  fields.add('validityPeriod');
+  fields.add('validTo');
+  fields.add('lastUpdated');
+  fields.add('additionalCharacteristic');
+  fields.add('additionalClassification');
+  fields.add('relatedEntry');
+end;
+
 { TFhirCatalogEntry }
 
 Function TFhirCatalogEntry.GetIdentifierList : TFhirIdentifierList;
@@ -10820,6 +10948,17 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDeviceIdentifier) and isEmptyProp(FIssuer) and isEmptyProp(FJurisdiction) and isEmptyProp(FCarrierAIDC) and isEmptyProp(FCarrierHRF) and isEmptyProp(FEntryType);
 end;
 
+procedure TFhirDeviceUdiCarrier.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('deviceIdentifier');
+  fields.add('issuer');
+  fields.add('jurisdiction');
+  fields.add('carrierAIDC');
+  fields.add('carrierHRF');
+  fields.add('entryType');
+end;
+
 { TFhirDeviceUdiCarrier }
 
 Procedure TFhirDeviceUdiCarrier.SetDeviceIdentifier(value : TFhirString);
@@ -11220,6 +11359,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FType_);
 end;
 
+procedure TFhirDeviceDeviceName.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('type');
+end;
+
 { TFhirDeviceDeviceName }
 
 Procedure TFhirDeviceDeviceName.SetName(value : TFhirString);
@@ -11517,6 +11663,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FSystemType) and isEmptyProp(FVersion);
 end;
 
+procedure TFhirDeviceSpecialization.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('systemType');
+  fields.add('version');
+end;
+
 { TFhirDeviceSpecialization }
 
 Procedure TFhirDeviceSpecialization.SetSystemType(value : TFhirCodeableConcept);
@@ -11811,6 +11964,14 @@ end;
 function TFhirDeviceVersion.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FComponent) and isEmptyProp(FValue);
+end;
+
+procedure TFhirDeviceVersion.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('component');
+  fields.add('value');
 end;
 
 { TFhirDeviceVersion }
@@ -12138,6 +12299,14 @@ end;
 function TFhirDeviceProperty.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FvalueQuantityList) and isEmptyProp(FvalueCodeList);
+end;
+
+procedure TFhirDeviceProperty.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('valueQuantity');
+  fields.add('valueCode');
 end;
 
 { TFhirDeviceProperty }
@@ -12892,6 +13061,37 @@ begin
   result := TFhirDevice(inherited Clone);
 end;
 
+procedure TFhirDevice.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('definition');
+  fields.add('udiCarrier');
+  fields.add('status');
+  fields.add('statusReason');
+  fields.add('distinctIdentifier');
+  fields.add('manufacturer');
+  fields.add('manufactureDate');
+  fields.add('expirationDate');
+  fields.add('lotNumber');
+  fields.add('serialNumber');
+  fields.add('deviceName');
+  fields.add('modelNumber');
+  fields.add('partNumber');
+  fields.add('type');
+  fields.add('specialization');
+  fields.add('version');
+  fields.add('property');
+  fields.add('patient');
+  fields.add('owner');
+  fields.add('contact');
+  fields.add('location');
+  fields.add('url');
+  fields.add('note');
+  fields.add('safety');
+  fields.add('parent');
+end;
+
 { TFhirDevice }
 
 Function TFhirDevice.GetIdentifierList : TFhirIdentifierList;
@@ -13560,6 +13760,14 @@ begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FState) and isEmptyProp(FTime);
 end;
 
+procedure TFhirDeviceMetricCalibration.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('state');
+  fields.add('time');
+end;
+
 { TFhirDeviceMetricCalibration }
 
 Procedure TFhirDeviceMetricCalibration.SetType_(value : TFhirEnum);
@@ -14017,6 +14225,21 @@ begin
   result := TFhirDeviceMetric(inherited Clone);
 end;
 
+procedure TFhirDeviceMetric.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('type');
+  fields.add('unit');
+  fields.add('source');
+  fields.add('parent');
+  fields.add('operationalStatus');
+  fields.add('color');
+  fields.add('category');
+  fields.add('measurementPeriod');
+  fields.add('calibration');
+end;
+
 { TFhirDeviceMetric }
 
 Function TFhirDeviceMetric.GetIdentifierList : TFhirIdentifierList;
@@ -14389,6 +14612,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FStatus) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirEncounterStatusHistory.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('status');
+  fields.add('period');
+end;
+
 { TFhirEncounterStatusHistory }
 
 Procedure TFhirEncounterStatusHistory.SetStatus(value : TFhirEnum);
@@ -14664,6 +14894,13 @@ end;
 function TFhirEncounterClassHistory.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FClass_) and isEmptyProp(FPeriod);
+end;
+
+procedure TFhirEncounterClassHistory.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('class');
+  fields.add('period');
 end;
 
 { TFhirEncounterClassHistory }
@@ -14955,6 +15192,14 @@ begin
   result := inherited isEmpty  and isEmptyProp(Ftype_List) and isEmptyProp(FPeriod) and isEmptyProp(FIndividual);
 end;
 
+procedure TFhirEncounterParticipant.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('period');
+  fields.add('individual');
+end;
+
 { TFhirEncounterParticipant }
 
 Function TFhirEncounterParticipant.GetType_List : TFhirCodeableConceptList;
@@ -15241,6 +15486,14 @@ end;
 function TFhirEncounterDiagnosis.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FCondition) and isEmptyProp(FUse) and isEmptyProp(FRank);
+end;
+
+procedure TFhirEncounterDiagnosis.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('condition');
+  fields.add('use');
+  fields.add('rank');
 end;
 
 { TFhirEncounterDiagnosis }
@@ -15669,6 +15922,20 @@ begin
   result := inherited isEmpty  and isEmptyProp(FPreAdmissionIdentifier) and isEmptyProp(FOrigin) and isEmptyProp(FAdmitSource) and isEmptyProp(FReAdmission) and isEmptyProp(FdietPreferenceList) and isEmptyProp(FspecialCourtesyList) and isEmptyProp(FspecialArrangementList) and isEmptyProp(FDestination) and isEmptyProp(FDischargeDisposition);
 end;
 
+procedure TFhirEncounterHospitalization.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('preAdmissionIdentifier');
+  fields.add('origin');
+  fields.add('admitSource');
+  fields.add('reAdmission');
+  fields.add('dietPreference');
+  fields.add('specialCourtesy');
+  fields.add('specialArrangement');
+  fields.add('destination');
+  fields.add('dischargeDisposition');
+end;
+
 { TFhirEncounterHospitalization }
 
 Procedure TFhirEncounterHospitalization.SetPreAdmissionIdentifier(value : TFhirIdentifier);
@@ -16016,6 +16283,15 @@ end;
 function TFhirEncounterLocation.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FLocation) and isEmptyProp(FStatus) and isEmptyProp(FPhysicalType) and isEmptyProp(FPeriod);
+end;
+
+procedure TFhirEncounterLocation.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('location');
+  fields.add('status');
+  fields.add('physicalType');
+  fields.add('period');
 end;
 
 { TFhirEncounterLocation }
@@ -16773,6 +17049,34 @@ begin
   result := TFhirEncounter(inherited Clone);
 end;
 
+procedure TFhirEncounter.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('statusHistory');
+  fields.add('class');
+  fields.add('classHistory');
+  fields.add('type');
+  fields.add('serviceType');
+  fields.add('priority');
+  fields.add('subject');
+  fields.add('episodeOfCare');
+  fields.add('basedOn');
+  fields.add('participant');
+  fields.add('appointment');
+  fields.add('period');
+  fields.add('length');
+  fields.add('reasonCode');
+  fields.add('reasonReference');
+  fields.add('diagnosis');
+  fields.add('account');
+  fields.add('hospitalization');
+  fields.add('location');
+  fields.add('serviceProvider');
+  fields.add('partOf');
+end;
+
 { TFhirEncounter }
 
 Function TFhirEncounter.GetIdentifierList : TFhirIdentifierList;
@@ -17454,6 +17758,22 @@ begin
   result := TFhirEndpoint(inherited Clone);
 end;
 
+procedure TFhirEndpoint.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('connectionType');
+  fields.add('name');
+  fields.add('managingOrganization');
+  fields.add('contact');
+  fields.add('period');
+  fields.add('payloadType');
+  fields.add('payloadMimeType');
+  fields.add('address');
+  fields.add('header');
+end;
+
 { TFhirEndpoint }
 
 Function TFhirEndpoint.GetIdentifierList : TFhirIdentifierList;
@@ -17858,6 +18178,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FStatus) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirEpisodeOfCareStatusHistory.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('status');
+  fields.add('period');
+end;
+
 { TFhirEpisodeOfCareStatusHistory }
 
 Procedure TFhirEpisodeOfCareStatusHistory.SetStatus(value : TFhirEnum);
@@ -18148,6 +18475,14 @@ end;
 function TFhirEpisodeOfCareDiagnosis.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FCondition) and isEmptyProp(FRole) and isEmptyProp(FRank);
+end;
+
+procedure TFhirEpisodeOfCareDiagnosis.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('condition');
+  fields.add('role');
+  fields.add('rank');
 end;
 
 { TFhirEpisodeOfCareDiagnosis }
@@ -18672,6 +19007,23 @@ begin
   result := TFhirEpisodeOfCare(inherited Clone);
 end;
 
+procedure TFhirEpisodeOfCare.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('statusHistory');
+  fields.add('type');
+  fields.add('diagnosis');
+  fields.add('patient');
+  fields.add('managingOrganization');
+  fields.add('period');
+  fields.add('referralRequest');
+  fields.add('careManager');
+  fields.add('team');
+  fields.add('account');
+end;
+
 { TFhirEpisodeOfCare }
 
 Function TFhirEpisodeOfCare.GetIdentifierList : TFhirIdentifierList;
@@ -19084,6 +19436,15 @@ begin
   result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue) and isEmptyProp(FExclude) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirGroupCharacteristic.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('value[x]');
+  fields.add('exclude');
+  fields.add('period');
+end;
+
 { TFhirGroupCharacteristic }
 
 Procedure TFhirGroupCharacteristic.SetCode(value : TFhirCodeableConcept);
@@ -19385,6 +19746,14 @@ end;
 function TFhirGroupMember.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FEntity) and isEmptyProp(FPeriod) and isEmptyProp(FInactive);
+end;
+
+procedure TFhirGroupMember.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('entity');
+  fields.add('period');
+  fields.add('inactive');
 end;
 
 { TFhirGroupMember }
@@ -19826,6 +20195,21 @@ begin
   result := TFhirGroup(inherited Clone);
 end;
 
+procedure TFhirGroup.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('type');
+  fields.add('actual');
+  fields.add('code');
+  fields.add('name');
+  fields.add('quantity');
+  fields.add('managingEntity');
+  fields.add('characteristic');
+  fields.add('member');
+end;
+
 { TFhirGroup }
 
 Function TFhirGroup.GetIdentifierList : TFhirIdentifierList;
@@ -20243,6 +20627,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FComment);
 end;
 
+procedure TFhirHealthcareServiceEligibility.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('comment');
+end;
+
 { TFhirHealthcareServiceEligibility }
 
 Procedure TFhirHealthcareServiceEligibility.SetCode(value : TFhirCodeableConcept);
@@ -20561,6 +20952,15 @@ end;
 function TFhirHealthcareServiceAvailableTime.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FAvailableStartTime) and isEmptyProp(FAvailableEndTime);
+end;
+
+procedure TFhirHealthcareServiceAvailableTime.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('availableStartTime');
+  fields.add('availableEndTime');
 end;
 
 { TFhirHealthcareServiceAvailableTime }
@@ -20919,6 +21319,13 @@ end;
 function TFhirHealthcareServiceNotAvailable.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FDuring);
+end;
+
+procedure TFhirHealthcareServiceNotAvailable.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('during');
 end;
 
 { TFhirHealthcareServiceNotAvailable }
@@ -21720,6 +22127,35 @@ begin
   result := TFhirHealthcareService(inherited Clone);
 end;
 
+procedure TFhirHealthcareService.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('providedBy');
+  fields.add('category');
+  fields.add('type');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('name');
+  fields.add('comment');
+  fields.add('extraDetails');
+  fields.add('photo');
+  fields.add('telecom');
+  fields.add('coverageArea');
+  fields.add('serviceProvisionCode');
+  fields.add('eligibility');
+  fields.add('program');
+  fields.add('characteristic');
+  fields.add('communication');
+  fields.add('referralMethod');
+  fields.add('appointmentRequired');
+  fields.add('availableTime');
+  fields.add('notAvailable');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
 { TFhirHealthcareService }
 
 Function TFhirHealthcareService.GetIdentifierList : TFhirIdentifierList;
@@ -22338,6 +22774,14 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLongitude) and isEmptyProp(FLatitude) and isEmptyProp(FAltitude);
 end;
 
+procedure TFhirLocationPosition.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('longitude');
+  fields.add('latitude');
+  fields.add('altitude');
+end;
+
 { TFhirLocationPosition }
 
 Procedure TFhirLocationPosition.SetLongitude(value : TFhirDecimal);
@@ -22701,6 +23145,15 @@ end;
 function TFhirLocationHoursOfOperation.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FOpeningTime) and isEmptyProp(FClosingTime);
+end;
+
+procedure TFhirLocationHoursOfOperation.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('openingTime');
+  fields.add('closingTime');
 end;
 
 { TFhirLocationHoursOfOperation }
@@ -23356,6 +23809,28 @@ begin
   result := TFhirLocation(inherited Clone);
 end;
 
+procedure TFhirLocation.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('operationalStatus');
+  fields.add('name');
+  fields.add('alias');
+  fields.add('description');
+  fields.add('mode');
+  fields.add('type');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('physicalType');
+  fields.add('position');
+  fields.add('managingOrganization');
+  fields.add('partOf');
+  fields.add('hoursOfOperation');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
 { TFhirLocation }
 
 Function TFhirLocation.GetIdentifierList : TFhirIdentifierList;
@@ -23881,6 +24356,15 @@ begin
   result := inherited isEmpty  and isEmptyProp(FPurpose) and isEmptyProp(FName) and isEmptyProp(FtelecomList) and isEmptyProp(FAddress);
 end;
 
+procedure TFhirOrganizationContact.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('purpose');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+end;
+
 { TFhirOrganizationContact }
 
 Procedure TFhirOrganizationContact.SetPurpose(value : TFhirCodeableConcept);
@@ -24364,6 +24848,21 @@ end;
 function TFhirOrganization.Clone : TFhirOrganization;
 begin
   result := TFhirOrganization(inherited Clone);
+end;
+
+procedure TFhirOrganization.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('type');
+  fields.add('name');
+  fields.add('alias');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('partOf');
+  fields.add('contact');
+  fields.add('endpoint');
 end;
 
 { TFhirOrganization }
@@ -25004,6 +25503,23 @@ begin
   result := TFhirOrganizationAffiliation(inherited Clone);
 end;
 
+procedure TFhirOrganizationAffiliation.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('period');
+  fields.add('organization');
+  fields.add('participatingOrganization');
+  fields.add('network');
+  fields.add('code');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('healthcareService');
+  fields.add('telecom');
+  fields.add('endpoint');
+end;
+
 { TFhirOrganizationAffiliation }
 
 Function TFhirOrganizationAffiliation.GetIdentifierList : TFhirIdentifierList;
@@ -25489,6 +26005,18 @@ begin
   result := inherited isEmpty  and isEmptyProp(FrelationshipList) and isEmptyProp(FName) and isEmptyProp(FtelecomList) and isEmptyProp(FAddress) and isEmptyProp(FGender) and isEmptyProp(FOrganization) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirPatientContact.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('relationship');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('gender');
+  fields.add('organization');
+  fields.add('period');
+end;
+
 { TFhirPatientContact }
 
 Function TFhirPatientContact.GetRelationshipList : TFhirCodeableConceptList;
@@ -25808,6 +26336,13 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLanguage) and isEmptyProp(FPreferred);
 end;
 
+procedure TFhirPatientCommunication.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('language');
+  fields.add('preferred');
+end;
+
 { TFhirPatientCommunication }
 
 Procedure TFhirPatientCommunication.SetLanguage(value : TFhirCodeableConcept);
@@ -26081,6 +26616,13 @@ end;
 function TFhirPatientLink.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FOther) and isEmptyProp(FType_);
+end;
+
+procedure TFhirPatientLink.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('other');
+  fields.add('type');
 end;
 
 { TFhirPatientLink }
@@ -26677,6 +27219,27 @@ begin
   result := TFhirPatient(inherited Clone);
 end;
 
+procedure TFhirPatient.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('deceased[x]');
+  fields.add('address');
+  fields.add('maritalStatus');
+  fields.add('multipleBirth[x]');
+  fields.add('photo');
+  fields.add('contact');
+  fields.add('communication');
+  fields.add('generalPractitioner');
+  fields.add('managingOrganization');
+  fields.add('link');
+end;
+
 { TFhirPatient }
 
 Function TFhirPatient.GetIdentifierList : TFhirIdentifierList;
@@ -27123,6 +27686,13 @@ end;
 function TFhirPersonLink.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FTarget) and isEmptyProp(FAssurance);
+end;
+
+procedure TFhirPersonLink.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('target');
+  fields.add('assurance');
 end;
 
 { TFhirPersonLink }
@@ -27583,6 +28153,21 @@ begin
   result := TFhirPerson(inherited Clone);
 end;
 
+procedure TFhirPerson.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('address');
+  fields.add('photo');
+  fields.add('managingOrganization');
+  fields.add('active');
+  fields.add('link');
+end;
+
 { TFhirPerson }
 
 Function TFhirPerson.GetIdentifierList : TFhirIdentifierList;
@@ -28012,6 +28597,15 @@ end;
 function TFhirPractitionerQualification.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FCode) and isEmptyProp(FPeriod) and isEmptyProp(FIssuer);
+end;
+
+procedure TFhirPractitionerQualification.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('code');
+  fields.add('period');
+  fields.add('issuer');
 end;
 
 { TFhirPractitionerQualification }
@@ -28498,6 +29092,21 @@ begin
   result := TFhirPractitioner(inherited Clone);
 end;
 
+procedure TFhirPractitioner.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('photo');
+  fields.add('qualification');
+  fields.add('communication');
+end;
+
 { TFhirPractitioner }
 
 Function TFhirPractitioner.GetIdentifierList : TFhirIdentifierList;
@@ -28938,6 +29547,15 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FAvailableStartTime) and isEmptyProp(FAvailableEndTime);
 end;
 
+procedure TFhirPractitionerRoleAvailableTime.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('availableStartTime');
+  fields.add('availableEndTime');
+end;
+
 { TFhirPractitionerRoleAvailableTime }
 
 Function TFhirPractitionerRoleAvailableTime.GetDaysOfWeek : TFhirEnumList;
@@ -29294,6 +29912,13 @@ end;
 function TFhirPractitionerRoleNotAvailable.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FDuring);
+end;
+
+procedure TFhirPractitionerRoleNotAvailable.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('during');
 end;
 
 { TFhirPractitionerRoleNotAvailable }
@@ -29866,6 +30491,25 @@ begin
   result := TFhirPractitionerRole(inherited Clone);
 end;
 
+procedure TFhirPractitionerRole.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('period');
+  fields.add('practitioner');
+  fields.add('organization');
+  fields.add('code');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('healthcareService');
+  fields.add('telecom');
+  fields.add('availableTime');
+  fields.add('notAvailable');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
 { TFhirPractitionerRole }
 
 Function TFhirPractitionerRole.GetIdentifierList : TFhirIdentifierList;
@@ -30290,6 +30934,13 @@ end;
 function TFhirRelatedPersonCommunication.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FLanguage) and isEmptyProp(FPreferred);
+end;
+
+procedure TFhirRelatedPersonCommunication.listFieldsInOrder(fields : TStringList);
+begin
+  listBackboneElementFieldsInOrder(fields);
+  fields.add('language');
+  fields.add('preferred');
 end;
 
 { TFhirRelatedPersonCommunication }
@@ -30800,6 +31451,23 @@ end;
 function TFhirRelatedPerson.Clone : TFhirRelatedPerson;
 begin
   result := TFhirRelatedPerson(inherited Clone);
+end;
+
+procedure TFhirRelatedPerson.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('patient');
+  fields.add('relationship');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('address');
+  fields.add('photo');
+  fields.add('period');
+  fields.add('communication');
 end;
 
 { TFhirRelatedPerson }
@@ -31368,6 +32036,19 @@ begin
   result := TFhirSchedule(inherited Clone);
 end;
 
+procedure TFhirSchedule.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('serviceCategory');
+  fields.add('serviceType');
+  fields.add('specialty');
+  fields.add('actor');
+  fields.add('planningHorizon');
+  fields.add('comment');
+end;
+
 { TFhirSchedule }
 
 Function TFhirSchedule.GetIdentifierList : TFhirIdentifierList;
@@ -31916,6 +32597,22 @@ end;
 function TFhirSlot.Clone : TFhirSlot;
 begin
   result := TFhirSlot(inherited Clone);
+end;
+
+procedure TFhirSlot.listFieldsInOrder(fields : TStringList);
+begin
+  listDomainResourceFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('serviceCategory');
+  fields.add('serviceType');
+  fields.add('specialty');
+  fields.add('appointmentType');
+  fields.add('schedule');
+  fields.add('status');
+  fields.add('start');
+  fields.add('end');
+  fields.add('overbooked');
+  fields.add('comment');
 end;
 
 { TFhirSlot }

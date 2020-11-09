@@ -223,6 +223,8 @@ type
     function GetResourceType : TFhirResourceType; virtual; abstract;
     function GetProfileVersion : TFHIRVersion; override;
     procedure SetProfileVersion(v : TFHIRVersion); override;
+    Procedure listResourceFieldsInOrder(fields: TStringList);
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -335,6 +337,8 @@ type
 
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    Procedure listDomainResourceFieldsInOrder(fields: TStringList);
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -471,6 +475,14 @@ begin
   oList.add(TFHIRProperty.create(self, 'meta', 'Meta', false, TFhirMeta, FMeta.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'implicitRules', 'uri', false, TFhirUri, FImplicitRules.Link)); {L1172}
   oList.add(TFHIRProperty.create(self, 'language', 'code', false, TFhirCode, FLanguage.Link)); {L1172}
+end;
+
+procedure TFhirResource.listResourceFieldsInOrder(fields: TStringList);
+begin
+  fields.add('id');
+  fields.add('meta');
+  fields.add('implicitRules');
+  fields.add('language');
 end;
 
 function TFhirResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -666,6 +678,14 @@ function TFhirResource.hasExtensions : boolean;
 begin
   result := false;
 end;
+procedure TFhirResource.listFieldsInOrder(fields : TStringList);
+begin
+  fields.add('id');
+  fields.add('meta');
+  fields.add('implicitRules');
+  fields.add('language');
+end;
+
 { TFhirResourceListEnumerator }
 
 constructor TFhirResourceListEnumerator.Create(list : TFhirResourceList);
@@ -1068,6 +1088,24 @@ end;
 function TFhirDomainResource.hasExtensions: boolean;
 begin
   result := (ExtensionList.Count > 0) or (FModifierExtensionList.Count > 0);
+end;
+
+procedure TFhirDomainResource.listDomainResourceFieldsInOrder(fields: TStringList);
+begin
+  listResourceFieldsInOrder(fields);
+  fields.add('text');
+  fields.add('contained');
+  fields.add('extension');
+  fields.add('modifierExtension');
+end;
+
+procedure TFhirDomainResource.listFieldsInOrder(fields : TStringList);
+begin
+  listResourceFieldsInOrder(fields);
+  fields.add('text');
+  fields.add('contained');
+  fields.add('extension');
+  fields.add('modifierExtension');
 end;
 
 end.
