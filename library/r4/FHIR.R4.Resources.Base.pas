@@ -223,6 +223,8 @@ Type
     function GetResourceType : TFhirResourceType; virtual; abstract;
     function GetProfileVersion : TFHIRVersion; override;
     procedure SetProfileVersion(v : TFHIRVersion); override;
+    Procedure listResourceFieldsInOrder(fields: TStringList);
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -342,6 +344,8 @@ Type
 
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    Procedure listDomainResourceFieldsInOrder(fields: TStringList);
+    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -534,6 +538,14 @@ begin
   oList.add(TFHIRProperty.create(self, 'language', 'code', false, TFhirCode, FLanguage.Link));{2}
 end;
 
+procedure TFhirResource.listResourceFieldsInOrder(fields: TStringList);
+begin
+  fields.add('id');
+  fields.add('meta');
+  fields.add('implicitRules');
+  fields.add('language');
+end;
+
 function TFhirResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'id') then
@@ -646,6 +658,14 @@ end;
 function TFhirResource.Clone : TFhirResource;
 begin
   result := TFhirResource(inherited Clone);
+end;
+
+procedure TFhirResource.listFieldsInOrder(fields : TStringList);
+begin
+  fields.add('id');
+  fields.add('meta');
+  fields.add('implicitRules');
+  fields.add('language');
 end;
 
 { TFhirResource }
@@ -1097,6 +1117,24 @@ end;
 function TFhirDomainResource.Clone : TFhirDomainResource;
 begin
   result := TFhirDomainResource(inherited Clone);
+end;
+
+procedure TFhirDomainResource.listDomainResourceFieldsInOrder(fields: TStringList);
+begin
+  listResourceFieldsInOrder(fields);
+  fields.add('text');
+  fields.add('contained');
+  fields.add('extension');
+  fields.add('modifierExtension');
+end;
+
+procedure TFhirDomainResource.listFieldsInOrder(fields : TStringList);
+begin
+  listResourceFieldsInOrder(fields);
+  fields.add('text');
+  fields.add('contained');
+  fields.add('extension');
+  fields.add('modifierExtension');
 end;
 
 { TFhirDomainResource }

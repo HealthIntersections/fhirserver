@@ -113,22 +113,36 @@ end;
 
 procedure TFHIREditor.DoTreeClick(sender: TObject);
 var
-  o : TFHIRObject;
+  loc : TFHIRObjectLocationData;
   c : TFHIRComposer;
 begin
   if FTree.Selected <> nil then
   begin
-    o := TFhirObject(FTree.Selected.Data);
-    if o.LocationData.hasLocation2 then
+    if (TObject(FTree.Selected.Data) is TFHIRObjectList) then
+      loc := TFHIRObjectList(FTree.Selected.Data).LocationData
+    else
+      loc := TFhirObject(FTree.Selected.Data).LocationData;
+
+    if loc.hasLocation2 then
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart2));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish2));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart2));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish2));
     end
     else
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish));
     end;
+    //if loc.hasLocation2 then
+    //begin
+    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart2));
+    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish2));
+    //end
+    //else
+    //begin
+    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart));
+    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish));
+    //end;
   end;
 
   //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
@@ -343,6 +357,8 @@ begin
     else
     begin
       child := FTree.Items.AddChildObject(item, prop.Name +': '+prop.value.fhirType, prop.value);
+      if prop.list <> nil then
+        FTree.Items.AddChildObject(child, '(list)', prop.list);
       LoadObject(child, prop.value);
     end;
   end;

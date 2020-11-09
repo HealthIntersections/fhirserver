@@ -1195,6 +1195,8 @@ end;
 function TJsonWriterDirect.sourceLocation: TSourceLocation;
 begin
   result := Location;
+  if (FCache <> '') then
+    result.line := result.line + 1; // for cache
 end;
 
 function TJsonWriterDirect.UseName: String;
