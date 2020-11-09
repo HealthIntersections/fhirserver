@@ -6,8 +6,8 @@ interface
 
 uses
   SysUtils, Classes,
-  SynEdit,
-  FHIR.Support.Base,
+  SynEdit, SynEditTypes,
+  FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   FHIR.Web.Parsers;
 
@@ -30,6 +30,7 @@ type
     FResource: TFHIRResourceV;
 
     FOpInProgress : TFHIRSynEditSynchroniserOpStatus;
+    FContainer : TFHIRObject;
     FFocus : TFHIRObject;
     FStart : TPoint;
     FFinish : TPoint;
@@ -38,6 +39,9 @@ type
 
     procedure loadXml;
     procedure loadJson;
+
+    function writeToSource : String;
+    function extractFromLines(lines : TStringList; start, finish : TSourceLocation) : String;
 
     procedure finishOpChange;
   public
@@ -63,7 +67,7 @@ type
     // set the value of the provided property, which already exists. The property is an object, which may be quite extensive.
     // from a user point of view, smaller operations are better than big ones, but they are technically possible.
     // the objects maye be (typically are) primitives. The object may be in a repeating list
-    procedure  changeProperty({owner : TFHIRObject; name : String; }obj : TFHIRObject);
+    procedure changeProperty(container : TFHIRObject; obj : TFHIRObject);
 
     // add a property, not to a list
     procedure addProperty(owner : TFHIRObject; name : String);
@@ -152,15 +156,69 @@ begin
   end;
 end;
 
-procedure TFHIRSynEditSynchroniser.finishOpChange;
+function TFHIRSynEditSynchroniser.writeToSource: String;
+var
+  ss : TStringStream;
+  c : TFHIRComposer;
 begin
-  // todo...
+  ss := TStringStream.create('', TEncoding.UTF8);
+  try
+    c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.Create('en'), OutputStylePretty);
+    try
+      c.KeepLocationData := true;
+      c.compose(ss, FResource);
+    finally
+      c.free;
+    end;
+    result := ss.DataString;
+  finally
+    ss.free;
+  end;
+end;
 
-  // delete the old range
-  SynEdit.CaretXY;
-  // figure out the bytes for the new range
-  // insert them
-  // update all the following content
+function TFHIRSynEditSynchroniser.extractFromLines(lines: TStringList; start, finish: TSourceLocation): String;
+var
+  i : integer;
+begin
+  if start.line > finish.line then
+    result := ''
+  else if start.line = finish.line then
+    result := lines[start.line].subString(start.col, finish.col - start.col)
+  else
+  begin
+    result :=  lines[start.line].subString(start.col);
+    for i := start.line +1 to finish.line - 1 do
+      result := result + #13#10 + lines[i];
+    result := lines[finish.line].subString(0, finish.col);
+  end;
+end;
+
+procedure TFHIRSynEditSynchroniser.finishOpChange;
+var
+  src : String;
+  lines : TStringList;
+  span : TSourceLocation;
+begin
+  lines := TStringList.create;
+  try
+    // write the parent object to the selected format
+    lines.Text := writeToSource; // for more efficiency, try just the immediate parent (not ready yet)
+
+    // figure out the new text to insert
+    src := extractFromLines(lines, FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish);
+    span := locSpan(FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish); // if line = 0, col is relative
+  finally
+    lines.Free;
+  end;
+
+  // start a transaction
+  SynEdit.BeginUndoBlock;
+  // replace the existing content
+  SynEdit.SetTextBetweenPoints(FFocus.LocationData.parseStart.toPoint, FFocus.LocationData.parseFinish.toPoint, src, [setSelect], scamIgnore, smaMoveUp, smNormal);
+  // update remaining content for new content
+  SynEdit.EndUndoBlock;
+
+  // todo: update locations
 end;
 
 procedure TFHIRSynEditSynchroniser.load;
@@ -173,11 +231,12 @@ begin
   end;
 end;
 
-procedure TFHIRSynEditSynchroniser.changeProperty(obj: TFHIRObject);
+procedure TFHIRSynEditSynchroniser.changeProperty(container : TFHIRObject; obj: TFHIRObject);
 begin
   FOpInProgress := opChange;
   FStart := TPoint.Create(obj.LocationData.ParseStart.col, obj.LocationData.ParseStart.Line);
   FFinish := TPoint.Create(obj.LocationData.parseFinish.col, obj.LocationData.parseFinish.Line);
+  FContainer := container.link;
   FFocus := obj.link;
 end;
 

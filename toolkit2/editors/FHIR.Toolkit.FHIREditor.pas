@@ -84,31 +84,13 @@ begin
 end;
 
 procedure TFHIREditor.DoTestEditing(sender: TObject);
-//var
-//  sync : TFHIRSynEditSynchroniser;
-//  cs : TFHIRCodeSystem;
+var
+  cs : TFHIRCodeSystem;
 begin
-  //sync := TFHIRSynEditSynchroniser.create;
-  //try
-  //  sync.SynEdit := TextEditor;
-  //  sync.Format := ffJson;
-  //  sync.Factory := FFactory.link;
-  //
-  //  sync.load;
-  //  cs := sync.resource as TFHIRCodeSystem;
-  //  sync.changeProperty(cs.nameElement);
-  //  cs.name := 'My Test';
-  //  sync.commit;
-  //
-  //finally
-  //  syn.free;
-  //end;
-end;
-
-function toPoint(loc : TSourceLocation) : TPoint;
-begin
-  result.x := loc.col;
-  result.y := loc.line;
+  cs := FSync.resource as TFHIRCodeSystem;
+  FSync.changeProperty(cs, cs.nameElement);
+  cs.name := 'My Test';
+  FSync.commit;
 end;
 
 procedure TFHIREditor.DoTreeClick(sender: TObject);
@@ -121,13 +103,13 @@ begin
     o := TFhirObject(FTree.Selected.Data);
     if o.LocationData.hasLocation2 then
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart2));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish2));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(o.LocationData.parseStart2.toPoint);
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(o.LocationData.parseFinish2.toPoint);
     end
     else
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseStart));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(o.LocationData.parseFinish));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(o.LocationData.parseStart.toPoint);
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(o.LocationData.parseFinish.toPoint);
     end;
   end;
 

@@ -415,6 +415,7 @@ type
     class function make(l, c : integer) : TSourceLocation; static;
     class function makeNull : TSourceLocation; static;
     function nonZero : boolean;
+    function toPoint : TPoint;
   end;
 
   TSourceLocationObject = class (TFslObject)
@@ -433,63 +434,8 @@ function isNullLoc(src : TSourceLocation) : boolean;
 function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
 function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
 function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
+function locSpan(start, finish : TSourceLocation) : TSourceLocation;
 
-(*
-Type
-  TFslStreamFilerReferenceHashEntry = Class(TFslHashEntry)
-    Private
-      FKey : Pointer;
-      FValue : Pointer;
-
-      Procedure SetKey(Const Value: Pointer);
-
-    Protected
-      Procedure Generate; Override;
-
-    Public
-      Procedure Assign(oSource : TFslObject); Override;
-
-      Property Key : Pointer Read FKey Write SetKey;
-      Property Value : Pointer Read FValue Write FValue;
-  End;
-
-  TFslStreamFilerReferenceHashTable = Class(TFslHashTable)
-    Protected
-      Function ItemClass : TFslHashEntryClass; Override;
-
-      Function Equal(oA, oB : TFslHashEntry) : Integer; Override;
-  End;
-
-  TFslStreamFilerReferenceManager = Class(TFslObject)
-    Private
-      FHashTable : TFslStreamFilerReferenceHashTable;
-      FLookupHashEntry : TFslStreamFilerReferenceHashEntry;
-
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
-
-      Function Link : TFslStreamFilerReferenceManager;
-
-      Procedure Clear;
-
-      Procedure Bind(oKey, oValue : TFslObject);
-      Function Get(oKey : TFslObject) : TFslObject;
-      Function Exists(oKey : TFslObject) : Boolean;
-
-      Property HashTable : TFslStreamFilerReferenceHashTable Read FHashTable;
-  End;
-
-  TFslStreamFilerResourceManager = Class(TFslObject)
-    Public
-      Function Link : TFslStreamFilerResourceManager;
-
-      Procedure Clear; Virtual;
-
-      Function ResolveObject(Const sResource : String; Const aClass : TFslObjectClass) : TFslObject; Virtual; abstract;
-      Function ResolveID(Const oObject : TFslObject) : String; Virtual; abstract;
-  End;
-*)
 Type
   TFslBufferList = Class(TFslObjectList)
     Private
@@ -5038,6 +4984,26 @@ function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
 begin
   result := locGreatorOrEqual(tgt, lower) and locLessOrEqual(tgt, upper);
 end;
+
+function locSpan(start, finish : TSourceLocation) : TSourceLocation;
+begin
+  if start.line < finish.line then
+    result := TSourceLocation.makeNull
+  else if start.line > finish.line then
+    result := TSourceLocation.make(finish.line - start.line, finish.col)
+  else if start.col > finish.col then
+    result := TSourceLocation.makeNull
+  else
+  result := TSourceLocation.make(0, finish.col - start.col);
+end;
+
+function TSourceLocation.toPoint : TPoint;
+begin
+  result.x := col;
+  result.y := line;
+end;
+
+{ TFslZipWorker }
 
 Constructor TFslZipWorker.Create;
 Begin
