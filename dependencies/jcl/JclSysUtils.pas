@@ -3095,7 +3095,7 @@ begin
         InternalAbort := False;
         AbortPtr := Options.AbortPtr;
         if AbortPtr <> nil then
-          AbortPtr^ := 0
+          AbortPtr^ := false
         else
           AbortPtr := @InternalAbort;
         // init the array of events to wait for
@@ -3152,7 +3152,7 @@ begin
           if ((Index = (WAIT_OBJECT_0 + 2)) and Options.MergeError) or
              ((Index = (WAIT_OBJECT_0 + 3)) and not Options.MergeError) then
             // event on abort
-            AbortPtr^ := 1
+            AbortPtr^ := true
           else
             {$IFDEF DELPHI11_UP}
             RaiseLastOSError(Index);

@@ -384,6 +384,7 @@ type
 
     function isMatchingName(given, expected : String; types : Array of String) : boolean;
     function GetFhirObjectVersion: TFHIRVersion; virtual;
+    procedure listFieldsInOrder(fields : TStringList); virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -954,6 +955,11 @@ procedure TFHIRObject.ListChildrenByName(name: string; list: TFHIRSelectionList)
 begin
   if self <> nil then
     GetChildrenByName(name, list);
+end;
+
+procedure TFHIRObject.listFieldsInOrder(fields: TStringList);
+begin
+  // nothing here
 end;
 
 function TFHIRObject.getNamedChildren: TFslList<TFHIRNamedValue>;

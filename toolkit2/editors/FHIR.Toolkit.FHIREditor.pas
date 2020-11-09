@@ -123,26 +123,26 @@ begin
     else
       loc := TFhirObject(FTree.Selected.Data).LocationData;
 
-    //if loc.hasLocation2 then
-    //begin
-    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart2));
-    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish2));
-    //end
-    //else
-    //begin
-    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart));
-    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish));
-    //end;
     if loc.hasLocation2 then
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart2));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish2));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart2));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish2));
     end
     else
     begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart));
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish));
+      TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.composeStart));
+      TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.composeFinish));
     end;
+    //if loc.hasLocation2 then
+    //begin
+    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart2));
+    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish2));
+    //end
+    //else
+    //begin
+    //  TextEditor.SelStart := TextEditor.RowColToCharIndex(toPoint(loc.parseStart));
+    //  TextEditor.SelEnd := TextEditor.RowColToCharIndex(toPoint(loc.parseFinish));
+    //end;
   end;
 
   //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);

@@ -121,6 +121,7 @@ end;
 procedure TFHIRSynEditSynchroniser.loadXml;
 var
   p : TFHIRParser;
+  c : TFHIRComposer;
 begin
   FResource.Free;
   FResource := nil;
@@ -133,6 +134,13 @@ begin
     FResource := p.parseResource(SynEdit.text); // this will use UTF8, so that positions match, since we are UTF-8 internally
   finally
     p.free;
+  end;
+  c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.Create('en'), OutputStylePretty);
+  try
+    c.KeepLocationData := true;
+    c.Compose(FResource);
+  finally
+    c.Free;
   end;
 end;
 
