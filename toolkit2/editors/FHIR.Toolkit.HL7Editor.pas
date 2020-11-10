@@ -135,11 +135,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing HL7: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing HL7: '+e.message);
       end;
     end;
   finally

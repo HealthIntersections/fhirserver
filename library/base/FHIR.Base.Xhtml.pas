@@ -981,9 +981,9 @@ var
 begin
   result := '';
   if FAttributes <> nil then
-   	for attr in FAttributes do
- 	  	if attr.Name = 'xmlns' then
- 		  	exit(attr.value);
+     for attr in FAttributes do
+       if attr.Name = 'xmlns' then
+         exit(attr.value);
 end;
 
 function TFhirXHtmlNode.primitiveValue: string;
@@ -1117,12 +1117,12 @@ class Function TFHIRXhtmlParser.elementIsOk(policy : TFHIRXhtmlParserPolicy; opt
 begin
   if (xopValidatorMode in options) then
     exit(true);
-	result := (policy = xppAllow) or StringArrayExistsInsensitive(['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'b', 'em', 'i', 'strong',
+  result := (policy = xppAllow) or StringArrayExistsInsensitive(['p', 'br', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'b', 'em', 'i', 'strong',
     'small', 'big', 'tt', 'small', 'dfn', 'q', 'var', 'abbr', 'acronym', 'cite', 'blockquote', 'hr', 'address', 'bdo', 'kbd', 'q', 'sub', 'sup',
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
     'code', 'samp', 'img', 'map', 'area'], name);
   if (not result) and (policy = xppReject) then
-  	raise EFHIRException.create('Illegal HTML element '+name);
+    raise EFHIRException.create('Illegal HTML element '+name);
 end;
 
 
@@ -1133,7 +1133,7 @@ begin
   if (attr = 'xmlns') or (attr.StartsWith('xmlns:')) then
     exit(true);
 
-	result := (policy = xppAllow) or
+  result := (policy = xppAllow) or
          StringArrayExistsInsensitive(['title', 'style', 'class', 'id', 'lang', 'xml:lang', 'dir', 'accesskey', 'tabindex',
                     // tables
                    'span', 'width', 'align', 'valign', 'char', 'charoff', 'abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan'], attr) or
@@ -1147,7 +1147,7 @@ begin
     result := (policy = xppAllow) or (StringStartsWith(value, '#') or StringStartsWith(value, 'data:') or StringStartsWith(value, 'http:') or StringStartsWith(value, 'https:'));
 
   if (not result) and (policy = xppReject) then
-  	raise EFHIRException.create('Illegal Attribute name '+name+'.'+attr);
+    raise EFHIRException.create('Illegal Attribute name '+name+'.'+attr);
 end;
 
 class Function TFHIRXhtmlParser.checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
@@ -1159,12 +1159,12 @@ begin
 
   ns := node.NamespaceURI;
   if (ns = '') then
-   	exit('');
+     exit('');
   if (ns <> defaultNS) then
   begin
-	  focus.Attributes.add('xmlns', ns);
-   	exit(ns);
-	end;
+    focus.Attributes.add('xmlns', ns);
+     exit(ns);
+  end;
   exit(defaultNS);
 end;
 

@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Turtle;
 
 const
-	GOOD_IRI_CHAR = 'a-zA-Z0-9\u00A0-\uFFFE';
+  GOOD_IRI_CHAR = 'a-zA-Z0-9\u00A0-\uFFFE';
   IRI_URL = '(([a-z])+:)*((%[0-9a-fA-F]{2})|[&''\\(\\)*+,;:@_~?!$\\/\\-\\#.\\='+GOOD_IRI_CHAR+'])+';
   LANG_REGEX = '[a-z]{2}(\\-[a-zA-Z]{2})?';
 

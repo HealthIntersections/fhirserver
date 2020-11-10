@@ -75,7 +75,7 @@ begin
         c := 0;
         for n in arr do
         begin
-          navpoints.AddObject('Item '+inttostr(c), TObject(n.LocationStart.line-1));
+          navpoints.AddObject('Item '+inttostr(c), TObject(n.LocationStart.line));
           inc(c);
         end;
       end;
@@ -87,7 +87,7 @@ begin
       begin
         for s in obj.properties.SortedKeys do
         begin
-          navpoints.AddObject(s, TObject(obj.properties[s].LocationStart.line-1));
+          navpoints.AddObject(s, TObject(obj.properties[s].LocationStart.line));
         end;
       end;
     end;
@@ -131,8 +131,6 @@ begin
     FJson := nil;
     try
       FJson := FParser.parseNode(FContent.text);
-      inc(cursor.line);
-      inc(cursor.col);
       path := FJson.findLocation(cursor);
       try
         inspection.AddPair('Path', FJson.describePath(path));
@@ -142,11 +140,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing Json: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing Json: '+e.message);
       end;
     end;
   finally

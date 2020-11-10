@@ -33,13 +33,13 @@ type
 //   code conversion algorithm specified by CD and place up to
 //   *OUTBYTESLEFT bytes in buffer at *OUTBUF.  */
 //extern size_t iconv (iconv_t __cd, char **__restrict __inbuf,
-//		     size_t *__restrict __inbytesleft,
-//		     char **__restrict __outbuf,
-//		     size_t *__restrict __outbytesleft);
+//         size_t *__restrict __inbytesleft,
+//         char **__restrict __outbuf,
+//         size_t *__restrict __outbytesleft);
   TIdiconv = function (__cd : iconv_t; __inbuf : PPAnsiChar;
                     __inbytesleft : Psize_t;
-		    __outbuf : PPAnsiChar;
-		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
+        __outbuf : PPAnsiChar;
+        __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
 //   This function is a possible cancellation points and therefore not
 //   marked with __THROW.  */
 //extern int iconv_close (iconv_t __cd);
@@ -188,8 +188,8 @@ function iconv_open(__tocode : PAnsiChar; __fromcode : PAnsiChar) : iconv_t; cde
 
 function iconv(__cd : iconv_t; __inbuf : PPAnsiChar;
                     __inbytesleft : PIdC_SIZET;
-		    __outbuf : PPAnsiChar;
-		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
+        __outbuf : PPAnsiChar;
+        __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
   external LICONV name FN_ICONV;
 
 function iconv_close(__cd : iconv_t) : TIdC_INT; cdecl;
@@ -283,8 +283,8 @@ end;
 
 function stub_iconv(__cd : iconv_t; __inbuf : PPAnsiChar; 
                     __inbytesleft : PIdC_SIZET; 
-		    __outbuf : PPAnsiChar;
-		    __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
+        __outbuf : PPAnsiChar;
+        __outbytesleft : PIdC_SIZET ) : TIdC_SIZET; cdecl;
 begin
   iconv := Fixup(FN_ICONV);
   Result := iconv(__cd,__inbuf,__inbytesleft,__outbuf,__outbytesleft);

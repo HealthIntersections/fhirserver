@@ -590,32 +590,32 @@ type
     }
     Property GroupId : Word read FGroupId write FGroupId;
     
-	{
+  {
     The element id of the element tag
     }
     Property ElementId : Word read FElementId write FElementId;
     
-	{
+  {
     The dictionary used to decode this element
     }
     Property Dictionary : TDicomDictionary read FDictionary write SetDictionary;
     
-	{
+  {
     The object model definition of this element
     }
     Property ElementDefinition : TDicomDictionaryElement read FElementDefinition write SetElementDefinition;
     
-	{
+  {
     True if this data element is not a sequence
     }
     Property IsSimple : Boolean read FIsSimple;
     
-	{
+  {
     List of data values contained in this element
     }
     Property Values : TDicomValueList read FValues;
     
-	{
+  {
     If this is a sequence, it would contain a list of DICOM objects
     }
     Property Objects : TDicomObjectList read FObjects;
@@ -1010,12 +1010,12 @@ type
     }
     Property PacketType : TDicomPDUType read FPacketType;
 
-	{
+  {
     }
     Property Version : Word read FVersion;
 
 
-	{
+  {
     The Dictionary used with this PDU
     }
     Property Dictionary : TDicomDictionary read FDictionary write SetDictionary;
@@ -1059,12 +1059,12 @@ type
     }
     Property Id : Byte read FId write FId;
 
-	{
+  {
     The abstract syntax UID that's supported by this presentation context
     }
     Property AbstractSyntax : TDicomString read FAbstractSyntax write SetAbstractSyntax;
 
-	{
+  {
     The list of transfer syntax that're associated with this presentation context
     }
     Property TransferSyntaxes : TDicomStringList read FTransferSyntaxes;
@@ -1157,7 +1157,7 @@ type
     Function Clone : TDicomPresentationAcceptContextInfo; Overload;
     Procedure Assign(oSource : TFslObject); Override;
 
-	Property OffsetStart : Cardinal read FOffsetStart write FOffsetStart;
+  Property OffsetStart : Cardinal read FOffsetStart write FOffsetStart;
     Property OffsetEnd : Cardinal read FOffsetEnd write FOffsetEnd;
 
   Published
@@ -1167,12 +1167,12 @@ type
     }
     Property Id : Byte read FId write FId;
 
-	{
+  {
     The select transfer syntax that is deemed suitable for both communication parties
     }
     Property TransferSyntax : TDicomString read FTransferSyntax write SetTransferSyntax;
 
-	{
+  {
     The presentation context result
     }
     Property Result : TPresentationAcceptResult read FResult write FResult;
@@ -1352,60 +1352,60 @@ type
     Procedure Assign(oSource : TFslObject); Override;
 
   Published
-	{
+  {
     This parameter identifies the Application Entity  that shall contain the 
-	intended acceptor of the A-ASSOCIATE service. It is based on the 
-	Destination DICOM Application Name. 
-	The Called AE title may or may not be the same as the Receiver Address 
-	present in DICOM Messages exchanged over the association. 
+  intended acceptor of the A-ASSOCIATE service. It is based on the 
+  Destination DICOM Application Name. 
+  The Called AE title may or may not be the same as the Receiver Address 
+  present in DICOM Messages exchanged over the association. 
     }
     Property CalledEntity : TDicomString Read FCalledEntity Write SetCalledEntity;
     
-	{
+  {
     This parameter identifies the Application Entity (AE) that shall contain 
-	the requestor of the A-ASSOCIATE service. It is based on the Source DICOM 
-	Application Name.
-	The Calling AE title may or may not be the same as the Initiator Address 
-	present in DICOM Messages exchanged over the association.
+  the requestor of the A-ASSOCIATE service. It is based on the Source DICOM 
+  Application Name.
+  The Calling AE title may or may not be the same as the Initiator Address 
+  present in DICOM Messages exchanged over the association.
     }
     Property CallingEntity : TDicomString Read FCallingEntity Write SetCallingEntity;
     
-	{
+  {
     This parameter identifies the application context proposed by the requestor. 
-	The acceptor shall return either the same or a different name. 
-	The returned name shall specify the application context to be used 
-	for this association
+  The acceptor shall return either the same or a different name. 
+  The returned name shall specify the application context to be used 
+  for this association
     }
     Property ApplicationContext : TDicomString Read FApplicationContext Write SetApplicationContext;
     
-	{
+  {
     This parameter used in an A-ASSOCIATE request or indication shall consist 
-	of a list containing one or more presentation contexts. Each item shall  
-	contain three components,  a presentation context identification, 
-	an Abstract Syntax Name, and a list of one or more Transfer Syntax Names. 
+  of a list containing one or more presentation contexts. Each item shall  
+  contain three components,  a presentation context identification, 
+  an Abstract Syntax Name, and a list of one or more Transfer Syntax Names. 
     }
     Property PresentationContexts : TDicomPresentationContextInfoList Read FPresentationContexts;
     
-	{
+  {
     This negotiation allows the receivers to limit the size of the 
-	Presentation Data Values List parameters of each P-DATA Indication. 
-	The association-requestor shall specify in the user information parameter
-	of the A-ASSOCIATE request primitive the maximum length in bytes for 
-	the PDV list parameter it is ready to receive in each P-DATA indication. 
-	The association-acceptor shall ensure in its fragmentation of the DICOM 
-	Messages that the list of PDVs included in each P-DATA request does not 
-	exceed this maximum length.
-	
-	Different maximum lengths can be specified for each direction of data flow 
-	on the association. 
+  Presentation Data Values List parameters of each P-DATA Indication. 
+  The association-requestor shall specify in the user information parameter
+  of the A-ASSOCIATE request primitive the maximum length in bytes for 
+  the PDV list parameter it is ready to receive in each P-DATA indication. 
+  The association-acceptor shall ensure in its fragmentation of the DICOM 
+  Messages that the list of PDVs included in each P-DATA request does not 
+  exceed this maximum length.
+  
+  Different maximum lengths can be specified for each direction of data flow 
+  on the association. 
     }
     Property MaxLength : Cardinal Read FMaxLength Write FMaxLength;
     
-	{
+  {
     This parameter shall be used by the requestor and the acceptor of 
-	the association to include DICOM Application Entity user information. 
-	Its meaning shall depend on the application context that accompanies
-	the primitive
+  the association to include DICOM Application Entity user information. 
+  Its meaning shall depend on the application context that accompanies
+  the primitive
     }
     Property UserData : TDicomUserDataList Read FUserData;
   End;
@@ -1431,68 +1431,68 @@ type
     Function Link : TDicomAssociateAcceptPDU; Overload;
     Function Clone : TDicomAssociateAcceptPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
-	
+  
   Published    
-	{
+  {
     This parameter identifies the Application Entity  that shall contain the 
-	intended acceptor of the A-ASSOCIATE service. It is based on the 
-	Destination DICOM Application Name. 
-	The Called AE title may or may not be the same as the Receiver Address 
-	present in DICOM Messages exchanged over the association. 
+  intended acceptor of the A-ASSOCIATE service. It is based on the 
+  Destination DICOM Application Name. 
+  The Called AE title may or may not be the same as the Receiver Address 
+  present in DICOM Messages exchanged over the association. 
     }
     Property CalledEntity : TDicomString Read FCalledEntity Write SetCalledEntity;
     
-	{
+  {
     This parameter identifies the Application Entity (AE) that shall contain
-	the requestor of the A-ASSOCIATE service. It is based on the Source DICOM 
-	Application Name. 
-	The Calling AE title may or may not be the same as the Initiator Address 
-	present in DICOM Messages exchanged over the association.
+  the requestor of the A-ASSOCIATE service. It is based on the Source DICOM 
+  Application Name. 
+  The Calling AE title may or may not be the same as the Initiator Address 
+  present in DICOM Messages exchanged over the association.
     }
     Property CallingEntity : TDicomString Read FCallingEntity Write SetCallingEntity;
 
-	{
+  {
     This parameter identifies the application context proposed by the requestor. 
-	The acceptor shall return either the same or a different name. 
-	The returned name shall specify the application context to be used 
-	for this association
+  The acceptor shall return either the same or a different name. 
+  The returned name shall specify the application context to be used 
+  for this association
     }
     Property ApplicationContext : TDicomString Read FApplicationContext Write SetApplicationContext;
-	
-	{
+  
+  {
     This parameter used in the A-ASSOCIATE Response and Confirmation indicates 
-	the acceptance or rejection of each of the presentation context definitions 
-	proposed in the presentation context definition list parameter 
-	(Section 7.1.1.13). 
-	The Presentation Context Definition Result List parameter shall take the 
-	form of a list of result values. There is a one to one correspondence 
-	between each one of these result values and each of the presentation 
-	contexts proposed in the Presentation Context Definition List parameter. 
-	Each result value represents either "acceptance", "user-rejection", or 
-	"provider-rejection". The values of the results are assigned by the Upper 
-	Layer (UL) user on the response service primitive. The result values may be 
-	sent in any order. 
+  the acceptance or rejection of each of the presentation context definitions 
+  proposed in the presentation context definition list parameter 
+  (Section 7.1.1.13). 
+  The Presentation Context Definition Result List parameter shall take the 
+  form of a list of result values. There is a one to one correspondence 
+  between each one of these result values and each of the presentation 
+  contexts proposed in the Presentation Context Definition List parameter. 
+  Each result value represents either "acceptance", "user-rejection", or 
+  "provider-rejection". The values of the results are assigned by the Upper 
+  Layer (UL) user on the response service primitive. The result values may be 
+  sent in any order. 
     }
-	Property PresentationContexts : TDicomPresentationAcceptContextInfoList Read FPresentationContexts;
+  Property PresentationContexts : TDicomPresentationAcceptContextInfoList Read FPresentationContexts;
     
-	{
+  {
     the association-acceptor can specify in the user information parameter of 
-	A-ASSOCIATE response primitive the maximum length in bytes for the PDV 
-	list parameter it is ready to receive in each P-DATA indication. 
-	The association-requestor shall ensure in its fragmentation of the DICOM 
-	Messages that the list of PDVs included in each P-DATA request does not 
-	exceed this maximum length.
-	
-	Different maximum lengths can be specified for each direction of data flow 
-	on the association.
+  A-ASSOCIATE response primitive the maximum length in bytes for the PDV 
+  list parameter it is ready to receive in each P-DATA indication. 
+  The association-requestor shall ensure in its fragmentation of the DICOM 
+  Messages that the list of PDVs included in each P-DATA request does not 
+  exceed this maximum length.
+  
+  Different maximum lengths can be specified for each direction of data flow 
+  on the association.
     }
-	Property MaxLength : Cardinal Read FMaxLength Write FMaxLength;
+  Property MaxLength : Cardinal Read FMaxLength Write FMaxLength;
     
-	{
+  {
     This parameter shall be used by the requestor and the acceptor of 
-	the association to include DICOM Application Entity user information. 
-	Its meaning shall depend on the application context that accompanies 
-	the primitive
+  the association to include DICOM Application Entity user information. 
+  Its meaning shall depend on the application context that accompanies 
+  the primitive
     }
     Property UserData : TDicomUserDataList Read FUserData;
   End;
@@ -1528,26 +1528,26 @@ type
     Function Link : TDicomAssociateRejectPDU; Overload;
     Function Clone : TDicomAssociateRejectPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
-	
+  
   Published
     
-	{
+  {
     This parameter shall be provided either by the acceptor of the A-ASSOCIATE 
-	request, or by the Upper Layer (UL) service-provider. It shall indicate 
-	the result of using the A-ASSOCIATE service.
+  request, or by the Upper Layer (UL) service-provider. It shall indicate 
+  the result of using the A-ASSOCIATE service.
     }
     Property Result : TDicomAssociateRejectResult Read FResult Write FResult;
     
-	{
+  {
     The value of the parameter is supplied by the Upper Layer (UL) 
-	service-provider. It identifies the creating source of the Result parameter 
-	and the Diagnostic parameter, if present.
+  service-provider. It identifies the creating source of the Result parameter 
+  and the Diagnostic parameter, if present.
     }
     Property Source : TDicomAssociateRejectSource Read FSource Write FSource;
     
-	{
+  {
     It shall be used to provide diagnostic information about the result of the 
-	A-ASSOCIATE service (i.e. reason to reject)
+  A-ASSOCIATE service (i.e. reason to reject)
     }
     Property Reason : TDicomAssociateRejectReason Read FReason Write FReason;
   End;
@@ -1576,20 +1576,20 @@ type
     Property OffsetEnd : Cardinal Read FOffsetEnd Write FOffsetEnd;
 
 // TODO:
-	{
+  {
     The message fragment
     }
     Property Bytes : TBytes Read FBytes Write FBytes;
   Published
 
-	{
+  {
     Whether the fragment is of the Command or Data type
     }
     Property Command : Boolean Read FCommand Write FCommand;
 
-	{
+  {
     Whether the fragment is or is not the last fragment of a
-	Command/Data Stream of a DICOM Message
+  Command/Data Stream of a DICOM Message
     }
     Property Last : Boolean Read FLast Write FLast;
 
@@ -1682,13 +1682,13 @@ type
   Published
     {
     The same presentation context id that is applied to all
-	Presentation Data Values (PDV) in this PDU
+  Presentation Data Values (PDV) in this PDU
     }
     Property ContextId : Byte Read FContextId Write FContextId;
 
-	{
+  {
     The list of Presentation Data Values (PDV) that contains the message
-	fragments
+  fragments
     }
     Property DataValues : TDicomPresentationDataValueList Read FDataValues;
   End;
@@ -1756,18 +1756,18 @@ type
     Function Link : TDicomAbortPDU; Overload;
     Function Clone : TDicomAbortPDU; Overload;
     Procedure Assign(oSource : TFslObject); Override;
-	
+  
   Published
 
-	{
+  {
     This parameter indicates the initiating source of  this abort. It shall
-	take one of the following symbolic values: 
-	a)  UL service-user 
-	b)  UL service-provider (ACSE related) 
+  take one of the following symbolic values: 
+  a)  UL service-user 
+  b)  UL service-provider (ACSE related) 
     }
     Property Source : TDicomAbortSource Read FSource Write FSource;
     
-	{
+  {
     Provide a diagnostic reason for the abort
     }
     Property Reason : TDicomAbortReason Read FReason Write FReason;
@@ -1857,17 +1857,17 @@ type
     Function SourceAET : String; // (0002,0016)
 
 // TODO
-	{
+  {
     The 128 byte File Preamble is available for use as defined by Application
-	Profiles or specific implementations. This Part of the DICOM Standard
-	does not require any structure for this fixed size Preamble.  It is not
-	required to be structured as a DICOM Data Element with a Tag and a Length.
-	It is intended to facilitate access to the images and other data in the
-	DICOM file by providing compatibility with a number of commonly used
-	computer image file formats.  Whether or not the File Preamble contains
-	information, the DICOM File content shall conform to the requirements of
-	this Part and the Data Set shall conform to the SOP Class specified in the
-	File Meta Information.
+  Profiles or specific implementations. This Part of the DICOM Standard
+  does not require any structure for this fixed size Preamble.  It is not
+  required to be structured as a DICOM Data Element with a Tag and a Length.
+  It is intended to facilitate access to the images and other data in the
+  DICOM file by providing compatibility with a number of commonly used
+  computer image file formats.  Whether or not the File Preamble contains
+  information, the DICOM File content shall conform to the requirements of
+  this Part and the Data Set shall conform to the SOP Class specified in the
+  File Meta Information.
     }
     Property Prelude : TBytes Read FPrelude Write FPrelude;
 
@@ -1879,15 +1879,15 @@ type
     Property Name : String Read FName Write FName;
 
 
-	{
+  {
     A set of DICOM Meta Elements with Tags and Lengths as defined in PS3.10,
-	Table 7.1-1
+  Table 7.1-1
     }
     Property Header : TDicomObject Read FHeader Write SetHeader;
 
-	{
+  {
     The contained Data Set, representing a single SOP Instance related to a
-	single SOP Class (and corresponding IOD).
+  single SOP Class (and corresponding IOD).
     }
     Property Content : TDicomObject Read FContent Write SetContent;
   End;
@@ -2096,7 +2096,7 @@ type
     }
     Property InstanceType : TDicomInstanceType Read GetInstanceType;
 
-	{
+  {
     The wrapped simple DICOM object
     }
     Property SimpleObject : TDicomObject Read FSimpleObject Write SetSimpleObject;
@@ -2106,42 +2106,42 @@ type
     The wrapped message (Command + Data)
     }
     Property Message : TDicomMessage Read FMessage write SetMessage;
-	{
+  {
     The wrapped file object
     }
     Property FileObject : TDicomFile Read FFileObject Write SetFileObject;
 
-	{
+  {
     The wrapped associate request
     }
     Property AssociateRequest : TDicomAssociateRequestPDU Read FAssociateRequest Write SetAssociateRequest;
 
-	{
+  {
     The wrapped associate accept
     }
     Property AssociateAccept : TDicomAssociateAcceptPDU Read FAssociateAccept Write SetAssociateAccept;
 
-	{
+  {
     The wrapped associatie reject
     }
     Property AssociateReject : TDicomAssociateRejectPDU Read FAssociateReject Write SetAssociateReject;
 
-	{
+  {
     The wrapped data PDU
     }
     Property Data : TDicomDataPDU Read FData Write SetData;
 
-	{
+  {
     The wrapped abort PDU
     }
     Property Abort : TDicomAbortPDU Read FAbort Write SetAbort;
 
-	{
+  {
     The wrapped release request
     }
     Property ReleaseRequest : TDicomReleaseRequestPDU Read FReleaseRequest Write SetReleaseRequest;
 
-	{
+  {
     The wrapped release response
     }
     Property ReleaseResponse : TDicomReleaseResponsePDU Read FReleaseResponse Write SetReleaseResponse;

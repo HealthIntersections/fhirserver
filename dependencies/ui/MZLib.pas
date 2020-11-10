@@ -2516,10 +2516,10 @@ Begin
     If ZState.AvailableOutput = 0 Then
     Begin
       // Since AvailableOutput is 0, Deflate will be called again with
-	    // more output space, but possibly with both Pending and
-     	// AvailableInput equal to zero. There won't be anything to do,
-	    // but this is not an error situation so make sure we
-	    // return OK instead of BUF_ERROR at next call of Deflate.
+      // more output space, but possibly with both Pending and
+       // AvailableInput equal to zero. There won't be anything to do,
+      // but this is not an error situation so make sure we
+      // return OK instead of BUF_ERROR at next call of Deflate.
       S.LastFlush := -1;
       Result := Z_OK;
       Exit;
@@ -2562,11 +2562,11 @@ Begin
       Exit;
       
       // If Flush <> Z_NO_FLUSH and AvailableOutput = 0, the next call
-	    // of Deflate should use the same Flush parameter to make sure
-	    // that the Flush is complete. So we don't have to output an
-	    // empty block here, this will be done at next call. This also
-	    // ensures that for a very small output buffer we emit at most
-	    // one empty block. 
+      // of Deflate should use the same Flush parameter to make sure
+      // that the Flush is complete. So we don't have to output an
+      // empty block here, this will be done at next call. This also
+      // ensures that for a very small output buffer we emit at most
+      // one empty block. 
     End;
     If BlockState = bsBlockDone Then
     Begin
@@ -2590,7 +2590,7 @@ Begin
       Begin
         // avoid BUF_ERROR at next call, see above
         S.LastFlush := -1;
-	      Result := Z_OK;
+        Result := Z_OK;
         Exit;
       End;
     End;
@@ -4147,7 +4147,7 @@ Var
   I: Cardinal;                     // counter, current code
   J: Cardinal;                     // counter
   K: Integer;                      // number of bits in current code
-  L: Integer;			                 // bits per table (returned in M)
+  L: Integer;                       // bits per table (returned in M)
   Mask: Cardinal;                  // (1 shl W) - 1, to avoid cc - O bug on HP
   P: PCardinal;                    // pointer into C[], B[], or V[]
   Q: PInflateHuft;                 // points to current table

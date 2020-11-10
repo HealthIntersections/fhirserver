@@ -224,7 +224,7 @@ begin
     if loc.prop = nil then
       result := loc.value.fhirType
     else if loc.prop.IsList then
-      result := result + '.'+ loc.prop.Name+'['+inttostr(loc.prop.values.IndexByReference(loc.prop))+']'
+      result := result + '.'+ loc.prop.Name+'['+inttostr(loc.prop.values.IndexByReference(loc.value))+']'
     else if loc.prop.name.endsWith('[x]') then
       result := result + '.'+ loc.prop.Name.replace('[x]', '.ofType('+loc.value.fhirType+')')
     else
@@ -254,8 +254,6 @@ begin
     FResource := nil;
     try
       FResource := parseResource(FContent.text);
-      inc(cursor.line);
-      inc(cursor.col);
       path := FResource.findLocation(cursor);
       try
         inspection.AddPair('Version', FFactory.versionString);
@@ -277,11 +275,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing Resource: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing Resource: '+e.message);
       end;
     end;
   finally

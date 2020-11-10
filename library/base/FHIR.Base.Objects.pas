@@ -324,7 +324,9 @@ type
     FComposeFinish2: TSourceLocation;
     FComposeStart2: TSourceLocation;
   public
+    constructor create; override;
     function inSpan(loc : TSourceLocation) : boolean;
+    function hasLocation1 : boolean;
     function hasLocation2 : boolean;
 
     property parseStart : TSourceLocation read FParseStart write FParseStart;
@@ -438,8 +440,8 @@ type
     property jsInstance : cardinal read FJsInstance write FJsInstance;
     property jsHandle : pointer read FJsHandle write FJsHandle;
 
-    // populated by some parsers when parsing
-    property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
+    // this is populated by the json and xml parsers if requested
+    property LocationData : TFHIRObjectLocationData read GetLocationData;
     property HasLocationData : boolean read GetHasLocationData;
     function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocatedNode>; overload;
 
@@ -746,12 +748,31 @@ end;
 
 function TFHIRObjectLocationData.hasLocation2: boolean;
 begin
-  result := FParseFinish2.nonZero or FComposeFinish2.nonZero;
+  result := not FParseFinish2.isNull or not FComposeFinish2.isNull;
+end;
+
+function TFHIRObjectLocationData.hasLocation1: boolean;
+begin
+  result := not FParseFinish.isNull or not FComposeFinish.isNull;
+end;
+
+constructor TFHIRObjectLocationData.create;
+begin
+  inherited create;
+  FComposeStart := TSourceLocation.CreateNull;
+  FComposeFinish := TSourceLocation.CreateNull;
+  FParseStart := TSourceLocation.CreateNull;
+  FParseFinish := TSourceLocation.CreateNull;
+  FParseFinish2 := TSourceLocation.CreateNull;
+  FParseStart2 := TSourceLocation.CreateNull;
+  FComposeFinish2 := TSourceLocation.CreateNull;
+  FComposeStart2 := TSourceLocation.CreateNull;
+
 end;
 
 function TFHIRObjectLocationData.inSpan(loc: TSourceLocation): boolean;
 begin
-  result := locInSpan(loc, FParseStart, FParseFinish);
+  result := loc.inSpan(FParseStart, FParseFinish) or loc.inSpan(FParseStart2, FParseFinish2);
 end;
 
 { TFHIRLocatedNode }

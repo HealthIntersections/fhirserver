@@ -60,11 +60,11 @@
   2000 Mar 28 Hadi
     Continued conversion to Indy
 
-	2000 Mar 24 Kudzu
+  2000 Mar 24 Kudzu
     Converted to Indy
 
-	2000 Jan 13 MTL
-  	Moved to new Palette Tab scheme (Winshoes Clients)
+  2000 Jan 13 MTL
+    Moved to new Palette Tab scheme (Winshoes Clients)
     1999
 }
 
@@ -80,7 +80,7 @@ interface
 {$i IdCompilerDefines.inc}
 
 uses
-	Classes,
+  Classes,
   IdGlobal,
   IdUDPClient;
 

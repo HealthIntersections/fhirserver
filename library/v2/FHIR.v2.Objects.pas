@@ -8938,7 +8938,7 @@ Begin
         Result := Result + ' ';
         End;
       Else If AStr[i] > '~' Then
-	Result := Result + '&#x'+IntToHex(ord(AStr[i]), 2)+';'
+  Result := Result + '&#x'+IntToHex(ord(AStr[i]), 2)+';'
       Else
         Begin
         Result := Result + AStr[i];

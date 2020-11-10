@@ -60,10 +60,10 @@ end;
 
 function GetURLFromFile(const Filename: string; var URL: string): boolean;
 var
-  URLfile		: TStringList;
-  i			: integer;
-  s			: string;
-  p			: PChar;
+  URLfile    : TStringList;
+  i      : integer;
+  s      : string;
+  p      : PChar;
 begin
   Result := False;
   URLfile := TStringList.Create;
@@ -99,7 +99,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropURLTarget
+//      TDropURLTarget
 // -----------------------------------------------------------------------------
 
 constructor TDropURLTarget.Create(AOwner: TComponent);

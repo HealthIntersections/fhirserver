@@ -839,8 +839,7 @@ begin
   if Context.SideBySide then
     updateDesigner;
 
-  loc.col := TextEditor.CaretX-1;
-  loc.line := TextEditor.CaretY-1;
+  loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
   ts := TStringList.create;
   try
     validate(true, true, loc, ts);
@@ -861,8 +860,7 @@ begin
 
   if (Context.Focus = self) then
   begin
-    loc.col := TextEditor.CaretX-1;
-    loc.line := TextEditor.CaretY-1;
+    loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
     ts := TStringList.create;
     try
       validate(false, true, loc, ts);
@@ -954,7 +952,7 @@ begin
     for ch in unicodeChars(s) do
       if (ord(ch) > 127) then
       begin
-        validationError(line, i, 'the character '+ch+' is illegal when the source is constrained to ASCII');
+        validationError(TSourceLocation.Create(line, i), 'the character '+ch+' is illegal when the source is constrained to ASCII');
         exit;
       end
       else
@@ -1241,8 +1239,7 @@ end;
 
 procedure TBaseEditor.locate(location: TSourceLocation);
 begin
-  TextEditor.CaretY := location.line;
-  TextEditor.CaretX := location.col;
+  TextEditor.CaretXY := location.toPoint;
   TextEditor.SetFocus;
 end;
 

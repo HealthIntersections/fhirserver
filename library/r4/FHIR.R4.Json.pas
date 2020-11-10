@@ -3591,7 +3591,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
-    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"', value.LocationStart.line+1, value.LocationStart.col+1);
+    raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
   result := TFHIREnum.create;
   try
     if (value <> nil) then
@@ -3629,6 +3629,7 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    writeln(inttostr(value.serialNumber)+': '+name+'= [code]: '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -3842,6 +3843,7 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -3984,6 +3986,7 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -4481,6 +4484,7 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -4978,6 +4982,7 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -5079,8 +5084,11 @@ end;
 
 procedure TFHIRJsonParser.ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
 begin
-  resource.LocationData.ParseStart := jsn.LocationStart;
-  resource.LocationData.ParseFinish := jsn.LocationEnd;
+  if KeepParseLocations then
+  begin
+    resource.LocationData.ParseStart := jsn.LocationStart;
+    resource.LocationData.ParseFinish := jsn.LocationEnd;
+  end;
   if jsn.has('id') or jsn.has('_id') then
     resource.idElement := parseId(jsn.node['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then
@@ -5800,11 +5808,11 @@ end;
 
 procedure TFHIRJsonParser.ParseNarrativeProperties(jsn : TJsonObject; result : TFhirNarrative);
 begin
-    ParseElementProperties(jsn, result);
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
-    if jsn.has('div') then
-        result.div_ := parseXHtmlNode(jsn.path+'.div', jsn.node['div']);{q2}
+  ParseElementProperties(jsn, result);
+  if jsn.has('status') or jsn.has('_status')  then
+    result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
+  if jsn.has('div') then
+      result.div_ := parseXHtmlNode(jsn.path+'.div', jsn.node['div']);{q2}
 end;
 
 procedure TFHIRJsonComposer.ComposeNarrative(json : TJSONWriter; name : string; elem : TFhirNarrative; noObj : boolean = false);
@@ -62659,7 +62667,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EParserException.create('error: the element '+s+' is not a valid resource name', jsn.LocationStart.line+1, jsn.locationStart.col+1);
+    raise jsn.locationStart.exception('error: the element '+s+' is not a valid resource name');
 end;
 
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;

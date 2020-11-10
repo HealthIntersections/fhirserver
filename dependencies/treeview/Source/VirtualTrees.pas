@@ -17028,8 +17028,8 @@ begin
                 Node := GetNextNode(Node);
                 NewColumn := GetStartColumn;
 
-				// fix: From last column, the Tab key should always go to next row irrespective of auto span
-				// Similarly the Shift-Tab key should go to previos row from first column
+        // fix: From last column, the Tab key should always go to next row irrespective of auto span
+        // Similarly the Shift-Tab key should go to previos row from first column
                 if (Node <> nil) and (NewColumn > NoColumn) then
                   SetFocusedNodeAndColumn(Node, NewColumn);
 
@@ -22866,7 +22866,7 @@ begin
         DoInitNode(Parent, Node, InitStates);
 
       // Fix: Any parent check state must be propagated here.
-	    // Because the CheckType is normally set in DoInitNode
+      // Because the CheckType is normally set in DoInitNode
       // by the App.
       if (Node.CheckType = ctTriStateCheckBox) and (toAutoTristateTracking in FOptions.FAutoOptions)  then
       begin

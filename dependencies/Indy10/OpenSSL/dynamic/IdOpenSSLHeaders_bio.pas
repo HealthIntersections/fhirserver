@@ -416,7 +416,7 @@ var
 //  (* BIO_s_accept() and BIO_s_connect() *)
 //  {$HPPEMIT '#  define BIO_do_connect(b)       BIO_do_handshake(b)'}
 //  {$HPPEMIT '#  define BIO_do_accept(b)        BIO_do_handshake(b)'}
-//  {$HPPEMIT '# endif'}	(* OPENSSL_NO_SOCK *)
+//  {$HPPEMIT '# endif'}  (* OPENSSL_NO_SOCK *)
 //
 //  {$HPPEMIT '# define BIO_do_handshake(b)     BIO_ctrl(b,BIO_C_DO_STATE_MACHINE,0,NULL)'}
 //

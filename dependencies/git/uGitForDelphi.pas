@@ -24,7 +24,7 @@ const
 
    // git_otype, enum with integer values
    //      typedef enum {
-   //      GIT_OBJ_ANY = -2,		/**< Object can be any of the following */
+   //      GIT_OBJ_ANY = -2,    /**< Object can be any of the following */
    //      GIT_OBJ_BAD = -1,       /**< Object is invalid. */
    //      GIT_OBJ__EXT1 = 0,      /**< Reserved for future use. */
    //      GIT_OBJ_COMMIT = 1,     /**< A commit object. */

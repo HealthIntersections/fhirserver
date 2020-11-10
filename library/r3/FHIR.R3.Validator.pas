@@ -1058,7 +1058,7 @@ begin
     end;
   end;
 
-  ok := rule(ctxt, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + type_ + '", but resource type was "' + resourceName + '"');
+  ok := rule(ctxt, IssueTypeINVALID, TSourceLocation.CreateNull, TSourceLocation.CreateNull, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + type_ + '", but resource type was "' + resourceName + '"');
 
   if (ok) then
   begin
@@ -1434,15 +1434,12 @@ begin
   begin
     vm := TFhirOperationOutcomeIssue.Create;
     try
-      vm.Tags['s-l'] := inttostr(locStart.line);
-      vm.Tags['s-c'] := inttostr(locStart.col);
-      vm.Tags['e-l'] := inttostr(locEnd.line);
-      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.Tags['s-l'] := inttostr(locStart.lineForHuman);
+      vm.Tags['s-c'] := inttostr(locStart.colForHuman);
+      vm.Tags['e-l'] := inttostr(locEnd.lineForHuman);
+      vm.Tags['e-c'] := inttostr(locEnd.colForHuman);
       vm.severity := IssueSeverityError;
-      if locStart.line + locStart.col > 0 then
-        vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')'
-      else
-        vm.expressionList.append.value := path;
+      vm.expressionList.append.value := path + ' // ' + locStart.describe;
       vm.code := t;
       vm.details := TFHIRCodeableConcept.Create;
       vm.details.text := msg;
@@ -1830,12 +1827,12 @@ begin
   begin
     vm := TFhirOperationOutcomeIssue.Create;
     try
-      vm.Tags['s-l'] := inttostr(locStart.line);
-      vm.Tags['s-c'] := inttostr(locStart.col);
-      vm.Tags['e-l'] := inttostr(locEnd.line);
-      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.Tags['s-l'] := inttostr(locStart.lineForHuman);
+      vm.Tags['s-c'] := inttostr(locStart.colForHuman);
+      vm.Tags['e-l'] := inttostr(locEnd.lineForHuman);
+      vm.Tags['e-c'] := inttostr(locEnd.colForHuman);
       vm.severity := IssueSeverityWarning;
-      vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
+      vm.expressionList.append.value := path + ' // ' + locStart.describe;
       vm.code := t;
       vm.details := TFHIRCodeableConcept.Create;
       vm.details.text := msg;
@@ -1860,12 +1857,12 @@ begin
   begin
     vm := TFhirOperationOutcomeIssue.Create;
     try
-      vm.Tags['s-l'] := inttostr(locStart.line);
-      vm.Tags['s-c'] := inttostr(locStart.col);
-      vm.Tags['e-l'] := inttostr(locEnd.line);
-      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.Tags['s-l'] := inttostr(locStart.lineForHuman);
+      vm.Tags['s-c'] := inttostr(locStart.colForHuman);
+      vm.Tags['e-l'] := inttostr(locEnd.lineForHuman);
+      vm.Tags['e-c'] := inttostr(locEnd.colForHuman);
       vm.severity := IssueSeverityInformation;
-      vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
+      vm.expressionList.append.value := path + ' // ' + locStart.describe;
       vm.code := t;
       vm.details := TFHIRCodeableConcept.Create;
       vm.details.text := msg;
@@ -1884,7 +1881,7 @@ var
 begin
   if (isBundleEntry(ei.path)) then
   begin
-		e := ep.getNamedChild('request');
+    e := ep.getNamedChild('request');
     if (e <> nil) then
       e := e.getNamedChild('method');
     if (e = nil) then
@@ -1901,9 +1898,9 @@ begin
     end
   end
   else if (isParametersEntry(ei.path)) then
-		result := risOptional
+    result := risOptional
   else
-		result := risRequired;
+    result := risRequired;
 end;
 
 function TrimBof(const s : String):String;
@@ -2485,7 +2482,7 @@ var
   ns : String;
 begin
   if (ty = 'boolean') then
-  	rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, (e.primitiveValue() ='true') or (e.primitiveValue() = 'false'), 'boolean values must be "true" or "false"');
+    rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, (e.primitiveValue() ='true') or (e.primitiveValue() = 'false'), 'boolean values must be "true" or "false"');
   if (ty = 'uri') then
   begin
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, not e.primitiveValue.startsWith('oid:'), 'URI values cannot start with oid:');
@@ -2549,7 +2546,7 @@ var
 begin
   for node in list do
   begin
-  	if (node.NodeType = fhntElement) then
+    if (node.NodeType = fhntElement) then
     begin
       rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path,  TFHIRXhtmlParser.elementIsOk(xppDrop, [], node.Name), 'Illegal element name in the XHTML("'+node.name+'")');
       if node.hasAttributes then
@@ -2567,7 +2564,7 @@ var
 begin
   for node in list do
   begin
-  	if (node.NodeType = fhntElement) then
+    if (node.NodeType = fhntElement) then
     begin
       ns := node.NsDecl;
       rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, (ns = '') or (XHTML_NS = ns), 'Wrong namespace on the XHTML ("'+ns+'")');
@@ -3606,7 +3603,7 @@ end;
 
 function TChildIterator.name: String;
 begin
-	result := element.Name;
+  result := element.Name;
 end;
 
 function TChildIterator.next: boolean;

@@ -403,7 +403,7 @@ type
    * would be used when a function takes an ASN1_ITEM * argument.
    *
    *)
-		
+    
 // # ifndef OPENSSL_EXPORT_VAR_AS_FUNCTION
 
 ///(* ASN1_ITEM pointer exported type *)

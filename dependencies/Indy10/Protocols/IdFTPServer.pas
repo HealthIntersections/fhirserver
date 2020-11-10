@@ -5312,7 +5312,7 @@ begin
   LFileSystem := FTPFileSystem;
   if Assigned(LFileSystem) then begin
     LFileSystem.GetFileDate(ASender, AFileName, VFileDate);
-	  VFileDate := VFileDate - OffsetFromUTC;
+    VFileDate := VFileDate - OffsetFromUTC;
   end else if Assigned(FOnGetFileDate) then begin
     FOnGetFileDate(ASender, AFileName, VFileDate);
   end;

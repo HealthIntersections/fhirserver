@@ -1948,7 +1948,7 @@ begin
     case APerms[9] of
       'x' :
         begin
-	        Result := Result or IdS_IXOTH;
+          Result := Result or IdS_IXOTH;
         end;
       't' :
         begin

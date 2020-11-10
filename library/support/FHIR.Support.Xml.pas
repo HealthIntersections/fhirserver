@@ -780,7 +780,6 @@ end;
 Function TFslXmlBuilder.SourceLocation : TSourceLocation;
 begin
   result := xml.sourceLocationForPending;
-  dec(result.line);
 end;
 
 Procedure TFslXmlBuilder.Comment(Const sContent : String);
@@ -846,8 +845,7 @@ begin
   else
     xml.ProduceTag(sName);
   started := true;
-  result.line := 0; //xml.line;
-  result.col := 0; //xml.col;
+  result := xml.FLocation;
 end;
 
 function TFslXmlBuilder.Open(Const sName : String) : TSourceLocation;
@@ -865,8 +863,7 @@ begin
   xml.ProduceOpen(sName);
   inc(depth);
   started := true;
-  result.line := 0; //xml.line;
-  result.col := 0; //xml.col;
+  result := xml.FLocation;
 end;
 
 procedure TFslXmlBuilder.ProcessingInstruction(sName, sText: String);
@@ -918,8 +915,7 @@ begin
     xml.ProduceText(HtmlTrim(sValue))
   else
     xml.ProduceText(sValue);
-  result.line := 0; //xml.line;
-  result.col := 0; //xml.col;
+  result := xml.FLocation;
 end;
 
 
@@ -940,8 +936,7 @@ begin
     xml.ProduceText(sName, StringTrimWhitespace(sValue))
   else
     xml.ProduceText(sName, sValue);
-  result.line := 0; //xml.line;
-  result.col := 0; //xml.col;
+  result := xml.FLocation;
 end;
 
 { TXmlBuilderNamespaceList }
@@ -1279,8 +1274,7 @@ Begin
 
   FBuilder := TFslStringBuilder.Create;
   FAttributes := TFslXMLAttributeList.Create;
-  FLocation.Line := 1;
-  FCol := 1;
+  FLocation := TSourceLocation.Create;
   FLastText := true;
 End;
 
@@ -1392,13 +1386,12 @@ begin
   begin
     if CharInSet(s[i], [#10, #13]) then
     begin
-      inc(result.line);
-      result.col := 1;
+      result.incLine;
       if (i < length(s)) and (s[i+1] <> s[i]) and CharInSet(s[i+1], [#10, #13]) then
         inc(i);
     end
     else
-      inc(result.col);
+      result.incCol;
     inc(i);
   end;
 End;
@@ -2740,8 +2733,7 @@ End;
 
 function TMXmlBuilder.SourceLocation: TSourceLocation;
 begin
-  result.line := 0;
-  result.col := 0;
+  result := TSourceLocation.Create;
 end;
 
 procedure TMXmlBuilder.Start(oNode : TMXmlElement);
@@ -2755,8 +2747,7 @@ begin
   End
   else
     FStack.Add(oNode.Link);
-  FSourceLocation.line := 0;
-  FSourceLocation.col := 0;
+  FSourceLocation := TSourceLocation.Create
 end;
 
 procedure TMXmlBuilder.Build(oStream: TFslStream);
@@ -2822,8 +2813,7 @@ begin
       oElem.attributes.addAll(FAttributes);
     FAttributes.Clear;
     FStack.Add(oElem.Link);
-    result.line := FSourceLocation.line;
-    result.col := FSourceLocation.col;
+    result := FSourceLocation;
   finally
     oElem.Free;
   end;
@@ -2863,8 +2853,7 @@ end;
 function TMXmlBuilder.Text(const sValue: String) : TSourceLocation;
 begin
   FStack.Last.addChild(TMXmlElement.createText(ReadTextLengthWithEscapes('', sValue, '')), true);
-  result.line := FSourceLocation.line;
-  result.col := FSourceLocation.col;
+  result := FSourceLocation;
 end;
 
 
@@ -2872,16 +2861,14 @@ function TMXmlBuilder.Entity(const sValue: String) : TSourceLocation;
 begin
   FStack.Last.addChild(TMXmlElement.createText('&'+sValue+';'), true);
   inc(FSourceLocation.col, length(sValue)+2);
-  result.line := FSourceLocation.line;
-  result.col := FSourceLocation.col;
+  result := FSourceLocation;
 end;
 
 function TMXmlBuilder.Tag(const sName: String) : TSourceLocation;
 begin
   Open(sName);
   Close(sName);
-  result.line := FSourceLocation.line;
-  result.col := FSourceLocation.col;
+  result := FSourceLocation;
 end;
 
 function TMXmlBuilder.TagText(const sName, sValue: String) : TSourceLocation;
@@ -2916,13 +2903,12 @@ begin
   begin
     if CharInSet(s[i], [#10, #13]) then
     begin
-      inc(FSourceLocation.line);
-      FSourceLocation.col := 0;
+      FSourceLocation.incLine;
       if (i < length(s)) and (s[i+1] <> s[i]) and CharInSet(s[i+1], [#10, #13]) then
         inc(i);
     end
     else
-      inc(FSourceLocation.col);
+      FSourceLocation.incCol;
     inc(i);
   end;
   result := s;

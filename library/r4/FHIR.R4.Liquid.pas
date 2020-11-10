@@ -527,8 +527,7 @@ begin
   inherited Create;
   self.source := source;
   cursor := 1;
-  FCurrent.line := 1;
-  FCurrent.col := 1;
+  FCurrent := TSourceLocation.Create;
 end;
 
 function TFHIRLiquidParser.grab: char;
@@ -536,12 +535,9 @@ begin
   inc(cursor);
   result := source[cursor-1];
   if result = #10 then
-  begin
-    inc(FCurrent.Line);
-    FCurrent.Col := 1;
-  end
+    FCurrent.incLine
   else if result <> #13 then
-    inc(FCurrent.Col);
+    FCurrent.incCol;
 end;
 
 function TFHIRLiquidParser.next1: char;
@@ -611,7 +607,7 @@ begin
         else if (cnt.Trim= 'comment') then
           list.add(parseComment(cnt.substring(7).trim()))
         else
-          raise EParserException.create(sourceName+': Unknown flow control statement '+cnt, FLast.line, FLast.col);
+          raise FLast.exception('Unknown flow control statement '+cnt+' in '+FSourceName);
       end
       else // next2() == '{'
       begin
@@ -660,7 +656,7 @@ begin
   while (i <= cnt.length) and (not cnt[i].isWhitespace) do
     inc(i);
   if (i > cnt.Length) or (i = 0) then
-    raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+    raise FLast.exception('Error reading include: '+cnt+' in '+sourceName);
   res := TFHIRLiquidInclude.create();
   try
     res.page := cnt.substring(0, i-1);
@@ -672,10 +668,10 @@ begin
       while (i <= cnt.length) and (cnt[i] <> '=') do
         inc(i);
       if (i > cnt.Length) or (j = i) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+        raise FLast.exception('Error reading include: '+cnt+' in '+sourceName);
       n := cnt.substring(j-1, i-j);
       if (res.params.ContainsKey(n)) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+        raise FLast.exception('Error reading include: '+cnt+' in '+sourceName);
       inc(i);
       res.params.AddOrSetValue(n, fpe.parse(cnt, i));
       while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -706,7 +702,7 @@ begin
       inc(i);
     s := cnt.substring(j-1, i-j);
     if ('in' <> s) then
-      raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast.line, FLast.col);
+      raise FLast.exception('Error reading loop: '+cnt+' in '+sourceName);
     res.condition := cnt.substring(i).trim();
     res.FCompiled := fpe.parse(res.condition);
     parseList(res.body, ['endloop']);
@@ -728,7 +724,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
     if not ((next1() = '}') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent.line, FCurrent.col);
+      raise FLast.exception('Unterminated Liquid statement {{ '+b.ToString()+' in '+sourceName);
     grab();
     grab();
     res := TFHIRLiquidStatement.create();
@@ -756,7 +752,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
     if not ((next1() = '%') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent.line, FCurrent.col);
+      raise FLast.exception('Unterminated Liquid statement {% '+b.ToString()+' in '+sourceName);
     grab();
     grab();
     result := b.ToString().trim();

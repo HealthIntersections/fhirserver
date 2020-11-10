@@ -335,7 +335,7 @@ end;
 
 function TFHIRPathExpressionNode.location: String;
 begin
-  result := inttostr(SourceLocationStart.line)+', '+inttostr(SourceLocationStart.col);
+  result := SourceLocationStart.describe;
 end;
 
 function TFHIRPathExpressionNode.nodeChildCount: integer;
@@ -401,7 +401,7 @@ end;
 
 function TFHIRPathExpressionNode.opLocation: String;
 begin
-  result := inttostr(OpSourceLocationStart.line)+', '+inttostr(OpSourceLocationStart.col);
+  result := OpSourceLocationStart.describe;
 end;
 
 function TFHIRPathExpressionNode.ParameterCount: integer;
@@ -486,15 +486,15 @@ var
 begin
   b := TStringBuilder.create();
   try
-		case kind of
-		enkName:
+    case kind of
+    enkName:
       begin
         if isToken(name) then
           b.append(name)
         else
           b.append('"'+name+'"');
       end;
-		enkFunction:
+    enkFunction:
       begin
         if (FunctionId = pfItem) then
           b.append('[')
@@ -517,35 +517,35 @@ begin
         else
           b.append(')');
       end;
-		enkConstant:
+    enkConstant:
       b.append(presentConstant);
-		enkGroup:
+    enkGroup:
       begin
         if group.ToString.Trim = '- 1' then // hack special case becuse of how negation works
           b.Append('-1')
         else
         begin
-    			b.append('(');
-	    		b.append(group.toString());
-		    	b.append(')');
+          b.append('(');
+          b.append(group.toString());
+          b.append(')');
         end;
-		  end;
+      end;
     end;
 
-		if (inner <> nil) then
+    if (inner <> nil) then
     begin
-			b.append('.');
-			b.append(inner.toString());
-		end;
-		if (operation <> popNull) then
+      b.append('.');
+      b.append(inner.toString());
+    end;
+    if (operation <> popNull) then
     begin
-			b.append(' ');
-			b.append(CODES_TFHIRPathOperation[operation]);
-			b.append(' ');
-			b.append(opNext.toString());
-		end;
+      b.append(' ');
+      b.append(CODES_TFHIRPathOperation[operation]);
+      b.append(' ');
+      b.append(opNext.toString());
+    end;
 
-		result := b.toString();
+    result := b.toString();
   finally
     b.free;
   end;

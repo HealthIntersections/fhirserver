@@ -142,8 +142,8 @@ type
     function GetCanBeSaved: boolean; virtual; abstract;
 
     function StartValidating : QWord;
-    procedure validationError(line, char : integer; msg: String);
-    procedure validationWarning(line, char : integer; msg: String);
+    procedure validationError(loc : TSourceLocation; msg: String);
+    procedure validationWarning(loc : TSourceLocation; msg: String);
     procedure finishValidating(validating : boolean; start : QWord);
   public
     constructor create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); virtual;
@@ -360,7 +360,7 @@ end;
 
 function TToolkitMessage.summary: String;
 begin
-  result := CODES_TToolkitMessageLevel[level]+ ' at '+editor.session.caption+' Line '+ inttostr(Location.line)+': '+Content;
+  result := CODES_TToolkitMessageLevel[level]+ ' at '+editor.session.caption+' Line '+ inttostr(Location.lineForHuman)+': '+Content;
 end;
 
 { TToolkitMessagesView }
@@ -479,21 +479,13 @@ begin
   result := GetTickCount64;
 end;
 
-procedure TToolkitEditor.validationError(line, char: integer; msg: String);
-var
-  loc : TSourceLocation;
+procedure TToolkitEditor.validationError(loc : TSourceLocation; msg: String);
 begin
-  loc.col := char;
-  loc.line := line;
   FValidationIssues.add(TToolkitMessage.create(self, loc, msgError, msg));
 end;
 
-procedure TToolkitEditor.validationWarning(line, char: integer; msg: String);
-var
-  loc : TSourceLocation;
+procedure TToolkitEditor.validationWarning(loc : TSourceLocation; msg: String);
 begin
-  loc.col := char;
-  loc.line := line;
   FValidationIssues.add(TToolkitMessage.create(self, loc, msgWarning, msg));
 end;
 
@@ -674,6 +666,7 @@ begin
     editor.loseFocus();
     FFocus := nil;
   end;
+  FMessageView.removeMessagesForEditor(editor);
   FEditorSessions.remove(editor.Session.link);
   FEditors.remove(editor);
 end;

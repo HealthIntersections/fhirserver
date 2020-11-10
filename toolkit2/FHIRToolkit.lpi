@@ -287,11 +287,6 @@
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>
@@ -307,6 +302,9 @@
       </Item>
       <Item>
         <Name Value="EParserException"/>
+      </Item>
+      <Item>
+        <Name Value="EJsonParserException"/>
       </Item>
     </Exceptions>
   </Debugging>

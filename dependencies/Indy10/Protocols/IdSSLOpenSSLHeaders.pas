@@ -237,21 +237,21 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 }
 
 // # Our development configs
-// "purify",	"purify gcc:-g -DPURIFY -Wall::(unknown)::-lsocket -lnsl::::",
-// "debug",	"gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DOPENSSL_NO_ASM -ggdb -g2 -Wformat -Wshadow -Wmissing-prototypes -Wmissing-declarations -Werror::(unknown)::-lefence::::",
-// "debug-ben",	"gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown):::::bn86-elf.o co86-elf.o",
+// "purify",  "purify gcc:-g -DPURIFY -Wall::(unknown)::-lsocket -lnsl::::",
+// "debug",  "gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DOPENSSL_NO_ASM -ggdb -g2 -Wformat -Wshadow -Wmissing-prototypes -Wmissing-declarations -Werror::(unknown)::-lefence::::",
+// "debug-ben",  "gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown):::::bn86-elf.o co86-elf.o",
 // "debug-ben-openbsd","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -DOPENSSL_OPENBSD_DEV_CRYPTO -DOPENSSL_NO_ASM -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown)::::",
 // "debug-ben-openbsd-debug","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -DOPENSSL_OPENBSD_DEV_CRYPTO -DOPENSSL_NO_ASM -g3 -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown)::::",
-// "debug-ben-debug",	"gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -g3 -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown)::::::",
-// "debug-ben-strict",	"gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DCONST_STRICT -O2 -Wall -Wshadow -Werror -Wpointer-arith -Wcast-qual -Wwrite-strings -pipe::(unknown)::::::",
+// "debug-ben-debug",  "gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DPEDANTIC -DDEBUG_SAFESTACK -g3 -O2 -pedantic -Wall -Wshadow -Werror -pipe::(unknown)::::::",
+// "debug-ben-strict",  "gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DCONST_STRICT -O2 -Wall -Wshadow -Werror -Wpointer-arith -Wcast-qual -Wwrite-strings -pipe::(unknown)::::::",
 // "debug-rse","cc:-DTERMIOS -DL_ENDIAN -pipe -O -g -ggdb3 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}",
-// "debug-bodo",	"gcc:-DL_ENDIAN -DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBIO_PAIR_DEBUG -DPEDANTIC -g -march=i486 -pedantic -Wshadow -Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wno-long-long -Wundef -Wconversion -pipe::-D_REENTRANT:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}",
+// "debug-bodo",  "gcc:-DL_ENDIAN -DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBIO_PAIR_DEBUG -DPEDANTIC -g -march=i486 -pedantic -Wshadow -Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wno-long-long -Wundef -Wconversion -pipe::-D_REENTRANT:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}",
 // "debug-ulf", "gcc:-DTERMIOS -DL_ENDIAN -march=i486 -Wall -DBN_DEBUG -DBN_DEBUG_RAND -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DOPENSSL_NO_ASM -g -Wformat -Wshadow -Wmissing-prototypes -Wmissing-declarations:::CYGWIN32:::${no_asm}:win32:cygwin-shared:::.dll",
 // "debug-steve64", "gcc:-m64 -DL_ENDIAN -DTERMIO -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -DOPENSSL_NO_DEPRECATED -g -pedantic -Wall -Werror -Wno-long-long -Wsign-compare -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "debug-steve32", "gcc:-m32 -DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -DOPENSSL_NO_DEPRECATED -g -pedantic -Wno-long-long -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC:-m32:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "debug-steve",	"gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -m32 -g -pedantic -Wno-long-long -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared",
-// "debug-steve-opt",	"gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -m32 -O3 -g -pedantic -Wno-long-long -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared",
-// "debug-steve-linux-pseudo64",	"gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DOPENSSL_NO_ASM -g -mcpu=i486 -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:SIXTY_FOUR_BIT:${no_asm}:dlfcn:linux-shared",
+// "debug-steve",  "gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -m32 -g -pedantic -Wno-long-long -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared",
+// "debug-steve-opt",  "gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DPEDANTIC -m32 -O3 -g -pedantic -Wno-long-long -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared",
+// "debug-steve-linux-pseudo64",  "gcc:-DL_ENDIAN -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DDEBUG_SAFESTACK -DCRYPTO_MDEBUG_ALL -DOPENSSL_NO_ASM -g -mcpu=i486 -Wall -Werror -Wshadow -pipe::-D_REENTRANT::-rdynamic -ldl:SIXTY_FOUR_BIT:${no_asm}:dlfcn:linux-shared",
 // "debug-levitte-linux-elf","gcc:-DLEVITTE_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_DEBUG -DBN_DEBUG_RAND -DCRYPTO_MDEBUG -DENGINE_CONF_DEBUG -DL_ENDIAN -DTERMIO -D_POSIX_SOURCE -DPEDANTIC -ggdb -g3 -mcpu=i486 -pedantic -ansi -Wall -Wshadow -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wno-long-long -Wundef -Wconversion -pipe::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "debug-levitte-linux-noasm","gcc:-DLEVITTE_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_DEBUG -DBN_DEBUG_RAND -DCRYPTO_MDEBUG -DENGINE_CONF_DEBUG -DOPENSSL_NO_ASM -DL_ENDIAN -DTERMIO -D_POSIX_SOURCE -DPEDANTIC -ggdb -g3 -mcpu=i486 -pedantic -ansi -Wall -Wshadow -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wno-long-long -Wundef -Wconversion -pipe::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "debug-levitte-linux-elf-extreme","gcc:-DLEVITTE_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_DEBUG -DBN_DEBUG_RAND -DCRYPTO_MDEBUG -DENGINE_CONF_DEBUG -DL_ENDIAN -DTERMIO -D_POSIX_SOURCE -DPEDANTIC -ggdb -g3 -mcpu=i486 -pedantic -ansi -Wall -W -Wundef -Wshadow -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wno-long-long -Wundef -Wconversion -pipe::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
@@ -261,11 +261,11 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // "debug-linux-ppro","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG -DL_ENDIAN -DTERMIO -g -mcpu=pentiumpro -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn",
 // "debug-linux-elf","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG -DL_ENDIAN -DTERMIO -g -march=i486 -Wall::-D_REENTRANT::-lefence -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "debug-linux-elf-noefence","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG -DL_ENDIAN -DTERMIO -g -march=i486 -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "dist",		"cc:-O::(unknown)::::::",
+// "dist",    "cc:-O::(unknown)::::::",
 
 // # Basic configs that should work on any (32 and less bit) box
-// "gcc",		"gcc:-O3::(unknown):::BN_LLONG:::",
-// "cc",		"cc:-O::(unknown)::::::",
+// "gcc",    "gcc:-O3::(unknown):::BN_LLONG:::",
+// "cc",    "cc:-O::(unknown)::::::",
 
 // ####VOS Configurations
 // "vos-gcc","gcc:-O3 -Wall -D_POSIX_C_SOURCE=200112L -D_BSD -DB_ENDIAN::(unknown):VOS:-Wl,-map:BN_LLONG:${no_asm}:::::.so:",
@@ -285,7 +285,7 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // # that gcc generates faster code [thanks to inline assembler], I would
 // # actually recommend to consider using gcc shared build even with vendor
 // # compiler:-)
-// #						<appro@fy.chalmers.se>
+// #            <appro@fy.chalmers.se>
 // "solaris64-x86_64-gcc","gcc:-m64 -O3 -Wall -DL_ENDIAN -DMD32_REG_T=int::-D_REENTRANT::-lsocket -lnsl -ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:solaris-shared:-fPIC:-m64 -shared -static-libgcc:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 //
 // #### Solaris x86 with Sun C setups
@@ -357,7 +357,7 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // #   doesn't seem to "digest" too many local variables (they make "him"
 // #   chew forever:-). For more details look-up MD32_XARRAY comment in
 // #   crypto/sha/sha_lcl.h.
-// #					<appro@fy.chalmers.se>
+// #          <appro@fy.chalmers.se>
 // #
 // # Since there is mention of this in shlib/hpux10-cc.sh
 // "hpux-parisc-cc-o4","cc:-Ae +O4 +ESlit -z -DB_ENDIAN -DBN_DIV2W -DMD32_XARRAY::-D_REENTRANT::-ldld:BN_LLONG DES_PTR DES_UNROLL DES_RISC1:${no_asm}:dl:hpux-shared:+Z:-b:.sl.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
@@ -384,16 +384,16 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // "hpux64-ia64-gcc","gcc:-mlp64 -O3 -DB_ENDIAN -D_REENTRANT::::-ldl:SIXTY_FOUR_BIT_LONG MD2_CHAR RC4_INDEX DES_UNROLL DES_RISC1 DES_INT:${ia64_asm}:dlfcn:hpux-shared:-fpic:-mlp64 -shared:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 
 // # Legacy HPUX 9.X configs...
-// "hpux-cc",	"cc:-DB_ENDIAN -DBN_DIV2W -DMD32_XARRAY -Ae +ESlit +O2 -z::(unknown)::-Wl,+s -ldld:DES_PTR DES_UNROLL DES_RISC1:${no_asm}:dl:hpux-shared:+Z:-b:.sl.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "hpux-gcc",	"gcc:-DB_ENDIAN -DBN_DIV2W -O3::(unknown)::-Wl,+s -ldld:DES_PTR DES_UNROLL DES_RISC1:${no_asm}:dl:hpux-shared:-fPIC:-shared:.sl.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "hpux-cc",  "cc:-DB_ENDIAN -DBN_DIV2W -DMD32_XARRAY -Ae +ESlit +O2 -z::(unknown)::-Wl,+s -ldld:DES_PTR DES_UNROLL DES_RISC1:${no_asm}:dl:hpux-shared:+Z:-b:.sl.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "hpux-gcc",  "gcc:-DB_ENDIAN -DBN_DIV2W -O3::(unknown)::-Wl,+s -ldld:DES_PTR DES_UNROLL DES_RISC1:${no_asm}:dl:hpux-shared:-fPIC:-shared:.sl.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 
 // #### HP MPE/iX http://jazz.external.hp.com/src/openssl/
-// "MPE/iX-gcc",	"gcc:-D_ENDIAN -DBN_DIV2W -O3 -D_POSIX_SOURCE -D_SOCKET_SOURCE -I/SYSLOG/PUB::(unknown):MPE:-L/SYSLOG/PUB -lsyslog -lsocket -lcurses:BN_LLONG DES_PTR DES_UNROLL DES_RISC1:::",
+// "MPE/iX-gcc",  "gcc:-D_ENDIAN -DBN_DIV2W -O3 -D_POSIX_SOURCE -D_SOCKET_SOURCE -I/SYSLOG/PUB::(unknown):MPE:-L/SYSLOG/PUB -lsyslog -lsocket -lcurses:BN_LLONG DES_PTR DES_UNROLL DES_RISC1:::",
 
 // # DEC Alpha OSF/1/Tru64 targets.
 // #
-// #	"What's in a name? That which we call a rose
-// #	 By any other word would smell as sweet."
+// #  "What's in a name? That which we call a rose
+// #   By any other word would smell as sweet."
 // #
 // # - William Shakespeare, "Romeo & Juliet", Act II, scene II.
 // #
@@ -409,18 +409,18 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // # *-generic* is endian-neutral target, but ./config is free to
 // # throw in -D[BL]_ENDIAN, whichever appropriate...
 // "linux-generic32","gcc:-DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-ppc",	"gcc:-DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc32.o::::::::::dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-ppc",  "gcc:-DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc32.o::::::::::dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // #### IA-32 targets...
-// "linux-ia32-icc",	"icc:-DL_ENDIAN -DTERMIO -O2 -no_cpprt::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-aout",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
+// "linux-ia32-icc",  "icc:-DL_ENDIAN -DTERMIO -O2 -no_cpprt::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-elf",  "gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-aout",  "gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
 // ####
 // "linux-generic64","gcc:-DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-ppc64",	"gcc:-m64 -DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc64.o::::::::::dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-ia64",	"gcc:-DL_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-ppc64",  "gcc:-m64 -DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc64.o::::::::::dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-ia64",  "gcc:-DL_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "linux-ia64-ecc","ecc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "linux-ia64-icc","icc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "linux-x86_64",	"gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "linux-x86_64",  "gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // #### SPARC Linux setups
 // # Ray Miller <ray.miller@computing-services.oxford.ac.uk> has patiently
 // # assisted with debugging of following two configs.
@@ -441,7 +441,7 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // #   choke. If you wish to build "blended" toolkit, add -arch generic
 // #   *after* -fast and invoke './Configure linux-alpha-ccc' manually.
 // #
-// #					<appro@fy.chalmers.se>
+// #          <appro@fy.chalmers.se>
 // #
 // "linux-alpha-gcc","gcc:-O3 -DL_ENDIAN -DTERMIO::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_RISC1 DES_UNROLL:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // "linux-alpha+bwx-gcc","gcc:-O3 -DL_ENDIAN -DTERMIO::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
@@ -450,30 +450,30 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 
 // #### *BSD [do see comment about ${BSDthreads} above!]
 // "BSD-generic32","gcc:-DTERMIOS -O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG RC2_CHAR RC4_INDEX DES_INT DES_UNROLL:${no_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "BSD-x86",	"gcc:-DL_ENDIAN -DTERMIOS -O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "BSD-x86-elf",	"gcc:-DL_ENDIAN -DTERMIOS -O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "debug-BSD-x86-elf",	"gcc:-DL_ENDIAN -DTERMIOS -O3 -Wall -g::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "BSD-sparcv8",	"gcc:-DB_ENDIAN -DTERMIOS -O3 -mv8 -Wall::${BSDthreads}:::BN_LLONG RC2_CHAR RC4_INDEX DES_INT DES_UNROLL::sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-x86",  "gcc:-DL_ENDIAN -DTERMIOS -O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-x86-elf",  "gcc:-DL_ENDIAN -DTERMIOS -O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "debug-BSD-x86-elf",  "gcc:-DL_ENDIAN -DTERMIOS -O3 -Wall -g::${BSDthreads}:::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:bsd-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-sparcv8",  "gcc:-DB_ENDIAN -DTERMIOS -O3 -mv8 -Wall::${BSDthreads}:::BN_LLONG RC2_CHAR RC4_INDEX DES_INT DES_UNROLL::sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 
 // "BSD-generic64","gcc:-DTERMIOS -O3 -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${no_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 // # -DMD32_REG_T=int doesn't actually belong in sparc64 target, it
 // # simply *happens* to work around a compiler bug in gcc 3.3.3,
 // # triggered by RIPEMD160 code.
-// "BSD-sparc64",	"gcc:-DB_ENDIAN -DTERMIOS -O3 -DMD32_REG_T=int -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC2_CHAR RC4_CHUNK DES_INT DES_PTR DES_RISC2 BF_PTR:::des_enc-sparc.o fcrypt_b.o:::::::::dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "BSD-ia64",	"gcc:-DL_ENDIAN -DTERMIOS -O3 -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-// "BSD-x86_64",	"gcc:-DL_ENDIAN -DTERMIOS -O3 -DMD32_REG_T=int -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-sparc64",  "gcc:-DB_ENDIAN -DTERMIOS -O3 -DMD32_REG_T=int -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC2_CHAR RC4_CHUNK DES_INT DES_PTR DES_RISC2 BF_PTR:::des_enc-sparc.o fcrypt_b.o:::::::::dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-ia64",  "gcc:-DL_ENDIAN -DTERMIOS -O3 -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+// "BSD-x86_64",  "gcc:-DL_ENDIAN -DTERMIOS -O3 -DMD32_REG_T=int -Wall::${BSDthreads}:::SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 
 // "bsdi-elf-gcc",     "gcc:-DPERL5 -DL_ENDIAN -fomit-frame-pointer -O3 -march=i486 -Wall::(unknown)::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 
-// "nextstep",	"cc:-O -Wall:<libc.h>:(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:::",
-// "nextstep3.3",	"cc:-O3 -Wall:<libc.h>:(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:::",
+// "nextstep",  "cc:-O -Wall:<libc.h>:(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:::",
+// "nextstep3.3",  "cc:-O3 -Wall:<libc.h>:(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:::",
 
 // # NCR MP-RAS UNIX ver 02.03.01
 // "ncr-scde","cc:-O6 -Xa -Hoff=BEHAVED -686 -Hwide -Hiw::(unknown)::-lsocket -lnsl -lc89:${x86_gcc_des} ${x86_gcc_opts}:::",
 
 // # QNX
-// "qnx4",	"cc:-DL_ENDIAN -DTERMIO::(unknown):::${x86_gcc_des} ${x86_gcc_opts}:",
-// "qnx6",	"cc:-DL_ENDIAN -DTERMIOS::(unknown)::-lsocket:${x86_gcc_des} ${x86_gcc_opts}:",
+// "qnx4",  "cc:-DL_ENDIAN -DTERMIO::(unknown):::${x86_gcc_des} ${x86_gcc_opts}:",
+// "qnx6",  "cc:-DL_ENDIAN -DTERMIOS::(unknown)::-lsocket:${x86_gcc_des} ${x86_gcc_opts}:",
 
 // #### SCO/Caldera targets.
 // #
@@ -531,9 +531,9 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // "cray-t3e", "cc: -DBIT_FIELD_LIMITS -DTERMIOS::(unknown):CRAY::SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT:::",
 
 // # DGUX, 88100.
-// "dgux-R3-gcc",	"gcc:-O3 -fomit-frame-pointer::(unknown):::RC4_INDEX DES_UNROLL:::",
-// "dgux-R4-gcc",	"gcc:-O3 -fomit-frame-pointer::(unknown)::-lnsl -lsocket:RC4_INDEX DES_UNROLL:::",
-// "dgux-R4-x86-gcc",	"gcc:-O3 -fomit-frame-pointer -DL_ENDIAN::(unknown)::-lnsl -lsocket:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}",
+// "dgux-R3-gcc",  "gcc:-O3 -fomit-frame-pointer::(unknown):::RC4_INDEX DES_UNROLL:::",
+// "dgux-R4-gcc",  "gcc:-O3 -fomit-frame-pointer::(unknown)::-lnsl -lsocket:RC4_INDEX DES_UNROLL:::",
+// "dgux-R4-x86-gcc",  "gcc:-O3 -fomit-frame-pointer -DL_ENDIAN::(unknown)::-lnsl -lsocket:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}",
 
 // # Sinix/ReliantUNIX RM400
 // # NOTE: The CDS++ Compiler up to V2.0Bsomething has the IRIX_CC_BUG optimizer problem. Better use -g  */
@@ -798,16 +798,16 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 // include the OpenSSL header files
 (*$HPPEMIT 'namespace Idsslopensslheaders'*)
 (*$HPPEMIT '{'*)
-(*$HPPEMIT '	struct SSL;'*)
-(*$HPPEMIT '	typedef SSL* PSSL;'*)
-(*$HPPEMIT '	struct SSL_CTX;'*)
-(*$HPPEMIT '	typedef SSL_CTX* PSSL_CTX;'*)
-(*$HPPEMIT '	struct SSL_METHOD;'*)
-(*$HPPEMIT '	typedef SSL_METHOD* PSSL_METHOD;'*)
-(*$HPPEMIT '	struct X509;'*)
-(*$HPPEMIT '	typedef X509* PX509;'*)
-(*$HPPEMIT '	struct X509_NAME;'*)
-(*$HPPEMIT '	typedef X509_NAME* PX509_NAME;'*)
+(*$HPPEMIT '  struct SSL;'*)
+(*$HPPEMIT '  typedef SSL* PSSL;'*)
+(*$HPPEMIT '  struct SSL_CTX;'*)
+(*$HPPEMIT '  typedef SSL_CTX* PSSL_CTX;'*)
+(*$HPPEMIT '  struct SSL_METHOD;'*)
+(*$HPPEMIT '  typedef SSL_METHOD* PSSL_METHOD;'*)
+(*$HPPEMIT '  struct X509;'*)
+(*$HPPEMIT '  typedef X509* PX509;'*)
+(*$HPPEMIT '  struct X509_NAME;'*)
+(*$HPPEMIT '  typedef X509_NAME* PX509_NAME;'*)
 (*$HPPEMIT '}'*)
 // RLebeau: why are the following types not being placed in
 // the Idsslopensslheaders namespace with the types above?
@@ -1350,7 +1350,7 @@ const
   {$EXTERNALSYM ASN1_R_BMPSTRING_IS_WRONG_LENGTH}
   ASN1_R_BMPSTRING_IS_WRONG_LENGTH = 210;
   {$EXTERNALSYM ASN1_R_BN_LIB}
-  ASN1_R_BN_LIB	= 105;
+  ASN1_R_BN_LIB  = 105;
   {$EXTERNALSYM ASN1_R_BOOLEAN_IS_WRONG_LENGTH}
   ASN1_R_BOOLEAN_IS_WRONG_LENGTH = 106;
   {$EXTERNALSYM ASN1_R_BUFFER_TOO_SMALL}
@@ -1360,15 +1360,15 @@ const
   {$EXTERNALSYM ASN1_R_DATA_IS_WRONG}
   ASN1_R_DATA_IS_WRONG = 109;
   {$EXTERNALSYM ASN1_R_DECODE_ERROR}
-  ASN1_R_DECODE_ERROR	= 110;
+  ASN1_R_DECODE_ERROR  = 110;
   {$EXTERNALSYM ASN1_R_DECODING_ERROR}
   ASN1_R_DECODING_ERROR = 111;
   {$EXTERNALSYM ASN1_R_DEPTH_EXCEEDED}
-  ASN1_R_DEPTH_EXCEEDED	= 174;
+  ASN1_R_DEPTH_EXCEEDED  = 174;
   {$EXTERNALSYM ASN1_R_ENCODE_ERROR}
   ASN1_R_ENCODE_ERROR = 112;
   {$EXTERNALSYM ASN1_R_ERROR_GETTING_TIME}
-  ASN1_R_ERROR_GETTING_TIME	= 173;
+  ASN1_R_ERROR_GETTING_TIME  = 173;
   {$EXTERNALSYM ASN1_R_ERROR_LOADING_SECTION}
   ASN1_R_ERROR_LOADING_SECTION = 172;
   {$EXTERNALSYM ASN1_R_ERROR_PARSING_SET_ELEMENT}
@@ -1382,11 +1382,11 @@ const
   {$EXTERNALSYM ASN1_R_EXPECTING_A_BOOLEAN}
   ASN1_R_EXPECTING_A_BOOLEAN = 117;
   {$EXTERNALSYM ASN1_R_EXPECTING_A_TIME}
-  ASN1_R_EXPECTING_A_TIME	= 118;
+  ASN1_R_EXPECTING_A_TIME  = 118;
   {$EXTERNALSYM ASN1_R_EXPLICIT_LENGTH_MISMATCH}
   ASN1_R_EXPLICIT_LENGTH_MISMATCH = 119;
   {$EXTERNALSYM ASN1_R_EXPLICIT_TAG_NOT_CONSTRUCTED}
-  ASN1_R_EXPLICIT_TAG_NOT_CONSTRUCTED	= 120;
+  ASN1_R_EXPLICIT_TAG_NOT_CONSTRUCTED  = 120;
   {$EXTERNALSYM ASN1_R_FIELD_MISSING}
   ASN1_R_FIELD_MISSING = 121;
   {$EXTERNALSYM ASN1_R_FIRST_NUM_TOO_LARGE}
@@ -1408,11 +1408,11 @@ const
   {$EXTERNALSYM ASN1_R_ILLEGAL_INTEGER}
   ASN1_R_ILLEGAL_INTEGER = 180;
   {$EXTERNALSYM ASN1_R_ILLEGAL_NESTED_TAGGING}
-  ASN1_R_ILLEGAL_NESTED_TAGGING	= 181;
+  ASN1_R_ILLEGAL_NESTED_TAGGING  = 181;
   {$EXTERNALSYM ASN1_R_ILLEGAL_NULL}
   ASN1_R_ILLEGAL_NULL = 125;
   {$EXTERNALSYM ASN1_R_ILLEGAL_NULL_VALUE}
-  ASN1_R_ILLEGAL_NULL_VALUE	= 182;
+  ASN1_R_ILLEGAL_NULL_VALUE  = 182;
   {$EXTERNALSYM ASN1_R_ILLEGAL_OBJECT}
   ASN1_R_ILLEGAL_OBJECT = 183;
   {$EXTERNALSYM ASN1_R_ILLEGAL_OPTIONAL_ANY}
@@ -1445,21 +1445,21 @@ const
   {$EXTERNALSYM ASN1_R_INVALID_TIME_FORMAT}
   ASN1_R_INVALID_TIME_FORMAT = 132;
   {$EXTERNALSYM ASN1_R_INVALID_UNIVERSALSTRING_LENGTH}
-  ASN1_R_INVALID_UNIVERSALSTRING_LENGTH	= 133;
+  ASN1_R_INVALID_UNIVERSALSTRING_LENGTH  = 133;
   {$EXTERNALSYM ASN1_R_INVALID_UTF8STRING}
-  ASN1_R_INVALID_UTF8STRING	= 134;
+  ASN1_R_INVALID_UTF8STRING  = 134;
   {$EXTERNALSYM ASN1_R_IV_TOO_LARGE}
-  ASN1_R_IV_TOO_LARGE	= 135;
+  ASN1_R_IV_TOO_LARGE  = 135;
   {$EXTERNALSYM ASN1_R_LENGTH_ERROR}
-  ASN1_R_LENGTH_ERROR	= 136;
+  ASN1_R_LENGTH_ERROR  = 136;
   {$EXTERNALSYM ASN1_R_LIST_ERROR}
-  ASN1_R_LIST_ERROR	= 188;
+  ASN1_R_LIST_ERROR  = 188;
   {$EXTERNALSYM ASN1_R_MIME_NO_CONTENT_TYPE}
-  ASN1_R_MIME_NO_CONTENT_TYPE	= 201;
+  ASN1_R_MIME_NO_CONTENT_TYPE  = 201;
   {$EXTERNALSYM ASN1_R_MIME_PARSE_ERROR}
-  ASN1_R_MIME_PARSE_ERROR	= 202;
+  ASN1_R_MIME_PARSE_ERROR  = 202;
   {$EXTERNALSYM ASN1_R_MIME_SIG_PARSE_ERROR}
-  ASN1_R_MIME_SIG_PARSE_ERROR	= 203;
+  ASN1_R_MIME_SIG_PARSE_ERROR  = 203;
   {$EXTERNALSYM ASN1_R_MISSING_EOC}
   ASN1_R_MISSING_EOC = 137;
   {$EXTERNALSYM ASN1_R_MISSING_SECOND_NUMBER}
@@ -1471,11 +1471,11 @@ const
   {$EXTERNALSYM ASN1_R_MSTRING_WRONG_TAG}
   ASN1_R_MSTRING_WRONG_TAG = 140;
   {$EXTERNALSYM ASN1_R_NESTED_ASN1_STRING}
-  ASN1_R_NESTED_ASN1_STRING	= 197;
+  ASN1_R_NESTED_ASN1_STRING  = 197;
   {$EXTERNALSYM ASN1_R_NON_HEX_CHARACTERS}
   ASN1_R_NON_HEX_CHARACTERS = 141;
   {$EXTERNALSYM ASN1_R_NOT_ASCII_FORMAT}
-  ASN1_R_NOT_ASCII_FORMAT	= 190;
+  ASN1_R_NOT_ASCII_FORMAT  = 190;
   {$EXTERNALSYM ASN1_R_NOT_ENOUGH_DATA}
   ASN1_R_NOT_ENOUGH_DATA = 142;
   {$EXTERNALSYM ASN1_R_NO_CONTENT_TYPE}
@@ -1489,7 +1489,7 @@ const
   {$EXTERNALSYM ASN1_R_NO_SIG_CONTENT_TYPE}
   ASN1_R_NO_SIG_CONTENT_TYPE = 207;
   {$EXTERNALSYM ASN1_R_NULL_IS_WRONG_LENGTH}
-  ASN1_R_NULL_IS_WRONG_LENGTH	= 144;
+  ASN1_R_NULL_IS_WRONG_LENGTH  = 144;
   {$EXTERNALSYM ASN1_R_OBJECT_NOT_ASCII_FORMAT}
   ASN1_R_OBJECT_NOT_ASCII_FORMAT = 191;
   {$EXTERNALSYM ASN1_R_ODD_NUMBER_OF_CHARS}
@@ -1501,7 +1501,7 @@ const
   {$EXTERNALSYM ASN1_R_SEQUENCE_LENGTH_MISMATCH}
   ASN1_R_SEQUENCE_LENGTH_MISMATCH = 148;
   {$EXTERNALSYM ASN1_R_SEQUENCE_NOT_CONSTRUCTED}
-  ASN1_R_SEQUENCE_NOT_CONSTRUCTED	= 149;
+  ASN1_R_SEQUENCE_NOT_CONSTRUCTED  = 149;
   {$EXTERNALSYM ASN1_R_SEQUENCE_OR_SET_NEEDS_CONFIG}
   ASN1_R_SEQUENCE_OR_SET_NEEDS_CONFIG = 192;
   {$EXTERNALSYM ASN1_R_SHORT_LINE}
@@ -1513,9 +1513,9 @@ const
   {$EXTERNALSYM ASN1_R_STRING_TOO_LONG}
   ASN1_R_STRING_TOO_LONG = 151;
   {$EXTERNALSYM ASN1_R_STRING_TOO_SHORT}
-  ASN1_R_STRING_TOO_SHORT	= 152;
+  ASN1_R_STRING_TOO_SHORT  = 152;
   {$EXTERNALSYM ASN1_R_TAG_VALUE_TOO_HIGH}
-  ASN1_R_TAG_VALUE_TOO_HIGH	= 153;
+  ASN1_R_TAG_VALUE_TOO_HIGH  = 153;
   {$EXTERNALSYM ASN1_R_THE_ASN1_OBJECT_IDENTIFIER_IS_NOT_KNOWN_FOR_THIS_MD}
   ASN1_R_THE_ASN1_OBJECT_IDENTIFIER_IS_NOT_KNOWN_FOR_THIS_MD = 154;
   {$EXTERNALSYM ASN1_R_TIME_NOT_ASCII_FORMAT}
@@ -1523,19 +1523,19 @@ const
   {$EXTERNALSYM ASN1_R_TOO_LONG}
   ASN1_R_TOO_LONG = 155;
   {$EXTERNALSYM ASN1_R_TYPE_NOT_CONSTRUCTED}
-  ASN1_R_TYPE_NOT_CONSTRUCTED	= 156;
+  ASN1_R_TYPE_NOT_CONSTRUCTED  = 156;
   {$EXTERNALSYM ASN1_R_UNABLE_TO_DECODE_RSA_KEY}
-  ASN1_R_UNABLE_TO_DECODE_RSA_KEY	= 157;
+  ASN1_R_UNABLE_TO_DECODE_RSA_KEY  = 157;
   {$EXTERNALSYM ASN1_R_UNABLE_TO_DECODE_RSA_PRIVATE_KEY}
-  ASN1_R_UNABLE_TO_DECODE_RSA_PRIVATE_KEY	= 158;
+  ASN1_R_UNABLE_TO_DECODE_RSA_PRIVATE_KEY  = 158;
   {$EXTERNALSYM ASN1_R_UNEXPECTED_EOC}
-  ASN1_R_UNEXPECTED_EOC	= 159;
+  ASN1_R_UNEXPECTED_EOC  = 159;
   {$EXTERNALSYM ASN1_R_UNIVERSALSTRING_IS_WRONG_LENGTH}
   ASN1_R_UNIVERSALSTRING_IS_WRONG_LENGTH = 211;
   {$EXTERNALSYM ASN1_R_UNKNOWN_FORMAT}
-  ASN1_R_UNKNOWN_FORMAT	= 160;
+  ASN1_R_UNKNOWN_FORMAT  = 160;
   {$EXTERNALSYM ASN1_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM}
-  ASN1_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM	= 161;
+  ASN1_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM  = 161;
   {$EXTERNALSYM ASN1_R_UNKNOWN_OBJECT_TYPE}
   ASN1_R_UNKNOWN_OBJECT_TYPE = 162;
   {$EXTERNALSYM ASN1_R_UNKNOWN_PUBLIC_KEY_TYPE}
@@ -1691,8 +1691,8 @@ const
   BIO_CTRL_DGRAM_CONNECT = 31;  //* BIO dgram special */
   {$EXTERNALSYM BIO_CTRL_DGRAM_SET_CONNECTED}
   BIO_CTRL_DGRAM_SET_CONNECTED = 32;  //* allow for an externally
-					                            //* connected socket to be
-					                           //* passed in */
+                                      //* connected socket to be
+                                     //* passed in */
   {$EXTERNALSYM BIO_CTRL_DGRAM_SET_RECV_TIMEOUT}
   BIO_CTRL_DGRAM_SET_RECV_TIMEOUT = 33; //* setsockopt, essentially */
   {$EXTERNALSYM BIO_CTRL_DGRAM_GET_RECV_TIMEOUT}
@@ -1719,15 +1719,15 @@ const
   BIO_CTRL_DGRAM_GET_MTU      = 41; //* get cached value for MTU */
   {$EXTERNALSYM BIO_CTRL_DGRAM_SET_MTU}
   BIO_CTRL_DGRAM_SET_MTU      = 42; //* set cached value for
-					                          // * MTU. want to use this
-				                            // * if asking the kernel
-					                         // * fails */
+                                    // * MTU. want to use this
+                                    // * if asking the kernel
+                                   // * fails */
 
   {$EXTERNALSYM BIO_CTRL_DGRAM_MTU_EXCEEDED}
   BIO_CTRL_DGRAM_MTU_EXCEEDED  = 43; //* check whether the MTU
-					     // * was exceed in the
-					     // * previous write
-					     // * operation */
+               // * was exceed in the
+               // * previous write
+               // * operation */
   {$EXTERNALSYM BIO_CTRL_DGRAM_GET_PEER}
   BIO_CTRL_DGRAM_GET_PEER      = 46;
 
@@ -2173,49 +2173,49 @@ const
 
   //function codes
   {$EXTERNALSYM RAND_F_ENG_RAND_GET_RAND_METHOD}
-  RAND_F_ENG_RAND_GET_RAND_METHOD			= 108;
+  RAND_F_ENG_RAND_GET_RAND_METHOD      = 108;
   {$EXTERNALSYM RAND_F_FIPS_RAND}
-  RAND_F_FIPS_RAND				= 103;
+  RAND_F_FIPS_RAND        = 103;
   {$EXTERNALSYM RAND_F_FIPS_RAND_BYTES}
-  RAND_F_FIPS_RAND_BYTES				= 102;
+  RAND_F_FIPS_RAND_BYTES        = 102;
   {$EXTERNALSYM RAND_F_FIPS_RAND_GET_RAND_METHOD}
-  RAND_F_FIPS_RAND_GET_RAND_METHOD		= 109;
+  RAND_F_FIPS_RAND_GET_RAND_METHOD    = 109;
   {$EXTERNALSYM RAND_F_FIPS_RAND_SET_DT}
-  RAND_F_FIPS_RAND_SET_DT				= 106;
+  RAND_F_FIPS_RAND_SET_DT        = 106;
   {$EXTERNALSYM RAND_F_FIPS_SET_DT}
-  RAND_F_FIPS_SET_DT				 = 104;
+  RAND_F_FIPS_SET_DT         = 104;
   {$EXTERNALSYM RAND_F_FIPS_SET_PRNG_SEED}
-  RAND_F_FIPS_SET_PRNG_SEED			 = 107;
+  RAND_F_FIPS_SET_PRNG_SEED       = 107;
   {$EXTERNALSYM RAND_F_FIPS_SET_TEST_MODE}
-  RAND_F_FIPS_SET_TEST_MODE			 = 105;
+  RAND_F_FIPS_SET_TEST_MODE       = 105;
   {$EXTERNALSYM RAND_F_RAND_GET_RAND_METHOD}
-  RAND_F_RAND_GET_RAND_METHOD			= 101;
+  RAND_F_RAND_GET_RAND_METHOD      = 101;
   {$EXTERNALSYM RAND_F_SSLEAY_RAND_BYTES}
-  RAND_F_SSLEAY_RAND_BYTES			= 100;
+  RAND_F_SSLEAY_RAND_BYTES      = 100;
 
 //* Reason codes. */
   {$EXTERNALSYM RAND_R_NON_FIPS_METHOD}
-  RAND_R_NON_FIPS_METHOD			 = 105;
+  RAND_R_NON_FIPS_METHOD       = 105;
   {$EXTERNALSYM RAND_R_NOT_IN_TEST_MODE}
-  RAND_R_NOT_IN_TEST_MODE				 = 106;
+  RAND_R_NOT_IN_TEST_MODE         = 106;
   {$EXTERNALSYM RAND_R_NO_KEY_SET}
-  RAND_R_NO_KEY_SET				 = 107;
+  RAND_R_NO_KEY_SET         = 107;
   {$EXTERNALSYM RAND_R_PRNG_ASKING_FOR_TOO_MUCH}
-  RAND_R_PRNG_ASKING_FOR_TOO_MUCH			 = 101;
+  RAND_R_PRNG_ASKING_FOR_TOO_MUCH       = 101;
   {$EXTERNALSYM RAND_R_PRNG_ERROR}
-  RAND_R_PRNG_ERROR				= 108;
+  RAND_R_PRNG_ERROR        = 108;
   {$EXTERNALSYM RAND_R_PRNG_KEYED}
-  RAND_R_PRNG_KEYED				 = 109;
+  RAND_R_PRNG_KEYED         = 109;
   {$EXTERNALSYM RAND_R_PRNG_NOT_REKEYED}
-  RAND_R_PRNG_NOT_REKEYED				= 102;
+  RAND_R_PRNG_NOT_REKEYED        = 102;
   {$EXTERNALSYM RAND_R_PRNG_NOT_RESEEDED}
-  RAND_R_PRNG_NOT_RESEEDED			 = 103;
+  RAND_R_PRNG_NOT_RESEEDED       = 103;
   {$EXTERNALSYM RAND_R_PRNG_NOT_SEEDED}
-  RAND_R_PRNG_NOT_SEEDED				 = 100;
+  RAND_R_PRNG_NOT_SEEDED         = 100;
   {$EXTERNALSYM RAND_R_PRNG_SEED_MUST_NOT_MATCH_KEY}
-  RAND_R_PRNG_SEED_MUST_NOT_MATCH_KEY		 = 110;
+  RAND_R_PRNG_SEED_MUST_NOT_MATCH_KEY     = 110;
   {$EXTERNALSYM RAND_R_PRNG_STUCK}
-  RAND_R_PRNG_STUCK				 = 104;
+  RAND_R_PRNG_STUCK         = 104;
 
   {$EXTERNALSYM B_ASN1_BIT_STRING}
   B_ASN1_BIT_STRING = $0400;
@@ -2309,11 +2309,11 @@ const
   {$EXTERNALSYM MBSTRING_UNIV}
   MBSTRING_UNIV = MBSTRING_FLAG or 4;
   {$EXTERNALSYM SMIME_OLDMIME}
-  SMIME_OLDMIME	= $400;
+  SMIME_OLDMIME  = $400;
   {$EXTERNALSYM SMIME_CRLFEOL}
-  SMIME_CRLFEOL	=	$800;
+  SMIME_CRLFEOL  =  $800;
   {$EXTERNALSYM SMIME_STREAM}
-  SMIME_STREAM  =	$1000;
+  SMIME_STREAM  =  $1000;
 
   {$EXTERNALSYM _CLOCKS_PER_SEC_}
   _CLOCKS_PER_SEC_ = 1000;
@@ -2328,11 +2328,11 @@ const
   {$EXTERNALSYM COMP_F_BIO_ZLIB_FLUSH}
   COMP_F_BIO_ZLIB_FLUSH = 99;
   {$EXTERNALSYM COMP_F_BIO_ZLIB_NEW}
-  COMP_F_BIO_ZLIB_NEW	= 100;
+  COMP_F_BIO_ZLIB_NEW  = 100;
   {$EXTERNALSYM COMP_F_BIO_ZLIB_READ}
   COMP_F_BIO_ZLIB_READ = 101;
   {$EXTERNALSYM COMP_F_BIO_ZLIB_WRITE}
-  COMP_F_BIO_ZLIB_WRITE	= 102;
+  COMP_F_BIO_ZLIB_WRITE  = 102;
 
 //* Reason codes. */
   {$EXTERNALSYM COMP_R_ZLIB_DEFLATE_ERROR}
@@ -2357,7 +2357,7 @@ const
   {$EXTERNALSYM CRYPTO_EX_INDEX_RSA}
   CRYPTO_EX_INDEX_RSA = 6;
   {$EXTERNALSYM CRYPTO_EX_INDEX_DSA}
-  CRYPTO_EX_INDEX_DSA	= 7;
+  CRYPTO_EX_INDEX_DSA  = 7;
   {$EXTERNALSYM CRYPTO_EX_INDEX_DH}
   CRYPTO_EX_INDEX_DH = 8;
   {$EXTERNALSYM CRYPTO_EX_INDEX_ENGINE}
@@ -2367,20 +2367,20 @@ const
   {$EXTERNALSYM CRYPTO_EX_INDEX_UI}
   CRYPTO_EX_INDEX_UI = 11;
   {$EXTERNALSYM CRYPTO_EX_INDEX_ECDSA}
-  CRYPTO_EX_INDEX_ECDSA	= 12;
+  CRYPTO_EX_INDEX_ECDSA  = 12;
   {$EXTERNALSYM CRYPTO_EX_INDEX_ECDH}
   CRYPTO_EX_INDEX_ECDH = 13;
   {$EXTERNALSYM CRYPTO_EX_INDEX_COMP}
   CRYPTO_EX_INDEX_COMP = 14;
   {$EXTERNALSYM CRYPTO_EX_INDEX_STORE}
-  CRYPTO_EX_INDEX_STORE	= 15;
+  CRYPTO_EX_INDEX_STORE  = 15;
   {$EXTERNALSYM CRYPTO_EX_INDEX_USER}
   CRYPTO_EX_INDEX_USER = 100;
 
   {$EXTERNALSYM CRYPTO_F_CRYPTO_GET_EX_NEW_INDEX}
   CRYPTO_F_CRYPTO_GET_EX_NEW_INDEX = 100;
   {$EXTERNALSYM CRYPTO_F_CRYPTO_GET_NEW_DYNLOCKID}
-  CRYPTO_F_CRYPTO_GET_NEW_DYNLOCKID	= 103;
+  CRYPTO_F_CRYPTO_GET_NEW_DYNLOCKID  = 103;
   {$EXTERNALSYM CRYPTO_F_CRYPTO_GET_NEW_LOCKID}
   CRYPTO_F_CRYPTO_GET_NEW_LOCKID = 101;
   {$EXTERNALSYM CRYPTO_F_CRYPTO_SET_EX_DATA}
@@ -2392,7 +2392,7 @@ const
   {$EXTERNALSYM CRYPTO_F_INT_DUP_EX_DATA}
   CRYPTO_F_INT_DUP_EX_DATA = 106;
   {$EXTERNALSYM CRYPTO_F_INT_FREE_EX_DATA}
-  CRYPTO_F_INT_FREE_EX_DATA	= 107;
+  CRYPTO_F_INT_FREE_EX_DATA  = 107;
   {$EXTERNALSYM CRYPTO_F_INT_NEW_EX_DATA}
   CRYPTO_F_INT_NEW_EX_DATA = 108;
   {$EXTERNALSYM CRYPTO_R_NO_DYNLOCK_CREATE_CALLBACK}
@@ -2443,7 +2443,7 @@ const
   CRYPTO_LOCK_MALLOC = 20;
 //was CRYPTO_LOCK_MALLOC = 18;
   {$EXTERNALSYM CRYPTO_LOCK_BIO}
-  CRYPTO_LOCK_BIO	= 21;
+  CRYPTO_LOCK_BIO  = 21;
 //was   CRYPTO_LOCK_BIO = 19;
   {$EXTERNALSYM CRYPTO_LOCK_GETHOSTBYNAME}
   CRYPTO_LOCK_GETHOSTBYNAME = 22;
@@ -2478,7 +2478,7 @@ const
   {$EXTERNALSYM CRYPTO_LOCK_BN}
   CRYPTO_LOCK_BN = 35;
   {$EXTERNALSYM CRYPTO_LOCK_EC_PRE_COMP}
-  CRYPTO_LOCK_EC_PRE_COMP	= 36;
+  CRYPTO_LOCK_EC_PRE_COMP  = 36;
   {$EXTERNALSYM CRYPTO_LOCK_STORE}
   CRYPTO_LOCK_STORE = 37;
   {$EXTERNALSYM CRYPTO_LOCK_COMP}
@@ -2529,7 +2529,7 @@ const
   {$EXTERNALSYM DSO_CTRL_SET_FLAGS}
   DSO_CTRL_SET_FLAGS = 2;
   {$EXTERNALSYM DSO_CTRL_OR_FLAGS}
-  DSO_CTRL_OR_FLAGS	= 3;
+  DSO_CTRL_OR_FLAGS  = 3;
 
 ///* By default, DSO_load() will translate the provided filename into a form
 // * typical for the platform (more specifically the DSO_METHOD) using the
@@ -2543,7 +2543,7 @@ const
 // * prompted the user for a path to a driver library so the filename should be
 // * interpreted as-is. */
   {$EXTERNALSYM DSO_FLAG_NO_NAME_TRANSLATION}
-  DSO_FLAG_NO_NAME_TRANSLATION	 = $01;
+  DSO_FLAG_NO_NAME_TRANSLATION   = $01;
 ///* An extra flag to give if only the extension should be added as
 // * translation.  This is obviously only of importance on Unix and
 // * other operating systems where the translation also may prefix
@@ -2557,7 +2557,7 @@ const
 // * case.  This is currently only being implemented for OpenVMS.
 // */
   {$EXTERNALSYM DSO_FLAG_UPCASE_SYMBOL}
-  DSO_FLAG_UPCASE_SYMBOL		 = $10;
+  DSO_FLAG_UPCASE_SYMBOL     = $10;
 
 //* This flag loads the library with public symbols.
 // * Meaning: The exported symbols of this library are public
@@ -2565,7 +2565,7 @@ const
 // * At the moment only implemented in unix.
 // */
   {$EXTERNALSYM DSO_FLAG_GLOBAL_SYMBOLS}
-  DSO_FLAG_GLOBAL_SYMBOLS	 = $20;
+  DSO_FLAG_GLOBAL_SYMBOLS   = $20;
   //seed.h
   {$IFNDEF OPENSSL_NO_SEED}
      {$IFDEF AES_LONG} //* look whether we need 'long' to get 32 bits */
@@ -2641,13 +2641,13 @@ const
   {$EXTERNALSYM DH_F_DH_BUILTIN_GENPARAMS}
   DH_F_DH_BUILTIN_GENPARAMS = 106;
   {$EXTERNALSYM DH_F_DH_COMPUTE_KEY}
-  DH_F_DH_COMPUTE_KEY	= 107;
+  DH_F_DH_COMPUTE_KEY  = 107;
   //was   DH_F_DH_COMPUTE_KEY = 102;
   {$EXTERNALSYM DH_F_DH_GENERATE_KEY}
   DH_F_DH_GENERATE_KEY = 108;
   //was   DH_F_DH_GENERATE_KEY = 103;
   {$EXTERNALSYM DH_F_DH_GENERATE_PARAMETERS}
-  DH_F_DH_GENERATE_PARAMETERS	= 109;
+  DH_F_DH_GENERATE_PARAMETERS  = 109;
   //was   DH_F_DH_GENERATE_PARAMETERS = 104;
   {$EXTERNALSYM DH_R_NO_PRIVATE_VALUE}
   DH_R_NO_PRIVATE_VALUE = 100;
@@ -2658,7 +2658,7 @@ const
   {$EXTERNALSYM DH_R_MODULUS_TOO_LARGE}
   DH_R_MODULUS_TOO_LARGE = 103;
   {$EXTERNALSYM DH_R_KEY_SIZE_TOO_SMALL}
-  DH_R_KEY_SIZE_TOO_SMALL	= 104;
+  DH_R_KEY_SIZE_TOO_SMALL  = 104;
   {$ENDIF}
   {$IFNDEF OPENSSL_NO_DSA}
   //I think the OpenSSL developers wanted to make sure this was defined.
@@ -2682,7 +2682,7 @@ const
 // * usage is compliant.
 // */
   {$EXTERNALSYM DSA_FLAG_NON_FIPS_ALLOW}
-  DSA_FLAG_NON_FIPS_ALLOW	= $0400;
+  DSA_FLAG_NON_FIPS_ALLOW  = $0400;
   {$EXTERNALSYM DSA_F_D2I_DSA_SIG}
   DSA_F_D2I_DSA_SIG = 110;
   {$EXTERNALSYM DSA_F_DSAPARAMS_PRINT}
@@ -2714,7 +2714,7 @@ const
   {$EXTERNALSYM DSA_F_DSA_VERIFY}
   DSA_F_DSA_VERIFY = 108;
   {$EXTERNALSYM DSA_F_DSA_GENERATE_PARAMETERS}
-  DSA_F_DSA_GENERATE_PARAMETERS	= 117;
+  DSA_F_DSA_GENERATE_PARAMETERS  = 117;
   {$EXTERNALSYM DSA_F_I2D_DSA_SIG}
   DSA_F_I2D_DSA_SIG = 111;
   {$EXTERNALSYM DSA_F_SIG_CB}
@@ -2728,7 +2728,7 @@ const
   {$EXTERNALSYM DSA_R_MODULUS_TOO_LARGE}
   DSA_R_MODULUS_TOO_LARGE = 103;
   {$EXTERNALSYM DSA_R_NON_FIPS_METHOD}
-  DSA_R_NON_FIPS_METHOD	= 104;
+  DSA_R_NON_FIPS_METHOD  = 104;
   {$EXTERNALSYM DSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE}
   DSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE = 105;
   {$EXTERNALSYM DSA_R_KEY_SIZE_TOO_SMALL}
@@ -3129,50 +3129,50 @@ const
   EVP_MD_FLAG_FIPS = $0400;
   //* Note if suitable for use in FIPS mode */
   {$EXTERNALSYM EVP_MD_FLAG_PKEY_DIGEST}
-  EVP_MD_FLAG_PKEY_DIGEST	= $0002; //* digest is a "clone" digest used
-//					* which is a copy of an existing
-//					* one for a specific public key type.
-//					* EVP_dss1() etc */
+  EVP_MD_FLAG_PKEY_DIGEST  = $0002; //* digest is a "clone" digest used
+//          * which is a copy of an existing
+//          * one for a specific public key type.
+//          * EVP_dss1() etc */
 //* Digest uses EVP_PKEY_METHOD for signing instead of MD specific signing */
 
   {$EXTERNALSYM EVP_MD_FLAG_PKEY_METHOD_SIGNATURE}
-  EVP_MD_FLAG_PKEY_METHOD_SIGNATURE	= $0004;  //note: conflicts with FIPS
+  EVP_MD_FLAG_PKEY_METHOD_SIGNATURE  = $0004;  //note: conflicts with FIPS
 
 //* DigestAlgorithmIdentifier flags... */
 
   {$EXTERNALSYM EVP_MD_FLAG_DIGALGID_MASK}
-  EVP_MD_FLAG_DIGALGID_MASK		= $0018;
+  EVP_MD_FLAG_DIGALGID_MASK    = $0018;
 
 //* NULL or absent parameter accepted. Use NULL */
 
   {$EXTERNALSYM EVP_MD_FLAG_DIGALGID_NULL}
-  EVP_MD_FLAG_DIGALGID_NULL	 = $0000;
+  EVP_MD_FLAG_DIGALGID_NULL   = $0000;
 
 //* NULL or absent parameter accepted. Use NULL for PKCS#1 otherwise absent */
 
   {$EXTERNALSYM EVP_MD_FLAG_DIGALGID_ABSENT}
-  EVP_MD_FLAG_DIGALGID_ABSENT	 = $0008;
+  EVP_MD_FLAG_DIGALGID_ABSENT   = $0008;
 
 //* Custom handling via ctrl */
 
   {$EXTERNALSYM EVP_MD_FLAG_DIGALGID_CUSTOM}
-  EVP_MD_FLAG_DIGALGID_CUSTOM	 = $0018;
+  EVP_MD_FLAG_DIGALGID_CUSTOM   = $0018;
 
   {$EXTERNALSYM EVP_MD_FLAG_SVCTX}
-  EVP_MD_FLAG_SVCTX	= $0800;
+  EVP_MD_FLAG_SVCTX  = $0800;
   //* pass EVP_MD_SVCTX to sign/verify */
 
 //* Digest ctrls */
 
   {$EXTERNALSYM EVP_MD_CTRL_DIGALGID}
-  EVP_MD_CTRL_DIGALGID	  = $1;
+  EVP_MD_CTRL_DIGALGID    = $1;
   {$EXTERNALSYM EVP_MD_CTRL_MICALG}
-  EVP_MD_CTRL_MICALG			= $2;
+  EVP_MD_CTRL_MICALG      = $2;
 
 //* Minimum Algorithm specific ctrl value */
 
   {$EXTERNALSYM EVP_MD_CTRL_ALG_CTRL}
-	EVP_MD_CTRL_ALG_CTRL		 =	$1000;
+  EVP_MD_CTRL_ALG_CTRL     =  $1000;
 
   {$EXTERNALSYM NID_undef}
   NID_undef = 0;
@@ -3219,7 +3219,7 @@ const
   {$EXTERNALSYM EVP_PKS_DSA}
   EVP_PKS_DSA = $0200;
   {$EXTERNALSYM EVP_PKS_EC}
-  EVP_PKS_EC	= $0400;
+  EVP_PKS_EC  = $0400;
 
   {$EXTERNALSYM EVP_PK_RSA}
   EVP_PK_RSA = $0001;
@@ -3243,23 +3243,23 @@ const
   {$EXTERNALSYM EVP_MD_CTX_FLAG_ONESHOT}
   EVP_MD_CTX_FLAG_ONESHOT = $0001;
   //* digest update will be called
-	//* once only */
+  //* once only */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_CLEANED}
-  EVP_MD_CTX_FLAG_CLEANED	= $0002;
+  EVP_MD_CTX_FLAG_CLEANED  = $0002;
   //* context has already been
-	//* cleaned */
+  //* cleaned */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_REUSE}
-  EVP_MD_CTX_FLAG_REUSE	=	$0004;
+  EVP_MD_CTX_FLAG_REUSE  =  $0004;
   //* Don't free up ctx->md_data
-	//* in EVP_MD_CTX_cleanup */
+  //* in EVP_MD_CTX_cleanup */
   //OpenSSL 1.0.0.
   //* FIPS and pad options are ignored in 1.0.0, definitions are here
 // * so we don't accidentally reuse the values for other purposes.
 // */
 
   {$EXTERNALSYM EVP_MD_CTX_FLAG_NON_FIPS_ALLOW}
- EVP_MD_CTX_FLAG_NON_FIPS_ALLOW = $0008;	//* Allow use of non FIPS digest
-//						 * in FIPS mode */
+ EVP_MD_CTX_FLAG_NON_FIPS_ALLOW = $0008;  //* Allow use of non FIPS digest
+//             * in FIPS mode */
 
 //* The following PAD options are also currently ignored in 1.0.0, digest
 // * parameters are handled through EVP_DigestSign*() and EVP_DigestVerify*()
@@ -3268,19 +3268,19 @@ const
 
 
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PAD_MASK}
-  EVP_MD_CTX_FLAG_PAD_MASK = $F0;	//* RSA mode to use */
+  EVP_MD_CTX_FLAG_PAD_MASK = $F0;  //* RSA mode to use */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PAD_PKCS1}
-  EVP_MD_CTX_FLAG_PAD_PKCS1 = $00;	//* PKCS#1 v1.5 mode */
+  EVP_MD_CTX_FLAG_PAD_PKCS1 = $00;  //* PKCS#1 v1.5 mode */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PAD_X931}
-  EVP_MD_CTX_FLAG_PAD_X931 = $10;	//* X9.31 mode */
+  EVP_MD_CTX_FLAG_PAD_X931 = $10;  //* X9.31 mode */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PAD_PSS}
-  EVP_MD_CTX_FLAG_PAD_PSS = $20;	//* PSS mode */
+  EVP_MD_CTX_FLAG_PAD_PSS = $20;  //* PSS mode */
 //#define M_EVP_MD_CTX_FLAG_PSS_SALT(ctx) \
-//		((ctx->flags>>16) &0xFFFF) /* seed length */
+//    ((ctx->flags>>16) &0xFFFF) /* seed length */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PSS_MDLEN}
-  EVP_MD_CTX_FLAG_PSS_MDLEN = $FFFF;	//* salt len same as digest */
+  EVP_MD_CTX_FLAG_PSS_MDLEN = $FFFF;  //* salt len same as digest */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_PSS_MREC}
-  EVP_MD_CTX_FLAG_PSS_MREC = $FFFE;	//* salt max or auto recovered */
+  EVP_MD_CTX_FLAG_PSS_MREC = $FFFE;  //* salt max or auto recovered */
   {$EXTERNALSYM EVP_MD_CTX_FLAG_NO_INIT}
    EVP_MD_CTX_FLAG_NO_INIT = $0100; //* Don't initialize md_data */
 
@@ -3288,23 +3288,23 @@ const
   {$EXTERNALSYM EVP_CIPH_STREAM_CIPHER}
   EVP_CIPH_STREAM_CIPHER = $0;
   {$EXTERNALSYM EVP_CIPH_ECB_MODE}
-  EVP_CIPH_ECB_MODE	= $1;
+  EVP_CIPH_ECB_MODE  = $1;
   {$EXTERNALSYM EVP_CIPH_CBC_MODE}
-  EVP_CIPH_CBC_MODE	= $2;
+  EVP_CIPH_CBC_MODE  = $2;
   {$EXTERNALSYM EVP_CIPH_CFB_MODE}
-  EVP_CIPH_CFB_MODE	= $3;
+  EVP_CIPH_CFB_MODE  = $3;
   {$EXTERNALSYM EVP_CIPH_OFB_MODE}
-  EVP_CIPH_OFB_MODE	= $4;
+  EVP_CIPH_OFB_MODE  = $4;
   {$EXTERNALSYM EVP_CIPH_CTR_MODE}
-  EVP_CIPH_CTR_MODE	= $5;
+  EVP_CIPH_CTR_MODE  = $5;
   {$EXTERNALSYM EVP_CIPH_GCM_MODE}
-  EVP_CIPH_GCM_MODE	=	$6;
+  EVP_CIPH_GCM_MODE  =  $6;
   {$EXTERNALSYM EVP_CIPH_CCM_MODE}
-  EVP_CIPH_CCM_MODE	=	$7;
+  EVP_CIPH_CCM_MODE  =  $7;
   {$EXTERNALSYM EVP_CIPH_XTS_MODE}
-  EVP_CIPH_XTS_MODE	= $10001;
+  EVP_CIPH_XTS_MODE  = $10001;
   {$EXTERNALSYM EVP_CIPH_MODE}
-	EVP_CIPH_MODE	= $F0007;
+  EVP_CIPH_MODE  = $F0007;
 
 //* Set if variable length cipher */
   {$EXTERNALSYM EVP_CIPH_VARIABLE_LENGTH}
@@ -3314,7 +3314,7 @@ const
   EVP_CIPH_CUSTOM_IV = $10;
 //* Set if the cipher's init() function should be called if key is NULL */
   {$EXTERNALSYM EVP_CIPH_ALWAYS_CALL_INIT}
-  EVP_CIPH_ALWAYS_CALL_INIT	= $20;
+  EVP_CIPH_ALWAYS_CALL_INIT  = $20;
 //* Call ctrl() to init cipher parameters */
   {$EXTERNALSYM EVP_CIPH_CTRL_INIT}
   EVP_CIPH_CTRL_INIT = $40;
@@ -3323,22 +3323,22 @@ const
   EVP_CIPH_CUSTOM_KEY_LENGTH = $80;
 //* Don't use standard block padding */
   {$EXTERNALSYM EVP_CIPH_NO_PADDING}
-  EVP_CIPH_NO_PADDING	= $100;
+  EVP_CIPH_NO_PADDING  = $100;
 //* cipher handles random key generation */
   {$EXTERNALSYM EVP_CIPH_RAND_KEY}
-  EVP_CIPH_RAND_KEY	= $200;
+  EVP_CIPH_RAND_KEY  = $200;
 //* cipher has its own additional copying logic */
   {$EXTERNALSYM EVP_CIPH_CUSTOM_COPY}
-  EVP_CIPH_CUSTOM_COPY	 = $400;
+  EVP_CIPH_CUSTOM_COPY   = $400;
 //* Allow use default ASN1 get/set iv */
   {$EXTERNALSYM EVP_CIPH_FLAG_DEFAULT_ASN1}
   EVP_CIPH_FLAG_DEFAULT_ASN1 = $1000;
 //* Buffer length in bits not bytes: CFB1 mode only */
   {$EXTERNALSYM EVP_CIPH_FLAG_LENGTH_BITS}
-  EVP_CIPH_FLAG_LENGTH_BITS	= $2000;
+  EVP_CIPH_FLAG_LENGTH_BITS  = $2000;
 //* Note if suitable for use in FIPS mode */
   {$EXTERNALSYM EVP_CIPH_FLAG_FIPS}
-  EVP_CIPH_FLAG_FIPS	 = $4000;
+  EVP_CIPH_FLAG_FIPS   = $4000;
 //* Allow non FIPS cipher in FIPS mode */
   {$EXTERNALSYM EVP_CIPH_FLAG_NON_FIPS_ALLOW}
   EVP_CIPH_FLAG_NON_FIPS_ALLOW = $8000;
@@ -3346,28 +3346,28 @@ const
 // * as finalisation.
 // */
   {$EXTERNALSYM EVP_CIPH_FLAG_CUSTOM_CIPHER}
-  EVP_CIPH_FLAG_CUSTOM_CIPHER	= $100000;
+  EVP_CIPH_FLAG_CUSTOM_CIPHER  = $100000;
   {$EXTERNALSYM EVP_CIPH_FLAG_AEAD_CIPHER}
   EVP_CIPH_FLAG_AEAD_CIPHER = $200000;
 
   {$EXTERNALSYM EVP_CTRL_INIT}
-  EVP_CTRL_INIT	= $0;
+  EVP_CTRL_INIT  = $0;
   {$EXTERNALSYM EVP_CTRL_SET_KEY_LENGTH}
   EVP_CTRL_SET_KEY_LENGTH = $1;
   {$EXTERNALSYM EVP_CTRL_GET_RC2_KEY_BITS}
-  EVP_CTRL_GET_RC2_KEY_BITS	= $2;
+  EVP_CTRL_GET_RC2_KEY_BITS  = $2;
   {$EXTERNALSYM EVP_CTRL_SET_RC2_KEY_BITS}
   EVP_CTRL_SET_RC2_KEY_BITS = $3;
   {$EXTERNALSYM EVP_CTRL_GET_RC5_ROUNDS}
-  EVP_CTRL_GET_RC5_ROUNDS	= $4;
+  EVP_CTRL_GET_RC5_ROUNDS  = $4;
   {$EXTERNALSYM EVP_CTRL_SET_RC5_ROUNDS}
   EVP_CTRL_SET_RC5_ROUNDS = $5;
   {$EXTERNALSYM EVP_CTRL_RAND_KEY}
-  EVP_CTRL_RAND_KEY	= $6;
+  EVP_CTRL_RAND_KEY  = $6;
   {$EXTERNALSYM EVP_CTRL_PBE_PRF_NID}
-  EVP_CTRL_PBE_PRF_NID	 = $7;
+  EVP_CTRL_PBE_PRF_NID   = $7;
   {$EXTERNALSYM EVP_CTRL_COPY}
-  EVP_CTRL_COPY	= $8;
+  EVP_CTRL_COPY  = $8;
   {$EXTERNALSYM EVP_CTRL_GCM_SET_IVLEN}
   EVP_CTRL_GCM_SET_IVLEN = $9;
   {$EXTERNALSYM EVP_CTRL_GCM_GET_TAG}
@@ -3397,10 +3397,10 @@ const
   EVP_CTRL_AEAD_TLS1_AAD = $16;
 //* Used by composite AEAD ciphers, no-op in GCM, CCM... */
   {$EXTERNALSYM EVP_CTRL_AEAD_SET_MAC_KEY}
-  EVP_CTRL_AEAD_SET_MAC_KEY	= $17;
+  EVP_CTRL_AEAD_SET_MAC_KEY  = $17;
 //* Set the GCM invocation field, decrypt only */
   {$EXTERNALSYM EVP_CTRL_GCM_SET_IV_INV}
-  EVP_CTRL_GCM_SET_IV_INV	= $18;
+  EVP_CTRL_GCM_SET_IV_INV  = $18;
 //* PBE type */
 
 //* GCM TLS constants */
@@ -3409,7 +3409,7 @@ const
   EVP_GCM_TLS_FIXED_IV_LEN = 4;
 //* Length of explicit part of IV part of TLS records */
   {$EXTERNALSYM EVP_GCM_TLS_EXPLICIT_IV_LEN}
-  EVP_GCM_TLS_EXPLICIT_IV_LEN	= 8;
+  EVP_GCM_TLS_EXPLICIT_IV_LEN  = 8;
 //* Length of tag for TLS */
   {$EXTERNALSYM EVP_GCM_TLS_TAG_LEN}
   EVP_GCM_TLS_TAG_LEN = 16;
@@ -3422,30 +3422,30 @@ const
   EVP_PBE_TYPE_PRF = $1;
 
   {$EXTERNALSYM ASN1_PKEY_ALIAS}
-  ASN1_PKEY_ALIAS	 = $1;
+  ASN1_PKEY_ALIAS   = $1;
   {$EXTERNALSYM ASN1_PKEY_DYNAMIC}
-  ASN1_PKEY_DYNAMIC	= $2;
+  ASN1_PKEY_DYNAMIC  = $2;
   {$EXTERNALSYM ASN1_PKEY_SIGPARAM_NULL}
-  ASN1_PKEY_SIGPARAM_NULL	= $4;
+  ASN1_PKEY_SIGPARAM_NULL  = $4;
   {$EXTERNALSYM ASN1_PKEY_CTRL_PKCS7_SIGN}
-  ASN1_PKEY_CTRL_PKCS7_SIGN	= $1;
+  ASN1_PKEY_CTRL_PKCS7_SIGN  = $1;
   {$EXTERNALSYM ASN1_PKEY_CTRL_PKCS7_ENCRYPT}
   ASN1_PKEY_CTRL_PKCS7_ENCRYPT = $2;
   {$EXTERNALSYM ASN1_PKEY_CTRL_DEFAULT_MD_NID}
-  ASN1_PKEY_CTRL_DEFAULT_MD_NID	= $3;
+  ASN1_PKEY_CTRL_DEFAULT_MD_NID  = $3;
   {$EXTERNALSYM ASN1_PKEY_CTRL_CMS_SIGN}
-  ASN1_PKEY_CTRL_CMS_SIGN	= $5;
+  ASN1_PKEY_CTRL_CMS_SIGN  = $5;
   {$EXTERNALSYM ASN1_PKEY_CTRL_CMS_ENVELOPE}
-  ASN1_PKEY_CTRL_CMS_ENVELOPE	= $7;
+  ASN1_PKEY_CTRL_CMS_ENVELOPE  = $7;
 
   {$EXTERNALSYM EVP_PKEY_OP_UNDEFINED}
-  EVP_PKEY_OP_UNDEFINED	 = 0;
+  EVP_PKEY_OP_UNDEFINED   = 0;
   {$EXTERNALSYM EVP_PKEY_OP_PARAMGEN}
-  EVP_PKEY_OP_PARAMGEN	 =(1 shl 1);
+  EVP_PKEY_OP_PARAMGEN   =(1 shl 1);
   {$EXTERNALSYM EVP_PKEY_OP_KEYGEN}
   EVP_PKEY_OP_KEYGEN = (1 shl 2);
   {$EXTERNALSYM EVP_PKEY_OP_SIGN}
-  EVP_PKEY_OP_SIGN	 = (1 shl 3);
+  EVP_PKEY_OP_SIGN   = (1 shl 3);
   {$EXTERNALSYM EVP_PKEY_OP_VERIFY}
   EVP_PKEY_OP_VERIFY  = (1 shl 4);
   {$EXTERNALSYM EVP_PKEY_OP_VERIFYRECOVER}
@@ -3455,11 +3455,11 @@ const
   {$EXTERNALSYM EVP_PKEY_OP_VERIFYCTX}
   EVP_PKEY_OP_VERIFYCTX = (1 shl 7);
   {$EXTERNALSYM EVP_PKEY_OP_ENCRYPT}
-  EVP_PKEY_OP_ENCRYPT	 = (1 shl 8);
+  EVP_PKEY_OP_ENCRYPT   = (1 shl 8);
   {$EXTERNALSYM EVP_PKEY_OP_DECRYPT}
-  EVP_PKEY_OP_DECRYPT	 = (1 shl 9);
+  EVP_PKEY_OP_DECRYPT   = (1 shl 9);
   {$EXTERNALSYM EVP_PKEY_OP_DERIVE}
-  EVP_PKEY_OP_DERIVE	 = (1 shl 10);
+  EVP_PKEY_OP_DERIVE   = (1 shl 10);
 
   {$EXTERNALSYM EVP_PKEY_OP_TYPE_SIG}
   EVP_PKEY_OP_TYPE_SIG =
@@ -3472,66 +3472,66 @@ const
  EVP_PKEY_OP_TYPE_CRYPT = (EVP_PKEY_OP_ENCRYPT or EVP_PKEY_OP_DECRYPT);
 
 //  EVP_PKEY_OP_TYPE_NOGEN =
-//	(EVP_PKEY_OP_SIG or EVP_PKEY_OP_CRYPT or EVP_PKEY_OP_DERIVE);
+//  (EVP_PKEY_OP_SIG or EVP_PKEY_OP_CRYPT or EVP_PKEY_OP_DERIVE);
 //  guessing from above.  THere may be a typo in the header.
   {$EXTERNALSYM EVP_PKEY_OP_TYPE_NOGEN}
   EVP_PKEY_OP_TYPE_NOGEN =
   {$EXTERNALSYM EVP_PKEY_OP_TYPE_GEN}
-	(EVP_PKEY_OP_TYPE_SIG or EVP_PKEY_OP_TYPE_CRYPT or EVP_PKEY_OP_DERIVE);
+  (EVP_PKEY_OP_TYPE_SIG or EVP_PKEY_OP_TYPE_CRYPT or EVP_PKEY_OP_DERIVE);
 
   {$EXTERNALSYM EVP_PKEY_OP_TYPE_GEN}
   EVP_PKEY_OP_TYPE_GEN =
-		(EVP_PKEY_OP_PARAMGEN or EVP_PKEY_OP_KEYGEN);
+    (EVP_PKEY_OP_PARAMGEN or EVP_PKEY_OP_KEYGEN);
 
   {$EXTERNALSYM EVP_PKEY_CTRL_MD}
-  EVP_PKEY_CTRL_MD	=	1;
+  EVP_PKEY_CTRL_MD  =  1;
   {$EXTERNALSYM EVP_PKEY_CTRL_PEER_KEY}
-  EVP_PKEY_CTRL_PEER_KEY	 = 2;
+  EVP_PKEY_CTRL_PEER_KEY   = 2;
 
   {$EXTERNALSYM EVP_PKEY_CTRL_PKCS7_ENCRYPT}
-  EVP_PKEY_CTRL_PKCS7_ENCRYPT	= 3;
+  EVP_PKEY_CTRL_PKCS7_ENCRYPT  = 3;
   {$EXTERNALSYM EVP_PKEY_CTRL_PKCS7_DECRYPT}
-  EVP_PKEY_CTRL_PKCS7_DECRYPT	= 4;
+  EVP_PKEY_CTRL_PKCS7_DECRYPT  = 4;
 
   {$EXTERNALSYM EVP_PKEY_CTRL_PKCS7_SIGN}
-  EVP_PKEY_CTRL_PKCS7_SIGN	= 5;
+  EVP_PKEY_CTRL_PKCS7_SIGN  = 5;
 
   {$EXTERNALSYM EVP_PKEY_CTRL_SET_MAC_KEY}
-  EVP_PKEY_CTRL_SET_MAC_KEY	= 6;
+  EVP_PKEY_CTRL_SET_MAC_KEY  = 6;
 
   {$EXTERNALSYM EVP_PKEY_CTRL_DIGESTINIT}
-  EVP_PKEY_CTRL_DIGESTINIT	= 7;
+  EVP_PKEY_CTRL_DIGESTINIT  = 7;
 
 //* Used by GOST key encryption in TLS */
 
   {$EXTERNALSYM EVP_PKEY_CTRL_SET_IV}
-  EVP_PKEY_CTRL_SET_IV 	= 8;
+  EVP_PKEY_CTRL_SET_IV   = 8;
   {$EXTERNALSYM EVP_PKEY_CTRL_CMS_ENCRYPT}
-  EVP_PKEY_CTRL_CMS_ENCRYPT	= 9;
+  EVP_PKEY_CTRL_CMS_ENCRYPT  = 9;
   {$EXTERNALSYM EVP_PKEY_CTRL_CMS_DECRYPT}
   EVP_PKEY_CTRL_CMS_DECRYPT = 10;
   {$EXTERNALSYM EVP_PKEY_CTRL_CMS_SIGN}
-  EVP_PKEY_CTRL_CMS_SIGN	 = 11;
+  EVP_PKEY_CTRL_CMS_SIGN   = 11;
   {$EXTERNALSYM EVP_PKEY_CTRL_CIPHER}
-  EVP_PKEY_CTRL_CIPHER	 = 12;
+  EVP_PKEY_CTRL_CIPHER   = 12;
   {$EXTERNALSYM EVP_PKEY_ALG_CTRL}
-  EVP_PKEY_ALG_CTRL		= $1000;
+  EVP_PKEY_ALG_CTRL    = $1000;
 
   {$EXTERNALSYM EVP_PKEY_FLAG_AUTOARGLEN}
-  EVP_PKEY_FLAG_AUTOARGLEN	= 2;
+  EVP_PKEY_FLAG_AUTOARGLEN  = 2;
 ///* Method handles all operations: don't assume any digest related
 // * defaults.
 // */
   {$EXTERNALSYM EVP_PKEY_FLAG_SIGCTX_CUSTOM}
-  EVP_PKEY_FLAG_SIGCTX_CUSTOM	= 4;
+  EVP_PKEY_FLAG_SIGCTX_CUSTOM  = 4;
   {$EXTERNALSYM EVP_F_AESNI_INIT_KEY}
-  EVP_F_AESNI_INIT_KEY				= 165;
+  EVP_F_AESNI_INIT_KEY        = 165;
   {$EXTERNALSYM EVP_F_AESNI_XTS_CIPHER}
-  EVP_F_AESNI_XTS_CIPHER				= 176;
+  EVP_F_AESNI_XTS_CIPHER        = 176;
   {$EXTERNALSYM EVP_F_AES_INIT_KEY}
   EVP_F_AES_INIT_KEY = 133;
   {$EXTERNALSYM EVP_F_ALG_MODULE_INIT}
-  EVP_F_ALG_MODULE_INIT	= 138;
+  EVP_F_ALG_MODULE_INIT  = 138;
   {$EXTERNALSYM EVP_F_AES_XTS}
   EVP_F_AES_XTS = 172;
   {$EXTERNALSYM EVP_F_AES_XTS_CIPHER}
@@ -3539,7 +3539,7 @@ const
   {$EXTERNALSYM EVP_F_CAMELLIA_INIT_KEY}
   EVP_F_CAMELLIA_INIT_KEY = 159;
   {$EXTERNALSYM EVP_F_CMAC_INIT}
-  EVP_F_CMAC_INIT	= 173;
+  EVP_F_CMAC_INIT  = 173;
   {$EXTERNALSYM EVP_F_D2I_PKEY}
   EVP_F_D2I_PKEY = 100;
   {$EXTERNALSYM EVP_F_DO_SIGVER_INIT}
@@ -3547,7 +3547,7 @@ const
   {$EXTERNALSYM EVP_F_DO_EVP_ENC_ENGINE}
   EVP_F_DO_EVP_ENC_ENGINE = 140;
   {$EXTERNALSYM EVP_F_DSAPKEY2PKCS8}
-  EVP_F_DSAPKEY2PKCS8	= 134;
+  EVP_F_DSAPKEY2PKCS8  = 134;
   {$EXTERNALSYM EVP_F_DSA_PKEY2PKCS8}
   EVP_F_DSA_PKEY2PKCS8 = 135;
   {$EXTERNALSYM EVP_F_ECDSA_PKEY2PKCS8}
@@ -3555,20 +3555,20 @@ const
   {$EXTERNALSYM EVP_F_ECKEY_PKEY2PKCS8}
   EVP_F_ECKEY_PKEY2PKCS8 = 132;
   {$EXTERNALSYM EVP_F_EVP_CIPHERINIT_EX}
-  EVP_F_EVP_CIPHERINIT_EX	= 123;
+  EVP_F_EVP_CIPHERINIT_EX  = 123;
   {$EXTERNALSYM EVP_F_EVP_CIPHER_CTX_COPY}
   EVP_F_EVP_CIPHER_CTX_COPY = 163;
   {$EXTERNALSYM EVP_F_EVP_CIPHER_CTX_CTRL}
-  EVP_F_EVP_CIPHER_CTX_CTRL	= 124;
+  EVP_F_EVP_CIPHER_CTX_CTRL  = 124;
   {$EXTERNALSYM EVP_F_EVP_CIPHER_CTX_SET_KEY_LENGTH}
-  EVP_F_EVP_CIPHER_CTX_SET_KEY_LENGTH	= 122;
+  EVP_F_EVP_CIPHER_CTX_SET_KEY_LENGTH  = 122;
   {$EXTERNALSYM EVP_F_EVP_DECRYPTFINAL_EX}
-  EVP_F_EVP_DECRYPTFINAL_EX	= 101;
+  EVP_F_EVP_DECRYPTFINAL_EX  = 101;
   //was EVP_F_EVP_DECRYPTFINAL = 101;
   {$EXTERNALSYM EVP_F_EVP_DIGESTINIT_EX}
-  EVP_F_EVP_DIGESTINIT_EX	= 128;
+  EVP_F_EVP_DIGESTINIT_EX  = 128;
   {$EXTERNALSYM EVP_F_EVP_ENCRYPTFINAL_EX}
-  EVP_F_EVP_ENCRYPTFINAL_EX	= 127;
+  EVP_F_EVP_ENCRYPTFINAL_EX  = 127;
   {$EXTERNALSYM EVP_F_EVP_MD_CTX_COPY_EX}
   EVP_F_EVP_MD_CTX_COPY_EX = 110;
   {$EXTERNALSYM EVP_F_EVP_MD_SIZE}
@@ -3577,7 +3577,7 @@ const
   {$EXTERNALSYM EVP_F_EVP_OPENINIT}
   EVP_F_EVP_OPENINIT = 102;
   {$EXTERNALSYM EVP_F_EVP_PBE_ALG_ADD}
-  EVP_F_EVP_PBE_ALG_ADD	= 115;
+  EVP_F_EVP_PBE_ALG_ADD  = 115;
   {$EXTERNALSYM EVP_F_EVP_PBE_ALG_ADD_TYPE}
   EVP_F_EVP_PBE_ALG_ADD_TYPE = 160;
   {$EXTERNALSYM EVP_F_EVP_PBE_CIPHERINIT}
@@ -3585,14 +3585,14 @@ const
   {$EXTERNALSYM EVP_F_EVP_PKCS82PKEY}
   EVP_F_EVP_PKCS82PKEY = 111;
   {$EXTERNALSYM EVP_F_EVP_PKEY2PKCS8_BROKEN}
-  EVP_F_EVP_PKEY2PKCS8_BROKEN	= 113;
+  EVP_F_EVP_PKEY2PKCS8_BROKEN  = 113;
   //was  EVP_F_EVP_PKEY2PKCS8 = 113;
   {$EXTERNALSYM EVP_F_EVP_PKCS82PKEY_BROKEN}
   EVP_F_EVP_PKCS82PKEY_BROKEN = 136;
   {$EXTERNALSYM EVP_F_EVP_PKEY_COPY_PARAMETERS}
   EVP_F_EVP_PKEY_COPY_PARAMETERS = 103;
   {$EXTERNALSYM EVP_F_EVP_PKEY_CTX_CTRL}
-  EVP_F_EVP_PKEY_CTX_CTRL	= 137;
+  EVP_F_EVP_PKEY_CTX_CTRL  = 137;
   {$EXTERNALSYM EVP_F_EVP_PKEY_CTX_CTRL_STR}
   EVP_F_EVP_PKEY_CTX_CTRL_STR = 150;
   {$EXTERNALSYM EVP_F_EVP_PKEY_CTX_DUP}
@@ -3612,41 +3612,41 @@ const
   {$EXTERNALSYM EVP_F_EVP_PKEY_ENCRYPT}
   EVP_F_EVP_PKEY_ENCRYPT = 105;
   {$EXTERNALSYM EVP_F_EVP_PKEY_ENCRYPT_INIT}
-  EVP_F_EVP_PKEY_ENCRYPT_INIT	= 139;
+  EVP_F_EVP_PKEY_ENCRYPT_INIT  = 139;
   {$EXTERNALSYM EVP_F_EVP_PKEY_ENCRYPT_OLD}
   EVP_F_EVP_PKEY_ENCRYPT_OLD = 152;
   {$EXTERNALSYM EVP_F_EVP_PKEY_GET1_DH}
   EVP_F_EVP_PKEY_GET1_DH = 119;
   {$EXTERNALSYM EVP_F_EVP_PKEY_GET1_DSA}
-  EVP_F_EVP_PKEY_GET1_DSA	= 120;
+  EVP_F_EVP_PKEY_GET1_DSA  = 120;
   {$EXTERNALSYM EVP_F_EVP_PKEY_GET1_ECDSA}
-  EVP_F_EVP_PKEY_GET1_ECDSA	= 130;
+  EVP_F_EVP_PKEY_GET1_ECDSA  = 130;
   {$EXTERNALSYM EVP_F_EVP_PKEY_GET1_EC_KEY}
   EVP_F_EVP_PKEY_GET1_EC_KEY = 131;
   {$EXTERNALSYM EVP_F_EVP_PKEY_GET1_RSA}
-  EVP_F_EVP_PKEY_GET1_RSA	= 121;
+  EVP_F_EVP_PKEY_GET1_RSA  = 121;
   {$EXTERNALSYM EVP_F_EVP_PKEY_KEYGEN}
-  EVP_F_EVP_PKEY_KEYGEN	= 146;
+  EVP_F_EVP_PKEY_KEYGEN  = 146;
   {$EXTERNALSYM EVP_F_EVP_PKEY_KEYGEN_INIT}
   EVP_F_EVP_PKEY_KEYGEN_INIT = 147;
   {$EXTERNALSYM EVP_F_EVP_PKEY_NEW}
   EVP_F_EVP_PKEY_NEW = 106;
   {$EXTERNALSYM EVP_F_EVP_PKEY_PARAMGEN}
-  EVP_F_EVP_PKEY_PARAMGEN				= 148;
+  EVP_F_EVP_PKEY_PARAMGEN        = 148;
   {$EXTERNALSYM EVP_F_EVP_PKEY_PARAMGEN_INIT}
-  EVP_F_EVP_PKEY_PARAMGEN_INIT			= 149;
+  EVP_F_EVP_PKEY_PARAMGEN_INIT      = 149;
   {$EXTERNALSYM EVP_F_EVP_PKEY_SIGN}
-  EVP_F_EVP_PKEY_SIGN				= 140;
+  EVP_F_EVP_PKEY_SIGN        = 140;
   {$EXTERNALSYM EVP_F_EVP_PKEY_SIGN_INIT}
-  EVP_F_EVP_PKEY_SIGN_INIT			= 141;
+  EVP_F_EVP_PKEY_SIGN_INIT      = 141;
   {$EXTERNALSYM EVP_F_EVP_PKEY_VERIFY}
-  EVP_F_EVP_PKEY_VERIFY				= 142;
+  EVP_F_EVP_PKEY_VERIFY        = 142;
   {$EXTERNALSYM EVP_F_EVP_PKEY_VERIFY_INIT}
-  EVP_F_EVP_PKEY_VERIFY_INIT			= 143;
+  EVP_F_EVP_PKEY_VERIFY_INIT      = 143;
   {$EXTERNALSYM EVP_F_EVP_PKEY_VERIFY_RECOVER}
-  EVP_F_EVP_PKEY_VERIFY_RECOVER		 = 144;
+  EVP_F_EVP_PKEY_VERIFY_RECOVER     = 144;
   {$EXTERNALSYM EVP_F_EVP_PKEY_VERIFY_RECOVER_INIT}
-  EVP_F_EVP_PKEY_VERIFY_RECOVER_INIT		= 145;
+  EVP_F_EVP_PKEY_VERIFY_RECOVER_INIT    = 145;
   {$EXTERNALSYM EVP_F_EVP_RIJNDAEL}
   EVP_F_EVP_RIJNDAEL = 126;
   {$EXTERNALSYM EVP_F_EVP_SIGNFINAL}
@@ -3654,46 +3654,46 @@ const
   {$EXTERNALSYM EVP_F_EVP_VERIFYFINAL}
   EVP_F_EVP_VERIFYFINAL = 108;
   {$EXTERNALSYM EVP_F_FIPS_CIPHERINIT}
-  EVP_F_FIPS_CIPHERINIT				= 166;
+  EVP_F_FIPS_CIPHERINIT        = 166;
   {$EXTERNALSYM EVP_F_FIPS_CIPHER_CTX_COPY}
-  EVP_F_FIPS_CIPHER_CTX_COPY			= 170;
+  EVP_F_FIPS_CIPHER_CTX_COPY      = 170;
   {$EXTERNALSYM EVP_F_FIPS_CIPHER_CTX_CTRL}
-  EVP_F_FIPS_CIPHER_CTX_CTRL		  = 167;
+  EVP_F_FIPS_CIPHER_CTX_CTRL      = 167;
   {$EXTERNALSYM EVP_F_FIPS_CIPHER_CTX_SET_KEY_LENGTH}
-  EVP_F_FIPS_CIPHER_CTX_SET_KEY_LENGTH		= 171;
+  EVP_F_FIPS_CIPHER_CTX_SET_KEY_LENGTH    = 171;
   {$EXTERNALSYM EVP_F_FIPS_DIGESTINIT}
-  EVP_F_FIPS_DIGESTINIT				 = 168;
+  EVP_F_FIPS_DIGESTINIT         = 168;
   {$EXTERNALSYM EVP_F_FIPS_MD_CTX_COPY}
-  EVP_F_FIPS_MD_CTX_COPY				= 169;
+  EVP_F_FIPS_MD_CTX_COPY        = 169;
   {$EXTERNALSYM EVP_F_HMAC_INIT_EX}
-  EVP_F_HMAC_INIT_EX				 = 174;
+  EVP_F_HMAC_INIT_EX         = 174;
   {$EXTERNALSYM EVP_F_INT_CTX_NEW}
-  EVP_F_INT_CTX_NEW				 = 157;
+  EVP_F_INT_CTX_NEW         = 157;
   {$EXTERNALSYM EVP_F_PKCS5_PBE_KEYIVGEN}
   EVP_F_PKCS5_PBE_KEYIVGEN = 117;
   {$EXTERNALSYM EVP_F_PKCS5_V2_PBKDF2_KEYIVGEN}
   EVP_F_PKCS5_V2_PBKDF2_KEYIVGEN = 164;
 
   {$EXTERNALSYM EVP_F_PKCS5_V2_PBE_KEYIVGEN}
-  EVP_F_PKCS5_V2_PBE_KEYIVGEN	= 118;
+  EVP_F_PKCS5_V2_PBE_KEYIVGEN  = 118;
   {$EXTERNALSYM EVP_F_PKCS8_SET_BROKEN}
   EVP_F_PKCS8_SET_BROKEN = 112;
   {$EXTERNALSYM EVP_F_PKEY_SET_TYPE}
-  EVP_F_PKEY_SET_TYPE			 = 158;
+  EVP_F_PKEY_SET_TYPE       = 158;
 
   //was EVP_F_EVP_PKCS8_SET_BROKEN = 112;
   {$EXTERNALSYM EVP_F_RC2_MAGIC_TO_METH}
-  EVP_F_RC2_MAGIC_TO_METH	= 109;
+  EVP_F_RC2_MAGIC_TO_METH  = 109;
   {$EXTERNALSYM EVP_F_RC5_CTRL}
   EVP_F_RC5_CTRL = 125;
   {$EXTERNALSYM EVP_R_AES_IV_SETUP_FAILED}
-  EVP_R_AES_IV_SETUP_FAILED		 = 162;
+  EVP_R_AES_IV_SETUP_FAILED     = 162;
   {$EXTERNALSYM EVP_R_AES_KEY_SETUP_FAILED}
-  EVP_R_AES_KEY_SETUP_FAILED	 = 143;
+  EVP_R_AES_KEY_SETUP_FAILED   = 143;
   {$EXTERNALSYM EVP_R_ASN1_LIB}
-  EVP_R_ASN1_LIB					 = 140;
+  EVP_R_ASN1_LIB           = 140;
   {$EXTERNALSYM EVP_R_BAD_BLOCK_LENGTH}
-  EVP_R_BAD_BLOCK_LENGTH				= 136;
+  EVP_R_BAD_BLOCK_LENGTH        = 136;
   {$EXTERNALSYM EVP_R_BAD_DECRYPT}
   EVP_R_BAD_DECRYPT = 100;
   {$EXTERNALSYM EVP_R_BN_DECODE_ERROR}
@@ -3705,7 +3705,7 @@ const
   {$EXTERNALSYM EVP_R_CIPHER_PARAMETER_ERROR}
   EVP_R_CIPHER_PARAMETER_ERROR = 122;
   {$EXTERNALSYM EVP_R_COMMAND_NOT_SUPPORTED}
-  EVP_R_COMMAND_NOT_SUPPORTED	= 147;
+  EVP_R_COMMAND_NOT_SUPPORTED  = 147;
   {$EXTERNALSYM EVP_R_DECODE_ERROR}
   EVP_R_DECODE_ERROR = 114;
   {$EXTERNALSYM EVP_R_DIFFERENT_KEY_TYPES}
@@ -3713,7 +3713,7 @@ const
   {$EXTERNALSYM EVP_R_DIFFERENT_PARAMETERS}
   EVP_R_DIFFERENT_PARAMETERS = 153;
   {$EXTERNALSYM EVP_R_DISABLED_FOR_FIPS}
-  EVP_R_DISABLED_FOR_FIPS	= 163; //was 144;
+  EVP_R_DISABLED_FOR_FIPS  = 163; //was 144;
 
   {$EXTERNALSYM EVP_R_ENCODE_ERROR}
   EVP_R_ENCODE_ERROR = 115;
@@ -3729,13 +3729,13 @@ const
   {$EXTERNALSYM EVP_R_EXPECTING_A_DH_KEY}
   EVP_R_EXPECTING_A_DH_KEY = 128;
   {$EXTERNALSYM EVP_R_EXPECTING_A_DSA_KEY}
-  EVP_R_EXPECTING_A_DSA_KEY	= 129;
+  EVP_R_EXPECTING_A_DSA_KEY  = 129;
   {$EXTERNALSYM EVP_R_EXPECTING_A_ECDSA_KEY}
-  EVP_R_EXPECTING_A_ECDSA_KEY	= 141;
+  EVP_R_EXPECTING_A_ECDSA_KEY  = 141;
   {$EXTERNALSYM EVP_R_EXPECTING_A_EC_KEY}
   EVP_R_EXPECTING_A_EC_KEY = 142;
   {$EXTERNALSYM EVP_R_FIPS_MODE_NOT_SUPPORTED}
-  EVP_R_FIPS_MODE_NOT_SUPPORTED	= 167;
+  EVP_R_FIPS_MODE_NOT_SUPPORTED  = 167;
   {$EXTERNALSYM EVP_R_INITIALIZATION_ERROR}
   EVP_R_INITIALIZATION_ERROR = 134;
   {$EXTERNALSYM EVP_R_INPUT_NOT_INITIALIZED}
@@ -3745,9 +3745,9 @@ const
   {$EXTERNALSYM EVP_R_INVALID_KEY_LENGTH}
   EVP_R_INVALID_KEY_LENGTH = 130;
   {$EXTERNALSYM EVP_R_INVALID_OPERATION}
-  EVP_R_INVALID_OPERATION	= 148;
+  EVP_R_INVALID_OPERATION  = 148;
   {$EXTERNALSYM EVP_R_INVALID_FIPS_MODE}
-  EVP_R_INVALID_FIPS_MODE	= 168; //was: 148;
+  EVP_R_INVALID_FIPS_MODE  = 168; //was: 148;
   {$EXTERNALSYM EVP_R_IV_TOO_LARGE}
   EVP_R_IV_TOO_LARGE = 102;
   {$EXTERNALSYM EVP_R_KEYGEN_FAILURE}
@@ -3755,21 +3755,21 @@ const
   {$EXTERNALSYM EVP_R_MESSAGE_DIGEST_IS_NULL}
   EVP_R_MESSAGE_DIGEST_IS_NULL = 159;
   {$EXTERNALSYM EVP_R_METHOD_NOT_SUPPORTED}
-  EVP_R_METHOD_NOT_SUPPORTED	 = 144;
+  EVP_R_METHOD_NOT_SUPPORTED   = 144;
   {$EXTERNALSYM EVP_R_MISSING_PARMATERS}
   EVP_R_MISSING_PARMATERS = 103;
   {$EXTERNALSYM EVP_R_NO_CIPHER_SET}
-  EVP_R_NO_CIPHER_SET			= 131;
+  EVP_R_NO_CIPHER_SET      = 131;
   {$EXTERNALSYM EVP_R_NO_DEFAULT_DIGEST}
-  EVP_R_NO_DEFAULT_DIGEST	= 158;
+  EVP_R_NO_DEFAULT_DIGEST  = 158;
   {$EXTERNALSYM EVP_R_NO_DIGEST_SET}
-  EVP_R_NO_DIGEST_SET			= 139;
+  EVP_R_NO_DIGEST_SET      = 139;
   {$EXTERNALSYM EVP_R_NO_DSA_PARAMETERS}
   EVP_R_NO_DSA_PARAMETERS = 116;
   {$EXTERNALSYM EVP_R_NO_KEY_SET}
-  EVP_R_NO_KEY_SET				= 154;
+  EVP_R_NO_KEY_SET        = 154;
   {$EXTERNALSYM EVP_R_NO_OPERATION_SET}
-  EVP_R_NO_OPERATION_SET		= 149;
+  EVP_R_NO_OPERATION_SET    = 149;
   {$EXTERNALSYM EVP_R_NO_SIGN_FUNCTION_CONFIGURED}
   EVP_R_NO_SIGN_FUNCTION_CONFIGURED = 104;
   {$EXTERNALSYM EVP_R_NO_VERIFY_FUNCTION_CONFIGURED}
@@ -3787,19 +3787,19 @@ const
   {$EXTERNALSYM EVP_R_PUBLIC_KEY_NOT_RSA}
   EVP_R_PUBLIC_KEY_NOT_RSA = 106;
   {$EXTERNALSYM EVP_R_TOO_LARGE}
-  EVP_R_TOO_LARGE	= 164;
+  EVP_R_TOO_LARGE  = 164;
   {$EXTERNALSYM EVP_R_UNKNOWN_CIPHER}
   EVP_R_UNKNOWN_CIPHER = 160;
   {$EXTERNALSYM EVP_R_UNKNOWN_DIGEST}
   EVP_R_UNKNOWN_DIGEST = 161;
   {$EXTERNALSYM EVP_R_UNKNOWN_OPTION}
-  EVP_R_UNKNOWN_OPTION				= 169; //149;
+  EVP_R_UNKNOWN_OPTION        = 169; //149;
   {$EXTERNALSYM EVP_R_UNKNOWN_PBE_ALGORITHM}
   EVP_R_UNKNOWN_PBE_ALGORITHM = 121;
   {$EXTERNALSYM EVP_R_UNSUPPORTED_CIPHER}
   EVP_R_UNSUPPORTED_CIPHER = 107;
   {$EXTERNALSYM EVP_R_UNSUPORTED_NUMBER_OF_ROUNDS}
-  EVP_R_UNSUPORTED_NUMBER_OF_ROUNDS	= 135;
+  EVP_R_UNSUPORTED_NUMBER_OF_ROUNDS  = 135;
 
   {$EXTERNALSYM EVP_R_UNSUPPORTED_KEYLENGTH}
   EVP_R_UNSUPPORTED_KEYLENGTH = 123;
@@ -3822,94 +3822,94 @@ const
   {$IFDEF OPENSSL_FIPS}
 //* Function codes. */
   {$EXTERNALSYM FIPS_F_DH_BUILTIN_GENPARAMS}
-  FIPS_F_DH_BUILTIN_GENPARAMS	= 100;
+  FIPS_F_DH_BUILTIN_GENPARAMS  = 100;
   {$EXTERNALSYM FIPS_F_DSA_BUILTIN_PARAMGEN}
-  FIPS_F_DSA_BUILTIN_PARAMGEN	  = 101;
+  FIPS_F_DSA_BUILTIN_PARAMGEN    = 101;
   {$EXTERNALSYM FIPS_F_DSA_DO_SIGN}
-  FIPS_F_DSA_DO_SIGN				= 102;
+  FIPS_F_DSA_DO_SIGN        = 102;
   {$EXTERNALSYM FIPS_F_DSA_DO_VERIFY}
-  FIPS_F_DSA_DO_VERIFY				= 103;
+  FIPS_F_DSA_DO_VERIFY        = 103;
   {$EXTERNALSYM FIPS_F_EVP_CIPHERINIT_EX}
-  FIPS_F_EVP_CIPHERINIT_EX		= 124;
+  FIPS_F_EVP_CIPHERINIT_EX    = 124;
   {$EXTERNALSYM FIPS_F_EVP_DIGESTINIT_EX}
-  FIPS_F_EVP_DIGESTINIT_EX			= 125;
+  FIPS_F_EVP_DIGESTINIT_EX      = 125;
   {$EXTERNALSYM FIPS_F_FIPS_CHECK_DSA}
-  FIPS_F_FIPS_CHECK_DSA				 = 104;
+  FIPS_F_FIPS_CHECK_DSA         = 104;
   {$EXTERNALSYM FIPS_F_FIPS_CHECK_INCORE_FINGERPRINT}
-  FIPS_F_FIPS_CHECK_INCORE_FINGERPRINT		= 105;
+  FIPS_F_FIPS_CHECK_INCORE_FINGERPRINT    = 105;
   {$EXTERNALSYM FIPS_F_FIPS_CHECK_RSA}
-  FIPS_F_FIPS_CHECK_RSA				= 106;
+  FIPS_F_FIPS_CHECK_RSA        = 106;
   {$EXTERNALSYM FIPS_F_FIPS_DSA_CHECK}
-  FIPS_F_FIPS_DSA_CHECK				= 107;
+  FIPS_F_FIPS_DSA_CHECK        = 107;
   {$EXTERNALSYM FIPS_F_FIPS_MODE_SET}
-  FIPS_F_FIPS_MODE_SET				 = 108;
+  FIPS_F_FIPS_MODE_SET         = 108;
   {$EXTERNALSYM FIPS_F_FIPS_PKEY_SIGNATURE_TEST}
-  FIPS_F_FIPS_PKEY_SIGNATURE_TEST			= 109;
+  FIPS_F_FIPS_PKEY_SIGNATURE_TEST      = 109;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_AES}
-  FIPS_F_FIPS_SELFTEST_AES			= 110;
+  FIPS_F_FIPS_SELFTEST_AES      = 110;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_DES}
-  FIPS_F_FIPS_SELFTEST_DES			= 111;
+  FIPS_F_FIPS_SELFTEST_DES      = 111;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_DSA}
-  FIPS_F_FIPS_SELFTEST_DSA			 = 112;
+  FIPS_F_FIPS_SELFTEST_DSA       = 112;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_HMAC}
-  FIPS_F_FIPS_SELFTEST_HMAC			 = 113;
+  FIPS_F_FIPS_SELFTEST_HMAC       = 113;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_RNG}
-  FIPS_F_FIPS_SELFTEST_RNG			 = 114;
+  FIPS_F_FIPS_SELFTEST_RNG       = 114;
   {$EXTERNALSYM FIPS_F_FIPS_SELFTEST_SHA1}
-  FIPS_F_FIPS_SELFTEST_SHA1			 = 115;
+  FIPS_F_FIPS_SELFTEST_SHA1       = 115;
   {$EXTERNALSYM FIPS_F_HASH_FINAL}
-  FIPS_F_HASH_FINAL				= 123;
+  FIPS_F_HASH_FINAL        = 123;
   {$EXTERNALSYM FIPS_F_RSA_BUILTIN_KEYGEN}
-  FIPS_F_RSA_BUILTIN_KEYGEN			= 116;
+  FIPS_F_RSA_BUILTIN_KEYGEN      = 116;
   {$EXTERNALSYM FIPS_F_RSA_EAY_PRIVATE_DECRYPT}
-  FIPS_F_RSA_EAY_PRIVATE_DECRYPT			= 117;
+  FIPS_F_RSA_EAY_PRIVATE_DECRYPT      = 117;
   {$EXTERNALSYM FIPS_F_RSA_EAY_PRIVATE_ENCRYPT}
-  FIPS_F_RSA_EAY_PRIVATE_ENCRYPT			= 118;
+  FIPS_F_RSA_EAY_PRIVATE_ENCRYPT      = 118;
   {$EXTERNALSYM FIPS_F_RSA_EAY_PUBLIC_DECRYPT}
-  FIPS_F_RSA_EAY_PUBLIC_DECRYPT			 = 119;
+  FIPS_F_RSA_EAY_PUBLIC_DECRYPT       = 119;
   {$EXTERNALSYM FIPS_F_RSA_EAY_PUBLIC_ENCRYPT}
-  FIPS_F_RSA_EAY_PUBLIC_ENCRYPT			 = 120;
+  FIPS_F_RSA_EAY_PUBLIC_ENCRYPT       = 120;
   {$EXTERNALSYM FIPS_F_RSA_X931_GENERATE_KEY_EX}
-  FIPS_F_RSA_X931_GENERATE_KEY_EX			= 121;
+  FIPS_F_RSA_X931_GENERATE_KEY_EX      = 121;
   {$EXTERNALSYM FIPS_F_SSLEAY_RAND_BYTES}
-  FIPS_F_SSLEAY_RAND_BYTES		 = 122;
+  FIPS_F_SSLEAY_RAND_BYTES     = 122;
 //* Reason codes. */
   {$EXTERNALSYM FIPS_R_CANNOT_READ_EXE}
-  FIPS_R_CANNOT_READ_EXE			   = 103;
+  FIPS_R_CANNOT_READ_EXE         = 103;
   {$EXTERNALSYM FIPS_R_CANNOT_READ_EXE_DIGEST}
-  FIPS_R_CANNOT_READ_EXE_DIGEST			= 104;
+  FIPS_R_CANNOT_READ_EXE_DIGEST      = 104;
   {$EXTERNALSYM FIPS_R_CONTRADICTING_EVIDENCE}
-  FIPS_R_CONTRADICTING_EVIDENCE			 = 114;
+  FIPS_R_CONTRADICTING_EVIDENCE       = 114;
   {$EXTERNALSYM FIPS_R_EXE_DIGEST_DOES_NOT_MATCH}
-  FIPS_R_EXE_DIGEST_DOES_NOT_MATCH		 = 105;
+  FIPS_R_EXE_DIGEST_DOES_NOT_MATCH     = 105;
   {$EXTERNALSYM FIPS_R_FINGERPRINT_DOES_NOT_MATCH}
-  FIPS_R_FINGERPRINT_DOES_NOT_MATCH		 = 110;
+  FIPS_R_FINGERPRINT_DOES_NOT_MATCH     = 110;
   {$EXTERNALSYM FIPS_R_FINGERPRINT_DOES_NOT_MATCH_NONPIC_RELOCATED}
   FIPS_R_FINGERPRINT_DOES_NOT_MATCH_NONPIC_RELOCATED = 111;
   {$EXTERNALSYM FIPS_R_FINGERPRINT_DOES_NOT_MATCH_SEGMENT_ALIASING}
   FIPS_R_FINGERPRINT_DOES_NOT_MATCH_SEGMENT_ALIASING = 112;
   {$EXTERNALSYM FIPS_R_FIPS_MODE_ALREADY_SET}
-  FIPS_R_FIPS_MODE_ALREADY_SET			 = 102;
+  FIPS_R_FIPS_MODE_ALREADY_SET       = 102;
   {$EXTERNALSYM FIPS_R_FIPS_SELFTEST_FAILED}
-  FIPS_R_FIPS_SELFTEST_FAILED			 = 106;
+  FIPS_R_FIPS_SELFTEST_FAILED       = 106;
   {$EXTERNALSYM FIPS_R_INVALID_KEY_LENGTH}
-  FIPS_R_INVALID_KEY_LENGTH			 = 109;
+  FIPS_R_INVALID_KEY_LENGTH       = 109;
   {$EXTERNALSYM FIPS_R_KEY_TOO_SHORT}
-  FIPS_R_KEY_TOO_SHORT				 = 108;
+  FIPS_R_KEY_TOO_SHORT         = 108;
   {$EXTERNALSYM FIPS_R_NON_FIPS_METHOD}
-  FIPS_R_NON_FIPS_METHOD				 = 100;
+  FIPS_R_NON_FIPS_METHOD         = 100;
   {$EXTERNALSYM FIPS_R_PAIRWISE_TEST_FAILED}
-  FIPS_R_PAIRWISE_TEST_FAILED			 = 107;
+  FIPS_R_PAIRWISE_TEST_FAILED       = 107;
   {$EXTERNALSYM FIPS_R_RSA_DECRYPT_ERROR}
-  FIPS_R_RSA_DECRYPT_ERROR			 = 115;
+  FIPS_R_RSA_DECRYPT_ERROR       = 115;
   {$EXTERNALSYM FIPS_R_RSA_ENCRYPT_ERROR}
-  FIPS_R_RSA_ENCRYPT_ERROR			 = 116;
+  FIPS_R_RSA_ENCRYPT_ERROR       = 116;
   {$EXTERNALSYM FIPS_R_SELFTEST_FAILED}
-  FIPS_R_SELFTEST_FAILED				 = 101;
+  FIPS_R_SELFTEST_FAILED         = 101;
   {$EXTERNALSYM FIPS_R_TEST_FAILURE}
-  FIPS_R_TEST_FAILURE				 = 117;
+  FIPS_R_TEST_FAILURE         = 117;
   {$EXTERNALSYM FIPS_R_UNSUPPORTED_PLATFORM}
-  FIPS_R_UNSUPPORTED_PLATFORM			 = 113;
+  FIPS_R_UNSUPPORTED_PLATFORM       = 113;
   {$ENDIF}
   {$IFNDEF OPENSSL_NO_ENGINE}
 //* These flags are used to control combinations of algorithm (methods)
@@ -3917,7 +3917,7 @@ const
   {$EXTERNALSYM ENGINE_METHOD_RSA : TIdC_UINT}
   ENGINE_METHOD_RSA : TIdC_UINT = $0001;
   {$EXTERNALSYM ENGINE_METHOD_DSA   : TIdC_UINT}
-  ENGINE_METHOD_DSA	: TIdC_UINT = $0002;
+  ENGINE_METHOD_DSA  : TIdC_UINT = $0002;
   {$EXTERNALSYM ENGINE_METHOD_DH : TIdC_UINT}
   ENGINE_METHOD_DH : TIdC_UINT = $0004;
   {$EXTERNALSYM ENGINE_METHOD_RAND : TIdC_UINT}
@@ -3925,21 +3925,21 @@ const
   {$EXTERNALSYM ENGINE_METHOD_ECDH : TIdC_UINT}
   ENGINE_METHOD_ECDH : TIdC_UINT = $0010;
   {$EXTERNALSYM ENGINE_METHOD_ECDSA   : TIdC_UINT}
-  ENGINE_METHOD_ECDSA	: TIdC_UINT = $0020;
+  ENGINE_METHOD_ECDSA  : TIdC_UINT = $0020;
   {$EXTERNALSYM ENGINE_METHOD_CIPHERS   : TIdC_UINT}
-  ENGINE_METHOD_CIPHERS	: TIdC_UINT = $0040;
+  ENGINE_METHOD_CIPHERS  : TIdC_UINT = $0040;
   {$EXTERNALSYM ENGINE_METHOD_DIGESTS   : TIdC_UINT}
-  ENGINE_METHOD_DIGESTS	: TIdC_UINT = $0080;
+  ENGINE_METHOD_DIGESTS  : TIdC_UINT = $0080;
   {$EXTERNALSYM ENGINE_METHOD_STORE   : TIdC_UINT}
-  ENGINE_METHOD_STORE	: TIdC_UINT = $0100;
+  ENGINE_METHOD_STORE  : TIdC_UINT = $0100;
   {$EXTERNALSYM ENGINE_METHOD_PKEY_METHS : TIdC_UINT}
   ENGINE_METHOD_PKEY_METHS : TIdC_UINT = $0200;
   {$EXTERNALSYM ENGINE_METHOD_PKEY_ASN1_METHS   : TIdC_UINT}
-  ENGINE_METHOD_PKEY_ASN1_METHS	: TIdC_UINT = $0400;
+  ENGINE_METHOD_PKEY_ASN1_METHS  : TIdC_UINT = $0400;
 
 //* Obvious all-or-nothing cases. */
   {$EXTERNALSYM ENGINE_METHOD_ALL   : TIdC_UINT}
-  ENGINE_METHOD_ALL	: TIdC_UINT = $FFFF;
+  ENGINE_METHOD_ALL  : TIdC_UINT = $FFFF;
   {$EXTERNALSYM ENGINE_METHOD_NONE : TIdC_UINT}
   ENGINE_METHOD_NONE : TIdC_UINT = $0000;
   {$EXTERNALSYM ENGINE_TABLE_FLAG_NOINIT : TIdC_UINT}
@@ -3948,9 +3948,9 @@ const
   {$EXTERNALSYM ENGINE_FLAGS_MANUAL_CMD_CTRL : TIdC_INT}
   ENGINE_FLAGS_MANUAL_CMD_CTRL : TIdC_INT = $0002;
   {$EXTERNALSYM ENGINE_FLAGS_BY_ID_COPY   : TIdC_INT}
-  ENGINE_FLAGS_BY_ID_COPY	: TIdC_INT = $0004;
+  ENGINE_FLAGS_BY_ID_COPY  : TIdC_INT = $0004;
   {$EXTERNALSYM ENGINE_CMD_FLAG_NUMERIC   : TIdC_UINT}
-  ENGINE_CMD_FLAG_NUMERIC	: TIdC_UINT = $0001;
+  ENGINE_CMD_FLAG_NUMERIC  : TIdC_UINT = $0001;
   {$EXTERNALSYM ENGINE_CMD_FLAG_STRING : TIdC_UINT}
   ENGINE_CMD_FLAG_STRING : TIdC_UINT = $0002;
   {$EXTERNALSYM ENGINE_CMD_FLAG_NO_INPUT : TIdC_UINT}
@@ -3959,38 +3959,38 @@ const
   ENGINE_CMD_FLAG_INTERNAL : TIdC_UINT = $0008;
 
   {$EXTERNALSYM ENGINE_CTRL_SET_LOGSTREAM}
-  ENGINE_CTRL_SET_LOGSTREAM	= 1;
+  ENGINE_CTRL_SET_LOGSTREAM  = 1;
   {$EXTERNALSYM ENGINE_CTRL_SET_PASSWORD_CALLBACK}
   ENGINE_CTRL_SET_PASSWORD_CALLBACK = 2;
   {$EXTERNALSYM ENGINE_CTRL_HUP}
-  ENGINE_CTRL_HUP	= 3;
+  ENGINE_CTRL_HUP  = 3;
   //* Close and reinitialise any
-	// handles/connections etc. */
+  // handles/connections etc. */
   {$EXTERNALSYM ENGINE_CTRL_SET_USER_INTERFACE}
   ENGINE_CTRL_SET_USER_INTERFACE = 4; //* Alternative to callback */
   {$EXTERNALSYM _CALLBACK_DATA}
   _CALLBACK_DATA = 5;
   //* User-specific data, used
-	//  when calling the password
-	//  callback and the user
-	//  interface */
+  //  when calling the password
+  //  callback and the user
+  //  interface */
   {$EXTERNALSYM D_CONFIGURATION}
-  D_CONFIGURATION	= 6;
+  D_CONFIGURATION  = 6;
   //* Load a configuration, given
-	//a string that represents a
-	//file name or so */
+  //a string that represents a
+  //file name or so */
   {$EXTERNALSYM D_SECTION}
-  D_SECTION	= 7;
+  D_SECTION  = 7;
   ///* Load data from a given
-	//section in the already loaded
-	//configuration */
+  //section in the already loaded
+  //configuration */
 
 ////* Returns non-zero if the supplied ENGINE has a ctrl() handler. If "not", then
 // * all the remaining control commands will return failure, so it is worth
 // * checking this first if the caller is trying to "discover" the engine's
 // * capabilities and doesn't want errors generated unnecessarily. */
   {$EXTERNALSYM ENGINE_CTRL_HAS_CTRL_FUNCTION}
-  ENGINE_CTRL_HAS_CTRL_FUNCTION	= 10;
+  ENGINE_CTRL_HAS_CTRL_FUNCTION  = 10;
 ///* Returns a positive command number for the first command supported by the
 // * engine. Returns zero if no ctrl commands are supported. */
   {$EXTERNALSYM ENGINE_CTRL_GET_FIRST_CMD_TYPE}
@@ -4012,17 +4012,17 @@ const
   {$EXTERNALSYM ENGINE_CTRL_GET_NAME_LEN_FROM_CMD}
   ENGINE_CTRL_GET_NAME_LEN_FROM_CMD = 14;
   {$EXTERNALSYM ENGINE_CTRL_GET_NAME_FROM_CMD}
-  ENGINE_CTRL_GET_NAME_FROM_CMD	= 15;
+  ENGINE_CTRL_GET_NAME_FROM_CMD  = 15;
 //* The next two are similar but give a "short description" of a command. */
   {$EXTERNALSYM ENGINE_CTRL_GET_DESC_LEN_FROM_CMD}
-  ENGINE_CTRL_GET_DESC_LEN_FROM_CMD	= 16;
+  ENGINE_CTRL_GET_DESC_LEN_FROM_CMD  = 16;
   {$EXTERNALSYM ENGINE_CTRL_GET_DESC_FROM_CMD}
   ENGINE_CTRL_GET_DESC_FROM_CMD = 17;
 ///* With this command, the return value is the OR'd combination of
 // * ENGINE_CMD_FLAG_*** values that indicate what kind of input a given
 // * engine-specific ctrl command expects. */
   {$EXTERNALSYM ENGINE_CTRL_GET_CMD_FLAGS}
-  ENGINE_CTRL_GET_CMD_FLAGS	= 18;
+  ENGINE_CTRL_GET_CMD_FLAGS  = 18;
 
 ///* ENGINE implementations should start the numbering of their own control
 // * commands from this value. (ie. ENGINE_CMD_BASE, ENGINE_CMD_BASE + 1, etc). */
@@ -4043,42 +4043,42 @@ const
 // * disable checking and workarounds for applications that fork().
 // */
   {$EXTERNALSYM ENGINE_CTRL_CHIL_NO_LOCKING}
-  ENGINE_CTRL_CHIL_NO_LOCKING	=	101;
+  ENGINE_CTRL_CHIL_NO_LOCKING  =  101;
 ///* This prevents the initialisation function from providing mutex
 // * callbacks to the nCipher library. */
 
 ///* Binary/behaviour compatibility levels */
   {$EXTERNALSYM OSSL_DYNAMIC_VERSION   : TIdC_UINT}
-  OSSL_DYNAMIC_VERSION	: TIdC_UINT = $00020000;
+  OSSL_DYNAMIC_VERSION  : TIdC_UINT = $00020000;
 ///* Binary versions older than this are too old for us (whether we're a loader or
 // * a loadee) */
   {$EXTERNALSYM OSSL_DYNAMIC_OLDEST   : TIdC_UINT}
-  OSSL_DYNAMIC_OLDEST	: TIdC_UINT = $00020000;
+  OSSL_DYNAMIC_OLDEST  : TIdC_UINT = $00020000;
 //* Function codes. */
   {$EXTERNALSYM ENGINE_F_DYNAMIC_CTRL}
-  ENGINE_F_DYNAMIC_CTRL	= 180;
+  ENGINE_F_DYNAMIC_CTRL  = 180;
   {$EXTERNALSYM ENGINE_F_DYNAMIC_GET_DATA_CTX}
   ENGINE_F_DYNAMIC_GET_DATA_CTX = 181;
   {$EXTERNALSYM ENGINE_F_DYNAMIC_LOAD}
   ENGINE_F_DYNAMIC_LOAD = 182;
   {$EXTERNALSYM ENGINE_F_DYNAMIC_SET_DATA_CTX}
-  ENGINE_F_DYNAMIC_SET_DATA_CTX	= 183;
+  ENGINE_F_DYNAMIC_SET_DATA_CTX  = 183;
   {$EXTERNALSYM ENGINE_F_ENGINE_ADD}
-  ENGINE_F_ENGINE_ADD	= 105;
+  ENGINE_F_ENGINE_ADD  = 105;
   {$EXTERNALSYM ENGINE_F_ENGINE_BY_ID}
-  ENGINE_F_ENGINE_BY_ID	= 106;
+  ENGINE_F_ENGINE_BY_ID  = 106;
   {$EXTERNALSYM ENGINE_F_ENGINE_CMD_IS_EXECUTABLE}
-  ENGINE_F_ENGINE_CMD_IS_EXECUTABLE	= 170;
+  ENGINE_F_ENGINE_CMD_IS_EXECUTABLE  = 170;
   {$EXTERNALSYM ENGINE_F_ENGINE_CTRL}
   ENGINE_F_ENGINE_CTRL = 142;
   {$EXTERNALSYM ENGINE_F_ENGINE_CTRL_CMD}
   ENGINE_F_ENGINE_CTRL_CMD = 178;
   {$EXTERNALSYM ENGINE_F_ENGINE_CTRL_CMD_STRING}
-  ENGINE_F_ENGINE_CTRL_CMD_STRING	= 171;
+  ENGINE_F_ENGINE_CTRL_CMD_STRING  = 171;
   {$EXTERNALSYM ENGINE_F_ENGINE_FINISH}
   ENGINE_F_ENGINE_FINISH = 107;
   {$EXTERNALSYM ENGINE_F_ENGINE_FREE_UTIL}
-  ENGINE_F_ENGINE_FREE_UTIL	= 108;
+  ENGINE_F_ENGINE_FREE_UTIL  = 108;
   {$EXTERNALSYM ENGINE_F_ENGINE_GET_CIPHER}
   ENGINE_F_ENGINE_GET_CIPHER = 185;
   {$EXTERNALSYM ENGINE_F_ENGINE_GET_DEFAULT_TYPE}
@@ -4090,7 +4090,7 @@ const
   {$EXTERNALSYM ENGINE_F_ENGINE_GET_PKEY_ASN1_METH}
   ENGINE_F_ENGINE_GET_PKEY_ASN1_METH = 193;
   {$EXTERNALSYM ENGINE_F_ENGINE_GET_PKEY_METH}
-  ENGINE_F_ENGINE_GET_PKEY_METH	= 192;
+  ENGINE_F_ENGINE_GET_PKEY_METH  = 192;
   {$EXTERNALSYM ENGINE_F_ENGINE_GET_PREV}
   ENGINE_F_ENGINE_GET_PREV = 116;
   {$EXTERNALSYM ENGINE_F_ENGINE_INIT}
@@ -4098,17 +4098,17 @@ const
   {$EXTERNALSYM ENGINE_F_ENGINE_LIST_ADD}
   ENGINE_F_ENGINE_LIST_ADD = 120;
   {$EXTERNALSYM ENGINE_F_ENGINE_LIST_REMOVE}
-  ENGINE_F_ENGINE_LIST_REMOVE	= 121;
+  ENGINE_F_ENGINE_LIST_REMOVE  = 121;
   {$EXTERNALSYM ENGINE_F_ENGINE_LOAD_PRIVATE_KEY}
   ENGINE_F_ENGINE_LOAD_PRIVATE_KEY = 150;
   {$EXTERNALSYM ENGINE_F_ENGINE_LOAD_PUBLIC_KEY}
-  ENGINE_F_ENGINE_LOAD_PUBLIC_KEY	= 151;
+  ENGINE_F_ENGINE_LOAD_PUBLIC_KEY  = 151;
  //was ENGINE_F_ENGINE_LOAD_SSL_CLIENT_CERT = 192;
   {$EXTERNALSYM ENGINE_F_ENGINE_LOAD_SSL_CLIENT_CERT}
   ENGINE_F_ENGINE_LOAD_SSL_CLIENT_CERT = 194;
 
   {$EXTERNALSYM ENGINE_F_ENGINE_NEW}
-  ENGINE_F_ENGINE_NEW	= 122;
+  ENGINE_F_ENGINE_NEW  = 122;
   {$EXTERNALSYM ENGINE_F_ENGINE_REMOVE}
   ENGINE_F_ENGINE_REMOVE = 123;
   {$EXTERNALSYM ENGINE_F_ENGINE_SET_DEFAULT_STRING}
@@ -4124,34 +4124,34 @@ const
   {$EXTERNALSYM ENGINE_F_ENGINE_UNLOAD_KEY}
   ENGINE_F_ENGINE_UNLOAD_KEY = 152;
   {$EXTERNALSYM ENGINE_F_ENGINE_UNLOCKED_FINISH}
-  ENGINE_F_ENGINE_UNLOCKED_FINISH	= 191;
+  ENGINE_F_ENGINE_UNLOCKED_FINISH  = 191;
   {$EXTERNALSYM ENGINE_F_ENGINE_UP_REF}
   ENGINE_F_ENGINE_UP_REF = 190;
   {$EXTERNALSYM ENGINE_F_INT_CTRL_HELPER}
   ENGINE_F_INT_CTRL_HELPER = 172;
   {$EXTERNALSYM ENGINE_F_INT_ENGINE_CONFIGURE}
-  ENGINE_F_INT_ENGINE_CONFIGURE	= 188;
+  ENGINE_F_INT_ENGINE_CONFIGURE  = 188;
   {$EXTERNALSYM ENGINE_F_INT_ENGINE_MODULE_INIT}
-  ENGINE_F_INT_ENGINE_MODULE_INIT	= 187;
+  ENGINE_F_INT_ENGINE_MODULE_INIT  = 187;
   {$EXTERNALSYM ENGINE_F_LOG_MESSAGE}
   ENGINE_F_LOG_MESSAGE = 141;
 //* Reason codes. */
   {$EXTERNALSYM ENGINE_R_ALREADY_LOADED}
-  ENGINE_R_ALREADY_LOADED	= 100;
+  ENGINE_R_ALREADY_LOADED  = 100;
   {$EXTERNALSYM ENGINE_R_ARGUMENT_IS_NOT_A_NUMBER}
-  ENGINE_R_ARGUMENT_IS_NOT_A_NUMBER	= 133;
+  ENGINE_R_ARGUMENT_IS_NOT_A_NUMBER  = 133;
   {$EXTERNALSYM ENGINE_R_CMD_NOT_EXECUTABLE}
-  ENGINE_R_CMD_NOT_EXECUTABLE	= 134;
+  ENGINE_R_CMD_NOT_EXECUTABLE  = 134;
   {$EXTERNALSYM ENGINE_R_COMMAND_TAKES_INPUT}
   ENGINE_R_COMMAND_TAKES_INPUT = 135;
   {$EXTERNALSYM ENGINE_R_COMMAND_TAKES_NO_INPUT}
-  ENGINE_R_COMMAND_TAKES_NO_INPUT	= 136;
+  ENGINE_R_COMMAND_TAKES_NO_INPUT  = 136;
   {$EXTERNALSYM ENGINE_R_CONFLICTING_ENGINE_ID}
   ENGINE_R_CONFLICTING_ENGINE_ID = 103;
   {$EXTERNALSYM ENGINE_R_CTRL_COMMAND_NOT_IMPLEMENTED}
   ENGINE_R_CTRL_COMMAND_NOT_IMPLEMENTED = 119;
   {$EXTERNALSYM ENGINE_R_DH_NOT_IMPLEMENTED}
-  ENGINE_R_DH_NOT_IMPLEMENTED	= 139;
+  ENGINE_R_DH_NOT_IMPLEMENTED  = 139;
   {$EXTERNALSYM ENGINE_R_DSA_NOT_IMPLEMENTED}
   ENGINE_R_DSA_NOT_IMPLEMENTED = 140;
   {$EXTERNALSYM ENGINE_R_DSO_FAILURE}
@@ -4162,14 +4162,14 @@ const
   ENGINE_R_ENGINES_SECTION_ERROR = 148;
 //was:  ENGINE_R_ENGINE_CONFIGURATION_ERROR = 101;
   {$EXTERNALSYM ENGINE_R_ENGINE_CONFIGURATION_ERROR}
-  ENGINE_R_ENGINE_CONFIGURATION_ERROR	= 102;
+  ENGINE_R_ENGINE_CONFIGURATION_ERROR  = 102;
 
   {$EXTERNALSYM ENGINE_R_ENGINE_IS_NOT_IN_LIST}
   ENGINE_R_ENGINE_IS_NOT_IN_LIST = 105;
   {$EXTERNALSYM ENGINE_R_ENGINE_SECTION_ERROR}
-  ENGINE_R_ENGINE_SECTION_ERROR	= 149;
+  ENGINE_R_ENGINE_SECTION_ERROR  = 149;
   {$EXTERNALSYM ENGINE_R_FAILED_LOADING_PRIVATE_KEY}
-  ENGINE_R_FAILED_LOADING_PRIVATE_KEY	= 128;
+  ENGINE_R_FAILED_LOADING_PRIVATE_KEY  = 128;
   {$EXTERNALSYM ENGINE_R_FAILED_LOADING_PUBLIC_KEY}
   ENGINE_R_FAILED_LOADING_PUBLIC_KEY = 129;
   {$EXTERNALSYM ENGINE_R_FINISH_FAILED}
@@ -4177,7 +4177,7 @@ const
   {$EXTERNALSYM ENGINE_R_GET_HANDLE_FAILED}
   ENGINE_R_GET_HANDLE_FAILED = 107;
   {$EXTERNALSYM ENGINE_R_ID_OR_NAME_MISSING}
-  ENGINE_R_ID_OR_NAME_MISSING	= 108;
+  ENGINE_R_ID_OR_NAME_MISSING  = 108;
   {$EXTERNALSYM ENGINE_R_INIT_FAILED}
   ENGINE_R_INIT_FAILED = 109;
   {$EXTERNALSYM ENGINE_R_INTERNAL_LIST_ERROR}
@@ -4185,37 +4185,37 @@ const
   {$EXTERNALSYM ENGINE_R_INVALID_ARGUMENT}
   ENGINE_R_INVALID_ARGUMENT = 143;
   {$EXTERNALSYM ENGINE_R_INVALID_CMD_NAME}
-  ENGINE_R_INVALID_CMD_NAME	= 137;
+  ENGINE_R_INVALID_CMD_NAME  = 137;
   {$EXTERNALSYM ENGINE_R_INVALID_CMD_NUMBER}
-  ENGINE_R_INVALID_CMD_NUMBER	= 138;
+  ENGINE_R_INVALID_CMD_NUMBER  = 138;
   {$EXTERNALSYM ENGINE_R_INVALID_INIT_VALUE}
-  ENGINE_R_INVALID_INIT_VALUE	= 151;
+  ENGINE_R_INVALID_INIT_VALUE  = 151;
   {$EXTERNALSYM ENGINE_R_INVALID_STRING}
-  ENGINE_R_INVALID_STRING	= 150;
+  ENGINE_R_INVALID_STRING  = 150;
   {$EXTERNALSYM ENGINE_R_NOT_INITIALISED}
   ENGINE_R_NOT_INITIALISED = 117;
   {$EXTERNALSYM ENGINE_R_NOT_LOADED}
-  ENGINE_R_NOT_LOADED	= 112;
+  ENGINE_R_NOT_LOADED  = 112;
   {$EXTERNALSYM ENGINE_R_NO_CONTROL_FUNCTION}
   ENGINE_R_NO_CONTROL_FUNCTION = 120;
   {$EXTERNALSYM ENGINE_R_NO_INDEX}
-  ENGINE_R_NO_INDEX	= 144;
+  ENGINE_R_NO_INDEX  = 144;
   {$EXTERNALSYM ENGINE_R_NO_LOAD_FUNCTION}
-  ENGINE_R_NO_LOAD_FUNCTION	= 125;
+  ENGINE_R_NO_LOAD_FUNCTION  = 125;
   {$EXTERNALSYM ENGINE_R_NO_REFERENCE}
-  ENGINE_R_NO_REFERENCE	= 130;
+  ENGINE_R_NO_REFERENCE  = 130;
   {$EXTERNALSYM ENGINE_R_NO_SUCH_ENGINE}
-  ENGINE_R_NO_SUCH_ENGINE	= 116;
+  ENGINE_R_NO_SUCH_ENGINE  = 116;
   {$EXTERNALSYM ENGINE_R_NO_UNLOAD_FUNCTION}
-  ENGINE_R_NO_UNLOAD_FUNCTION	= 126;
+  ENGINE_R_NO_UNLOAD_FUNCTION  = 126;
   {$EXTERNALSYM ENGINE_R_PROVIDE_PARAMETERS}
-  ENGINE_R_PROVIDE_PARAMETERS	= 113;
+  ENGINE_R_PROVIDE_PARAMETERS  = 113;
   {$EXTERNALSYM ENGINE_R_RSA_NOT_IMPLEMENTED}
   ENGINE_R_RSA_NOT_IMPLEMENTED = 141;
   {$EXTERNALSYM ENGINE_R_UNIMPLEMENTED_CIPHER}
-  ENGINE_R_UNIMPLEMENTED_CIPHER	= 146;
+  ENGINE_R_UNIMPLEMENTED_CIPHER  = 146;
   {$EXTERNALSYM ENGINE_R_UNIMPLEMENTED_DIGEST}
-  ENGINE_R_UNIMPLEMENTED_DIGEST	= 147;
+  ENGINE_R_UNIMPLEMENTED_DIGEST  = 147;
   {$EXTERNALSYM ENGINE_R_UNIMPLEMENTED_PUBLIC_KEY_METHOD}
   ENGINE_R_UNIMPLEMENTED_PUBLIC_KEY_METHOD = 101;
   {$EXTERNALSYM ENGINE_R_VERSION_INCOMPATIBILITY}
@@ -4260,7 +4260,7 @@ const
   {$EXTERNALSYM CAMELLIA_ENCRYPT}
   CAMELLIA_ENCRYPT = 1;
   {$EXTERNALSYM CAMELLIA_DECRYPT}
-  CAMELLIA_DECRYPT	= 0;
+  CAMELLIA_DECRYPT  = 0;
 //* This should be a hidden type, but EVP requires that the size be known */
 
   {$EXTERNALSYM CAMELLIA_BLOCK_SIZE}
@@ -4274,9 +4274,9 @@ const
   {$EXTERNALSYM WHIRLPOOL_DIGEST_LENGTH}
   WHIRLPOOL_DIGEST_LENGTH = (512 div 8);
   {$EXTERNALSYM WHIRLPOOL_BBLOCK}
-  WHIRLPOOL_BBLOCK	= 512;
+  WHIRLPOOL_BBLOCK  = 512;
   {$EXTERNALSYM WHIRLPOOL_COUNTER}
-  WHIRLPOOL_COUNTER	= (256 div 8);
+  WHIRLPOOL_COUNTER  = (256 div 8);
   {$IFNDEF OPENSSL_NO_MD2}
   {$EXTERNALSYM MD2_BLOCK}
   MD2_BLOCK = 16;
@@ -5043,7 +5043,7 @@ const
   OPENSSL_VERSION_NUMBER = $1000105f;   // MMNNFFPPS Major, Minor, Fix, Patch, Status
   {$EXTERNALSYM OPENSSL_VERSION_TEXT}
 {$IFDEF OPENSSL_FIPS}
-  OPENSSL_VERSION_TEXT	= 'OpenSSL 1.0.1e-fips 11 Feb 2013'; {Do not localize}
+  OPENSSL_VERSION_TEXT  = 'OpenSSL 1.0.1e-fips 11 Feb 2013'; {Do not localize}
 {$ELSE}
   OPENSSL_VERSION_TEXT = 'OpenSSL 1.0.1e 11 Feb 2013';   {Do not localize}
 {$ENDIF}
@@ -5142,7 +5142,7 @@ const
   {$EXTERNALSYM PEM_OBJ_PUB_DSA}
   PEM_OBJ_PUB_DSA = 15;
   {$EXTERNALSYM PEM_OBJ_PUB_DH}
-  PEM_OBJ_PUB_DH =	16;
+  PEM_OBJ_PUB_DH =  16;
   {$EXTERNALSYM PEM_OBJ_DHPARAMS}
   PEM_OBJ_DHPARAMS = 17;
   {$EXTERNALSYM PEM_OBJ_DSAPARAMS}
@@ -5152,7 +5152,7 @@ const
   {$EXTERNALSYM PEM_OBJ_PRIV_ECDSA}
   PEM_OBJ_PRIV_ECDSA = 20;
   {$EXTERNALSYM PEM_OBJ_PUB_ECDSA}
-  PEM_OBJ_PUB_ECDSA	= 21;
+  PEM_OBJ_PUB_ECDSA  = 21;
   {$EXTERNALSYM PEM_OBJ_ECPARAMETERS}
   PEM_OBJ_ECPARAMETERS = 22;
   {$EXTERNALSYM PEM_R_BAD_BASE64_DECODE}
@@ -5204,7 +5204,7 @@ const
   {$EXTERNALSYM PEM_STRING_X509_CRL}
   PEM_STRING_X509_CRL = 'X509 CRL';  {Do not localize}
   {$EXTERNALSYM PEM_STRING_PUBLIC}
-  PEM_STRING_PUBLIC	= 'PUBLIC KEY';  {Do not localize}
+  PEM_STRING_PUBLIC  = 'PUBLIC KEY';  {Do not localize}
   {$EXTERNALSYM PEM_STRING_RSA}
   PEM_STRING_RSA = 'RSA PRIVATE KEY';  {Do not localize}
   {$EXTERNALSYM PEM_STRING_RSA_PUBLIC}
@@ -5212,7 +5212,7 @@ const
   {$EXTERNALSYM PEM_STRING_DSA}
   PEM_STRING_DSA = 'DSA PRIVATE KEY';  {Do not localize}
   {$EXTERNALSYM PEM_STRING_DSA_PUBLIC}
-  PEM_STRING_DSA_PUBLIC	 = 'DSA PUBLIC KEY'; {Do not localize}
+  PEM_STRING_DSA_PUBLIC   = 'DSA PUBLIC KEY'; {Do not localize}
   {$EXTERNALSYM PEM_STRING_PKCS7}
   PEM_STRING_PKCS7 = 'PKCS7';  {Do not localize}
   {$EXTERNALSYM PEM_STRING_PKCS7_SIGNED}
@@ -5232,7 +5232,7 @@ const
   {$EXTERNALSYM PEM_STRING_ECPARAMETERS}
   PEM_STRING_ECPARAMETERS = 'EC PARAMETERS'; {Do not localize}
   {$EXTERNALSYM PEM_STRING_ECPRIVATEKEY}
-  PEM_STRING_ECPRIVATEKEY	= 'EC PRIVATE KEY'; {Do not localize}
+  PEM_STRING_ECPRIVATEKEY  = 'EC PRIVATE KEY'; {Do not localize}
   {$EXTERNALSYM PEM_STRING_CMS}
   PEM_STRING_CMS = 'CMS'; {Do not localize}
   {$EXTERNALSYM PEM_TYPE_CLEAR}
@@ -5383,7 +5383,7 @@ const
 // */
 
   {$EXTERNALSYM RSA_FLAG_FIPS_METHOD}
-  RSA_FLAG_FIPS_METHOD			= $0400;
+  RSA_FLAG_FIPS_METHOD      = $0400;
 
 ///* If this flag is set the operations normally disabled in FIPS mode are
 // * permitted it is then the applications responsibility to ensure that the
@@ -5391,7 +5391,7 @@ const
 // */
 
   {$EXTERNALSYM RSA_FLAG_NON_FIPS_ALLOW}
-  RSA_FLAG_NON_FIPS_ALLOW		 = $0400;
+  RSA_FLAG_NON_FIPS_ALLOW     = $0400;
 
   {$EXTERNALSYM RSA_3}
   RSA_3 = $3;
@@ -5437,23 +5437,23 @@ const
 {$ENDIF}
   //the openssl developers probably only wanted to define this if it was not already defined.
   {$EXTERNALSYM RSA_MAX_MODULUS_BITS}
-  RSA_MAX_MODULUS_BITS	= 16384;
+  RSA_MAX_MODULUS_BITS  = 16384;
   {$EXTERNALSYM RSA_FIPS_MIN_MODULUS_BITS}
   RSA_FIPS_MIN_MODULUS_BITS = 1024;
   //the openssl developers probably only wanted to define this if it was not already defined.
   {$EXTERNALSYM RSA_SMALL_MODULUS_BITS}
-  RSA_SMALL_MODULUS_BITS  =	3072;
+  RSA_SMALL_MODULUS_BITS  =  3072;
   //the openssl developers probably only wanted to define this if it was not already defined.
   {$EXTERNALSYM RSA_MAX_PUBEXP_BITS}
-  RSA_MAX_PUBEXP_BITS	= 64; //* exponent limit enforced for "large" modulus only */
+  RSA_MAX_PUBEXP_BITS  = 64; //* exponent limit enforced for "large" modulus only */
 
   {$EXTERNALSYM RSA_FLAG_THREAD_SAFE}
   RSA_FLAG_THREAD_SAFE = $10;
   //* function codes */
   {$EXTERNALSYM RSA_F_FIPS_RSA_SIGN}
-  RSA_F_FIPS_RSA_SIGN				= 140;
+  RSA_F_FIPS_RSA_SIGN        = 140;
   {$EXTERNALSYM RSA_F_FIPS_RSA_VERIFY}
-  RSA_F_FIPS_RSA_VERIFY				= 141;
+  RSA_F_FIPS_RSA_VERIFY        = 141;
   {$EXTERNALSYM RSA_F_MEMORY_LOCK}
   RSA_F_MEMORY_LOCK = 100;
   {$EXTERNALSYM RSA_F_RSA_CHECK_KEY}
@@ -5495,15 +5495,15 @@ const
   {$EXTERNALSYM RSA_F_RSA_PRINT_FP}
   RSA_F_RSA_PRINT_FP = 116;
   {$EXTERNALSYM RSA_F_RSA_PRIVATE_ENCRYPT}
-  RSA_F_RSA_PRIVATE_ENCRYPT			 = 137;
+  RSA_F_RSA_PRIVATE_ENCRYPT       = 137;
   {$EXTERNALSYM RSA_F_RSA_PUBLIC_DECRYPT}
-  RSA_F_RSA_PUBLIC_DECRYPT			 = 138;
+  RSA_F_RSA_PUBLIC_DECRYPT       = 138;
   {$EXTERNALSYM RSA_F_RSA_SETUP_BLINDING}
-  RSA_F_RSA_SETUP_BLINDING			 = 136;
+  RSA_F_RSA_SETUP_BLINDING       = 136;
   {$EXTERNALSYM RSA_F_RSA_SET_DEFAULT_METHOD}
-  RSA_F_RSA_SET_DEFAULT_METHOD		 = 139;
+  RSA_F_RSA_SET_DEFAULT_METHOD     = 139;
   {$EXTERNALSYM RSA_F_RSA_SET_METHOD}
-  RSA_F_RSA_SET_METHOD				 = 142;
+  RSA_F_RSA_SET_METHOD         = 142;
   {$EXTERNALSYM RSA_F_RSA_SIGN}
   RSA_F_RSA_SIGN = 117;
   {$EXTERNALSYM RSA_F_RSA_SIGN_ASN1_OCTET_STRING}
@@ -5513,7 +5513,7 @@ const
   {$EXTERNALSYM RSA_F_RSA_VERIFY_ASN1_OCTET_STRING}
   RSA_F_RSA_VERIFY_ASN1_OCTET_STRING = 120;
   {$EXTERNALSYM RSA_F_RSA_VERIFY_PKCS1_PSS}
-  RSA_F_RSA_VERIFY_PKCS1_PSS			= 126;
+  RSA_F_RSA_VERIFY_PKCS1_PSS      = 126;
   {$EXTERNALSYM RSA_METHOD_FLAG_NO_CHECK}
   RSA_METHOD_FLAG_NO_CHECK = $01;
   {$EXTERNALSYM RSA_NO_PADDING}
@@ -5559,13 +5559,13 @@ const
   {$EXTERNALSYM RSA_R_KEY_SIZE_TOO_SMALL}
   RSA_R_KEY_SIZE_TOO_SMALL = 120;
   {$EXTERNALSYM RSA_R_LAST_OCTET_INVALID}
-  RSA_R_LAST_OCTET_INVALID			= 134;
+  RSA_R_LAST_OCTET_INVALID      = 134;
   {$EXTERNALSYM RSA_R_MODULUS_TOO_LARGE}
-  RSA_R_MODULUS_TOO_LARGE				= 105;
+  RSA_R_MODULUS_TOO_LARGE        = 105;
   {$EXTERNALSYM RSA_R_NON_FIPS_METHOD}
-  RSA_R_NON_FIPS_METHOD				= 141;
+  RSA_R_NON_FIPS_METHOD        = 141;
   {$EXTERNALSYM RSA_R_NO_PUBLIC_EXPONENT}
-  RSA_R_NO_PUBLIC_EXPONENT			= 140;
+  RSA_R_NO_PUBLIC_EXPONENT      = 140;
   {$EXTERNALSYM RSA_R_NULL_BEFORE_BLOCK_MISSING}
   RSA_R_NULL_BEFORE_BLOCK_MISSING = 113;
   {$EXTERNALSYM RSA_R_N_DOES_NOT_EQUAL_P_Q}
@@ -5573,7 +5573,7 @@ const
   {$EXTERNALSYM RSA_R_OAEP_DECODING_ERROR}
   RSA_R_OAEP_DECODING_ERROR = 121;
   {$EXTERNALSYM RSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE}
-  RSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE	 = 142;
+  RSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE   = 142;
   {$EXTERNALSYM RSA_R_PADDING_CHECK_FAILED}
   RSA_R_PADDING_CHECK_FAILED = 114;
   {$EXTERNALSYM RSA_R_P_NOT_PRIME}
@@ -5581,9 +5581,9 @@ const
   {$EXTERNALSYM RSA_R_Q_NOT_PRIME}
   RSA_R_Q_NOT_PRIME = 129;
   {$EXTERNALSYM RSA_R_SLEN_CHECK_FAILED}
-  RSA_R_SLEN_CHECK_FAILED				= 136;
+  RSA_R_SLEN_CHECK_FAILED        = 136;
   {$EXTERNALSYM RSA_R_SLEN_RECOVERY_FAILED}
-  RSA_R_SLEN_RECOVERY_FAILED			= 135;
+  RSA_R_SLEN_RECOVERY_FAILED      = 135;
   {$EXTERNALSYM RSA_R_SSLV3_ROLLBACK_ATTACK}
   RSA_R_SSLV3_ROLLBACK_ATTACK = 115;
   {$EXTERNALSYM RSA_R_THE_ASN1_OBJECT_IDENTIFIER_IS_NOT_KNOWN_FOR_THIS_MD}
@@ -5744,7 +5744,7 @@ const
   {$EXTERNALSYM SN_mdc2WithRSA}
   SN_mdc2WithRSA = 'RSA-MDC2';  {Do not localize}
   {$EXTERNALSYM SN_member_body}
-  SN_member_body	='member-body'; {Do not localize}
+  SN_member_body  ='member-body'; {Do not localize}
   {$EXTERNALSYM SN_ms_code_com}
   SN_ms_code_com = 'msCodeCom';  {Do not localize}
   {$EXTERNALSYM SN_ms_code_ind}
@@ -5856,13 +5856,13 @@ const
   {$EXTERNALSYM SN_zlib_compression}
   SN_zlib_compression = 'ZLIB';  {Do not localize}
   {$EXTERNALSYM OCSP_DEFAULT_NONCE_LENGTH}
-  OCSP_DEFAULT_NONCE_LENGTH	= 16;
+  OCSP_DEFAULT_NONCE_LENGTH  = 16;
   {$EXTERNALSYM OCSP_NOCERTS}
   OCSP_NOCERTS = $1;
   {$EXTERNALSYM OCSP_NOINTERN}
-  OCSP_NOINTERN	= $2;
+  OCSP_NOINTERN  = $2;
   {$EXTERNALSYM OCSP_NOSIGS}
-  OCSP_NOSIGS	= $4;
+  OCSP_NOSIGS  = $4;
   {$EXTERNALSYM OCSP_NOCHAIN}
   OCSP_NOCHAIN = $8;
   {$EXTERNALSYM OCSP_NOVERIFY}
@@ -5870,17 +5870,17 @@ const
   {$EXTERNALSYM OCSP_NOEXPLICIT}
   OCSP_NOEXPLICIT = $20;
   {$EXTERNALSYM OCSP_NOCASIGN}
-  OCSP_NOCASIGN	= $40;
+  OCSP_NOCASIGN  = $40;
   {$EXTERNALSYM OCSP_NODELEGATED}
   OCSP_NODELEGATED = $80;
   {$EXTERNALSYM OCSP_NOCHECKS}
-  OCSP_NOCHECKS	= $100;
+  OCSP_NOCHECKS  = $100;
   {$EXTERNALSYM OCSP_TRUSTOTHER}
-  OCSP_TRUSTOTHER	= $200;
+  OCSP_TRUSTOTHER  = $200;
   {$EXTERNALSYM OCSP_RESPID_KEY}
-  OCSP_RESPID_KEY	= $400;
+  OCSP_RESPID_KEY  = $400;
   {$EXTERNALSYM OCSP_NOTIME}
-  OCSP_NOTIME	= $800;
+  OCSP_NOTIME  = $800;
   {$EXTERNALSYM OCSP_RESPONSE_STATUS_SUCCESSFUL}
   OCSP_RESPONSE_STATUS_SUCCESSFUL          = 0;
   {$EXTERNALSYM OCSP_RESPONSE_STATUS_MALFORMEDREQUEST}
@@ -5918,102 +5918,102 @@ const
   {$EXTERNALSYM V_OCSP_CERTSTATUS_UNKNOWN}
   V_OCSP_CERTSTATUS_UNKNOWN = 2;
   {$EXTERNALSYM OCSP_F_ASN1_STRING_ENCODE}
-  OCSP_F_ASN1_STRING_ENCODE		   	= 100;
+  OCSP_F_ASN1_STRING_ENCODE         = 100;
   {$EXTERNALSYM OCSP_F_D2I_OCSP_NONCE}
-  OCSP_F_D2I_OCSP_NONCE				    = 102;
+  OCSP_F_D2I_OCSP_NONCE            = 102;
   {$EXTERNALSYM OCSP_F_OCSP_BASIC_ADD1_STATUS}
-  OCSP_F_OCSP_BASIC_ADD1_STATUS	  = 103;
+  OCSP_F_OCSP_BASIC_ADD1_STATUS    = 103;
   {$EXTERNALSYM OCSP_F_OCSP_BASIC_SIGN}
-  OCSP_F_OCSP_BASIC_SIGN			    = 104;
+  OCSP_F_OCSP_BASIC_SIGN          = 104;
   {$EXTERNALSYM OCSP_F_OCSP_BASIC_VERIFY}
-  OCSP_F_OCSP_BASIC_VERIFY  		  = 105;
+  OCSP_F_OCSP_BASIC_VERIFY        = 105;
   {$EXTERNALSYM OCSP_F_OCSP_CERT_ID_NEW}
-  OCSP_F_OCSP_CERT_ID_NEW		  	  = 101;
+  OCSP_F_OCSP_CERT_ID_NEW          = 101;
   {$EXTERNALSYM OCSP_F_OCSP_CHECK_DELEGATED}
-  OCSP_F_OCSP_CHECK_DELEGATED	    = 106;
+  OCSP_F_OCSP_CHECK_DELEGATED      = 106;
   {$EXTERNALSYM OCSP_F_OCSP_CHECK_IDS}
-  OCSP_F_OCSP_CHECK_IDS				    = 107;
+  OCSP_F_OCSP_CHECK_IDS            = 107;
   {$EXTERNALSYM OCSP_F_OCSP_CHECK_ISSUER}
-  OCSP_F_OCSP_CHECK_ISSUER		    = 108;
+  OCSP_F_OCSP_CHECK_ISSUER        = 108;
   {$EXTERNALSYM OCSP_F_OCSP_CHECK_VALIDITY}
-  OCSP_F_OCSP_CHECK_VALIDITY	    = 115;
+  OCSP_F_OCSP_CHECK_VALIDITY      = 115;
   {$EXTERNALSYM OCSP_F_OCSP_MATCH_ISSUERID}
-  OCSP_F_OCSP_MATCH_ISSUERID	    = 109;
+  OCSP_F_OCSP_MATCH_ISSUERID      = 109;
   {$EXTERNALSYM OCSP_F_OCSP_PARSE_URL}
-  OCSP_F_OCSP_PARSE_URL				    = 114;
+  OCSP_F_OCSP_PARSE_URL            = 114;
   {$EXTERNALSYM OCSP_F_OCSP_REQUEST_SIGN}
-  OCSP_F_OCSP_REQUEST_SIGN		    = 110;
+  OCSP_F_OCSP_REQUEST_SIGN        = 110;
   {$EXTERNALSYM OCSP_F_OCSP_REQUEST_VERIFY}
-  OCSP_F_OCSP_REQUEST_VERIFY			= 116;
+  OCSP_F_OCSP_REQUEST_VERIFY      = 116;
   {$EXTERNALSYM OCSP_F_OCSP_RESPONSE_GET1_BASIC}
-  OCSP_F_OCSP_RESPONSE_GET1_BASIC	= 111;
+  OCSP_F_OCSP_RESPONSE_GET1_BASIC  = 111;
   {$EXTERNALSYM OCSP_F_OCSP_SENDREQ_BIO}
-  OCSP_F_OCSP_SENDREQ_BIO			    = 112;
+  OCSP_F_OCSP_SENDREQ_BIO          = 112;
   {$EXTERNALSYM OCSP_F_PARSE_HTTP_LINE1}
-  OCSP_F_PARSE_HTTP_LINE1		      = 117;
+  OCSP_F_PARSE_HTTP_LINE1          = 117;
   {$EXTERNALSYM OCSP_F_REQUEST_VERIFY}
-  OCSP_F_REQUEST_VERIFY	          = 113;
+  OCSP_F_REQUEST_VERIFY            = 113;
 //* Reason codes. */
   {$EXTERNALSYM OCSP_R_BAD_DATA}
-  OCSP_R_BAD_DATA					= 100;
+  OCSP_R_BAD_DATA          = 100;
   {$EXTERNALSYM OCSP_R_CERTIFICATE_VERIFY_ERROR}
-  OCSP_R_CERTIFICATE_VERIFY_ERROR			= 101;
+  OCSP_R_CERTIFICATE_VERIFY_ERROR      = 101;
   {$EXTERNALSYM OCSP_R_DIGEST_ERR}
-  OCSP_R_DIGEST_ERR				= 102;
+  OCSP_R_DIGEST_ERR        = 102;
   {$EXTERNALSYM OCSP_R_ERROR_IN_NEXTUPDATE_FIELD}
-  OCSP_R_ERROR_IN_NEXTUPDATE_FIELD		= 122;
+  OCSP_R_ERROR_IN_NEXTUPDATE_FIELD    = 122;
   {$EXTERNALSYM OCSP_R_ERROR_IN_THISUPDATE_FIELD}
-  OCSP_R_ERROR_IN_THISUPDATE_FIELD		= 123;
+  OCSP_R_ERROR_IN_THISUPDATE_FIELD    = 123;
   {$EXTERNALSYM OCSP_R_ERROR_PARSING_URL}
-  OCSP_R_ERROR_PARSING_URL			= 121;
+  OCSP_R_ERROR_PARSING_URL      = 121;
   {$EXTERNALSYM OCSP_R_MISSING_OCSPSIGNING_USAGE}
-  OCSP_R_MISSING_OCSPSIGNING_USAGE		= 103;
+  OCSP_R_MISSING_OCSPSIGNING_USAGE    = 103;
   {$EXTERNALSYM OCSP_R_NEXTUPDATE_BEFORE_THISUPDATE}
-  OCSP_R_NEXTUPDATE_BEFORE_THISUPDATE		= 124;
+  OCSP_R_NEXTUPDATE_BEFORE_THISUPDATE    = 124;
   {$EXTERNALSYM OCSP_R_NOT_BASIC_RESPONSE}
-  OCSP_R_NOT_BASIC_RESPONSE			= 104;
+  OCSP_R_NOT_BASIC_RESPONSE      = 104;
   {$EXTERNALSYM OCSP_R_NO_CERTIFICATES_IN_CHAIN}
-  OCSP_R_NO_CERTIFICATES_IN_CHAIN			= 105;
+  OCSP_R_NO_CERTIFICATES_IN_CHAIN      = 105;
   {$EXTERNALSYM OCSP_R_NO_CONTENT}
-  OCSP_R_NO_CONTENT				 = 106;
+  OCSP_R_NO_CONTENT         = 106;
   {$EXTERNALSYM OCSP_R_NO_PUBLIC_KEY}
-  OCSP_R_NO_PUBLIC_KEY				= 107;
+  OCSP_R_NO_PUBLIC_KEY        = 107;
   {$EXTERNALSYM OCSP_R_NO_RESPONSE_DATA}
-  OCSP_R_NO_RESPONSE_DATA			= 108;
+  OCSP_R_NO_RESPONSE_DATA      = 108;
   {$EXTERNALSYM OCSP_R_NO_REVOKED_TIME}
-  OCSP_R_NO_REVOKED_TIME			= 109;
+  OCSP_R_NO_REVOKED_TIME      = 109;
   {$EXTERNALSYM OCSP_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE}
-  OCSP_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE	= 110;
+  OCSP_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE  = 110;
   {$EXTERNALSYM OCSP_R_REQUEST_NOT_SIGNED}
-  OCSP_R_REQUEST_NOT_SIGNED		 = 128;
+  OCSP_R_REQUEST_NOT_SIGNED     = 128;
   {$EXTERNALSYM OCSP_R_RESPONSE_CONTAINS_NO_REVOCATION_DATA}
-  OCSP_R_RESPONSE_CONTAINS_NO_REVOCATION_DATA	 = 111;
+  OCSP_R_RESPONSE_CONTAINS_NO_REVOCATION_DATA   = 111;
   {$EXTERNALSYM OCSP_R_ROOT_CA_NOT_TRUSTED}
-  OCSP_R_ROOT_CA_NOT_TRUSTED		 = 112;
+  OCSP_R_ROOT_CA_NOT_TRUSTED     = 112;
   {$EXTERNALSYM OCSP_R_SERVER_READ_ERROR}
-  OCSP_R_SERVER_READ_ERROR			 = 113;
+  OCSP_R_SERVER_READ_ERROR       = 113;
   {$EXTERNALSYM OCSP_R_SERVER_RESPONSE_ERROR}
-  OCSP_R_SERVER_RESPONSE_ERROR	 = 114;
+  OCSP_R_SERVER_RESPONSE_ERROR   = 114;
   {$EXTERNALSYM OCSP_R_SERVER_RESPONSE_PARSE_ERROR}
   OCSP_R_SERVER_RESPONSE_PARSE_ERROR = 115;
   {$EXTERNALSYM OCSP_R_SERVER_WRITE_ERROR}
-  OCSP_R_SERVER_WRITE_ERROR		 = 116;
+  OCSP_R_SERVER_WRITE_ERROR     = 116;
   {$EXTERNALSYM OCSP_R_SIGNATURE_FAILURE}
-  OCSP_R_SIGNATURE_FAILURE		 = 117;
+  OCSP_R_SIGNATURE_FAILURE     = 117;
   {$EXTERNALSYM OCSP_R_SIGNER_CERTIFICATE_NOT_FOUND}
-  OCSP_R_SIGNER_CERTIFICATE_NOT_FOUND		= 118;
+  OCSP_R_SIGNER_CERTIFICATE_NOT_FOUND    = 118;
   {$EXTERNALSYM OCSP_R_STATUS_EXPIRED}
-  OCSP_R_STATUS_EXPIRED				 = 125;
+  OCSP_R_STATUS_EXPIRED         = 125;
   {$EXTERNALSYM OCSP_R_STATUS_NOT_YET_VALID}
-  OCSP_R_STATUS_NOT_YET_VALID	 = 126;
+  OCSP_R_STATUS_NOT_YET_VALID   = 126;
   {$EXTERNALSYM OCSP_R_STATUS_TOO_OLD}
-  OCSP_R_STATUS_TOO_OLD				 = 127;
+  OCSP_R_STATUS_TOO_OLD         = 127;
   {$EXTERNALSYM OCSP_R_UNKNOWN_MESSAGE_DIGEST}
-  OCSP_R_UNKNOWN_MESSAGE_DIGEST	= 119;
+  OCSP_R_UNKNOWN_MESSAGE_DIGEST  = 119;
   {$EXTERNALSYM OCSP_R_UNKNOWN_NID}
-  OCSP_R_UNKNOWN_NID			  = 120;
+  OCSP_R_UNKNOWN_NID        = 120;
   {$EXTERNALSYM OCSP_R_UNSUPPORTED_REQUESTORNAME_TYPE}
-  OCSP_R_UNSUPPORTED_REQUESTORNAME_TYPE	= 129;
+  OCSP_R_UNSUPPORTED_REQUESTORNAME_TYPE  = 129;
   {$EXTERNALSYM SSL_ST_CONNECT}
   SSL_ST_CONNECT = $1000;
   {$EXTERNALSYM SSL_ST_ACCEPT}
@@ -6288,7 +6288,7 @@ const
   {$EXTERNALSYM SSL3_AD_ILLEGAL_PARAMETER}
   SSL3_AD_ILLEGAL_PARAMETER = 47;
   {$EXTERNALSYM TLS1_HB_REQUEST}
-  TLS1_HB_REQUEST	= 1;
+  TLS1_HB_REQUEST  = 1;
   {$EXTERNALSYM TLS1_HB_RESPONSE}
   TLS1_HB_RESPONSE = 2;
   {$EXTERNALSYM SSL3_AD_NO_CERTIFICATE}
@@ -6367,7 +6367,7 @@ const
   SSL3_CK_RSA_IDEA_128_SHA = $03000007;
   //* Signalling cipher suite value: from draft-ietf-tls-renegotiation-03.txt */
   {$EXTERNALSYM SSL3_CK_SCSV}
-  SSL3_CK_SCSV	= $030000FF;
+  SSL3_CK_SCSV  = $030000FF;
 
   {$EXTERNALSYM SSL3_CK_RSA_NULL_MD5}
   SSL3_CK_RSA_NULL_MD5 = $03000001;
@@ -6411,7 +6411,7 @@ const
   {$EXTERNALSYM TLS1_FLAGS_SKIP_CERT_VERIFY}
   TLS1_FLAGS_SKIP_CERT_VERIFY = $0010;
   {$EXTERNALSYM TLS1_FLAGS_KEEP_HANDSHAKE}
-  TLS1_FLAGS_KEEP_HANDSHAKE	= $0020;
+  TLS1_FLAGS_KEEP_HANDSHAKE  = $0020;
 
   {* SSL3_FLAGS_SGC_RESTART_DONE is set when we
  * restart a handshake because of MS SGC and so prevents us
@@ -6430,7 +6430,7 @@ const
   {$EXTERNALSYM SSL3_MAX_SSL_SESSION_ID_LENGTH}
   SSL3_MAX_SSL_SESSION_ID_LENGTH = 32;
   {$EXTERNALSYM SSL3_MT_HELLO_REQUEST}
-  SSL3_MT_HELLO_REQUEST	= 0;
+  SSL3_MT_HELLO_REQUEST  = 0;
   {$EXTERNALSYM SSL3_MT_CLIENT_REQUEST}
   SSL3_MT_CLIENT_REQUEST = 0;
   {$EXTERNALSYM SSL3_MT_CLIENT_HELLO}
@@ -6480,7 +6480,7 @@ const
   {$EXTERNALSYM SSL3_RT_APPLICATION_DATA}
   SSL3_RT_APPLICATION_DATA = 23;
   {$EXTERNALSYM TLS1_RT_HEARTBEAT}
-  TLS1_RT_HEARTBEAT	= 24;
+  TLS1_RT_HEARTBEAT  = 24;
   {$EXTERNALSYM SSL3_RT_CHANGE_CIPHER_SPEC}
   SSL3_RT_CHANGE_CIPHER_SPEC = 20;
   {$EXTERNALSYM SSL3_RT_HANDSHAKE}
@@ -6488,11 +6488,11 @@ const
   {$EXTERNALSYM SSL3_RT_HEADER_LENGTH}
   SSL3_RT_HEADER_LENGTH = 5;
   {$EXTERNALSYM SSL3_RT_MAX_MD_SIZE}
-  SSL3_RT_MAX_MD_SIZE	= 64;
+  SSL3_RT_MAX_MD_SIZE  = 64;
   {$EXTERNALSYM SSL_RT_MAX_CIPHER_BLOCK_SIZE}
   SSL_RT_MAX_CIPHER_BLOCK_SIZE = 16;
   {$EXTERNALSYM SSL3_RT_MAX_EXTRA}
-  SSL3_RT_MAX_EXTRA	= (16384);
+  SSL3_RT_MAX_EXTRA  = (16384);
 
   {$EXTERNALSYM SSL3_RT_MAX_PLAIN_LENGTH}
   SSL3_RT_MAX_PLAIN_LENGTH = 16384;
@@ -6506,15 +6506,15 @@ const
 {$ifdef OPENSSL_NO_COMP}
   SSL3_RT_MAX_COMPRESSED_LENGTH = SSL3_RT_MAX_PLAIN_LENGTH;
 {$else}
-  SSL3_RT_MAX_COMPRESSED_LENGTH	=
-		(SSL3_RT_MAX_PLAIN_LENGTH+SSL3_RT_MAX_COMPRESSED_OVERHEAD);
+  SSL3_RT_MAX_COMPRESSED_LENGTH  =
+    (SSL3_RT_MAX_PLAIN_LENGTH+SSL3_RT_MAX_COMPRESSED_OVERHEAD);
 {$endif}
  {$EXTERNALSYM SSL3_RT_MAX_ENCRYPTED_LENGTH}
   SSL3_RT_MAX_ENCRYPTED_LENGTH =
-		(SSL3_RT_MAX_ENCRYPTED_OVERHEAD+SSL3_RT_MAX_COMPRESSED_LENGTH);
+    (SSL3_RT_MAX_ENCRYPTED_OVERHEAD+SSL3_RT_MAX_COMPRESSED_LENGTH);
  {$EXTERNALSYM SSL3_RT_MAX_PACKET_SIZE}
-  SSL3_RT_MAX_PACKET_SIZE	=
-		(SSL3_RT_MAX_ENCRYPTED_LENGTH+SSL3_RT_HEADER_LENGTH);
+  SSL3_RT_MAX_PACKET_SIZE  =
+    (SSL3_RT_MAX_ENCRYPTED_LENGTH+SSL3_RT_HEADER_LENGTH);
 
   {$EXTERNALSYM SSL3_RT_MAX_DATA_SIZE}
   SSL3_RT_MAX_DATA_SIZE = 1024*1024;
@@ -6576,13 +6576,13 @@ const
   {$EXTERNALSYM SSL3_ST_CW_CHANGE_B}
   SSL3_ST_CW_CHANGE_B = $1A1 or SSL_ST_CONNECT;
   {$EXTERNALSYM SSL3_ST_CW_NEXT_PROTO_A}
-  SSL3_ST_CW_NEXT_PROTO_A	= ($200 or SSL_ST_CONNECT);
+  SSL3_ST_CW_NEXT_PROTO_A  = ($200 or SSL_ST_CONNECT);
   {$EXTERNALSYM SSL3_ST_CW_NEXT_PROTO_B}
-  SSL3_ST_CW_NEXT_PROTO_B	= ($201 or SSL_ST_CONNECT);
+  SSL3_ST_CW_NEXT_PROTO_B  = ($201 or SSL_ST_CONNECT);
 
 {$ifndef OPENSSL_NO_SCTP}
   {$EXTERNALSYM DTLS1_SCTP_ST_CW_WRITE_SOCK}
-  DTLS1_SCTP_ST_CW_WRITE_SOCK	=	$310 or SSL_ST_CONNECT;
+  DTLS1_SCTP_ST_CW_WRITE_SOCK  =  $310 or SSL_ST_CONNECT;
   {$EXTERNALSYM DTLS1_SCTP_ST_CR_READ_SOCK}
   DTLS1_SCTP_ST_CR_READ_SOCK = $320 or SSL_ST_CONNECT;
 {$endif}
@@ -6613,9 +6613,9 @@ const
   {$EXTERNALSYM SSL3_ST_SR_CHANGE_B}
   SSL3_ST_SR_CHANGE_B = $1B1 or SSL_ST_ACCEPT;
   {$EXTERNALSYM SSL3_ST_SR_NEXT_PROTO_A}
-  SSL3_ST_SR_NEXT_PROTO_A	= ($210 or SSL_ST_ACCEPT);
+  SSL3_ST_SR_NEXT_PROTO_A  = ($210 or SSL_ST_ACCEPT);
   {$EXTERNALSYM SSL3_ST_SR_NEXT_PROTO_B}
-  SSL3_ST_SR_NEXT_PROTO_B	= ($211 or SSL_ST_ACCEPT);
+  SSL3_ST_SR_NEXT_PROTO_B  = ($211 or SSL_ST_ACCEPT);
   {$EXTERNALSYM SSL3_ST_SR_CLNT_HELLO_A}
   SSL3_ST_SR_CLNT_HELLO_A = $110 or SSL_ST_ACCEPT;
   {$EXTERNALSYM SSL3_ST_SR_CLNT_HELLO_B}
@@ -6651,14 +6651,14 @@ const
   {$EXTERNALSYM SSL3_ST_SW_SESSION_TICKET_B}
   SSL3_ST_SW_SESSION_TICKET_B = ($1F1 or SSL_ST_ACCEPT);
   {$EXTERNALSYM SSL3_ST_SW_CERT_STATUS_A}
-  SSL3_ST_SW_CERT_STATUS_A =	($200 or SSL_ST_ACCEPT);
+  SSL3_ST_SW_CERT_STATUS_A =  ($200 or SSL_ST_ACCEPT);
   {$EXTERNALSYM SSL3_ST_SW_CERT_STATUS_B}
-  SSL3_ST_SW_CERT_STATUS_B =	($201 or SSL_ST_ACCEPT);
+  SSL3_ST_SW_CERT_STATUS_B =  ($201 or SSL_ST_ACCEPT);
   {$EXTERNALSYM SSL3_ST_SW_FLUSH}
   SSL3_ST_SW_FLUSH = $100 or SSL_ST_ACCEPT;
 {$ifndef OPENSSL_NO_SCTP}
   {$EXTERNALSYM DTLS1_SCTP_ST_SW_WRITE_SOCK}
-  DTLS1_SCTP_ST_SW_WRITE_SOCK	= ($310 or SSL_ST_ACCEPT);
+  DTLS1_SCTP_ST_SW_WRITE_SOCK  = ($310 or SSL_ST_ACCEPT);
   {$EXTERNALSYM DTLS1_SCTP_ST_SR_READ_SOCK}
   DTLS1_SCTP_ST_SR_READ_SOCK = ($320 or SSL_ST_ACCEPT);
 {$endif}
@@ -6821,7 +6821,7 @@ const
   {$EXTERNALSYM TLSEXT_TYPE_ec_point_formats}
   TLSEXT_TYPE_ec_point_formats = 11;
   {$EXTERNALSYM TLSEXT_TYPE_srp}
-  TLSEXT_TYPE_srp	=	12;
+  TLSEXT_TYPE_srp  =  12;
   {$EXTERNALSYM TLSEXT_TYPE_signature_algorithms}
   TLSEXT_TYPE_signature_algorithms = 13;
   {$EXTERNALSYM TLSEXT_TYPE_use_srtp}
@@ -6848,13 +6848,13 @@ const
   {$EXTERNALSYM TLSEXT_ECPOINTFORMAT_first}
   TLSEXT_ECPOINTFORMAT_first = 0;
   {$EXTERNALSYM TLSEXT_ECPOINTFORMAT_uncompressed}
-  TLSEXT_ECPOINTFORMAT_uncompressed	= 0;
+  TLSEXT_ECPOINTFORMAT_uncompressed  = 0;
   {$EXTERNALSYM TLSEXT_ECPOINTFORMAT_ansiX962_compressed_prime}
   TLSEXT_ECPOINTFORMAT_ansiX962_compressed_prime = 1;
   {$EXTERNALSYM TLSEXT_ECPOINTFORMAT_ansiX962_compressed_char2}
   TLSEXT_ECPOINTFORMAT_ansiX962_compressed_char2 = 2;
   {$EXTERNALSYM TLSEXT_ECPOINTFORMAT_last}
-  TLSEXT_ECPOINTFORMAT_last	= 2;
+  TLSEXT_ECPOINTFORMAT_last  = 2;
   {$EXTERNALSYM TLSEXT_signature_anonymous}
   TLSEXT_signature_anonymous = 0;
   {$EXTERNALSYM TLSEXT_signature_rsa}
@@ -6866,7 +6866,7 @@ const
   {$EXTERNALSYM TLSEXT_hash_none}
   TLSEXT_hash_none = 0;
   {$EXTERNALSYM TLSEXT_hash_md5}
-  TLSEXT_hash_md5	=	1;
+  TLSEXT_hash_md5  =  1;
   {$EXTERNALSYM TLSEXT_hash_sha1}
   TLSEXT_hash_sha1 = 2;
   {$EXTERNALSYM TLSEXT_hash_sha224}
@@ -6891,7 +6891,7 @@ const
   SSL_TLSEXT_ERR_NOACK = 3;
   {$IFDEF OPENSSL_NO_HEARTBEATS}
    {$EXTERNALSYM SSL_TLSEXT_HB_DONT_SEND_REQUESTS}
-  SSL_TLSEXT_HB_ENABLED	= $01;
+  SSL_TLSEXT_HB_ENABLED  = $01;
    {$EXTERNALSYM SSL_TLSEXT_HB_DONT_SEND_REQUESTS}
   SSL_TLSEXT_HB_DONT_SEND_REQUESTS = $02;
    {$EXTERNALSYM SSL_TLSEXT_HB_DONT_RECV_REQUESTS}
@@ -6985,7 +6985,7 @@ const
   {$IFNDEF NO_TLSEXT}
   //* see tls1.h for macros based on these */
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_SERVERNAME_CB}
-  SSL_CTRL_SET_TLSEXT_SERVERNAME_CB	= 53;
+  SSL_CTRL_SET_TLSEXT_SERVERNAME_CB  = 53;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG}
   SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG = 54;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_HOSTNAME}
@@ -6993,27 +6993,27 @@ const
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_DEBUG_CB}
   SSL_CTRL_SET_TLSEXT_DEBUG_CB = 56;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_DEBUG_ARG}
-  SSL_CTRL_SET_TLSEXT_DEBUG_ARG	= 57;
+  SSL_CTRL_SET_TLSEXT_DEBUG_ARG  = 57;
   {$EXTERNALSYM SSL_CTRL_GET_TLSEXT_TICKET_KEYS}
-  SSL_CTRL_GET_TLSEXT_TICKET_KEYS	= 58;
+  SSL_CTRL_GET_TLSEXT_TICKET_KEYS  = 58;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_TICKET_KEYS}
-  SSL_CTRL_SET_TLSEXT_TICKET_KEYS	=	59;
+  SSL_CTRL_SET_TLSEXT_TICKET_KEYS  =  59;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT}
   SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT = 60;
    {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB}
-  SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB	= 61;
+  SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB  = 61;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB_ARG}
   SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB_ARG = 62;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB}
-  SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB	= 63;
+  SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB  = 63;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB_ARG}
-  SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB_ARG	= 64;
+  SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB_ARG  = 64;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_TYPE}
-  SSL_CTRL_SET_TLSEXT_STATUS_REQ_TYPE	= 65;
+  SSL_CTRL_SET_TLSEXT_STATUS_REQ_TYPE  = 65;
   {$EXTERNALSYM SSL_CTRL_GET_TLSEXT_STATUS_REQ_EXTS}
-  SSL_CTRL_GET_TLSEXT_STATUS_REQ_EXTS	= 66;
+  SSL_CTRL_GET_TLSEXT_STATUS_REQ_EXTS  = 66;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_EXTS}
-  SSL_CTRL_SET_TLSEXT_STATUS_REQ_EXTS	= 67;
+  SSL_CTRL_SET_TLSEXT_STATUS_REQ_EXTS  = 67;
   {$EXTERNALSYM SSL_CTRL_GET_TLSEXT_STATUS_REQ_IDS}
   SSL_CTRL_GET_TLSEXT_STATUS_REQ_IDS = 68;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_IDS}
@@ -7023,24 +7023,24 @@ const
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP}
   SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP = 71;
   {$EXTERNALSYM SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB}
-  SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB	= 72;
+  SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB  = 72;
   {$EXTERNALSYM SSL_CTRL_SET_TLS_EXT_SRP_USERNAME_CB}
   SSL_CTRL_SET_TLS_EXT_SRP_USERNAME_CB = 75;
   {$EXTERNALSYM SSL_CTRL_SET_SRP_VERIFY_PARAM_CB}
   SSL_CTRL_SET_SRP_VERIFY_PARAM_CB = 76;
    {$EXTERNALSYM SSL_CTRL_SET_SRP_GIVE_CLIENT_PWD_CB}
-  SSL_CTRL_SET_SRP_GIVE_CLIENT_PWD_CB	= 77;
+  SSL_CTRL_SET_SRP_GIVE_CLIENT_PWD_CB  = 77;
     {$EXTERNALSYM SSL_CTRL_SET_SRP_ARG}
   SSL_CTRL_SET_SRP_ARG = 78;
   {$EXTERNALSYM SSL_CTRL_SET_TLS_EXT_SRP_USERNAME}
-  SSL_CTRL_SET_TLS_EXT_SRP_USERNAME	= 79;
+  SSL_CTRL_SET_TLS_EXT_SRP_USERNAME  = 79;
   {$EXTERNALSYM SSL_CTRL_SET_TLS_EXT_SRP_STRENGTH}
-  SSL_CTRL_SET_TLS_EXT_SRP_STRENGTH	= 80;
+  SSL_CTRL_SET_TLS_EXT_SRP_STRENGTH  = 80;
   {$EXTERNALSYM SSL_CTRL_SET_TLS_EXT_SRP_PASSWORD}
-  SSL_CTRL_SET_TLS_EXT_SRP_PASSWORD	= 81;
+  SSL_CTRL_SET_TLS_EXT_SRP_PASSWORD  = 81;
     {$ifndef OPENSSL_NO_HEARTBEATS}
   {$EXTERNALSYM SSL_CTRL_TLS_EXT_SEND_HEARTBEAT}
-  SSL_CTRL_TLS_EXT_SEND_HEARTBEAT	= 85;
+  SSL_CTRL_TLS_EXT_SEND_HEARTBEAT  = 85;
   {$EXTERNALSYM SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING}
   SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING = 86;
   {$EXTERNALSYM SSL_CTRL_SET_TLS_EXT_HEARTBEAT_NO_REQUESTS}
@@ -7051,14 +7051,14 @@ const
   SSL_CTRL_SET_ECDH_AUTO = 94;
 
   {$EXTERNALSYM DTLS_CTRL_GET_TIMEOUT}
-  DTLS_CTRL_GET_TIMEOUT	= 73;
+  DTLS_CTRL_GET_TIMEOUT  = 73;
   {$EXTERNALSYM DTLS_CTRL_HANDLE_TIMEOUT}
   DTLS_CTRL_HANDLE_TIMEOUT = 74;
   {$EXTERNALSYM DTLS_CTRL_LISTEN}
   DTLS_CTRL_LISTEN = 75;
 
   {$EXTERNALSYM SSL_CTRL_GET_RI_SUPPORT}
-  SSL_CTRL_GET_RI_SUPPORT	= 76;
+  SSL_CTRL_GET_RI_SUPPORT  = 76;
   {$EXTERNALSYM SSL_CTRL_CLEAR_OPTIONS}
   SSL_CTRL_CLEAR_OPTIONS = 77;
   {$EXTERNALSYM SSL_CTRL_CLEAR_MODE}
@@ -7183,11 +7183,11 @@ const
   {$EXTERNALSYM SSL_F_DTLS1_ACCEPT}
   SSL_F_DTLS1_ACCEPT = 246;
   {$EXTERNALSYM SSL_F_DTLS1_ADD_CERT_TO_BUF}
-  SSL_F_DTLS1_ADD_CERT_TO_BUF	= 295; //was 280;
+  SSL_F_DTLS1_ADD_CERT_TO_BUF  = 295; //was 280;
   {$EXTERNALSYM SSL_F_DTLS1_BUFFER_RECORD}
   SSL_F_DTLS1_BUFFER_RECORD = 247;
   {$EXTERNALSYM SSL_F_DTLS1_CHECK_TIMEOUT_NUM}
-  SSL_F_DTLS1_CHECK_TIMEOUT_NUM	= 316;
+  SSL_F_DTLS1_CHECK_TIMEOUT_NUM  = 316;
   {$EXTERNALSYM SSL_F_DTLS1_CLIENT_HELLO}
   SSL_F_DTLS1_CLIENT_HELLO = 248;
   {$EXTERNALSYM SSL_F_DTLS1_CONNECT}
@@ -7205,7 +7205,7 @@ const
   {$EXTERNALSYM SSL_F_DTLS1_HANDLE_TIMEOUT}
   SSL_F_DTLS1_HANDLE_TIMEOUT = 297; //was 282
   {$EXTERNALSYM SSL_F_DTLS1_HEARTBEAT}
-  SSL_F_DTLS1_HEARTBEAT	= 305;
+  SSL_F_DTLS1_HEARTBEAT  = 305;
   {$EXTERNALSYM SSL_F_DTLS1_OUTPUT_CERT_CHAIN}
   SSL_F_DTLS1_OUTPUT_CERT_CHAIN = 255;
   {$EXTERNALSYM SSL_F_DTLS1_PREPROCESS_FRAGMENT}
@@ -7328,7 +7328,7 @@ const
   {$EXTERNALSYM SSL_F_SSL3_GET_NEW_SESSION_TICKET}
   SSL_F_SSL3_GET_NEW_SESSION_TICKET = 283;
   {$EXTERNALSYM SSL_F_SSL3_GET_NEXT_PROTO}
-  SSL_F_SSL3_GET_NEXT_PROTO	= 306;
+  SSL_F_SSL3_GET_NEXT_PROTO  = 306;
   {$EXTERNALSYM SSL_F_SSL3_GET_RECORD}
   SSL_F_SSL3_GET_RECORD = 143;
   {$EXTERNALSYM SSL_F_SSL3_GET_SERVER_CERTIFICATE}
@@ -7364,7 +7364,7 @@ const
   {$EXTERNALSYM SSL_F_SSL3_SETUP_READ_BUFFER}
   SSL_F_SSL3_SETUP_READ_BUFFER = 156;
   {$EXTERNALSYM SSL_F_SSL3_SETUP_WRITE_BUFFER}
-  SSL_F_SSL3_SETUP_WRITE_BUFFER	= 291;
+  SSL_F_SSL3_SETUP_WRITE_BUFFER  = 291;
   {$EXTERNALSYM SSL_F_SSL3_WRITE_BYTES}
   SSL_F_SSL3_WRITE_BYTES = 158;
   {$EXTERNALSYM SSL_F_SSL3_WRITE_PENDING}
@@ -7402,7 +7402,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_CHECK_SERVERHELLO_TLSEXT}
   SSL_F_SSL_CHECK_SERVERHELLO_TLSEXT = 280;//was 274;
   {$EXTERNALSYM SSL_F_SSL_CHECK_SRVR_ECC_CERT_AND_ALG}
-  SSL_F_SSL_CHECK_SRVR_ECC_CERT_AND_ALG	= 279;
+  SSL_F_SSL_CHECK_SRVR_ECC_CERT_AND_ALG  = 279;
   {$EXTERNALSYM SSL_F_SSL_CIPHER_PROCESS_RULESTR}
   SSL_F_SSL_CIPHER_PROCESS_RULESTR = 230;
   {$EXTERNALSYM SSL_F_SSL_CIPHER_STRENGTH_SORT}
@@ -7418,7 +7418,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_CTX_CHECK_PRIVATE_KEY}
   SSL_F_SSL_CTX_CHECK_PRIVATE_KEY = 168;
   {$EXTERNALSYM SSL_F_SSL_CTX_MAKE_PROFILES}
-  SSL_F_SSL_CTX_MAKE_PROFILES	= 309;
+  SSL_F_SSL_CTX_MAKE_PROFILES  = 309;
   {$EXTERNALSYM SSL_F_SSL_CTX_NEW}
   SSL_F_SSL_CTX_NEW = 169;
   {$EXTERNALSYM SSL_F_SSL_CTX_SET_CIPHER_LIST}
@@ -7432,7 +7432,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_CTX_SET_SSL_VERSION}
   SSL_F_SSL_CTX_SET_SSL_VERSION = 170;
   {$EXTERNALSYM SSL_F_SSL_CTX_SET_TRUST}
-  SSL_F_SSL_CTX_SET_TRUST	= 229;
+  SSL_F_SSL_CTX_SET_TRUST  = 229;
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_CERTIFICATE}
   SSL_F_SSL_CTX_USE_CERTIFICATE = 171;
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_CERTIFICATE_ASN1}
@@ -7448,7 +7448,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_PRIVATEKEY_FILE}
   SSL_F_SSL_CTX_USE_PRIVATEKEY_FILE = 176;
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_PSK_IDENTITY_HINT}
-  SSL_F_SSL_CTX_USE_PSK_IDENTITY_HINT	= 272;
+  SSL_F_SSL_CTX_USE_PSK_IDENTITY_HINT  = 272;
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_RSAPRIVATEKEY}
   SSL_F_SSL_CTX_USE_RSAPRIVATEKEY = 177;
   {$EXTERNALSYM SSL_F_SSL_CTX_USE_RSAPRIVATEKEY_ASN1}
@@ -7480,7 +7480,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_PARSE_CLIENTHELLO_USE_SRTP_EXT}
   SSL_F_SSL_PARSE_CLIENTHELLO_USE_SRTP_EXT = 310;
   {$EXTERNALSYM SSL_F_SSL_PARSE_SERVERHELLO_RENEGOTIATE_EXT}
-  SSL_F_SSL_PARSE_SERVERHELLO_RENEGOTIATE_EXT	= 301;//was 289;
+  SSL_F_SSL_PARSE_SERVERHELLO_RENEGOTIATE_EXT  = 301;//was 289;
   {$EXTERNALSYM SSL_F_SSL_PARSE_SERVERHELLO_TLSEXT}
   SSL_F_SSL_PARSE_SERVERHELLO_TLSEXT = 303; //was 291;
   {$EXTERNALSYM SSL_F_SSL_PARSE_SERVERHELLO_USE_SRTP_EXT}
@@ -7502,7 +7502,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_SESSION_PRINT_FP}
   SSL_F_SSL_SESSION_PRINT_FP = 190;
   {$EXTERNALSYM SSL_F_SSL_SESSION_SET1_ID_CONTEXT}
-  SSL_F_SSL_SESSION_SET1_ID_CONTEXT	= 312;
+  SSL_F_SSL_SESSION_SET1_ID_CONTEXT  = 312;
   {$EXTERNALSYM SSL_F_SSL_SESS_CERT_NEW}
   SSL_F_SSL_SESS_CERT_NEW = 225;
   {$EXTERNALSYM SSL_F_SSL_SET_CERT}
@@ -7540,7 +7540,7 @@ const
   {$EXTERNALSYM SSL_F_SSL_USE_PRIVATEKEY_FILE}
   SSL_F_SSL_USE_PRIVATEKEY_FILE = 203;
   {$EXTERNALSYM SSL_F_SSL_USE_PSK_IDENTITY_HINT}
-  SSL_F_SSL_USE_PSK_IDENTITY_HINT	= 273;
+  SSL_F_SSL_USE_PSK_IDENTITY_HINT  = 273;
   {$EXTERNALSYM SSL_F_SSL_USE_RSAPRIVATEKEY}
   SSL_F_SSL_USE_RSAPRIVATEKEY = 204;
   {$EXTERNALSYM SSL_F_SSL_USE_RSAPRIVATEKEY_ASN1}
@@ -7556,7 +7556,7 @@ const
   {$EXTERNALSYM SSL_F_TLS1_CHANGE_CIPHER_STATE}
   SSL_F_TLS1_CHANGE_CIPHER_STATE = 209;
   {$EXTERNALSYM SSL_F_TLS1_CHECK_SERVERHELLO_TLSEXT}
-  SSL_F_TLS1_CHECK_SERVERHELLO_TLSEXT	= 274;
+  SSL_F_TLS1_CHECK_SERVERHELLO_TLSEXT  = 274;
   {$EXTERNALSYM SSL_F_TLS1_ENC}
   SSL_F_TLS1_ENC = 210;
   {$EXTERNALSYM SSL_F_TLS1_EXPORT_KEYING_MATERIAL}
@@ -7564,9 +7564,9 @@ const
   {$EXTERNALSYM SSL_F_TLS1_HEARTBEAT}
   SSL_F_TLS1_HEARTBEAT = 315;
   {$EXTERNALSYM SSL_F_TLS1_PREPARE_CLIENTHELLO_TLSEXT}
-  SSL_F_TLS1_PREPARE_CLIENTHELLO_TLSEXT	= 275;
+  SSL_F_TLS1_PREPARE_CLIENTHELLO_TLSEXT  = 275;
   {$EXTERNALSYM SSL_F_TLS1_PREPARE_SERVERHELLO_TLSEXT}
-  SSL_F_TLS1_PREPARE_SERVERHELLO_TLSEXT	= 276;
+  SSL_F_TLS1_PREPARE_SERVERHELLO_TLSEXT  = 276;
   {$EXTERNALSYM SSL_F_TLS1_PRF}
   SSL_F_TLS1_PRF = 284;
   {$EXTERNALSYM SSL_F_TLS1_SETUP_KEY_BLOCK}
@@ -7603,9 +7603,9 @@ const
   {$EXTERNALSYM SSL_NOTHING}
   SSL_NOTHING = 1;
    {$EXTERNALSYM SSL_WRITING}
-  SSL_WRITING	= 2;
+  SSL_WRITING  = 2;
    {$EXTERNALSYM SSL_READING}
-  SSL_READING	= 3;
+  SSL_READING  = 3;
    {$EXTERNALSYM SSL_X509_LOOKUP}
   SSL_X509_LOOKUP = 4;
   {$EXTERNALSYM SSL_OP_MICROSOFT_SESS_ID_BUG}
@@ -7642,12 +7642,12 @@ const
   SSL_OP_NO_TICKET                              = $00004000;
 //* Use Cisco's "speshul" version of DTLS_BAD_VER (as client)  */
   {$EXTERNALSYM SSL_OP_CISCO_ANYCONNECT}
-  SSL_OP_CISCO_ANYCONNECT	= $00008000;
+  SSL_OP_CISCO_ANYCONNECT  = $00008000;
   {$EXTERNALSYM SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION}
   SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION = $00010000;
 //* Don't use compression even if supported */
   {$EXTERNALSYM SSL_OP_NO_COMPRESSION}
-  SSL_OP_NO_COMPRESSION	= $00020000;
+  SSL_OP_NO_COMPRESSION  = $00020000;
 //* Permit unsafe legacy renegotiation */
   {$EXTERNALSYM SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION}
   SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION      = $00040000;
@@ -7669,9 +7669,9 @@ const
   {$EXTERNALSYM SSL_OP_NO_TLSv1}
   SSL_OP_NO_TLSv1 = $04000000;
   {$EXTERNALSYM SSL_OP_NO_TLSv1_2}
-  SSL_OP_NO_TLSv1_2	= $08000000;
+  SSL_OP_NO_TLSv1_2  = $08000000;
   {$EXTERNALSYM SSL_OP_NO_TLSv1_1}
-  SSL_OP_NO_TLSv1_1	= $10000000;
+  SSL_OP_NO_TLSv1_1  = $10000000;
   {$EXTERNALSYM SSL_OP_PKCS1_CHECK_1}
   SSL_OP_PKCS1_CHECK_1 = $00; //was $08000000;
   {$EXTERNALSYM SSL_OP_PKCS1_CHECK_2}
@@ -7687,7 +7687,7 @@ const
 // * Required for interoperability with CryptoPro CSP 3.x
 // */
   {$EXTERNALSYM SSL_OP_CRYPTOPRO_TLSEXT_BUG}
-  SSL_OP_CRYPTOPRO_TLSEXT_BUG	= $80000000;
+  SSL_OP_CRYPTOPRO_TLSEXT_BUG  = $80000000;
 
   {$EXTERNALSYM SSL_RECEIVED_SHUTDOWN}
   SSL_RECEIVED_SHUTDOWN = 2;
@@ -7720,15 +7720,15 @@ const
   {$EXTERNALSYM SSL_R_BAD_DSA_SIGNATURE}
   SSL_R_BAD_DSA_SIGNATURE = 112;
   {$EXTERNALSYM SSL_R_BAD_ECC_CERT}
-  SSL_R_BAD_ECC_CERT			= 304;
+  SSL_R_BAD_ECC_CERT      = 304;
   {$EXTERNALSYM SSL_R_BAD_ECDSA_SIGNATURE}
-  SSL_R_BAD_ECDSA_SIGNATURE	 = 305;
+  SSL_R_BAD_ECDSA_SIGNATURE   = 305;
   {$EXTERNALSYM SSL_R_BAD_ECPOINT}
-  SSL_R_BAD_ECPOINT	 = 306;
+  SSL_R_BAD_ECPOINT   = 306;
   {$EXTERNALSYM SSL_R_BAD_HANDSHAKE_LENGTH}
   SSL_R_BAD_HANDSHAKE_LENGTH = 332;
   {$EXTERNALSYM SSL_R_BAD_HELLO_REQUEST}
-  SSL_R_BAD_HELLO_REQUEST	= 105;
+  SSL_R_BAD_HELLO_REQUEST  = 105;
   {$EXTERNALSYM SSL_R_BAD_LENGTH}
   SSL_R_BAD_LENGTH = 271;
   {$EXTERNALSYM SSL_R_BAD_MAC_DECODE}
@@ -7853,7 +7853,7 @@ const
   {$EXTERNALSYM SSL_R_GOT_A_FIN_BEFORE_A_CCS}
   SSL_R_GOT_A_FIN_BEFORE_A_CCS = 154;
   {$EXTERNALSYM   SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS}
-  SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS	= 355;
+  SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS  = 355;
   {$EXTERNALSYM SSL_R_GOT_NEXT_PROTO_WITHOUT_EXTENSION}
   SSL_R_GOT_NEXT_PROTO_WITHOUT_EXTENSION = 356;
   {$EXTERNALSYM SSL_R_HTTPS_PROXY_REQUEST}
@@ -7861,7 +7861,7 @@ const
   {$EXTERNALSYM SSL_R_HTTP_REQUEST}
   SSL_R_HTTP_REQUEST = 156;
   {$EXTERNALSYM SSL_R_ILLEGAL_PADDING}
-  SSL_R_ILLEGAL_PADDING	= 283;
+  SSL_R_ILLEGAL_PADDING  = 283;
   {$EXTERNALSYM SSL_R_INCONSISTENT_COMPRESSION}
   SSL_R_INCONSISTENT_COMPRESSION = 340;
   {$EXTERNALSYM SSL_R_INTERNAL_ERROR}
@@ -7937,7 +7937,7 @@ const
   {$EXTERNALSYM SSL_R_NO_CIPHER_MATCH}
   SSL_R_NO_CIPHER_MATCH = 185;
   {$EXTERNALSYM SSL_R_NO_CLIENT_CERT_METHOD}
-  SSL_R_NO_CLIENT_CERT_METHOD	= 317;
+  SSL_R_NO_CLIENT_CERT_METHOD  = 317;
   {$EXTERNALSYM SSL_R_NO_CLIENT_CERT_RECEIVED}
   SSL_R_NO_CLIENT_CERT_RECEIVED = 186;
   {$EXTERNALSYM SSL_R_NO_COMPRESSION_SPECIFIED}
@@ -8170,13 +8170,13 @@ const
   {$EXTERNALSYM SSL_R_UNSUPPORTED_COMPRESSION_ALGORITHM}
   SSL_R_UNSUPPORTED_COMPRESSION_ALGORITHM = 257;
   {$EXTERNALSYM SSL_R_UNSUPPORTED_DIGEST_TYPE}
-  SSL_R_UNSUPPORTED_DIGEST_TYPE	= 326;
+  SSL_R_UNSUPPORTED_DIGEST_TYPE  = 326;
   {$EXTERNALSYM SSL_R_UNSUPPORTED_PROTOCOL}
   SSL_R_UNSUPPORTED_PROTOCOL = 258;
   {$EXTERNALSYM SSL_R_UNSUPPORTED_SSL_VERSION}
   SSL_R_UNSUPPORTED_SSL_VERSION = 259;
   {$EXTERNALSYM SSL_R_USE_SRTP_NOT_NEGOTIATED}
-  SSL_R_USE_SRTP_NOT_NEGOTIATED	= 369;
+  SSL_R_USE_SRTP_NOT_NEGOTIATED  = 369;
   {$EXTERNALSYM SSL_R_WRITE_BIO_NOT_SET}
   SSL_R_WRITE_BIO_NOT_SET = 260;
   {$EXTERNALSYM SSL_R_WRONG_CIPHER_RETURNED}
@@ -8277,7 +8277,7 @@ const
   {$EXTERNALSYM SSL_TXT_aDSS}
   SSL_TXT_aDSS = 'aDSS';  {Do not localize}
   {$EXTERNALSYM SSL_TXT_aDH}
-  SSL_TXT_aDH	= 'aDH';  {Do not localize}
+  SSL_TXT_aDH  = 'aDH';  {Do not localize}
   {$EXTERNALSYM SSL_TXT_RSA}
   SSL_TXT_RSA = 'RSA';  {Do not localize}
   {$EXTERNALSYM SSL_TXT_DH}
@@ -8372,7 +8372,7 @@ const
   {$EXTERNALSYM TLS1_2_VERSION_MINOR}
   TLS1_2_VERSION_MINOR = $03;
   {$EXTERNALSYM TLS1_1_VERSION}
-  TLS1_1_VERSION			= $0302;
+  TLS1_1_VERSION      = $0302;
   {$EXTERNALSYM TLS1_1_VERSION_MAJOR}
   TLS1_1_VERSION_MAJOR = $03;
   {$EXTERNALSYM TLS1_1_VERSION_MINOR}
@@ -8386,7 +8386,7 @@ const
 
   {$IFNDEF OPENSSL_NO_HEARTBEATS}
   {$EXTERNALSYM SSL_TLSEXT_HB_ENABLED}
-  SSL_TLSEXT_HB_ENABLED	= $01;
+  SSL_TLSEXT_HB_ENABLED  = $01;
   {$EXTERNALSYM SSL_TLSEXT_HB_DONT_SEND_REQUESTS}
   SSL_TLSEXT_HB_DONT_SEND_REQUESTS = $02;
   {$EXTERNALSYM SSL_TLSEXT_HB_DONT_RECV_REQUESTS}
@@ -8445,17 +8445,17 @@ const
   TLS1_CK_ADH_WITH_AES_256_SHA = $0300003A;
 //* TLS v1.2 ciphersuites */
   {$EXTERNALSYM TLS1_CK_RSA_WITH_NULL_SHA256}
-  TLS1_CK_RSA_WITH_NULL_SHA256		 = $0300003B;
+  TLS1_CK_RSA_WITH_NULL_SHA256     = $0300003B;
   {$EXTERNALSYM TLS1_CK_RSA_WITH_AES_128_SHA256}
-  TLS1_CK_RSA_WITH_AES_128_SHA256		= $0300003C;
+  TLS1_CK_RSA_WITH_AES_128_SHA256    = $0300003C;
   {$EXTERNALSYM TLS1_CK_RSA_WITH_AES_256_SHA256}
-  TLS1_CK_RSA_WITH_AES_256_SHA256		= $0300003D;
+  TLS1_CK_RSA_WITH_AES_256_SHA256    = $0300003D;
   {$EXTERNALSYM TLS1_CK_DH_DSS_WITH_AES_128_SHA256}
   TLS1_CK_DH_DSS_WITH_AES_128_SHA256 = $0300003E;
   {$EXTERNALSYM TLS1_CK_DH_RSA_WITH_AES_128_SHA256}
-  TLS1_CK_DH_RSA_WITH_AES_128_SHA256	= $0300003F;
+  TLS1_CK_DH_RSA_WITH_AES_128_SHA256  = $0300003F;
   {$EXTERNALSYM TLS1_CK_DHE_DSS_WITH_AES_128_SHA256}
-  TLS1_CK_DHE_DSS_WITH_AES_128_SHA256	= $03000040;
+  TLS1_CK_DHE_DSS_WITH_AES_128_SHA256  = $03000040;
 
 //* Camellia ciphersuites from RFC4132 */
   {$EXTERNALSYM TLS1_CK_RSA_WITH_CAMELLIA_128_CBC_SHA}
@@ -8485,19 +8485,19 @@ const
 
 //* TLS v1.2 ciphersuites */
   {$EXTERNALSYM TLS1_CK_DHE_RSA_WITH_AES_128_SHA256}
-  TLS1_CK_DHE_RSA_WITH_AES_128_SHA256		= $03000067;
+  TLS1_CK_DHE_RSA_WITH_AES_128_SHA256    = $03000067;
   {$EXTERNALSYM TLS1_CK_DH_DSS_WITH_AES_256_SHA256}
-  TLS1_CK_DH_DSS_WITH_AES_256_SHA256	 = $03000068;
+  TLS1_CK_DH_DSS_WITH_AES_256_SHA256   = $03000068;
   {$EXTERNALSYM TLS1_CK_DH_RSA_WITH_AES_256_SHA256}
-  TLS1_CK_DH_RSA_WITH_AES_256_SHA256	 = $03000069;
+  TLS1_CK_DH_RSA_WITH_AES_256_SHA256   = $03000069;
   {$EXTERNALSYM TLS1_CK_DHE_DSS_WITH_AES_256_SHA256}
-  TLS1_CK_DHE_DSS_WITH_AES_256_SHA256	= $0300006A;
+  TLS1_CK_DHE_DSS_WITH_AES_256_SHA256  = $0300006A;
   {$EXTERNALSYM TLS1_CK_DHE_RSA_WITH_AES_256_SHA256}
-  TLS1_CK_DHE_RSA_WITH_AES_256_SHA256	= $0300006B;
+  TLS1_CK_DHE_RSA_WITH_AES_256_SHA256  = $0300006B;
   {$EXTERNALSYM TLS1_CK_ADH_WITH_AES_128_SHA256}
-  TLS1_CK_ADH_WITH_AES_128_SHA256			= $0300006C;
+  TLS1_CK_ADH_WITH_AES_128_SHA256      = $0300006C;
     {$EXTERNALSYM TLS1_CK_ADH_WITH_AES_256_SHA256}
-  TLS1_CK_ADH_WITH_AES_256_SHA256		 = $0300006D;
+  TLS1_CK_ADH_WITH_AES_256_SHA256     = $0300006D;
   //* SEED ciphersuites from RFC4162 */
   {$EXTERNALSYM TLS1_CK_RSA_WITH_SEED_SHA}
   TLS1_CK_RSA_WITH_SEED_SHA                       = $03000096;
@@ -8514,29 +8514,29 @@ const
 
 //* TLS v1.2 GCM ciphersuites from RFC5288 */
   {$EXTERNALSYM TLS1_CK_RSA_WITH_AES_128_GCM_SHA256}
-  TLS1_CK_RSA_WITH_AES_128_GCM_SHA256	= $0300009C;
+  TLS1_CK_RSA_WITH_AES_128_GCM_SHA256  = $0300009C;
   {$EXTERNALSYM TLS1_CK_RSA_WITH_AES_256_GCM_SHA384}
-  TLS1_CK_RSA_WITH_AES_256_GCM_SHA384	= $0300009D;
+  TLS1_CK_RSA_WITH_AES_256_GCM_SHA384  = $0300009D;
   {$EXTERNALSYM TLS1_CK_DHE_RSA_WITH_AES_128_GCM_SHA256}
   TLS1_CK_DHE_RSA_WITH_AES_128_GCM_SHA256 = $0300009E;
   {$EXTERNALSYM TLS1_CK_DHE_RSA_WITH_AES_256_GCM_SHA384}
-  TLS1_CK_DHE_RSA_WITH_AES_256_GCM_SHA384	= $0300009F;
+  TLS1_CK_DHE_RSA_WITH_AES_256_GCM_SHA384  = $0300009F;
   {$EXTERNALSYM TLS1_CK_DH_RSA_WITH_AES_128_GCM_SHA256}
   TLS1_CK_DH_RSA_WITH_AES_128_GCM_SHA256 = $030000A0;
   {$EXTERNALSYM TLS1_CK_DH_RSA_WITH_AES_256_GCM_SHA384}
   TLS1_CK_DH_RSA_WITH_AES_256_GCM_SHA384 = $030000A1;
   {$EXTERNALSYM TLS1_CK_DHE_DSS_WITH_AES_128_GCM_SHA256}
-  TLS1_CK_DHE_DSS_WITH_AES_128_GCM_SHA256	= $030000A2;
+  TLS1_CK_DHE_DSS_WITH_AES_128_GCM_SHA256  = $030000A2;
   {$EXTERNALSYM TLS1_CK_DHE_DSS_WITH_AES_256_GCM_SHA384}
-  TLS1_CK_DHE_DSS_WITH_AES_256_GCM_SHA384	=	$030000A3;
+  TLS1_CK_DHE_DSS_WITH_AES_256_GCM_SHA384  =  $030000A3;
   {$EXTERNALSYM TLS1_CK_DH_DSS_WITH_AES_128_GCM_SHA256}
   TLS1_CK_DH_DSS_WITH_AES_128_GCM_SHA256 = $030000A4;
   {$EXTERNALSYM TLS1_CK_DH_DSS_WITH_AES_256_GCM_SHA384}
   TLS1_CK_DH_DSS_WITH_AES_256_GCM_SHA384 = $030000A5;
   {$EXTERNALSYM TLS1_CK_ADH_WITH_AES_128_GCM_SHA256}
-  TLS1_CK_ADH_WITH_AES_128_GCM_SHA256	= $030000A6;
+  TLS1_CK_ADH_WITH_AES_128_GCM_SHA256  = $030000A6;
    {$EXTERNALSYM TLS1_CK_ADH_WITH_AES_256_GCM_SHA384}
-  TLS1_CK_ADH_WITH_AES_256_GCM_SHA384	= $030000A7;
+  TLS1_CK_ADH_WITH_AES_256_GCM_SHA384  = $030000A7;
 //* ECC ciphersuites from draft-ietf-tls-ecc-12.txt with changes soon to be in draft 13 */
   {$EXTERNALSYM TLS1_CK_ECDH_ECDSA_WITH_NULL_SHA}
   TLS1_CK_ECDH_ECDSA_WITH_NULL_SHA                = $0300C001;
@@ -8590,15 +8590,15 @@ const
   TLS1_CK_ECDH_anon_WITH_AES_256_CBC_SHA          = $0300C019;
 //* SRP ciphersuites from RFC 5054 */
   {$EXTERNALSYM TLS1_CK_SRP_SHA_WITH_3DES_EDE_CBC_SHA}
-  TLS1_CK_SRP_SHA_WITH_3DES_EDE_CBC_SHA	= $0300C01A;
+  TLS1_CK_SRP_SHA_WITH_3DES_EDE_CBC_SHA  = $0300C01A;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA}
-  TLS1_CK_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA	= $0300C01B;
+  TLS1_CK_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA  = $0300C01B;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA}
-  TLS1_CK_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA	= $0300C01C;
+  TLS1_CK_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA  = $0300C01C;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_WITH_AES_128_CBC_SHA}
   TLS1_CK_SRP_SHA_WITH_AES_128_CBC_SHA = $0300C01D;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_RSA_WITH_AES_128_CBC_SHA}
-  TLS1_CK_SRP_SHA_RSA_WITH_AES_128_CBC_SHA	= $0300C01E;
+  TLS1_CK_SRP_SHA_RSA_WITH_AES_128_CBC_SHA  = $0300C01E;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_DSS_WITH_AES_128_CBC_SHA}
   TLS1_CK_SRP_SHA_DSS_WITH_AES_128_CBC_SHA = $0300C01F;
   {$EXTERNALSYM TLS1_CK_SRP_SHA_WITH_AES_256_CBC_SHA}
@@ -8629,9 +8629,9 @@ const
 
 //* ECDH GCM based ciphersuites from RFC5289 */
   {$EXTERNALSYM TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256}
-  TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256	= $0300C02B;
+  TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256  = $0300C02B;
   {$EXTERNALSYM TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384}
-  TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384	= $0300C02C;
+  TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384  = $0300C02C;
   {$EXTERNALSYM TLS1_CK_ECDH_ECDSA_WITH_AES_128_GCM_SHA256}
   TLS1_CK_ECDH_ECDSA_WITH_AES_128_GCM_SHA256 = $0300C02D;
   {$EXTERNALSYM TLS1_CK_ECDH_ECDSA_WITH_AES_256_GCM_SHA384}
@@ -8778,13 +8778,13 @@ const
   TLS1_TXT_ADH_WITH_SEED_SHA                      = 'ADH-SEED-SHA';
 //* TLS v1.2 ciphersuites */
   {$EXTERNALSYM TLS1_TXT_RSA_WITH_NULL_SHA256}
-  TLS1_TXT_RSA_WITH_NULL_SHA256	= 'NULL-SHA256';
+  TLS1_TXT_RSA_WITH_NULL_SHA256  = 'NULL-SHA256';
   {$EXTERNALSYM TLS1_TXT_RSA_WITH_AES_128_SHA256}
   TLS1_TXT_RSA_WITH_AES_128_SHA256 = 'AES128-SHA256';
   {$EXTERNALSYM TLS1_TXT_RSA_WITH_AES_256_SHA256}
   TLS1_TXT_RSA_WITH_AES_256_SHA256 = 'AES256-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_DSS_WITH_AES_128_SHA256}
-  TLS1_TXT_DH_DSS_WITH_AES_128_SHA256	= 'DH-DSS-AES128-SHA256';
+  TLS1_TXT_DH_DSS_WITH_AES_128_SHA256  = 'DH-DSS-AES128-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_RSA_WITH_AES_128_SHA256}
   TLS1_TXT_DH_RSA_WITH_AES_128_SHA256 = 'DH-RSA-AES128-SHA256';
   {$EXTERNALSYM TLS1_TXT_DHE_DSS_WITH_AES_128_SHA256}
@@ -8792,9 +8792,9 @@ const
   {$EXTERNALSYM TLS1_TXT_DHE_RSA_WITH_AES_128_SHA256}
   TLS1_TXT_DHE_RSA_WITH_AES_128_SHA256 = 'DHE-RSA-AES128-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_DSS_WITH_AES_256_SHA256}
-  TLS1_TXT_DH_DSS_WITH_AES_256_SHA256	= 'DH-DSS-AES256-SHA256';
+  TLS1_TXT_DH_DSS_WITH_AES_256_SHA256  = 'DH-DSS-AES256-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_RSA_WITH_AES_256_SHA256}
-  TLS1_TXT_DH_RSA_WITH_AES_256_SHA256	= 'DH-RSA-AES256-SHA256';
+  TLS1_TXT_DH_RSA_WITH_AES_256_SHA256  = 'DH-RSA-AES256-SHA256';
   {$EXTERNALSYM TLS1_TXT_DHE_DSS_WITH_AES_256_SHA256}
   TLS1_TXT_DHE_DSS_WITH_AES_256_SHA256 = 'DHE-DSS-AES256-SHA256';
   {$EXTERNALSYM TLS1_TXT_DHE_RSA_WITH_AES_256_SHA256}
@@ -8814,17 +8814,17 @@ TLS1_TXT_DHE_RSA_WITH_AES_128_GCM_SHA256 = 'DHE-RSA-AES128-GCM-SHA256';
   {$EXTERNALSYM TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384}
 TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM TLS1_TXT_DH_RSA_WITH_AES_128_GCM_SHA256}
-  TLS1_TXT_DH_RSA_WITH_AES_128_GCM_SHA256	= 'DH-RSA-AES128-GCM-SHA256';
+  TLS1_TXT_DH_RSA_WITH_AES_128_GCM_SHA256  = 'DH-RSA-AES128-GCM-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_RSA_WITH_AES_256_GCM_SHA384}
-  TLS1_TXT_DH_RSA_WITH_AES_256_GCM_SHA384	= 'DH-RSA-AES256-GCM-SHA384';
+  TLS1_TXT_DH_RSA_WITH_AES_256_GCM_SHA384  = 'DH-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM TLS1_TXT_DHE_DSS_WITH_AES_128_GCM_SHA256}
   TLS1_TXT_DHE_DSS_WITH_AES_128_GCM_SHA256 = 'DHE-DSS-AES128-GCM-SHA256';
   {$EXTERNALSYM TLS1_TXT_DHE_DSS_WITH_AES_256_GCM_SHA384}
   TLS1_TXT_DHE_DSS_WITH_AES_256_GCM_SHA384 = 'DHE-DSS-AES256-GCM-SHA384';
   {$EXTERNALSYM TLS1_TXT_DH_DSS_WITH_AES_128_GCM_SHA256}
-  TLS1_TXT_DH_DSS_WITH_AES_128_GCM_SHA256	= 'DH-DSS-AES128-GCM-SHA256';
+  TLS1_TXT_DH_DSS_WITH_AES_128_GCM_SHA256  = 'DH-DSS-AES128-GCM-SHA256';
   {$EXTERNALSYM TLS1_TXT_DH_DSS_WITH_AES_256_GCM_SHA384}
-  TLS1_TXT_DH_DSS_WITH_AES_256_GCM_SHA384	=	'DH-DSS-AES256-GCM-SHA384';
+  TLS1_TXT_DH_DSS_WITH_AES_256_GCM_SHA384  =  'DH-DSS-AES256-GCM-SHA384';
   {$EXTERNALSYM TLS1_TXT_ADH_WITH_AES_128_GCM_SHA256}
   TLS1_TXT_ADH_WITH_AES_128_GCM_SHA256 = 'ADH-AES128-GCM-SHA256';
   {$EXTERNALSYM TLS1_TXT_ADH_WITH_AES_256_GCM_SHA384}
@@ -8876,9 +8876,9 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM TLS_CT_DSS_FIXED_DH}
   TLS_CT_DSS_FIXED_DH = 4;
   {$EXTERNALSYM TLS_CT_ECDSA_SIGN}
-  TLS_CT_ECDSA_SIGN	= 64;
+  TLS_CT_ECDSA_SIGN  = 64;
   {$EXTERNALSYM TLS_CT_RSA_FIXED_ECDH}
-  TLS_CT_RSA_FIXED_ECDH	= 65;
+  TLS_CT_RSA_FIXED_ECDH  = 65;
   {$EXTERNALSYM TLS_CT_ECDSA_FIXED_ECDH}
   TLS_CT_ECDSA_FIXED_ECDH = 66;
   {$EXTERNALSYM TLS_CT_GOST94_SIGN}
@@ -9004,13 +9004,13 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM WINNT}
   WINNT = 1;
   {$EXTERNALSYM X509_TRUST_DEFAULT}
-  X509_TRUST_DEFAULT	= -1;	//* Only valid in purpose settings */
+  X509_TRUST_DEFAULT  = -1;  //* Only valid in purpose settings */
   {$EXTERNALSYM X509_TRUST_COMPAT}
-  X509_TRUST_COMPAT	= 1;
+  X509_TRUST_COMPAT  = 1;
   {$EXTERNALSYM X509_TRUST_SSL_CLIENT}
-  X509_TRUST_SSL_CLIENT	= 2;
+  X509_TRUST_SSL_CLIENT  = 2;
   {$EXTERNALSYM X509_TRUST_SSL_SERVER}
-  X509_TRUST_SSL_SERVER	= 3;
+  X509_TRUST_SSL_SERVER  = 3;
   {$EXTERNALSYM X509_TRUST_EMAIL}
   X509_TRUST_EMAIL = 4;
   {$EXTERNALSYM X509_TRUST_OBJECT_SIGN}
@@ -9018,7 +9018,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_TRUST_OCSP_SIGN}
   X509_TRUST_OCSP_SIGN = 6;
   {$EXTERNALSYM X509_TRUST_OCSP_REQUEST}
-  X509_TRUST_OCSP_REQUEST	= 7;
+  X509_TRUST_OCSP_REQUEST  = 7;
   {$EXTERNALSYM X509_TRUST_TSA}
   X509_TRUST_TSA = 8;
   {$EXTERNALSYM X509_TRUST_MIN}
@@ -9090,10 +9090,10 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_F_X509_CHECK_PRIVATE_KEY}
   X509_F_X509_CHECK_PRIVATE_KEY        = 128;
   {$EXTERNALSYM X509_F_NETSCAPE_SPKI_B64_DECODE}
-  X509_F_NETSCAPE_SPKI_B64_DECODE	     = 129;
+  X509_F_NETSCAPE_SPKI_B64_DECODE       = 129;
 
   {$EXTERNALSYM X509_F_NETSCAPE_SPKI_B64_ENCODE}
-  X509_F_NETSCAPE_SPKI_B64_ENCODE	     = 130;
+  X509_F_NETSCAPE_SPKI_B64_ENCODE       = 130;
   {$EXTERNALSYM X509_F_X509_NAME_ENTRY_CREATE_BY_TXT}
   X509_F_X509_NAME_ENTRY_CREATE_BY_TXT = 131;
   {$EXTERNALSYM X509_F_X509_LOAD_CERT_CRL_FILE}
@@ -9102,32 +9102,32 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   X509_F_X509_TRUST_ADD                = 133;
 
   {$EXTERNALSYM X509_F_X509_STORE_CTX_PURPOSE_INHERIT}
-  X509_F_X509_STORE_CTX_PURPOSE_INHERIT	= 134;
+  X509_F_X509_STORE_CTX_PURPOSE_INHERIT  = 134;
   {$EXTERNALSYM X509_F_X509AT_ADD1_ATTR}
-  X509_F_X509AT_ADD1_ATTR	             = 135;
+  X509_F_X509AT_ADD1_ATTR               = 135;
   {$EXTERNALSYM X509_F_X509_ATTRIBUTE_CREATE_BY_NID}
   X509_F_X509_ATTRIBUTE_CREATE_BY_NID  = 136;
   {$EXTERNALSYM X509_F_X509_ATTRIBUTE_CREATE_BY_OBJ}
-  X509_F_X509_ATTRIBUTE_CREATE_BY_OBJ	 = 137;
+  X509_F_X509_ATTRIBUTE_CREATE_BY_OBJ   = 137;
   {$EXTERNALSYM X509_F_X509_ATTRIBUTE_SET1_DATA}
   X509_F_X509_ATTRIBUTE_SET1_DATA      = 138;
   {$EXTERNALSYM X509_F_X509_ATTRIBUTE_GET0_DATA}
   X509_F_X509_ATTRIBUTE_GET0_DATA      = 139;
 
   {$EXTERNALSYM X509_F_X509_ATTRIBUTE_CREATE_BY_TXT}
-  X509_F_X509_ATTRIBUTE_CREATE_BY_TXT	 = 140;
+  X509_F_X509_ATTRIBUTE_CREATE_BY_TXT   = 140;
   {$EXTERNALSYM X509_F_X509_TRUST_SET}
   X509_F_X509_TRUST_SET                = 141;
   {$EXTERNALSYM X509_F_X509_STORE_CTX_NEW}
-  X509_F_X509_STORE_CTX_NEW		         = 142;
+  X509_F_X509_STORE_CTX_NEW             = 142;
   {$EXTERNALSYM X509_F_X509_STORE_CTX_INIT}
   X509_F_X509_STORE_CTX_INIT           = 143;
   {$EXTERNALSYM X509_F_X509_REQ_CHECK_PRIVATE_KEY}
-  X509_F_X509_REQ_CHECK_PRIVATE_KEY	   = 144;
+  X509_F_X509_REQ_CHECK_PRIVATE_KEY     = 144;
   {$EXTERNALSYM X509_F_CHECK_POLICY}
-  X509_F_CHECK_POLICY	                 = 145;
+  X509_F_CHECK_POLICY                   = 145;
   {$EXTERNALSYM X509_F_X509_STORE_CTX_GET1_ISSUER}
-  X509_F_X509_STORE_CTX_GET1_ISSUER		 = 146;
+  X509_F_X509_STORE_CTX_GET1_ISSUER     = 146;
   {$EXTERNALSYM X509_F_X509_CRL_PRINT_FP}
   X509_F_X509_CRL_PRINT_FP             = 147;
 
@@ -9170,7 +9170,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_R_LOADING_DEFAULTS}
   X509_R_LOADING_DEFAULTS = 104;
   {$EXTERNALSYM X509_R_METHOD_NOT_SUPPORTED}
-  X509_R_METHOD_NOT_SUPPORTED	= 124;
+  X509_R_METHOD_NOT_SUPPORTED  = 124;
   {$EXTERNALSYM X509_R_NO_CERT_SET_FOR_US_TO_VERIFY}
   X509_R_NO_CERT_SET_FOR_US_TO_VERIFY = 105;
   {$EXTERNALSYM X509_R_PUBLIC_KEY_DECODE_ERROR}
@@ -9188,7 +9188,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_R_UNKNOWN_NID}
   X509_R_UNKNOWN_NID = 109;
   {$EXTERNALSYM X509_R_UNKNOWN_PURPOSE_ID}
-  X509_R_UNKNOWN_PURPOSE_ID	= 121;
+  X509_R_UNKNOWN_PURPOSE_ID  = 121;
   {$EXTERNALSYM X509_R_UNSUPPORTED_ALGORITHM}
   X509_R_UNSUPPORTED_ALGORITHM = 111;
   {$EXTERNALSYM X509_R_WRONG_LOOKUP_TYPE}
@@ -9243,34 +9243,34 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_V_ERR_CERT_REVOKED}
   X509_V_ERR_CERT_REVOKED = 23;
   {$EXTERNALSYM X509_V_ERR_INVALID_CA}
-  X509_V_ERR_INVALID_CA	 = 24;
+  X509_V_ERR_INVALID_CA   = 24;
   {$EXTERNALSYM X509_V_ERR_PATH_LENGTH_EXCEEDED}
-  X509_V_ERR_PATH_LENGTH_EXCEEDED	= 25;
+  X509_V_ERR_PATH_LENGTH_EXCEEDED  = 25;
   {$EXTERNALSYM X509_V_ERR_INVALID_PURPOSE}
   X509_V_ERR_INVALID_PURPOSE = 26;
   {$EXTERNALSYM X509_V_ERR_CERT_UNTRUSTED}
-  X509_V_ERR_CERT_UNTRUSTED	= 27;
+  X509_V_ERR_CERT_UNTRUSTED  = 27;
   {$EXTERNALSYM X509_V_ERR_CERT_REJECTED}
   X509_V_ERR_CERT_REJECTED = 28;
 //* These are 'informational' when looking for issuer cert */
   {$EXTERNALSYM X509_V_ERR_SUBJECT_ISSUER_MISMATCH}
   X509_V_ERR_SUBJECT_ISSUER_MISMATCH = 29;
   {$EXTERNALSYM X509_V_ERR_AKID_SKID_MISMATCH}
-  X509_V_ERR_AKID_SKID_MISMATCH	= 30;
+  X509_V_ERR_AKID_SKID_MISMATCH  = 30;
   {$EXTERNALSYM X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH}
   X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH = 31;
   {$EXTERNALSYM X509_V_ERR_KEYUSAGE_NO_CERTSIGN}
-  X509_V_ERR_KEYUSAGE_NO_CERTSIGN	= 32;
+  X509_V_ERR_KEYUSAGE_NO_CERTSIGN  = 32;
   {$EXTERNALSYM X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER}
-  X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER	= 33;
+  X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER  = 33;
   {$EXTERNALSYM X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION}
-  X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION	= 34;
+  X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION  = 34;
   {$EXTERNALSYM X509_V_ERR_KEYUSAGE_NO_CRL_SIGN}
-  X509_V_ERR_KEYUSAGE_NO_CRL_SIGN	= 35;
+  X509_V_ERR_KEYUSAGE_NO_CRL_SIGN  = 35;
   {$EXTERNALSYM X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION}
   X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION = 36;
   {$EXTERNALSYM X509_V_ERR_INVALID_NON_CA}
-  X509_V_ERR_INVALID_NON_CA	= 37;
+  X509_V_ERR_INVALID_NON_CA  = 37;
   {$EXTERNALSYM X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED}
   X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED = 38;
   {$EXTERNALSYM X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE}
@@ -9293,7 +9293,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_V_ERR_PERMITTED_VIOLATION}
   X509_V_ERR_PERMITTED_VIOLATION = 47;
   {$EXTERNALSYM X509_V_ERR_EXCLUDED_VIOLATION}
-  X509_V_ERR_EXCLUDED_VIOLATION	= 48;
+  X509_V_ERR_EXCLUDED_VIOLATION  = 48;
   {$EXTERNALSYM X509_V_ERR_SUBTREE_MINMAX}
   X509_V_ERR_SUBTREE_MINMAX = 49;
   {$EXTERNALSYM X509_V_ERR_APPLICATION_VERIFICATION}
@@ -9353,40 +9353,40 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
 
   //* Send issuer+subject checks to verify_cb */
   {$EXTERNALSYM X509_V_FLAG_CB_ISSUER_CHECK}
-  X509_V_FLAG_CB_ISSUER_CHECK	= $1;
+  X509_V_FLAG_CB_ISSUER_CHECK  = $1;
   //* Use check time instead of current time */
   {$EXTERNALSYM X509_V_FLAG_USE_CHECK_TIME}
   X509_V_FLAG_USE_CHECK_TIME = $2;
   //* Lookup CRLs */
   {$EXTERNALSYM X509_V_FLAG_CRL_CHECK}
-  X509_V_FLAG_CRL_CHECK	 = $4;
+  X509_V_FLAG_CRL_CHECK   = $4;
   //* Lookup CRLs for whole chain */
   {$EXTERNALSYM X509_V_FLAG_CRL_CHECK_ALL}
-  X509_V_FLAG_CRL_CHECK_ALL	= $8;
+  X509_V_FLAG_CRL_CHECK_ALL  = $8;
   //* Ignore unhandled critical extensions */
   {$EXTERNALSYM X509_V_FLAG_IGNORE_CRITICAL}
-  X509_V_FLAG_IGNORE_CRITICAL	 = $10;
+  X509_V_FLAG_IGNORE_CRITICAL   = $10;
 //* Disable workarounds for broken certificates */
   {$EXTERNALSYM X509_V_FLAG_X509_STRICT}
-  X509_V_FLAG_X509_STRICT	= $20;
+  X509_V_FLAG_X509_STRICT  = $20;
 //* Enable proxy certificate validation */
   {$EXTERNALSYM X509_V_FLAG_ALLOW_PROXY_CERTS}
-  X509_V_FLAG_ALLOW_PROXY_CERTS	= $40;
+  X509_V_FLAG_ALLOW_PROXY_CERTS  = $40;
 //* Enable policy checking */
   {$EXTERNALSYM X509_V_FLAG_POLICY_CHECK}
-  X509_V_FLAG_POLICY_CHECK	= $80;
+  X509_V_FLAG_POLICY_CHECK  = $80;
 //* Policy variable require-explicit-policy */
   {$EXTERNALSYM X509_V_FLAG_EXPLICIT_POLICY}
   X509_V_FLAG_EXPLICIT_POLICY = $100;
 //* Policy variable inhibit-any-policy */
   {$EXTERNALSYM X509_V_FLAG_INHIBIT_ANY}
-  X509_V_FLAG_INHIBIT_ANY	= $200;
+  X509_V_FLAG_INHIBIT_ANY  = $200;
 //* Policy variable inhibit-policy-mapping */
   {$EXTERNALSYM X509_V_FLAG_INHIBIT_MAP}
-  X509_V_FLAG_INHIBIT_MAP	= $400;
+  X509_V_FLAG_INHIBIT_MAP  = $400;
 //* Notify callback that policy is OK */
   {$EXTERNALSYM X509_V_FLAG_NOTIFY_POLICY}
-  X509_V_FLAG_NOTIFY_POLICY	= $800;
+  X509_V_FLAG_NOTIFY_POLICY  = $800;
 //* Extended CRL features such as indirect CRLs, alternate CRL signing keys */
   {$EXTERNALSYM X509_V_FLAG_EXTENDED_CRL_SUPPORT}
   X509_V_FLAG_EXTENDED_CRL_SUPPORT = $1000;
@@ -9404,9 +9404,9 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509_VP_FLAG_RESET_FLAGS}
   X509_VP_FLAG_RESET_FLAGS = $4;
   {$EXTERNALSYM X509_VP_FLAG_LOCKED}
-  X509_VP_FLAG_LOCKED	= $8;
+  X509_VP_FLAG_LOCKED  = $8;
   {$EXTERNALSYM X509_VP_FLAG_ONCE}
-  X509_VP_FLAG_ONCE	= $10;
+  X509_VP_FLAG_ONCE  = $10;
   {$EXTERNALSYM X509_V_FLAG_POLICY_MASK}
   X509_V_FLAG_POLICY_MASK = (X509_V_FLAG_POLICY_CHECK or
     X509_V_FLAG_EXPLICIT_POLICY or
@@ -9442,9 +9442,9 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509V3_EXT_MULTILINE}
   X509V3_EXT_MULTILINE = $4;
   {$EXTERNALSYM GEN_OTHERNAME}
-  GEN_OTHERNAME	= 0;
+  GEN_OTHERNAME  = 0;
   {$EXTERNALSYM GEN_EMAIL}
-  GEN_EMAIL	= 1;
+  GEN_EMAIL  = 1;
   {$EXTERNALSYM GEN_DNS}
   GEN_DNS = 2;
   {$EXTERNALSYM GEN_X400}
@@ -9454,7 +9454,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM GEN_EDIPARTY}
   GEN_EDIPARTY = 5;
   {$EXTERNALSYM GEN_URI}
-  GEN_URI	= 6;
+  GEN_URI  = 6;
   {$EXTERNALSYM GEN_IPADD}
   GEN_IPADD = 7;
   {$EXTERNALSYM GEN_RID}
@@ -9462,11 +9462,11 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM CRLDP_ALL_REASONS}
   CRLDP_ALL_REASONS = $807f;
   {$EXTERNALSYM CRL_REASON_NONE}
-  CRL_REASON_NONE	=	-1;
+  CRL_REASON_NONE  =  -1;
   {$EXTERNALSYM CRL_REASON_UNSPECIFIED}
   CRL_REASON_UNSPECIFIED = 0;
   {$EXTERNALSYM CRL_REASON_KEY_COMPROMISE}
-  CRL_REASON_KEY_COMPROMISE	= 1;
+  CRL_REASON_KEY_COMPROMISE  = 1;
   {$EXTERNALSYM CRL_REASON_CA_COMPROMISE}
   CRL_REASON_CA_COMPROMISE = 2;
   {$EXTERNALSYM CRL_REASON_AFFILIATION_CHANGED}
@@ -9476,7 +9476,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM CRL_REASON_CESSATION_OF_OPERATION}
   CRL_REASON_CESSATION_OF_OPERATION = 5;
   {$EXTERNALSYM CRL_REASON_CERTIFICATE_HOLD}
-  CRL_REASON_CERTIFICATE_HOLD	= 6;
+  CRL_REASON_CERTIFICATE_HOLD  = 6;
   {$EXTERNALSYM CRL_REASON_REMOVE_FROM_CRL}
   CRL_REASON_REMOVE_FROM_CRL = 8;
   {$EXTERNALSYM CRL_REASON_PRIVILEGE_WITHDRAWN}
@@ -9487,16 +9487,16 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
 //* Values in idp_flags field */
 //* IDP present */
   {$EXTERNALSYM IDP_PRESENT}
-	IDP_PRESENT	= $1;
+  IDP_PRESENT  = $1;
 //* IDP values inconsistent */
   {$EXTERNALSYM IDP_INVALID}
-  IDP_INVALID	= $2;
+  IDP_INVALID  = $2;
 //* onlyuser true */
   {$EXTERNALSYM IDP_ONLYUSER}
   IDP_ONLYUSER = $4;
 //* onlyCA true */
   {$EXTERNALSYM IDP_ONLYCA}
-  IDP_ONLYCA	= $8;
+  IDP_ONLYCA  = $8;
 //* onlyattr true */
   {$EXTERNALSYM IDP_ONLYATTR}
   IDP_ONLYATTR = $10;
@@ -9505,32 +9505,32 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   IDP_INDIRECT = $20;
 //* onlysomereasons present */
   {$EXTERNALSYM IDP_REASONS}
-  IDP_REASONS	= $40;
+  IDP_REASONS  = $40;
 
   //* X509_PURPOSE stuff */
   {$EXTERNALSYM EXFLAG_BCONS}
   EXFLAG_BCONS = $1;
   {$EXTERNALSYM EXFLAG_KUSAGE}
-  EXFLAG_KUSAGE	= $2;
+  EXFLAG_KUSAGE  = $2;
   {$EXTERNALSYM EXFLAG_XKUSAGE}
   EXFLAG_XKUSAGE = $4;
   {$EXTERNALSYM EXFLAG_NSCERT}
-  EXFLAG_NSCERT	= $8;
+  EXFLAG_NSCERT  = $8;
   {$EXTERNALSYM EXFLAG_CA}
   EXFLAG_CA = $10;
   //* Really self issued not necessarily self signed */
   {$EXTERNALSYM EXFLAG_SI}
-  EXFLAG_SI	= $20;
+  EXFLAG_SI  = $20;
   {$EXTERNALSYM EXFLAG_SS}
-  EXFLAG_SS	= $20;
+  EXFLAG_SS  = $20;
   {$EXTERNALSYM EXFLAG_V1}
-  EXFLAG_V1	= $40;
+  EXFLAG_V1  = $40;
   {$EXTERNALSYM EXFLAG_INVALID}
   EXFLAG_INVALID = $80;
   {$EXTERNALSYM EXFLAG_SET}
   EXFLAG_SET = $100;
   {$EXTERNALSYM EXFLAG_CRITICAL}
-  EXFLAG_CRITICAL	= $200;
+  EXFLAG_CRITICAL  = $200;
   {$EXTERNALSYM EXFLAG_PROXY}
   EXFLAG_PROXY = $400;
   {$EXTERNALSYM EXFLAG_INVALID_POLICY}
@@ -9538,9 +9538,9 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM KU_DIGITAL_SIGNATURE}
   KU_DIGITAL_SIGNATURE = $0080;
   {$EXTERNALSYM KU_NON_REPUDIATION}
-  KU_NON_REPUDIATION	= $0040;
+  KU_NON_REPUDIATION  = $0040;
   {$EXTERNALSYM KU_KEY_ENCIPHERMENT}
-  KU_KEY_ENCIPHERMENT	= $0020;
+  KU_KEY_ENCIPHERMENT  = $0020;
   {$EXTERNALSYM KU_DATA_ENCIPHERMENT}
   KU_DATA_ENCIPHERMENT = $0010;
   {$EXTERNALSYM KU_KEY_AGREEMENT}
@@ -9548,27 +9548,27 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM KU_KEY_CERT_SIGN}
   KU_KEY_CERT_SIGN = $0004;
   {$EXTERNALSYM KU_CRL_SIGN}
-  KU_CRL_SIGN	= $0002;
+  KU_CRL_SIGN  = $0002;
   {$EXTERNALSYM KU_ENCIPHER_ONLY}
   KU_ENCIPHER_ONLY = $0001;
   {$EXTERNALSYM KU_DECIPHER_ONLY}
   KU_DECIPHER_ONLY = $8000;
   {$EXTERNALSYM NS_SSL_CLIENT}
-  NS_SSL_CLIENT	= $80;
+  NS_SSL_CLIENT  = $80;
   {$EXTERNALSYM NS_SSL_SERVER}
-  NS_SSL_SERVER	= $40;
+  NS_SSL_SERVER  = $40;
   {$EXTERNALSYM NS_SMIME}
   NS_SMIME = $20;
   {$EXTERNALSYM NS_OBJSIGN}
   NS_OBJSIGN = $10;
   {$EXTERNALSYM NS_SSL_CA}
-  NS_SSL_CA	= $04;
+  NS_SSL_CA  = $04;
   {$EXTERNALSYM NS_SMIME_CA}
-  NS_SMIME_CA	= $02;
+  NS_SMIME_CA  = $02;
   {$EXTERNALSYM NS_OBJSIGN_CA}
   NS_OBJSIGN_CA = $01;
   {$EXTERNALSYM NS_ANY_CA}
-  NS_ANY_CA	= (NS_SSL_CA or NS_SMIME_CA or
+  NS_ANY_CA  = (NS_SSL_CA or NS_SMIME_CA or
   {$EXTERNALSYM XKU_SSL_SERVER}
     NS_OBJSIGN_CA);
   {$EXTERNALSYM XKU_SSL_SERVER}
@@ -9576,11 +9576,11 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM XKU_SSL_CLIENT}
   XKU_SSL_CLIENT = $2;
   {$EXTERNALSYM XKU_SMIME}
-  XKU_SMIME	=	$4;
+  XKU_SMIME  =  $4;
   {$EXTERNALSYM XKU_CODE_SIGN}
-  XKU_CODE_SIGN	= $8;
+  XKU_CODE_SIGN  = $8;
   {$EXTERNALSYM XKU_SGC}
-  XKU_SGC	= $10;
+  XKU_SGC  = $10;
   {$EXTERNALSYM XKU_OCSP_SIGN}
   XKU_OCSP_SIGN = $20;
   {$EXTERNALSYM XKU_TIMESTAMP}
@@ -9593,17 +9593,17 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   X509_PURPOSE_DYNAMIC_NAME = $2;
 
   {$EXTERNALSYM X509_PURPOSE_SSL_CLIENT}
-  X509_PURPOSE_SSL_CLIENT	= 1;
+  X509_PURPOSE_SSL_CLIENT  = 1;
   {$EXTERNALSYM X509_PURPOSE_SSL_SERVER}
-  X509_PURPOSE_SSL_SERVER	= 2;
+  X509_PURPOSE_SSL_SERVER  = 2;
   {$EXTERNALSYM X509_PURPOSE_NS_SSL_SERVER}
   X509_PURPOSE_NS_SSL_SERVER = 3;
   {$EXTERNALSYM X509_PURPOSE_SMIME_SIGN}
-  X509_PURPOSE_SMIME_SIGN	= 4;
+  X509_PURPOSE_SMIME_SIGN  = 4;
   {$EXTERNALSYM X509_PURPOSE_SMIME_ENCRYPT}
   X509_PURPOSE_SMIME_ENCRYPT = 5;
   {$EXTERNALSYM X509_PURPOSE_CRL_SIGN}
-  X509_PURPOSE_CRL_SIGN	= 6;
+  X509_PURPOSE_CRL_SIGN  = 6;
   {$EXTERNALSYM X509_PURPOSE_ANY}
   X509_PURPOSE_ANY = 7;
   {$EXTERNALSYM X509_PURPOSE_OCSP_HELPER}
@@ -9620,10 +9620,10 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
 //* Flags for X509V3_EXT_print() */
 
   {$EXTERNALSYM X509V3_EXT_UNKNOWN_MASK}
-  X509V3_EXT_UNKNOWN_MASK		= TIdC_LONG($f shl 16);
+  X509V3_EXT_UNKNOWN_MASK    = TIdC_LONG($f shl 16);
 //* Return error for unknown extensions */
   {$EXTERNALSYM X509V3_EXT_DEFAULT}
-  X509V3_EXT_DEFAULT		= 0;
+  X509V3_EXT_DEFAULT    = 0;
 //* Print error for unknown extensions */
   {$EXTERNALSYM X509V3_EXT_ERROR_UNKNOWN}
  X509V3_EXT_ERROR_UNKNOWN = (TIdC_LONG(1) shl 16);
@@ -9632,31 +9632,31 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   X509V3_EXT_PARSE_UNKNOWN = (TIdC_LONG(2) shl 16);
 //* BIO_dump unknown extensions */
   {$EXTERNALSYM X509V3_EXT_DUMP_UNKNOWN}
-  X509V3_EXT_DUMP_UNKNOWN	 = (TIdC_LONG(3) shl 16);
+  X509V3_EXT_DUMP_UNKNOWN   = (TIdC_LONG(3) shl 16);
 
 //* Flags for X509V3_add1_i2d */
   {$EXTERNALSYM X509V3_ADD_OP_MASK}
-  X509V3_ADD_OP_MASK	 = TIdC_LONG($f);
+  X509V3_ADD_OP_MASK   = TIdC_LONG($f);
   {$EXTERNALSYM X509V3_ADD_DEFAULT}
-  X509V3_ADD_DEFAULT	 = TIdC_LONG(0);
+  X509V3_ADD_DEFAULT   = TIdC_LONG(0);
   {$EXTERNALSYM X509V3_ADD_APPEND}
-  X509V3_ADD_APPEND		= TIdC_LONG(1);
+  X509V3_ADD_APPEND    = TIdC_LONG(1);
   {$EXTERNALSYM X509V3_ADD_REPLACE}
-  X509V3_ADD_REPLACE	= TIdC_LONG(2);
+  X509V3_ADD_REPLACE  = TIdC_LONG(2);
   {$EXTERNALSYM X509V3_ADD_REPLACE_EXISTING}
-  X509V3_ADD_REPLACE_EXISTING	= TIdC_LONG(3);
+  X509V3_ADD_REPLACE_EXISTING  = TIdC_LONG(3);
   {$EXTERNALSYM X509V3_ADD_KEEP_EXISTING}
-  X509V3_ADD_KEEP_EXISTING	= TIdC_LONG(4);
+  X509V3_ADD_KEEP_EXISTING  = TIdC_LONG(4);
   {$EXTERNALSYM X509V3_ADD_DELETE}
-  X509V3_ADD_DELETE		= TIdC_LONG(5);
+  X509V3_ADD_DELETE    = TIdC_LONG(5);
   {$EXTERNALSYM X509V3_ADD_SILENT}
-  X509V3_ADD_SILENT	 = TIdC_LONG($10);
+  X509V3_ADD_SILENT   = TIdC_LONG($10);
 
   {$IFNDEF OPENSSL_NO_RFC3779}
   {$EXTERNALSYM ASIdOrRange_id}
-	ASIdOrRange_id	  =	0;
+  ASIdOrRange_id    =  0;
   {$EXTERNALSYM ASIdOrRange_range}
-  ASIdOrRange_range	= 1;
+  ASIdOrRange_range  = 1;
 
   {$EXTERNALSYM ASIdentifierChoice_inherit}
   ASIdentifierChoice_inherit = 0;
@@ -9664,22 +9664,22 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   ASIdentifierChoice_asIdsOrRanges = 1;
 
   {$EXTERNALSYM IPAddressOrRange_addressPrefix}
-  IPAddressOrRange_addressPrefix	= 0;
+  IPAddressOrRange_addressPrefix  = 0;
   {$EXTERNALSYM IPAddressOrRange_addressRange}
-  IPAddressOrRange_addressRange	= 1;
+  IPAddressOrRange_addressRange  = 1;
 
   {$EXTERNALSYM IPAddressChoice_inherit}
-  IPAddressChoice_inherit		 = 0;
+  IPAddressChoice_inherit     = 0;
   {$EXTERNALSYM IPAddressChoice_addressesOrRanges}
-  IPAddressChoice_addressesOrRanges	= 1;
+  IPAddressChoice_addressesOrRanges  = 1;
 
 //  /*
 // * API tag for elements of the ASIdentifer SEQUENCE.
 // */
   {$EXTERNALSYM V3_ASID_ASNUM}
-  V3_ASID_ASNUM	= 0;
+  V3_ASID_ASNUM  = 0;
   {$EXTERNALSYM V3_ASID_RDI}
-  V3_ASID_RDI	= 1;
+  V3_ASID_RDI  = 1;
 
 //*
 // * AFI values, assigned by IANA.  It'd be nice to make the AFI
@@ -9688,54 +9688,54 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
 // * be worth the trouble.
 // */
   {$EXTERNALSYM IANA_AFI_IPV4}
-  IANA_AFI_IPV4	= 1;
+  IANA_AFI_IPV4  = 1;
   {$EXTERNALSYM IANA_AFI_IPV6}
-  IANA_AFI_IPV6	= 2;
+  IANA_AFI_IPV6  = 2;
   {$ENDIF}
 
-	//* Function codes. */
+  //* Function codes. */
   {$EXTERNALSYM X509V3_F_A2I_GENERAL_NAME}
-  X509V3_F_A2I_GENERAL_NAME		 = 164;
+  X509V3_F_A2I_GENERAL_NAME     = 164;
   {$EXTERNALSYM X509V3_F_ASIDENTIFIERCHOICE_CANONIZE}
-  X509V3_F_ASIDENTIFIERCHOICE_CANONIZE		= 161;
+  X509V3_F_ASIDENTIFIERCHOICE_CANONIZE    = 161;
   {$EXTERNALSYM X509V3_F_ASIDENTIFIERCHOICE_IS_CANONICAL}
-  X509V3_F_ASIDENTIFIERCHOICE_IS_CANONICAL	= 162;
+  X509V3_F_ASIDENTIFIERCHOICE_IS_CANONICAL  = 162;
   {$EXTERNALSYM X509V3_F_COPY_EMAIL}
-  X509V3_F_COPY_EMAIL				= 122;
+  X509V3_F_COPY_EMAIL        = 122;
   {$EXTERNALSYM X509V3_F_COPY_ISSUER}
-  X509V3_F_COPY_ISSUER			 = 123;
+  X509V3_F_COPY_ISSUER       = 123;
   {$EXTERNALSYM X509V3_F_DO_DIRNAME}
-  X509V3_F_DO_DIRNAME				= 144;
+  X509V3_F_DO_DIRNAME        = 144;
   {$EXTERNALSYM X509V3_F_DO_EXT_CONF}
-  X509V3_F_DO_EXT_CONF			 = 124;
+  X509V3_F_DO_EXT_CONF       = 124;
   {$EXTERNALSYM X509V3_F_DO_EXT_I2D}
-  X509V3_F_DO_EXT_I2D				= 135;
+  X509V3_F_DO_EXT_I2D        = 135;
   {$EXTERNALSYM X509V3_F_DO_EXT_NCONF}
-  X509V3_F_DO_EXT_NCONF				= 151;
+  X509V3_F_DO_EXT_NCONF        = 151;
   {$EXTERNALSYM X509V3_F_DO_I2V_NAME_CONSTRAINTS}
-  X509V3_F_DO_I2V_NAME_CONSTRAINTS		= 148;
+  X509V3_F_DO_I2V_NAME_CONSTRAINTS    = 148;
   {$EXTERNALSYM X509V3_F_GNAMES_FROM_SECTNAME}
-  X509V3_F_GNAMES_FROM_SECTNAME			= 156;
+  X509V3_F_GNAMES_FROM_SECTNAME      = 156;
   {$EXTERNALSYM X509V3_F_HEX_TO_STRING}
-  X509V3_F_HEX_TO_STRING				 = 111;
+  X509V3_F_HEX_TO_STRING         = 111;
   {$EXTERNALSYM X509V3_F_I2S_ASN1_ENUMERATED}
-  X509V3_F_I2S_ASN1_ENUMERATED	= 121;
+  X509V3_F_I2S_ASN1_ENUMERATED  = 121;
   {$EXTERNALSYM X509V3_F_I2S_ASN1_IA5STRING}
-  X509V3_F_I2S_ASN1_IA5STRING	  = 149;
+  X509V3_F_I2S_ASN1_IA5STRING    = 149;
   {$EXTERNALSYM X509V3_F_I2S_ASN1_INTEGER}
   X509V3_F_I2S_ASN1_INTEGER = 120;
   {$EXTERNALSYM X509V3_F_I2V_AUTHORITY_INFO_ACCESS}
-  X509V3_F_I2V_AUTHORITY_INFO_ACCESS		= 138;
+  X509V3_F_I2V_AUTHORITY_INFO_ACCESS    = 138;
   {$EXTERNALSYM X509V3_F_NOTICE_SECTION}
-  X509V3_F_NOTICE_SECTION				 =132;
+  X509V3_F_NOTICE_SECTION         =132;
   {$EXTERNALSYM X509V3_F_NREF_NOS}
-  X509V3_F_NREF_NOS				 =133;
+  X509V3_F_NREF_NOS         =133;
   {$EXTERNALSYM X509V3_F_POLICY_SECTION}
-  X509V3_F_POLICY_SECTION				 =131;
+  X509V3_F_POLICY_SECTION         =131;
   {$EXTERNALSYM X509V3_F_PROCESS_PCI_VALUE}
-  X509V3_F_PROCESS_PCI_VALUE			 =150;
+  X509V3_F_PROCESS_PCI_VALUE       =150;
   {$EXTERNALSYM X509V3_F_R2I_CERTPOL}
-  X509V3_F_R2I_CERTPOL				 =130;
+  X509V3_F_R2I_CERTPOL         =130;
   {$EXTERNALSYM X509V3_F_R2I_PCI}
   X509V3_F_R2I_PCI                              = 155;
   {$EXTERNALSYM X509V3_F_S2I_ASN1_IA5STRING}
@@ -9773,241 +9773,241 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM X509V3_F_V2I_BASIC_CONSTRAINTS}
   X509V3_F_V2I_BASIC_CONSTRAINTS                = 102;
   {$EXTERNALSYM X509V3_F_V2I_CRLD}
-  X509V3_F_V2I_CRLD				= 134;
+  X509V3_F_V2I_CRLD        = 134;
   {$EXTERNALSYM X509V3_F_V2I_EXTENDED_KEY_USAGE}
   X509V3_F_V2I_EXTENDED_KEY_USAGE               = 103;
   {$EXTERNALSYM X509V3_F_V2I_GENERAL_NAMES}
   X509V3_F_V2I_GENERAL_NAMES                    = 118;
   {$EXTERNALSYM X509V3_F_V2I_GENERAL_NAME_EX}
-  X509V3_F_V2I_GENERAL_NAME_EX			= 117;
+  X509V3_F_V2I_GENERAL_NAME_EX      = 117;
   {$EXTERNALSYM X509V3_F_V2I_IDP}
-  X509V3_F_V2I_IDP				= 157;
+  X509V3_F_V2I_IDP        = 157;
   {$EXTERNALSYM X509V3_F_V2I_IPADDRBLOCKS}
-  X509V3_F_V2I_IPADDRBLOCKS			= 159;
+  X509V3_F_V2I_IPADDRBLOCKS      = 159;
   {$EXTERNALSYM X509V3_F_V2I_ISSUER_ALT}
   X509V3_F_V2I_ISSUER_ALT                       = 153;
   {$EXTERNALSYM X509V3_F_V2I_NAME_CONSTRAINTS}
-  X509V3_F_V2I_NAME_CONSTRAINTS			= 147;
+  X509V3_F_V2I_NAME_CONSTRAINTS      = 147;
   {$EXTERNALSYM X509V3_F_V2I_POLICY_CONSTRAINTS}
-  X509V3_F_V2I_POLICY_CONSTRAINTS		= 146;
+  X509V3_F_V2I_POLICY_CONSTRAINTS    = 146;
   {$EXTERNALSYM X509V3_F_V2I_POLICY_MAPPINGS}
-  X509V3_F_V2I_POLICY_MAPPINGS			= 145;
+  X509V3_F_V2I_POLICY_MAPPINGS      = 145;
   {$EXTERNALSYM X509V3_F_V2I_SUBJECT_ALT}
-  X509V3_F_V2I_SUBJECT_ALT			= 154;
+  X509V3_F_V2I_SUBJECT_ALT      = 154;
   {$EXTERNALSYM X509V3_F_V3_ADDR_VALIDATE_PATH_INTERNAL}
-  X509V3_F_V3_ADDR_VALIDATE_PATH_INTERNAL		= 160;
+  X509V3_F_V3_ADDR_VALIDATE_PATH_INTERNAL    = 160;
   {$EXTERNALSYM X509V3_F_V3_GENERIC_EXTENSION}
-  X509V3_F_V3_GENERIC_EXTENSION			= 116;
+  X509V3_F_V3_GENERIC_EXTENSION      = 116;
   {$EXTERNALSYM X509V3_F_X509V3_ADD1_I2D}
-  X509V3_F_X509V3_ADD1_I2D			= 140;
+  X509V3_F_X509V3_ADD1_I2D      = 140;
   {$EXTERNALSYM X509V3_F_X509V3_ADD_VALUE}
-  X509V3_F_X509V3_ADD_VALUE			= 105;
+  X509V3_F_X509V3_ADD_VALUE      = 105;
   {$EXTERNALSYM X509V3_F_X509V3_EXT_ADD}
-  X509V3_F_X509V3_EXT_ADD				= 104;
+  X509V3_F_X509V3_EXT_ADD        = 104;
   {$EXTERNALSYM X509V3_F_X509V3_EXT_ADD_ALIAS}
-  X509V3_F_X509V3_EXT_ADD_ALIAS			= 106;
+  X509V3_F_X509V3_EXT_ADD_ALIAS      = 106;
   {$EXTERNALSYM X509V3_F_X509V3_EXT_CONF}
-  X509V3_F_X509V3_EXT_CONF		 = 107;
+  X509V3_F_X509V3_EXT_CONF     = 107;
   {$EXTERNALSYM X509V3_F_X509V3_EXT_I2D}
-  X509V3_F_X509V3_EXT_I2D			 = 136;
+  X509V3_F_X509V3_EXT_I2D       = 136;
   {$EXTERNALSYM X509V3_F_X509V3_EXT_NCONF}
-  X509V3_F_X509V3_EXT_NCONF		 = 152;
+  X509V3_F_X509V3_EXT_NCONF     = 152;
   {$EXTERNALSYM X509V3_F_X509V3_GET_SECTION}
-  X509V3_F_X509V3_GET_SECTION			= 142;
+  X509V3_F_X509V3_GET_SECTION      = 142;
   {$EXTERNALSYM X509V3_F_X509V3_GET_STRING}
-  X509V3_F_X509V3_GET_STRING			= 143;
+  X509V3_F_X509V3_GET_STRING      = 143;
   {$EXTERNALSYM X509V3_F_X509V3_GET_VALUE_BOOL}
-  X509V3_F_X509V3_GET_VALUE_BOOL			= 110;
+  X509V3_F_X509V3_GET_VALUE_BOOL      = 110;
   {$EXTERNALSYM X509V3_F_X509V3_PARSE_LIST}
-  X509V3_F_X509V3_PARSE_LIST			= 109;
+  X509V3_F_X509V3_PARSE_LIST      = 109;
   {$EXTERNALSYM X509V3_F_X509_PURPOSE_ADD}
-  X509V3_F_X509_PURPOSE_ADD			= 137;
+  X509V3_F_X509_PURPOSE_ADD      = 137;
   {$EXTERNALSYM X509V3_F_X509_PURPOSE_SET}
-  X509V3_F_X509_PURPOSE_SET			= 141;
+  X509V3_F_X509_PURPOSE_SET      = 141;
 
-	//* Reason codes. */
+  //* Reason codes. */
   {$EXTERNALSYM X509V3_R_BAD_IP_ADDRESS}
-  X509V3_R_BAD_IP_ADDRESS			 =  118;
+  X509V3_R_BAD_IP_ADDRESS       =  118;
   {$EXTERNALSYM X509V3_R_BAD_OBJECT}
-  X509V3_R_BAD_OBJECT				 = 119;
+  X509V3_R_BAD_OBJECT         = 119;
   {$EXTERNALSYM X509V3_R_BN_DEC2BN_ERROR}
-  X509V3_R_BN_DEC2BN_ERROR			= 100;
+  X509V3_R_BN_DEC2BN_ERROR      = 100;
   {$EXTERNALSYM X509V3_R_BN_TO_ASN1_INTEGER_ERROR}
-  X509V3_R_BN_TO_ASN1_INTEGER_ERROR	= 101;
+  X509V3_R_BN_TO_ASN1_INTEGER_ERROR  = 101;
   {$EXTERNALSYM X509V3_R_DIRNAME_ERROR}
-  X509V3_R_DIRNAME_ERROR				 = 149;
+  X509V3_R_DIRNAME_ERROR         = 149;
   {$EXTERNALSYM X509V3_R_DISTPOINT_ALREADY_SET}
-  X509V3_R_DISTPOINT_ALREADY_SET			= 160;
+  X509V3_R_DISTPOINT_ALREADY_SET      = 160;
   {$EXTERNALSYM X509V3_R_DUPLICATE_ZONE_ID}
-  X509V3_R_DUPLICATE_ZONE_ID			 = 133;
+  X509V3_R_DUPLICATE_ZONE_ID       = 133;
   {$EXTERNALSYM X509V3_R_ERROR_CONVERTING_ZONE}
-  X509V3_R_ERROR_CONVERTING_ZONE			= 131;
+  X509V3_R_ERROR_CONVERTING_ZONE      = 131;
   {$EXTERNALSYM X509V3_R_ERROR_CREATING_EXTENSION}
-  X509V3_R_ERROR_CREATING_EXTENSION		= 144;
+  X509V3_R_ERROR_CREATING_EXTENSION    = 144;
   {$EXTERNALSYM X509V3_R_ERROR_IN_EXTENSION}
-  X509V3_R_ERROR_IN_EXTENSION			= 128;
+  X509V3_R_ERROR_IN_EXTENSION      = 128;
   {$EXTERNALSYM X509V3_R_EXPECTED_A_SECTION_NAME}
-  X509V3_R_EXPECTED_A_SECTION_NAME		= 137;
+  X509V3_R_EXPECTED_A_SECTION_NAME    = 137;
   {$EXTERNALSYM X509V3_R_EXTENSION_EXISTS}
-  X509V3_R_EXTENSION_EXISTS			 = 145;
+  X509V3_R_EXTENSION_EXISTS       = 145;
   {$EXTERNALSYM X509V3_R_EXTENSION_NAME_ERROR}
-  X509V3_R_EXTENSION_NAME_ERROR		 = 115;
+  X509V3_R_EXTENSION_NAME_ERROR     = 115;
   {$EXTERNALSYM X509V3_R_EXTENSION_NOT_FOUND}
-  X509V3_R_EXTENSION_NOT_FOUND		 =  102;
+  X509V3_R_EXTENSION_NOT_FOUND     =  102;
   {$EXTERNALSYM X509V3_R_EXTENSION_SETTING_NOT_SUPPORTED}
-  X509V3_R_EXTENSION_SETTING_NOT_SUPPORTED	 = 103;
+  X509V3_R_EXTENSION_SETTING_NOT_SUPPORTED   = 103;
   {$EXTERNALSYM X509V3_R_EXTENSION_VALUE_ERROR}
-  X509V3_R_EXTENSION_VALUE_ERROR		 = 116;
+  X509V3_R_EXTENSION_VALUE_ERROR     = 116;
   {$EXTERNALSYM X509V3_R_ILLEGAL_EMPTY_EXTENSION}
-  X509V3_R_ILLEGAL_EMPTY_EXTENSION		= 151;
+  X509V3_R_ILLEGAL_EMPTY_EXTENSION    = 151;
   {$EXTERNALSYM X509V3_R_ILLEGAL_HEX_DIGIT}
-  X509V3_R_ILLEGAL_HEX_DIGIT			 = 113;
+  X509V3_R_ILLEGAL_HEX_DIGIT       = 113;
   {$EXTERNALSYM X509V3_R_INCORRECT_POLICY_SYNTAX_TAG}
-  X509V3_R_INCORRECT_POLICY_SYNTAX_TAG		= 152;
+  X509V3_R_INCORRECT_POLICY_SYNTAX_TAG    = 152;
   {$EXTERNALSYM X509V3_R_INVALID_MULTIPLE_RDNS}
-  X509V3_R_INVALID_MULTIPLE_RDNS			= 161;
+  X509V3_R_INVALID_MULTIPLE_RDNS      = 161;
   {$EXTERNALSYM X509V3_R_INVALID_ASNUMBER}
-  X509V3_R_INVALID_ASNUMBER			= 162;
+  X509V3_R_INVALID_ASNUMBER      = 162;
   {$EXTERNALSYM X509V3_R_INVALID_ASRANGE}
-  X509V3_R_INVALID_ASRANGE			= 163;
+  X509V3_R_INVALID_ASRANGE      = 163;
   {$EXTERNALSYM X509V3_R_INVALID_BOOLEAN_STRING}
-  X509V3_R_INVALID_BOOLEAN_STRING		 = 104;
+  X509V3_R_INVALID_BOOLEAN_STRING     = 104;
   {$EXTERNALSYM X509V3_R_INVALID_EXTENSION_STRING}
-  X509V3_R_INVALID_EXTENSION_STRING	 = 105;
+  X509V3_R_INVALID_EXTENSION_STRING   = 105;
   {$EXTERNALSYM X509V3_R_INVALID_INHERITANCE}
-  X509V3_R_INVALID_INHERITANCE			= 165;
+  X509V3_R_INVALID_INHERITANCE      = 165;
   {$EXTERNALSYM X509V3_R_INVALID_IPADDRESS}
-  X509V3_R_INVALID_IPADDRESS			 = 166;
+  X509V3_R_INVALID_IPADDRESS       = 166;
   {$EXTERNALSYM X509V3_R_INVALID_NAME}
-  X509V3_R_INVALID_NAME				= 106;
+  X509V3_R_INVALID_NAME        = 106;
   {$EXTERNALSYM X509V3_R_INVALID_NULL_ARGUMENT}
-  X509V3_R_INVALID_NULL_ARGUMENT			= 107;
+  X509V3_R_INVALID_NULL_ARGUMENT      = 107;
   {$EXTERNALSYM X509V3_R_INVALID_NULL_NAME}
-  X509V3_R_INVALID_NULL_NAME		 = 108;
+  X509V3_R_INVALID_NULL_NAME     = 108;
   {$EXTERNALSYM X509V3_R_INVALID_NULL_VALUE}
-  X509V3_R_INVALID_NULL_VALUE			= 109;
+  X509V3_R_INVALID_NULL_VALUE      = 109;
   {$EXTERNALSYM X509V3_R_INVALID_NUMBER}
-  X509V3_R_INVALID_NUMBER				= 140;
+  X509V3_R_INVALID_NUMBER        = 140;
   {$EXTERNALSYM X509V3_R_INVALID_NUMBERS}
-  X509V3_R_INVALID_NUMBERS			= 141;
+  X509V3_R_INVALID_NUMBERS      = 141;
   {$EXTERNALSYM X509V3_R_INVALID_OBJECT_IDENTIFIER}
-  X509V3_R_INVALID_OBJECT_IDENTIFIER		= 110;
+  X509V3_R_INVALID_OBJECT_IDENTIFIER    = 110;
   {$EXTERNALSYM X509V3_R_INVALID_OPTION}
-  X509V3_R_INVALID_OPTION				= 138;
+  X509V3_R_INVALID_OPTION        = 138;
   {$EXTERNALSYM X509V3_R_INVALID_POLICY_IDENTIFIER}
-  X509V3_R_INVALID_POLICY_IDENTIFIER		= 134;
+  X509V3_R_INVALID_POLICY_IDENTIFIER    = 134;
   {$EXTERNALSYM X509V3_R_INVALID_PROXY_POLICY_SETTING}
-  X509V3_R_INVALID_PROXY_POLICY_SETTING	 = 153;
+  X509V3_R_INVALID_PROXY_POLICY_SETTING   = 153;
   {$EXTERNALSYM X509V3_R_INVALID_PURPOSE}
-  X509V3_R_INVALID_PURPOSE		 = 146;
+  X509V3_R_INVALID_PURPOSE     = 146;
   {$EXTERNALSYM X509V3_R_INVALID_SAFI}
-  X509V3_R_INVALID_SAFI				= 164;
+  X509V3_R_INVALID_SAFI        = 164;
   {$EXTERNALSYM X509V3_R_INVALID_SECTION}
-  X509V3_R_INVALID_SECTION			= 135;
+  X509V3_R_INVALID_SECTION      = 135;
   {$EXTERNALSYM X509V3_R_INVALID_SYNTAX}
-  X509V3_R_INVALID_SYNTAX				 = 143;
+  X509V3_R_INVALID_SYNTAX         = 143;
   {$EXTERNALSYM X509V3_R_ISSUER_DECODE_ERROR}
-  X509V3_R_ISSUER_DECODE_ERROR		 = 126;
+  X509V3_R_ISSUER_DECODE_ERROR     = 126;
   {$EXTERNALSYM X509V3_R_MISSING_VALUE}
-  X509V3_R_MISSING_VALUE				 = 124;
+  X509V3_R_MISSING_VALUE         = 124;
   {$EXTERNALSYM X509V3_R_NEED_ORGANIZATION_AND_NUMBERS}
-  X509V3_R_NEED_ORGANIZATION_AND_NUMBERS		= 142;
+  X509V3_R_NEED_ORGANIZATION_AND_NUMBERS    = 142;
   {$EXTERNALSYM X509V3_R_NO_CONFIG_DATABASE}
-  X509V3_R_NO_CONFIG_DATABASE			= 136;
+  X509V3_R_NO_CONFIG_DATABASE      = 136;
   {$EXTERNALSYM X509V3_R_NO_ISSUER_CERTIFICATE}
-  X509V3_R_NO_ISSUER_CERTIFICATE			= 121;
+  X509V3_R_NO_ISSUER_CERTIFICATE      = 121;
   {$EXTERNALSYM X509V3_R_NO_ISSUER_DETAILS}
-  X509V3_R_NO_ISSUER_DETAILS			= 127;
+  X509V3_R_NO_ISSUER_DETAILS      = 127;
   {$EXTERNALSYM X509V3_R_NO_POLICY_IDENTIFIER}
-  X509V3_R_NO_POLICY_IDENTIFIER			= 139;
+  X509V3_R_NO_POLICY_IDENTIFIER      = 139;
   {$EXTERNALSYM X509V3_R_NO_PROXY_CERT_POLICY_LANGUAGE_DEFINED}
-  X509V3_R_NO_PROXY_CERT_POLICY_LANGUAGE_DEFINED	= 154;
+  X509V3_R_NO_PROXY_CERT_POLICY_LANGUAGE_DEFINED  = 154;
   {$EXTERNALSYM X509V3_R_NO_PUBLIC_KEY}
-  X509V3_R_NO_PUBLIC_KEY				= 114;
+  X509V3_R_NO_PUBLIC_KEY        = 114;
   {$EXTERNALSYM X509V3_R_NO_SUBJECT_DETAILS}
-  X509V3_R_NO_SUBJECT_DETAILS			= 125;
+  X509V3_R_NO_SUBJECT_DETAILS      = 125;
   {$EXTERNALSYM X509V3_R_ODD_NUMBER_OF_DIGITS}
-  X509V3_R_ODD_NUMBER_OF_DIGITS		 = 112;
+  X509V3_R_ODD_NUMBER_OF_DIGITS     = 112;
   {$EXTERNALSYM X509V3_R_OPERATION_NOT_DEFINED}
-  X509V3_R_OPERATION_NOT_DEFINED			= 148;
+  X509V3_R_OPERATION_NOT_DEFINED      = 148;
   {$EXTERNALSYM X509V3_R_OTHERNAME_ERROR}
-  X509V3_R_OTHERNAME_ERROR			 = 147;
+  X509V3_R_OTHERNAME_ERROR       = 147;
   {$EXTERNALSYM X509V3_R_POLICY_LANGUAGE_ALREADY_DEFINED}
-  X509V3_R_POLICY_LANGUAGE_ALREADY_DEFINED	= 155;
+  X509V3_R_POLICY_LANGUAGE_ALREADY_DEFINED  = 155;
   {$EXTERNALSYM X509V3_R_POLICY_PATH_LENGTH}
-  X509V3_R_POLICY_PATH_LENGTH			= 156;
+  X509V3_R_POLICY_PATH_LENGTH      = 156;
   {$EXTERNALSYM X509V3_R_POLICY_PATH_LENGTH_ALREADY_DEFINED}
-  X509V3_R_POLICY_PATH_LENGTH_ALREADY_DEFINED	 = 157;
+  X509V3_R_POLICY_PATH_LENGTH_ALREADY_DEFINED   = 157;
   {$EXTERNALSYM X509V3_R_POLICY_SYNTAX_NOT_CURRENTLY_SUPPORTED}
-  X509V3_R_POLICY_SYNTAX_NOT_CURRENTLY_SUPPORTED	= 158;
+  X509V3_R_POLICY_SYNTAX_NOT_CURRENTLY_SUPPORTED  = 158;
   {$EXTERNALSYM X509V3_R_POLICY_WHEN_PROXY_LANGUAGE_REQUIRES_NO_POLICY}
   X509V3_R_POLICY_WHEN_PROXY_LANGUAGE_REQUIRES_NO_POLICY = 159;
   {$EXTERNALSYM X509V3_R_SECTION_NOT_FOUND}
-  X509V3_R_SECTION_NOT_FOUND			 = 150;
+  X509V3_R_SECTION_NOT_FOUND       = 150;
   {$EXTERNALSYM X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS}
-  X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS	= 122;
+  X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS  = 122;
   {$EXTERNALSYM X509V3_R_UNABLE_TO_GET_ISSUER_KEYID}
-  X509V3_R_UNABLE_TO_GET_ISSUER_KEYID	= 123;
+  X509V3_R_UNABLE_TO_GET_ISSUER_KEYID  = 123;
   {$EXTERNALSYM X509V3_R_UNKNOWN_BIT_STRING_ARGUMENT}
   X509V3_R_UNKNOWN_BIT_STRING_ARGUMENT = 111;
   {$EXTERNALSYM X509V3_R_UNKNOWN_EXTENSION}
   X509V3_R_UNKNOWN_EXTENSION = 129;
   {$EXTERNALSYM X509V3_R_UNKNOWN_EXTENSION_NAME}
-  X509V3_R_UNKNOWN_EXTENSION_NAME	= 130;
+  X509V3_R_UNKNOWN_EXTENSION_NAME  = 130;
   {$EXTERNALSYM X509V3_R_UNKNOWN_OPTION}
   X509V3_R_UNKNOWN_OPTION = 120;
   {$EXTERNALSYM X509V3_R_UNSUPPORTED_OPTION}
-  X509V3_R_UNSUPPORTED_OPTION	= 117;
+  X509V3_R_UNSUPPORTED_OPTION  = 117;
   {$EXTERNALSYM X509V3_R_UNSUPPORTED_TYPE}
-  X509V3_R_UNSUPPORTED_TYPE	= 167;
+  X509V3_R_UNSUPPORTED_TYPE  = 167;
   {$EXTERNALSYM X509V3_R_USER_TOO_LONG}
   X509V3_R_USER_TOO_LONG = 132;
 //* Possible values for status. See ts_resp_print.c && ts_resp_verify.c. */
   {$EXTERNALSYM TS_STATUS_GRANTED}
-  TS_STATUS_GRANTED		=	0;
+  TS_STATUS_GRANTED    =  0;
   {$EXTERNALSYM TS_STATUS_GRANTED_WITH_MODS}
-  TS_STATUS_GRANTED_WITH_MODS	 = 1;
+  TS_STATUS_GRANTED_WITH_MODS   = 1;
   {$EXTERNALSYM TS_STATUS_REJECTION}
-  TS_STATUS_REJECTION		 =	2;
+  TS_STATUS_REJECTION     =  2;
   {$EXTERNALSYM TS_STATUS_WAITING}
-  TS_STATUS_WAITING		 =	3;
+  TS_STATUS_WAITING     =  3;
   {$EXTERNALSYM TS_STATUS_REVOCATION_WARNING}
-  TS_STATUS_REVOCATION_WARNING	 =	4;
+  TS_STATUS_REVOCATION_WARNING   =  4;
   {$EXTERNALSYM TS_STATUS_REVOCATION_NOTIFICATION}
-  TS_STATUS_REVOCATION_NOTIFICATION	= 5;
+  TS_STATUS_REVOCATION_NOTIFICATION  = 5;
 
 //* Possible values for failure_info. See ts_resp_print.c && ts_resp_verify.c */
   {$EXTERNALSYM TS_INFO_BAD_ALG}
-  TS_INFO_BAD_ALG		=	0;
+  TS_INFO_BAD_ALG    =  0;
   {$EXTERNALSYM TS_INFO_BAD_REQUEST}
-  TS_INFO_BAD_REQUEST	 =	2;
+  TS_INFO_BAD_REQUEST   =  2;
   {$EXTERNALSYM TS_INFO_BAD_DATA_FORMAT}
-  TS_INFO_BAD_DATA_FORMAT	 =	5;
+  TS_INFO_BAD_DATA_FORMAT   =  5;
   {$EXTERNALSYM TS_INFO_TIME_NOT_AVAILABLE}
   TS_INFO_TIME_NOT_AVAILABLE = 14;
   {$EXTERNALSYM TS_INFO_UNACCEPTED_POLICY}
-  TS_INFO_UNACCEPTED_POLICY	= 15;
+  TS_INFO_UNACCEPTED_POLICY  = 15;
   {$EXTERNALSYM TS_INFO_UNACCEPTED_EXTENSION}
   TS_INFO_UNACCEPTED_EXTENSION = 16;
   {$EXTERNALSYM TS_INFO_ADD_INFO_NOT_AVAILABLE}
   TS_INFO_ADD_INFO_NOT_AVAILABLE = 17;
   {$EXTERNALSYM TS_INFO_SYSTEM_FAILURE}
-  TS_INFO_SYSTEM_FAILURE	 = 25;
+  TS_INFO_SYSTEM_FAILURE   = 25;
 //* Declarations related to response generation, defined in ts/ts_resp_sign.c. */
 //* Optional flags for response generation. */
 //* Don't include the TSA name in response. */
   {$EXTERNALSYM TS_TSA_NAME}
-  TS_TSA_NAME		= $01;
+  TS_TSA_NAME    = $01;
 //* Set ordering to true in response. */
   {$EXTERNALSYM TS_ORDERING}
-  TS_ORDERING		= $02;
+  TS_ORDERING    = $02;
 ///*
 // * Include the signer certificate and the other specified certificates in
 // * the ESS signing certificate attribute beside the PKCS7 signed data.
 // * Only the signer certificates is included by default.
 // */
   {$EXTERNALSYM TS_ESS_CERT_ID_CHAIN}
-  TS_ESS_CERT_ID_CHAIN	= $04;
+  TS_ESS_CERT_ID_CHAIN  = $04;
 //* At most we accept usec precision. */
   {$EXTERNALSYM TS_MAX_CLOCK_PRECISION_DIGITS}
  TS_MAX_CLOCK_PRECISION_DIGITS = 6;
@@ -10018,66 +10018,66 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   TS_VFY_SIGNATURE  = TIdC_ULONG(1 shl 0);
 //* Verify the version number of the response. */
   {$EXTERNALSYM TS_VFY_VERSION}
-  TS_VFY_VERSION	  =	TIdC_ULONG(1 shl 1);
+  TS_VFY_VERSION    =  TIdC_ULONG(1 shl 1);
   ///* Verify if the policy supplied by the user matches the policy of the TSA. */
   {$EXTERNALSYM TS_VFY_POLICY}
-  TS_VFY_POLICY		= TIdC_ULONG(1 shl 2);
+  TS_VFY_POLICY    = TIdC_ULONG(1 shl 2);
 
 ///* Verify the message imprint provided by the user. This flag should not be
 //   specified with TS_VFY_DATA. */
   {$EXTERNALSYM TS_VFY_IMPRINT}
-  TS_VFY_IMPRINT	 = TIdC_ULONG(1 shl 3);
+  TS_VFY_IMPRINT   = TIdC_ULONG(1 shl 3);
 ///* Verify the message imprint computed by the verify method from the user
 //   provided data and the MD algorithm of the response. This flag should not be
 //   specified with TS_VFY_IMPRINT. */
   {$EXTERNALSYM TS_VFY_DATA}
-  TS_VFY_DATA		= TIdC_ULONG(1 shl 4);
+  TS_VFY_DATA    = TIdC_ULONG(1 shl 4);
 //* Verify the nonce value. */
   {$EXTERNALSYM TS_VFY_NONCE}
-  TS_VFY_NONCE	 = TIdC_ULONG(1 shl 5);
+  TS_VFY_NONCE   = TIdC_ULONG(1 shl 5);
 //* Verify if the TSA name field matches the signer certificate. */
   {$EXTERNALSYM TS_VFY_SIGNER}
-  TS_VFY_SIGNER	 = TIdC_ULONG(1 shl 6);
+  TS_VFY_SIGNER   = TIdC_ULONG(1 shl 6);
 //* Verify if the TSA name field equals to the user provided name. */
   {$EXTERNALSYM TS_VFY_TSA_NAME}
-  TS_VFY_TSA_NAME	 = TIdC_ULONG(1 shl 7);
+  TS_VFY_TSA_NAME   = TIdC_ULONG(1 shl 7);
 
 //* You can use the following convenience constants. */
   {$EXTERNALSYM TS_VFY_ALL_IMPRINT}
-  TS_VFY_ALL_IMPRINT	= (TS_VFY_SIGNATURE
-			 or TS_VFY_VERSION
-			 or TS_VFY_POLICY
-			 or TS_VFY_IMPRINT
-			 or TS_VFY_NONCE
-			 or TS_VFY_SIGNER
-			 or TS_VFY_TSA_NAME);
+  TS_VFY_ALL_IMPRINT  = (TS_VFY_SIGNATURE
+       or TS_VFY_VERSION
+       or TS_VFY_POLICY
+       or TS_VFY_IMPRINT
+       or TS_VFY_NONCE
+       or TS_VFY_SIGNER
+       or TS_VFY_TSA_NAME);
   {$EXTERNALSYM TS_VFY_ALL_DATA}
   TS_VFY_ALL_DATA       = (TS_VFY_SIGNATURE
                          or TS_VFY_VERSION
                          or TS_VFY_POLICY
                          or TS_VFY_DATA
-			 or TS_VFY_NONCE
-			 or TS_VFY_SIGNER
-			 or TS_VFY_TSA_NAME);
+       or TS_VFY_NONCE
+       or TS_VFY_SIGNER
+       or TS_VFY_TSA_NAME);
 
 //* Error codes for the TS functions. */
 
 
 //* Function codes. */
   {$EXTERNALSYM TS_F_D2I_TS_RESP}
-  TS_F_D2I_TS_RESP				= 147;
+  TS_F_D2I_TS_RESP        = 147;
   {$EXTERNALSYM TS_F_DEF_SERIAL_CB}
-  TS_F_DEF_SERIAL_CB				= 110;
+  TS_F_DEF_SERIAL_CB        = 110;
   {$EXTERNALSYM TS_F_DEF_TIME_CB}
-  TS_F_DEF_TIME_CB				= 111;
+  TS_F_DEF_TIME_CB        = 111;
   {$EXTERNALSYM TS_F_ESS_ADD_SIGNING_CERT}
-  TS_F_ESS_ADD_SIGNING_CERT			= 112;
+  TS_F_ESS_ADD_SIGNING_CERT      = 112;
   {$EXTERNALSYM TS_F_ESS_CERT_ID_NEW_INIT}
-  TS_F_ESS_CERT_ID_NEW_INIT			= 113;
+  TS_F_ESS_CERT_ID_NEW_INIT      = 113;
   {$EXTERNALSYM TS_F_ESS_SIGNING_CERT_NEW_INIT}
   TS_F_ESS_SIGNING_CERT_NEW_INIT                = 114;
   {$EXTERNALSYM TS_F_INT_TS_RESP_VERIFY_TOKEN}
-  TS_F_INT_TS_RESP_VERIFY_TOKEN	                = 149;
+  TS_F_INT_TS_RESP_VERIFY_TOKEN                  = 149;
   {$EXTERNALSYM TS_F_PKCS7_TO_TS_TST_INFO}
   TS_F_PKCS7_TO_TS_TST_INFO                     = 148;
   {$EXTERNALSYM TS_F_TS_ACCURACY_SET_MICROS}
@@ -10097,25 +10097,25 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM TS_F_TS_CHECK_STATUS_INFO}
   TS_F_TS_CHECK_STATUS_INFO                     = 104;
   {$EXTERNALSYM TS_F_TS_COMPUTE_IMPRINT}
-  TS_F_TS_COMPUTE_IMPRINT			= 145;
+  TS_F_TS_COMPUTE_IMPRINT      = 145;
   {$EXTERNALSYM TS_F_TS_CONF_SET_DEFAULT_ENGINE}
   TS_F_TS_CONF_SET_DEFAULT_ENGINE               = 146;
   {$EXTERNALSYM TS_F_TS_GET_STATUS_TEXT}
   TS_F_TS_GET_STATUS_TEXT                       = 105;
   {$EXTERNALSYM TS_F_TS_MSG_IMPRINT_SET_ALGO}
-  TS_F_TS_MSG_IMPRINT_SET_ALGO			= 118;
+  TS_F_TS_MSG_IMPRINT_SET_ALGO      = 118;
   {$EXTERNALSYM TS_F_TS_REQ_SET_MSG_IMPRINT}
-  TS_F_TS_REQ_SET_MSG_IMPRINT			= 119;
+  TS_F_TS_REQ_SET_MSG_IMPRINT      = 119;
   {$EXTERNALSYM TS_F_TS_REQ_SET_NONCE}
-  TS_F_TS_REQ_SET_NONCE				= 120;
+  TS_F_TS_REQ_SET_NONCE        = 120;
   {$EXTERNALSYM TS_F_TS_REQ_SET_POLICY_ID}
-  TS_F_TS_REQ_SET_POLICY_ID			= 121;
+  TS_F_TS_REQ_SET_POLICY_ID      = 121;
   {$EXTERNALSYM TS_F_TS_RESP_CREATE_RESPONSE}
-  TS_F_TS_RESP_CREATE_RESPONSE			= 122;
+  TS_F_TS_RESP_CREATE_RESPONSE      = 122;
   {$EXTERNALSYM TS_F_TS_RESP_CREATE_TST_INFO}
-  TS_F_TS_RESP_CREATE_TST_INFO			= 123;
+  TS_F_TS_RESP_CREATE_TST_INFO      = 123;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_ADD_FAILURE_INFO}
-  TS_F_TS_RESP_CTX_ADD_FAILURE_INFO		= 124;
+  TS_F_TS_RESP_CTX_ADD_FAILURE_INFO    = 124;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_ADD_MD}
   TS_F_TS_RESP_CTX_ADD_MD                       = 125;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_ADD_POLICY}
@@ -10123,483 +10123,483 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM TS_F_TS_RESP_CTX_NEW}
   TS_F_TS_RESP_CTX_NEW                          = 127;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_SET_ACCURACY}
-  TS_F_TS_RESP_CTX_SET_ACCURACY			= 128;
+  TS_F_TS_RESP_CTX_SET_ACCURACY      = 128;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_SET_CERTS}
-  TS_F_TS_RESP_CTX_SET_CERTS			= 129;
+  TS_F_TS_RESP_CTX_SET_CERTS      = 129;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_SET_DEF_POLICY}
-  TS_F_TS_RESP_CTX_SET_DEF_POLICY		= 130;
+  TS_F_TS_RESP_CTX_SET_DEF_POLICY    = 130;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_SET_SIGNER_CERT}
-  TS_F_TS_RESP_CTX_SET_SIGNER_CERT		= 131;
+  TS_F_TS_RESP_CTX_SET_SIGNER_CERT    = 131;
   {$EXTERNALSYM TS_F_TS_RESP_CTX_SET_STATUS_INFO}
-  TS_F_TS_RESP_CTX_SET_STATUS_INFO		= 132;
+  TS_F_TS_RESP_CTX_SET_STATUS_INFO    = 132;
   {$EXTERNALSYM TS_F_TS_RESP_GET_POLICY}
-  TS_F_TS_RESP_GET_POLICY			= 133;
+  TS_F_TS_RESP_GET_POLICY      = 133;
   {$EXTERNALSYM TS_F_TS_RESP_SET_GENTIME_WITH_PRECISION}
-  TS_F_TS_RESP_SET_GENTIME_WITH_PRECISION	= 134;
+  TS_F_TS_RESP_SET_GENTIME_WITH_PRECISION  = 134;
   {$EXTERNALSYM TS_F_TS_RESP_SET_STATUS_INFO}
-  TS_F_TS_RESP_SET_STATUS_INFO			= 135;
+  TS_F_TS_RESP_SET_STATUS_INFO      = 135;
   {$EXTERNALSYM TS_F_TS_RESP_SET_TST_INFO}
-  TS_F_TS_RESP_SET_TST_INFO			= 150;
+  TS_F_TS_RESP_SET_TST_INFO      = 150;
   {$EXTERNALSYM TS_F_TS_RESP_SIGN}
-  TS_F_TS_RESP_SIGN				= 136;
+  TS_F_TS_RESP_SIGN        = 136;
   {$EXTERNALSYM TS_F_TS_RESP_VERIFY_SIGNATURE}
-  TS_F_TS_RESP_VERIFY_SIGNATURE			= 106;
+  TS_F_TS_RESP_VERIFY_SIGNATURE      = 106;
   {$EXTERNALSYM TS_F_TS_RESP_VERIFY_TOKEN}
-  TS_F_TS_RESP_VERIFY_TOKEN			= 107;
+  TS_F_TS_RESP_VERIFY_TOKEN      = 107;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_ACCURACY}
-  TS_F_TS_TST_INFO_SET_ACCURACY			= 137;
+  TS_F_TS_TST_INFO_SET_ACCURACY      = 137;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_MSG_IMPRINT}
-  TS_F_TS_TST_INFO_SET_MSG_IMPRINT		= 138;
+  TS_F_TS_TST_INFO_SET_MSG_IMPRINT    = 138;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_NONCE}
-  TS_F_TS_TST_INFO_SET_NONCE			= 139;
+  TS_F_TS_TST_INFO_SET_NONCE      = 139;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_POLICY_ID}
-  TS_F_TS_TST_INFO_SET_POLICY_ID		= 140;
+  TS_F_TS_TST_INFO_SET_POLICY_ID    = 140;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_SERIAL}
-  TS_F_TS_TST_INFO_SET_SERIAL			= 141;
+  TS_F_TS_TST_INFO_SET_SERIAL      = 141;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_TIME}
-  TS_F_TS_TST_INFO_SET_TIME			= 142;
+  TS_F_TS_TST_INFO_SET_TIME      = 142;
   {$EXTERNALSYM TS_F_TS_TST_INFO_SET_TSA}
-  TS_F_TS_TST_INFO_SET_TSA			= 143;
+  TS_F_TS_TST_INFO_SET_TSA      = 143;
   {$EXTERNALSYM TS_F_TS_VERIFY}
-  TS_F_TS_VERIFY				= 108;
+  TS_F_TS_VERIFY        = 108;
   {$EXTERNALSYM TS_F_TS_VERIFY_CERT}
-  TS_F_TS_VERIFY_CERT				= 109;
+  TS_F_TS_VERIFY_CERT        = 109;
   {$EXTERNALSYM TS_F_TS_VERIFY_CTX_NEW}
-  TS_F_TS_VERIFY_CTX_NEW			= 144;
+  TS_F_TS_VERIFY_CTX_NEW      = 144;
 
 //* Reason codes. */
   {$EXTERNALSYM TS_R_BAD_PKCS7_TYPE}
-  TS_R_BAD_PKCS7_TYPE				= 132;
+  TS_R_BAD_PKCS7_TYPE        = 132;
   {$EXTERNALSYM TS_R_BAD_TYPE}
-  TS_R_BAD_TYPE					= 133;
+  TS_R_BAD_TYPE          = 133;
   {$EXTERNALSYM TS_R_CERTIFICATE_VERIFY_ERROR}
-  TS_R_CERTIFICATE_VERIFY_ERROR			= 100;
+  TS_R_CERTIFICATE_VERIFY_ERROR      = 100;
   {$EXTERNALSYM TS_R_COULD_NOT_SET_ENGINE}
-  TS_R_COULD_NOT_SET_ENGINE			= 127;
+  TS_R_COULD_NOT_SET_ENGINE      = 127;
   {$EXTERNALSYM TS_R_COULD_NOT_SET_TIME}
-  TS_R_COULD_NOT_SET_TIME				= 115;
+  TS_R_COULD_NOT_SET_TIME        = 115;
   {$EXTERNALSYM TS_R_D2I_TS_RESP_INT_FAILED}
-  TS_R_D2I_TS_RESP_INT_FAILED			= 128;
+  TS_R_D2I_TS_RESP_INT_FAILED      = 128;
   {$EXTERNALSYM TS_R_DETACHED_CONTENT}
-  TS_R_DETACHED_CONTENT				= 134;
+  TS_R_DETACHED_CONTENT        = 134;
   {$EXTERNALSYM TS_R_ESS_ADD_SIGNING_CERT_ERROR}
-  TS_R_ESS_ADD_SIGNING_CERT_ERROR			= 116;
+  TS_R_ESS_ADD_SIGNING_CERT_ERROR      = 116;
   {$EXTERNALSYM TS_R_ESS_SIGNING_CERTIFICATE_ERROR}
-  TS_R_ESS_SIGNING_CERTIFICATE_ERROR		= 101;
+  TS_R_ESS_SIGNING_CERTIFICATE_ERROR    = 101;
   {$EXTERNALSYM TS_R_INVALID_NULL_POINTER}
-  TS_R_INVALID_NULL_POINTER			= 102;
+  TS_R_INVALID_NULL_POINTER      = 102;
   {$EXTERNALSYM TS_R_INVALID_SIGNER_CERTIFICATE_PURPOSE}
-  TS_R_INVALID_SIGNER_CERTIFICATE_PURPOSE		= 117;
+  TS_R_INVALID_SIGNER_CERTIFICATE_PURPOSE    = 117;
   {$EXTERNALSYM TS_R_MESSAGE_IMPRINT_MISMATCH}
-  TS_R_MESSAGE_IMPRINT_MISMATCH			= 103;
+  TS_R_MESSAGE_IMPRINT_MISMATCH      = 103;
   {$EXTERNALSYM TS_R_NONCE_MISMATCH}
-  TS_R_NONCE_MISMATCH				= 104;
+  TS_R_NONCE_MISMATCH        = 104;
   {$EXTERNALSYM TS_R_NONCE_NOT_RETURNED}
-  TS_R_NONCE_NOT_RETURNED				= 105;
+  TS_R_NONCE_NOT_RETURNED        = 105;
   {$EXTERNALSYM TS_R_NO_CONTENT}
-  TS_R_NO_CONTENT					= 106;
+  TS_R_NO_CONTENT          = 106;
   {$EXTERNALSYM TS_R_NO_TIME_STAMP_TOKEN}
-  TS_R_NO_TIME_STAMP_TOKEN			= 107;
+  TS_R_NO_TIME_STAMP_TOKEN      = 107;
   {$EXTERNALSYM TS_R_PKCS7_ADD_SIGNATURE_ERROR}
-  TS_R_PKCS7_ADD_SIGNATURE_ERROR			= 118;
+  TS_R_PKCS7_ADD_SIGNATURE_ERROR      = 118;
   {$EXTERNALSYM TS_R_PKCS7_ADD_SIGNED_ATTR_ERROR}
-  TS_R_PKCS7_ADD_SIGNED_ATTR_ERROR		= 119;
+  TS_R_PKCS7_ADD_SIGNED_ATTR_ERROR    = 119;
   {$EXTERNALSYM TS_R_PKCS7_TO_TS_TST_INFO_FAILED}
-  TS_R_PKCS7_TO_TS_TST_INFO_FAILED		= 129;
+  TS_R_PKCS7_TO_TS_TST_INFO_FAILED    = 129;
   {$EXTERNALSYM TS_R_POLICY_MISMATCH}
-  TS_R_POLICY_MISMATCH				= 108;
+  TS_R_POLICY_MISMATCH        = 108;
   {$EXTERNALSYM TS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE}
-  TS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE	= 120;
+  TS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE  = 120;
   {$EXTERNALSYM TS_R_RESPONSE_SETUP_ERROR}
-  TS_R_RESPONSE_SETUP_ERROR			= 121;
+  TS_R_RESPONSE_SETUP_ERROR      = 121;
   {$EXTERNALSYM TS_R_SIGNATURE_FAILURE}
-  TS_R_SIGNATURE_FAILURE				= 109;
+  TS_R_SIGNATURE_FAILURE        = 109;
   {$EXTERNALSYM TS_R_THERE_MUST_BE_ONE_SIGNER}
-  TS_R_THERE_MUST_BE_ONE_SIGNER			= 110;
+  TS_R_THERE_MUST_BE_ONE_SIGNER      = 110;
   {$EXTERNALSYM TS_R_TIME_SYSCALL_ERROR}
-  TS_R_TIME_SYSCALL_ERROR				= 122;
+  TS_R_TIME_SYSCALL_ERROR        = 122;
   {$EXTERNALSYM TS_R_TOKEN_NOT_PRESENT}
-  TS_R_TOKEN_NOT_PRESENT				= 130;
+  TS_R_TOKEN_NOT_PRESENT        = 130;
   {$EXTERNALSYM TS_R_TOKEN_PRESENT}
-  TS_R_TOKEN_PRESENT				= 131;
+  TS_R_TOKEN_PRESENT        = 131;
   {$EXTERNALSYM TS_R_TSA_NAME_MISMATCH}
-  TS_R_TSA_NAME_MISMATCH				= 111;
+  TS_R_TSA_NAME_MISMATCH        = 111;
   {$EXTERNALSYM TS_R_TSA_UNTRUSTED}
-  TS_R_TSA_UNTRUSTED				= 112;
+  TS_R_TSA_UNTRUSTED        = 112;
   {$EXTERNALSYM TS_R_TST_INFO_SETUP_ERROR}
-  TS_R_TST_INFO_SETUP_ERROR			= 123;
+  TS_R_TST_INFO_SETUP_ERROR      = 123;
   {$EXTERNALSYM TS_R_TS_DATASIGN}
-  TS_R_TS_DATASIGN				= 124;
+  TS_R_TS_DATASIGN        = 124;
   {$EXTERNALSYM TS_R_UNACCEPTABLE_POLICY}
-  TS_R_UNACCEPTABLE_POLICY			= 125;
+  TS_R_UNACCEPTABLE_POLICY      = 125;
   {$EXTERNALSYM TS_R_UNSUPPORTED_MD_ALGORITHM}
-  TS_R_UNSUPPORTED_MD_ALGORITHM			= 126;
+  TS_R_UNSUPPORTED_MD_ALGORITHM      = 126;
   {$EXTERNALSYM TS_R_UNSUPPORTED_VERSION}
-  TS_R_UNSUPPORTED_VERSION			= 113;
+  TS_R_UNSUPPORTED_VERSION      = 113;
   {$EXTERNALSYM TS_R_WRONG_CONTENT_TYPE}
-  TS_R_WRONG_CONTENT_TYPE				= 114;
+  TS_R_WRONG_CONTENT_TYPE        = 114;
 
   {$UNDEF OPENSSL_NO_CMS}
   {$IFNDEF OPENSSL_NO_CMS}
   {$EXTERNALSYM CMS_SIGNERINFO_ISSUER_SERIAL}
-  CMS_SIGNERINFO_ISSUER_SERIAL	= 0;
+  CMS_SIGNERINFO_ISSUER_SERIAL  = 0;
   {$EXTERNALSYM CMS_SIGNERINFO_KEYIDENTIFIER}
   CMS_SIGNERINFO_KEYIDENTIFIER = 1;
   {$EXTERNALSYM CMS_RECIPINFO_TRANS}
-  CMS_RECIPINFO_TRANS	 = 0;
+  CMS_RECIPINFO_TRANS   = 0;
   {$EXTERNALSYM CMS_RECIPINFO_AGREE}
-  CMS_RECIPINFO_AGREE	 = 1;
+  CMS_RECIPINFO_AGREE   = 1;
   {$EXTERNALSYM CMS_RECIPINFO_KEK}
-  CMS_RECIPINFO_KEK	 = 2;
+  CMS_RECIPINFO_KEK   = 2;
   {$EXTERNALSYM CMS_RECIPINFO_PASS}
-  CMS_RECIPINFO_PASS	 = 3;
+  CMS_RECIPINFO_PASS   = 3;
   {$EXTERNALSYM CMS_RECIPINFO_OTHER}
-  CMS_RECIPINFO_OTHER	 = 4;
+  CMS_RECIPINFO_OTHER   = 4;
 
 //* S/MIME related flags */
   {$EXTERNALSYM CMS_TEXT}
-  CMS_TEXT			= $1;
+  CMS_TEXT      = $1;
   {$EXTERNALSYM CMS_NOCERTS}
-  CMS_NOCERTS			= $2;
+  CMS_NOCERTS      = $2;
   {$EXTERNALSYM CMS_NO_CONTENT_VERIFY}
-  CMS_NO_CONTENT_VERIFY	 = $4;
+  CMS_NO_CONTENT_VERIFY   = $4;
   {$EXTERNALSYM CMS_NO_ATTR_VERIFY}
-  CMS_NO_ATTR_VERIFY	 = $8;
+  CMS_NO_ATTR_VERIFY   = $8;
   {$EXTERNALSYM CMS_NOSIGS}
-  CMS_NOSIGS			= (CMS_NO_CONTENT_VERIFY or CMS_NO_ATTR_VERIFY);
+  CMS_NOSIGS      = (CMS_NO_CONTENT_VERIFY or CMS_NO_ATTR_VERIFY);
   {$EXTERNALSYM CMS_NOINTERN}
-  CMS_NOINTERN		 = $10;
+  CMS_NOINTERN     = $10;
   {$EXTERNALSYM CMS_NO_SIGNER_CERT_VERIFY}
-  CMS_NO_SIGNER_CERT_VERIFY	= $20;
+  CMS_NO_SIGNER_CERT_VERIFY  = $20;
   {$EXTERNALSYM CMS_NOVERIFY}
-  CMS_NOVERIFY			= $20;
+  CMS_NOVERIFY      = $20;
   {$EXTERNALSYM CMS_DETACHED}
-  CMS_DETACHED			= $40;
+  CMS_DETACHED      = $40;
   {$EXTERNALSYM CMS_BINARY}
-  CMS_BINARY			= $80;
+  CMS_BINARY      = $80;
   {$EXTERNALSYM CMS_NOATTR}
-  CMS_NOATTR			= $100;
+  CMS_NOATTR      = $100;
   {$EXTERNALSYM CMS_NOSMIMECAP}
-  CMS_NOSMIMECAP		= $200;
+  CMS_NOSMIMECAP    = $200;
   {$EXTERNALSYM CMS_NOOLDMIMETYPE}
-  CMS_NOOLDMIMETYPE		= $400;
+  CMS_NOOLDMIMETYPE    = $400;
   {$EXTERNALSYM CMS_CRLFEOL}
-  CMS_CRLFEOL			= $800;
+  CMS_CRLFEOL      = $800;
   {$EXTERNALSYM CMS_STREAM}
-  CMS_STREAM			= $1000;
+  CMS_STREAM      = $1000;
   {$EXTERNALSYM CMS_NOCRL}
-  CMS_NOCRL			= $2000;
+  CMS_NOCRL      = $2000;
   {$EXTERNALSYM CMS_PARTIAL}
-  CMS_PARTIAL		 = $4000;
+  CMS_PARTIAL     = $4000;
   {$EXTERNALSYM CMS_REUSE_DIGEST}
-  CMS_REUSE_DIGEST		= $8000;
+  CMS_REUSE_DIGEST    = $8000;
   {$EXTERNALSYM CMS_USE_KEYID}
-  CMS_USE_KEYID		 = $10000;
+  CMS_USE_KEYID     = $10000;
 
 //* Error codes for the CMS functions. */
 
 //* Function codes. */
   {$EXTERNALSYM CMS_F_CHECK_CONTENT}
-  CMS_F_CHECK_CONTENT				= 99;
+  CMS_F_CHECK_CONTENT        = 99;
   {$EXTERNALSYM CMS_F_CMS_ADD0_CERT}
-  CMS_F_CMS_ADD0_CERT				= 164;
+  CMS_F_CMS_ADD0_CERT        = 164;
   {$EXTERNALSYM CMS_F_CMS_ADD0_RECIPIENT_KEY}
-  CMS_F_CMS_ADD0_RECIPIENT_KEY			= 100;
+  CMS_F_CMS_ADD0_RECIPIENT_KEY      = 100;
   {$EXTERNALSYM CMS_F_CMS_ADD1_RECEIPTREQUEST}
-  CMS_F_CMS_ADD1_RECEIPTREQUEST			= 158;
+  CMS_F_CMS_ADD1_RECEIPTREQUEST      = 158;
   {$EXTERNALSYM CMS_F_CMS_ADD1_RECIPIENT_CERT}
-  CMS_F_CMS_ADD1_RECIPIENT_CERT			= 101;
+  CMS_F_CMS_ADD1_RECIPIENT_CERT      = 101;
   {$EXTERNALSYM CMS_F_CMS_ADD1_SIGNER}
-  CMS_F_CMS_ADD1_SIGNER				= 102;
+  CMS_F_CMS_ADD1_SIGNER        = 102;
   {$EXTERNALSYM CMS_F_CMS_ADD1_SIGNINGTIME}
-  CMS_F_CMS_ADD1_SIGNINGTIME			= 103;
+  CMS_F_CMS_ADD1_SIGNINGTIME      = 103;
   {$EXTERNALSYM CMS_F_CMS_COMPRESS}
-  CMS_F_CMS_COMPRESS				= 104;
+  CMS_F_CMS_COMPRESS        = 104;
   {$EXTERNALSYM CMS_F_CMS_COMPRESSEDDATA_CREATE}
-  CMS_F_CMS_COMPRESSEDDATA_CREATE			= 105;
+  CMS_F_CMS_COMPRESSEDDATA_CREATE      = 105;
   {$EXTERNALSYM CMS_F_CMS_COMPRESSEDDATA_INIT_BIO}
-  CMS_F_CMS_COMPRESSEDDATA_INIT_BIO		= 106;
+  CMS_F_CMS_COMPRESSEDDATA_INIT_BIO    = 106;
   {$EXTERNALSYM CMS_F_CMS_COPY_CONTENT}
-  CMS_F_CMS_COPY_CONTENT				= 107;
+  CMS_F_CMS_COPY_CONTENT        = 107;
   {$EXTERNALSYM CMS_F_CMS_COPY_MESSAGEDIGEST}
-  CMS_F_CMS_COPY_MESSAGEDIGEST			= 108;
+  CMS_F_CMS_COPY_MESSAGEDIGEST      = 108;
   {$EXTERNALSYM CMS_F_CMS_DATA}
-  CMS_F_CMS_DATA					= 109;
+  CMS_F_CMS_DATA          = 109;
   {$EXTERNALSYM CMS_F_CMS_DATAFINAL}
-  CMS_F_CMS_DATAFINAL				= 110;
+  CMS_F_CMS_DATAFINAL        = 110;
   {$EXTERNALSYM CMS_F_CMS_DATAINIT}
-  CMS_F_CMS_DATAINIT				= 111;
+  CMS_F_CMS_DATAINIT        = 111;
   {$EXTERNALSYM CMS_F_CMS_DECRYPT}
-  CMS_F_CMS_DECRYPT				= 112;
+  CMS_F_CMS_DECRYPT        = 112;
   {$EXTERNALSYM CMS_F_CMS_DECRYPT_SET1_KEY}
-  CMS_F_CMS_DECRYPT_SET1_KEY			= 113;
+  CMS_F_CMS_DECRYPT_SET1_KEY      = 113;
   {$EXTERNALSYM CMS_F_CMS_DECRYPT_SET1_PKEY}
-  CMS_F_CMS_DECRYPT_SET1_PKEY			= 114;
+  CMS_F_CMS_DECRYPT_SET1_PKEY      = 114;
   {$EXTERNALSYM CMS_F_CMS_DIGESTALGORITHM_FIND_CTX}
-  CMS_F_CMS_DIGESTALGORITHM_FIND_CTX		= 115;
+  CMS_F_CMS_DIGESTALGORITHM_FIND_CTX    = 115;
   {$EXTERNALSYM CMS_F_CMS_DIGESTALGORITHM_INIT_BIO}
-  CMS_F_CMS_DIGESTALGORITHM_INIT_BIO		= 116;
+  CMS_F_CMS_DIGESTALGORITHM_INIT_BIO    = 116;
   {$EXTERNALSYM CMS_F_CMS_DIGESTEDDATA_DO_FINAL}
-  CMS_F_CMS_DIGESTEDDATA_DO_FINAL			= 117;
+  CMS_F_CMS_DIGESTEDDATA_DO_FINAL      = 117;
   {$EXTERNALSYM CMS_F_CMS_DIGEST_VERIFY}
-  CMS_F_CMS_DIGEST_VERIFY				= 118;
+  CMS_F_CMS_DIGEST_VERIFY        = 118;
   {$EXTERNALSYM CMS_F_CMS_ENCODE_RECEIPT}
-  CMS_F_CMS_ENCODE_RECEIPT			= 161;
+  CMS_F_CMS_ENCODE_RECEIPT      = 161;
   {$EXTERNALSYM CMS_F_CMS_ENCRYPT}
-  CMS_F_CMS_ENCRYPT				= 119;
+  CMS_F_CMS_ENCRYPT        = 119;
   {$EXTERNALSYM CMS_F_CMS_ENCRYPTEDCONTENT_INIT_BIO}
-  CMS_F_CMS_ENCRYPTEDCONTENT_INIT_BIO		= 120;
+  CMS_F_CMS_ENCRYPTEDCONTENT_INIT_BIO    = 120;
   {$EXTERNALSYM CMS_F_CMS_ENCRYPTEDDATA_DECRYPT}
-  CMS_F_CMS_ENCRYPTEDDATA_DECRYPT			= 121;
+  CMS_F_CMS_ENCRYPTEDDATA_DECRYPT      = 121;
   {$EXTERNALSYM CMS_F_CMS_ENCRYPTEDDATA_ENCRYPT}
-  CMS_F_CMS_ENCRYPTEDDATA_ENCRYPT			= 122;
+  CMS_F_CMS_ENCRYPTEDDATA_ENCRYPT      = 122;
   {$EXTERNALSYM CMS_F_CMS_ENCRYPTEDDATA_SET1_KEY}
-  CMS_F_CMS_ENCRYPTEDDATA_SET1_KEY		= 123;
+  CMS_F_CMS_ENCRYPTEDDATA_SET1_KEY    = 123;
   {$EXTERNALSYM CMS_F_CMS_ENVELOPEDDATA_CREATE}
-  CMS_F_CMS_ENVELOPEDDATA_CREATE			= 124;
+  CMS_F_CMS_ENVELOPEDDATA_CREATE      = 124;
   {$EXTERNALSYM CMS_F_CMS_ENVELOPEDDATA_INIT_BIO}
-  CMS_F_CMS_ENVELOPEDDATA_INIT_BIO		= 125;
+  CMS_F_CMS_ENVELOPEDDATA_INIT_BIO    = 125;
   {$EXTERNALSYM CMS_F_CMS_ENVELOPED_DATA_INIT}
-  CMS_F_CMS_ENVELOPED_DATA_INIT			= 126;
+  CMS_F_CMS_ENVELOPED_DATA_INIT      = 126;
   {$EXTERNALSYM CMS_F_CMS_FINAL}
-  CMS_F_CMS_FINAL					= 127;
+  CMS_F_CMS_FINAL          = 127;
   {$EXTERNALSYM CMS_F_CMS_GET0_CERTIFICATE_CHOICES}
-  CMS_F_CMS_GET0_CERTIFICATE_CHOICES		= 128;
+  CMS_F_CMS_GET0_CERTIFICATE_CHOICES    = 128;
   {$EXTERNALSYM CMS_F_CMS_GET0_CONTENT}
-  CMS_F_CMS_GET0_CONTENT				= 129;
+  CMS_F_CMS_GET0_CONTENT        = 129;
   {$EXTERNALSYM CMS_F_CMS_GET0_ECONTENT_TYPE}
-  CMS_F_CMS_GET0_ECONTENT_TYPE			= 130;
+  CMS_F_CMS_GET0_ECONTENT_TYPE      = 130;
   {$EXTERNALSYM CMS_F_CMS_GET0_ENVELOPED}
-  CMS_F_CMS_GET0_ENVELOPED			= 131;
+  CMS_F_CMS_GET0_ENVELOPED      = 131;
   {$EXTERNALSYM CMS_F_CMS_GET0_REVOCATION_CHOICES}
-  CMS_F_CMS_GET0_REVOCATION_CHOICES		= 132;
+  CMS_F_CMS_GET0_REVOCATION_CHOICES    = 132;
   {$EXTERNALSYM CMS_F_CMS_GET0_SIGNED}
-  CMS_F_CMS_GET0_SIGNED				= 133;
+  CMS_F_CMS_GET0_SIGNED        = 133;
   {$EXTERNALSYM CMS_F_CMS_MSGSIGDIGEST_ADD1}
-  CMS_F_CMS_MSGSIGDIGEST_ADD1			= 162;
+  CMS_F_CMS_MSGSIGDIGEST_ADD1      = 162;
   {$EXTERNALSYM CMS_F_CMS_RECEIPTREQUEST_CREATE0}
-  CMS_F_CMS_RECEIPTREQUEST_CREATE0		= 159;
+  CMS_F_CMS_RECEIPTREQUEST_CREATE0    = 159;
   {$EXTERNALSYM CMS_F_CMS_RECEIPT_VERIFY}
-  CMS_F_CMS_RECEIPT_VERIFY			= 160;
+  CMS_F_CMS_RECEIPT_VERIFY      = 160;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_DECRYPT}
-  CMS_F_CMS_RECIPIENTINFO_DECRYPT			= 134;
+  CMS_F_CMS_RECIPIENTINFO_DECRYPT      = 134;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KEKRI_DECRYPT}
-  CMS_F_CMS_RECIPIENTINFO_KEKRI_DECRYPT		= 135;
+  CMS_F_CMS_RECIPIENTINFO_KEKRI_DECRYPT    = 135;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KEKRI_ENCRYPT}
-  CMS_F_CMS_RECIPIENTINFO_KEKRI_ENCRYPT		= 136;
+  CMS_F_CMS_RECIPIENTINFO_KEKRI_ENCRYPT    = 136;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KEKRI_GET0_ID}
-  CMS_F_CMS_RECIPIENTINFO_KEKRI_GET0_ID		= 137;
+  CMS_F_CMS_RECIPIENTINFO_KEKRI_GET0_ID    = 137;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KEKRI_ID_CMP}
-  CMS_F_CMS_RECIPIENTINFO_KEKRI_ID_CMP		= 138;
+  CMS_F_CMS_RECIPIENTINFO_KEKRI_ID_CMP    = 138;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KTRI_CERT_CMP}
-  CMS_F_CMS_RECIPIENTINFO_KTRI_CERT_CMP		= 139;
+  CMS_F_CMS_RECIPIENTINFO_KTRI_CERT_CMP    = 139;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KTRI_DECRYPT}
-  CMS_F_CMS_RECIPIENTINFO_KTRI_DECRYPT		= 140;
+  CMS_F_CMS_RECIPIENTINFO_KTRI_DECRYPT    = 140;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KTRI_ENCRYPT}
-  CMS_F_CMS_RECIPIENTINFO_KTRI_ENCRYPT		= 141;
+  CMS_F_CMS_RECIPIENTINFO_KTRI_ENCRYPT    = 141;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_ALGS}
-  CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_ALGS		= 142;
+  CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_ALGS    = 142;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_SIGNER_ID}
-  CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_SIGNER_ID	= 143;
+  CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_SIGNER_ID  = 143;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_SET0_KEY}
-  CMS_F_CMS_RECIPIENTINFO_SET0_KEY		= 144;
+  CMS_F_CMS_RECIPIENTINFO_SET0_KEY    = 144;
   {$EXTERNALSYM CMS_F_CMS_RECIPIENTINFO_SET0_PKEY}
-  CMS_F_CMS_RECIPIENTINFO_SET0_PKEY		= 145;
+  CMS_F_CMS_RECIPIENTINFO_SET0_PKEY    = 145;
   {$EXTERNALSYM CMS_F_CMS_SET1_SIGNERIDENTIFIER}
-  CMS_F_CMS_SET1_SIGNERIDENTIFIER			= 146;
+  CMS_F_CMS_SET1_SIGNERIDENTIFIER      = 146;
   {$EXTERNALSYM CMS_F_CMS_SET_DETACHED}
-  CMS_F_CMS_SET_DETACHED				= 147;
+  CMS_F_CMS_SET_DETACHED        = 147;
   {$EXTERNALSYM CMS_F_CMS_SIGN}
-  CMS_F_CMS_SIGN					= 148;
+  CMS_F_CMS_SIGN          = 148;
   {$EXTERNALSYM CMS_F_CMS_SIGNED_DATA_INIT}
-  CMS_F_CMS_SIGNED_DATA_INIT			= 149;
+  CMS_F_CMS_SIGNED_DATA_INIT      = 149;
   {$EXTERNALSYM CMS_F_CMS_SIGNERINFO_CONTENT_SIGN}
-  CMS_F_CMS_SIGNERINFO_CONTENT_SIGN		= 150;
+  CMS_F_CMS_SIGNERINFO_CONTENT_SIGN    = 150;
   {$EXTERNALSYM CMS_F_CMS_SIGNERINFO_SIGN}
-  CMS_F_CMS_SIGNERINFO_SIGN			= 151;
+  CMS_F_CMS_SIGNERINFO_SIGN      = 151;
   {$EXTERNALSYM CMS_F_CMS_SIGNERINFO_VERIFY}
-  CMS_F_CMS_SIGNERINFO_VERIFY			= 152;
+  CMS_F_CMS_SIGNERINFO_VERIFY      = 152;
   {$EXTERNALSYM CMS_F_CMS_SIGNERINFO_VERIFY_CERT}
-  CMS_F_CMS_SIGNERINFO_VERIFY_CERT		= 153;
+  CMS_F_CMS_SIGNERINFO_VERIFY_CERT    = 153;
   {$EXTERNALSYM CMS_F_CMS_SIGNERINFO_VERIFY_CONTENT}
-  CMS_F_CMS_SIGNERINFO_VERIFY_CONTENT		= 154;
+  CMS_F_CMS_SIGNERINFO_VERIFY_CONTENT    = 154;
   {$EXTERNALSYM CMS_F_CMS_SIGN_RECEIPT}
-  CMS_F_CMS_SIGN_RECEIPT			  = 163;
+  CMS_F_CMS_SIGN_RECEIPT        = 163;
   {$EXTERNALSYM CMS_F_CMS_STREAM}
-  CMS_F_CMS_STREAM				= 155;
+  CMS_F_CMS_STREAM        = 155;
   {$EXTERNALSYM CMS_F_CMS_UNCOMPRESS}
-  CMS_F_CMS_UNCOMPRESS				= 156;
+  CMS_F_CMS_UNCOMPRESS        = 156;
   {$EXTERNALSYM CMS_F_CMS_VERIFY}
-  CMS_F_CMS_VERIFY				= 157;
+  CMS_F_CMS_VERIFY        = 157;
 
 //* Reason codes. */
   {$EXTERNALSYM CMS_R_ADD_SIGNER_ERROR}
-  CMS_R_ADD_SIGNER_ERROR				= 99;
+  CMS_R_ADD_SIGNER_ERROR        = 99;
   {$EXTERNALSYM CMS_R_CERTIFICATE_ALREADY_PRESENT}
-  CMS_R_CERTIFICATE_ALREADY_PRESENT		= 175;
+  CMS_R_CERTIFICATE_ALREADY_PRESENT    = 175;
   {$EXTERNALSYM CMS_R_CERTIFICATE_HAS_NO_KEYID}
-  CMS_R_CERTIFICATE_HAS_NO_KEYID			= 160;
+  CMS_R_CERTIFICATE_HAS_NO_KEYID      = 160;
   {$EXTERNALSYM CMS_R_CERTIFICATE_VERIFY_ERROR}
-  CMS_R_CERTIFICATE_VERIFY_ERROR			= 100;
+  CMS_R_CERTIFICATE_VERIFY_ERROR      = 100;
   {$EXTERNALSYM CMS_R_CIPHER_INITIALISATION_ERROR}
-  CMS_R_CIPHER_INITIALISATION_ERROR		= 101;
+  CMS_R_CIPHER_INITIALISATION_ERROR    = 101;
   {$EXTERNALSYM CMS_R_CIPHER_PARAMETER_INITIALISATION_ERROR}
-  CMS_R_CIPHER_PARAMETER_INITIALISATION_ERROR	 = 102;
+  CMS_R_CIPHER_PARAMETER_INITIALISATION_ERROR   = 102;
   {$EXTERNALSYM CMS_R_CMS_DATAFINAL_ERROR}
-  CMS_R_CMS_DATAFINAL_ERROR			 = 103;
+  CMS_R_CMS_DATAFINAL_ERROR       = 103;
   {$EXTERNALSYM CMS_R_CMS_LIB}
-  CMS_R_CMS_LIB					= 104;
+  CMS_R_CMS_LIB          = 104;
   {$EXTERNALSYM CMS_R_CONTENTIDENTIFIER_MISMATCH}
-  CMS_R_CONTENTIDENTIFIER_MISMATCH		= 170;
+  CMS_R_CONTENTIDENTIFIER_MISMATCH    = 170;
   {$EXTERNALSYM CMS_R_CONTENT_NOT_FOUND}
-  CMS_R_CONTENT_NOT_FOUND				 = 105;
+  CMS_R_CONTENT_NOT_FOUND         = 105;
   {$EXTERNALSYM CMS_R_CONTENT_TYPE_MISMATCH}
-  CMS_R_CONTENT_TYPE_MISMATCH			 = 171;
+  CMS_R_CONTENT_TYPE_MISMATCH       = 171;
   {$EXTERNALSYM CMS_R_CONTENT_TYPE_NOT_COMPRESSED_DATA}
-  CMS_R_CONTENT_TYPE_NOT_COMPRESSED_DATA		= 106;
+  CMS_R_CONTENT_TYPE_NOT_COMPRESSED_DATA    = 106;
   {$EXTERNALSYM CMS_R_CONTENT_TYPE_NOT_ENVELOPED_DATA}
-  CMS_R_CONTENT_TYPE_NOT_ENVELOPED_DATA		= 107;
+  CMS_R_CONTENT_TYPE_NOT_ENVELOPED_DATA    = 107;
   {$EXTERNALSYM CMS_R_CONTENT_TYPE_NOT_SIGNED_DATA}
-  CMS_R_CONTENT_TYPE_NOT_SIGNED_DATA		= 108;
+  CMS_R_CONTENT_TYPE_NOT_SIGNED_DATA    = 108;
   {$EXTERNALSYM CMS_R_CONTENT_VERIFY_ERROR}
-  CMS_R_CONTENT_VERIFY_ERROR			= 109;
+  CMS_R_CONTENT_VERIFY_ERROR      = 109;
   {$EXTERNALSYM CMS_R_CTRL_ERROR}
-  CMS_R_CTRL_ERROR				= 110;
+  CMS_R_CTRL_ERROR        = 110;
   {$EXTERNALSYM CMS_R_CTRL_FAILURE}
-  CMS_R_CTRL_FAILURE				= 111;
+  CMS_R_CTRL_FAILURE        = 111;
   {$EXTERNALSYM CMS_R_DECRYPT_ERROR}
-  CMS_R_DECRYPT_ERROR				= 112;
+  CMS_R_DECRYPT_ERROR        = 112;
   {$EXTERNALSYM CMS_R_DIGEST_ERROR}
-  CMS_R_DIGEST_ERROR				= 161;
+  CMS_R_DIGEST_ERROR        = 161;
   {$EXTERNALSYM CMS_R_ERROR_GETTING_PUBLIC_KEY}
-  CMS_R_ERROR_GETTING_PUBLIC_KEY			= 113;
+  CMS_R_ERROR_GETTING_PUBLIC_KEY      = 113;
   {$EXTERNALSYM CMS_R_ERROR_READING_MESSAGEDIGEST_ATTRIBUTE}
-  CMS_R_ERROR_READING_MESSAGEDIGEST_ATTRIBUTE	= 114;
+  CMS_R_ERROR_READING_MESSAGEDIGEST_ATTRIBUTE  = 114;
   {$EXTERNALSYM CMS_R_ERROR_SETTING_KEY}
-  CMS_R_ERROR_SETTING_KEY				= 115;
+  CMS_R_ERROR_SETTING_KEY        = 115;
   {$EXTERNALSYM CMS_R_ERROR_SETTING_RECIPIENTINFO}
-  CMS_R_ERROR_SETTING_RECIPIENTINFO		= 116;
+  CMS_R_ERROR_SETTING_RECIPIENTINFO    = 116;
   {$EXTERNALSYM CMS_R_INVALID_ENCRYPTED_KEY_LENGTH}
-  CMS_R_INVALID_ENCRYPTED_KEY_LENGTH		= 117;
+  CMS_R_INVALID_ENCRYPTED_KEY_LENGTH    = 117;
   {$EXTERNALSYM CMS_R_INVALID_KEY_LENGTH}
-  CMS_R_INVALID_KEY_LENGTH			= 118;
+  CMS_R_INVALID_KEY_LENGTH      = 118;
   {$EXTERNALSYM CMS_R_MD_BIO_INIT_ERROR}
-  CMS_R_MD_BIO_INIT_ERROR				= 119;
+  CMS_R_MD_BIO_INIT_ERROR        = 119;
   {$EXTERNALSYM CMS_R_MESSAGEDIGEST_ATTRIBUTE_WRONG_LENGTH}
-  CMS_R_MESSAGEDIGEST_ATTRIBUTE_WRONG_LENGTH	= 120;
+  CMS_R_MESSAGEDIGEST_ATTRIBUTE_WRONG_LENGTH  = 120;
   {$EXTERNALSYM CMS_R_MESSAGEDIGEST_WRONG_LENGTH}
-  CMS_R_MESSAGEDIGEST_WRONG_LENGTH		= 121;
+  CMS_R_MESSAGEDIGEST_WRONG_LENGTH    = 121;
   {$EXTERNALSYM CMS_R_MSGSIGDIGEST_ERROR}
-  CMS_R_MSGSIGDIGEST_ERROR			= 172;
+  CMS_R_MSGSIGDIGEST_ERROR      = 172;
   {$EXTERNALSYM CMS_R_MSGSIGDIGEST_VERIFICATION_FAILURE}
-  CMS_R_MSGSIGDIGEST_VERIFICATION_FAILURE		= 162;
+  CMS_R_MSGSIGDIGEST_VERIFICATION_FAILURE    = 162;
   {$EXTERNALSYM CMS_R_MSGSIGDIGEST_WRONG_LENGTH}
-  CMS_R_MSGSIGDIGEST_WRONG_LENGTH			= 163;
+  CMS_R_MSGSIGDIGEST_WRONG_LENGTH      = 163;
   {$EXTERNALSYM CMS_R_NEED_ONE_SIGNER}
-  CMS_R_NEED_ONE_SIGNER				= 164;
+  CMS_R_NEED_ONE_SIGNER        = 164;
   {$EXTERNALSYM CMS_R_NOT_A_SIGNED_RECEIPT}
-  CMS_R_NOT_A_SIGNED_RECEIPT			= 165;
+  CMS_R_NOT_A_SIGNED_RECEIPT      = 165;
   {$EXTERNALSYM CMS_R_NOT_ENCRYPTED_DATA}
-  CMS_R_NOT_ENCRYPTED_DATA			= 122;
+  CMS_R_NOT_ENCRYPTED_DATA      = 122;
   {$EXTERNALSYM CMS_R_NOT_KEK}
-  CMS_R_NOT_KEK					= 123;
+  CMS_R_NOT_KEK          = 123;
   {$EXTERNALSYM CMS_R_NOT_KEY_TRANSPORT}
-  CMS_R_NOT_KEY_TRANSPORT				= 124;
+  CMS_R_NOT_KEY_TRANSPORT        = 124;
   {$EXTERNALSYM CMS_R_NOT_SUPPORTED_FOR_THIS_KEY_TYPE}
-  CMS_R_NOT_SUPPORTED_FOR_THIS_KEY_TYPE		= 125;
+  CMS_R_NOT_SUPPORTED_FOR_THIS_KEY_TYPE    = 125;
   {$EXTERNALSYM CMS_R_NO_CIPHER}
-  CMS_R_NO_CIPHER					= 126;
+  CMS_R_NO_CIPHER          = 126;
   {$EXTERNALSYM CMS_R_NO_CONTENT}
-  CMS_R_NO_CONTENT				= 127;
+  CMS_R_NO_CONTENT        = 127;
   {$EXTERNALSYM CMS_R_NO_CONTENT_TYPE}
-  CMS_R_NO_CONTENT_TYPE				= 173;
+  CMS_R_NO_CONTENT_TYPE        = 173;
   {$EXTERNALSYM CMS_R_NO_DEFAULT_DIGEST}
-  CMS_R_NO_DEFAULT_DIGEST				= 128;
+  CMS_R_NO_DEFAULT_DIGEST        = 128;
   {$EXTERNALSYM CMS_R_NO_DIGEST_SET}
-  CMS_R_NO_DIGEST_SET				= 129;
+  CMS_R_NO_DIGEST_SET        = 129;
   {$EXTERNALSYM CMS_R_NO_KEY}
-  CMS_R_NO_KEY					= 130;
+  CMS_R_NO_KEY          = 130;
   {$EXTERNALSYM CMS_R_NO_KEY_OR_CERT}
-  CMS_R_NO_KEY_OR_CERT				= 174;
+  CMS_R_NO_KEY_OR_CERT        = 174;
   {$EXTERNALSYM CMS_R_NO_MATCHING_DIGEST}
-  CMS_R_NO_MATCHING_DIGEST			= 131;
+  CMS_R_NO_MATCHING_DIGEST      = 131;
   {$EXTERNALSYM CMS_R_NO_MATCHING_RECIPIENT}
-  CMS_R_NO_MATCHING_RECIPIENT			= 132;
+  CMS_R_NO_MATCHING_RECIPIENT      = 132;
   {$EXTERNALSYM CMS_R_NO_MATCHING_SIGNATURE}
-  CMS_R_NO_MATCHING_SIGNATURE			= 166;
+  CMS_R_NO_MATCHING_SIGNATURE      = 166;
   {$EXTERNALSYM CMS_R_NO_MSGSIGDIGEST}
-  CMS_R_NO_MSGSIGDIGEST				= 167;
+  CMS_R_NO_MSGSIGDIGEST        = 167;
   {$EXTERNALSYM CMS_R_NO_PRIVATE_KEY}
-  CMS_R_NO_PRIVATE_KEY				= 133;
+  CMS_R_NO_PRIVATE_KEY        = 133;
   {$EXTERNALSYM CMS_R_NO_PUBLIC_KEY}
-  CMS_R_NO_PUBLIC_KEY				= 134;
+  CMS_R_NO_PUBLIC_KEY        = 134;
   {$EXTERNALSYM CMS_R_NO_RECEIPT_REQUEST}
-  CMS_R_NO_RECEIPT_REQUEST			= 168;
+  CMS_R_NO_RECEIPT_REQUEST      = 168;
   {$EXTERNALSYM CMS_R_NO_SIGNERS}
-  CMS_R_NO_SIGNERS				= 135;
+  CMS_R_NO_SIGNERS        = 135;
   {$EXTERNALSYM CMS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE}
-  CMS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE	= 136;
+  CMS_R_PRIVATE_KEY_DOES_NOT_MATCH_CERTIFICATE  = 136;
   {$EXTERNALSYM CMS_R_RECEIPT_DECODE_ERROR}
-  CMS_R_RECEIPT_DECODE_ERROR			= 169;
+  CMS_R_RECEIPT_DECODE_ERROR      = 169;
   {$EXTERNALSYM CMS_R_RECIPIENT_ERROR}
-  CMS_R_RECIPIENT_ERROR				= 137;
+  CMS_R_RECIPIENT_ERROR        = 137;
   {$EXTERNALSYM CMS_R_SIGNER_CERTIFICATE_NOT_FOUND}
-  CMS_R_SIGNER_CERTIFICATE_NOT_FOUND		= 138;
+  CMS_R_SIGNER_CERTIFICATE_NOT_FOUND    = 138;
   {$EXTERNALSYM CMS_R_SIGNFINAL_ERROR}
-  CMS_R_SIGNFINAL_ERROR				= 139;
+  CMS_R_SIGNFINAL_ERROR        = 139;
   {$EXTERNALSYM CMS_R_SMIME_TEXT_ERROR}
-  CMS_R_SMIME_TEXT_ERROR				= 140;
+  CMS_R_SMIME_TEXT_ERROR        = 140;
   {$EXTERNALSYM CMS_R_STORE_INIT_ERROR}
-  CMS_R_STORE_INIT_ERROR				= 141;
+  CMS_R_STORE_INIT_ERROR        = 141;
   {$EXTERNALSYM CMS_R_TYPE_NOT_COMPRESSED_DATA}
-  CMS_R_TYPE_NOT_COMPRESSED_DATA			= 142;
+  CMS_R_TYPE_NOT_COMPRESSED_DATA      = 142;
   {$EXTERNALSYM CMS_R_TYPE_NOT_DATA}
-  CMS_R_TYPE_NOT_DATA				= 143;
+  CMS_R_TYPE_NOT_DATA        = 143;
   {$EXTERNALSYM CMS_R_TYPE_NOT_DIGESTED_DATA}
-  CMS_R_TYPE_NOT_DIGESTED_DATA			= 144;
+  CMS_R_TYPE_NOT_DIGESTED_DATA      = 144;
   {$EXTERNALSYM CMS_R_TYPE_NOT_ENCRYPTED_DATA}
-  CMS_R_TYPE_NOT_ENCRYPTED_DATA			= 145;
+  CMS_R_TYPE_NOT_ENCRYPTED_DATA      = 145;
   {$EXTERNALSYM CMS_R_TYPE_NOT_ENVELOPED_DATA}
-  CMS_R_TYPE_NOT_ENVELOPED_DATA			= 146;
+  CMS_R_TYPE_NOT_ENVELOPED_DATA      = 146;
   {$EXTERNALSYM CMS_R_UNABLE_TO_FINALIZE_CONTEXT}
-  CMS_R_UNABLE_TO_FINALIZE_CONTEXT		= 147;
+  CMS_R_UNABLE_TO_FINALIZE_CONTEXT    = 147;
   {$EXTERNALSYM CMS_R_UNKNOWN_CIPHER}
-  CMS_R_UNKNOWN_CIPHER				= 148;
+  CMS_R_UNKNOWN_CIPHER        = 148;
   {$EXTERNALSYM CMS_R_UNKNOWN_DIGEST_ALGORIHM}
-  CMS_R_UNKNOWN_DIGEST_ALGORIHM			= 149;
+  CMS_R_UNKNOWN_DIGEST_ALGORIHM      = 149;
   {$EXTERNALSYM CMS_R_UNKNOWN_ID}
-  CMS_R_UNKNOWN_ID				= 150;
+  CMS_R_UNKNOWN_ID        = 150;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_COMPRESSION_ALGORITHM}
-  CMS_R_UNSUPPORTED_COMPRESSION_ALGORITHM		= 151;
+  CMS_R_UNSUPPORTED_COMPRESSION_ALGORITHM    = 151;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_CONTENT_TYPE}
-  CMS_R_UNSUPPORTED_CONTENT_TYPE			= 152;
+  CMS_R_UNSUPPORTED_CONTENT_TYPE      = 152;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_KEK_ALGORITHM}
-  CMS_R_UNSUPPORTED_KEK_ALGORITHM			= 153;
+  CMS_R_UNSUPPORTED_KEK_ALGORITHM      = 153;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_RECIPIENT_TYPE}
-  CMS_R_UNSUPPORTED_RECIPIENT_TYPE		= 154;
+  CMS_R_UNSUPPORTED_RECIPIENT_TYPE    = 154;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_RECPIENTINFO_TYPE}
-  CMS_R_UNSUPPORTED_RECPIENTINFO_TYPE		= 155;
+  CMS_R_UNSUPPORTED_RECPIENTINFO_TYPE    = 155;
   {$EXTERNALSYM CMS_R_UNSUPPORTED_TYPE}
-  CMS_R_UNSUPPORTED_TYPE				= 156;
+  CMS_R_UNSUPPORTED_TYPE        = 156;
   {$EXTERNALSYM CMS_R_UNWRAP_ERROR}
-  CMS_R_UNWRAP_ERROR				= 157;
+  CMS_R_UNWRAP_ERROR        = 157;
   {$EXTERNALSYM CMS_R_VERIFICATION_FAILURE}
-  CMS_R_VERIFICATION_FAILURE			= 158;
+  CMS_R_VERIFICATION_FAILURE      = 158;
   {$EXTERNALSYM CMS_R_WRAP_ERROR}
-  CMS_R_WRAP_ERROR				= 159;
+  CMS_R_WRAP_ERROR        = 159;
 
   {$ENDIF}
 
   {$EXTERNALSYM DSO_F_BEOS_BIND_FUNC}
   DSO_F_BEOS_BIND_FUNC = 144;
   {$EXTERNALSYM DSO_F_BEOS_BIND_VAR}
-  DSO_F_BEOS_BIND_VAR	= 145;
+  DSO_F_BEOS_BIND_VAR  = 145;
   {$EXTERNALSYM DSO_F_BEOS_LOAD}
-  DSO_F_BEOS_LOAD	= 146;
+  DSO_F_BEOS_LOAD  = 146;
   {$EXTERNALSYM DSO_F_BEOS_NAME_CONVERTER}
-  DSO_F_BEOS_NAME_CONVERTER	= 147;
+  DSO_F_BEOS_NAME_CONVERTER  = 147;
   {$EXTERNALSYM DSO_F_BEOS_UNLOAD}
-  DSO_F_BEOS_UNLOAD	= 148;
+  DSO_F_BEOS_UNLOAD  = 148;
   {$EXTERNALSYM DSO_F_DLFCN_BIND_FUNC}
   DSO_F_DLFCN_BIND_FUNC = 100;
   {$EXTERNALSYM DSO_F_DLFCN_BIND_VAR}
@@ -10617,7 +10617,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM DSO_F_DL_BIND_VAR}
   DSO_F_DL_BIND_VAR = 105;
   {$EXTERNALSYM DSO_F_DL_LOAD}
-  DSO_F_DL_LOAD	= 106;
+  DSO_F_DL_LOAD  = 106;
   {$EXTERNALSYM DSO_F_DL_MERGER}
   DSO_F_DL_MERGER = 131;
   {$EXTERNALSYM DSO_F_DL_NAME_CONVERTER}
@@ -10625,7 +10625,7 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM DSO_F_DL_UNLOAD}
   DSO_F_DL_UNLOAD = 107;
   {$EXTERNALSYM DSO_F_DSO_BIND_FUNC}
-  DSO_F_DSO_BIND_FUNC	= 108;
+  DSO_F_DSO_BIND_FUNC  = 108;
   {$EXTERNALSYM DSO_F_DSO_BIND_VAR}
   DSO_F_DSO_BIND_VAR = 109;
   {$EXTERNALSYM DSO_F_DSO_CONVERT_FILENAME}
@@ -10635,63 +10635,63 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM DSO_F_DSO_FREE}
   DSO_F_DSO_FREE = 111;
   {$EXTERNALSYM DSO_F_DSO_GET_FILENAME}
-  DSO_F_DSO_GET_FILENAME				= 127;
+  DSO_F_DSO_GET_FILENAME        = 127;
   {$EXTERNALSYM DSO_F_DSO_GET_LOADED_FILENAME}
-  DSO_F_DSO_GET_LOADED_FILENAME	= 128;
+  DSO_F_DSO_GET_LOADED_FILENAME  = 128;
   {$EXTERNALSYM DSO_F_DSO_GLOBAL_LOOKUP}
-  DSO_F_DSO_GLOBAL_LOOKUP				= 139;
+  DSO_F_DSO_GLOBAL_LOOKUP        = 139;
   {$EXTERNALSYM DSO_F_DSO_LOAD}
-  DSO_F_DSO_LOAD					 = 112;
+  DSO_F_DSO_LOAD           = 112;
   {$EXTERNALSYM DSO_F_DSO_MERGE}
-  DSO_F_DSO_MERGE					 = 132;
+  DSO_F_DSO_MERGE           = 132;
   {$EXTERNALSYM DSO_F_DSO_NEW_METHOD}
-  DSO_F_DSO_NEW_METHOD				= 113;
+  DSO_F_DSO_NEW_METHOD        = 113;
   {$EXTERNALSYM DSO_F_DSO_PATHBYADDR}
-  DSO_F_DSO_PATHBYADDR				= 140;
+  DSO_F_DSO_PATHBYADDR        = 140;
   {$EXTERNALSYM DSO_F_DSO_SET_FILENAME}
-  DSO_F_DSO_SET_FILENAME				= 129;
+  DSO_F_DSO_SET_FILENAME        = 129;
   {$EXTERNALSYM DSO_F_DSO_SET_NAME_CONVERTER}
-  DSO_F_DSO_SET_NAME_CONVERTER			= 122;
+  DSO_F_DSO_SET_NAME_CONVERTER      = 122;
   {$EXTERNALSYM DSO_F_DSO_UP_REF}
-  DSO_F_DSO_UP_REF				 = 114;
+  DSO_F_DSO_UP_REF         = 114;
   {$EXTERNALSYM DSO_F_GLOBAL_LOOKUP_FUNC}
-  DSO_F_GLOBAL_LOOKUP_FUNC			= 138;
+  DSO_F_GLOBAL_LOOKUP_FUNC      = 138;
   {$EXTERNALSYM DSO_F_PATHBYADDR}
-  DSO_F_PATHBYADDR				= 137;
+  DSO_F_PATHBYADDR        = 137;
   {$EXTERNALSYM DSO_F_VMS_BIND_SYM}
-  DSO_F_VMS_BIND_SYM			 = 115;
+  DSO_F_VMS_BIND_SYM       = 115;
   {$EXTERNALSYM DSO_F_VMS_LOAD}
-  DSO_F_VMS_LOAD					= 116;
+  DSO_F_VMS_LOAD          = 116;
   {$EXTERNALSYM DSO_F_VMS_MERGER}
-  DSO_F_VMS_MERGER				= 133;
+  DSO_F_VMS_MERGER        = 133;
   {$EXTERNALSYM DSO_F_VMS_UNLOAD}
-  DSO_F_VMS_UNLOAD				= 117;
+  DSO_F_VMS_UNLOAD        = 117;
   {$EXTERNALSYM DSO_F_WIN32_BIND_FUNC}
-  DSO_F_WIN32_BIND_FUNC				= 118;
+  DSO_F_WIN32_BIND_FUNC        = 118;
   {$EXTERNALSYM DSO_F_WIN32_BIND_VAR}
-  DSO_F_WIN32_BIND_VAR				= 119;
+  DSO_F_WIN32_BIND_VAR        = 119;
   {$EXTERNALSYM DSO_F_WIN32_GLOBALLOOKUP}
-  DSO_F_WIN32_GLOBALLOOKUP			= 142;
+  DSO_F_WIN32_GLOBALLOOKUP      = 142;
   {$EXTERNALSYM DSO_F_WIN32_GLOBALLOOKUP_FUNC}
-  DSO_F_WIN32_GLOBALLOOKUP_FUNC			= 143;
+  DSO_F_WIN32_GLOBALLOOKUP_FUNC      = 143;
   {$EXTERNALSYM DSO_F_WIN32_JOINER}
-  DSO_F_WIN32_JOINER			 = 135;
+  DSO_F_WIN32_JOINER       = 135;
   {$EXTERNALSYM DSO_F_WIN32_LOAD}
-  DSO_F_WIN32_LOAD				 = 120;
+  DSO_F_WIN32_LOAD         = 120;
   {$EXTERNALSYM DSO_F_WIN32_MERGER}
-  DSO_F_WIN32_MERGER				= 134;
+  DSO_F_WIN32_MERGER        = 134;
   {$EXTERNALSYM DSO_F_WIN32_NAME_CONVERTER}
-  DSO_F_WIN32_NAME_CONVERTER			= 125;
+  DSO_F_WIN32_NAME_CONVERTER      = 125;
   {$EXTERNALSYM DSO_F_WIN32_PATHBYADDR}
-  DSO_F_WIN32_PATHBYADDR			 = 141;
+  DSO_F_WIN32_PATHBYADDR       = 141;
   {$EXTERNALSYM DSO_F_WIN32_SPLITTER}
-  DSO_F_WIN32_SPLITTER			 = 136;
+  DSO_F_WIN32_SPLITTER       = 136;
   {$EXTERNALSYM DSO_F_WIN32_UNLOAD}
-  DSO_F_WIN32_UNLOAD				 = 121;
+  DSO_F_WIN32_UNLOAD         = 121;
 
 //* Reason codes. */
   {$EXTERNALSYM DSO_R_CTRL_FAILED}
-  DSO_R_CTRL_FAILED	= 100;
+  DSO_R_CTRL_FAILED  = 100;
   {$EXTERNALSYM DSO_R_DSO_ALREADY_LOADED}
   DSO_R_DSO_ALREADY_LOADED = 110;
   {$EXTERNALSYM DSO_R_EMPTY_FILE_STRUCTURE}
@@ -10701,27 +10701,27 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
   {$EXTERNALSYM DSO_R_FILENAME_TOO_BIG}
   DSO_R_FILENAME_TOO_BIG = 101;
   {$EXTERNALSYM DSO_R_FINISH_FAILED}
-  DSO_R_FINISH_FAILED	= 102;
+  DSO_R_FINISH_FAILED  = 102;
   {$EXTERNALSYM DSO_R_INCORRECT_FILE_SYNTAX}
   DSO_R_INCORRECT_FILE_SYNTAX = 115;
   {$EXTERNALSYM DSO_R_LOAD_FAILED}
-  DSO_R_LOAD_FAILED	= 103;
+  DSO_R_LOAD_FAILED  = 103;
   {$EXTERNALSYM DSO_R_NAME_TRANSLATION_FAILED}
-  DSO_R_NAME_TRANSLATION_FAILED	= 109;
+  DSO_R_NAME_TRANSLATION_FAILED  = 109;
   {$EXTERNALSYM DSO_R_NO_FILENAME}
-  DSO_R_NO_FILENAME	= 111;
+  DSO_R_NO_FILENAME  = 111;
   {$EXTERNALSYM DSO_R_NO_FILE_SPECIFICATION}
-  DSO_R_NO_FILE_SPECIFICATION	= 116;
+  DSO_R_NO_FILE_SPECIFICATION  = 116;
   {$EXTERNALSYM DSO_R_NULL_HANDLE}
-  DSO_R_NULL_HANDLE			 = 104;
+  DSO_R_NULL_HANDLE       = 104;
   {$EXTERNALSYM DSO_R_SET_FILENAME_FAILED}
-  DSO_R_SET_FILENAME_FAILED		 = 112;
+  DSO_R_SET_FILENAME_FAILED     = 112;
   {$EXTERNALSYM DSO_R_STACK_ERROR}
-  DSO_R_STACK_ERROR			 = 105;
+  DSO_R_STACK_ERROR       = 105;
    {$EXTERNALSYM DSO_R_SYM_FAILURE}
-  DSO_R_SYM_FAILURE	= 106;
+  DSO_R_SYM_FAILURE  = 106;
    {$EXTERNALSYM DSO_R_UNLOAD_FAILED}
-  DSO_R_UNLOAD_FAILED	= 107;
+  DSO_R_UNLOAD_FAILED  = 107;
    {$EXTERNALSYM DSO_R_UNSUPPORTED}
   DSO_R_UNSUPPORTED = 108;
 
@@ -10739,9 +10739,9 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
    SRP_ERR_MEMORY = 4;
 
    {$EXTERNALSYM DB_srptype}
-   DB_srptype	= 0;
+   DB_srptype  = 0;
    {$EXTERNALSYM DB_srpverifier}
-   DB_srpverifier	= 1;
+   DB_srpverifier  = 1;
    {$EXTERNALSYM DB_srpsalt}
    DB_srpsalt = 2;
    {$EXTERNALSYM DB_srpid}
@@ -10753,13 +10753,13 @@ TLS1_TXT_DHE_RSA_WITH_AES_256_GCM_SHA384 = 'DHE-RSA-AES256-GCM-SHA384';
    {$NODEFINE DB_NUMBER}
    DB_NUMBER = 6;
    {$EXTERNALSYM DB_SRP_INDEX}
-   DB_SRP_INDEX	= 'I';
+   DB_SRP_INDEX  = 'I';
    {$EXTERNALSYM DB_SRP_VALID}
-   DB_SRP_VALID	= 'V';
+   DB_SRP_VALID  = 'V';
    {$EXTERNALSYM DB_SRP_REVOKED}
-   DB_SRP_REVOKED	= 'R';
+   DB_SRP_REVOKED  = 'R';
    {$EXTERNALSYM DB_SRP_MODIF}
-   DB_SRP_MODIF	= 'v';
+   DB_SRP_MODIF  = 'v';
   {$ENDIF}
    {$EXTERNALSYM SRTP_AES128_CM_SHA1_80}
    SRTP_AES128_CM_SHA1_80 = $0001;
@@ -10953,15 +10953,15 @@ const
   {$EXTERNALSYM ERR_LIB_CMS}
   ERR_LIB_CMS = 46;
   {$EXTERNALSYM ERR_LIB_TS}
-  ERR_LIB_TS	=	47;
+  ERR_LIB_TS  =  47;
   {$EXTERNALSYM ERR_LIB_HMAC}
-  ERR_LIB_HMAC	=	48;
+  ERR_LIB_HMAC  =  48;
   {$EXTERNALSYM ERR_LIB_JPAKE}
   //OpenSSL 0.9.8n was 47
   ERR_LIB_JPAKE = 49;
 //* fatal error */
   {$EXTERNALSYM ERR_R_FATAL}
-  ERR_R_FATAL	= 64;
+  ERR_R_FATAL  = 64;
 //was  ERR_R_FATAL = 32;
   {$EXTERNALSYM ERR_R_MALLOC_FAILURE}
   ERR_R_MALLOC_FAILURE = (1 or ERR_R_FATAL);
@@ -10997,7 +10997,7 @@ const
   {$EXTERNALSYM SYS_F_OPENDIR}
   SYS_F_OPENDIR = 10;
   {$EXTERNALSYM SYS_F_FREAD}
-  SYS_F_FREAD	= 11;
+  SYS_F_FREAD  = 11;
 //* These are the possible flags.  They can be or'ed together. */
 //* Use to have echoing of input */
   {$EXTERNALSYM UI_INPUT_FLAG_ECHO}
@@ -11008,7 +11008,7 @@ const
 //   one input in each UI being marked with this flag, or the application
 //   might get confused. */
   {$EXTERNALSYM UI_INPUT_FLAG_DEFAULT_PWD}
-  UI_INPUT_FLAG_DEFAULT_PWD	= $02;
+  UI_INPUT_FLAG_DEFAULT_PWD  = $02;
 
 //* The user of these routines may want to define flags of their own.  The core
 //   UI won't look at those, but will pass them on to the method routines.  They
@@ -11016,10 +11016,10 @@ const
 //   UI_INPUT_FLAG_USER_BASE tells which is the lowest bit to use.  A good
 //   example of use is this:
 
-//	#define MY_UI_FLAG1	(0x01 << UI_INPUT_FLAG_USER_BASE)
+//  #define MY_UI_FLAG1  (0x01 << UI_INPUT_FLAG_USER_BASE)
 //*/
   {$EXTERNALSYM UI_INPUT_FLAG_USER_BASE}
-  UI_INPUT_FLAG_USER_BASE	= 16;
+  UI_INPUT_FLAG_USER_BASE  = 16;
   //IO_ctrl commands
 //* The commands */
 //* Use UI_CONTROL_PRINT_ERRORS with the value 1 to have UI_process print the
@@ -11031,7 +11031,7 @@ const
 //   a user interface.  This makes UI_ctrl() return 1 if it is redoable, and 0
 //   if not. */
   {$EXTERNALSYM UI_CTRL_IS_REDOABLE}
-  UI_CTRL_IS_REDOABLE	=	2;
+  UI_CTRL_IS_REDOABLE  =  2;
 //* Function codes. */
   {$EXTERNALSYM UI_F_GENERAL_ALLOCATE_BOOLEAN}
   UI_F_GENERAL_ALLOCATE_BOOLEAN = 108;
@@ -11052,7 +11052,7 @@ const
   {$EXTERNALSYM UI_F_UI_DUP_VERIFY_STRING}
   UI_F_UI_DUP_VERIFY_STRING = 106;
   {$EXTERNALSYM UI_F_UI_GET0_RESULT}
-  UI_F_UI_GET0_RESULT	= 107;
+  UI_F_UI_GET0_RESULT  = 107;
   {$EXTERNALSYM UI_F_UI_NEW_METHOD}
   UI_F_UI_NEW_METHOD = 104;
   {$EXTERNALSYM UI_F_UI_SET_RESULT}
@@ -11065,11 +11065,11 @@ const
   {$EXTERNALSYM UI_R_INDEX_TOO_SMALL}
   UI_R_INDEX_TOO_SMALL = 103;
   {$EXTERNALSYM UI_R_NO_RESULT_BUFFER}
-  UI_R_NO_RESULT_BUFFER	= 105;
+  UI_R_NO_RESULT_BUFFER  = 105;
   {$EXTERNALSYM UI_R_RESULT_TOO_LARGE}
-  UI_R_RESULT_TOO_LARGE	= 100;
+  UI_R_RESULT_TOO_LARGE  = 100;
   {$EXTERNALSYM UI_R_RESULT_TOO_SMALL}
-  UI_R_RESULT_TOO_SMALL	= 101;
+  UI_R_RESULT_TOO_SMALL  = 101;
   {$EXTERNALSYM UI_R_UNKNOWN_CONTROL_COMMAND}
   UI_R_UNKNOWN_CONTROL_COMMAND = 106;
 
@@ -11116,7 +11116,7 @@ const
   {$EXTERNALSYM ERR_R_RAND_LIB}
   ERR_R_RAND_LIB = ERR_LIB_RAND;
   {$EXTERNALSYM ERR_R_DSO_LIB}
-  ERR_R_DSO_LIB	= ERR_LIB_DSO;
+  ERR_R_DSO_LIB  = ERR_LIB_DSO;
   {$EXTERNALSYM ERR_R_ENGINE_LIB}
   ERR_R_ENGINE_LIB = ERR_LIB_ENGINE;
   {$EXTERNALSYM ERR_R_OCSP_LIB}
@@ -11286,9 +11286,9 @@ type
   {$EXTERNALSYM OPENSSL_ITEM}
   OPENSSL_ITEM = record
     code : TIdC_INT;
-    value : Pointer;		//* Not used for flag attributes */
-    value_size : size_t;	//* Max size of value for output, length for input */
-    value_length : Psize_t;	//* Returned length of value for output */
+    value : Pointer;    //* Not used for flag attributes */
+    value_size : size_t;  //* Max size of value for output, length for input */
+    value_length : Psize_t;  //* Returned length of value for output */
   end;
   {$EXTERNALSYM CRYPTO_EX_DATA}
   CRYPTO_EX_DATA = record
@@ -11307,31 +11307,31 @@ type
   PCRYPTO_dynlock_value = Pointer;
   {$EXTERNALSYM CRYPTO_dynlock}
   CRYPTO_dynlock = record
-	  references : TIdC_INT;
-	  data : PCRYPTO_dynlock_value;
+    references : TIdC_INT;
+    data : PCRYPTO_dynlock_value;
   end;
   {$EXTERNALSYM PCRYPTO_dynlock}
   PCRYPTO_dynlock = ^CRYPTO_dynlock;
 //* Callback types for crypto.h */
 //typedef int CRYPTO_EX_new(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
-//					int idx, long argl, void *argp);
+//          int idx, long argl, void *argp);
  {$EXTERNALSYM CRYPTO_EX_new}
   CRYPTO_EX_new = function(parent : Pointer; ptr : Pointer; ad : CRYPTO_EX_DATA;
     idx : TIdC_INT; arg1 : TIdC_LONG; argp : Pointer) : TIdC_INT; cdecl;
 //typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
-//					int idx, long argl, void *argp);
+//          int idx, long argl, void *argp);
  {$EXTERNALSYM CRYPTO_EX_free}
   CRYPTO_EX_free = procedure (parent : Pointer; ptr : Pointer; ad : CRYPTO_EX_DATA;
     idx : TIdC_INT; arg1 : TIdC_LONG; argp : Pointer); cdecl;
 //typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, CRYPTO_EX_DATA *from, void *from_d,
-//					int idx, long argl, void *argp);
+//          int idx, long argl, void *argp);
  {$EXTERNALSYM CRYPTO_EX_dup}
   CRYPTO_EX_dup = function (_to : PCRYPTO_EX_DATA; from : PCRYPTO_EX_DATA;
     from_d : Pointer; idx : TIdC_INT; arg1 : TIdC_LONG; argp : Pointer) : TIdC_INT; cdecl;
    {$EXTERNALSYM CRYPTO_EX_DATA_FUNCS}
   CRYPTO_EX_DATA_FUNCS = record
-    argl : TIdC_LONG;	//* Arbitary long */
-    argp : Pointer;	//* Arbitary void * */
+    argl : TIdC_LONG;  //* Arbitary long */
+    argp : Pointer;  //* Arbitary void * */
     new_func : CRYPTO_EX_new;
     free_func : CRYPTO_EX_free;
     dup_func : CRYPTO_EX_dup;
@@ -11424,11 +11424,11 @@ type
   PBN_ULONG = ^BN_ULONG;
   {$EXTERNALSYM BIGNUM}
   BIGNUM = record
-    d : PBN_ULONG;	// Pointer to an array of 'BN_BITS2' bit chunks.
-    top : TIdC_INT;	// Index of last used d +1.
+    d : PBN_ULONG;  // Pointer to an array of 'BN_BITS2' bit chunks.
+    top : TIdC_INT;  // Index of last used d +1.
     // The next are internal book keeping for bn_expand.
-    dmax : TIdC_INT;	// Size of the d array.
-    neg : TIdC_INT;	// one if the number is negative
+    dmax : TIdC_INT;  // Size of the d array.
+    neg : TIdC_INT;  // one if the number is negative
     flags : TIdC_INT;
   end;
   {$EXTERNALSYM PBIGNUM}
@@ -11449,10 +11449,10 @@ type
     Ni : BIGNUM;     // R*(1/R mod N) - N*Ni = 1
                      // (Ni is only stored for bignum algorithm)
 {#if 0
-	/* OpenSSL 0.9.9 preview: */
-	BN_ULONG n0[2];/* least significant word(s) of Ni */
+  /* OpenSSL 0.9.9 preview: */
+  BN_ULONG n0[2];/* least significant word(s) of Ni */
 #else
-	BN_ULONG n0;   /* least significant word of Ni */
+  BN_ULONG n0;   /* least significant word of Ni */
 #endif}
     {$IFNDEF USE_THIS}
     //* OpenSSL 0.9.9 preview: */
@@ -11490,9 +11490,9 @@ type
   {$EXTERNALSYM BN_GENCB_union}
   BN_GENCB_union = record
     case Integer of
-    		// if(ver==1) - handles old style callbacks
+        // if(ver==1) - handles old style callbacks
         0 : (cb_1 : BN_cb_1);
-		// if(ver==2) - new callback style
+    // if(ver==2) - new callback style
         1 : (cb_2 : BN_cb_2);
   end;
   {$EXTERNALSYM BN_GENCB}
@@ -11660,12 +11660,12 @@ type
     {$EXTERNALSYM UIT_INFO}
     {$EXTERNALSYM UIT_ERROR}
   UI_string_types = (
-  	UIT_NONE,    //=0,
-  	UIT_PROMPT,	 //* Prompt for a string */
-   	UIT_VERIFY,	 //* Prompt for a string and verify */
-   	UIT_BOOLEAN, //* Prompt for a yes/no response */
-   	UIT_INFO,		 //* Send info to the user */
-   	UIT_ERROR);	 //* Send an error message to the user */
+    UIT_NONE,    //=0,
+    UIT_PROMPT,   //* Prompt for a string */
+     UIT_VERIFY,   //* Prompt for a string and verify */
+     UIT_BOOLEAN, //* Prompt for a yes/no response */
+     UIT_INFO,     //* Send info to the user */
+     UIT_ERROR);   //* Send an error message to the user */
 
   //bio.h
   //http://www.openssl.org/docs/crypto/bio.html
@@ -11711,27 +11711,27 @@ type
   {$EXTERNALSYM BIO}
   {$EXTERNALSYM BIO_F_BUFFER_CTX}
   BIO_F_BUFFER_CTX = record
-	{
-	/* Buffers are setup like this:
-	 *
-	 * <---------------------- size ----------------------->
-	 * +---------------------------------------------------+
-	 * | consumed | remaining          | free space        |
-	 * +---------------------------------------------------+
-	 * <-- off --><------- len ------->
-	 *}
+  {
+  /* Buffers are setup like this:
+   *
+   * <---------------------- size ----------------------->
+   * +---------------------------------------------------+
+   * | consumed | remaining          | free space        |
+   * +---------------------------------------------------+
+   * <-- off --><------- len ------->
+   *}
 
-	//* BIO *bio; */ /* this is now in the BIO struct */
-    ibuf_size : TIdC_INT;	//* how big is the input buffer */
-   	obuf_size : TIdC_INT;	//* how big is the output buffer */
+  //* BIO *bio; */ /* this is now in the BIO struct */
+    ibuf_size : TIdC_INT;  //* how big is the input buffer */
+     obuf_size : TIdC_INT;  //* how big is the output buffer */
 
-	  ibuf : PIdAnsiChar;		//* the char array */
-   	ibuf_len : TIdC_INT;		//* how many bytes are in it */
-	  ibuf_off : TIdC_INT;		//* write/read offset */
+    ibuf : PIdAnsiChar;    //* the char array */
+     ibuf_len : TIdC_INT;    //* how many bytes are in it */
+    ibuf_off : TIdC_INT;    //* write/read offset */
 
-	  obuf : PIdAnsiChar;		//* the char array */
-	  obuf_len : TIdC_INT;		//* how many bytes are in it */
-	  obuf_off : TIdC_INT;		//* write/read offset */
+    obuf : PIdAnsiChar;    //* the char array */
+    obuf_len : TIdC_INT;    //* how many bytes are in it */
+    obuf_off : TIdC_INT;    //* write/read offset */
   end;
   {$EXTERNALSYM PBIO_F_BUFFER_CTX}
   PBIO_F_BUFFER_CTX = ^BIO_F_BUFFER_CTX;
@@ -11825,7 +11825,7 @@ type
   PASN1_ITEM_EXP = ^ASN1_ITEM_EXP;
   {$ENDIF}
 //  typedef int asn1_output_data_fn(BIO *out, BIO *data, ASN1_VALUE *val, int flags,
-//					const ASN1_ITEM *it);
+//          const ASN1_ITEM *it);
   {$EXTERNALSYM asn1_output_data_fn}
   asn1_output_data_fn = function(AOut : PBIO; data : PBIO; val : PASN1_VALUE;
     flags : TIdC_INT; it : PASN1_ITEM): TIdC_INT; stdcall;
@@ -12215,76 +12215,76 @@ type
   {$EXTERNALSYM DSO_METHOD}
   DSO_METHOD = record
     name : PIdAnsiChar;
-	///* Loads a shared library, NB: new DSO_METHODs must ensure that a
-	// * successful load populates the loaded_filename field, and likewise a
-	// * successful unload OPENSSL_frees and NULLs it out. */
-	  dso_load : function (dso : PDSO) : TIdC_INT cdecl;
-	//* Unloads a shared library */
+  ///* Loads a shared library, NB: new DSO_METHODs must ensure that a
+  // * successful load populates the loaded_filename field, and likewise a
+  // * successful unload OPENSSL_frees and NULLs it out. */
+    dso_load : function (dso : PDSO) : TIdC_INT cdecl;
+  //* Unloads a shared library */
     dso_unload : function (dso : PDSO) : TIdC_INT cdecl;
-	//* Binds a variable */
+  //* Binds a variable */
     dso_bind_var : function (dso : PDSO; symname : PIdAnsiChar) : Pointer cdecl;
-	///* Binds a function - assumes a return type of DSO_FUNC_TYPE.
-	// * This should be cast to the real function prototype by the
-	// * caller. Platforms that don't have compatible representations
-	// * for different prototypes (this is possible within ANSI C)
-	// * are highly unlikely to have shared libraries at all, let
-	// * alone a DSO_METHOD implemented for them. */
+  ///* Binds a function - assumes a return type of DSO_FUNC_TYPE.
+  // * This should be cast to the real function prototype by the
+  // * caller. Platforms that don't have compatible representations
+  // * for different prototypes (this is possible within ANSI C)
+  // * are highly unlikely to have shared libraries at all, let
+  // * alone a DSO_METHOD implemented for them. */
     dso_bind_func : function (dso : PDSO; symname : PIdAnsiChar) : DSO_FUNC_TYPE stdcall;
 
-	///* The generic (yuck) "ctrl()" function. NB: Negative return
-	// * values (rather than zero) indicate errors. */
+  ///* The generic (yuck) "ctrl()" function. NB: Negative return
+  // * values (rather than zero) indicate errors. */
     dso_ctrl : function (dso : PDSO; cmd : TIdC_INT; larg : TIdC_LONG; parg : Pointer) : TIdC_LONG stdcall;
-	///* The default DSO_METHOD-specific function for converting filenames to
-	// * a canonical native form. */
-	 dso_name_converter : DSO_NAME_CONVERTER_FUNC;
-	///* The default DSO_METHOD-specific function for converting filenames to
-	// * a canonical native form. */
-	 dso_merger : DSO_MERGER_FUNC;
+  ///* The default DSO_METHOD-specific function for converting filenames to
+  // * a canonical native form. */
+   dso_name_converter : DSO_NAME_CONVERTER_FUNC;
+  ///* The default DSO_METHOD-specific function for converting filenames to
+  // * a canonical native form. */
+   dso_merger : DSO_MERGER_FUNC;
 
-	//* [De]Initialisation handlers. */
+  //* [De]Initialisation handlers. */
    init : function (dso : PDSO) : TIdC_INT stdcall;
    finish : function (dso : PDSO) : TIdC_INT stdcall;
 
-	//* Return pathname of the module containing location */
+  //* Return pathname of the module containing location */
     pathbyaddr : function (addr : Pointer; path : PIdAnsiChar; sz : TIdC_INT) : TIdC_INT stdcall;
-	//* Perform global symbol lookup, i.e. among *all* modules */
+  //* Perform global symbol lookup, i.e. among *all* modules */
     globallookup : function (symname : PIdAnsiChar) : Pointer stdcall;
   end;
   {$EXTERNALSYM DSO}
   DSO = record
-	  meth : PDSO_METHOD;
-	///* Standard dlopen uses a (void *). Win32 uses a HANDLE. VMS
-	// * doesn't use anything but will need to cache the filename
-	// * for use in the dso_bind handler. All in all, let each
-	// * method control its own destiny. "Handles" and such go in
-	// * a STACK. */
-	  meth_data : PSTACK_OF_POINTER;
-	  references : TIdC_INT;
-   	flags : TIdC_INT;
-	///* For use by applications etc ... use this for your bits'n'pieces,
-	// * don't touch meth_data! */
-	  ex_data : CRYPTO_EX_DATA;
-	///* If this callback function pointer is set to non-NULL, then it will
-	// * be used in DSO_load() in place of meth->dso_name_converter. NB: This
-	// * should normally set using DSO_set_name_converter(). */
-	  name_converter : DSO_NAME_CONVERTER_FUNC;
-	///* If this callback function pointer is set to non-NULL, then it will
-	// * be used in DSO_load() in place of meth->dso_merger. NB: This
-	// * should normally set using DSO_set_merger(). */
-	  merger : DSO_MERGER_FUNC;
-	///* This is populated with (a copy of) the platform-independant
-	// * filename used for this DSO. */
-	  filename : PIdAnsiChar;
-	///* This is populated with (a copy of) the translated filename by which
-	// * the DSO was actually loaded. It is NULL iff the DSO is not currently
-	// * loaded. NB: This is here because the filename translation process
-	// * may involve a callback being invoked more than once not only to
-	// * convert to a platform-specific form, but also to try different
-	// * filenames in the process of trying to perform a load. As such, this
-	// * variable can be used to indicate (a) whether this DSO structure
-	// * corresponds to a loaded library or not, and (b) the filename with
-	// * which it was actually loaded. */
-	  loaded_filename : PIdAnsiChar;
+    meth : PDSO_METHOD;
+  ///* Standard dlopen uses a (void *). Win32 uses a HANDLE. VMS
+  // * doesn't use anything but will need to cache the filename
+  // * for use in the dso_bind handler. All in all, let each
+  // * method control its own destiny. "Handles" and such go in
+  // * a STACK. */
+    meth_data : PSTACK_OF_POINTER;
+    references : TIdC_INT;
+     flags : TIdC_INT;
+  ///* For use by applications etc ... use this for your bits'n'pieces,
+  // * don't touch meth_data! */
+    ex_data : CRYPTO_EX_DATA;
+  ///* If this callback function pointer is set to non-NULL, then it will
+  // * be used in DSO_load() in place of meth->dso_name_converter. NB: This
+  // * should normally set using DSO_set_name_converter(). */
+    name_converter : DSO_NAME_CONVERTER_FUNC;
+  ///* If this callback function pointer is set to non-NULL, then it will
+  // * be used in DSO_load() in place of meth->dso_merger. NB: This
+  // * should normally set using DSO_set_merger(). */
+    merger : DSO_MERGER_FUNC;
+  ///* This is populated with (a copy of) the platform-independant
+  // * filename used for this DSO. */
+    filename : PIdAnsiChar;
+  ///* This is populated with (a copy of) the translated filename by which
+  // * the DSO was actually loaded. It is NULL iff the DSO is not currently
+  // * loaded. NB: This is here because the filename translation process
+  // * may involve a callback being invoked more than once not only to
+  // * convert to a platform-specific form, but also to try different
+  // * filenames in the process of trying to perform a load. As such, this
+  // * variable can be used to indicate (a) whether this DSO structure
+  // * corresponds to a loaded library or not, and (b) the filename with
+  // * which it was actually loaded. */
+    loaded_filename : PIdAnsiChar;
   end;
   //dh.h
   {$IFNDEF OPENSSL_NO_DH}
@@ -12528,16 +12528,16 @@ type
     engine : PENGINE; // functional reference if 'digest' is ENGINE-provided
     flags : TIdC_ULONG;
     md_data : Pointer;
-	//* Public key context for sign/verify */
-	  pctx : PEVP_PKEY_CTX;
-	//* Update function: usually copied from EVP_MD */
-//	int (*update)(EVP_MD_CTX *ctx,const void *data,size_t count);
+  //* Public key context for sign/verify */
+    pctx : PEVP_PKEY_CTX;
+  //* Update function: usually copied from EVP_MD */
+//  int (*update)(EVP_MD_CTX *ctx,const void *data,size_t count);
      update : function (ctx : PEVP_MD_CTX; const data : Pointer; count : size_t) : TIdC_INT cdecl;
   end;
   {$EXTERNALSYM EVP_MD_SVCTX}
   EVP_MD_SVCTX = record
-	  mctx : PEVP_MD_CTX;
-	  key : Pointer;
+    mctx : PEVP_MD_CTX;
+    key : Pointer;
   end;
   {$EXTERNALSYM PEVP_MD_SVCTX}
   PEVP_MD_SVCTX = ^EVP_MD_SVCTX;
@@ -12598,7 +12598,7 @@ type
     num : TIdC_INT;     // used by cfb/ofb mode
     app_data : Pointer; // application stuff
     key_len : TIdC_INT; // May change for variable length cipher
-    flags : TIdC_ULONG;	// Various flags
+    flags : TIdC_ULONG;  // Various flags
     cipher_data : Pointer; // per EVP data
     final_used : TIdC_INT;
     block_mask : TIdC_INT;
@@ -12620,7 +12620,7 @@ type
                        // the length is adjusted up each time a longer
                        // line is decoded
     enc_data:array [0..79] of TIdAnsiChar;
-    line_num: TIdC_INT;	// number read on current line
+    line_num: TIdC_INT;  // number read on current line
     expect_nl: TIdC_INT;
   end;
   {$EXTERNALSYM PEVP_ENCODE_CTX}
@@ -12759,13 +12759,13 @@ type
   ENGINE_CTRL_FUNC_PTR = function(Para1 : PENGINE; Para2 : TIdC_INT;
     Para3 : TIdC_LONG; Para4 : Pointer; f : ENGINE_CTRL_FUNC_PTR_F) : TIdC_Int; cdecl;
 //typedef EVP_PKEY * (*ENGINE_LOAD_KEY_PTR)(ENGINE *, const char *,
-//	UI_METHOD *ui_method, void *callback_data);
+//  UI_METHOD *ui_method, void *callback_data);
   {$EXTERNALSYM ENGINE_LOAD_KEY_PTR}
   ENGINE_LOAD_KEY_PTR = function(Para1 : PENGINE; Para2 : PIdAnsiChar;
     ui_method : PUI_METHOD; callback_data : Pointer) : PEVP_PKEY; cdecl;
 //typedef int (*ENGINE_SSL_CLIENT_CERT_PTR)(ENGINE *, SSL *ssl,
-//	STACK_OF(X509_NAME) *ca_dn, X509 **pcert, EVP_PKEY **pkey,
-//	STACK_OF(X509) **pother, UI_METHOD *ui_method, void *callback_data);
+//  STACK_OF(X509_NAME) *ca_dn, X509 **pcert, EVP_PKEY **pkey,
+//  STACK_OF(X509) **pother, UI_METHOD *ui_method, void *callback_data);
   {$EXTERNALSYM ENGINE_SSL_CLIENT_CERT_PTR}
   ENGINE_SSL_CLIENT_CERT_PTR = function(Para1 : PENGINE; ssl : PSSL;
     ca_dn : PSTACK_OF_X509_NAME; var pcert : PX509; var pkey : PEVP_PKEY;
@@ -12817,24 +12817,24 @@ type
   {$EXTERNALSYM dyn_lock_add_lock_cb}
   dyn_lock_add_lock_cb = function (var para1 : TIdC_INT; para2, para3 : TIdC_INT; para4 : PIdAnsiChar; para5 : TIdC_INT) : TIdC_INT; cdecl;
 //typedef struct CRYPTO_dynlock_value *(*dyn_dynlock_create_cb)(
-//						const char *,int);
+//            const char *,int);
   {$EXTERNALSYM dyn_dynlock_create_cb}
   dyn_dynlock_create_cb = function (para1 : PIdAnsiChar; para2 : TIdC_INT) : PCRYPTO_dynlock_value; cdecl;
 //typedef void (*dyn_dynlock_lock_cb)(int,struct CRYPTO_dynlock_value *,
-//						const char *,int);
+//            const char *,int);
   {$EXTERNALSYM dyn_dynlock_lock_cb}
   dyn_dynlock_lock_cb = procedure (para1 : TIdC_INT; para2 : PCRYPTO_dynlock_value); cdecl;
 //typedef void (*dyn_dynlock_destroy_cb)(struct CRYPTO_dynlock_value *,
-//						const char *,int);
+//            const char *,int);
   {$EXTERNALSYM dyn_dynlock_destroy_cb}
   dyn_dynlock_destroy_cb = procedure(para1 : PCRYPTO_dynlock_value; para2 : PIdAnsiChar; para3 : TIdC_INT); cdecl;
 //typedef struct st_dynamic_LOCK_fns {
-//	dyn_lock_locking_cb			lock_locking_cb;
-//	dyn_lock_add_lock_cb			lock_add_lock_cb;
-//	dyn_dynlock_create_cb			dynlock_create_cb;
-//	dyn_dynlock_lock_cb			dynlock_lock_cb;
-//	dyn_dynlock_destroy_cb			dynlock_destroy_cb;
-//	} dynamic_LOCK_fns;
+//  dyn_lock_locking_cb      lock_locking_cb;
+//  dyn_lock_add_lock_cb      lock_add_lock_cb;
+//  dyn_dynlock_create_cb      dynlock_create_cb;
+//  dyn_dynlock_lock_cb      dynlock_lock_cb;
+//  dyn_dynlock_destroy_cb      dynlock_destroy_cb;
+//  } dynamic_LOCK_fns;
   {$EXTERNALSYM dynamic_LOCK_fns}
    dynamic_LOCK_fns = record
      lock_locking_cb : dyn_lock_locking_cb;
@@ -12884,7 +12884,7 @@ type
  {$IFNDEF OPENSSL_NO_AES}
    {$IFDEF OPENSSL_FIPS}
   {$EXTERNALSYM FIPS_AES_SIZE_T}
-  FIPS_AES_SIZE_T	= TIdC_INT;
+  FIPS_AES_SIZE_T  = TIdC_INT;
   {$ENDIF}
   //OpenSSL Developer's note
   // This should be a hidden type, but EVP requires that the size be known
@@ -13031,7 +13031,7 @@ type
     funcs : Pointer;              // functions that handle this type
     size : TIdC_LONG;             // Structure size (usually)
     {$IFNDEF NO_ASN1_FIELD_NAMES}
-    sname : PIdAnsiChar;	  // Structure name
+    sname : PIdAnsiChar;    // Structure name
     {$ENDIF}
   end;
   {$EXTERNALSYM PASN1_PCTX}
@@ -13067,7 +13067,7 @@ type
   {$EXTERNALSYM ASN1_ADB_TABLE}
   ASN1_ADB_TABLE = record
     flags : TIdC_LONG;            // Various flags
-    offset : TIdC_LONG;	          // Offset of selector field
+    offset : TIdC_LONG;            // Offset of selector field
     app_items : PPSTACK_OF_ASN1_ADB_TABLE; // Application defined items
     tbl : PASN1_ADB_TABLE;        // Table of possible types
     tblcount : TIdC_LONG;         // Number of entries in tbl
@@ -13078,12 +13078,12 @@ type
   PASN1_TLC = ^ASN1_TLC;
   {$EXTERNALSYM ASN1_TLC}
   ASN1_TLC = record
-	  valid : Byte;	//* Values below are valid */
-	  ret : TIdC_INT;	//* return value */
-	  plen : TIdC_LONG;	//* length */
-	  ptag : TIdC_INT;	//* class value */
-	  pclass : TIdC_INT;	//* class value */
-	  hdrlen : TIdC_INT;	//* header length */
+    valid : Byte;  //* Values below are valid */
+    ret : TIdC_INT;  //* return value */
+    plen : TIdC_LONG;  //* length */
+    ptag : TIdC_INT;  //* class value */
+    pclass : TIdC_INT;  //* class value */
+    hdrlen : TIdC_INT;  //* header length */
   end;
   ///* Typedefs for ASN1 function pointers */
   {$EXTERNALSYM ASN1_new_func}
@@ -13097,7 +13097,7 @@ type
   {$EXTERNALSYM ASN1_i2d_func}
   ASN1_i2d_func = function (a : PASN1_VALUE; _in : PPByte)  : TIdC_INT; cdecl;
 //  typedef int ASN1_ex_d2i(ASN1_VALUE **pval, const unsigned char **in, long len, const ASN1_ITEM *it,
-//					int tag, int aclass, char opt, ASN1_TLC *ctx);
+//          int tag, int aclass, char opt, ASN1_TLC *ctx);
   {$EXTERNALSYM ASN1_ex_d2i}
   ASN1_ex_d2i = function(pval : PPASN1_VALUE; _in : PPByte; len : TIdC_LONG;
     it : PASN1_ITEM; tag, aclass : TIdC_INT; opt : Byte;
@@ -13120,21 +13120,21 @@ type
   ///* end typedefs
   {$EXTERNALSYM ASN1_COMPAT_FUNCS}
   ASN1_COMPAT_FUNCS = record
-	  asn1_new : ASN1_new_func;
-	  asn1_free : ASN1_free_func;
-	  asn1_d2i : ASN1_d2i_func;
-	 asn1_i2d : ASN1_i2d_func;
+    asn1_new : ASN1_new_func;
+    asn1_free : ASN1_free_func;
+    asn1_d2i : ASN1_d2i_func;
+   asn1_i2d : ASN1_i2d_func;
   end;
   {$EXTERNALSYM PASN1_COMPAT_FUNCS}
   PASN1_COMPAT_FUNCS = ^ASN1_COMPAT_FUNCS;
   {$EXTERNALSYM ASN1_EXTERN_FUNCS}
   ASN1_EXTERN_FUNCS = record
-	  app_data : Pointer;
-    asn1_ex_new : ASN1_ex_new_func; //	ASN1_ex_new_func *asn1_ex_new;
-    asn1_ex_free : ASN1_ex_free_func; //	ASN1_ex_free_func *asn1_ex_free;
-    asn1_ex_clear: ASN1_ex_free_func;//	ASN1_ex_free_func *asn1_ex_clear;
-    asn1_ex_d2i : ASN1_ex_d2i;//	ASN1_ex_d2i *asn1_ex_d2i;
-    asn1_ex_i2d : ASN1_ex_i2d; //	ASN1_ex_i2d *asn1_ex_i2d;
+    app_data : Pointer;
+    asn1_ex_new : ASN1_ex_new_func; //  ASN1_ex_new_func *asn1_ex_new;
+    asn1_ex_free : ASN1_ex_free_func; //  ASN1_ex_free_func *asn1_ex_free;
+    asn1_ex_clear: ASN1_ex_free_func;//  ASN1_ex_free_func *asn1_ex_clear;
+    asn1_ex_d2i : ASN1_ex_d2i;//  ASN1_ex_d2i *asn1_ex_d2i;
+    asn1_ex_i2d : ASN1_ex_i2d; //  ASN1_ex_i2d *asn1_ex_i2d;
   end;
   {$EXTERNALSYM PASN1_EXTERN_FUNCS}
   PASN1_EXTERN_FUNCS = ^ASN1_EXTERN_FUNCS;
@@ -13142,15 +13142,15 @@ type
   ASN1_PRIMITIVE_FUNCS = record
     app_data : Pointer;
     flags : TIdC_ULONG;
-//	ASN1_ex_new_func *prim_new;
+//  ASN1_ex_new_func *prim_new;
     prim_new : ASN1_ex_new_func;
-//	ASN1_ex_free_func *prim_free;
+//  ASN1_ex_free_func *prim_free;
     prim_free : ASN1_ex_free_func;
-//	ASN1_ex_free_func *prim_clear;
+//  ASN1_ex_free_func *prim_clear;
     prim_clear : ASN1_ex_free_func;
-//	ASN1_primitive_c2i *prim_c2i;
+//  ASN1_primitive_c2i *prim_c2i;
     prim_c2i : ASN1_primitive_c2i;
-//	ASN1_primitive_i2c *prim_i2c;
+//  ASN1_primitive_i2c *prim_i2c;
     prim_i2c : ASN1_primitive_i2c;
   end;
   {$EXTERNALSYM PASN1_PRIMITIVE_FUNCS}
@@ -13162,10 +13162,10 @@ type
   ASN1_AUX = record
     app_data : Pointer;
     flags : TIdC_INT;
-    ref_offset : TIdC_INT;		//* Offset of reference value */
-    ref_lock : TIdC_INT;		//* Lock type to use */
+    ref_offset : TIdC_INT;    //* Offset of reference value */
+    ref_lock : TIdC_INT;    //* Lock type to use */
     asn1_cb : ASN1_aux_cb; //ASN1_aux_cb *asn1_cb;
-    enc_offset : TIdC_INT;		//* Offset of ASN1_ENCODING structure */
+    enc_offset : TIdC_INT;    //* Offset of ASN1_ENCODING structure */
   end;
   {$EXTERNALSYM PASN1_AUX}
   PASN1_AUX = ^ASN1_AUX;
@@ -13846,7 +13846,7 @@ type
     {$else}
     bytes : PIdAnsiChar;
     {$ENDIF}
-    //*	unsigned long hash; Keep the hash around for lookups */
+    //*  unsigned long hash; Keep the hash around for lookups */
     canon_enc : PIdAnsiChar;
     canon_enclen : TIdC_INT;
   end;
@@ -13933,7 +13933,7 @@ type
     trust : PSTACK_OF_ASN1_OBJECT;  // trusted uses
     reject : PSTACK_OF_ASN1_OBJECT; // rejected uses
     alias : PASN1_UTF8STRING;       // "friendly name"
-    keyid : PASN1_OCTET_STRING;	    // key id of private key
+    keyid : PASN1_OCTET_STRING;      // key id of private key
     other : PSTACK_OF_X509_ALGOR;   // other unspecified info
   end;
   {$EXTERNALSYM PX509_CERT_AUX}
@@ -14156,19 +14156,19 @@ type
     check_policy : function (ctx : PX509_STORE_CTX) : TIdC_INT;  cdecl;
     cleanup : function (ctx : PX509_STORE_CTX) : TIdC_INT;  cdecl;
     //* The following is built up */
-    valid : TIdC_INT;		//* if 0, rebuild chain */
-    last_untrusted : TIdC_INT;	//* index of last untrusted cert */
-    chain : PSTACK_OF_X509; 		//* chain of X509s - built up and trusted */
-    tree : PX509_POLICY_TREE;	//* Valid policy tree */
+    valid : TIdC_INT;    //* if 0, rebuild chain */
+    last_untrusted : TIdC_INT;  //* index of last untrusted cert */
+    chain : PSTACK_OF_X509;     //* chain of X509s - built up and trusted */
+    tree : PX509_POLICY_TREE;  //* Valid policy tree */
 
-    explicit_policy : TIdC_INT;	//* Require explicit policy value */
+    explicit_policy : TIdC_INT;  //* Require explicit policy value */
 
     //* When something goes wrong, this is why */
     error_depth : TIdC_INT;
     error : TIdC_INT;
     current_cert : PX509;
-    current_issuer : PX509;	//* cert currently being tested as valid issuer */
-    current_crl : PX509_CRL;	//* current CRL */
+    current_issuer : PX509;  //* cert currently being tested as valid issuer */
+    current_crl : PX509_CRL;  //* current CRL */
 
     current_crl_score : TIdC_INT;  //* score of current CRL */
     current_reasons : TIdC_UINT;  //* Reason mask */
@@ -14491,7 +14491,7 @@ type
 //*/
  {$EXTERNALSYM OCSP_REQINFO}
   OCSP_REQINFO = record
-   	version : PASN1_INTEGER;
+     version : PASN1_INTEGER;
     requestorName : PGENERAL_NAME;
     requestList : PSTACK_OF_OCSP_ONEREQ;
     requestExtensions : PSTACK_OF_X509_EXTENSION;
@@ -14672,12 +14672,12 @@ type
 // */
  {$EXTERNALSYM OCSP_RESPDATA}
   OCSP_RESPDATA = record
-	  version : PASN1_INTEGER;
-	  responderId : POCSP_RESPID;
-	  producedAt : PASN1_GENERALIZEDTIME;
-	  responses : PSTACK_OF_OCSP_SINGLERESP;
-	  responseExtensions : PSTACK_OF_X509_EXTENSION;
-	end;
+    version : PASN1_INTEGER;
+    responderId : POCSP_RESPID;
+    producedAt : PASN1_GENERALIZEDTIME;
+    responses : PSTACK_OF_OCSP_SINGLERESP;
+    responseExtensions : PSTACK_OF_X509_EXTENSION;
+  end;
  {$EXTERNALSYM POCSP_RESPDATA}
   POCSP_RESPDATA = ^OCSP_RESPDATA;
  {$EXTERNALSYM PPOCSP_RESPDATA}
@@ -14697,20 +14697,20 @@ type
 //     a bit odd, but that's the spec.  Also note that the data structures do not
 //     leave anywhere to independently specify the algorithm used for the initial
 //     hash. So, we look at the signature-specification algorithm, and try to do
-//     something intelligent.	-- Kathy Weinhold, CertCo */
+//     something intelligent.  -- Kathy Weinhold, CertCo */
 //  /* Note 2:
 //     It seems that the mentioned passage from RFC 2560 (section 4.2.1) is open
 //     for interpretation.  I've done tests against another responder, and found
 //     that it doesn't do the double hashing that the RFC seems to say one
 //     should.  Therefore, all relevant functions take a flag saying which
-//     variant should be used.	-- Richard Levitte, OpenSSL team and CeloCom */
+//     variant should be used.  -- Richard Levitte, OpenSSL team and CeloCom */
  {$EXTERNALSYM OCSP_BASICRESP}
   OCSP_BASICRESP = record
-	  tbsResponseData : POCSP_RESPDATA;
-	  signatureAlgorithm : PX509_ALGOR;
-	  signature : PASN1_BIT_STRING;
-	  certs : PSTACK_OF_X509;
-	end;
+    tbsResponseData : POCSP_RESPDATA;
+    signatureAlgorithm : PX509_ALGOR;
+    signature : PASN1_BIT_STRING;
+    certs : PSTACK_OF_X509;
+  end;
  {$EXTERNALSYM POCSP_BASICRESP}
   POCSP_BASICRESP = ^OCSP_BASICRESP;
  {$EXTERNALSYM PPOCSP_BASICRESP}
@@ -14722,10 +14722,10 @@ type
 // */
  {$EXTERNALSYM OCSP_CRLID}
   OCSP_CRLID = record
-	  crlUrl : PASN1_IA5STRING;
-	  crlNum : PASN1_INTEGER;
-	  crlTime : PASN1_GENERALIZEDTIME;
-	end;
+    crlUrl : PASN1_IA5STRING;
+    crlNum : PASN1_INTEGER;
+    crlTime : PASN1_GENERALIZEDTIME;
+  end;
  {$EXTERNALSYM POCSP_CRLID}
   POCSP_CRLID = ^OCSP_CRLID;
  {$EXTERNALSYM PPOCSP_CRLID}
@@ -14736,8 +14736,8 @@ type
 // */
  {$EXTERNALSYM OCSP_SERVICELOC}
   OCSP_SERVICELOC = record
-	  issuer : PX509_NAME;
-	  locator : PSTACK_OF_ACCESS_DESCRIPTION;
+    issuer : PX509_NAME;
+    locator : PSTACK_OF_ACCESS_DESCRIPTION;
   end;
   {$EXTERNALSYM POCSP_SERVICELOC}
   POCSP_SERVICELOC = ^OCSP_SERVICELOC;
@@ -14794,7 +14794,7 @@ type
   // PASN1_UTCTIME     = Pointer;
 
 //GREGOR - spremenjana deklaracija ker se tolèe
-//  Phostent	  = Pointer;
+//  Phostent    = Pointer;
   {$NODEFINE Phostent2}
   Phostent2   = Pointer;
 //END GREGOR
@@ -14848,8 +14848,8 @@ type
   _ossl_old_des_ks_union = record
     case Integer of
        0 : (_ : _ossl_old_des_cblock);
-		//* make sure things are correct size on machines with
-		//* 8 byte longs */
+    //* make sure things are correct size on machines with
+    //* 8 byte longs */
        2 : (pad : array [0..1] of DES_LONG);
   end;
   {$EXTERNALSYM _ossl_old_des_ks_struct}
@@ -15115,71 +15115,71 @@ _des_cblock = DES_cblock
   {$ENDIF}
   {$EXTERNALSYM TS_MSG_IMPRINT}
   TS_MSG_IMPRINT = record
-	 hash_algo : PX509_ALGOR;
-	 hashed_msg : PASN1_OCTET_STRING;
+   hash_algo : PX509_ALGOR;
+   hashed_msg : PASN1_OCTET_STRING;
   end;
   {$EXTERNALSYM PTS_MSG_IMPRINT}
   PTS_MSG_IMPRINT = ^TS_MSG_IMPRINT;
   {$EXTERNALSYM TS_REQ}
   TS_REQ = record
-	  version : PASN1_INTEGER;
-	  msg_imprint : PTS_MSG_IMPRINT;
-	  policy_id : PASN1_OBJECT;		//* OPTIONAL */
-	  nonce : PASN1_INTEGER;		//* OPTIONAL */
-    cert_req : ASN1_BOOLEAN;		//* DEFAULT FALSE */
-	  extensions : PSTACK_OF_X509_EXTENSION;	//* [0] OPTIONAL */
+    version : PASN1_INTEGER;
+    msg_imprint : PTS_MSG_IMPRINT;
+    policy_id : PASN1_OBJECT;    //* OPTIONAL */
+    nonce : PASN1_INTEGER;    //* OPTIONAL */
+    cert_req : ASN1_BOOLEAN;    //* DEFAULT FALSE */
+    extensions : PSTACK_OF_X509_EXTENSION;  //* [0] OPTIONAL */
   end;
   {$EXTERNALSYM PTS_REQ}
   PTS_REQ = ^TS_REQ;
   {$EXTERNALSYM TS_ACCURACY}
   TS_ACCURACY = record
-	  seconds : PASN1_INTEGER;
-	  millis : PASN1_INTEGER;
-	  micros : PASN1_INTEGER;
+    seconds : PASN1_INTEGER;
+    millis : PASN1_INTEGER;
+    micros : PASN1_INTEGER;
   end;
   {$EXTERNALSYM PTS_ACCURACY}
   PTS_ACCURACY = ^TS_ACCURACY;
   {$EXTERNALSYM TS_TST_INFO}
   TS_TST_INFO = record
-	  version : PASN1_INTEGER;
-	  policy_id : PASN1_OBJECT;
-	  msg_imprint : PTS_MSG_IMPRINT;
-	  serial : PASN1_INTEGER;
-	  time : PASN1_GENERALIZEDTIME;
-	  accuracy : PTS_ACCURACY;
-	  ordering : PASN1_BOOLEAN;
-	  nonce : PASN1_INTEGER;
-	  tsa : PGENERAL_NAME;
+    version : PASN1_INTEGER;
+    policy_id : PASN1_OBJECT;
+    msg_imprint : PTS_MSG_IMPRINT;
+    serial : PASN1_INTEGER;
+    time : PASN1_GENERALIZEDTIME;
+    accuracy : PTS_ACCURACY;
+    ordering : PASN1_BOOLEAN;
+    nonce : PASN1_INTEGER;
+    tsa : PGENERAL_NAME;
     extensions : PSTACK_OF_X509_EXTENSION;
   end;
   {$EXTERNALSYM PTS_TST_INFO}
   PTS_TST_INFO = ^TS_TST_INFO;
   {$EXTERNALSYM TS_STATUS_INFO}
   TS_STATUS_INFO = record
-	  status : PASN1_INTEGER;
-	  text : PSTACK_OF_ASN1_UTF8STRING;
-	  failure_info : PASN1_BIT_STRING;
+    status : PASN1_INTEGER;
+    text : PSTACK_OF_ASN1_UTF8STRING;
+    failure_info : PASN1_BIT_STRING;
   end;
   {$EXTERNALSYM PTS_STATUS_INFO}
   PTS_STATUS_INFO = ^TS_STATUS_INFO;
   {$EXTERNALSYM TS_RESP}
   TS_RESP = record
-  	status_info : PTS_STATUS_INFO;
-	  token : PPKCS7;
-	  tst_info : PTS_TST_INFO;
+    status_info : PTS_STATUS_INFO;
+    token : PPKCS7;
+    tst_info : PTS_TST_INFO;
   end;
   {$EXTERNALSYM PTS_RESP}
   PTS_RESP = ^TS_RESP;
   {$EXTERNALSYM ESS_ISSUER_SERIAL}
   ESS_ISSUER_SERIAL = record
-  	issuer : PSTACK_OF_GENERAL_NAME;
+    issuer : PSTACK_OF_GENERAL_NAME;
     serial : PASN1_INTEGER;
   end;
   {$EXTERNALSYM PESS_ISSUER_SERIAL}
   PESS_ISSUER_SERIAL = ^ESS_ISSUER_SERIAL;
   {$EXTERNALSYM ESS_CERT_ID}
   ESS_CERT_ID = record
-    hash : PASN1_OCTET_STRING;	//* Always SHA-1 digest. */
+    hash : PASN1_OCTET_STRING;  //* Always SHA-1 digest. */
     issuer_serial : PESS_ISSUER_SERIAL;
   end;
   {$EXTERNALSYM PESS_CERT_ID}
@@ -15198,8 +15198,8 @@ _des_cblock = DES_cblock
   {$ENDIF}
   {$EXTERNALSYM ESS_SIGNING_CERT}
   ESS_SIGNING_CERT = record
-	 cert_ids : PSTACK_OF_ESS_CERT_ID;
-	 policy_info : PSTACK_OF_POLICYINFO;
+   cert_ids : PSTACK_OF_ESS_CERT_ID;
+   policy_info : PSTACK_OF_POLICYINFO;
   end;
   {$EXTERNALSYM PESS_SIGNING_CERT}
   PESS_SIGNING_CERT = ^ESS_SIGNING_CERT;
@@ -15212,7 +15212,7 @@ _des_cblock = DES_cblock
   //* This must return the seconds and microseconds since Jan 1, 1970 in
  //  the sec and usec variables allocated by the caller.
  //  Return non-zero for success and zero for failure. */
-//typedef	int (*TS_time_cb)(struct TS_resp_ctx *, void *, long *sec, long *usec);
+//typedef  int (*TS_time_cb)(struct TS_resp_ctx *, void *, long *sec, long *usec);
   {$EXTERNALSYM TS_time_cb}
   TS_time_cb = function (p1 : PTS_resp_ctx; p2 : Pointer; sec, usec : TIdC_LONG) : TIdC_INT cdecl;
 ///* This must process the given extension.
@@ -15220,64 +15220,64 @@ _des_cblock = DES_cblock
 // * Return values: !0 (processed), 0 (error, it must set the
 // * status info/failure info of the response).
 // */
-//typedef	int (*TS_extension_cb)(struct TS_resp_ctx *, X509_EXTENSION *, void *);
+//typedef  int (*TS_extension_cb)(struct TS_resp_ctx *, X509_EXTENSION *, void *);
   {$EXTERNALSYM TS_extension_cb}
   TS_extension_cb = function (p1 : PTS_resp_ctx; p2 : PX509_EXTENSION; p3 : Pointer) : TIdC_INT cdecl;
   {$EXTERNALSYM TS_RESP_CTX}
   TS_RESP_CTX = record
-		signer_cert : PX509;
-		signer_key : PEVP_PKEY;
-	  certs : PSTACK_OF_X509;	//* Certs to include in signed data. */
-	  policies : PSTACK_OF_ASN1_OBJECT;	//* Acceptable policies. */
-		default_policy : PASN1_OBJECT; //* It may appear in policies, too. */
-	  mds : PSTACK_OF_EVP_MD;	//* Acceptable message digests. */
-		seconds : PASN1_INTEGER;	//* accuracy, 0 means not specified. */
-		millis : PASN1_INTEGER;	//* accuracy, 0 means not specified. */
-		micros : PASN1_INTEGER;	//* accuracy, 0 means not specified. */
-		clock_precision_digits : TIdC_UNSIGNED; //* fraction of seconds in
-						   //time stamp token. */
-		flags : TIdC_UNSIGNED;		//* Optional info, see values above. */
+    signer_cert : PX509;
+    signer_key : PEVP_PKEY;
+    certs : PSTACK_OF_X509;  //* Certs to include in signed data. */
+    policies : PSTACK_OF_ASN1_OBJECT;  //* Acceptable policies. */
+    default_policy : PASN1_OBJECT; //* It may appear in policies, too. */
+    mds : PSTACK_OF_EVP_MD;  //* Acceptable message digests. */
+    seconds : PASN1_INTEGER;  //* accuracy, 0 means not specified. */
+    millis : PASN1_INTEGER;  //* accuracy, 0 means not specified. */
+    micros : PASN1_INTEGER;  //* accuracy, 0 means not specified. */
+    clock_precision_digits : TIdC_UNSIGNED; //* fraction of seconds in
+               //time stamp token. */
+    flags : TIdC_UNSIGNED;    //* Optional info, see values above. */
 
-	//* Callback functions. */
-	  serial_cb : TS_serial_cb;
-	  serial_cb_data : Pointer;	//* User data for serial_cb. */
+  //* Callback functions. */
+    serial_cb : TS_serial_cb;
+    serial_cb_data : Pointer;  //* User data for serial_cb. */
 
-	  time_cb : TS_time_cb;
-	  time_cb_data : Pointer;	//* User data for time_cb. */
+    time_cb : TS_time_cb;
+    time_cb_data : Pointer;  //* User data for time_cb. */
 
-	  extension_cb : TS_extension_cb;
-	  extension_cb_data : Pointer;	//* User data for extension_cb. */
+    extension_cb : TS_extension_cb;
+    extension_cb_data : Pointer;  //* User data for extension_cb. */
 
-	//* These members are used only while creating the response. */
-		request : PTS_REQ;
-		response : PTS_RESP;
-		tst_info : PTS_TST_INFO;
+  //* These members are used only while creating the response. */
+    request : PTS_REQ;
+    response : PTS_RESP;
+    tst_info : PTS_TST_INFO;
   end;
   {$EXTERNALSYM TS_VERIFY_CTX}
   TS_VERIFY_CTX = record
-  	//* Set this to the union of TS_VFY_... flags you want to carry out. */
-		flags : TIdC_UNSIGNED;
+    //* Set this to the union of TS_VFY_... flags you want to carry out. */
+    flags : TIdC_UNSIGNED;
 
-	//* Must be set only with TS_VFY_SIGNATURE. certs is optional. */
-		store : PX509_STORE;
-	  certs : PSTACK_OF_X509;
+  //* Must be set only with TS_VFY_SIGNATURE. certs is optional. */
+    store : PX509_STORE;
+    certs : PSTACK_OF_X509;
 
-	//* Must be set only with TS_VFY_POLICY. */
-		policy : PASN1_OBJECT;
+  //* Must be set only with TS_VFY_POLICY. */
+    policy : PASN1_OBJECT;
 
-//	/* Must be set only with TS_VFY_IMPRINT. If md_alg is NULL,
-//	   the algorithm from the response is used. */
-		md_alg : PX509_ALGOR;
-	  imprint : PIdAnsiChar;
-		imprint_len : TIdC_UNSIGNED;
+//  /* Must be set only with TS_VFY_IMPRINT. If md_alg is NULL,
+//     the algorithm from the response is used. */
+    md_alg : PX509_ALGOR;
+    imprint : PIdAnsiChar;
+    imprint_len : TIdC_UNSIGNED;
 
-	//* Must be set only with TS_VFY_DATA. */
-	  data : PBIO;
+  //* Must be set only with TS_VFY_DATA. */
+    data : PBIO;
 
-	//* Must be set only with TS_VFY_TSA_NAME. */
-		nonce : PASN1_INTEGER;
+  //* Must be set only with TS_VFY_TSA_NAME. */
+    nonce : PASN1_INTEGER;
 
-	//* Must be set only with TS_VFY_TSA_NAME. */
+  //* Must be set only with TS_VFY_TSA_NAME. */
     tsa_name : PGENERAL_NAME;
   end;
   {$EXTERNALSYM PTS_VERIFY_CTX}
@@ -15334,11 +15334,11 @@ _des_cblock = DES_cblock
   {$ENDIF}
   {$EXTERNALSYM SRP_user_pwd}
   SRP_user_pwd = record
-	  id  : PIdAnsiChar;
-   	s : PBIGNUM;
-   	v : PBIGNUM;
-	  g : PBIGNUM;
-	  N : PBIGNUM;
+    id  : PIdAnsiChar;
+     s : PBIGNUM;
+     v : PBIGNUM;
+    g : PBIGNUM;
+    N : PBIGNUM;
     info : PIdAnsiChar;
   end;
   {$EXTERNALSYM PSRP_user_pwd}
@@ -15357,13 +15357,13 @@ _des_cblock = DES_cblock
   {$ENDIF}
   {$EXTERNALSYM SRP_VBASE}
   SRP_VBASE = record
-	  users_pwd : PSTACK_OF_SRP_user_pwd;
-	  gN_cache : PSTACK_OF_SRP_gN_cache;
+    users_pwd : PSTACK_OF_SRP_user_pwd;
+    gN_cache : PSTACK_OF_SRP_gN_cache;
 //* to simulate a user */
     seed_key : PIdAnsiChar;
     default_g : PBIGNUM;
     default_N : PBIGNUM;
-	end;
+  end;
   {$EXTERNALSYM PSRP_VBASE}
   PSRP_VBASE = ^SRP_VBASE;
 
@@ -15419,11 +15419,11 @@ _des_cblock = DES_cblock
     id: TIdC_ULONG; // id, 4 bytes, first is version
 
     //* changed in 0.9.9: these four used to be portions of a single value 'algorithms' */
-    algorithm_mkey : TIdC_ULONG;	//* key exchange algorithm */
-    algorithm_auth : TIdC_ULONG;	//* server authentication */
-    algorithm_enc : TIdC_ULONG;	//* symmetric encryption */
-    algorithm_mac : TIdC_ULONG;	//* symmetric authentication */
-    algorithm_ssl : TIdC_ULONG;	//* (major) protocol version */
+    algorithm_mkey : TIdC_ULONG;  //* key exchange algorithm */
+    algorithm_auth : TIdC_ULONG;  //* server authentication */
+    algorithm_enc : TIdC_ULONG;  //* symmetric encryption */
+    algorithm_mac : TIdC_ULONG;  //* symmetric authentication */
+    algorithm_ssl : TIdC_ULONG;  //* (major) protocol version */
     algo_strength: TIdC_ULONG; // strength and export flags
     algorithm2: TIdC_ULONG;// Extra flags
     strength_bits: TIdC_INT;  // Number of bits really used
@@ -15465,43 +15465,43 @@ _des_cblock = DES_cblock
     krb5_client_princ: array[0..SSL_MAX_KRB5_PRINCIPAL_LENGTH-1] of Byte;
     {$ENDIF}
 {$ifndef OPENSSL_NO_PSK}
-	  psk_identity_hint : PIdAnsiChar;
-	  psk_identity : PIdAnsiChar;
+    psk_identity_hint : PIdAnsiChar;
+    psk_identity : PIdAnsiChar;
 {$endif}
     not_resumable: TIdC_INT;
     // The cert is the certificate used to establish this connection
     sess_cert :  PSESS_CERT;
 
-	//* This is the cert for the other end.
-	// * On clients, it will be the same as sess_cert->peer_key->x509
-	// * (the latter is not enough as sess_cert is not retained
-	// * in the external representation of sessions, see ssl_asn1.c). */
-	  peer : PX509;
-	//* when app_verify_callback accepts a session where the peer's certificate
-	// * is not ok, we must remember the error for session reuse: */
-	  verify_result : TIdC_LONG; //* only for servers */
-	  references : TIdC_INT;
-	  timeout : TIdC_LONG;
-	  time : TIdC_LONG;
-	  compress_meth : TIdC_UINT;	//* Need to lookup the method */
+  //* This is the cert for the other end.
+  // * On clients, it will be the same as sess_cert->peer_key->x509
+  // * (the latter is not enough as sess_cert is not retained
+  // * in the external representation of sessions, see ssl_asn1.c). */
+    peer : PX509;
+  //* when app_verify_callback accepts a session where the peer's certificate
+  // * is not ok, we must remember the error for session reuse: */
+    verify_result : TIdC_LONG; //* only for servers */
+    references : TIdC_INT;
+    timeout : TIdC_LONG;
+    time : TIdC_LONG;
+    compress_meth : TIdC_UINT;  //* Need to lookup the method */
 
-	  cipher : PSSL_CIPHER;
-	  cipher_id : TIdC_ULONG;	//* when ASN.1 loaded, this
-					// * needs to be used to load
-					// * the 'cipher' structure */
+    cipher : PSSL_CIPHER;
+    cipher_id : TIdC_ULONG;  //* when ASN.1 loaded, this
+          // * needs to be used to load
+          // * the 'cipher' structure */
     ciphers : PSTACK_OF_SSL_CIPHER; //* shared ciphers? */
     ex_data : CRYPTO_EX_DATA; // application specific data */
-	//* These are used to make removal of session-ids more
-	// * efficient and to implement a maximum cache size. */
-	  prev, next : PSSL_SESSION;
+  //* These are used to make removal of session-ids more
+  // * efficient and to implement a maximum cache size. */
+    prev, next : PSSL_SESSION;
 
     {$IFNDEF OPENSSL_NO_TLSEXT}
     tlsext_hostname : PIdAnsiChar;
       {$IFDEF OPENSSL_NO_EC}
-	  tlsext_ecpointformatlist_length : size_t;
-	  tlsext_ecpointformatlist : PIdAnsiChar; //* peer's list */
-	  tlsext_ellipticcurvelist_length : size_t;
-	  tlsext_ellipticcurvelist : PIdAnsiChar; //* peer's list */
+    tlsext_ecpointformatlist_length : size_t;
+    tlsext_ecpointformatlist : PIdAnsiChar; //* peer's list */
+    tlsext_ellipticcurvelist_length : size_t;
+    tlsext_ellipticcurvelist : PIdAnsiChar; //* peer's list */
       {$ENDIF} //* OPENSSL_NO_EC */
 
  //* RFC4507 info */
@@ -15510,7 +15510,7 @@ _des_cblock = DES_cblock
     tlsext_tick_lifetime_hint : TIdC_LONG;//* Session lifetime hint in seconds */
     {$ENDIF}
 {$ifndef OPENSSL_NO_SRP}
-	  srp_username : PIdAnsiChar;
+    srp_username : PIdAnsiChar;
 {$endif}
   end;
   {$ENDIF}
@@ -15521,24 +15521,24 @@ _des_cblock = DES_cblock
 
   {$EXTERNALSYM SRP_CTX}
   SRP_CTX = record
-	//* param for all the callbacks */
-	  SRP_cb_arg : Pointer;
-	//* set client Hello login callback */
+  //* param for all the callbacks */
+    SRP_cb_arg : Pointer;
+  //* set client Hello login callback */
     TLS_ext_srp_username_callback : function(para1 : PSSL; para2 : TIdC_INT; para3 : Pointer) : TIdC_INT cdecl;
-	//int (*TLS_ext_srp_username_callback)(SSL *, int *, void *);
-	//* set SRP N/g param callback for verification */
+  //int (*TLS_ext_srp_username_callback)(SSL *, int *, void *);
+  //* set SRP N/g param callback for verification */
     SRP_verify_param_callback : function(para1 : PSSL; para2 : Pointer) : TIdC_INT cdecl;
-//	int (*SRP_verify_param_callback)(SSL *, void *);
-	//* set SRP client passwd callback */
+//  int (*SRP_verify_param_callback)(SSL *, void *);
+  //* set SRP client passwd callback */
     SRP_give_srp_client_pwd_callback : function(para1 : PSSL; para2 : Pointer) : PIdAnsiChar cdecl;
-  //	char *(*SRP_give_srp_client_pwd_callback)(SSL *, void *);
+  //  char *(*SRP_give_srp_client_pwd_callback)(SSL *, void *);
     login : PIdAnsiChar;
-   	N, g, s, B, A : PBIGNUM;
-   	_a, _b, v : PBIGNUM;
-	  info : PIdAnsiChar;
-	  strength : TIdC_INT;
+     N, g, s, B, A : PBIGNUM;
+     _a, _b, v : PBIGNUM;
+    info : PIdAnsiChar;
+    strength : TIdC_INT;
     srp_Mask : TIdC_ULONG;
-	end;
+  end;
   {$EXTERNALSYM PSRP_CTX}
   PSRP_CTX = ^SRP_CTX;
 {$endif}
@@ -15649,14 +15649,14 @@ _des_cblock = DES_cblock
   {$EXTERNALSYM PSSL_CTX_info_callback}
   PSSL_CTX_info_callback = procedure (const ssl : PSSL; _type, val : TIdC_INT); cdecl; // used if SSL's info_callback is NULL
 //int (*tlsext_ticket_key_cb)(SSL *ssl,
-//					unsigned char *name, unsigned char *iv,
-//					EVP_CIPHER_CTX *ectx,
-//					HMAC_CTX *hctx, int enc);
+//          unsigned char *name, unsigned char *iv,
+//          EVP_CIPHER_CTX *ectx,
+//          HMAC_CTX *hctx, int enc);
   {$EXTERNALSYM Ptlsext_ticket_key_cb}
   Ptlsext_ticket_key_cb = function (ssl : PSSL; name, iv : PIdAnsiChar;
     ectx : PEVP_CIPHER_CTX;
     hctx : PHMAC_CTX; enc : TIdC_INT) : TIdC_INT; cdecl;
-//	int (*tlsext_status_cb)(SSL *ssl, void *arg);
+//  int (*tlsext_status_cb)(SSL *ssl, void *arg);
   {$EXTERNALSYM Ptlsext_status_cb}
   Ptlsext_status_cb = function (ssl : PSSL; arg : Pointer) : TIdC_INT; cdecl;
   {$EXTERNALSYM SSL_CTX_stats}
@@ -15782,15 +15782,15 @@ _des_cblock = DES_cblock
     {$ENDIF}
 
     quiet_shutdown : TIdC_INT;
-	//* Maximum amount of data to send in one fragment.
-	// * actual record size can be more than this due to
-	// * padding and MAC overheads.
-	// */
-	  max_send_fragment : TIdC_UINT;
+  //* Maximum amount of data to send in one fragment.
+  // * actual record size can be more than this due to
+  // * padding and MAC overheads.
+  // */
+    max_send_fragment : TIdC_UINT;
     {$IFNDEF OPENSSL_ENGINE}
-	///* Engine to pass requests for client certs to
-	// */
-	  client_cert_engine : PENGINE;
+  ///* Engine to pass requests for client certs to
+  // */
+    client_cert_engine : PENGINE;
     {$ENDIF}
     {$IFNDEF OPENSSL_NO_TLSEXT}
 //* TLS extensions servername callback */
@@ -15800,70 +15800,70 @@ _des_cblock = DES_cblock
     tlsext_tick_key_name : array [0..(16-1)] of TIdAnsiChar;
     tlsext_tick_hmac_key : array [0..(16-1)] of TIdAnsiChar;
     tlsext_tick_aes_key : array [0..(16-1)] of TIdAnsiChar;
-	//* Callback to support customisation of ticket key setting */
- //	int (*tlsext_ticket_key_cb)(SSL *ssl,
- //					unsigned char *name, unsigned char *iv,
- //					EVP_CIPHER_CTX *ectx,
- //					HMAC_CTX *hctx, int enc);
+  //* Callback to support customisation of ticket key setting */
+ //  int (*tlsext_ticket_key_cb)(SSL *ssl,
+ //          unsigned char *name, unsigned char *iv,
+ //          EVP_CIPHER_CTX *ectx,
+ //          HMAC_CTX *hctx, int enc);
     tlsext_ticket_key_cb : Ptlsext_ticket_key_cb;
-	//* certificate status request info */
-	//* Callback for status request */
-	//int (*tlsext_status_cb)(SSL *ssl, void *arg);
+  //* certificate status request info */
+  //* Callback for status request */
+  //int (*tlsext_status_cb)(SSL *ssl, void *arg);
     tlsext_status_cb : Ptlsext_status_cb;
-	  tlsext_status_arg : Pointer;
+    tlsext_status_arg : Pointer;
     {$ENDIF}
-	//* draft-rescorla-tls-opaque-prf-input-00.txt information */
+  //* draft-rescorla-tls-opaque-prf-input-00.txt information */
      tlsext_opaque_prf_input_callback : function(para1 : PSSL; peerinput : Pointer; len : size_t; arg : Pointer ) : TIdC_INT cdecl;
-	//int (*tlsext_opaque_prf_input_callback)(SSL *, void *peerinput, size_t len, void *arg);
+  //int (*tlsext_opaque_prf_input_callback)(SSL *, void *peerinput, size_t len, void *arg);
      tlsext_opaque_prf_input_callback_arg : Pointer;
 
 {$ifndef OPENSSL_NO_PSK}
-	   psk_identity_hint : PIdAnsiChar;
+     psk_identity_hint : PIdAnsiChar;
      psk_client_callback : function (ssl : PSSL; hint : PIdAnsiChar;
        identity : PIdAnsiChar; max_identity_len : TIdC_UINT;
        psk : PIdAnsiChar; max_psk_len : TIdC_UINT ) : TIdC_UINT cdecl;
- //	unsigned int (*psk_client_callback)(SSL *ssl, const char *hint, char *identity,
-//		unsigned int max_identity_len, unsigned char *psk,
-//		unsigned int max_psk_len);
+ //  unsigned int (*psk_client_callback)(SSL *ssl, const char *hint, char *identity,
+//    unsigned int max_identity_len, unsigned char *psk,
+//    unsigned int max_psk_len);
      psk_server_callback : function (ssl : PSSL; identity, psk : PIdAnsiChar; max_psk_len : TIdC_UINT) : TIdC_UINT cdecl;
-//	unsigned int (*psk_server_callback)(SSL *ssl, const char *identity,
-//		unsigned char *psk, unsigned int max_psk_len);
+//  unsigned int (*psk_server_callback)(SSL *ssl, const char *identity,
+//    unsigned char *psk, unsigned int max_psk_len);
 {$endif}
 
 {$ifndef OPENSSL_NO_BUF_FREELISTS}
-	  freelist_max_len : TIdC_UINT;
-	  wbuf_freelist : Pssl3_buf_freelist_st;
-	  rbuf_freelist : Pssl3_buf_freelist_st;
+    freelist_max_len : TIdC_UINT;
+    wbuf_freelist : Pssl3_buf_freelist_st;
+    rbuf_freelist : Pssl3_buf_freelist_st;
 {$endif}
 {$ifndef OPENSSL_NO_SRP}
-	  srp_ctx : SRP_CTX; //* ctx for SRP authentication */
+    srp_ctx : SRP_CTX; //* ctx for SRP authentication */
 {$endif}
 
 {$ifndef OPENSSL_NO_TLSEXT}
 //# ifndef OPENSSL_NO_NEXTPROTONEG
-	//* Next protocol negotiation information */
-	//* (for experimental NPN extension). */
+  //* Next protocol negotiation information */
+  //* (for experimental NPN extension). */
 
-	//* For a server, this contains a callback function by which the set of
-	// * advertised protocols can be provided. */
+  //* For a server, this contains a callback function by which the set of
+  // * advertised protocols can be provided. */
     next_protos_advertised_cb : function(s : PSSL; out but : PIdAnsiChar;
      out len : TIdC_UINT; arg : Pointer) : TIdC_INT cdecl;
-//	int (*next_protos_advertised_cb)(SSL *s, const unsigned char **buf,
-//			                 unsigned int *len, void *arg);
-	  next_protos_advertised_cb_arg : Pointer;
-	//* For a client, this contains a callback function that selects the
-	// * next protocol from the list provided by the server. */
+//  int (*next_protos_advertised_cb)(SSL *s, const unsigned char **buf,
+//                       unsigned int *len, void *arg);
+    next_protos_advertised_cb_arg : Pointer;
+  //* For a client, this contains a callback function that selects the
+  // * next protocol from the list provided by the server. */
     next_proto_select_cb : function(s : PSSL; out _out : PIdAnsiChar;
       outlen : PIdAnsiChar;
       _in : PIdAnsiChar;
       inlen : TIdC_UINT;
       arg : Pointer) : TIdC_INT cdecl;
-//	int (*next_proto_select_cb)(SSL *s, unsigned char **out,
-//				    unsigned char *outlen,
-//				    const unsigned char *in,
-//				    unsigned int inlen,
-//				    void *arg);
-	  next_proto_select_cb_arg : Pointer;
+//  int (*next_proto_select_cb)(SSL *s, unsigned char **out,
+//            unsigned char *outlen,
+//            const unsigned char *in,
+//            unsigned int inlen,
+//            void *arg);
+    next_proto_select_cb_arg : Pointer;
 //# endif
         //* SRTP profiles we are willing to do from RFC 5764 */
       srtp_profiles : PSTACK_OF_SRTP_PROTECTION_PROFILE;
@@ -15914,9 +15914,9 @@ _des_cblock = DES_cblock
     // test instead of an "init" member.
     server : TIdC_INT;  // are we the server side? - mostly used by SSL_clear
     new_session : TIdC_INT;//* Generate a new session or reuse an old one.
-	                 //* NB: For servers, the 'new' session may actually be a previously
-	                 //* cached session or even the previous session unless
-	                 //* SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION is set */
+                   //* NB: For servers, the 'new' session may actually be a previously
+                   //* cached session or even the previous session unless
+                   //* SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION is set */
     quiet_shutdown : TIdC_INT;  // don't send shutdown packets
     shutdown : TIdC_INT;        // we have shut things down, 0x01 sent, 0x02
                                 // for received
@@ -15947,9 +15947,9 @@ _des_cblock = DES_cblock
     cipher_list : PSTACK_OF_SSL_CIPHER;
     cipher_list_by_id : PSTACK_OF_SSL_CIPHER;
 
-	//* These are the ones being used, the ones in SSL_SESSION are
-	// * the ones to be 'copied' into these ones */
-	  mac_flags : TIdC_INT;
+  //* These are the ones being used, the ones in SSL_SESSION are
+  // * the ones to be 'copied' into these ones */
+    mac_flags : TIdC_INT;
     // These are the ones being used, the ones in SSL_SESSION are
     // the ones to be 'copied' into these ones
     enc_read_ctx : PEVP_CIPHER_CTX;  // cryptographic state
@@ -15994,13 +15994,13 @@ _des_cblock = DES_cblock
       max_identity_len : TIdC_UINT;
       psk : PIdAnsiChar;
       max_psk_len : TIdC_UINT) : TIdC_UINT cdecl;
-//	unsigned int (*psk_client_callback)(SSL *ssl, const char *hint, char *identity,
-//		unsigned int max_identity_len, unsigned char *psk,
-//		unsigned int max_psk_len);
+//  unsigned int (*psk_client_callback)(SSL *ssl, const char *hint, char *identity,
+//    unsigned int max_identity_len, unsigned char *psk,
+//    unsigned int max_psk_len);
       psk_server_callback : function(ssl : PSSL; identity : PIdAnsiChar;
         psk : PIdAnsiChar; max_psk_len : TIdC_UINT) : TIdC_UINT cdecl;
-//	unsigned int (*psk_server_callback)(SSL *ssl, const char *identity,
-//		unsigned char *psk, unsigned int max_psk_len);
+//  unsigned int (*psk_server_callback)(SSL *ssl, const char *identity,
+//    unsigned char *psk, unsigned int max_psk_len);
 {$endif}
     ctx : PSSL_CTX;
     // set this flag to 1 and a sleep(1) is put into all SSL_read()
@@ -16029,55 +16029,55 @@ _des_cblock = DES_cblock
                        //   1 : prepare 2, allow last ack just after in server callback.
                        //   2 : don't call servername callback, no ack in server hello
                        //*/
-	//* certificate status request info */
-	//* Status type or -1 if no status type */
-	  tlsext_status_type : TIdC_INT;
-	//* Expect OCSP CertificateStatus message */
-	  tlsext_status_expected : TIdC_INT;
+  //* certificate status request info */
+  //* Status type or -1 if no status type */
+    tlsext_status_type : TIdC_INT;
+  //* Expect OCSP CertificateStatus message */
+    tlsext_status_expected : TIdC_INT;
 
 {$ifndef OPENSSL_NO_EC}
-	  tlsext_ecpointformatlist_length : size_t;
-	  tlsext_ecpointformatlist : PIdAnsiChar; //* our list */
+    tlsext_ecpointformatlist_length : size_t;
+    tlsext_ecpointformatlist : PIdAnsiChar; //* our list */
     tlsext_ellipticcurvelist_length : size_t;
     tlsext_ellipticcurvelist : PIdAnsiChar; //* our list */
 {$endif} //* OPENSSL_NO_EC */
 
 
-	//* draft-rescorla-tls-opaque-prf-input-00.txt information to be used for handshakes */
-	tlsext_opaque_prf_input : Pointer;
-	 tlsext_opaque_prf_input_len : size_t;
+  //* draft-rescorla-tls-opaque-prf-input-00.txt information to be used for handshakes */
+  tlsext_opaque_prf_input : Pointer;
+   tlsext_opaque_prf_input_len : size_t;
 
-	//* TLS Session Ticket extension override */
-	 tlsext_session_ticket : PTLS_SESSION_TICKET_EXT;
+  //* TLS Session Ticket extension override */
+   tlsext_session_ticket : PTLS_SESSION_TICKET_EXT;
 
-	//* TLS Session Ticket extension callback */
-	 tls_session_ticket_ext_cb : tls_session_ticket_ext_cb_fn;
-	 tls_session_ticket_ext_cb_arg : Pointer;
+  //* TLS Session Ticket extension callback */
+   tls_session_ticket_ext_cb : tls_session_ticket_ext_cb_fn;
+   tls_session_ticket_ext_cb_arg : Pointer;
 
-	//* TLS pre-shared secret session resumption */
-	 tls_session_secret_cb : tls_session_secret_cb_fn;
-	 tls_session_secret_cb_arg : Pointer;
+  //* TLS pre-shared secret session resumption */
+   tls_session_secret_cb : tls_session_secret_cb_fn;
+   tls_session_secret_cb_arg : Pointer;
 
-	initial_ctx : PSSL_CTX; //* initial ctx, used to store sessions */
+  initial_ctx : PSSL_CTX; //* initial ctx, used to store sessions */
 
 {$ifndef OPENSSL_NO_NEXTPROTONEG}
-	///* Next protocol negotiation. For the client, this is the protocol that
-	// * we sent in NextProtocol and is set when handling ServerHello
-	// * extensions.
-	// *
-	// * For a server, this is the client's selected_protocol from
-	// * NextProtocol and is set when handling the NextProtocol message,
-	// * before the Finished message. */
-	next_proto_negotiated : PIdAnsiChar;
-	next_proto_negotiated_len : Byte;
+  ///* Next protocol negotiation. For the client, this is the protocol that
+  // * we sent in NextProtocol and is set when handling ServerHello
+  // * extensions.
+  // *
+  // * For a server, this is the client's selected_protocol from
+  // * NextProtocol and is set when handling the NextProtocol message,
+  // * before the Finished message. */
+  next_proto_negotiated : PIdAnsiChar;
+  next_proto_negotiated_len : Byte;
 {$endif}
 
-	//* OCSP status request only */
+  //* OCSP status request only */
     tlsext_ocsp_ids : PSTACK_OF_OCSP_RESPID;//STACK_OF(OCSP_RESPID) *tlsext_ocsp_ids;
-	  tlsext_ocsp_exts : PX509_EXTENSIONS;
-	//* OCSP response received or to be sent */
-	  tlsext_ocsp_resp : PIdAnsiChar;
-	  tlsext_ocsp_resplen : TIdC_INT;
+    tlsext_ocsp_exts : PX509_EXTENSIONS;
+  //* OCSP response received or to be sent */
+    tlsext_ocsp_resp : PIdAnsiChar;
+    tlsext_ocsp_resplen : TIdC_INT;
     //* RFC4507 session ticket expected to be received or sent */
     tlsext_ticket_expected : TIdC_INT;
     _initial_ctx : PSSL_CTX; //* initial ctx, used to store sessions */
@@ -16186,7 +16186,7 @@ _des_cblock = DES_cblock
     //* The value of 'extra' when the buffers were initialized */
     init_extra : TIdC_INT;
     rbuf : PSSL3_BUFFER;    //* read IO goes into here */
-    wbuf : PSSL3_BUFFER;	//* write IO goes into here */
+    wbuf : PSSL3_BUFFER;  //* write IO goes into here */
     rrec : PSSL3_RECORD;    //* each decoded record goes in here */
     wrec : PSSL3_RECORD;    //* goes out from here */
     // storage for Alert/Handshake protocol data received but not
@@ -16303,15 +16303,15 @@ _des_cblock = DES_cblock
   //
   {$EXTERNALSYM dtls1_retransmit_state} 
   dtls1_retransmit_state = record
-	  enc_write_ctx : PEVP_CIPHER_CTX;	//* cryptographic state */
-   	write_hash : PEVP_MD;		//* used for mac generation */
+    enc_write_ctx : PEVP_CIPHER_CTX;  //* cryptographic state */
+     write_hash : PEVP_MD;    //* used for mac generation */
 {$IFNDEF OPENSSL_NO_COMP}
-   	compress : COMP_CTX;				//* compression */
+     compress : COMP_CTX;        //* compression */
 {$ELSE}
-   	compress : PIdAnsiChar;
+     compress : PIdAnsiChar;
 {$ENDIF}
-   	session : PSSL_SESSION;
-	  epoch : TIdC_USHORT;
+     session : PSSL_SESSION;
+    epoch : TIdC_USHORT;
   end;
   {$EXTERNALSYM Pdtls1_retransmit_state}   
   Pdtls1_retransmit_state = ^dtls1_retransmit_state;
@@ -16331,7 +16331,7 @@ _des_cblock = DES_cblock
     frag_off : TIdC_ULONG;
     frag_len : TIdC_ULONG;
     is_ccs : TIdC_UINT;
-    //	struct dtls1_retransmit_state saved_retransmit_state;
+    //  struct dtls1_retransmit_state saved_retransmit_state;
     saved_retransmit_state : dtls1_retransmit_state;
   end;
   {$EXTERNALSYM ccs_header_st}    
@@ -16378,8 +16378,8 @@ _des_cblock = DES_cblock
     handshake_write_seq : TIdC_USHORT;
     next_handshake_write_seq : TIdC_USHORT;
     handshake_read_seq : TIdC_USHORT;
-	//* save last sequence number for retransmissions */
-   	last_write_sequence : array [0..8-1] of byte;
+  //* save last sequence number for retransmissions */
+     last_write_sequence : array [0..8-1] of byte;
 
     // Received handshake records (processed and unprocessed)
     unprocessed_rcds : record_pqueue;
@@ -16389,24 +16389,24 @@ _des_cblock = DES_cblock
     // Buffered (sent) handshake records
     sent_messages : pqueue;
    ///* Buffered application records.
-	 //* Only for records between CCS and Finished
-	 //* to prevent either protocol violation or
-	 //* unnecessary message loss.
-	 //*/
-	  buffered_app_data : record_pqueue;
+   //* Only for records between CCS and Finished
+   //* to prevent either protocol violation or
+   //* unnecessary message loss.
+   //*/
+    buffered_app_data : record_pqueue;
 
-	///* Is set when listening for new connections with dtls1_listen() */
-	  listen : TIdC_UINT;
+  ///* Is set when listening for new connections with dtls1_listen() */
+    listen : TIdC_UINT;
 
     mtu : TIdC_UINT; // max wire packet size
     w_msg_hdr : hm_header;
     r_msg_hdr : hm_header;
     timeout :  dtls1_timeout_st;
-    	//* Indicates when the last handshake msg sent will timeout */
+      //* Indicates when the last handshake msg sent will timeout */
     next_timeout : timeval;
 
-	//* Timeout duration */
-	   timeout_duration : TIdC_USHORT;
+  //* Timeout duration */
+     timeout_duration : TIdC_USHORT;
 
     // storage for Alert/Handshake protocol data received but not
     // yet processed by ssl3_read_bytes:
@@ -16468,10 +16468,10 @@ type
 
   {$EXTERNALSYM EVP_CIPHER_do_all_fn}
   EVP_CIPHER_do_all_fn = procedure(ciph : PEVP_CIPHER;
-		from : PIdAnsiChar; _to : PIdAnsiChar; x : Pointer) cdecl;
+    from : PIdAnsiChar; _to : PIdAnsiChar; x : Pointer) cdecl;
   {$EXTERNALSYM EVP_MD_do_all_fn}
   EVP_MD_do_all_fn = procedure(ciph : PEVP_CIPHER;
-		from: PIdAnsiChar; _to: PIdAnsiChar; x : Pointer) cdecl;
+    from: PIdAnsiChar; _to: PIdAnsiChar; x : Pointer) cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_public_pub_decode}
   EVP_PKEY_asn1_set_public_pub_decode = function(pk : PEVP_PKEY; pub : PX509_PUBKEY) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_public_pub_encode}
@@ -16480,7 +16480,7 @@ type
   EVP_PKEY_asn1_set_public_pub_cmp = function (a : PEVP_PKEY; b : PEVP_PKEY) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_public_pub_print}
   EVP_PKEY_asn1_set_public_pub_print = function(_out : PBIO; pkey : PEVP_PKEY;  indent : TIdC_INT;
-		pctx : PASN1_PCTX) : TIdC_INT cdecl;
+    pctx : PASN1_PCTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_public_pub_pkey_size}
   EVP_PKEY_asn1_set_public_pub_pkey_size = function(pk : PEVP_PKEY) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_public_pkey_bits}
@@ -16491,10 +16491,10 @@ type
   EVP_PKEY_asn1_set_private_priv_encode = function (p8 : PPKCS8_PRIV_KEY_INFO; pk : PEVP_PKEY): TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_private_priv_print}
   EVP_PKEY_asn1_set_private_priv_print = function (_out : PBIO; pkey : PEVP_PKEY; indent : TIdC_INT;
-	  pctx : PASN1_PCTX) : TIdC_INT cdecl;
+    pctx : PASN1_PCTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_param_param_decode}
   EVP_PKEY_asn1_set_param_param_decode = function(pkey : PEVP_PKEY;
-		pder : PPIdAnsiChar; derlen : TIdC_INT): TIdC_INT cdecl;
+    pder : PPIdAnsiChar; derlen : TIdC_INT): TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_param_param_encode}
   EVP_PKEY_asn1_set_param_param_encode = function(pkey : PEVP_PKEY; pder : PPIdAnsiChar) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_param_param_missing}
@@ -16505,12 +16505,12 @@ type
   EVP_PKEY_asn1_set_param_param_cmp = function(a : PEVP_PKEY; b : PEVP_PKEY): TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_param_param_print}
   EVP_PKEY_asn1_set_param_param_print = function(_out : PBIO; pkey : PEVP_PKEY; indent : TIdC_INT;
-		pctx : PASN1_PCTX) : TIdC_INT cdecl;
+    pctx : PASN1_PCTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_free_pkey_free}
   EVP_PKEY_asn1_set_free_pkey_free = procedure(pkey : PEVP_PKEY) cdecl;
   {$EXTERNALSYM EVP_PKEY_asn1_set_ctr_pkey_ctrl}
   EVP_PKEY_asn1_set_ctr_pkey_ctrl = function(pkey : PEVP_PKEY; op : TIdC_INT;
-							arg1 : TIdC_LONG; arg2 : Pointer) : TIdC_INT cdecl;
+              arg1 : TIdC_LONG; arg2 : Pointer) : TIdC_INT cdecl;
 
   {$EXTERNALSYM EVP_PKEY_gen_cb}
 
@@ -16539,18 +16539,18 @@ type
   EVP_PKEY_meth_set_verify_verify_init = function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_verify_verify}
   EVP_PKEY_meth_set_verify_verify = function(ctx : PEVP_PKEY_CTX; sig : PIdAnsiChar;  siglen : size_t;
-					tbs : PIdAnsiChar;  tbslen : size_t) : TIdC_INT cdecl;
+          tbs : PIdAnsiChar;  tbslen : size_t) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_verify_recover_verify_recover_init}
   EVP_PKEY_meth_set_verify_recover_verify_recover_init = function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_verify_recover_verify_recover}
   EVP_PKEY_meth_set_verify_recover_verify_recover = function(ctx : PEVP_PKEY_CTX;
-					sig : PIdAnsiChar; siglen : Psize_t;
-					tbs: PIdAnsiChar;  tbslen : size_t) : TIdC_INT cdecl;
+          sig : PIdAnsiChar; siglen : Psize_t;
+          tbs: PIdAnsiChar;  tbslen : size_t) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_signctx_signctx_init}
   EVP_PKEY_meth_set_signctx_signctx_init = function(ctx : PEVP_PKEY_CTX; mctx : PEVP_MD_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_signctx_signctx}
   EVP_PKEY_meth_set_signctx_signctx = function(ctx : PEVP_PKEY_CTX; sig : PIdAnsiChar; siglen : size_t;
-					 mctx : PEVP_MD_CTX) : TIdC_INT cdecl;
+           mctx : PEVP_MD_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_verifyctx_verifyctx_init}
   EVP_PKEY_meth_set_verifyctx_verifyctx_init = function : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_verifyctx_verifyctx}
@@ -16559,12 +16559,12 @@ type
   EVP_PKEY_meth_set_encrypt_encrypt_init = function( ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_encrypt_encryptfn}
   EVP_PKEY_meth_set_encrypt_encryptfn = function(ctx : PEVP_PKEY_CTX; _out : PIdAnsiChar; outlen : psize_t;
-	 _in : PIdAnsiChar;  inlen : size_t) : TIdC_INT cdecl;
+   _in : PIdAnsiChar;  inlen : size_t) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_decrypt_decrypt_init}
   EVP_PKEY_meth_set_decrypt_decrypt_init = function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_decrypt_decrypt}
   EVP_PKEY_meth_set_decrypt_decrypt = function(ctx : PEVP_PKEY_CTX; _out : PIdAnsiChar; outlen : psize_t;
-	 _in : PIdAnsiChar;  inlen : size_t) : TIdC_INT cdecl;
+   _in : PIdAnsiChar;  inlen : size_t) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_derive_derive_init}
   EVP_PKEY_meth_set_derive_derive_init = function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl;
 
@@ -16574,7 +16574,7 @@ type
   EVP_PKEY_meth_set_ctrl_ctrl = function(ctx : PEVP_PKEY_CTX; _type : TIdC_INT; p1 : TIdC_INT; p2 : Pointer) : TIdC_INT cdecl;
   {$EXTERNALSYM EVP_PKEY_meth_set_ctrlctrl_str}
   EVP_PKEY_meth_set_ctrlctrl_str = function(ctx : PEVP_PKEY_CTX;
-	  _type : PIdAnsiChar; value : PIdAnsiChar) : TIdC_INT cdecl;
+    _type : PIdAnsiChar; value : PIdAnsiChar) : TIdC_INT cdecl;
 
 
 var
@@ -16810,51 +16810,51 @@ var
   EVP_DigestFinal_ex : function(ctx : PEVP_MD_CTX; md : PIdAnsiChar; var s : TIdC_UInt) : TIdC_Int cdecl = nil;
    {$EXTERNALSYM EVP_EncryptInit}
   EVP_EncryptInit : function(ctx : PEVP_CIPHER_CTX;cipher : PEVP_CIPHER;
-		key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
+    key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_EncryptInit_ex}
   EVP_EncryptInit_ex : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER; impl : PENGINE;
-		key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
+    key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_EncryptUpdate}
-  	EVP_EncryptUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
-		outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+    EVP_EncryptUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
+    outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_EncryptFinal_ex}
-	EVP_EncryptFinal_ex : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
+  EVP_EncryptFinal_ex : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_EncryptFinal}
-	EVP_EncryptFinal : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl: PIdC_INT) : TIdC_INT cdecl = nil;
+  EVP_EncryptFinal : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl: PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptInit}
-	EVP_DecryptInit : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER;
-		key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
+  EVP_DecryptInit : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER;
+    key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptInit_ex}
   EVP_DecryptInit_ex : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER; impl : PENGINE;
-		key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
+    key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptUpdate}
   EVP_DecryptUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
-		outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+    outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptFinal}
   EVP_DecryptFinal : function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptFinal_ex}
   EVP_DecryptFinal_ex : function(ctx : PEVP_CIPHER_CTX; outm: PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherInit}
   EVP_CipherInit : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER;
-	  key : PIdAnsiChar; iv : PIdAnsiChar;
-		enc : TIdC_INT) : TIdC_INT cdecl = nil;
+    key : PIdAnsiChar; iv : PIdAnsiChar;
+    enc : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherInit_ex}
   EVP_CipherInit_ex : function(ctx : PEVP_CIPHER_CTX; cipher: PEVP_CIPHER; impl : PENGINE;
-		key : PIdAnsiChar; iv : PIdAnsiChar;
-		enc : TIdC_INT) : TIdC_INT cdecl = nil;
+    key : PIdAnsiChar; iv : PIdAnsiChar;
+    enc : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherUpdate}
   EVP_CipherUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
-		outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+    outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherFinal}
   EVP_CipherFinal : function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherFinal_ex}
   EVP_CipherFinal_ex: function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_SignFinal}
   EVP_SignFinal : function(ctx : PEVP_MD_CTX; md : PIdAnsiChar; s : PIdC_INT;
-		pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
+    pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_VerifyFinal}
   EVP_VerifyFinal : function(ctx : PEVP_MD_CTX; sigbuf : PIdAnsiChar;
-	  siglen : TIdC_UINT; pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
+    siglen : TIdC_UINT; pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DigestSignInit}
   EVP_DigestSignInit : function(ctx : PEVP_MD_CTX; pctx : PPEVP_PKEY_CTX;
     _type : PEVP_MD; e : PENGINE; pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
@@ -16865,34 +16865,34 @@ var
   EVP_DigestVerifyInit : function(ctx : PEVP_MD_CTX; pctx : PPEVP_PKEY_CTX;
     _type : PEVP_MD;e : PENGINE; pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DigestVerifyFinal}
-	EVP_DigestVerifyFinal: function(ctx : PEVP_MD_CTX;
+  EVP_DigestVerifyFinal: function(ctx : PEVP_MD_CTX;
     sig : PIdAnsiChar;  siglen : size_t) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_OpenInit}
   EVP_OpenInit : function(ctx : PEVP_CIPHER_CTX; _type : PEVP_CIPHER;
-		ek : PIdAnsiChar; ekl : TIdC_INT; iv : PIdAnsiChar;
-		priv : PEVP_PKEY) : TIdC_INT cdecl = nil;
+    ek : PIdAnsiChar; ekl : TIdC_INT; iv : PIdAnsiChar;
+    priv : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_OpenFinal}
-	EVP_OpenFinal : function (ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
+  EVP_OpenFinal : function (ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_SealInit}
   EVP_SealInit : function(ctx : PEVP_CIPHER_CTX; _type : PEVP_CIPHER;
-	  ek : PPIdAnsiChar; ekl : PIdC_INT; iv : PIdAnsiChar;
-		pubk : PPEVP_PKEY; npubk : TIdC_INT) : TIdC_INT cdecl = nil;
+    ek : PPIdAnsiChar; ekl : PIdC_INT; iv : PIdAnsiChar;
+    pubk : PPEVP_PKEY; npubk : TIdC_INT) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_SealFinal}
   EVP_SealFinal : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
    {$EXTERNALSYM EVP_EncodeInit}
   EVP_EncodeInit : procedure(ctx : PEVP_ENCODE_CTX) cdecl = nil;
   {$EXTERNALSYM EVP_EncodeUpdate}
   EVP_EncodeUpdate : procedure(ctx : PEVP_ENCODE_CTX; _out : PIdAnsiChar; outl : PIdC_INT;
-		_in : PIdAnsiChar; inl : TIdC_INT) cdecl = nil;
+    _in : PIdAnsiChar; inl : TIdC_INT) cdecl = nil;
   {$EXTERNALSYM EVP_EncodeFinal}
   EVP_EncodeFinal : procedure(ctx : PEVP_ENCODE_CTX; _out: PIdAnsiChar; outl : PIdC_INT) cdecl = nil;
     {$EXTERNALSYM EVP_EncodeBlock}
   EVP_EncodeBlock : function(t: PIdAnsiChar; f: PIdAnsiChar; n : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecodeInit}
-	EVP_DecodeInit : procedure(ctx : PEVP_ENCODE_CTX) cdecl = nil;
+  EVP_DecodeInit : procedure(ctx : PEVP_ENCODE_CTX) cdecl = nil;
    {$EXTERNALSYM EVP_DecodeUpdate}
   EVP_DecodeUpdate : function(ctx : PEVP_ENCODE_CTX; _out : PIdAnsiChar; outl : PIdC_INT;
-		_in  : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+    _in  : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecodeFinal}
   EVP_DecodeFinal: function(ctx : PEVP_ENCODE_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecodeBlock}
@@ -16924,7 +16924,7 @@ var
   BIO_f_reliable : function : PBIO_METHOD cdecl = nil;
   {$EXTERNALSYM BIO_set_cipher}
   BIO_set_cipher : procedure (b : PBIO; c : PEVP_CIPHER; k : PIdAnsiChar;
-		i : PIdAnsiChar; enc : TIdC_INT) cdecl = nil;
+    i : PIdAnsiChar; enc : TIdC_INT) cdecl = nil;
   {$endif}
   {$EXTERNALSYM EVP_MD_CTX_init}
   EVP_MD_CTX_init : procedure(ctx : PEVP_MD_CTX) cdecl = nil;
@@ -17201,13 +17201,13 @@ var
   //long  SSL_CTX_ctrl(SSL_CTX *ctx,int cmd, long larg, void *parg);
   SSL_CTX_ctrl : function(ssl: PSSL_CTX; cmd: TIdC_INT; larg: TIdC_LONG; parg: Pointer): TIdC_LONG cdecl = nil;
   {$EXTERNALSYM SSL_ctrl}
-  //long	SSL_ctrl(SSL *ssl,int cmd, long larg, void *parg);
+  //long  SSL_ctrl(SSL *ssl,int cmd, long larg, void *parg);
   SSL_ctrl : function(ssl : PSSL; cmd : TIdC_INT; larg : TIdC_LONG; parg : Pointer) : TIdC_LONG cdecl = nil;
   {$EXTERNALSYM SSL_callback_ctrl}
-  //long	SSL_callback_ctrl(SSL *, int, void (*)(void));
+  //long  SSL_callback_ctrl(SSL *, int, void (*)(void));
   SSL_callback_ctrl : function(ssl : PSSL; cmd : TIdC_INT; fp : SSL_callback_ctrl_fp) : TIdC_LONG cdecl = nil;
   {$EXTERNALSYM SSL_CTX_callback_ctrl}
-  //long	SSL_CTX_callback_ctrl(SSL_CTX *, int, void (*)(void));
+  //long  SSL_CTX_callback_ctrl(SSL_CTX *, int, void (*)(void));
   SSL_CTX_callback_ctrl : function(ssl : PSSL_CTX; cmd : TIdC_INT; fp : SSL_callback_ctrl_fp) : TIdC_LONG cdecl = nil;
   {$EXTERNALSYM SSL_get_error}
   SSL_get_error : function(s: PSSL; ret_code: TIdC_INT): TIdC_INT cdecl = nil;
@@ -17242,11 +17242,11 @@ var
   {$EXTERNALSYM TLSv1_1_client_method}
   TLSv1_1_client_method : function : PSSL_METHOD cdecl = nil; //TLS1.1
   {$EXTERNALSYM TLSv1_2_method}
-  TLSv1_2_method : function : PSSL_METHOD cdecl = nil;		//* TLSv1.2 */
+  TLSv1_2_method : function : PSSL_METHOD cdecl = nil;    //* TLSv1.2 */
   {$EXTERNALSYM TLSv1_2_server_method}
-  TLSv1_2_server_method : function : PSSL_METHOD cdecl = nil;	//* TLSv1.2 */
+  TLSv1_2_server_method : function : PSSL_METHOD cdecl = nil;  //* TLSv1.2 */
   {$EXTERNALSYM TLSv1_2_client_method}
-  TLSv1_2_client_method : function : PSSL_METHOD cdecl = nil;	//* TLSv1.2 */
+  TLSv1_2_client_method : function : PSSL_METHOD cdecl = nil;  //* TLSv1.2 */
 
   {$EXTERNALSYM DTLSv1_method}
   DTLSv1_method : function: PSSL_METHOD cdecl = nil; // DTLSv1.0
@@ -17610,12 +17610,12 @@ var
 
   {$EXTERNALSYM EVP_PKEY_decrypt_old}
   EVP_PKEY_decrypt_old : function(dec_key : PIdAnsiChar;
-			enc_key : PIdAnsiChar; enc_key_len : TIdC_INT;
-			private_key : PEVP_PKEY) : TIdC_INT cdecl = nil;
+      enc_key : PIdAnsiChar; enc_key_len : TIdC_INT;
+      private_key : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_encrypt_old}
   EVP_PKEY_encrypt_old : function(enc_key : PIdAnsiChar;
-			key : PIdAnsiChar; key_len : TIdC_INT;
-			pub_key : PEVP_PKEY) : TIdC_INT cdecl = nil;
+      key : PIdAnsiChar; key_len : TIdC_INT;
+      pub_key : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_type}
   EVP_PKEY_type : function(_type : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_id}
@@ -17664,12 +17664,12 @@ var
 
   {$EXTERNALSYM d2i_PublicKey}
   d2i_PublicKey : function(_type : TIdC_INT; a :PPEVP_PKEY; pp : PPIdAnsiChar;
-			length : TIdC_LONG) : PEVP_PKEY cdecl = nil;
+      length : TIdC_LONG) : PEVP_PKEY cdecl = nil;
   {$EXTERNALSYM i2d_PublicKey}
   i2d_PublicKey : function(a : PEVP_PKEY; pp : PPIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM d2i_AutoPrivateKey}
   d2i_AutoPrivateKey : function(a : PPEVP_PKEY; pp : PPIdAnsiChar;
-	 length : TIdC_LONG) : PEVP_PKEY cdecl = nil;
+   length : TIdC_LONG) : PEVP_PKEY cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_copy_parameters}
   EVP_PKEY_copy_parameters : function(_to : PEVP_PKEY; from : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_missing_parameters}
@@ -17682,13 +17682,13 @@ var
   EVP_PKEY_cmp : function(a : PEVP_PKEY; b : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM   EVP_PKEY_print_public}
   EVP_PKEY_print_public : function(_out : PBIO; pkey : PEVP_PKEY;
-				indent : TIdC_INT; pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
+        indent : TIdC_INT; pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_print_private}
   EVP_PKEY_print_private : function(_out : PBIO; pkey : PEVP_PKEY;
-				indent : TIdC_INT; pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
+        indent : TIdC_INT; pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_print_params}
   EVP_PKEY_print_params : function(_out : PBIO; pkey : PEVP_PKEY;
-				indent : TIdC_INT;  pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
+        indent : TIdC_INT;  pctx : PASN1_PCTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_get_default_digest_nid}
   EVP_PKEY_get_default_digest_nid : function(pkey : PEVP_PKEY; pnid : PIdC_INT) : TIdC_INT cdecl = nil;
 
@@ -17707,37 +17707,37 @@ var
 //* PKCS5 password based encryption */
   {$EXTERNALSYM PKCS5_PBE_keyivgen}
   PKCS5_PBE_keyivgen : function(ctx : PEVP_CIPHER_CTX; pass : PIdAnsiChar; passlen : TIdC_INT;
-			  param : PASN1_TYPE; cipher : PEVP_CIPHER; md : PEVP_MD;
-			 en_de : TIdC_INT) : TIdC_INT cdecl = nil;
+        param : PASN1_TYPE; cipher : PEVP_CIPHER; md : PEVP_MD;
+       en_de : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM PKCS5_PBKDF2_HMAC_SHA1}
   PKCS5_PBKDF2_HMAC_SHA1 : function(pass : PIdAnsiChar; passlen : TIdC_INT;
-			   salt : PIdAnsiChar; saltlen : TIdC_INT; iter : TIdC_INT;
-			   keylen : TIdC_INT; _out : PIdAnsiChar) : TIdC_INT cdecl = nil;
+         salt : PIdAnsiChar; saltlen : TIdC_INT; iter : TIdC_INT;
+         keylen : TIdC_INT; _out : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM PKCS5_PBKDF2_HMAC}
   PKCS5_PBKDF2_HMAC : function(pass : PIdAnsiChar; passlen : TIdC_INT;
-			   salt : PIdAnsiChar; saltlen : TIdC_INT; iter : TIdC_INT;
-			   digest : PEVP_MD;
-		     keylen : TIdC_INT; _out : PIdAnsiChar) : TIdC_INT cdecl = nil;
+         salt : PIdAnsiChar; saltlen : TIdC_INT; iter : TIdC_INT;
+         digest : PEVP_MD;
+         keylen : TIdC_INT; _out : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM PKCS5_v2_PBE_keyivgen}
   PKCS5_v2_PBE_keyivgen : function(ctx : PEVP_CIPHER_CTX; pass : PIdAnsiChar; passlen : TIdC_INT;
-		param : PASN1_TYPE; cipher : PEVP_CIPHER; md : PEVP_MD;
-		en_de : TIdC_INT) : TIdC_INT cdecl = nil;
+    param : PASN1_TYPE; cipher : PEVP_CIPHER; md : PEVP_MD;
+    en_de : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM PKCS5_PBE_add}
   PKCS5_PBE_add : procedure cdecl = nil;
   {$EXTERNALSYM EVP_PBE_CipherInit}
   EVP_PBE_CipherInit : function (pbe_obj : PASN1_OBJECT; pass : PIdAnsiChar; passlen : TIdC_INT;
-	  param : PASN1_TYPE; ctx : PEVP_CIPHER_CTX; en_de : TIdC_INT) : TIdC_INT cdecl = nil;
+    param : PASN1_TYPE; ctx : PEVP_CIPHER_CTX; en_de : TIdC_INT) : TIdC_INT cdecl = nil;
 
   {$EXTERNALSYM  EVP_PBE_alg_add_type}
 
   EVP_PBE_alg_add_type : function(pbe_type : TIdC_INT; pbe_nid : TIdC_INT; cipher_nid : TIdC_INT; md_nid : TIdC_INT;
-	  keygen : PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
+    keygen : PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM  EVP_PBE_alg_add}
   EVP_PBE_alg_add : function(nid : TIdC_INT; cipher : PEVP_CIPHER; md : PEVP_MD;
-		keygen :PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
+    keygen :PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
     {$EXTERNALSYM EVP_PBE_find}
   EVP_PBE_find : function(_type : TIdC_INT; pbe_nid : TIdC_INT;
-			pcnid : PIdC_INT; pmnid : PIdC_INT; var pkeygen : PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
+      pcnid : PIdC_INT; pmnid : PIdC_INT; var pkeygen : PEVP_PBE_KEYGEN) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PBE_cleanup}
   EVP_PBE_cleanup : procedure cdecl = nil;
 
@@ -17749,53 +17749,53 @@ var
   EVP_PKEY_asn1_find : function(pe :PPENGINE; _type : TIdC_INT) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_find_str}
   EVP_PKEY_asn1_find_str : function(pe : PPENGINE;
-	  str : PIdAnsiChar; len : TIdC_INT) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
+    str : PIdAnsiChar; len : TIdC_INT) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_add0}
   EVP_PKEY_asn1_add0 : function(ameth : PEVP_PKEY_ASN1_METHOD) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_add_alias}
   EVP_PKEY_asn1_add_alias : function(_to : TIdC_INT; from : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_get0_info}
   EVP_PKEY_asn1_get0_info : function(ppkey_id : PIdC_int; pkey_base_id : PIdC_INT; ppkey_flags : PIdC_INT;
-	  pinfo : PPIdAnsiChar; ppem_str : PPIdAnsiChar;
-		ameth : PEVP_PKEY_ASN1_METHOD) : TIdC_INT cdecl = nil;
+    pinfo : PPIdAnsiChar; ppem_str : PPIdAnsiChar;
+    ameth : PEVP_PKEY_ASN1_METHOD) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_get0_asn1}
   EVP_PKEY_get0_asn1 : function(pkey : PEVP_PKEY) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_new}
   EVP_PKEY_asn1_new : function(id : TIdC_INT; flags : TIdC_INT;
-	  pem_str : PIdAnsiChar; info : PIdAnsiChar) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
+    pem_str : PIdAnsiChar; info : PIdAnsiChar) : PEVP_PKEY_ASN1_METHOD cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_copy}
   EVP_PKEY_asn1_copy : procedure(dst : PEVP_PKEY_ASN1_METHOD;
-	  src : PEVP_PKEY_ASN1_METHOD) cdecl = nil;
+    src : PEVP_PKEY_ASN1_METHOD) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_free}
   EVP_PKEY_asn1_free : procedure(ameth : PEVP_PKEY_ASN1_METHOD) cdecl = nil;
 
   {$EXTERNALSYM EVP_PKEY_asn1_set_public}
   EVP_PKEY_asn1_set_public : procedure(ameth : PEVP_PKEY_ASN1_METHOD;
-		pub_decode : EVP_PKEY_asn1_set_public_pub_decode;
-		pub_encode : EVP_PKEY_asn1_set_public_pub_encode;
+    pub_decode : EVP_PKEY_asn1_set_public_pub_decode;
+    pub_encode : EVP_PKEY_asn1_set_public_pub_encode;
     pub_cmp : EVP_PKEY_asn1_set_public_pub_cmp;
-		pub_print : EVP_PKEY_asn1_set_public_pub_print;
-		pkey_size : EVP_PKEY_asn1_set_public_pub_pkey_size;
-		pkey_bits : EVP_PKEY_asn1_set_public_pkey_bits) cdecl = nil;
+    pub_print : EVP_PKEY_asn1_set_public_pub_print;
+    pkey_size : EVP_PKEY_asn1_set_public_pub_pkey_size;
+    pkey_bits : EVP_PKEY_asn1_set_public_pkey_bits) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_set_private}
   EVP_PKEY_asn1_set_private : procedure(ameth : PEVP_PKEY_ASN1_METHOD;
-		priv_decode : EVP_PKEY_asn1_set_private_priv_decode;
-		priv_encode : EVP_PKEY_asn1_set_private_priv_encode;
-		priv_print : EVP_PKEY_asn1_set_private_priv_print) cdecl = nil;
+    priv_decode : EVP_PKEY_asn1_set_private_priv_decode;
+    priv_encode : EVP_PKEY_asn1_set_private_priv_encode;
+    priv_print : EVP_PKEY_asn1_set_private_priv_print) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_set_param}
   EVP_PKEY_asn1_set_param : procedure(ameth : PEVP_PKEY_ASN1_METHOD;
-		param_decode : EVP_PKEY_asn1_set_param_param_decode;
-		param_encode : EVP_PKEY_asn1_set_param_param_encode;
-		param_missing : EVP_PKEY_asn1_set_param_param_missing;
-		param_copy : EVP_PKEY_asn1_set_param_param_copy;
-		param_cmp : EVP_PKEY_asn1_set_param_param_cmp;
-		param_print : EVP_PKEY_asn1_set_param_param_print) cdecl = nil;
+    param_decode : EVP_PKEY_asn1_set_param_param_decode;
+    param_encode : EVP_PKEY_asn1_set_param_param_encode;
+    param_missing : EVP_PKEY_asn1_set_param_param_missing;
+    param_copy : EVP_PKEY_asn1_set_param_param_copy;
+    param_cmp : EVP_PKEY_asn1_set_param_param_cmp;
+    param_print : EVP_PKEY_asn1_set_param_param_print) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_set_free}
   EVP_PKEY_asn1_set_free : procedure(ameth : PEVP_PKEY_ASN1_METHOD;
-		pkey_free : EVP_PKEY_asn1_set_free_pkey_free) cdecl = nil;
+    pkey_free : EVP_PKEY_asn1_set_free_pkey_free) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_asn1_set_ctrl}
   EVP_PKEY_asn1_set_ctrl : procedure(ameth : PEVP_PKEY_ASN1_METHOD;
-		pkey_ctrl : EVP_PKEY_asn1_set_ctr_pkey_ctrl) cdecl = nil;
+    pkey_ctrl : EVP_PKEY_asn1_set_ctr_pkey_ctrl) cdecl = nil;
 
   {$EXTERNALSYM EVP_PKEY_meth_find}
   EVP_PKEY_meth_find : function (_type : TIdC_INT) : PEVP_PKEY_METHOD cdecl = nil;
@@ -17803,7 +17803,7 @@ var
   EVP_PKEY_meth_new : function(id : TIdC_INT; flags : TIdC_INT) : PEVP_PKEY_METHOD cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_get0_info}
   EVP_PKEY_meth_get0_info : procedure(ppkey_id : PIdC_INT; pflags : PIdC_INT;
-	 meth : PEVP_PKEY_METHOD) cdecl = nil;
+   meth : PEVP_PKEY_METHOD) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_copy}
   EVP_PKEY_meth_copy : procedure(dst : PEVP_PKEY_METHOD; src : PEVP_PKEY_METHOD) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_free}
@@ -17820,17 +17820,17 @@ var
   EVP_PKEY_CTX_free : procedure(ctx : PEVP_PKEY_CTX) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_ctrl}
   EVP_PKEY_CTX_ctrl : function(ctx : PEVP_PKEY_CTX; keytype : TIdC_INT; optype : TIdC_INT;
-	  cmd : TIdC_INT; p1 : TIdC_INT; p2 : Pointer) : TIdC_INT cdecl = nil;
+    cmd : TIdC_INT; p1 : TIdC_INT; p2 : Pointer) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_ctrl_str}
   EVP_PKEY_CTX_ctrl_str : function(ctx : PEVP_PKEY_CTX; _type : PIdAnsiChar;
-						value : PIdAnsiChar) : TIdC_INT cdecl = nil;
+            value : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_get_operation}
   EVP_PKEY_CTX_get_operation : function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_set0_keygen_info}
   EVP_PKEY_CTX_set0_keygen_info : procedure(ctx : PEVP_PKEY_CTX; dat : PIdC_INT; datlen : TIdC_INT) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_new_mac_key}
   EVP_PKEY_new_mac_key : function(_type : TIdC_INT; e : PENGINE;
-	   key : PIdAnsiChar; keylen : TIdC_INT) : PEVP_PKEY cdecl = nil;
+     key : PIdAnsiChar; keylen : TIdC_INT) : PEVP_PKEY cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_set_data}
   EVP_PKEY_CTX_set_data : procedure(ctx : PEVP_PKEY_CTX; data : Pointer) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_CTX_get_data}
@@ -17847,20 +17847,20 @@ var
   EVP_PKEY_sign_init : function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_sign}
   EVP_PKEY_sign : function(ctx : PEVP_PKEY_CTX;
-	  sig : PIdAnsiChar; siglen : Psize_t;
-	  tbs : PIdAnsiChar; tbslen : size_t) : TIdC_INT cdecl = nil;
+    sig : PIdAnsiChar; siglen : Psize_t;
+    tbs : PIdAnsiChar; tbslen : size_t) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_verify_init}
   EVP_PKEY_verify_init : function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_verify}
   EVP_PKEY_verify : function(ctx : PEVP_PKEY_CTX;
-			sig : PIdAnsiChar; siglen : size_t;
-			tbs : PIdAnsiChar; tbslen : size_t) : TIdC_INT cdecl = nil;
+      sig : PIdAnsiChar; siglen : size_t;
+      tbs : PIdAnsiChar; tbslen : size_t) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_verify_recover_init}
   EVP_PKEY_verify_recover_init : function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_verify_recover}
   EVP_PKEY_verify_recover : function(ctx : PEVP_PKEY_CTX;
-			rout : PIdAnsiChar;  routlen : Psize_t;
-			sig : PIdAnsiChar; siglen : size_t) : TIdC_INT cdecl = nil;
+      rout : PIdAnsiChar;  routlen : Psize_t;
+      sig : PIdAnsiChar; siglen : size_t) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_encrypt_init}
   EVP_PKEY_encrypt_init : function(ctx : PEVP_PKEY_CTX) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_encrypt}
@@ -17903,43 +17903,43 @@ var
     copy : EVP_PKEY_meth_set_copy_copy) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_cleanup}
   EVP_PKEY_meth_set_cleanup : procedure(pmeth : PEVP_PKEY_METHOD;
-   	cleanup : EVP_PKEY_meth_set_cleanup_cleanup) cdecl = nil;
+     cleanup : EVP_PKEY_meth_set_cleanup_cleanup) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_paramgen}
   EVP_PKEY_meth_set_paramgen : procedure(pmeth : PEVP_PKEY_METHOD;
     paramgen_init : EVP_PKEY_meth_set_paramgen_paramgen_init;
     paramgen : EVP_PKEY_meth_set_paramgen_paramgen);
   {$EXTERNALSYM EVP_PKEY_meth_set_keygen}
   EVP_PKEY_meth_set_keygen : procedure(pmeth : PEVP_PKEY_METHOD;
-	  keygen_init : EVP_PKEY_meth_set_keygen_keygen_init;
-  	keygen : EVP_PKEY_meth_set_keygen_keygen) cdecl = nil;
+    keygen_init : EVP_PKEY_meth_set_keygen_keygen_init;
+    keygen : EVP_PKEY_meth_set_keygen_keygen) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_sign}
   EVP_PKEY_meth_set_sign : procedure(pmeth : PEVP_PKEY_METHOD;
-	  sign_init : EVP_PKEY_meth_set_sign_sign_init;
-	  sign : EVP_PKEY_meth_set_sign_sign) cdecl = nil;
+    sign_init : EVP_PKEY_meth_set_sign_sign_init;
+    sign : EVP_PKEY_meth_set_sign_sign) cdecl = nil;
   {$EXTERNALSYM   EVP_PKEY_meth_set_verify}
   EVP_PKEY_meth_set_verify : procedure(pmeth : PEVP_PKEY_METHOD;
-	  verify_init : EVP_PKEY_meth_set_verify_verify_init;
-	  verify : EVP_PKEY_meth_set_verify_verify) cdecl = nil;
+    verify_init : EVP_PKEY_meth_set_verify_verify_init;
+    verify : EVP_PKEY_meth_set_verify_verify) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_verify_recover}
   EVP_PKEY_meth_set_verify_recover : procedure(pmeth : PEVP_PKEY_METHOD;
-	 verify_recover_init : EVP_PKEY_meth_set_verify_recover_verify_recover_init;
-	 verify_recover : EVP_PKEY_meth_set_verify_recover_verify_recover) cdecl = nil;
+   verify_recover_init : EVP_PKEY_meth_set_verify_recover_verify_recover_init;
+   verify_recover : EVP_PKEY_meth_set_verify_recover_verify_recover) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_signctx}
   EVP_PKEY_meth_set_signctx : procedure(pmeth : PEVP_PKEY_METHOD;
-  	signctx_init : EVP_PKEY_meth_set_signctx_signctx_init;
+    signctx_init : EVP_PKEY_meth_set_signctx_signctx_init;
     signctx : EVP_PKEY_meth_set_signctx_signctx) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_verifyctx}
   EVP_PKEY_meth_set_verifyctx : procedure(pmeth : PEVP_PKEY_METHOD;
-	verifyctx_init : EVP_PKEY_meth_set_verifyctx_verifyctx_init;
-	verifyctx : EVP_PKEY_meth_set_verifyctx_verifyctx) cdecl = nil;
+  verifyctx_init : EVP_PKEY_meth_set_verifyctx_verifyctx_init;
+  verifyctx : EVP_PKEY_meth_set_verifyctx_verifyctx) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_encrypt}
   EVP_PKEY_meth_set_encrypt : procedure(pmeth : PEVP_PKEY_METHOD;
-	encrypt_init : EVP_PKEY_meth_set_encrypt_encrypt_init;
-	encryptfn : EVP_PKEY_meth_set_encrypt_encryptfn) cdecl = nil;
+  encrypt_init : EVP_PKEY_meth_set_encrypt_encrypt_init;
+  encryptfn : EVP_PKEY_meth_set_encrypt_encryptfn) cdecl = nil;
   {$EXTERNALSYM EVP_PKEY_meth_set_decrypt}
   EVP_PKEY_meth_set_decrypt : procedure(pmeth : PEVP_PKEY_METHOD;
-	  decrypt_init : EVP_PKEY_meth_set_decrypt_decrypt_init;
-	  decrypt : EVP_PKEY_meth_set_decrypt_decrypt);
+    decrypt_init : EVP_PKEY_meth_set_decrypt_decrypt_init;
+    decrypt : EVP_PKEY_meth_set_decrypt_decrypt);
   {$EXTERNALSYM EVP_PKEY_meth_set_derive}
   EVP_PKEY_meth_set_derive : procedure(pmeth : PEVP_PKEY_METHOD;
     derive_init : EVP_PKEY_meth_set_derive_derive_init;
@@ -18084,13 +18084,13 @@ changed from "void" to "int" so that they can return failure.
   HMAC_CTX_init : procedure(ctx : PHMAC_CTX) cdecl = nil;
 
 //void HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int len,
-//		  const EVP_MD *md, ENGINE *impl);
+//      const EVP_MD *md, ENGINE *impl);
  {$EXTERNALSYM _HMAC_Init_ex}
   _HMAC_Init_ex : procedure(ctx : PHMAC_CTX; key : Pointer; len : TIdC_INT;
     md : PEVP_MD; impl : PENGINE) cdecl = nil;
 //OpenSSL 1.0
 //int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int len,
-//		  const EVP_MD *md, ENGINE *impl);
+//      const EVP_MD *md, ENGINE *impl);
  {$EXTERNALSYM _1_0_HMAC_Init_ex}
   _1_0_HMAC_Init_ex : function(ctx : PHMAC_CTX; key : Pointer; len : TIdC_INT;
     md : PEVP_MD; impl : PENGINE) : TIdC_INT cdecl = nil;
@@ -24920,109 +24920,109 @@ end;
 function SSL_CTX_set_max_send_fragment(ctx : PSSL_CTX; m : TIdC_LONG) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,nil);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,nil);
 end;
 
 function SSL_set_max_send_fragment(ssl : PSSL; m : TIdC_LONG) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,nil);
 end;
 
 function DTLSv1_get_timeout(ssl : PSSL; var arg : timeval) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result :=	SSL_ctrl(ssl,DTLS_CTRL_GET_TIMEOUT,0, @arg);
+  Result :=  SSL_ctrl(ssl,DTLS_CTRL_GET_TIMEOUT,0, @arg);
 end;
 
 function DTLSv1_handle_timeout(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result :=	SSL_ctrl(ssl,DTLS_CTRL_HANDLE_TIMEOUT,0, nil);
+  Result :=  SSL_ctrl(ssl,DTLS_CTRL_HANDLE_TIMEOUT,0, nil);
 end;
 
 function DTLSv1_listen(ssl : PSSL; var peer : sockaddr) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,DTLS_CTRL_LISTEN,0, @peer);
+  Result := SSL_ctrl(ssl,DTLS_CTRL_LISTEN,0, @peer);
 end;
 
 function SSL_session_reused(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,nil);
 end;
 
 function SSL_num_renegotiations(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_GET_NUM_RENEGOTIATIONS,0,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_GET_NUM_RENEGOTIATIONS,0,nil);
 end;
 
 function SSL_clear_num_renegotiations(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_CLEAR_NUM_RENEGOTIATIONS,0,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_CLEAR_NUM_RENEGOTIATIONS,0,nil);
 end;
 
 function SSL_total_renegotiations(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_GET_TOTAL_RENEGOTIATIONS,0,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_GET_TOTAL_RENEGOTIATIONS,0,nil);
 end;
 
 function SSL_CTX_need_tmp_RSA(ctx : PSSL_CTX) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_NEED_TMP_RSA,0,nil);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_NEED_TMP_RSA,0,nil);
 end;
 
 function SSL_CTX_set_tmp_rsa(ctx  : PSSL_CTX; rsa : PRSA) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_RSA,0,rsa);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_RSA,0,rsa);
 end;
 
 function SSL_CTX_set_tmp_dh(ctx : PSSL_CTX; dh : PDH) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_DH,0,dh);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_DH,0,dh);
 end;
 
 function SSL_CTX_set_tmp_ecdh(ctx : PSSL_CTX; ecdh : PEC_KEY) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
 end;
 
 function SSL_CTX_set_ecdh_auto(ctx : PSSL_CTX; m : TIdC_LONG) : TIdC_LONG;
   {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_ECDH_AUTO,m,nil);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_SET_ECDH_AUTO,m,nil);
 end;
 
 function SSL_need_tmp_RSA(ssl : PSSL) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_NEED_TMP_RSA,0,nil);
+  Result := SSL_ctrl(ssl,SSL_CTRL_NEED_TMP_RSA,0,nil);
 end;
 
 procedure SSL_set_tmp_rsa(ssl : PSSL; rsa : PRSA);
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	SSL_ctrl(ssl,SSL_CTRL_SET_TMP_RSA,0,rsa);
+  SSL_ctrl(ssl,SSL_CTRL_SET_TMP_RSA,0,rsa);
 end;
 
 function SSL_set_tmp_dh(ssl : PSSL;dh : PDH) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_SET_TMP_DH,0,dh);
+  Result := SSL_ctrl(ssl,SSL_CTRL_SET_TMP_DH,0,dh);
 end;
 
 function SSL_set_tmp_ecdh(ssl : PSSL; ecdh : PEC_KEY) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_ctrl(ssl,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
+  Result := SSL_ctrl(ssl,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
 end;
 
 {$IFNDEF OPENSSL_NO_TLSEXT}
@@ -25323,7 +25323,7 @@ begin
   Result := BIO_ptr_ctrl(b,BIO_C_GET_ACCEPT,0);
 end;
 
-//* #define BIO_set_nbio(b,n)	BIO_ctrl(b,BIO_C_SET_NBIO,(n),NULL) */
+//* #define BIO_set_nbio(b,n)  BIO_ctrl(b,BIO_C_SET_NBIO,(n),NULL) */
 function BIO_set_nbio_accept(b : PBIO; n : TIdC_INT) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
@@ -26156,13 +26156,13 @@ end;
 function EVP_MD_name(e : PEVP_MD) : PIdAnsiChar;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := OBJ_nid2sn(EVP_MD_nid(e))
+  Result := OBJ_nid2sn(EVP_MD_nid(e))
 end;
 
 function EVP_MD_CTX_size(e : PEVP_MD_CTX) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result :=	EVP_MD_size(EVP_MD_CTX_md(e));
+  Result :=  EVP_MD_size(EVP_MD_CTX_md(e));
 end;
 
 function EVP_MD_CTX_block_size(e : PEVP_MD_CTX) : TIdC_INT;
@@ -26198,7 +26198,7 @@ end;
 function EVP_CIPHER_CTX_mode(e : PEVP_CIPHER_CTX) : TIdC_ULONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := (EVP_CIPHER_CTX_flags(e) and EVP_CIPH_MODE)
+  Result := (EVP_CIPHER_CTX_flags(e) and EVP_CIPH_MODE)
 end;
 
 function EVP_ENCODE_LENGTH(l : Integer) : Integer;
@@ -26417,7 +26417,7 @@ end;
 function EVP_PKEY_CTX_set_signature_md(ctx : PEVP_PKEY_CTX;md : PEVP_PKEY_CTX) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := EVP_PKEY_CTX_ctrl(ctx, -1, EVP_PKEY_OP_TYPE_SIG,
+  Result := EVP_PKEY_CTX_ctrl(ctx, -1, EVP_PKEY_OP_TYPE_SIG,
     EVP_PKEY_CTRL_MD, 0, Pointer(md));
 end;
 

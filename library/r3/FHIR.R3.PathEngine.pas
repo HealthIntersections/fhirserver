@@ -1863,7 +1863,7 @@ var
 begin
   res := execute(context, focus, exp.Parameters[0], true);
   try
-		s := convertToString(res);
+    s := convertToString(res);
   finally
     res.Free;
   end;
@@ -3463,8 +3463,8 @@ begin
       lUnit := TFHIRSelectionList.create;
       rUnit := TFHIRSelectionList.create;
       try
-			  ListChildrenByName(left[0].value, 'code', lUnit);
-			  ListChildrenByName(right[0].value, 'code', rUnit);
+        ListChildrenByName(left[0].value, 'code', lUnit);
+        ListChildrenByName(right[0].value, 'code', rUnit);
         if (TFHIRSelectionList.compareDeep(lUnit, rUnit, true)) then
         begin
           lUnit.Clear;
@@ -3525,8 +3525,8 @@ begin
       lUnit := TFHIRSelectionList.create;
       rUnit := TFHIRSelectionList.create;
       try
-			  ListChildrenByName(left[0].value, 'unit', lUnit);
-			  ListChildrenByName(right[0].value, 'unit', rUnit);
+        ListChildrenByName(left[0].value, 'unit', lUnit);
+        ListChildrenByName(right[0].value, 'unit', rUnit);
         if (TFHIRSelectionList.compareDeep(lUnit, rUnit, true)) then
         begin
           lUnit.Clear;
@@ -3634,8 +3634,8 @@ begin
       lUnit := TFHIRSelectionList.create;
       rUnit := TFHIRSelectionList.create;
       try
-			  ListChildrenByName(left[0].value, 'unit', lUnit);
-			  ListChildrenByName(right[0].value, 'unit', rUnit);
+        ListChildrenByName(left[0].value, 'unit', lUnit);
+        ListChildrenByName(right[0].value, 'unit', rUnit);
         if (TFHIRSelectionList.compareDeep(lUnit, rUnit, true)) then
         begin
           lUnit.Clear;
@@ -3696,8 +3696,8 @@ begin
       lUnit := TFHIRSelectionList.create;
       rUnit := TFHIRSelectionList.create;
       try
-			  ListChildrenByName(left[0].value, 'code', lUnit);
-			  ListChildrenByName(right[0].value, 'code', rUnit);
+        ListChildrenByName(left[0].value, 'code', lUnit);
+        ListChildrenByName(right[0].value, 'code', rUnit);
         if (TFHIRSelectionList.compareDeep(lUnit, rUnit, true)) then
         begin
           lUnit.Clear;
@@ -5186,10 +5186,10 @@ function hasType(ed : TFhirElementDefinition; s : String) : boolean;
 var
   t : TFhirElementDefinitionType;
 begin
-	result := false;
-	for t in ed.type_List do
-		if (s.equals(t.code)) then
-			exit(true);
+  result := false;
+  for t in ed.type_List do
+    if (s.equals(t.code)) then
+      exit(true);
 end;
 
 function TFHIRPathEngine.isAbstractType(list : TFHIRElementDefinitionTypeList) : boolean;

@@ -88,8 +88,8 @@ const
   IdNTLM_LM_SESS_HASH_SIZE = 16;
   IdNTLM_LM_RESPONSE_SIZE = 24;
 
-  IdNTLM_NTLMSSP_HASH_SIZE	= 16;
-  IdNTLM_NTLMSSP_RESPONSE_SIZE	= 24;
+  IdNTLM_NTLMSSP_HASH_SIZE  = 16;
+  IdNTLM_NTLMSSP_RESPONSE_SIZE  = 24;
 
   IdNTLM_NTLMSSP_V2_HASH_SIZE = 6;
   IdNTLM_NTLMSSP_V2_RESPONSE_SIZE = 16;
@@ -157,7 +157,7 @@ var
 //void RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
   GRC4_set_key : procedure(key : PRC4_KEY; len : TIdC_INT; data : PIdAnsiChar); cdecl = nil;
 //void RC4(RC4_KEY *key, unsigned long len, const unsigned char *indata,
-//		unsigned char *outdata);
+//    unsigned char *outdata);
   GRC4 : procedure (key : PRC4_KEY; len : TIdC_ULONG; indata, outdata : PIdAnsiChar) ; cdecl = nil;
 {$ENDIF}
 

@@ -108,8 +108,8 @@ function TNarrativeGenerator.capitalize(s : String):String;
 begin
   if( s = '') then
     result := ''
-	else
-  	result := UpperCase(s.substring(0, 1)) + s.substring(1);
+  else
+    result := UpperCase(s.substring(0, 1)) + s.substring(1);
 end;
 
 function TNarrativeGenerator.camelCase(s : String):String;

@@ -356,7 +356,7 @@ begin
     if match > 0 then
     begin
       if not spec.wholeWords or isWord(line, match-1, match+spec.text.length) then
-        results.add(TToolkitSearchMatch.create(src.name, src.address, TSourceLocation.make(linenum, match), fragment(line, match, spec.text.length)));
+        results.add(TToolkitSearchMatch.create(src.name, src.address, TSourceLocation.Create(linenum, match), fragment(line, match, spec.text.length)));
     end;
     cursor := match + length(spec.text);
   until match = 0;
@@ -377,8 +377,8 @@ begin
     i := 0;
     for line in ts do
     begin
-      inc(i);
       searchLine(src, i, line);
+      inc(i);
     end;
   finally
     ts.free;

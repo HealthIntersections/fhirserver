@@ -9,6 +9,7 @@ uses
   {$IFDEF WINDOWS}
   FastMM4,
   {$ENDIF}
+  Windows,
   Interfaces, // this includes the LCL widgetset
   Forms, frm_main, frm_npm_manager, frm_npm_browser,
   { you can add units after this }
@@ -30,6 +31,7 @@ uses
 {$R *.res}
 
 begin
+  AllocConsole;
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;
   Application.Initialize;

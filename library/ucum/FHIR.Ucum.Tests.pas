@@ -215,7 +215,7 @@ begin
   try
     o2 := TUcumPair.Create(TFslDecimal.ValueOf(v2), u2);
     try
-	    o3 := svc.multiply(o1, o2);
+      o3 := svc.multiply(o1, o2);
       try
         assertTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
       finally

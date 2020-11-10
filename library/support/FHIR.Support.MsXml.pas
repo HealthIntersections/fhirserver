@@ -15683,8 +15683,7 @@ end;
 
 procedure TMsXmlSaxHandler.characters(var chars: WideString);
 begin
-  FLocation.Line := FLocator.lineNumber;
-  FLocation.col := FLocator.columnNumber;
+  FLocation := TSourceLocation.Create(FLocator.lineNumber, FLocator.columnNumber);
   text(chars, FLocation);
 end;
 
@@ -15707,8 +15706,7 @@ end;
 
 procedure TMsXmlSaxHandler.endElement(var uri, localname, qname: WideString);
 begin
-  FLocation.Line := FLocator.lineNumber;
-  FLocation.col := FLocator.columnNumber;
+  FLocation := TSourceLocation.Create(FLocator.lineNumber, FLocator.columnNumber);
   endElement(FLocation);
 end;
 
@@ -15790,8 +15788,7 @@ end;
 
 procedure TMsXmlSaxHandler.startElement(var uri, localname, qname: widestring; const attrs: IVBSAXAttributes);
 begin
-  FLocation.Line := FLocator.lineNumber;
-  FLocation.col := FLocator.columnNumber;
+  FLocation := TSourceLocation.Create(FLocator.lineNumber, FLocator.columnNumber);
   startElement(FLocation, uri, localname, attrs);
 end;
 
@@ -15854,15 +15851,15 @@ begin
   // which is where we want to end it. So we store the last location
   // we saw anything at, and use that instead
 
-  if isNullLoc(FLastStart) then
+  if FLastStart.isNull then
     loc.locationStart := sourceLocation
   else
     loc.locationStart := FLastStart;
-  loc.locationEnd := nullLoc;
+  loc.locationEnd := TSourceLocation.CreateNull;
 
   for i := 0 to attrs.length - 1 do
     focus.setAttribute(attrs.getQName(i), attrs.getValue(i));
-  FLastStart := nullLoc;
+  FLastStart := TSourceLocation.CreateNull;
 end;
 
 procedure TLocatingSaxToDomParser.text(chars: String; sourceLocation: TSourceLocation);
@@ -15874,7 +15871,7 @@ begin
   if FStack.Count > 0 then
   begin
     sl := FLocations[StrToInt(FStack[FStack.Count-1].getAttribute(MAP_ATTR_NAME))];
-    if isNullLoc(sl.LocationEnd) then
+    if sl.LocationEnd.isNull then
       sl.LocationEnd := sourceLocation;
     FStack[FStack.Count-1].appendChild(FDom.createTextNode(chars));
   end;
@@ -15888,7 +15885,7 @@ begin
   // we consider that an element 'ends' where the text or next element
   // starts. That's not strictly true, but gives a better output
     sl := FLocations[StrToInt(FStack[FStack.Count-1].getAttribute(MAP_ATTR_NAME))];
-  if isNullLoc(sl.LocationEnd) then
+  if sl.LocationEnd.isNull then
     sl.LocationEnd := sourceLocation;
   FStack.Delete(FStack.Count-1);
   FLastStart := sourceLocation;

@@ -1222,13 +1222,13 @@ End;
 
 Function RectangleToString(Const aRectangle : TGPRectF) : String;
 Begin
-	Result := StringFormat('x:%f, y:%f, w:%f, h:%f', [aRectangle.X, aRectangle.Y, aRectangle.Width, aRectangle.Height]);
+  Result := StringFormat('x:%f, y:%f, w:%f, h:%f', [aRectangle.X, aRectangle.Y, aRectangle.Width, aRectangle.Height]);
 End;
 
 
 Function RectangleToString(Const aRectangle : TGPRect) : String;
 Begin
-	Result := StringFormat('x:%d, y:%d, w:%d, h:%d', [aRectangle.X, aRectangle.Y, aRectangle.Width, aRectangle.Height]);
+  Result := StringFormat('x:%d, y:%d, w:%d, h:%d', [aRectangle.X, aRectangle.Y, aRectangle.Width, aRectangle.Height]);
 End;
 
 
@@ -2559,7 +2559,7 @@ End;
 
 Procedure TGdiPlusCustomControl.Invalidate;
 Begin
-	If Transparent Then
+  If Transparent Then
     InvalidateParent;
 
   If HandleAllocated Then
@@ -2582,7 +2582,7 @@ End;
 
 Procedure TGdiPlusCustomControl.CMEnabledChanged(Var aMessage: TMessage);
 Begin
-	Inherited;
+  Inherited;
 
   InvalidateRect(Handle, Nil, False);
 End;
@@ -2590,7 +2590,7 @@ End;
 
 Function TGdiPlusCustomControl.GetInputEnabled: Boolean;
 Begin
-	Result := FInputEnabled;
+  Result := FInputEnabled;
 End;
 
 
@@ -2605,19 +2605,19 @@ Procedure TGdiPlusCustomControl.SetInputEnabled(Const Value: Boolean);
   End;
 
 Begin
-	If FInputEnabled <> Value Then
+  If FInputEnabled <> Value Then
   Begin
-  	FInputEnabled := Value;
+    FInputEnabled := Value;
 
-  	If Not Value Then
+    If Not Value Then
     Begin
       ControlStyle := ControlStyle + [csNoStdEvents];
 
       If (Parent <> Nil) Then
-    		RemoveFocus(False);
+        RemoveFocus(False);
     End
     Else
-    	ControlStyle := ControlStyle - [csNoStdEvents];
+      ControlStyle := ControlStyle - [csNoStdEvents];
 
     InvalidateRect(Handle, Nil, False);
   End;

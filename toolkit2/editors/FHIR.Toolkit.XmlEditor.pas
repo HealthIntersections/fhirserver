@@ -65,11 +65,11 @@ begin
           if e.NodeType = ntElement then
           begin
             if (e.HasAttribute['name']) then
-              navpoints.AddObject(e.Name+' ('+e.attribute['name']+')', TObject(e.Start.line-1))
+              navpoints.AddObject(e.Name+' ('+e.attribute['name']+')', TObject(e.Start.line))
             else if (e.HasAttribute['id']) then
-              navpoints.AddObject(e.Name+' ('+e.attribute['id']+')', TObject(e.Start.line-1))
+              navpoints.AddObject(e.Name+' ('+e.attribute['id']+')', TObject(e.Start.line))
             else
-              navpoints.AddObject(e.Name, TObject(e.Start.line-1));
+              navpoints.AddObject(e.Name, TObject(e.Start.line));
           end;
         end;
       end;
@@ -133,8 +133,6 @@ begin
     FXml := nil;
     try
       FXml := FParser.parse(FContent.text, [xpResolveNamespaces]);
-      inc(cursor.line);
-      inc(cursor.col);
       path := FXml.findLocation(cursor);
       try
         inspection.AddPair('Path', FXml.describePath(path));
@@ -144,11 +142,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing XML: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing XML: '+e.message);
       end;
     end;
   finally

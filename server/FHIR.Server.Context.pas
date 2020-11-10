@@ -531,10 +531,10 @@ begin
   result := '';
   FLock.Lock;
   try
-		result := UriForKnownOid(oid);
-		if (result = '') then
+    result := UriForKnownOid(oid);
+    if (result = '') then
     begin
-  		for ns in FNamingSystems.Values do
+      for ns in FNamingSystems.Values do
       begin
         if ns.hasOid(oid) then
         begin

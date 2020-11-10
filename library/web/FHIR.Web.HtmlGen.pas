@@ -205,29 +205,29 @@ begin
     '</div>'+#13#10+
     ''+#13#10+
     ''+#13#10+
-    '				</div>  <!-- /inner-wrapper -->'+#13#10+
+    '        </div>  <!-- /inner-wrapper -->'+#13#10+
     '            </div>  <!-- /row -->'+#13#10+
     '        </div>  <!-- /container -->'+#13#10+
     '    </div>  <!-- /segment-content -->'+#13#10+
     ''+#13#10+
     ''+#13#10+
-    '	<div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '			<div class="inner-wrapper">'+#13#10+
-    '				<p>'+#13#10+
+    '  <div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
+    '    <div class="container">  <!-- container -->'+#13#10+
+    '      <div class="inner-wrapper">'+#13#10+
+    '        <p>'+#13#10+
     '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+Ffactory.specUrl+'" style="color: gold">'+FFactory.versionString+'</a>'+#13#10+
     '        | Request-id: '+logId+
     '        </span>'+#13#10+
     '        </p>'+#13#10+
-    '			</div>  <!-- /inner-wrapper -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '	</div>  <!-- /segment-footer -->'+#13#10+
+    '      </div>  <!-- /inner-wrapper -->'+#13#10+
+    '    </div>  <!-- /container -->'+#13#10+
+    '  </div>  <!-- /segment-footer -->'+#13#10+
     ''+#13#10+
     ''+#13#10+
-    '	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '	</div>  <!-- /segment-post-footer -->'+#13#10+
+    '  <div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
+    '    <div class="container">  <!-- container -->'+#13#10+
+    '    </div>  <!-- /container -->'+#13#10+
+    '  </div>  <!-- /segment-post-footer -->'+#13#10+
     ''+#13#10+
     ''+#13#10+
     ''+#13#10+
@@ -311,10 +311,10 @@ end;
 function THtmlPublisher.HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
 begin
   result :=
-    '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
-    '		<div id="stripe"> </div>'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
+    '  <div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
+    '    <div id="stripe"> </div>'+#13#10+
+    '    <div class="container">  <!-- container -->'+#13#10+
+    '    <div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
 
 
   result := result +
@@ -330,20 +330,20 @@ begin
 
   result := result +
     '  &nbsp;'#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
+    '    </div>  <!-- /container -->'+#13#10+
+    '    </div>  <!-- /container -->'+#13#10+
     '</div>'#13#10+
     ''#13#10;
 //    if FFacebookLike and (FOauthUrl <> '') then
 //      result := result + '<iframe src="https://www.facebook.com/plugins/like.php?href='+FOauthUrl+'" scrolling="no" frameborder="0" style="border:none; width:450px; height:30px"></iframe>'#13#10;
 
   result := result +
-    '	<!-- /segment-breadcrumb -->'+#13#10+
+    '  <!-- /segment-breadcrumb -->'+#13#10+
     ''+#13#10+
-    '	<div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
-    '	<div class="container">  <!-- container -->'+#13#10+
+    '  <div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
+    '  <div class="container">  <!-- container -->'+#13#10+
     '            <div class="row">'+#13#10+
-    '            	<div class="inner-wrapper">'+#13#10+
+    '              <div class="inner-wrapper">'+#13#10+
     ' <div id="div-cnt" class="col-9">'+#13#10+
     ''+#13#10+
     ''+#13#10;

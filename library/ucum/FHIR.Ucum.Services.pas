@@ -667,13 +667,13 @@ begin
         c := conv.convert(t);
         Try
           cu := TUcumExpressionComposer.Compose(c, false);
-			    if (c.Units.Count = 1) then
+          if (c.Units.Count = 1) then
           begin
-  					if (propertyType = model.Properties[c.Units[0].Base.PropertyType].Name) then
-	  					exit('')
-		  			else
-			  			exit('unit '+code+' is of the property type '+model.Properties[c.Units[0].Base.PropertyType].Name+' ('+cu+'), not '+propertyType+' as required.');
-			    end;
+            if (propertyType = model.Properties[c.Units[0].Base.PropertyType].Name) then
+              exit('')
+            else
+              exit('unit '+code+' is of the property type '+model.Properties[c.Units[0].Base.PropertyType].Name+' ('+cu+'), not '+propertyType+' as required.');
+          end;
 
           // defined special case
           if (propertyType = 'concentration') and (cu = 'm-3') then

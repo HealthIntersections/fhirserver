@@ -133,8 +133,8 @@
 unit IdCommandHandlers;
 
 {
-	Original author: Chad Z. Hower
-	Separate Unit  : Sergio Perry
+  Original author: Chad Z. Hower
+  Separate Unit  : Sergio Perry
 }
 
 interface

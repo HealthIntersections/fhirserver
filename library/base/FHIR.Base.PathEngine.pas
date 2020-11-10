@@ -297,7 +297,7 @@ begin
     list[i] := context[i];
   list[length(list)-1] := base;
 
-  if locGreatorOrEqual(loc, base.LocationData.parseFinish) then
+  if TSourceLocation.greatorOrEqual(loc, base.LocationData.parseFinish) then
   begin
     result := path;
     focus := list;
@@ -312,13 +312,13 @@ begin
         p := pl[i];
         if (p.hasValue) then
         begin
-          if locGreatorOrEqual(loc, p.Values[0].LocationData.ParseStart) then
+          if TSourceLocation.greatorOrEqual(loc, p.Values[0].LocationData.ParseStart) then
           begin
             path := path + '.'+p.Name;
             if p.IsList then
             begin
               for j := p.Values.Count - 1 downto 0 do
-                if (result = '') and locGreatorOrEqual(loc, p.Values[j].LocationData.ParseStart) then
+                if (result = '') and TSourceLocation.greatorOrEqual(loc, p.Values[j].LocationData.ParseStart) then
                   result := findPath(path+'['+inttostr(j)+']', loc, list, p.Values[j], focus);
             end
             else
@@ -331,7 +331,7 @@ begin
       pl.Free;
     end;
   end;
-  if (result = '') and locGreatorOrEqual(loc, base.LocationData.ParseStart) and locLessOrEqual(loc, base.LocationData.ParseFinish)  then
+  if (result = '') and TSourceLocation.greatorOrEqual(loc, base.LocationData.ParseStart) and TSourceLocation.lessOrEqual(loc, base.LocationData.ParseFinish)  then
   begin
     result := path;
     focus := list;
@@ -541,8 +541,7 @@ begin
   FVersion := ver;
   FPath := path;
   FCursor := offset;
-  FCurrentLocation.line := 1;
-  FCurrentLocation.col := 1;
+  FCurrentLocation := TSourceLocation.Create;
   next;
 end;
 
@@ -552,8 +551,7 @@ begin
   FVersion := ver;
   FPath := path;
   FCursor := 1;
-  FCurrentLocation.line := 1;
-  FCurrentLocation.col := 1;
+  FCurrentLocation := TSourceLocation.Create;
   next;
 end;
 
@@ -577,20 +575,18 @@ procedure TFHIRPathLexer.nextChar();
 begin
   if FPath[FCursor] = #13 then
   begin
-    inc(FCurrentLocation.line);
-    FCurrentLocation.col := 1;
+    FCurrentLocation.incLine;
     flast13 := true;
   end
   else if not flast13 and (FPath[FCursor] = #10) then
   begin
-    inc(FCurrentLocation.line);
-    FCurrentLocation.col := 1;
+    FCurrentLocation.incLine;
     flast13 := false;
   end
   else
   begin
     flast13 := false;
-    inc(FCurrentLocation.col);
+    FCurrentLocation.incCol;
   end;
   inc(FCursor);
 end;
@@ -808,7 +804,7 @@ end;
 
 function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
 begin
-  result := EParserException.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"', location.line, location.col);
+  result := location.exception('Error "'+msg+'"');
 end;
 
 function TFHIRPathLexer.getLine(line: integer): String;

@@ -455,16 +455,16 @@ end;
 procedure TFHIRDatabaseInstaller.CreateUnii;
 begin
   FConn.ExecSQL('CREATE TABLE Unii ('+#13#10+
-  	'UniiKey int NOT NULL,'+#13#10+
-  	'Code nchar(20) NOT NULL,'+#13#10+
-  	'Display nchar(255) NULL,'+#13#10+
+    'UniiKey int NOT NULL,'+#13#10+
+    'Code nchar(20) NOT NULL,'+#13#10+
+    'Display nchar(255) NULL,'+#13#10+
     PrimaryKeyType(FConn.owner.Platform, 'PK_Unii', 'UniiKey')+') '+CreateTableInfo(FConn.owner.platform));
 
   FConn.ExecSQL('CREATE TABLE UniiDesc ('+#13#10+
-   	'UniiDescKey int NOT NULL, '+#13#10+
-  	'UniiKey int NOT NULL, '+#13#10+
-  	'Type nchar(20) NOT NULL, '+#13#10+
- 	  'Display nchar(255) NULL, '+#13#10+
+     'UniiDescKey int NOT NULL, '+#13#10+
+    'UniiKey int NOT NULL, '+#13#10+
+    'Type nchar(20) NOT NULL, '+#13#10+
+     'Display nchar(255) NULL, '+#13#10+
        InlineForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey')+
     PrimaryKeyType(FConn.owner.Platform, 'PK_UniiDesc', 'UniiDescKey')+') '+CreateTableInfo(FConn.owner.platform));
 
@@ -1259,8 +1259,8 @@ begin
       raise EDBException.create('Database must be rebuilt');
     if (version < 13) then
     begin
-      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	IsComponent int NULL');
-      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	CodeList nchar(30) NULL');
+      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD  IsComponent int NULL');
+      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD  CodeList nchar(30) NULL');
     end;
 
     if (version < 14) then
@@ -1271,10 +1271,10 @@ begin
       begin
         Fconn.ExecSQL('Drop index SK_Authorizations_Hash on Authorizations');
         Fconn.ExecSQL('ALTER TABLE dbo.Authorizations Drop Column Hash');
-        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD	Uuid char(36) NULL');
+        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD  Uuid char(36) NULL');
       end;
       if (version < 16) then
-        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD	PatientId char(64) NULL');
+        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD  PatientId char(64) NULL');
     end;
     if (version < 17) then
     begin

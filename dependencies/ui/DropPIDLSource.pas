@@ -63,7 +63,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			Miscellaneous Functions...
+//      Miscellaneous Functions...
 // -----------------------------------------------------------------------------
 
 function GetSizeOfPidl(pidl: PItemIDList): integer;
@@ -101,7 +101,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropPIDLSource
+//      TDropPIDLSource
 // -----------------------------------------------------------------------------
  
 constructor TDropPIDLSource.Create(aOwner: TComponent);

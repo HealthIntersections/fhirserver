@@ -159,10 +159,10 @@ Type
     Fone : TUcumFactor;
 
     Procedure debug(indent, state : String; oUnit : TUcumTerm); overload;
-  	Procedure debug(indent, state : String; can : TUcumCanonical); overload;
-  	function expandDefinedUnit(indent : String; unit_ : TUcumDefinedUnit) : TUcumCanonical; overload;
-   	function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
-   	function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
+    Procedure debug(indent, state : String; can : TUcumCanonical); overload;
+    function expandDefinedUnit(indent : String; unit_ : TUcumDefinedUnit) : TUcumCanonical; overload;
+     function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
+     function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
   public
     constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -433,7 +433,7 @@ Begin
       if StringStartsWithSensitive(sym, Fmodel.Prefixes[i].Code) Then
       Begin
         Unit_ := Fmodel.getUnit(Copy(sym, Length(Fmodel.Prefixes[i].Code)+1, $FF));
-      	if (Unit_ <> nil) and ((Unit_.Kind = UcumBASEUNIT) or TUcumDefinedUnit(Unit_).metric) Then
+        if (Unit_ <> nil) and ((Unit_.Kind = UcumBASEUNIT) or TUcumDefinedUnit(Unit_).metric) Then
         Begin
           selected := Fmodel.Prefixes[i];
           break;
@@ -728,20 +728,20 @@ var
 begin
   b := TStringBuilder.Create;
   try
-	  if (value) then
-	  	b.append(can.Value.asDecimal);
+    if (value) then
+      b.append(can.Value.asDecimal);
     first := true;
-	  for c in can.units do
+    for c in can.units do
     begin
-	  	if (first) then
+      if (first) then
         first := false
       else
         b.append('.');
-	  	b.append(c.Base.Code);
-	  	if (c.exponent <> 1) then
-	  		b.append(c.exponent);
-	  end;
-	  result := b.ToString;
+      b.append(c.Base.Code);
+      if (c.exponent <> 1) then
+        b.append(c.exponent);
+    end;
+    result := b.ToString;
   finally
     b.free;
   end;
@@ -885,7 +885,7 @@ end;
 
 Procedure TUcumConverter.debug(indent, state : String; oUnit : TUcumTerm);
 begin
-//	writeln(indent+state+': '+TUcumExpressionComposer.compose(oUnit));
+//  writeln(indent+state+': '+TUcumExpressionComposer.compose(oUnit));
 end;
 
 Procedure TUcumConverter.debug(indent, state : String; can : TUcumCanonical);
@@ -904,11 +904,11 @@ begin
     result.Value := TFSLDecimal.create(1);
     if (sym.Unit_ is TUcumBaseUnit) then
     begin
-  		result.Units.add(TUcumCanonicalUnit.create(sym.Unit_.Link as TUcumBaseUnit, sym.exponent));
-  	end
+      result.Units.add(TUcumCanonicalUnit.create(sym.Unit_.Link as TUcumBaseUnit, sym.exponent));
+    end
     else
     begin
-			can := expandDefinedUnit(indent, sym.Unit_ as TUcumDefinedUnit);
+      can := expandDefinedUnit(indent, sym.Unit_ as TUcumDefinedUnit);
       try
         for c in can.Units do
           c.exponent := c.exponent * sym.exponent;
@@ -922,17 +922,17 @@ begin
       finally
         can.free;
       end;
-		end;
-		if (sym.Prefix <> nil) then
+    end;
+    if (sym.Prefix <> nil) then
     begin
-			if (sym.Exponent > 0) then
-				for i := 1 to sym.exponent do
-					result.multiplyValue(sym.Prefix.Value)
-			else
-				for i := -1 downto sym.exponent do
-					result.divideValue(sym.Prefix.Value);
-		end;
-		result.Link;
+      if (sym.Exponent > 0) then
+        for i := 1 to sym.exponent do
+          result.multiplyValue(sym.Prefix.Value)
+      else
+        for i := -1 downto sym.exponent do
+          result.divideValue(sym.Prefix.Value);
+    end;
+    result.Link;
   finally
     result.Free;
   end;
@@ -948,18 +948,18 @@ begin
   if (unit_.isSpecial) then
   begin
     h := Fhandlers.HandlerByCode[unit_.code];
-  	if (h = nil) then
+    if (h = nil) then
       raise ETerminologyError.create('Not handled yet (special unit)')
     else
-   		u := h.Units;
+       u := h.Units;
   end;
 
   t := TUcumExpressionParser.Parse(Fmodel, u);
   try
-		debug(indent, 'now handle', t);
-		result := normalise(indent+'  ', t);
+    debug(indent, 'now handle', t);
+    result := normalise(indent+'  ', t);
     try
-  		result.multiplyValue(unit_.Value.Value);
+      result.multiplyValue(unit_.Value.Value);
       result.Link;
     finally
       result.Free;

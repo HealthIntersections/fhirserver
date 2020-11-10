@@ -377,11 +377,11 @@ var
 From: Ralph Goers (rgoer@rgoer.candle.com)
 Subject: Re: FTP -- VM, MVS, VMS Questions 
 
- 	
-View this article only	
+   
+View this article only  
 Newsgroups: comp.os.os2.networking.tcp-ip
 Date: 1996/01/27 
-	
+  
 
 In message <4e7k0p$t1v@blackice.winternet.com> - frickson@gibbon.com (John C. F
 rickson) writes:

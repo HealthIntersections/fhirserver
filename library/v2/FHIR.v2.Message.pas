@@ -995,7 +995,7 @@ var
   loc : TSourceLocation;
   iStart : integer;
 begin
-  loc := TSourceLocation.make(FLine, 0);
+  loc := TSourceLocation.Create(FLine, 0);
   iStart :=  iCursor;
   if (iCursor + 3 > length(FSource)) then //we are either missing a #13 or have an invalid segment code
     raise EER7Exception.create('Remaining length in message too short for a valid segment.' + #13 +
@@ -1019,7 +1019,7 @@ begin
     oMessage.SegmentList.Add(oSegment.Link); // do this to provide a model before setting the code
     parseSegmentInner(oSegment, iCursor, iStart);
     if v2LocationData in FOptions then
-      oSegment.LocationData.parseFinish := TSourceLocation.make(FLine, iCursor - iStart);
+      oSegment.LocationData.parseFinish := TSourceLocation.Create(FLine, iCursor - iStart);
   finally
     oSegment.Free;
   end;
@@ -1036,11 +1036,11 @@ begin
     oField := TV2Field.create;
     try
       if v2LocationData in FOptions then
-        oField.LocationData.ParseStart := TSourceLocation.make(FLine, iCursor - iStart);
+        oField.LocationData.ParseStart := TSourceLocation.Create(FLine, iCursor - iStart);
       oSegment.FieldList.Add(oField.Link);
       ParseField(oField, iCursor, iStart);
       if v2LocationData in FOptions then
-        oField.LocationData.ParseFinish := TSourceLocation.make(FLine, iCursor - iStart - 1);
+        oField.LocationData.ParseFinish := TSourceLocation.Create(FLine, iCursor - iStart - 1);
     finally
       oField.Free;
     end;
@@ -1050,7 +1050,7 @@ begin
   while (iCursor < Length(FSource)) and (FSource[iCursor] = 13) do
   begin
     if not first and (v2Validating in FOptions) then
-      raise EParserException.create('Unexpected line break', FLine+2, 0)
+      raise EParserException.create('Unexpected line break', TSourceLocation.Create(FLine+2, 0))
     else
     begin
       inc(iCursor);
@@ -1143,9 +1143,9 @@ begin
     cell := TV2Cell.Create;
     try
       if v2LocationData in FOptions then
-        cell.LocationData.ParseStart := TSourceLocation.make(FLine, iStart - iCursorStart);
+        cell.LocationData.ParseStart := TSourceLocation.Create(FLine, iStart - iCursorStart);
       if v2LocationData in FOptions then
-        cell.LocationData.ParseFinish := TSourceLocation.make(FLine, iCursor - iCursorStart);
+        cell.LocationData.ParseFinish := TSourceLocation.Create(FLine, iCursor - iCursorStart);
       parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
       ofield.elementList.Add(cell.link);
     finally
@@ -1176,10 +1176,10 @@ begin
       child := TV2Cell.Create;
       try
         if v2LocationData in FOptions then
-          child.LocationData.ParseStart := TSourceLocation.make(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
+          child.LocationData.ParseStart := TSourceLocation.Create(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
         inc(i, sLeft.length);
         if v2LocationData in FOptions then
-          child.LocationData.ParseFinish := TSourceLocation.make(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
+          child.LocationData.ParseFinish := TSourceLocation.Create(cell.LocationData.ParseStart.line, cell.LocationData.ParseStart.col + i);
         cell.componentList.Add(child.link);
         parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
         inc(i);
