@@ -221,7 +221,9 @@
       <Unit>
         <Filename Value="frames\ftk_frame_codesystem.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="CodeSystemFrame"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit>
       <Unit>
         <Filename Value="editors\ftk_editor_fhir.pas"/>

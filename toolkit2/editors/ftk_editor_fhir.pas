@@ -13,7 +13,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
   FHIR.R4.Resources.Canonical,
-  FHIR.LCL.Synchroniser,
+  fui_orchestrators,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -333,7 +333,7 @@ end;
 
 function TFHIREditor.hasDesigner: boolean;
 begin
-  Result := ;
+  Result := false;
 end;
 
 procedure TFHIREditor.makeDesigner;

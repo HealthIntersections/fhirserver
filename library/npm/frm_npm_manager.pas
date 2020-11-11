@@ -10,7 +10,7 @@ uses
   frm_progress, frm_npm_browser,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging,
   FHIR.Web.Fetcher,
-  FHIR.Npm.Package, FHIR.Npm.Cache, FHIR.LCL.Managers;
+  FHIR.Npm.Package, FHIR.Npm.Cache, fui_orchestrators;
 
 type
 

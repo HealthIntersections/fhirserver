@@ -1,19 +1,653 @@
-object Frame1: TFrame1
+object CodeSystemFrame: TCodeSystemFrame
   Left = 0
-  Height = 240
+  Height = 1394
   Top = 0
-  Width = 320
-  ClientHeight = 240
-  ClientWidth = 320
+  Width = 1420
+  ClientHeight = 1394
+  ClientWidth = 1420
+  DesignTimePPI = 168
+  ParentFont = False
   TabOrder = 0
-  DesignLeft = 3155
-  DesignTop = -64
-  object Label1: TLabel
-    Left = 50
-    Height = 15
-    Top = 84
-    Width = 105
-    Caption = 'Code System Frame'
-    ParentColor = False
+  DesignLeft = 71
+  DesignTop = 315
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 1394
+    Top = 0
+    Width = 1420
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Metadata'
+      ClientHeight = 1351
+      ClientWidth = 1412
+      OnContextPopup = TabSheet1ContextPopup
+      object GroupBox1: TGroupBox
+        Left = 0
+        Height = 376
+        Top = 0
+        Width = 1412
+        Align = alTop
+        Caption = '  Identification  '
+        ClientHeight = 341
+        ClientWidth = 1408
+        Font.CharSet = ANSI_CHARSET
+        Font.Color = clNavy
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = GroupBox1Click
+        object Label4: TLabel
+          Left = 65
+          Height = 30
+          Top = 176
+          Width = 92
+          Caption = 'Identifiers'
+          Font.CharSet = ANSI_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+          ParentShowHint = False
+        end
+        object Label2: TLabel
+          Left = 96
+          Height = 30
+          Top = 64
+          Width = 61
+          Caption = 'Name:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object Label1: TLabel
+          Left = 115
+          Height = 30
+          Top = 8
+          Width = 42
+          Caption = 'URL:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtURL: TEdit
+          Left = 168
+          Height = 38
+          Top = 8
+          Width = 1224
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 0
+          Text = 'edtURL'
+        end
+        object Label3: TLabel
+          Left = 856
+          Height = 30
+          Top = 64
+          Width = 68
+          Caption = 'Version'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtName: TEdit
+          Left = 168
+          Height = 38
+          Top = 64
+          Width = 556
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 1
+          Text = 'edtName'
+        end
+        object edtVersion: TEdit
+          Left = 952
+          Height = 38
+          Top = 64
+          Width = 440
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 2
+          Text = 'edtVersion'
+        end
+        object lvIdentifiers: TListView
+          Left = 168
+          Height = 148
+          Top = 176
+          Width = 1074
+          Anchors = [akTop, akLeft, akRight]
+          Columns = <          
+            item
+              Caption = 'System'
+              Width = 10
+            end          
+            item
+              Caption = 'Value'
+              Width = 10
+            end          
+            item
+              Caption = 'Use'
+              Width = 10
+            end>
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 3
+          ViewStyle = vsReport
+        end
+        object btnAddIdentifier: TButton
+          Left = 1260
+          Height = 44
+          Top = 176
+          Width = 131
+          Anchors = [akTop, akRight]
+          Caption = 'Add'
+          Font.CharSet = ANSI_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 4
+        end
+        object btnDeleteIdentifier: TButton
+          Left = 1261
+          Height = 44
+          Top = 227
+          Width = 131
+          Anchors = [akTop, akRight]
+          Caption = 'Delete'
+          Font.CharSet = ANSI_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 5
+        end
+        object Label5: TLabel
+          Left = 113
+          Height = 30
+          Top = 120
+          Width = 44
+          Caption = 'Title:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+          ParentShowHint = False
+        end
+        object btnName: TSpeedButton
+          Left = 733
+          Height = 39
+          Top = 64
+          Width = 40
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 0
+        Height = 440
+        Top = 376
+        Width = 1412
+        Align = alTop
+        Caption = '  Management  '
+        ClientHeight = 405
+        ClientWidth = 1408
+        Font.CharSet = ANSI_CHARSET
+        Font.Color = clNavy
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        object Label6: TLabel
+          Left = 96
+          Height = 30
+          Top = 8
+          Width = 61
+          Caption = 'Status:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object cbxStatus: TComboBox
+          Left = 168
+          Height = 38
+          Top = 8
+          Width = 1028
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ItemHeight = 30
+          ParentFont = False
+          TabOrder = 0
+          Text = 'cbxStatus'
+        end
+        object chkExperimental: TCheckBox
+          Left = 1220
+          Height = 34
+          Top = 12
+          Width = 154
+          Anchors = [akTop, akRight]
+          Caption = 'Experimental'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 1
+        end
+        object Label7: TLabel
+          Left = 108
+          Height = 30
+          Top = 72
+          Width = 49
+          Caption = 'Date:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtDate: TDateEdit
+          Left = 168
+          Height = 38
+          Top = 64
+          Width = 1216
+          CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+          DateOrder = doNone
+          ButtonWidth = 40
+          Anchors = [akTop, akLeft, akRight]
+          NumGlyphs = 1
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          MaxLength = 0
+          ParentFont = False
+          TabOrder = 2
+          Text = 'edtDate'
+        end
+        object Label8: TLabel
+          Left = 67
+          Height = 30
+          Top = 120
+          Width = 90
+          Caption = 'Publisher:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtPublisher: TEdit
+          Left = 168
+          Height = 38
+          Top = 120
+          Width = 1168
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 3
+          Text = 'edtPublisher'
+        end
+        object Label9: TLabel
+          Left = 47
+          Height = 30
+          Top = 176
+          Width = 110
+          Caption = 'Description:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtDescription: TEdit
+          Left = 168
+          Height = 38
+          Top = 176
+          Width = 1168
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 4
+          Text = 'edtDescription'
+        end
+        object Label10: TLabel
+          Left = 77
+          Height = 30
+          Top = 240
+          Width = 80
+          Caption = 'Purpose:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtPurpose: TEdit
+          Left = 168
+          Height = 38
+          Top = 232
+          Width = 1168
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 5
+          Text = 'edtPurpose'
+        end
+        object Label11: TLabel
+          Left = 62
+          Height = 30
+          Top = 288
+          Width = 95
+          Caption = 'Copyright:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtCopyright: TEdit
+          Left = 168
+          Height = 38
+          Top = 288
+          Width = 1168
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 6
+          Text = 'edtCopyright'
+        end
+        object Label12: TLabel
+          Left = 48
+          Height = 30
+          Top = 344
+          Width = 109
+          Caption = 'Jurisdiction:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object cbxJurisdiction: TComboBox
+          Left = 168
+          Height = 38
+          Top = 344
+          Width = 1220
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ItemHeight = 30
+          ParentFont = False
+          TabOrder = 7
+          Text = 'cbxJurisdiction'
+        end
+        object btnPublisher: TSpeedButton
+          Left = 1344
+          Height = 39
+          Top = 120
+          Width = 40
+          Anchors = [akTop, akRight]
+        end
+        object btnDescription: TSpeedButton
+          Left = 1344
+          Height = 39
+          Top = 176
+          Width = 40
+          Anchors = [akTop, akRight]
+        end
+        object btnPurpose: TSpeedButton
+          Left = 1344
+          Height = 39
+          Top = 231
+          Width = 40
+          Anchors = [akTop, akRight]
+        end
+        object btnCopyright: TSpeedButton
+          Left = 1344
+          Height = 39
+          Top = 288
+          Width = 40
+          Anchors = [akTop, akRight]
+        end
+      end
+      object GroupBox3: TGroupBox
+        Left = 0
+        Height = 535
+        Top = 816
+        Width = 1412
+        Align = alClient
+        Caption = '  Terminology Details  '
+        ClientHeight = 500
+        ClientWidth = 1408
+        Font.CharSet = ANSI_CHARSET
+        Font.Color = clNavy
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        OnClick = GroupBox3Click
+        object Label13: TLabel
+          Left = 64
+          Height = 30
+          Top = 72
+          Width = 93
+          Caption = 'Heirarchy:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object cbxHeirarchy: TComboBox
+          Left = 168
+          Height = 38
+          Top = 72
+          Width = 1223
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ItemHeight = 30
+          ParentFont = False
+          TabOrder = 0
+          Text = 'cbxHeirarchy'
+        end
+        object Label14: TLabel
+          Left = 73
+          Height = 30
+          Top = 16
+          Width = 84
+          Caption = 'ValueSet:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtValueSet: TEdit
+          Left = 168
+          Height = 38
+          Top = 16
+          Width = 1224
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 1
+          Text = 'edtValueSet'
+        end
+        object Label15: TLabel
+          Left = 32
+          Height = 30
+          Top = 128
+          Width = 125
+          Caption = 'Supplements:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtSupplements: TEdit
+          Left = 168
+          Height = 38
+          Top = 128
+          Width = 1224
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 2
+          Text = 'edtSupplements'
+        end
+        object Label16: TLabel
+          Left = 78
+          Height = 30
+          Top = 184
+          Width = 79
+          Caption = 'Content:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object cbxContent: TComboBox
+          Left = 168
+          Height = 38
+          Top = 184
+          Width = 1224
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ItemHeight = 30
+          ParentFont = False
+          TabOrder = 3
+          Text = 'cbxContent'
+        end
+        object Label17: TLabel
+          Left = 13
+          Height = 30
+          Top = 240
+          Width = 144
+          Caption = 'Concept Count:'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentColor = False
+          ParentFont = False
+        end
+        object edtConceptCount: TEdit
+          Left = 168
+          Height = 38
+          Top = 240
+          Width = 936
+          Anchors = [akTop, akLeft, akRight]
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 4
+          Text = 'edtConceptCount'
+        end
+        object btnConcepts: TButton
+          Left = 1114
+          Height = 41
+          Top = 240
+          Width = 280
+          Anchors = [akTop, akRight]
+          Caption = 'Update From Concepts'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 5
+        end
+        object chkCase: TCheckBox
+          Left = 42
+          Height = 34
+          Top = 296
+          Width = 263
+          Caption = 'Codes are Case Sensitive'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 6
+        end
+        object chkGrammar: TCheckBox
+          Left = 416
+          Height = 34
+          Top = 296
+          Width = 317
+          Caption = 'Has a Compositional Grammar'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 7
+        end
+        object chkNeedsVersion: TCheckBox
+          Left = 893
+          Height = 34
+          Top = 296
+          Width = 281
+          Caption = 'Needs Version When Used'
+          Font.CharSet = ANSI_CHARSET
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          ParentFont = False
+          TabOrder = 8
+        end
+      end
+    end
+  end
+  object editTitle: TEdit
+    Left = 176
+    Height = 38
+    Top = 192
+    Width = 1224
+    Anchors = [akTop, akLeft, akRight]
+    ParentFont = False
+    TabOrder = 1
+    Text = 'editTitle'
   end
 end

@@ -9,7 +9,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, IniFiles, DateUtils,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.LCL.Managers, FHIR.Npm.Client;
+  fui_orchestrators, FHIR.Npm.Client;
 
 type
   { TPackageRegistryManager }
