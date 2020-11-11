@@ -37,7 +37,7 @@ const
   NPPM_GETNBOPENFILES = (NOTEPADPLUS_USER + 7);
     ALL_OPEN_FILES = 0;
     PRIMARY_VIEW = 1;
-    SECOND_VIEW	= 2;
+    SECOND_VIEW  = 2;
   NPPM_GETOPENFILENAMES = (NOTEPADPLUS_USER + 8);
   WM_CANCEL_SCINTILLAKEY = (NOTEPADPLUS_USER + 9);
   WM_BIND_SCINTILLAKEY = (NOTEPADPLUS_USER + 10);
@@ -88,7 +88,7 @@ const
   //void WM_LAUNCH_FINDINFILESDLG(char * dir2Search, char * filtre)
 
   NPPM_DMMSHOW = (NOTEPADPLUS_USER + 30);
-  NPPM_DMMHIDE	= (NOTEPADPLUS_USER + 31);
+  NPPM_DMMHIDE  = (NOTEPADPLUS_USER + 31);
   NPPM_DMMUPDATEDISPINFO = (NOTEPADPLUS_USER + 32);
   //void WM_DMM_xxx(0, tTbData->hClient)
 
@@ -106,10 +106,10 @@ const
   NPPM_SAVECURRENTFILE = (NOTEPADPLUS_USER + 38);
   NPPM_SAVECURRENTFILEAs = (NOTEPADPLUS_USER + 78);
   //BOOL WM_SWITCHTOFILE(0, 0)
-  NPPM_SAVEALLFILES	= (NOTEPADPLUS_USER + 39);
+  NPPM_SAVEALLFILES  = (NOTEPADPLUS_USER + 39);
   //BOOL WM_SAVEALLFILES(0, 0)
-  NPPM_SETMENUITEMCHECK	= (NOTEPADPLUS_USER + 40);
-  //void WM_PIMENU_CHECK(UINT	funcItem[X]._cmdID, TRUE/FALSE)
+  NPPM_SETMENUITEMCHECK  = (NOTEPADPLUS_USER + 40);
+  //void WM_PIMENU_CHECK(UINT  funcItem[X]._cmdID, TRUE/FALSE)
   NPPM_ADDTOOLBARICON = (NOTEPADPLUS_USER + 41); // see TToolbarIcons
   //void WM_ADDTOOLBARICON(UINT funcItem[X]._cmdID, toolbarIcons icon)
   NPPM_GETWINDOWSVERSION = (NOTEPADPLUS_USER + 42);
@@ -127,124 +127,124 @@ const
 
   // new
   NPPM_MSGTOPLUGIN = (NOTEPADPLUS_USER + 47); // see TCommunicationInfo
-	//BOOL NPPM_MSGTOPLUGIN(TCHAR *destModuleName, CommunicationInfo *info)
-	// return value is TRUE when the message arrive to the destination plugins.
-	// if destModule or info is NULL, then return value is FALSE
-//		struct CommunicationInfo {
-//			long internalMsg;
-//			const TCHAR * srcModuleName;
-//			void * info; // defined by plugin
-//		};
+  //BOOL NPPM_MSGTOPLUGIN(TCHAR *destModuleName, CommunicationInfo *info)
+  // return value is TRUE when the message arrive to the destination plugins.
+  // if destModule or info is NULL, then return value is FALSE
+//    struct CommunicationInfo {
+//      long internalMsg;
+//      const TCHAR * srcModuleName;
+//      void * info; // defined by plugin
+//    };
 
-	NPPM_MENUCOMMAND = (NOTEPADPLUS_USER + 48);
-	//void NPPM_MENUCOMMAND(0, int cmdID)
-	// uncomment //#include "menuCmdID.h"
-	// in the beginning of this file then use the command symbols defined in "menuCmdID.h" file
-	// to access all the Notepad++ menu command items
+  NPPM_MENUCOMMAND = (NOTEPADPLUS_USER + 48);
+  //void NPPM_MENUCOMMAND(0, int cmdID)
+  // uncomment //#include "menuCmdID.h"
+  // in the beginning of this file then use the command symbols defined in "menuCmdID.h" file
+  // to access all the Notepad++ menu command items
 
-	NPPM_TRIGGERTABBARCONTEXTMENU = (NOTEPADPLUS_USER + 49);
-	//void NPPM_TRIGGERTABBARCONTEXTMENU(int view, int index2Activate)
+  NPPM_TRIGGERTABBARCONTEXTMENU = (NOTEPADPLUS_USER + 49);
+  //void NPPM_TRIGGERTABBARCONTEXTMENU(int view, int index2Activate)
 
-	NPPM_GETNPPVERSION = (NOTEPADPLUS_USER + 50);
-	// int NPPM_GETNPPVERSION(0, 0)
-	// return version
-	// ex : v4.6
-	// HIWORD(version) == 4
-	// LOWORD(version) == 6
+  NPPM_GETNPPVERSION = (NOTEPADPLUS_USER + 50);
+  // int NPPM_GETNPPVERSION(0, 0)
+  // return version
+  // ex : v4.6
+  // HIWORD(version) == 4
+  // LOWORD(version) == 6
 
-	NPPM_HIDETABBAR = (NOTEPADPLUS_USER + 51);
-	// BOOL NPPM_HIDETABBAR(0, BOOL hideOrNot)
-	// if hideOrNot is set as TRUE then tab bar will be hidden
-	// otherwise it'll be shown.
-	// return value : the old status value
+  NPPM_HIDETABBAR = (NOTEPADPLUS_USER + 51);
+  // BOOL NPPM_HIDETABBAR(0, BOOL hideOrNot)
+  // if hideOrNot is set as TRUE then tab bar will be hidden
+  // otherwise it'll be shown.
+  // return value : the old status value
 
-	NPPM_ISTABBARHIDE = (NOTEPADPLUS_USER + 52);
-	// BOOL NPPM_ISTABBARHIDE(0, 0)
-	// returned value : TRUE if tab bar is hidden, otherwise FALSE
+  NPPM_ISTABBARHIDE = (NOTEPADPLUS_USER + 52);
+  // BOOL NPPM_ISTABBARHIDE(0, 0)
+  // returned value : TRUE if tab bar is hidden, otherwise FALSE
 
-	NPPM_CHECKDOCSTATUS = (NOTEPADPLUS_USER + 53);
-	// VOID NPPM_CHECKDOCSTATUS(BOOL, 0)
+  NPPM_CHECKDOCSTATUS = (NOTEPADPLUS_USER + 53);
+  // VOID NPPM_CHECKDOCSTATUS(BOOL, 0)
 
-	NPPM_ENABLECHECKDOCOPT = (NOTEPADPLUS_USER + 54);
-	// VOID NPPM_ENABLECHECKDOCOPT(OPT, 0)
-		// where OPT is :
-		CHECKDOCOPT_NONE = 0;
-		CHECKDOCOPT_UPDATESILENTLY = 1;
-		CHECKDOCOPT_UPDATEGO2END = 2;
+  NPPM_ENABLECHECKDOCOPT = (NOTEPADPLUS_USER + 54);
+  // VOID NPPM_ENABLECHECKDOCOPT(OPT, 0)
+    // where OPT is :
+    CHECKDOCOPT_NONE = 0;
+    CHECKDOCOPT_UPDATESILENTLY = 1;
+    CHECKDOCOPT_UPDATEGO2END = 2;
 
-	NPPM_GETCHECKDOCOPT = (NOTEPADPLUS_USER + 55);
-	// INT NPPM_GETCHECKDOCOPT(0, 0)
-	NPPM_SETCHECKDOCOPT = (NOTEPADPLUS_USER + 56);
-	// INT NPPM_SETCHECKDOCOPT(OPT, 0)
+  NPPM_GETCHECKDOCOPT = (NOTEPADPLUS_USER + 55);
+  // INT NPPM_GETCHECKDOCOPT(0, 0)
+  NPPM_SETCHECKDOCOPT = (NOTEPADPLUS_USER + 56);
+  // INT NPPM_SETCHECKDOCOPT(OPT, 0)
 
-	NPPM_GETPOSFROMBUFFERID = (NOTEPADPLUS_USER + 57);
-	// INT NPPM_GETPOSFROMBUFFERID(INT bufferID, 0)
-	// Return VIEW|INDEX from a buffer ID. -1 if the bufferID non existing
-	//
-	// VIEW takes 2 highest bits and INDEX (0 based) takes the rest (30 bits)
-	// Here's the values for the view :
-	//  MAIN_VIEW 0
-	//  SUB_VIEW  1
+  NPPM_GETPOSFROMBUFFERID = (NOTEPADPLUS_USER + 57);
+  // INT NPPM_GETPOSFROMBUFFERID(INT bufferID, 0)
+  // Return VIEW|INDEX from a buffer ID. -1 if the bufferID non existing
+  //
+  // VIEW takes 2 highest bits and INDEX (0 based) takes the rest (30 bits)
+  // Here's the values for the view :
+  //  MAIN_VIEW 0
+  //  SUB_VIEW  1
 
-	NPPM_GETFULLPATHFROMBUFFERID = (NOTEPADPLUS_USER + 58);
-	// INT NPPM_GETFULLPATHFROMBUFFERID(INT bufferID, CHAR *fullFilePath)
-	// Get full path file name from a bufferID.
-	// Return -1 if the bufferID non existing, otherwise the number of TCHAR copied/to copy
-	// User should call it with fullFilePath be NULL to get the number of TCHAR (not including the nul character),
-	// allocate fullFilePath with the return values + 1, then call it again to get  full path file name
+  NPPM_GETFULLPATHFROMBUFFERID = (NOTEPADPLUS_USER + 58);
+  // INT NPPM_GETFULLPATHFROMBUFFERID(INT bufferID, CHAR *fullFilePath)
+  // Get full path file name from a bufferID.
+  // Return -1 if the bufferID non existing, otherwise the number of TCHAR copied/to copy
+  // User should call it with fullFilePath be NULL to get the number of TCHAR (not including the nul character),
+  // allocate fullFilePath with the return values + 1, then call it again to get  full path file name
 
-	NPPM_GETBUFFERIDFROMPOS = (NOTEPADPLUS_USER + 59);
-	//wParam: Position of document
-	//lParam: View to use, 0 = Main, 1 = Secondary
-	//Returns 0 if invalid
+  NPPM_GETBUFFERIDFROMPOS = (NOTEPADPLUS_USER + 59);
+  //wParam: Position of document
+  //lParam: View to use, 0 = Main, 1 = Secondary
+  //Returns 0 if invalid
 
-	NPPM_GETCURRENTBUFFERID = (NOTEPADPLUS_USER + 60);
-	//Returns active Buffer
+  NPPM_GETCURRENTBUFFERID = (NOTEPADPLUS_USER + 60);
+  //Returns active Buffer
 
-	NPPM_RELOADBUFFERID = (NOTEPADPLUS_USER + 61);
-	//Reloads Buffer
-	//wParam: Buffer to reload
-	//lParam: 0 if no alert, else alert
+  NPPM_RELOADBUFFERID = (NOTEPADPLUS_USER + 61);
+  //Reloads Buffer
+  //wParam: Buffer to reload
+  //lParam: 0 if no alert, else alert
 
-	NPPM_SETFILENAME = (NOTEPADPLUS_USER + 63);
-	//wParam: BufferID to rename
-	//lParam: name to set (TCHAR*)
-	//Buffer must have been previously unnamed (eg "new 1" document types)
+  NPPM_SETFILENAME = (NOTEPADPLUS_USER + 63);
+  //wParam: BufferID to rename
+  //lParam: name to set (TCHAR*)
+  //Buffer must have been previously unnamed (eg "new 1" document types)
 
-	NPPM_GETBUFFERLANGTYPE = (NOTEPADPLUS_USER + 64);
-	//wParam: BufferID to get LangType from
-	//lParam: 0
-	//Returns as int, see LangType. -1 on error
+  NPPM_GETBUFFERLANGTYPE = (NOTEPADPLUS_USER + 64);
+  //wParam: BufferID to get LangType from
+  //lParam: 0
+  //Returns as int, see LangType. -1 on error
 
-	NPPM_SETBUFFERLANGTYPE = (NOTEPADPLUS_USER + 65);
-	//wParam: BufferID to set LangType of
-	//lParam: LangType
-	//Returns TRUE on success, FALSE otherwise
-	//use int, see LangType for possible values
-	//L_USER and L_EXTERNAL are not supported
+  NPPM_SETBUFFERLANGTYPE = (NOTEPADPLUS_USER + 65);
+  //wParam: BufferID to set LangType of
+  //lParam: LangType
+  //Returns TRUE on success, FALSE otherwise
+  //use int, see LangType for possible values
+  //L_USER and L_EXTERNAL are not supported
 
-	NPPM_GETBUFFERENCODING = (NOTEPADPLUS_USER + 66);
-	//wParam: BufferID to get encoding from
-	//lParam: 0
-	//returns as int, see UniMode. -1 on error
+  NPPM_GETBUFFERENCODING = (NOTEPADPLUS_USER + 66);
+  //wParam: BufferID to get encoding from
+  //lParam: 0
+  //returns as int, see UniMode. -1 on error
 
-	NPPM_SETBUFFERENCODING = (NOTEPADPLUS_USER + 67);
-	//wParam: BufferID to set encoding of
-	//lParam: format
-	//Returns TRUE on success, FALSE otherwise
-	//use int, see UniMode
-	//Can only be done on new, unedited files
+  NPPM_SETBUFFERENCODING = (NOTEPADPLUS_USER + 67);
+  //wParam: BufferID to set encoding of
+  //lParam: format
+  //Returns TRUE on success, FALSE otherwise
+  //use int, see UniMode
+  //Can only be done on new, unedited files
 
-	NPPM_GETBUFFERFORMAT = (NOTEPADPLUS_USER + 68);
-	//wParam: BufferID to get format from
-	//lParam: 0
-	//returns as int, see formatType. -1 on error
+  NPPM_GETBUFFERFORMAT = (NOTEPADPLUS_USER + 68);
+  //wParam: BufferID to get format from
+  //lParam: 0
+  //returns as int, see formatType. -1 on error
 
-	NPPM_SETBUFFERFORMAT = (NOTEPADPLUS_USER + 69);
-	//wParam: BufferID to set format of
-	//lParam: format
-	//Returns TRUE on success, FALSE otherwise
-	//use int, see formatType
+  NPPM_SETBUFFERFORMAT = (NOTEPADPLUS_USER + 69);
+  //wParam: BufferID to set format of
+  //lParam: format
+  //Returns TRUE on success, FALSE otherwise
+  //use int, see formatType
 
 
 
@@ -333,15 +333,15 @@ const
 {
 #define WM_DOCK_USERDEFINE_DLG      (SCINTILLA_USER + 1)
 #define WM_UNDOCK_USERDEFINE_DLG    (SCINTILLA_USER + 2)
-#define WM_CLOSE_USERDEFINE_DLG		(SCINTILLA_USER + 3)
-#define WM_REMOVE_USERLANG		    (SCINTILLA_USER + 4)
-#define WM_RENAME_USERLANG			(SCINTILLA_USER + 5)
-#define WM_REPLACEALL_INOPENEDDOC	(SCINTILLA_USER + 6)
-#define WM_FINDALL_INOPENEDDOC  	(SCINTILLA_USER + 7)
+#define WM_CLOSE_USERDEFINE_DLG    (SCINTILLA_USER + 3)
+#define WM_REMOVE_USERLANG        (SCINTILLA_USER + 4)
+#define WM_RENAME_USERLANG      (SCINTILLA_USER + 5)
+#define WM_REPLACEALL_INOPENEDDOC  (SCINTILLA_USER + 6)
+#define WM_FINDALL_INOPENEDDOC    (SCINTILLA_USER + 7)
 }
   WM_DOOPEN = (SCINTILLA_USER + 8);
 {
-#define WM_FINDINFILES			  	(SCINTILLA_USER + 9)
+#define WM_FINDINFILES          (SCINTILLA_USER + 9)
 }
 
 { docking.h }
@@ -358,51 +358,51 @@ const
   DWS_ADDINFO = 4; // Additional information are in use
 
 // default docking values for first call of plugin
-  DWS_DF_CONT_LEFT = CONT_LEFT shl 28;	        // default docking on left
-  DWS_DF_CONT_RIGHT = CONT_RIGHT shl 28;	// default docking on right
-  DWS_DF_CONT_TOP = CONT_TOP shl 28;	        // default docking on top
-  DWS_DF_CONT_BOTTOM = CONT_BOTTOM shl 28;	// default docking on bottom
-  DWS_DF_FLOATING = $80000000;			// default state is floating
+  DWS_DF_CONT_LEFT = CONT_LEFT shl 28;          // default docking on left
+  DWS_DF_CONT_RIGHT = CONT_RIGHT shl 28;  // default docking on right
+  DWS_DF_CONT_TOP = CONT_TOP shl 28;          // default docking on top
+  DWS_DF_CONT_BOTTOM = CONT_BOTTOM shl 28;  // default docking on bottom
+  DWS_DF_FLOATING = $80000000;      // default state is floating
 
 { dockingResource.h }
   DMN_FIRST = 1050;
   DMN_CLOSE = (DMN_FIRST + 1); //nmhdr.code = DWORD(DMN_CLOSE, 0)); //nmhdr.hwndFrom = hwndNpp; //nmhdr.idFrom = ctrlIdNpp;
   DMN_DOCK = (DMN_FIRST + 2);
-  DMN_FLOAT = (DMN_FIRST + 3); //nmhdr.code = DWORD(DMN_XXX, int newContainer);	//nmhdr.hwndFrom = hwndNpp; //nmhdr.idFrom = ctrlIdNpp;
+  DMN_FLOAT = (DMN_FIRST + 3); //nmhdr.code = DWORD(DMN_XXX, int newContainer);  //nmhdr.hwndFrom = hwndNpp; //nmhdr.idFrom = ctrlIdNpp;
 
 
   IDM = 40000;
 
   IDM_FILE       = (IDM + 1000);
-  IDM_FILE_NEW                     		= (IDM_FILE + 1);
-  IDM_FILE_OPEN                    		= (IDM_FILE + 2);
-  IDM_FILE_CLOSE                   		= (IDM_FILE + 3);
-  IDM_FILE_CLOSEALL              		= (IDM_FILE + 4);
+  IDM_FILE_NEW                         = (IDM_FILE + 1);
+  IDM_FILE_OPEN                        = (IDM_FILE + 2);
+  IDM_FILE_CLOSE                       = (IDM_FILE + 3);
+  IDM_FILE_CLOSEALL                  = (IDM_FILE + 4);
   IDM_FILE_CLOSEALL_BUT_CURRENT   = (IDM_FILE + 5);
-  IDM_FILE_SAVE                    		= (IDM_FILE + 6);
+  IDM_FILE_SAVE                        = (IDM_FILE + 6);
   IDM_FILE_SAVEALL            = (IDM_FILE + 7);
-  IDM_FILE_SAVEAS		   		= (IDM_FILE + 8);
-  IDM_FILE_ASIAN_LANG	   		= (IDM_FILE + 9);
-  IDM_FILE_PRINT		   		= (IDM_FILE + 10);
+  IDM_FILE_SAVEAS           = (IDM_FILE + 8);
+  IDM_FILE_ASIAN_LANG         = (IDM_FILE + 9);
+  IDM_FILE_PRINT           = (IDM_FILE + 10);
   IDM_FILE_PRINTNOW               =  1001;
-  IDM_FILE_EXIT			   	= (IDM_FILE + 11);
-  IDM_FILE_LOADSESSION	    = (IDM_FILE + 12);
-  IDM_FILE_SAVESESSION		= (IDM_FILE + 13);
-  IDM_FILE_RELOAD     		= (IDM_FILE + 14);
-  IDM_FILE_SAVECOPYAS     	= (IDM_FILE + 15);
-  IDM_FILE_DELETE		     	= (IDM_FILE + 16);
-  IDM_FILE_RENAME		     	= (IDM_FILE + 17);
+  IDM_FILE_EXIT           = (IDM_FILE + 11);
+  IDM_FILE_LOADSESSION      = (IDM_FILE + 12);
+  IDM_FILE_SAVESESSION    = (IDM_FILE + 13);
+  IDM_FILE_RELOAD         = (IDM_FILE + 14);
+  IDM_FILE_SAVECOPYAS       = (IDM_FILE + 15);
+  IDM_FILE_DELETE           = (IDM_FILE + 16);
+  IDM_FILE_RENAME           = (IDM_FILE + 17);
 
  // A mettre ` jour si on ajoute nouveau menu item dans le menu "File"
-  IDM_FILEMENU_LASTONE = 	IDM_FILE_RENAME;
+  IDM_FILEMENU_LASTONE =   IDM_FILE_RENAME;
 
   IDM_EDIT       = (IDM + 2000);
-  IDM_EDIT_CUT					= (IDM_EDIT + 1);
-  IDM_EDIT_COPY				= (IDM_EDIT + 2);
-  IDM_EDIT_UNDO				= (IDM_EDIT + 3);
-  IDM_EDIT_REDO				= (IDM_EDIT + 4);
-  IDM_EDIT_PASTE				= (IDM_EDIT + 5);
-  IDM_EDIT_DELETE				= (IDM_EDIT + 6);
+  IDM_EDIT_CUT          = (IDM_EDIT + 1);
+  IDM_EDIT_COPY        = (IDM_EDIT + 2);
+  IDM_EDIT_UNDO        = (IDM_EDIT + 3);
+  IDM_EDIT_REDO        = (IDM_EDIT + 4);
+  IDM_EDIT_PASTE        = (IDM_EDIT + 5);
+  IDM_EDIT_DELETE        = (IDM_EDIT + 6);
   IDM_EDIT_SELECTALL          = (IDM_EDIT + 7);
 
   IDM_EDIT_INS_TAB            = (IDM_EDIT + 8);
@@ -416,74 +416,74 @@ const
   IDM_EDIT_UPPERCASE          = (IDM_EDIT + 16);
   IDM_EDIT_LOWERCASE          = (IDM_EDIT + 17);
 
-  IDM_EDIT_BLOCK_COMMENT  	= (IDM_EDIT + 22);
-  IDM_EDIT_STREAM_COMMENT  	= (IDM_EDIT + 23);
-  IDM_EDIT_TRIMTRAILING  		= (IDM_EDIT + 24);
+  IDM_EDIT_BLOCK_COMMENT    = (IDM_EDIT + 22);
+  IDM_EDIT_STREAM_COMMENT    = (IDM_EDIT + 23);
+  IDM_EDIT_TRIMTRAILING      = (IDM_EDIT + 24);
 
-  IDM_EDIT_RTL				= (IDM_EDIT+26);
-  IDM_EDIT_LTR				= (IDM_EDIT+27);
-  IDM_EDIT_SETREADONLY		= (IDM_EDIT+28);
-  IDM_EDIT_FULLPATHTOCLIP		= (IDM_EDIT+29);
-  IDM_EDIT_FILENAMETOCLIP		= (IDM_EDIT+30);
-  IDM_EDIT_CURRENTDIRTOCLIP	= (IDM_EDIT+31);
+  IDM_EDIT_RTL        = (IDM_EDIT+26);
+  IDM_EDIT_LTR        = (IDM_EDIT+27);
+  IDM_EDIT_SETREADONLY    = (IDM_EDIT+28);
+  IDM_EDIT_FULLPATHTOCLIP    = (IDM_EDIT+29);
+  IDM_EDIT_FILENAMETOCLIP    = (IDM_EDIT+30);
+  IDM_EDIT_CURRENTDIRTOCLIP  = (IDM_EDIT+31);
 
-  IDM_EDIT_CLEARREADONLY		= (IDM_EDIT+33);
-  IDM_EDIT_COLUMNMODE			= (IDM_EDIT+34);
+  IDM_EDIT_CLEARREADONLY    = (IDM_EDIT+33);
+  IDM_EDIT_COLUMNMODE      = (IDM_EDIT+34);
   IDM_EDIT_BLOCK_COMMENT_SET  = (IDM_EDIT+35);
-  IDM_EDIT_BLOCK_UNCOMMENT  	= (IDM_EDIT+36);
+  IDM_EDIT_BLOCK_UNCOMMENT    = (IDM_EDIT+36);
 
-  IDM_EDIT_AUTOCOMPLETE    			= (50000+0);
-  IDM_EDIT_AUTOCOMPLETE_CURRENTFILE	= (50000+1);
-  IDM_EDIT_FUNCCALLTIP				= (50000+2);
+  IDM_EDIT_AUTOCOMPLETE          = (50000+0);
+  IDM_EDIT_AUTOCOMPLETE_CURRENTFILE  = (50000+1);
+  IDM_EDIT_FUNCCALLTIP        = (50000+2);
 
-	//Belong to MENU FILE
+  //Belong to MENU FILE
   IDM_OPEN_ALL_RECENT_FILE  = (IDM_EDIT + 40);
   IDM_CLEAN_RECENT_FILE_LIST  = (IDM_EDIT + 41);
 
   IDM_SEARCH       = (IDM + 3000);
 
-  IDM_SEARCH_FIND	                = (IDM_SEARCH + 1);
-  IDM_SEARCH_FINDNEXT				= (IDM_SEARCH + 2);
+  IDM_SEARCH_FIND                  = (IDM_SEARCH + 1);
+  IDM_SEARCH_FINDNEXT        = (IDM_SEARCH + 2);
   IDM_SEARCH_REPLACE              = (IDM_SEARCH + 3);
-  IDM_SEARCH_GOTOLINE				= (IDM_SEARCH + 4);
-  IDM_SEARCH_TOGGLE_BOOKMARK		= (IDM_SEARCH + 5);
-  IDM_SEARCH_NEXT_BOOKMARK		= (IDM_SEARCH + 6);
-  IDM_SEARCH_PREV_BOOKMARK		= (IDM_SEARCH + 7);
-  IDM_SEARCH_CLEAR_BOOKMARKS		= (IDM_SEARCH + 8);
-  IDM_SEARCH_GOTOMATCHINGBRACE	= (IDM_SEARCH + 9);
-  IDM_SEARCH_FINDPREV				= (IDM_SEARCH + 10);
-  IDM_SEARCH_FINDINCREMENT		= (IDM_SEARCH + 11);
-  IDM_SEARCH_FINDINFILES			= (IDM_SEARCH + 13);
-  IDM_SEARCH_VOLATILE_FINDNEXT	= (IDM_SEARCH + 14);
-  IDM_SEARCH_VOLATILE_FINDPREV	= (IDM_SEARCH + 15);
-  IDM_SEARCH_CUTMARKEDLINES  		= (IDM_SEARCH + 18);
-  IDM_SEARCH_COPYMARKEDLINES  	= (IDM_SEARCH + 19);
-  IDM_SEARCH_PASTEMARKEDLINES  	= (IDM_SEARCH + 20);
-  IDM_SEARCH_DELETEMARKEDLINES  	= (IDM_SEARCH + 21);
-  IDM_SEARCH_MARKALLEXT1			= (IDM_SEARCH + 22);
-  IDM_SEARCH_UNMARKALLEXT1		= (IDM_SEARCH + 23);
-  IDM_SEARCH_MARKALLEXT2			= (IDM_SEARCH + 24);
-  IDM_SEARCH_UNMARKALLEXT2		= (IDM_SEARCH + 25);
-  IDM_SEARCH_MARKALLEXT3			= (IDM_SEARCH + 26);
-  IDM_SEARCH_UNMARKALLEXT3		= (IDM_SEARCH + 27);
-  IDM_SEARCH_MARKALLEXT4			= (IDM_SEARCH + 28);
-  IDM_SEARCH_UNMARKALLEXT4		= (IDM_SEARCH + 29);
-  IDM_SEARCH_MARKALLEXT5			= (IDM_SEARCH + 30);
-  IDM_SEARCH_UNMARKALLEXT5		= (IDM_SEARCH + 31);
-  IDM_SEARCH_CLEARALLMARKS		= (IDM_SEARCH + 32);
+  IDM_SEARCH_GOTOLINE        = (IDM_SEARCH + 4);
+  IDM_SEARCH_TOGGLE_BOOKMARK    = (IDM_SEARCH + 5);
+  IDM_SEARCH_NEXT_BOOKMARK    = (IDM_SEARCH + 6);
+  IDM_SEARCH_PREV_BOOKMARK    = (IDM_SEARCH + 7);
+  IDM_SEARCH_CLEAR_BOOKMARKS    = (IDM_SEARCH + 8);
+  IDM_SEARCH_GOTOMATCHINGBRACE  = (IDM_SEARCH + 9);
+  IDM_SEARCH_FINDPREV        = (IDM_SEARCH + 10);
+  IDM_SEARCH_FINDINCREMENT    = (IDM_SEARCH + 11);
+  IDM_SEARCH_FINDINFILES      = (IDM_SEARCH + 13);
+  IDM_SEARCH_VOLATILE_FINDNEXT  = (IDM_SEARCH + 14);
+  IDM_SEARCH_VOLATILE_FINDPREV  = (IDM_SEARCH + 15);
+  IDM_SEARCH_CUTMARKEDLINES      = (IDM_SEARCH + 18);
+  IDM_SEARCH_COPYMARKEDLINES    = (IDM_SEARCH + 19);
+  IDM_SEARCH_PASTEMARKEDLINES    = (IDM_SEARCH + 20);
+  IDM_SEARCH_DELETEMARKEDLINES    = (IDM_SEARCH + 21);
+  IDM_SEARCH_MARKALLEXT1      = (IDM_SEARCH + 22);
+  IDM_SEARCH_UNMARKALLEXT1    = (IDM_SEARCH + 23);
+  IDM_SEARCH_MARKALLEXT2      = (IDM_SEARCH + 24);
+  IDM_SEARCH_UNMARKALLEXT2    = (IDM_SEARCH + 25);
+  IDM_SEARCH_MARKALLEXT3      = (IDM_SEARCH + 26);
+  IDM_SEARCH_UNMARKALLEXT3    = (IDM_SEARCH + 27);
+  IDM_SEARCH_MARKALLEXT4      = (IDM_SEARCH + 28);
+  IDM_SEARCH_UNMARKALLEXT4    = (IDM_SEARCH + 29);
+  IDM_SEARCH_MARKALLEXT5      = (IDM_SEARCH + 30);
+  IDM_SEARCH_UNMARKALLEXT5    = (IDM_SEARCH + 31);
+  IDM_SEARCH_CLEARALLMARKS    = (IDM_SEARCH + 32);
 
-  IDM_VIEW	= (IDM + 4000);
-  IDM_VIEW_TOOLBAR_HIDE			= (IDM_VIEW + 1);
-  IDM_VIEW_TOOLBAR_REDUCE			= (IDM_VIEW + 2);
-  IDM_VIEW_TOOLBAR_ENLARGE		= (IDM_VIEW + 3);
-  IDM_VIEW_TOOLBAR_STANDARD		= (IDM_VIEW + 4);
-  IDM_VIEW_REDUCETABBAR			= (IDM_VIEW + 5);
-  IDM_VIEW_LOCKTABBAR				= (IDM_VIEW + 6);
-  IDM_VIEW_DRAWTABBAR_TOPBAR   	= (IDM_VIEW + 7);
-  IDM_VIEW_DRAWTABBAR_INACIVETAB	= (IDM_VIEW + 8);
-  IDM_VIEW_POSTIT					= (IDM_VIEW + 9);
-  IDM_VIEW_TOGGLE_FOLDALL			= (IDM_VIEW + 10);
-  IDM_VIEW_USER_DLG				= (IDM_VIEW + 11);
+  IDM_VIEW  = (IDM + 4000);
+  IDM_VIEW_TOOLBAR_HIDE      = (IDM_VIEW + 1);
+  IDM_VIEW_TOOLBAR_REDUCE      = (IDM_VIEW + 2);
+  IDM_VIEW_TOOLBAR_ENLARGE    = (IDM_VIEW + 3);
+  IDM_VIEW_TOOLBAR_STANDARD    = (IDM_VIEW + 4);
+  IDM_VIEW_REDUCETABBAR      = (IDM_VIEW + 5);
+  IDM_VIEW_LOCKTABBAR        = (IDM_VIEW + 6);
+  IDM_VIEW_DRAWTABBAR_TOPBAR     = (IDM_VIEW + 7);
+  IDM_VIEW_DRAWTABBAR_INACIVETAB  = (IDM_VIEW + 8);
+  IDM_VIEW_POSTIT          = (IDM_VIEW + 9);
+  IDM_VIEW_TOGGLE_FOLDALL      = (IDM_VIEW + 10);
+  IDM_VIEW_USER_DLG        = (IDM_VIEW + 11);
   IDM_VIEW_LINENUMBER             = (IDM_VIEW + 12);
   IDM_VIEW_SYMBOLMARGIN           = (IDM_VIEW + 13);
   IDM_VIEW_FOLDERMAGIN            = (IDM_VIEW + 14);
@@ -491,102 +491,102 @@ const
   IDM_VIEW_FOLDERMAGIN_ARROW      = (IDM_VIEW + 16);
   IDM_VIEW_FOLDERMAGIN_CIRCLE     = (IDM_VIEW + 17);
   IDM_VIEW_FOLDERMAGIN_BOX        = (IDM_VIEW + 18);
-  IDM_VIEW_ALL_CHARACTERS		 	= (IDM_VIEW + 19);
-  IDM_VIEW_INDENT_GUIDE		 	= (IDM_VIEW + 20);
-  IDM_VIEW_CURLINE_HILITING		= (IDM_VIEW + 21);
-  IDM_VIEW_WRAP					= (IDM_VIEW + 22);
-  IDM_VIEW_ZOOMIN			 		= (IDM_VIEW + 23);
-  IDM_VIEW_ZOOMOUT			 	= (IDM_VIEW + 24);
-  IDM_VIEW_TAB_SPACE		        = (IDM_VIEW + 25);
-  IDM_VIEW_EOL			        = (IDM_VIEW + 26);
-  IDM_VIEW_EDGELINE		        = (IDM_VIEW + 27);
-  IDM_VIEW_EDGEBACKGROUND	        = (IDM_VIEW + 28);
-  IDM_VIEW_TOGGLE_UNFOLDALL	    = (IDM_VIEW + 29);
-  IDM_VIEW_FOLD_CURRENT			= (IDM_VIEW + 30);
-  IDM_VIEW_UNFOLD_CURRENT	        = (IDM_VIEW + 31);
-  IDM_VIEW_FULLSCREENTOGGLE	    = (IDM_VIEW + 32);
-  IDM_VIEW_ZOOMRESTORE	        = (IDM_VIEW + 33);
-  IDM_VIEW_ALWAYSONTOP	        = (IDM_VIEW + 34);
-  IDM_VIEW_SYNSCROLLV			= (IDM_VIEW + 35);
-  IDM_VIEW_SYNSCROLLH			= (IDM_VIEW + 36);
-  IDM_VIEW_EDGENONE				= (IDM_VIEW + 37);
-  IDM_VIEW_DRAWTABBAR_CLOSEBOTTUN	= (IDM_VIEW + 38);
-  IDM_VIEW_DRAWTABBAR_DBCLK2CLOSE	= (IDM_VIEW + 39);
-  IDM_VIEW_REFRESHTABAR	        = (IDM_VIEW + 40);
-  IDM_VIEW_WRAP_SYMBOL	        = (IDM_VIEW + 41);
-  IDM_VIEW_HIDELINES		        = (IDM_VIEW + 42);
-  IDM_VIEW_DRAWTABBAR_VERTICAL   	= (IDM_VIEW + 43);
-  IDM_VIEW_DRAWTABBAR_MULTILINE	= (IDM_VIEW + 44);
-  IDM_VIEW_DOCCHANGEMARGIN		= (IDM_VIEW + 45);
+  IDM_VIEW_ALL_CHARACTERS       = (IDM_VIEW + 19);
+  IDM_VIEW_INDENT_GUIDE       = (IDM_VIEW + 20);
+  IDM_VIEW_CURLINE_HILITING    = (IDM_VIEW + 21);
+  IDM_VIEW_WRAP          = (IDM_VIEW + 22);
+  IDM_VIEW_ZOOMIN           = (IDM_VIEW + 23);
+  IDM_VIEW_ZOOMOUT         = (IDM_VIEW + 24);
+  IDM_VIEW_TAB_SPACE            = (IDM_VIEW + 25);
+  IDM_VIEW_EOL              = (IDM_VIEW + 26);
+  IDM_VIEW_EDGELINE            = (IDM_VIEW + 27);
+  IDM_VIEW_EDGEBACKGROUND          = (IDM_VIEW + 28);
+  IDM_VIEW_TOGGLE_UNFOLDALL      = (IDM_VIEW + 29);
+  IDM_VIEW_FOLD_CURRENT      = (IDM_VIEW + 30);
+  IDM_VIEW_UNFOLD_CURRENT          = (IDM_VIEW + 31);
+  IDM_VIEW_FULLSCREENTOGGLE      = (IDM_VIEW + 32);
+  IDM_VIEW_ZOOMRESTORE          = (IDM_VIEW + 33);
+  IDM_VIEW_ALWAYSONTOP          = (IDM_VIEW + 34);
+  IDM_VIEW_SYNSCROLLV      = (IDM_VIEW + 35);
+  IDM_VIEW_SYNSCROLLH      = (IDM_VIEW + 36);
+  IDM_VIEW_EDGENONE        = (IDM_VIEW + 37);
+  IDM_VIEW_DRAWTABBAR_CLOSEBOTTUN  = (IDM_VIEW + 38);
+  IDM_VIEW_DRAWTABBAR_DBCLK2CLOSE  = (IDM_VIEW + 39);
+  IDM_VIEW_REFRESHTABAR          = (IDM_VIEW + 40);
+  IDM_VIEW_WRAP_SYMBOL          = (IDM_VIEW + 41);
+  IDM_VIEW_HIDELINES            = (IDM_VIEW + 42);
+  IDM_VIEW_DRAWTABBAR_VERTICAL     = (IDM_VIEW + 43);
+  IDM_VIEW_DRAWTABBAR_MULTILINE  = (IDM_VIEW + 44);
+  IDM_VIEW_DOCCHANGEMARGIN    = (IDM_VIEW + 45);
 
 
-  IDM_VIEW_FOLD			= (IDM_VIEW + 50);
-  IDM_VIEW_FOLD_1		= (IDM_VIEW_FOLD + 1);
-  IDM_VIEW_FOLD_2		= (IDM_VIEW_FOLD + 2);
-  IDM_VIEW_FOLD_3 	= (IDM_VIEW_FOLD + 3);
-  IDM_VIEW_FOLD_4    	= (IDM_VIEW_FOLD + 4);
-  IDM_VIEW_FOLD_5		= (IDM_VIEW_FOLD + 5);
-  IDM_VIEW_FOLD_6    	= (IDM_VIEW_FOLD + 6);
-  IDM_VIEW_FOLD_7	    = (IDM_VIEW_FOLD + 7);
-  IDM_VIEW_FOLD_8	    = (IDM_VIEW_FOLD + 8);
+  IDM_VIEW_FOLD      = (IDM_VIEW + 50);
+  IDM_VIEW_FOLD_1    = (IDM_VIEW_FOLD + 1);
+  IDM_VIEW_FOLD_2    = (IDM_VIEW_FOLD + 2);
+  IDM_VIEW_FOLD_3   = (IDM_VIEW_FOLD + 3);
+  IDM_VIEW_FOLD_4      = (IDM_VIEW_FOLD + 4);
+  IDM_VIEW_FOLD_5    = (IDM_VIEW_FOLD + 5);
+  IDM_VIEW_FOLD_6      = (IDM_VIEW_FOLD + 6);
+  IDM_VIEW_FOLD_7      = (IDM_VIEW_FOLD + 7);
+  IDM_VIEW_FOLD_8      = (IDM_VIEW_FOLD + 8);
 
-  IDM_VIEW_UNFOLD			= (IDM_VIEW + 60);
-  IDM_VIEW_UNFOLD_1		= (IDM_VIEW_UNFOLD + 1);
-  IDM_VIEW_UNFOLD_2		= (IDM_VIEW_UNFOLD + 2);
-  IDM_VIEW_UNFOLD_3 		= (IDM_VIEW_UNFOLD + 3);
-  IDM_VIEW_UNFOLD_4    	= (IDM_VIEW_UNFOLD + 4);
-  IDM_VIEW_UNFOLD_5		= (IDM_VIEW_UNFOLD + 5);
-  IDM_VIEW_UNFOLD_6    	= (IDM_VIEW_UNFOLD + 6);
-  IDM_VIEW_UNFOLD_7	    = (IDM_VIEW_UNFOLD + 7);
-  IDM_VIEW_UNFOLD_8	    = (IDM_VIEW_UNFOLD + 8);
+  IDM_VIEW_UNFOLD      = (IDM_VIEW + 60);
+  IDM_VIEW_UNFOLD_1    = (IDM_VIEW_UNFOLD + 1);
+  IDM_VIEW_UNFOLD_2    = (IDM_VIEW_UNFOLD + 2);
+  IDM_VIEW_UNFOLD_3     = (IDM_VIEW_UNFOLD + 3);
+  IDM_VIEW_UNFOLD_4      = (IDM_VIEW_UNFOLD + 4);
+  IDM_VIEW_UNFOLD_5    = (IDM_VIEW_UNFOLD + 5);
+  IDM_VIEW_UNFOLD_6      = (IDM_VIEW_UNFOLD + 6);
+  IDM_VIEW_UNFOLD_7      = (IDM_VIEW_UNFOLD + 7);
+  IDM_VIEW_UNFOLD_8      = (IDM_VIEW_UNFOLD + 8);
 
 
-  IDM_VIEW_GOTO_ANOTHER_VIEW   = 	10001;
+  IDM_VIEW_GOTO_ANOTHER_VIEW   =   10001;
   IDM_VIEW_CLONE_TO_ANOTHER_VIEW=  10002;
-  IDM_VIEW_GOTO_NEW_INSTANCE   = 	10003;
-  IDM_VIEW_LOAD_IN_NEW_INSTANCE  = 	10004;
+  IDM_VIEW_GOTO_NEW_INSTANCE   =   10003;
+  IDM_VIEW_LOAD_IN_NEW_INSTANCE  =   10004;
 
-  IDM_VIEW_SWITCHTO_OTHER_VIEW	= (IDM_VIEW + 72);
+  IDM_VIEW_SWITCHTO_OTHER_VIEW  = (IDM_VIEW + 72);
 
 
   IDM_FORMAT  = (IDM + 5000);
-  IDM_FORMAT_TODOS			= (IDM_FORMAT + 1);
-  IDM_FORMAT_TOUNIX		= (IDM_FORMAT + 2);
-  IDM_FORMAT_TOMAC		 	= (IDM_FORMAT + 3);
-  IDM_FORMAT_ANSI 			= (IDM_FORMAT + 4);
-  IDM_FORMAT_UTF_8			= (IDM_FORMAT + 5);
-  IDM_FORMAT_UCS_2BE		= (IDM_FORMAT + 6);
-  IDM_FORMAT_UCS_2LE	    = (IDM_FORMAT + 7);
-  IDM_FORMAT_AS_UTF_8	= (IDM_FORMAT + 8);
-  IDM_FORMAT_CONV2_ANSI		= (IDM_FORMAT + 9);
-  IDM_FORMAT_CONV2_AS_UTF_8	= (IDM_FORMAT + 10);
-  IDM_FORMAT_CONV2_UTF_8		= (IDM_FORMAT + 11);
-  IDM_FORMAT_CONV2_UCS_2BE	= (IDM_FORMAT + 12);
-  IDM_FORMAT_CONV2_UCS_2LE	= (IDM_FORMAT + 13);
+  IDM_FORMAT_TODOS      = (IDM_FORMAT + 1);
+  IDM_FORMAT_TOUNIX    = (IDM_FORMAT + 2);
+  IDM_FORMAT_TOMAC       = (IDM_FORMAT + 3);
+  IDM_FORMAT_ANSI       = (IDM_FORMAT + 4);
+  IDM_FORMAT_UTF_8      = (IDM_FORMAT + 5);
+  IDM_FORMAT_UCS_2BE    = (IDM_FORMAT + 6);
+  IDM_FORMAT_UCS_2LE      = (IDM_FORMAT + 7);
+  IDM_FORMAT_AS_UTF_8  = (IDM_FORMAT + 8);
+  IDM_FORMAT_CONV2_ANSI    = (IDM_FORMAT + 9);
+  IDM_FORMAT_CONV2_AS_UTF_8  = (IDM_FORMAT + 10);
+  IDM_FORMAT_CONV2_UTF_8    = (IDM_FORMAT + 11);
+  IDM_FORMAT_CONV2_UCS_2BE  = (IDM_FORMAT + 12);
+  IDM_FORMAT_CONV2_UCS_2LE  = (IDM_FORMAT + 13);
 
-  IDM_LANG 	= (IDM + 6000);
-  IDM_LANGSTYLE_CONFIG_DLG	= (IDM_LANG + 1);
-  IDM_LANG_C 			= (IDM_LANG + 2);
-  IDM_LANG_CPP 		= (IDM_LANG + 3);
-  IDM_LANG_JAVA 		= (IDM_LANG + 4);
-  IDM_LANG_HTML 		= (IDM_LANG + 5);
-  IDM_LANG_XML		= (IDM_LANG + 6);
-  IDM_LANG_JS			= (IDM_LANG + 7);
-  IDM_LANG_PHP		= (IDM_LANG + 8);
-  IDM_LANG_ASP		= (IDM_LANG + 9);
+  IDM_LANG   = (IDM + 6000);
+  IDM_LANGSTYLE_CONFIG_DLG  = (IDM_LANG + 1);
+  IDM_LANG_C       = (IDM_LANG + 2);
+  IDM_LANG_CPP     = (IDM_LANG + 3);
+  IDM_LANG_JAVA     = (IDM_LANG + 4);
+  IDM_LANG_HTML     = (IDM_LANG + 5);
+  IDM_LANG_XML    = (IDM_LANG + 6);
+  IDM_LANG_JS      = (IDM_LANG + 7);
+  IDM_LANG_PHP    = (IDM_LANG + 8);
+  IDM_LANG_ASP    = (IDM_LANG + 9);
   IDM_LANG_CSS        = (IDM_LANG + 10);
-  IDM_LANG_PASCAL		= (IDM_LANG + 11);
-  IDM_LANG_PYTHON		= (IDM_LANG + 12);
-  IDM_LANG_PERL		= (IDM_LANG + 13);
-  IDM_LANG_OBJC		= (IDM_LANG + 14);
-  IDM_LANG_ASCII		= (IDM_LANG + 15);
-  IDM_LANG_TEXT		= (IDM_LANG + 16);
-  IDM_LANG_RC			= (IDM_LANG + 17);
-  IDM_LANG_MAKEFILE	= (IDM_LANG + 18);
-  IDM_LANG_INI		= (IDM_LANG + 19);
-  IDM_LANG_SQL		= (IDM_LANG + 20);
-  IDM_LANG_VB   		= (IDM_LANG + 21);
-  IDM_LANG_BATCH  	= (IDM_LANG + 22);
+  IDM_LANG_PASCAL    = (IDM_LANG + 11);
+  IDM_LANG_PYTHON    = (IDM_LANG + 12);
+  IDM_LANG_PERL    = (IDM_LANG + 13);
+  IDM_LANG_OBJC    = (IDM_LANG + 14);
+  IDM_LANG_ASCII    = (IDM_LANG + 15);
+  IDM_LANG_TEXT    = (IDM_LANG + 16);
+  IDM_LANG_RC      = (IDM_LANG + 17);
+  IDM_LANG_MAKEFILE  = (IDM_LANG + 18);
+  IDM_LANG_INI    = (IDM_LANG + 19);
+  IDM_LANG_SQL    = (IDM_LANG + 20);
+  IDM_LANG_VB       = (IDM_LANG + 21);
+  IDM_LANG_BATCH    = (IDM_LANG + 22);
   IDM_LANG_CS         = (IDM_LANG + 23);
   IDM_LANG_LUA        = (IDM_LANG + 24);
   IDM_LANG_TEX        = (IDM_LANG + 25);
@@ -615,26 +615,26 @@ const
   IDM_LANG_CMAKE      = (IDM_LANG + 48);
   IDM_LANG_YAML       = (IDM_LANG + 49);
 
-  IDM_LANG_EXTERNAL	= (IDM_LANG + 50);
-  IDM_LANG_EXTERNAL_LIMIT	= (IDM_LANG + 79);
+  IDM_LANG_EXTERNAL  = (IDM_LANG + 50);
+  IDM_LANG_EXTERNAL_LIMIT  = (IDM_LANG + 79);
 
-  IDM_LANG_USER		= (IDM_LANG + 80);     //46080
-  IDM_LANG_USER_LIMIT		= (IDM_LANG + 110);  //46110
+  IDM_LANG_USER    = (IDM_LANG + 80);     //46080
+  IDM_LANG_USER_LIMIT    = (IDM_LANG + 110);  //46110
 
 
-  IDM_ABOUT 	= (IDM  + 7000);
-  IDM_HOMESWEETHOME	= (IDM_ABOUT  + 1);
-  IDM_PROJECTPAGE		= (IDM_ABOUT  + 2);
-  IDM_ONLINEHELP		= (IDM_ABOUT  + 3);
-  IDM_FORUM			= (IDM_ABOUT  + 4);
-  IDM_PLUGINSHOME		= (IDM_ABOUT  + 5);
-  IDM_UPDATE_NPP		= (IDM_ABOUT  + 6);
-  IDM_WIKIFAQ			= (IDM_ABOUT  + 7);
-  IDM_HELP			= (IDM_ABOUT  + 8);
+  IDM_ABOUT   = (IDM  + 7000);
+  IDM_HOMESWEETHOME  = (IDM_ABOUT  + 1);
+  IDM_PROJECTPAGE    = (IDM_ABOUT  + 2);
+  IDM_ONLINEHELP    = (IDM_ABOUT  + 3);
+  IDM_FORUM      = (IDM_ABOUT  + 4);
+  IDM_PLUGINSHOME    = (IDM_ABOUT  + 5);
+  IDM_UPDATE_NPP    = (IDM_ABOUT  + 6);
+  IDM_WIKIFAQ      = (IDM_ABOUT  + 7);
+  IDM_HELP      = (IDM_ABOUT  + 8);
 
 
   IDM_SETTING    = (IDM + 8000);
-  IDM_SETTING_TAB_SIZE   	       = (IDM_SETTING + 1);
+  IDM_SETTING_TAB_SIZE            = (IDM_SETTING + 1);
   IDM_SETTING_TAB_REPLCESPACE  = (IDM_SETTING + 2);
   IDM_SETTING_HISTORY_SIZE  = (IDM_SETTING + 3);
   IDM_SETTING_EDGE_SIZE  = (IDM_SETTING + 4);
@@ -652,8 +652,8 @@ const
   IDM_MACRO_STARTRECORDINGMACRO    = (IDM_EDIT + 18);
   IDM_MACRO_STOPRECORDINGMACRO     = (IDM_EDIT + 19);
   IDM_MACRO_PLAYBACKRECORDEDMACRO  = (IDM_EDIT + 21);
-  IDM_MACRO_SAVECURRENTMACRO 	= (IDM_EDIT + 25);
-  IDM_MACRO_RUNMULTIMACRODLG	= (IDM_EDIT+32);
+  IDM_MACRO_SAVECURRENTMACRO   = (IDM_EDIT + 25);
+  IDM_MACRO_RUNMULTIMACRODLG  = (IDM_EDIT+32);
 
   IDM_EXECUTE  = (IDM + 9000);
 

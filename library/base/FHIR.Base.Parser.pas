@@ -1650,7 +1650,7 @@ begin
     if (url = '') then
       url := oResource.Tags['rdf-url'];
 
-    base := TTurtleComplex.Create(nullLoc);
+    base := TTurtleComplex.Create(TSourceLocation.CreateNull);
     try
       base.addUriPredicate('a', 'fhir:'+oResource.fhirType);
       base.addUriPredicate('fhir:nodeRole', 'fhir:treeRoot');
@@ -1666,7 +1666,7 @@ begin
     if URL <> '' then
     begin
       // Protege Ontology Link
-      base := TTurtleComplex.Create(nullLoc);
+      base := TTurtleComplex.Create(TSourceLocation.CreateNull);
       try
         base.addUriPredicate('a', 'owl:ontology');
         base.addUriPredicate('owl:imports', 'fhir:fhir.ttl');
@@ -1705,7 +1705,7 @@ begin
     exit;
   url := NewGuidURN;
   this.addUriPredicate('fhir:'+parentType+'.'+name, url);
-  base := TTurtleComplex.Create(nullLoc);
+  base := TTurtleComplex.Create(TSourceLocation.CreateNull);
   try
     base.addUriPredicate('a', 'fhir:'+elem.fhirType);
     Fttl.addObject(url, base.link);

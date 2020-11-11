@@ -10,9 +10,9 @@ uses
   lclintf, ValEdit,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc, FHIR.Support.Logging,
-  FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
-  FHIR.Toolkit.Store, FHIR.Toolkit.FileStore,
-  FHIR.Toolkit.Factory, FHIR.Toolkit.Search,
+  ftk_context, ftk_store_temp,
+  ftk_store, ftk_store_files,
+  ftk_factory, ftk_search,
 
   frm_npm_manager, frm_file_format, frm_settings;
 
@@ -986,6 +986,7 @@ begin
   tab.free;
   if (store) then
     FTempStore.storeOpenFileList(FContext.EditorSessions);
+  pgEditorsChange(self);
 end;
 
 procedure TMainToolkitForm.locateOnTab(sender: TObject; x, y: integer; var point: TPoint);
@@ -1013,7 +1014,7 @@ begin
       entry.Data := msg;
       entry.caption := msg.editor.Session.Caption;
       entry.SubItems.add(CODES_TToolkitMessageLevel[msg.level]);
-      entry.SubItems.add('Line '+inttostr(msg.Location.line));
+      entry.SubItems.add('Line '+inttostr(msg.Location.lineForHuman));
       entry.SubItems.add(msg.Content);
     end;
 end;
@@ -1128,7 +1129,7 @@ begin
     begin
       entry := lvSearch.Items.add;
       entry.caption := m.name;
-      entry.SubItems.add(inttostr(m.location.line));
+      entry.SubItems.add(inttostr(m.location.lineForHuman));
       entry.SubItems.add(m.fragment);
       entry.Data := m;
     end;
@@ -1808,9 +1809,14 @@ end;
 
 procedure TMainToolkitForm.pgEditorsChange(Sender: TObject);
 begin
+  if FContext.Focus <> nil then
+    FContext.Focus.loseFocus();
   FContext.Focus := FContext.EditorForTab(pgEditors.ActivePage);
-  FContext.Focus.getFocus(mnuContent);
-  FContext.Focus.editPause;
+  if FContext.Focus <> nil then
+  begin
+    FContext.Focus.getFocus(mnuContent);
+    FContext.Focus.editPause;
+  end;
   checkActiveTabCurrency;
   updateActionStatus(self);
   updateStatusBar;

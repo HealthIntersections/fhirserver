@@ -36,7 +36,7 @@ your registry.
 http://davenport.sourceforge.net/ntlm.html describes these like this:
 
 =======================================================================
-Level        |	Sent by Client               |	Accepted by Server
+Level        |  Sent by Client               |  Accepted by Server
 =======================================================================
 0            | LM NTLM                       | LM NTLM /LMv2 NTLMv2
 1            | LM NTLM                       | LM NTLM /LMv2 NTLMv2

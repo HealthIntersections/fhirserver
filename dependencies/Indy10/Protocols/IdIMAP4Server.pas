@@ -955,7 +955,7 @@ begin
             //Return-Path: <Christina_Powell@secondhandcars.com>
             //...
             //Content-Type: multipart/alternative;
-            //	boundary="----=_NextPart_000_70BE_C8606D03.F4EA24EE"
+            //  boundary="----=_NextPart_000_70BE_C8606D03.F4EA24EE"
             //C10 OK Completed
             //We don't want to thrash UIDs and flags in MailBox message, so load into LMessage
             LMessageTemp := TIdMessage.Create;
@@ -1033,7 +1033,7 @@ begin
               DoSendReply(ASender.Context, ')');  {Do not Localize}
               //Free the memory...
             finally
-	      FreeAndNil(LMessageRaw);
+        FreeAndNil(LMessageRaw);
             end;
           end
           else if TextIsSame(LDataItems[LLO], 'BODYSTRUCTURE') then begin  {Do not Localize}

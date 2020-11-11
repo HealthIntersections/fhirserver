@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.IniEditor;
+unit ftk_editor_ini;
 
 {$i fhir.inc}
 
@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
   FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_editor_base;
 
 type
 
@@ -83,10 +83,10 @@ begin
           if s.EndsWith(']') then
             section := s.Substring(1, length(s)-2)
           else if validate then
-            validationError(i+1, 1, 'Improperly terminated section name - doesn''t end with ]');
+            validationError(TSourceLocation.Create(i, 0), 'Improperly terminated section name - doesn''t end with ]');
         end
         else if (validate) and (not s.contains('=')) then
-          validationWarning(i+1, 1, 'No = found on non-comment line');
+          validationWarning(TSourceLocation.Create(i, 0), 'No = found on non-comment line');
       end;
       if (i = cursor.line) then
         inspection.AddPair('Section', section);

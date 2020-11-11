@@ -175,7 +175,7 @@ TPintArray = ^TDintArray1;
       Throw : function (env: PJNIEnv; obj : jthrowable) : jint ; stdcall;
       ThrowNew : function(env : PJNIEnv; clazz: jclass; const msg : PUTF8Char) : jint ; stdcall;
       ExceptionOccurred : function (env : PJNIEnv) : jthrowable ; stdcall;
-	    ExceptionDescribe, ExceptionClear : procedure (env : PJNIEnv) ; stdcall;
+      ExceptionDescribe, ExceptionClear : procedure (env : PJNIEnv) ; stdcall;
       FatalError : procedure(env: PJNIEnv; const msg : PUTF8Char) ; stdcall;
       PushLocalFrame : function(env : PJNIEnv; capacity : jint) : jint ; stdcall;
       PopLocalFrame : function(env : PJNIEnv; res : jobject) : jobject ; stdcall;

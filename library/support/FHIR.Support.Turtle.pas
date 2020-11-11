@@ -37,7 +37,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc;
 
 Const
-	GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
+  GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
   IRI_URL = '(([a-z])+:)*((%[0-9a-fA-F]{2})|[&''\\(\\)*+,;:@_~?!$\\/\\-\\#.\\='+GOOD_IRI_CHAR+'])+';
   LANG_REGEX = '[a-z]{2}(\\-[a-zA-Z]{2})?';
 
@@ -46,8 +46,8 @@ Type
 
   TTurtleObject = class (TFslObject)
   protected
-		FStart : TSourceLocation;
-		FStop : TSourceLocation;
+    FStart : TSourceLocation;
+    FStop : TSourceLocation;
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -59,10 +59,10 @@ Type
     property stop : TSourceLocation read FStop;
   end;
 
-	TTurtleLiteral = class (TTurtleObject)
+  TTurtleLiteral = class (TTurtleObject)
   private
-		Fvalue : String;
-		Ftype : String;
+    Fvalue : String;
+    Ftype : String;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
@@ -73,11 +73,11 @@ Type
     function hasValue(value : String) : boolean; override;
     function singleLiteral : String; override;
     function isSimple : boolean; override;
-		property value : String read Fvalue write Fvalue;
-		property type_ : String read Ftype write Ftype;
-	end;
+    property value : String read Fvalue write Fvalue;
+    property type_ : String read Ftype write Ftype;
+  end;
 
-	TTurtleURL = class (TTurtleObject)
+  TTurtleURL = class (TTurtleObject)
   private
     Furi : String;
     procedure setUri(value : String);
@@ -87,13 +87,13 @@ Type
     constructor Create(start : TSourceLocation); overload;
     constructor Create(uri : String); overload;
     function Link : TTurtleURL; overload;
-		property uri : String read Furi write Seturi;
+    property uri : String read Furi write Seturi;
     function hasValue(value : String) : boolean; override;
     function isSimple : boolean; override;
     function singleLiteral : String; override;
   end;
 
-	TTurtleList = class (TTurtleObject)
+  TTurtleList = class (TTurtleObject)
   private
     Flist : TFslList<TTurtleObject>;
   protected
@@ -109,7 +109,7 @@ Type
     function singleLiteral : String; override;
   end;
 
-	TTurtleComplex = class (TTurtleObject)
+  TTurtleComplex = class (TTurtleObject)
   private
     FPredicates : TFslMap<TTurtleObject>;
     FNames : TStringList;
@@ -168,13 +168,13 @@ Type
     procedure prefix(pfx, ns : String);
   end;
 
-	TLexerTokenType = (
+  TLexerTokenType = (
     lttNULL,
-		lttTOKEN, // [, ], :, @
-		lttWORD, // a word
-		lttURI, // a URI <>
-		lttLITERAL // "..."
-	);
+    lttTOKEN, // [, ], :, @
+    lttWORD, // a word
+    lttURI, // a URI <>
+    lttLITERAL // "..."
+  );
 
 const
   LEX_TYPES : array [TLexerTokenType] of String = ('null', 'token', 'word', 'uri', 'literal');
@@ -184,9 +184,9 @@ type
   private
     FSource : String;
     FType : TLexerTokenType;
-		cursor : integer;
+    cursor : integer;
     pos, startPos : TSourceLocation;
-		Ftoken : String;
+    Ftoken : String;
     procedure skipWhitespace;
     function grab : char;
     procedure readNext(postColon : boolean);
@@ -279,13 +279,13 @@ end;
 
 constructor TTurtleLiteral.Create(value: String);
 begin
-  inherited Create(nullLoc);
+  inherited Create(TSourceLocation.CreateNull);
   FValue := value;
 end;
 
 constructor TTurtleLiteral.Create(value, type_: String);
 begin
-  inherited Create(nullLoc);
+  inherited Create(TSourceLocation.CreateNull);
   FValue := value;
   FType := type_;
 end;
@@ -347,7 +347,7 @@ end;
 
 constructor TTurtleURL.Create(uri: String);
 begin
-  inherited Create(nullLoc);
+  inherited Create(TSourceLocation.CreateNull);
   self.uri := uri;
 end;
 
@@ -626,7 +626,7 @@ begin
       list := eo as TTurtleList
     else
     begin
-      list := TTurtleList.Create(nullLoc, eo);
+      list := TTurtleList.Create(TSourceLocation.CreateNull, eo);
       predicates.AddOrSetValue(uri, list);
     end;
     list.list.add(obj);
@@ -645,7 +645,7 @@ end;
 
 function TTurtleComplex.addPredicate(uri: String): TTurtleComplex;
 begin
-  result := TTurtleComplex.Create(nullLoc);
+  result := TTurtleComplex.Create(TSourceLocation.CreateNull);
   addPredicate(uri, result);
 end;
 
@@ -701,8 +701,7 @@ constructor TTurtleLexer.Create(source: String);
 begin
   Fsource := source;
   cursor := 1;
-  pos.line := 1;
-  pos.col := 1;
+  pos := TSourceLocation.Create;
   readNext(false);
 end;
 
@@ -736,12 +735,9 @@ var
 begin
   ch := FSource[cursor];
   if (ch = #10) then
-  begin
-    inc(pos.line);
-    pos.col := 1;
-  end
+    pos.incLine
   else
-    inc(pos.col);
+    pos.incCol;
 
   inc(cursor);
   exit(ch);
@@ -762,95 +758,95 @@ begin
   ch := grab();
   b := TStringBuilder.create();
   try
-		case ch of
-			'@', '.', ':', ';', '^', ',', ']', '[', '(', ')':
+    case ch of
+      '@', '.', ':', ';', '^', ',', ']', '[', '(', ')':
       begin
-				Ftype := lttTOKEN;
-				b.append(ch);
-				Ftoken := b.toString();
-				exit;
+        Ftype := lttTOKEN;
+        b.append(ch);
+        Ftoken := b.toString();
+        exit;
       end;
-			'<':
+      '<':
       begin
-				while (cursor <= FSource.length) do
+        while (cursor <= FSource.length) do
         begin
-					ch := grab();
-					if (ch = '>') then
-						break;
-					b.append(ch);
-				end;
-				Ftype := lttURI;
-				Ftoken := unescape(b.toString(), true);
-				exit;
+          ch := grab();
+          if (ch = '>') then
+            break;
+          b.append(ch);
+        end;
+        Ftype := lttURI;
+        Ftoken := unescape(b.toString(), true);
+        exit;
       end;
-			'"':
-			begin
-      	b.append(ch);
-				e := '"';
-				while (cursor < FSource.length) do
+      '"':
+      begin
+        b.append(ch);
+        e := '"';
+        while (cursor < FSource.length) do
         begin
-					ch := grab();
+          ch := grab();
           if (b.length = 2) and (ch <> '"') and (b.ToString = '""') then
           begin
-						dec(cursor);
-						break;
-					end;
-					b.append(ch);
+            dec(cursor);
+            break;
+          end;
+          b.append(ch);
           s := b.toString();
           if (s = '"""') then
-						e := '"""'
+            e := '"""'
           else if (s <> '""') and (copy(s, length(s)-length(e)+1, length(e)) = e) and (not (copy(s, length(s)-length(e), length(e)+1) = '\'+e) or (copy(s, length(s)-length(e)-1, length(e)+2) = '\\'+e)) then
-						break;
-				end;
-				Ftype := lttLITERAL;
-				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
-				exit;
+            break;
+        end;
+        Ftype := lttLITERAL;
+        Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
+        exit;
       end;
-			'''':
+      '''':
       begin
-				b.append(ch);
-				e := '''';
-				while (cursor < FSource.length) do
+        b.append(ch);
+        e := '''';
+        while (cursor < FSource.length) do
         begin
-					ch := grab();
-					if (b.ToString = '''''') and (ch <> '''') then
+          ch := grab();
+          if (b.ToString = '''''') and (ch <> '''') then
           begin
-						dec(cursor);
-						break;
-					end;
-					b.append(ch);
+            dec(cursor);
+            break;
+          end;
+          b.append(ch);
           s := b.toString();
-					if (s = '''''''') then
-						e := ''''''''
-					else
+          if (s = '''''''') then
+            e := ''''''''
+          else
           begin
             if (s <> '''''') and (copy(s, length(s)-length(e)+1, length(e)) = e) then
-						  break;
+              break;
           end;
-				end;
-				Ftype := lttLITERAL;
-				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
-				exit;
+        end;
+        Ftype := lttLITERAL;
+        Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
+        exit;
       end;
-			else
+      else
         if CharInSet(ch, ['0'..'9', 'a'..'z', 'A'..'Z', '_', '-', '+', '%']) then
         begin
-					b.append(ch);
-					while (cursor <= FSource.length) do
+          b.append(ch);
+          while (cursor <= FSource.length) do
           begin
-						ch := grab();
+            ch := grab();
             if ch.isWhitespace or CharInSet(ch, [';', ']', ')', '~']) or ((( ch = ':')) and (not postColon)) then
-							break;
-						b.append(ch);
-					end;
-					Ftype := lttWORD;
-					Ftoken := b.toString();
-					dec(cursor);
-					exit;
-				end
+              break;
+            b.append(ch);
+          end;
+          Ftype := lttWORD;
+          Ftoken := b.toString();
+          dec(cursor);
+          exit;
+        end
         else
-					raise EWebException.create('unexpected lexer char '+ch);
-			end;
+          raise EWebException.create('unexpected lexer char '+ch);
+      end;
   finally
     b.Free;
   end;
@@ -977,7 +973,7 @@ end;
 
 procedure TTurtleLexer.error(message : String);
 begin
-  raise EWebException.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
+  raise pos.exception('Syntax Error parsing Turtle : '+message);
 end;
 
 { TTurtleParser }
@@ -990,7 +986,7 @@ begin
   try
     lexer := TTurtleLexer.Create(source);
     try
-		  parse(lexer, result);
+      parse(lexer, result);
     finally
       lexer.Free;
     end;
@@ -1008,7 +1004,7 @@ begin
   try
     lexer := TTurtleLexer.Create(StreamToString(source, TEncoding.UTF8));
     try
-		  parse(lexer, result);
+      parse(lexer, result);
     finally
       lexer.Free;
     end;
@@ -1026,7 +1022,7 @@ begin
   try
     lexer := TTurtleLexer.Create(StreamToString(source, TEncoding.UTF8));
     try
-		  parse(lexer, result);
+      parse(lexer, result);
     finally
       lexer.Free;
     end;
@@ -1043,7 +1039,7 @@ var
   uri : TTurtleURL;
   complex, bnode : TTurtleComplex;
 begin
-	doPrefixes := true;
+  doPrefixes := true;
   while (not lexer.done()) do
   begin
     if (doPrefixes) and ((lexer.peek(lttTOKEN, '@')) or (lexer.peek(lttWORD, 'PREFIX')) or (lexer.peek(lttWORD, 'BASE'))) then
@@ -1171,63 +1167,63 @@ begin
   inlist := false;
   result := TTurtleComplex.create(lexer.startPos);
   try
-		done := lexer.peek(lttTOKEN, ']');
-		while (not done) do
+    done := lexer.peek(lttTOKEN, ']');
+    while (not done) do
     begin
-			uri := '';
-			if (lexer.peekType() = lttURI) then
-				uri := lexer.uri()
-			else
+      uri := '';
+      if (lexer.peekType() = lttURI) then
+        uri := lexer.uri()
+      else
       begin
         if lexer.peekType() = lttWORD then
-  				t := lexer.word()
+          t := lexer.word()
         else
           t := '';
-				if (lexer.Ftype = lttTOKEN) and (lexer.Ftoken = ':') then
+        if (lexer.Ftype = lttTOKEN) and (lexer.Ftoken = ':') then
         begin
-					lexer.token(':');
-					if (not doc.prefixes.containsKey(t)) then
+          lexer.token(':');
+          if (not doc.prefixes.containsKey(t)) then
             lexer.error('unknown prefix '+t);
-					uri := doc.prefixes[t]+lexer.word();
-				end
+          uri := doc.prefixes[t]+lexer.word();
+        end
         else if (t = 'a') then
         begin
           if doc.prefixes.containsKey('rdfs') then
-  					uri := doc.prefixes['rdfs']+'type'
+            uri := doc.prefixes['rdfs']+'type'
           else
-  					uri := 'http://www.w3.org/2000/01/rdf-schema#type'
+            uri := 'http://www.w3.org/2000/01/rdf-schema#type'
         end
-				else
-					lexer.error('unexpected token "'+t+'"');
-			end;
+        else
+          lexer.error('unexpected token "'+t+'"');
+      end;
 
-			if (lexer.peek(lttTOKEN, '(')) then
+      if (lexer.peek(lttTOKEN, '(')) then
       begin
-				inlist := true;
+        inlist := true;
         result.addPredicate(uri, TTurtleList.Create(lexer.startPos));
-				lexer.token('(');
-			end;
+        lexer.token('(');
+      end;
 
-			repeat
-				if (lexer.peek(lttTOKEN, '[')) then
+      repeat
+        if (lexer.peek(lttTOKEN, '[')) then
         begin
-					lexer.token('[');
+          lexer.token('[');
           result.addPredicate(uri, parseComplex(lexer, doc));
-					lexer.token(']');
-				end
+          lexer.token(']');
+        end
         else if (lexer.peekType() = lttURI) then
         begin
-					u := TTurtleURL.Create(lexer.startPos);
+          u := TTurtleURL.Create(lexer.startPos);
           try
-					  u.Uri := lexer.uri();
+            u.Uri := lexer.uri();
             result.addPredicate(uri, u.Link);
           finally
             u.Free;
           end;
-				end
+        end
         else if (lexer.peekType() = lttLITERAL) then
         begin
-					ul := TTurtleLiteral.create(lexer.startPos);
+          ul := TTurtleLiteral.create(lexer.startPos);
           try
             ul.value := lexer.literal();
             if (lexer.peek(lttTOKEN, '^')) then
@@ -1255,57 +1251,57 @@ begin
           finally
             ul.free;
           end;
-				end
+        end
         else if (lexer.peekType() = lttWORD) or (lexer.peek(lttTOKEN, ':')) then
         begin
-					sp := lexer.startPos;
-					if lexer.peekType() = lttWORD then pfx := lexer.word() else pfx := '';
-					if StringIsDecimal(pfx) and not lexer.peek(lttTOKEN, ':') then
+          sp := lexer.startPos;
+          if lexer.peekType() = lttWORD then pfx := lexer.word() else pfx := '';
+          if StringIsDecimal(pfx) and not lexer.peek(lttTOKEN, ':') then
           begin
-						ul := TTurtleLiteral.create(sp);
-            try
-						  ul.value := pfx;
-              result.addPredicate(uri, ul.Link);
-            finally
-              ul.Free;
-            end;
-					end
-          else if (('false'.equals(pfx)) or ('true'.equals(pfx))) and (not lexer.peek(lttTOKEN, ':')) then
-          begin
-						ul := TTurtleLiteral.create(sp);
+            ul := TTurtleLiteral.create(sp);
             try
               ul.value := pfx;
               result.addPredicate(uri, ul.Link);
             finally
               ul.Free;
             end;
-					end
+          end
+          else if (('false'.equals(pfx)) or ('true'.equals(pfx))) and (not lexer.peek(lttTOKEN, ':')) then
+          begin
+            ul := TTurtleLiteral.create(sp);
+            try
+              ul.value := pfx;
+              result.addPredicate(uri, ul.Link);
+            finally
+              ul.Free;
+            end;
+          end
           else
           begin
-						if (not doc.prefixes.containsKey(pfx)) then
+            if (not doc.prefixes.containsKey(pfx)) then
               lexer.error('Unknown prefix "'+pfx+'"');
-						u := TTurtleURL.Create(sp);
+            u := TTurtleURL.Create(sp);
             try
-						  lexer.token(':');
-						  u.setUri(doc.prefixes[pfx]+lexer.word());
+              lexer.token(':');
+              u.setUri(doc.prefixes[pfx]+lexer.word());
               result.addPredicate(uri, u.Link);
             finally
               u.Free;
             end;
-					end;
-				end
+          end;
+        end
         else if (not lexer.peek(lttTOKEN, ';')) and ((not inlist) or (not lexer.peek(lttTOKEN, ')'))) then
           lexer.error('unexpected token '+lexer.Ftoken);
 
-				if (inlist) then
-					rpt := not lexer.peek(lttTOKEN, ')')
-				else
+        if (inlist) then
+          rpt := not lexer.peek(lttTOKEN, ')')
+        else
         begin
-					rpt := lexer.peek(lttTOKEN, ',');
-					if (rpt) then
+          rpt := lexer.peek(lttTOKEN, ',');
+          if (rpt) then
             lexer.readNext(false);
-				end;
-			until not rpt;
+        end;
+      until not rpt;
       if (inlist) then
         lexer.token(')');
 
@@ -1318,7 +1314,7 @@ begin
       else
         done := true;
     end;
-		result.Link;
+    result.Link;
   finally
     result.free;
   end;
@@ -1326,7 +1322,7 @@ end;
 
 class function TTurtleParser.anonymousId() : TTurtleURL;
 begin
-  result := TTurtleURL.create(nullLoc);
+  result := TTurtleURL.create(TSourceLocation.CreateNull);
   result.Uri := NewGuidURN;
 end;
 

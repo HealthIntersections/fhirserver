@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.TextEditor;
+unit ftk_editor_text;
 
 {$i fhir.inc}
 
@@ -8,7 +8,7 @@ uses
   Classes, SysUtils,
   Controls, ComCtrls, Menus, SynEdit, SynEditHighlighter,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
-  FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_editor_base;
 
 type
 

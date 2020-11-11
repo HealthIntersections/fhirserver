@@ -97,7 +97,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropBMPSource
+//      TDropBMPSource
 // -----------------------------------------------------------------------------
 
 constructor TDropBMPSource.Create(aOwner: TComponent);

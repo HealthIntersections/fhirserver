@@ -42,6 +42,86 @@ Uses
   FHIR.Support.Fpc, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities;
 
 type
+  EParserException = class;
+
+  { TSourceRange }
+
+  TSourceRange = record
+    lines : integer;
+    cols : integer;
+    function isNull : boolean;
+    procedure incCols;
+    procedure incLines;
+
+    class function Create : TSourceRange; overload; static;
+    class function Create(l, c : integer) : TSourceRange; overload; static;
+    class function CreateNull : TSourceRange; static;
+  end;
+
+  { TSourceLocation }
+
+  // TSourceLocation is zero based - both row and column
+  // Location also acts as a
+  TSourceLocation = record
+    line : integer;
+    col : integer;
+
+    procedure incCol;
+    procedure incLine;
+
+    function nonZero : boolean;
+    function isNull : boolean;
+    function inSpan(lower, upper : TSourceLocation) : boolean;
+
+    // for error messages - humans report in 1 based
+    function lineForHuman : integer;
+    function colForHuman : integer;
+    function describe : String;
+    function exception(msg : String) : EParserException;
+
+    class function Create : TSourceLocation; overload; static;
+    class function Create(l, c : integer) : TSourceLocation; overload; static;
+    class function CreateNull : TSourceLocation; static;
+    class function min(src1, src2 : TSourceLocation) : TSourceLocation; static;
+    class function max(src1, src2 : TSourceLocation) : TSourceLocation; static;
+
+    class operator add(position : TSourceLocation; range : TSourceRange) : TSourceLocation;
+    class operator subtract(start, finish : TSourceLocation) : TSourceRange;
+    class operator subtract(position : TSourceLocation; range : TSourceRange) : TSourceLocation;
+    class operator equal(src1, src2 : TSourceLocation) : boolean;
+    class operator notEqual(src1, src2 : TSourceLocation) : boolean;
+    class operator lessThan(src1, src2 : TSourceLocation) : boolean;
+    class operator greaterThan(src1, src2 : TSourceLocation) : boolean;
+    class operator lessThanOrEqual(src1, src2 : TSourceLocation) : boolean;
+    class operator greaterThanOrEqual(src1, src2 : TSourceLocation) : boolean;
+
+      // SynEdit is one based. toPoint/fromPoint correct for this
+    class function fromPoint(p : TPoint) : TSourceLocation; static;
+    function toPoint : TPoint;
+  end;
+
+  { EParserException }
+
+  EParserException = class (EFslException)
+  private
+    FLocation : TSourceLocation;
+    function GetColNumber: integer;
+    function GetLineNumber: integer;
+  public
+    constructor Create(msg : String; Location : TSourceLocation); // Line and Col are zero based
+    Property Location : TSourceLocation read FLocation;
+    Property LineNumber : integer read GetLineNumber;
+    Property ColNumber : integer read GetColNumber;
+  end;
+  EJsonParserException = class (EParserException); // error reading or writing Json
+
+  TSourceLocationObject = class (TFslObject)
+  public
+    locationStart : TSourceLocation;
+    locationEnd : TSourceLocation;
+  end;
+
+type
 
   TFslStream = Class(TFslObject)
     Protected
@@ -406,35 +486,9 @@ type
 
   TStream = Classes.TStream;
 
-type
-
-  { TSourceLocation }
-
-  TSourceLocation = record
-    line, col : integer;
-    class function make(l, c : integer) : TSourceLocation; static;
-    class function makeNull : TSourceLocation; static;
-    function nonZero : boolean;
-    function toPoint : TPoint;
-  end;
-
-  TSourceLocationObject = class (TFslObject)
-  public
-    locationStart : TSourceLocation;
-    locationEnd : TSourceLocation;
-  end;
-
 const
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
-function minLoc(src1, src2 : TSourceLocation) : TSourceLocation;
-function maxLoc(src1, src2 : TSourceLocation) : TSourceLocation;
-function nullLoc : TSourceLocation;
-function isNullLoc(src : TSourceLocation) : boolean;
-function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
-function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
-function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
-function locSpan(start, finish : TSourceLocation) : TSourceLocation;
 
 Type
   TFslBufferList = Class(TFslObjectList)
@@ -838,6 +892,8 @@ Type
       Function More : Boolean; Virtual;
   End;
 
+  { TFslTextFormatter }
+
   TFslTextFormatter = Class(TFslFormatter)
     Private
       FLocation : TSourceLocation;
@@ -853,6 +909,7 @@ Type
       Function BeforeWhitespace : String;
       Function AfterWhitespace : String;
 
+      function AdjustLocation(location: TSourceLocation; const sText: String): TSourceLocation;
     Public
       constructor Create; Override;
 
@@ -1463,19 +1520,39 @@ Type
 
 Implementation
 
-{ TSourceLocation }
+{ TSourceRange }
 
-class function TSourceLocation.make(l, c: integer): TSourceLocation;
+function TSourceRange.isNull: boolean;
 begin
-  result.line := l;
-  result.col := c;
+  result := (lines = -1) and (cols = -1);
 end;
 
-function TSourceLocation.nonZero: boolean;
+procedure TSourceRange.incCols;
 begin
-  result := (line > 0) or (col > 0);
+  inc(cols);
 end;
 
+procedure TSourceRange.incLines;
+begin
+  inc(lines);
+  cols := 0;
+end;
+
+class function TSourceRange.Create: TSourceRange;
+begin
+  result := Create(0, 0);
+end;
+
+class function TSourceRange.Create(l, c: integer): TSourceRange;
+begin
+  result.lines := l;
+  result.cols := c;
+end;
+
+class function TSourceRange.CreateNull: TSourceRange;
+begin
+  result := Create(-1, -1);
+end;
 
 Function TFslStream.Link : TFslStream;
 Begin
@@ -2727,11 +2804,6 @@ Begin
 End;
 
 
-class function TSourceLocation.makeNull: TSourceLocation;
-begin
-  result := make(-1, -1);
-end;
-
 { TFslFile }
 
 constructor TFslFile.Create(const AFileName: string; Mode: Word);
@@ -3849,8 +3921,7 @@ Begin
   {$IFNDEF VER130}
   Encoding := SysUtils.TEncoding.UTF8;
   {$ENDIF}
-  FLocation.line := 1;
-  FLocation.col := 1;
+  FLocation := TSourceLocation.Create;
 End;
 
 
@@ -3887,32 +3958,38 @@ Begin
     Result := '';
 End;
 
-
-procedure TFslTextFormatter.Produce(const sText: String);
+function TFslTextFormatter.AdjustLocation(location : TSourceLocation; const sText: String) : TSourceLocation;
 var
   i : integer;
   nl : boolean;
 begin
+  result := location;
   nl := false;
   for i := 1 to length(sText) do
-  case sText[i] of
-    #13:
+  begin
+    case sText[i] of
+      #13:
+        begin
+        nl := true;
+        result.incLine;
+        end;
+      #10:
+        if not nl then
+        begin
+        result.incLine;
+        end;
+    else
       begin
-      nl := true;
-      inc(Flocation.line);
-      FLocation.col := 1;
+        nl := false;
+        result.incCol;
       end;
-    #10:
-      if not nl then
-      begin
-      inc(Flocation.line);
-      FLocation.col := 1;
-      end;
-  else
-    nl := false;
-    inc(FLocation.col);
+    end;
   end;
+end;
 
+procedure TFslTextFormatter.Produce(const sText: String);
+begin
+  FLocation := AdjustLocation(FLocation, sText);
   inherited;
 end;
 
@@ -3928,18 +4005,16 @@ begin
     13:
       begin
       nl := true;
-      inc(Flocation.line);
-      FLocation.col := 1;
+      Flocation.incLine;
       end;
     10:
       if not nl then
       begin
-      inc(Flocation.line);
-      FLocation.col := 1;
+      Flocation.incLine;
       end;
   else
     nl := false;
-    inc(FLocation.col);
+    FLocation.incCol;
   end;
   inherited;
 end;
@@ -4923,85 +4998,6 @@ begin
     raise ELibraryException.create('File "' + filename + '" not found');
 end;
 
-
-function minLoc(src1, src2 : TSourceLocation) : TSourceLocation;
-begin
-  if (src1.line < src2.line) then
-    result := src1
-  else if (src2.line < src1.line) then
-    result := src2
-  else if (src1.col < src2.col) then
-    result := src1
-  else
-    result := src2
-end;
-
-function maxLoc(src1, src2 : TSourceLocation) : TSourceLocation;
-begin
-  if (src1.line > src2.line) then
-    result := src1
-  else if (src2.line > src1.line) then
-    result := src2
-  else if (src1.col > src2.col) then
-    result := src1
-  else
-    result := src2
-end;
-
-function nullLoc : TSourceLocation;
-begin
-  result.line := -1;
-  result.col := -1;
-end;
-
-
-function isNullLoc(src : TSourceLocation) : boolean;
-begin
-  result := (src.line = -1) and (src.col = -1);
-end;
-
-function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
-begin
-  if src1.line < src2.line then
-    result := true
-  else if src1.line > src2.line then
-    result := false
-  else
-    result := src1.col <= src2.col;
-end;
-
-function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
-begin
-  if src1.line > src2.line then
-    result := true
-  else if src1.line < src2.line then
-    result := false
-  else
-    result := src1.col >= src2.col;
-end;
-
-function locInSpan(tgt, lower, upper : TSourceLocation) : boolean;
-begin
-  result := locGreatorOrEqual(tgt, lower) and locLessOrEqual(tgt, upper);
-end;
-
-function locSpan(start, finish : TSourceLocation) : TSourceLocation;
-begin
-  if start.line > finish.line then
-    result := TSourceLocation.makeNull
-  else if start.line < finish.line then
-    result := TSourceLocation.make(finish.line - start.line, finish.col)
-  else if start.col > finish.col then
-    result := TSourceLocation.makeNull
-  else
-  result := TSourceLocation.make(0, finish.col - start.col);
-end;
-
-function TSourceLocation.toPoint : TPoint;
-begin
-  result.x := col;
-  result.y := line;
-end;
 
 { TFslZipWorker }
 
@@ -7148,11 +7144,233 @@ Begin
   Result := Inherited More Or (Length(FCache) > 0);
 End;
 
+{ TSourceLocation }
+
+class function TSourceLocation.Create(l, c: integer): TSourceLocation;
+begin
+  result.line := l;
+  result.col := c;
+end;
+
+function TSourceLocation.nonZero: boolean;
+begin
+  result := (line > 0) or (col > 0);
+end;
+
+class function TSourceLocation.Create : TSourceLocation;
+begin
+  result := Create(0, 0);
+end;
+
+
+class function TSourceLocation.CreateNull: TSourceLocation;
+begin
+  result := Create(-1, -1);
+end;
+
+class function TSourceLocation.min(src1, src2 : TSourceLocation) : TSourceLocation;
+begin
+  if (src1.line < src2.line) then
+    result := src1
+  else if (src2.line < src1.line) then
+    result := src2
+  else if (src1.col < src2.col) then
+    result := src1
+  else
+    result := src2
+end;
+
+class function TSourceLocation.max(src1, src2 : TSourceLocation) : TSourceLocation;
+begin
+  if (src1.line > src2.line) then
+    result := src1
+  else if (src2.line > src1.line) then
+    result := src2
+  else if (src1.col > src2.col) then
+    result := src1
+  else
+    result := src2
+end;
+
+function TSourceLocation.isNull : boolean;
+begin
+  result := (line = -1) and (col = -1);
+end;
+
+class operator TSourceLocation.equal(src1, src2 : TSourceLocation) : boolean;
+begin
+  if src1.isNull and src2.isNull then
+    result := true
+  else if src1.isNull or src2.isNull then
+    result := false
+  else
+    result := (src1.line = src2.line) and (src1.col = src2.col);
+end;
+
+class operator TSourceLocation.notEqual(src1, src2 : TSourceLocation ) : boolean;
+begin
+  if src1.isNull and src2.isNull then
+    result := false
+  else if src1.isNull or src2.isNull then
+    result := true
+  else
+    result := not ((src1.line = src2.line) and (src1.col = src2.col));
+end;
+
+class operator TSourceLocation.lessThan(src1, src2 : TSourceLocation ) : boolean;
+begin
+  if src1.line < src2.line then
+    result := true
+  else if src1.line > src2.line then
+    result := false
+  else
+    result := src1.col < src2.col;
+end;
+
+class operator TSourceLocation.greaterThan(src1, src2 : TSourceLocation ) : boolean;
+begin
+  if src1.line > src2.line then
+    result := true
+  else if src1.line < src2.line then
+    result := false
+  else
+    result := src1.col > src2.col;
+end;
+
+class operator TSourceLocation.lessThanOrEqual(src1, src2 : TSourceLocation) : boolean;
+begin
+  if src1.line < src2.line then
+    result := true
+  else if src1.line > src2.line then
+    result := false
+  else
+    result := src1.col <= src2.col;
+end;
+
+class operator TSourceLocation.greaterThanOrEqual(src1, src2 : TSourceLocation) : boolean;
+begin
+  if src1.line > src2.line then
+    result := true
+  else if src1.line < src2.line then
+    result := false
+  else
+    result := src1.col >= src2.col;
+end;
+
+function TSourceLocation.inSpan(lower, upper : TSourceLocation) : boolean;
+begin
+  result := (self >= lower) and (self <= upper);
+end;
+
+function TSourceLocation.toPoint : TPoint;
+begin
+  result.x := col + 1;
+  result.y := line + 1;
+end;
+
+procedure TSourceLocation.incCol;
+begin
+  inc(col);
+end;
+
+procedure TSourceLocation.incLine;
+begin
+  inc(line);
+  col := 0;
+end;
+
+function TSourceLocation.lineForHuman : integer;
+begin
+  result := line + 1;
+end;
+
+function TSourceLocation.colForHuman : integer;
+begin
+  result := col + 1;
+end;
+
+function TSourceLocation.describe : String;
+begin
+  if isNull then
+    result := 'Unknown Location'
+  else
+    result := 'Line '+inttostr(lineForHuman)+', Column '+inttostr(colForHuman);
+end;
+
+function TSourceLocation.exception(msg: String) : EParserException;
+begin
+  result := EParserException.create(msg + ' at '+describe, self);
+end;
+
+class operator TSourceLocation.add(position : TSourceLocation; range : TSourceRange) : TSourceLocation;
+begin
+  if position.isNull or range.isNull then
+    result := TSourceLocation.CreateNull
+  else if (range.lines = 0) then
+    result := TSourceLocation.Create(position.line, position.col + range.cols)
+  else
+    result := TSourceLocation.Create(position.line + range.lines, range.cols)
+end;
+
+class operator TSourceLocation.subtract(start, finish : TSourceLocation) : TSourceRange;
+begin
+  if start.isNull or finish.isNull then
+    result := TSourceRange.CreateNull
+  else if start.line > finish.line then
+    result := TSourceRange.CreateNull
+  else if start.line < finish.line then
+    result := TSourceRange.Create(finish.line - start.line, finish.col)
+  else if start.col > finish.col then
+    result := TSourceRange.CreateNull
+  else
+    result := TSourceRange.Create(0, finish.col - start.col);
+end;
+
+class operator TSourceLocation.subtract(position : TSourceLocation; range : TSourceRange) : TSourceLocation;
+begin
+  if position.isNull or range.isNull then
+    result := TSourceLocation.CreateNull
+  else if range.lines = 0 then
+  begin
+    if range.cols < position.col then
+      result := TSourceLocation.CreateNull
+    else
+      result := TSourceLocation.Create(position.line, position.col - range.cols);
+  end
+  else if range.lines > position.line then
+    result := TSourceLocation.CreateNull
+  else
+    result := TSourceLocation.Create(position.line - range.lines, 0);
+end;
+
+class function TSourceLocation.fromPoint(p : TPoint) : TSourceLocation;
+begin
+  result := Create(p.y-1, p.x-1);
+end;
+
+{ EParserException }
+
+function EParserException.GetColNumber: integer;
+begin
+  result := Location.col;
+end;
+
+function EParserException.GetLineNumber: integer;
+begin
+  result := Location.line;
+end;
+
+constructor EParserException.Create(msg: String; Location: TSourceLocation);
+begin
+  Inherited Create(msg);
+  FLocation := location;
+end;
 
 Procedure Init;
 Begin
   Eolns := Bytes([10, 11, 13]);
 End;
+
 
 Initialization
   Init;

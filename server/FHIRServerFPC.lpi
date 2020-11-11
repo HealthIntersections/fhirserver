@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\support;..\library\r2;..\library\v2;..\library\cda;..\library\r3;..\library\r4;..\library\r4\tests;..\library\r5;..\library;..\library\web;..\library\ucum;..\library\npm;..\library\snomed;..\library\javascript;..\library\database;..\library\loinc;..\library\ndc;..\library\smart;..\library\tools;..\library\version;..\library\xversion;..\library\client;..\library\cdshooks;..\dependencies\FMMAVX;..\dependencies\chakracore-delphi;tests;Modules"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>

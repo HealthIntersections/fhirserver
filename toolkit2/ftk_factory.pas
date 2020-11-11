@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.Factory;
+unit ftk_factory;
 
 {$i fhir.inc}
 
@@ -11,9 +11,10 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json,
   FHIR.Base.Objects,
 
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.TextEditor, FHIR.Toolkit.IniEditor, FHIR.Toolkit.XmlEditor, FHIR.Toolkit.JsonEditor, FHIR.Toolkit.HtmlEditor,
-  FHIR.Toolkit.MarkdownEditor, FHIR.Toolkit.JavascriptEditor, FHIR.Toolkit.HL7Editor, FHIR.Toolkit.FHIREditor;
+  ftk_context, ftk_store,
+  ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,
+  ftk_editor_md, ftk_editor_js, ftk_editor_hl7, ftk_editor_fhir,
+  ftk_frame_resource, ftk_frame_codesystem;
 
 type
 
@@ -30,6 +31,7 @@ type
     function examineFile(filename : String; const bytes : TBytes) : TToolkitEditSession;
 
     function makeEditor(session : TToolkitEditSession) : TToolkitEditor;
+    function makeResourceFrame(name : String) : TResourceEditorFrame;
   end;
 
 implementation
@@ -215,6 +217,11 @@ begin
   else
     raise Exception.create('not supported yet');
   end;
+end;
+
+function TToolkitFactory.makeResourceFrame(name: String): TResourceEditorFrame;
+begin
+  result := nil;
 end;
 
 

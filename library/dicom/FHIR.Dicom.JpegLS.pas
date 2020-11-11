@@ -58,7 +58,7 @@ Implementation
 Var
   GHandle : HModule;
 
-Function DummyJpegLSDecode(Response : Pointer;	ResponseLength : Integer; pResultCode: PCardinal; Data : Pointer; Length : Integer; Width: Integer; Height: Integer; Cbit: Integer; Ccomp: Integer) : Boolean; stdcall;
+Function DummyJpegLSDecode(Response : Pointer;  ResponseLength : Integer; pResultCode: PCardinal; Data : Pointer; Length : Integer; Width: Integer; Height: Integer; Cbit: Integer; Ccomp: Integer) : Boolean; stdcall;
 Begin
   raise EDicomException.create('Unable to decode this image as the jpeg-ls library was not found');
 End;

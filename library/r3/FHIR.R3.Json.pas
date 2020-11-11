@@ -2705,7 +2705,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
-    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"', value.LocationStart.line+1, value.LocationStart.col+1);
+    raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
   result := TFHIREnum.create;
   try
     if (value <> nil) then
@@ -45272,7 +45272,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise EParserException.create('error: the element '+s+' is not a valid resource name', jsn.LocationStart.line+1, jsn.locationStart.col+1);
+    raise jsn.locationStart.exception('error: the element '+s+' is not a valid resource name');
 end;
 
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;

@@ -57,15 +57,15 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//	Miscellaneous DIB Function
+//  Miscellaneous DIB Function
 // -----------------------------------------------------------------------------
 
 procedure CopyDIBToBitmap(Bitmap: TBitmap; BitmapInfo: PBitmapInfo; DIBSize: integer);
 var
-  BitmapFileHeader	: TBitmapFileHeader;
-  FileSize		: integer;
-  InfoSize		: integer;
-  Stream		: TMemoryStream;
+  BitmapFileHeader  : TBitmapFileHeader;
+  FileSize    : integer;
+  InfoSize    : integer;
+  Stream    : TMemoryStream;
 begin
   // Write DIB to a stream in the BMP file format
   Stream := TMemoryStream.Create;
@@ -101,7 +101,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropBMPTarget
+//      TDropBMPTarget
 // -----------------------------------------------------------------------------
 
 constructor TDropBMPTarget.Create( AOwner: TComponent );

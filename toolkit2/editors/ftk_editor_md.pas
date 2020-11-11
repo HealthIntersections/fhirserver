@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.MarkdownEditor;
+unit ftk_editor_md;
 
 {$i fhir.inc}
 
@@ -9,8 +9,8 @@ uses
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
   MarkdownProcessor,
   FHIR.Support.Base, FHIR.Base.XHtml, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 

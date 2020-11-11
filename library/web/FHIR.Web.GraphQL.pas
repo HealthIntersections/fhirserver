@@ -718,12 +718,9 @@ begin
   begin
     result := ConsumeCharacter;
     if result = #10 then
-    begin
-      inc(FLocation.line);
-      FLocation.col := 1;
-    end
+      FLocation.incLine
     else
-      inc(FLocation.col);
+      FLocation.incCol;
   end;
 end;
 

@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.HtmlEditor;
+unit ftk_editor_html;
 
 {$i fhir.inc}
 
@@ -8,8 +8,8 @@ uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
   FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 
@@ -50,7 +50,7 @@ var
   e : TMXmlElement;
 begin
   if (element.Name.ToLower = 'h1') or (element.Name.ToLower = 'h2') then
-    navpoints.AddObject(element.Name+' '+element.allText, TObject(element.Start.line-1));
+    navpoints.AddObject(element.Name+' '+element.allText, TObject(element.Start.line));
   for e in element.Children do
     listHeadings(navpoints, e);
 end;
@@ -126,8 +126,6 @@ begin
      FXml := nil;
      try
        FXml := FParser.parse(FContent.text, [xpResolveNamespaces, xpHTMLEntities]);
-       inc(cursor.line);
-       inc(cursor.col);
        path := FXml.findLocation(cursor);
        try
          inspection.AddPair('Path', FXml.describePath(path));
@@ -137,11 +135,11 @@ begin
      except
        on e : EParserException do
        begin
-         validationError(e.Line, e.Col, e.message);
+         validationError(e.Location, e.message);
        end;
        on e : Exception do
        begin
-         validationError(1, 1, 'Error Parsing XHTML: '+e.message);
+         validationError(TSourceLocation.CreateNull, 'Error Parsing XHTML: '+e.message);
        end;
      end;
   finally

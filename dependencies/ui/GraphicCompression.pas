@@ -233,14 +233,14 @@ type
     Error: jpeg_error_mgr;                    // libjpeg error manager
     DestinationManager: jpeg_destination_mgr; // data dest for compression
     SourceManager: jpeg_source_mgr;           // data source for decompression
-    HSampling,	                              // luminance sampling factors
+    HSampling,                                // luminance sampling factors
     VSampling: Word;
     BytesPerLine: Cardinal;                   // decompressed bytes per scanline
     RawBuffer: Pointer;                       // source data
     RawBufferSize: Cardinal;
     // pointers to intermediate buffers when processing downsampled data
     DownSampleBuffer: array[0..MAX_COMPONENTS - 1] of JSAMPARRAY;
-    ScanCount,	                              // number of 'scanlines' accumulated
+    ScanCount,                                // number of 'scanlines' accumulated
     SamplesPerClump: Integer;
     JPEGTables: Pointer;                      // JPEGTables tag value, or nil
     JTLength: Cardinal;                       // number of bytes JPEGTables
@@ -250,7 +250,7 @@ type
 
   TTIFFJPEGDecoder = class(TDecoder)
   private
-		FState: TJPEGState;
+    FState: TJPEGState;
     FImageProperties: Pointer; // anonymously declared because I cannot take GraphicEx.pas in the uses clause above
   public
     constructor Create(Properties: Pointer);
@@ -2051,7 +2051,7 @@ var
 
 begin
   State := Pointer(cinfo);
-	State.Error.format_message(@State.General.common, Buffer);
+  State.Error.format_message(@State.General.common, Buffer);
   MessageBox(0, Buffer, PChar(gesWarning), MB_OK or MB_ICONWARNING);
 end;
 
@@ -2060,11 +2060,11 @@ end;
 procedure Internaljpeg_create_compress(var State: TJPEGState);
 
 begin
-	// initialize JPEG error handling
+  // initialize JPEG error handling
   State.General.Common.err := @State.Error;
-	State.Error.output_message := Internaljpeg_output_message;
+  State.Error.output_message := Internaljpeg_output_message;
 
-	jpeg_createCompress(@State.General.c, JPEG_LIB_VERSION, SizeOf(State.General.c));
+  jpeg_createCompress(@State.General.c, JPEG_LIB_VERSION, SizeOf(State.General.c));
 end;
 }
 //----------------------------------------------------------------------------------------------------------------------
@@ -2079,8 +2079,8 @@ var
 begin
   State := Pointer(cinfo);
 
-	State.SourceManager.next_input_byte := State.RawBuffer;
-	State.SourceManager.bytes_in_buffer := State.RawBufferSize;
+  State.SourceManager.next_input_byte := State.RawBuffer;
+  State.SourceManager.bytes_in_buffer := State.RawBufferSize;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2096,13 +2096,13 @@ var
 begin
   State := Pointer(cinfo);
 
-	// Should never get here since entire strip/tile is read into memory before the
+  // Should never get here since entire strip/tile is read into memory before the
   // decompressor is called, and thus was supplied by init_source.
-	MessageBox(0, PChar(gesJPEGEOI), PChar(gesWarning), MB_OK or MB_ICONWARNING);
+  MessageBox(0, PChar(gesJPEGEOI), PChar(gesWarning), MB_OK or MB_ICONWARNING);
 
-	// insert a fake EOI marker
-	State.SourceManager.next_input_byte := @Dummy_EOI;
-	State.SourceManager.bytes_in_buffer := 2;
+  // insert a fake EOI marker
+  State.SourceManager.next_input_byte := @Dummy_EOI;
+  State.SourceManager.bytes_in_buffer := 2;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2115,19 +2115,19 @@ var
 begin
   State := Pointer(cinfo);
 
-	if num_bytes > 0 then
+  if num_bytes > 0 then
   begin
-		if num_bytes > State.SourceManager.bytes_in_buffer then
+    if num_bytes > State.SourceManager.bytes_in_buffer then
     begin
-			// oops, buffer overrun
-			std_fill_input_buffer(cinfo);
-		end
+      // oops, buffer overrun
+      std_fill_input_buffer(cinfo);
+    end
     else
     begin
-			Inc(State.SourceManager.next_input_byte, num_bytes);
-			Dec(State.SourceManager.bytes_in_buffer, num_bytes);
-		end;
-	end;
+      Inc(State.SourceManager.next_input_byte, num_bytes);
+      Dec(State.SourceManager.bytes_in_buffer, num_bytes);
+    end;
+  end;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2155,7 +2155,7 @@ begin
     SourceManager.skip_input_data := @std_skip_input_data;
     SourceManager.resync_to_restart := @jpeg_resync_to_restart;
     SourceManager.term_source := @std_term_source;
-    SourceManager.bytes_in_buffer := 0;		// for safety
+    SourceManager.bytes_in_buffer := 0;    // for safety
     SourceManager.next_input_byte := nil;
   end;
 end;
@@ -2173,8 +2173,8 @@ var
 begin
   State := Pointer(cinfo);
 
-	State.SourceManager.next_input_byte := State.JPEGTables;
-	State.SourceManager.bytes_in_buffer := State.JTLength;
+  State.SourceManager.next_input_byte := State.JPEGTables;
+  State.SourceManager.bytes_in_buffer := State.JTLength;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2182,8 +2182,8 @@ end;
 procedure Internaljpeg_tables_src(var State: TJPEGState);
 
 begin
-	Internaljpeg_data_src(State);
-	State.SourceManager.init_source := @tables_init_source;
+  Internaljpeg_data_src(State);
+  State.SourceManager.init_source := @tables_init_source;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2217,20 +2217,20 @@ const
   PLANARCONFIG_SEPARATE = 2;
 
 var
-	I, J: Integer;
+  I, J: Integer;
   SegmentWidth,
   SegmentHeight: Cardinal;
   Temp: Integer;
   Target: PByte;
   
 begin
-	// Reset decoder state from any previous strip/tile, in case application didn't read the whole strip.
-	jpeg_abort(@FState.General.Common);
+  // Reset decoder state from any previous strip/tile, in case application didn't read the whole strip.
+  jpeg_abort(@FState.General.Common);
 
   FState.RawBuffer := Source;
   FState.RawBufferSize := PackedSize;
-	// Read the header for this strip/tile.
-	jpeg_read_header(@FState.General, True);
+  // Read the header for this strip/tile.
+  jpeg_read_header(@FState.General, True);
 
   with PImageProperties(FImageProperties)^ do
   begin
@@ -2337,26 +2337,26 @@ end;
 procedure TTIFFJPEGDecoder.DecodeInit;
 
 begin
-	// initialize JPEG error handling
+  // initialize JPEG error handling
   FState.Error := jpeg_std_error;
-	FState.General.d.common.err := @FState.Error;
-	FState.Error.output_message := Internaljpeg_output_message;
+  FState.General.d.common.err := @FState.Error;
+  FState.Error.output_message := Internaljpeg_output_message;
 
   // let JPEG library init the core structure before setting our own stuff
-	jpeg_createDecompress(@FState.General.d, JPEG_LIB_VERSION, SizeOf(FState.General.d));
+  jpeg_createDecompress(@FState.General.d, JPEG_LIB_VERSION, SizeOf(FState.General.d));
 
   with PImageProperties(FImageProperties)^ do
   begin
     if {(ColorScheme = csYCbCr) and} Assigned(YCbCrSubsampling) then
     begin
-		  FState.HSampling := YCbCrSubsampling[0];
-		  FState.VSampling := YCbCrSubsampling[1];
+      FState.HSampling := YCbCrSubsampling[0];
+      FState.VSampling := YCbCrSubsampling[1];
     end
     else
     begin
-		  // TIFF 6.0 forbids subsampling of all other color spaces
-		  FState.HSampling := 1;
-		  FState.VSampling := 1;
+      // TIFF 6.0 forbids subsampling of all other color spaces
+      FState.HSampling := 1;
+      FState.VSampling := 1;
     end;
   end;
 
@@ -2396,7 +2396,7 @@ const
   THUNDER_CODE = $C0;       // mask for 2-bit code word
     // code values
   THUNDER_RUN = 0;          // run of pixels w/ encoded count
-  THUNDER_2BITDELTAS = $40;	// 3 pixels w/ encoded 2-bit deltas
+  THUNDER_2BITDELTAS = $40;  // 3 pixels w/ encoded 2-bit deltas
     DELTA2_SKIP = 2;        // skip code for 2-bit deltas
   THUNDER_3BITDELTAS = $80; // 2 pixels w/ encoded 3-bit deltas
     DELTA3_SKIP = 4;        // skip code for 3-bit deltas

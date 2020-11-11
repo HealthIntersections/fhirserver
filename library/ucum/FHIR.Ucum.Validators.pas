@@ -150,7 +150,7 @@ Begin
       if (code[i] = '[') Then
         if (inBrack) Then
           raise ETerminologyError.create('nested [')
-	else
+  else
           inBrack := true;
       if (code[i] = ']') Then
         if (not inBrack) Then

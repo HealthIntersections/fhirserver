@@ -112,16 +112,6 @@ Type
   EJavascriptHost = class (EJavascriptException);   // error from hosting infrastructure
   EJavascriptApplication = class (EJavascriptException);    // error running application functionality
   ETestExceptionNotDone = class (EFslException);
-  EParserException = class (EFslException)
-  private
-    FLine : Integer;
-    FCol : Integer;
-  public
-    constructor Create(msg : String; Line, Col : integer);
-    Property Line : integer read FLine;
-    Property Col : integer read FCol;
-  end;
-  EJsonParserException = class (EParserException); // error reading or writing Json
   EJsonException = class (EFslException); // error reading or writing Json
   EJsonTodo = Class(EJsonException)
   public
@@ -210,6 +200,9 @@ Type
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     {$IFOPT D+}
     property NamedClass : String read FNamedClass;
+    {$ENDIF}
+    {$IFDEF OBJECT_TRACKING}
+    property SerialNumber : integer read FSerial;
     {$ENDIF}
 
     class function getReport(sep : String; full : boolean) : String;
@@ -3103,15 +3096,6 @@ end;
 constructor EJsonTodo.Create(place: String);
 begin
   inherited create('Not done yet @ '+place);
-end;
-
-{ EParserException }
-
-constructor EParserException.Create(msg: String; Line, Col: integer);
-begin
-  Inherited Create(msg);
-  FLine := Line;
-  FCol := Col;
 end;
 
 { TFslList<T>.TDefaultComparer }

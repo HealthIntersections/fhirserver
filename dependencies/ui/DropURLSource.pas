@@ -85,7 +85,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropURLSource
+//      TDropURLSource
 // -----------------------------------------------------------------------------
 
 constructor TDropURLSource.Create(aOwner: TComponent);

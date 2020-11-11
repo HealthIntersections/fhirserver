@@ -431,7 +431,7 @@ end;
 
 function TMXmlNamedNode.containsLocation(loc : TSourceLocation): boolean;
 begin
-  result := locInSpan(loc, FStart, FStop);
+  result := loc.inSpan(FStart, FStop);
 end;
 
 constructor TMXmlNamedNode.Create(nodeType: TMXmlElementType);
@@ -497,7 +497,7 @@ begin
       if result = nil then
         result := t
       else
-        raise EXmlException.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+        raise EXmlException.create('Multiple matches found for '+name+' at '+FStart.describe);
 end;
 
 function TMXmlElement.elementNS(ns, name: String): TMXmlElement;
@@ -510,7 +510,7 @@ begin
       if result = nil then
         result := t
       else
-        raise EXmlException.create('Multiple matches found for '+ns+'::'+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+        raise EXmlException.create('Multiple matches found for '+ns+'::'+name+' at '+FStart.describe);
 end;
 
 function TMXmlElement.equal(other: TMXmlNode): boolean;
@@ -863,7 +863,7 @@ begin
   if NodeType in [ntText, ntComment, ntProcessingInstruction] then
     FText := Value
   else
-    raise EXmlException.create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+    raise EXmlException.create('Unable to set text at '+FStart.describe);
 end;
 
 function TMXmlElement.ToString: String;
@@ -1074,8 +1074,7 @@ end;
 
 function TMXmlParser.parseXPath: TMXPathExpressionNode;
 begin
-  FLocation.line := 1;
-  FLocation.col := 1;
+  FLocation := TSourceLocation.Create;
   FStartLocation := FLocation;
 
   b := TStringBuilder.Create;
@@ -1121,12 +1120,9 @@ function TMXmlParser.read: char;
 begin
   result := char(reader.Read);
   if not CharInSet(result, [#13, #10]) then
-    inc(FLocation.col)
+    FLocation.incCol
   else if (result = #10) or (peek <> #10) then
-  begin
-    inc(FLocation.line);
-    FLocation.col := 1;
-  end;
+    FLocation.incLine
 end;
 
 class Function TMXmlParser.IsXmlNameChar(Const ch : Char): Boolean;
@@ -1405,8 +1401,7 @@ function TMXmlParser.parse : TMXmlDocument;
 var
   s : String;
 begin
-  FLocation.line := 1;
-  FLocation.col := 1;
+  FLocation := TSourceLocation.Create;
   FStartLocation := FLocation;
 
   b := TStringBuilder.Create;
@@ -1663,7 +1658,7 @@ end;
 procedure TMXmlParser.rule(test: boolean; message: String);
 begin
   if not test then
-    raise EParserException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col), FLocation.line, FLocation.col);
+    raise FLocation.exception(message);
 end;
 
 function describeTokens(tokens : Array of String) : String;
@@ -1705,7 +1700,7 @@ begin
     if StringArrayExistsSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))) then
       node.axis := TMXPathExpressionAxis(StringArrayIndexOfSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))))
     else
-      raise EParserException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')), FLocation.Line, FLocation.Col);
+      raise FLocation.exception('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
     s := s.Substring(s.IndexOf('::')+2);
   end
   else
@@ -1748,7 +1743,7 @@ begin
   begin
     // starting at the root...
     if not readNext then
-      raise EParserException.Create('Syntax error..', FLocation.Line, FLocation.Col);
+      raise FLocation.exception('Syntax error..');
     readNext := false;
     node.NodeType := xentRoot; // no value in this case
   end

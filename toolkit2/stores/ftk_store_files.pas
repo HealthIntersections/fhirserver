@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.FileStore;
+unit ftk_store_files;
 
 {$i fhir.inc}
 
@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes, Dialogs,
   FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Toolkit.Store;
+  ftk_store;
 
 type
 

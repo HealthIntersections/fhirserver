@@ -213,7 +213,7 @@ begin
   doload('136', 'Cayman Islands', 'CYM', 'country');
   doload('140', 'Central African Republic', 'CAF', 'country');
   doload('148', 'Chad', 'TCD', 'country');
-  doload('830', 'Channel Islands	', '', 'country');
+  doload('830', 'Channel Islands  ', '', 'country');
   doload('152', 'Chile', 'CHL', 'country');
   doload('156', 'China', 'CHN', 'country');
   doload('344', 'China, Hong Kong Special Administrative Region', 'HKG', 'country');
@@ -280,7 +280,7 @@ begin
   doload('380', 'Italy', 'ITA', 'country');
   doload('388', 'Jamaica', 'JAM', 'country');
   doload('392', 'Japan', 'JPN', 'country');
-  doload('832', 'Jersey	JEY', '', 'country');
+  doload('832', 'Jersey  JEY', '', 'country');
   doload('400', 'Jordan', 'JOR', 'country');
   doload('398', 'Kazakhstan', 'KAZ', 'country');
   doload('404', 'Kenya', 'KEN', 'country');
@@ -306,7 +306,7 @@ begin
   doload('474', 'Martinique', 'MTQ', 'country');
   doload('478', 'Mauritania', 'MRT', 'country');
   doload('480', 'Mauritius', 'MUS', 'country');
-  doload('175', 'Mayotte	MYT', '', 'country');
+  doload('175', 'Mayotte  MYT', '', 'country');
   doload('484', 'Mexico', 'MEX', 'country');
   doload('583', 'Micronesia (Federated States of)', 'FSM', 'country');
   doload('492', 'Monaco', 'MCO', 'country');
@@ -352,7 +352,7 @@ begin
   doload('654', 'Saint Helena', 'SHN', 'country');
   doload('659', 'Saint Kitts and Nevis', 'KNA', 'country');
   doload('662', 'Saint Lucia', 'LCA', 'country');
-  doload('663', 'Saint Martin (French part)	MAF', '', 'country');
+  doload('663', 'Saint Martin (French part)  MAF', '', 'country');
   doload('666', 'Saint Pierre and Miquelon', 'SPM', 'country');
   doload('670', 'Saint Vincent and the Grenadines', 'VCT', 'country');
   doload('882', 'Samoa', 'WSM', 'country');
@@ -365,7 +365,7 @@ begin
   doload('690', 'Seychelles', 'SYC', 'country');
   doload('694', 'Sierra Leone', 'SLE', 'country');
   doload('702', 'Singapore', 'SGP', 'country');
-  doload('534', 'Sint Maarten (Dutch part)	SXM', '', 'country');
+  doload('534', 'Sint Maarten (Dutch part)  SXM', '', 'country');
   doload('703', 'Slovakia', 'SVK', 'country');
   doload('705', 'Slovenia', 'SVN', 'country');
   doload('090', 'Solomon Islands', 'SLB', 'country');

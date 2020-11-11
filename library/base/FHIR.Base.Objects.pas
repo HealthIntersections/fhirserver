@@ -324,7 +324,9 @@ type
     FComposeFinish2: TSourceLocation;
     FComposeStart2: TSourceLocation;
   public
+    constructor create; override;
     function inSpan(loc : TSourceLocation) : boolean;
+    function hasLocation1 : boolean;
     function hasLocation2 : boolean;
 
     property parseStart : TSourceLocation read FParseStart write FParseStart;
@@ -438,10 +440,17 @@ type
     property jsInstance : cardinal read FJsInstance write FJsInstance;
     property jsHandle : pointer read FJsHandle write FJsHandle;
 
-    // populated by some parsers when parsing
-    property LocationData : TFHIRObjectLocationData read GetLocationData; // this is only populated by the parsers on demand
+    // this is populated by the json and xml parsers if requested
+    property LocationData : TFHIRObjectLocationData read GetLocationData;
     property HasLocationData : boolean read GetHasLocationData;
     function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocatedNode>; overload;
+
+    // called when content is added to the source from which this was parsed.
+    // start is where the insertion was
+    // finish is the content that was deleted
+    // new content is ths line/col count of the content inserted
+    // focus is the object that was the focus of the change (inner content for this has to be adjusted from as composed
+    procedure updateLocationData(start : TSourceLocation; removed, added: TSourceRange; focus : TFHIRObject);
 
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
@@ -746,12 +755,31 @@ end;
 
 function TFHIRObjectLocationData.hasLocation2: boolean;
 begin
-  result := FParseFinish2.nonZero or FComposeFinish2.nonZero;
+  result := not FParseFinish2.isNull or not FComposeFinish2.isNull;
+end;
+
+function TFHIRObjectLocationData.hasLocation1: boolean;
+begin
+  result := not FParseFinish.isNull or not FComposeFinish.isNull;
+end;
+
+constructor TFHIRObjectLocationData.create;
+begin
+  inherited create;
+  FComposeStart := TSourceLocation.CreateNull;
+  FComposeFinish := TSourceLocation.CreateNull;
+  FParseStart := TSourceLocation.CreateNull;
+  FParseFinish := TSourceLocation.CreateNull;
+  FParseFinish2 := TSourceLocation.CreateNull;
+  FParseStart2 := TSourceLocation.CreateNull;
+  FComposeFinish2 := TSourceLocation.CreateNull;
+  FComposeStart2 := TSourceLocation.CreateNull;
+
 end;
 
 function TFHIRObjectLocationData.inSpan(loc: TSourceLocation): boolean;
 begin
-  result := locInSpan(loc, FParseStart, FParseFinish);
+  result := loc.inSpan(FParseStart, FParseFinish) or loc.inSpan(FParseStart2, FParseFinish2);
 end;
 
 { TFHIRLocatedNode }
@@ -933,6 +961,24 @@ begin
     result.Link;
   finally
     result.free;
+  end;
+end;
+
+procedure TFHIRObject.updateLocationData(start : TSourceLocation; removed, added: TSourceRange; focus : TFHIRObject);
+var
+  nc : TFHIRNamedValue;
+begin
+  if self = focus then
+  begin
+    raise exception.create('not done yet');
+  end
+  else if start >= LocationData.parseFinish then // if start is after this, then we don't need to do anything
+  begin
+    if start <= LocationData.parseStart then
+      LocationData.parseStart := (LocationData.parseStart - removed) + added;
+    LocationData.parseFinish := (LocationData.parseFinish - removed) + added;
+    for nc in getNamedChildren do
+      nc.value.updateLocationData(start, removed, added, focus);
   end;
 end;
 

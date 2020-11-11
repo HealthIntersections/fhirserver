@@ -73,7 +73,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			Miscellaneous Functions...
+//      Miscellaneous Functions...
 // -----------------------------------------------------------------------------
 
 function GetPidlsFromHGlobal(const HGlob: HGlobal; var Pidls: TStrings): boolean;
@@ -115,7 +115,7 @@ end;
 
 {By implementing the following TStrings class, component processing is reduced.}
 // -----------------------------------------------------------------------------
-//			TPIDLTargetStrings
+//      TPIDLTargetStrings
 // -----------------------------------------------------------------------------
 
 type 
@@ -188,7 +188,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropPIDLTarget
+//      TDropPIDLTarget
 // -----------------------------------------------------------------------------
 
 constructor TDropPIDLTarget.Create(AOwner: TComponent);

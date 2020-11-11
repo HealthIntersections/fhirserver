@@ -1567,11 +1567,11 @@ begin
 end;
 
 procedure TAuth2Server.loadScopeVariables(variables : TFslMap<TFHIRObject>; scope : String; user : TSCIMUser);
-//patient/*.read	Permission to read any resource for the current patient
-//user/*.*	Permission to read and write all resources that the current user can access
-//openid profile	Permission to retrieve information about the current logged-in user
-//launch	Permission to obtain launch context when app is launched from an EHR
-//launch/patient	When launching outside the EHR, ask for a patient to be selected at launch time
+//patient/*.read  Permission to read any resource for the current patient
+//user/*.*  Permission to read and write all resources that the current user can access
+//openid profile  Permission to retrieve information about the current logged-in user
+//launch  Permission to obtain launch context when app is launched from an EHR
+//launch/patient  When launching outside the EHR, ask for a patient to be selected at launch time
 var
   security : TFHIRSecurityRights;
   s, c : String;

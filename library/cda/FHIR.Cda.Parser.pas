@@ -1990,41 +1990,41 @@ Begin
       Begin
         If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2067,27 +2067,27 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
         // choice :
-	Else If oChild.Name = 'assignedPerson' Then
+  Else If oChild.Name = 'assignedPerson' Then
           Result.assignedPerson := ParsePerson(sPath+'\assignedPerson', oChild)
-	Else If oChild.Name = 'assignedAuthoringDevice' Then
+  Else If oChild.Name = 'assignedAuthoringDevice' Then
           Result.assignedAuthoringDevice := ParseAuthoringDevice(sPath+'\assignedAuthoringDevice', oChild)
         // end choice
-	Else If oChild.Name = 'representedOrganization' Then
+  Else If oChild.Name = 'representedOrganization' Then
           Result.representedOrganization := ParseOrganization(sPath+'\representedOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2124,13 +2124,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'representedCustodianOrganization' Then
+  Else If oChild.Name = 'representedCustodianOrganization' Then
           Result.representedCustodianOrganization := ParseCustodianOrganization(sPath+'\representedCustodianOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2167,23 +2167,23 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'assignedPerson' Then
+  Else If oChild.Name = 'assignedPerson' Then
           Result.assignedPerson := ParsePerson(sPath+'\assignedPerson', oChild)
-	Else If oChild.Name = 'representedOrganization' Then
+  Else If oChild.Name = 'representedOrganization' Then
           Result.representedOrganization := ParseOrganization(sPath+'\representedOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2220,23 +2220,23 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'associatedPerson' Then
+  Else If oChild.Name = 'associatedPerson' Then
           Result.associatedPerson := ParsePerson(sPath+'\associatedPerson', oChild)
-	Else If oChild.Name = 'scopingOrganization' Then
+  Else If oChild.Name = 'scopingOrganization' Then
           Result.scopingOrganization := ParseOrganization(sPath+'\scopingOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2275,17 +2275,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'signatureCode' Then
+  Else If oChild.Name = 'signatureCode' Then
           Result.signatureCode := ParseCS(sPath+'\signatureCode', oChild)
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseTS(sPath+'\time', oChild)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2322,15 +2322,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'functionCode' Then
+  Else If oChild.Name = 'functionCode' Then
           Result.functionCode := ParseCD(sPath+'\functionCode', oChild)
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseTS(sPath+'\time', oChild)
         Else if oChild.Name = 'assignedAuthor' Then
           Result.assignedAuthor := ParseAssignedAuthor(sPath+'\assignedAuthor', oChild)
@@ -2369,19 +2369,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'manufacturerModelName' Then
+  Else If oChild.Name = 'manufacturerModelName' Then
           Result.manufacturerModelName := ParseSC(sPath+'\manufacturerModelName', oChild)
-	Else If oChild.Name = 'softwareName' Then
+  Else If oChild.Name = 'softwareName' Then
           Result.softwareName := ParseSC(sPath+'\softwareName', oChild)
-	Else If oChild.Name = 'asMaintainedEntity' Then
+  Else If oChild.Name = 'asMaintainedEntity' Then
           Result.asMaintainedEntity.Add(ParseMaintainedEntity(sPath+'\asMaintainedEntity', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2418,13 +2418,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'consent' Then
+  Else If oChild.Name = 'consent' Then
           Result.consent := ParseConsent(sPath+'\consent', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2461,13 +2461,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'place' Then
+  Else If oChild.Name = 'place' Then
           Result.place := ParsePlace(sPath+'\place', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2504,59 +2504,59 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id := ParseII(sPath+'\id', oChild)
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'title' Then
+  Else If oChild.Name = 'title' Then
           Result.title := ParseST(sPath+'\title', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseTS(sPath+'\effectiveTime', oChild)
-	Else If oChild.Name = 'confidentialityCode' Then
+  Else If oChild.Name = 'confidentialityCode' Then
           Result.confidentialityCode := ParseCD(sPath+'\confidentialityCode', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'setId' Then
+  Else If oChild.Name = 'setId' Then
           Result.setId := ParseII(sPath+'\setId', oChild)
-	Else If oChild.Name = 'versionNumber' Then
+  Else If oChild.Name = 'versionNumber' Then
           Result.versionNumber := ParseINT(sPath+'\versionNumber', oChild)
-	Else If oChild.Name = 'copyTime' Then
+  Else If oChild.Name = 'copyTime' Then
           Result.copyTime := ParseTS(sPath+'\copyTime', oChild)
-	Else If oChild.Name = 'recordTarget' Then
+  Else If oChild.Name = 'recordTarget' Then
           Result.recordTarget.Add(ParseRecordTarget(sPath+'\recordTarget', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'dataEnterer' Then
+  Else If oChild.Name = 'dataEnterer' Then
           Result.dataEnterer := ParseDataEnterer(sPath+'\dataEnterer', oChild)
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'custodian' Then
+  Else If oChild.Name = 'custodian' Then
           Result.custodian := ParseCustodian(sPath+'\custodian', oChild)
-	Else If oChild.Name = 'informationRecipient' Then
+  Else If oChild.Name = 'informationRecipient' Then
           Result.informationRecipient.Add(ParseInformationRecipient(sPath+'\informationRecipient', oChild))
-	Else If oChild.Name = 'legalAuthenticator' Then
+  Else If oChild.Name = 'legalAuthenticator' Then
           Result.legalAuthenticator := ParseLegalAuthenticator(sPath+'\legalAuthenticator', oChild)
-	Else If oChild.Name = 'authenticator' Then
+  Else If oChild.Name = 'authenticator' Then
           Result.authenticator.Add(ParseAuthenticator(sPath+'\authenticator', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant1(sPath+'\participant', oChild))
-	Else If oChild.Name = 'inFulfillmentOf' Then
+  Else If oChild.Name = 'inFulfillmentOf' Then
           Result.inFulfillmentOf.Add(ParseInFulfillmentOf(sPath+'\inFulfillmentOf', oChild))
-	Else If oChild.Name = 'documentationOf' Then
+  Else If oChild.Name = 'documentationOf' Then
           Result.documentationOf.Add(ParseDocumentationOf(sPath+'\documentationOf', oChild))
-	Else If oChild.Name = 'relatedDocument' Then
+  Else If oChild.Name = 'relatedDocument' Then
           Result.relatedDocument.Add(ParseRelatedDocument(sPath+'\relatedDocument', oChild))
-	Else If oChild.Name = 'authorization' Then
+  Else If oChild.Name = 'authorization' Then
           Result.authorization.Add(ParseAuthorization(sPath+'\authorization', oChild))
-	Else If oChild.Name = 'componentOf' Then
+  Else If oChild.Name = 'componentOf' Then
           Result.componentOf := ParseComponent1(sPath+'\componentOf', oChild)
-	Else If oChild.Name = 'component' Then
+  Else If oChild.Name = 'component' Then
           Result.component := ParseComponent2(sPath+'\component', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath)
@@ -2593,13 +2593,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'encompassingEncounter' Then
+  Else If oChild.Name = 'encompassingEncounter' Then
           Result.encompassingEncounter := ParseEncompassingEncounter(sPath+'\encompassingEncounter', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2636,16 +2636,16 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
         // choice :
-	Else If oChild.Name = 'nonXMLBody' Then
+  Else If oChild.Name = 'nonXMLBody' Then
           Result.nonXMLBody := ParseNonXMLBody(sPath+'\nonXMLBody', oChild)
-	Else If oChild.Name = 'structuredBody' Then
+  Else If oChild.Name = 'structuredBody' Then
           Result.structuredBody := ParseStructuredBody(sPath+'\structuredBody', oChild)
         // end choice
         Else If Errors Then
@@ -2683,13 +2683,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'section' Then
+  Else If oChild.Name = 'section' Then
           Result.section := ParseSection(sPath+'\section', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2726,34 +2726,34 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'sequenceNumber' Then
+  Else If oChild.Name = 'sequenceNumber' Then
           Result.sequenceNumber := ParseINT(sPath+'\sequenceNumber', oChild)
-	Else If oChild.Name = 'seperatableInd' Then
+  Else If oChild.Name = 'seperatableInd' Then
           Result.seperatableInd := ParseBL(sPath+'\seperatableInd', oChild)
         // choice :
-	Else If oChild.Name = 'act' Then
+  Else If oChild.Name = 'act' Then
           Result.act := ParseAct(sPath+'\act', oChild)
-	Else If oChild.Name = 'encounter' Then
+  Else If oChild.Name = 'encounter' Then
           Result.encounter := ParseEncounter(sPath+'\encounter', oChild)
-	Else If oChild.Name = 'observation' Then
+  Else If oChild.Name = 'observation' Then
           Result.observation := ParseObservation(sPath+'\observation', oChild)
-	Else If oChild.Name = 'observationMedia' Then
+  Else If oChild.Name = 'observationMedia' Then
           Result.observationMedia := ParseObservationMedia(sPath+'\observationMedia', oChild)
-	Else If oChild.Name = 'organizer' Then
+  Else If oChild.Name = 'organizer' Then
           Result.organizer := ParseOrganizer(sPath+'\organizer', oChild)
-	Else If oChild.Name = 'procedure' Then
+  Else If oChild.Name = 'procedure' Then
           Result.procedure_ := ParseProcedure(sPath+'\procedure', oChild)
-	Else If oChild.Name = 'regionOfInterest' Then
+  Else If oChild.Name = 'regionOfInterest' Then
           Result.regionOfInterest := ParseRegionOfInterest(sPath+'\regionOfInterest', oChild)
-	Else If oChild.Name = 'substanceAdministration' Then
+  Else If oChild.Name = 'substanceAdministration' Then
           Result.substanceAdministration := ParseSubstanceAdministration(sPath+'\substanceAdministration', oChild)
-	Else If oChild.Name = 'supply' Then
+  Else If oChild.Name = 'supply' Then
           Result.supply := ParseSupply(sPath+'\supply', oChild)
         // end choice
         Else If Errors Then
@@ -2792,17 +2792,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2839,13 +2839,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'manufacturedProduct' Then
+  Else If oChild.Name = 'manufacturedProduct' Then
           Result.manufacturedProduct := ParseManufacturedProduct(sPath+'\manufacturedProduct', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2882,17 +2882,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'value' Then
+  Else If oChild.Name = 'value' Then
           Result.value := ParseANY(sPath+'\value', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2931,13 +2931,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'assignedCustodian' Then
+  Else If oChild.Name = 'assignedCustodian' Then
           Result.assignedCustodian := ParseAssignedCustodian(sPath+'\assignedCustodian', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -2974,19 +2974,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.Name := ParseEN(sPath+'\name', oChild)
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom := ParseTEL(sPath+'\telecom', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr := ParseAD(sPath+'\addr', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3023,15 +3023,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseTS(sPath+'\time', oChild)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3068,17 +3068,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'manufacturerModelName' Then
+  Else If oChild.Name = 'manufacturerModelName' Then
           Result.manufacturerModelName := ParseSC(sPath+'\manufacturerModelName', oChild)
-	Else If oChild.Name = 'softwareName' Then
+  Else If oChild.Name = 'softwareName' Then
           Result.softwareName := ParseSC(sPath+'\softwareName', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3117,13 +3117,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'serviceEvent' Then
+  Else If oChild.Name = 'serviceEvent' Then
           Result.serviceEvent := ParseServiceEvent(sPath+'\serviceEvent', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3160,25 +3160,25 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'dischargeDispositionCode' Then
+  Else If oChild.Name = 'dischargeDispositionCode' Then
           Result.dischargeDispositionCode := ParseCD(sPath+'\dischargeDispositionCode', oChild)
-	Else If oChild.Name = 'responsibleParty' Then
+  Else If oChild.Name = 'responsibleParty' Then
           Result.responsibleParty := ParseResponsibleParty(sPath+'\responsibleParty', oChild)
-	Else If oChild.Name = 'encounterParticipant' Then
+  Else If oChild.Name = 'encounterParticipant' Then
           Result.encounterParticipant.Add(ParseEncounterParticipant(sPath+'\encounterParticipant', oChild))
-	Else If oChild.Name = 'location' Then
+  Else If oChild.Name = 'location' Then
           Result.location := ParseLocation(sPath+'\location', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3215,41 +3215,41 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3290,15 +3290,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseIVL(sPath+'\time', oChild, Tv3TS)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3337,17 +3337,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'desc' Then
+  Else If oChild.Name = 'desc' Then
           Result.desc := ParseED(sPath+'\desc', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3386,30 +3386,30 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
         // choice :
-	Else If oChild.Name = 'act' Then
+  Else If oChild.Name = 'act' Then
           Result.act := ParseAct(sPath+'\act', oChild)
-	Else If oChild.Name = 'encounter' Then
+  Else If oChild.Name = 'encounter' Then
           Result.encounter := ParseEncounter(sPath+'\encounter', oChild)
-	Else If oChild.Name = 'observation' Then
+  Else If oChild.Name = 'observation' Then
           Result.observation := ParseObservation(sPath+'\observation', oChild)
-	Else If oChild.Name = 'observationMedia' Then
+  Else If oChild.Name = 'observationMedia' Then
           Result.observationMedia := ParseObservationMedia(sPath+'\observationMedia', oChild)
-	Else If oChild.Name = 'organizer' Then
+  Else If oChild.Name = 'organizer' Then
           Result.organizer := ParseOrganizer(sPath+'\organizer', oChild)
-	Else If oChild.Name = 'procedure' Then
+  Else If oChild.Name = 'procedure' Then
           Result.procedure_ := ParseProcedure(sPath+'\procedure', oChild)
-	Else If oChild.Name = 'regionOfInterest' Then
+  Else If oChild.Name = 'regionOfInterest' Then
           Result.regionOfInterest := ParseRegionOfInterest(sPath+'\regionOfInterest', oChild)
-	Else If oChild.Name = 'substanceAdministration' Then
+  Else If oChild.Name = 'substanceAdministration' Then
           Result.substanceAdministration := ParseSubstanceAdministration(sPath+'\substanceAdministration', oChild)
-	Else If oChild.Name = 'supply' Then
+  Else If oChild.Name = 'supply' Then
           Result.supply := ParseSupply(sPath+'\supply', oChild)
         // end choice
         Else If Errors Then
@@ -3449,34 +3449,34 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'sequenceNumber' Then
+  Else If oChild.Name = 'sequenceNumber' Then
           Result.sequenceNumber := ParseINT(sPath+'\sequenceNumber', oChild)
-	Else If oChild.Name = 'seperatableInd' Then
+  Else If oChild.Name = 'seperatableInd' Then
           Result.seperatableInd := ParseBL(sPath+'\seperatableInd', oChild)
         // choice :
-	Else If oChild.Name = 'act' Then
+  Else If oChild.Name = 'act' Then
           Result.act := ParseAct(sPath+'\act', oChild)
-	Else If oChild.Name = 'encounter' Then
+  Else If oChild.Name = 'encounter' Then
           Result.encounter := ParseEncounter(sPath+'\encounter', oChild)
-	Else If oChild.Name = 'observation' Then
+  Else If oChild.Name = 'observation' Then
           Result.observation := ParseObservation(sPath+'\observation', oChild)
-	Else If oChild.Name = 'observationMedia' Then
+  Else If oChild.Name = 'observationMedia' Then
           Result.observationMedia := ParseObservationMedia(sPath+'\observationMedia', oChild)
-	Else If oChild.Name = 'organizer' Then
+  Else If oChild.Name = 'organizer' Then
           Result.organizer := ParseOrganizer(sPath+'\organizer', oChild)
-	Else If oChild.Name = 'procedure' Then
+  Else If oChild.Name = 'procedure' Then
           Result.procedure_ := ParseProcedure(sPath+'\procedure', oChild)
-	Else If oChild.Name = 'regionOfInterest' Then
+  Else If oChild.Name = 'regionOfInterest' Then
           Result.regionOfInterest := ParseRegionOfInterest(sPath+'\regionOfInterest', oChild)
-	Else If oChild.Name = 'substanceAdministration' Then
+  Else If oChild.Name = 'substanceAdministration' Then
           Result.substanceAdministration := ParseSubstanceAdministration(sPath+'\substanceAdministration', oChild)
-	Else If oChild.Name = 'supply' Then
+  Else If oChild.Name = 'supply' Then
           Result.supply := ParseSupply(sPath+'\supply', oChild)
         // end choice
         Else If Errors Then
@@ -3522,17 +3522,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3571,21 +3571,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'setId' Then
+  Else If oChild.Name = 'setId' Then
           Result.setId := ParseII(sPath+'\setId', oChild)
-	Else If oChild.Name = 'versionNumber' Then
+  Else If oChild.Name = 'versionNumber' Then
           Result.versionNumber := ParseINT(sPath+'\versionNumber', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3624,17 +3624,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3673,17 +3673,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3720,24 +3720,24 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
         // choice :
-	Else If oChild.Name = 'guardianPerson' Then
+  Else If oChild.Name = 'guardianPerson' Then
           Result.guardianPerson := ParsePerson(sPath+'\guardianPerson', oChild)
-	Else If oChild.Name = 'guardianOrganization' Then
+  Else If oChild.Name = 'guardianOrganization' Then
           Result.guardianOrganization := ParseOrganization(sPath+'\guardianOrganization', oChild)
         // end choice
         Else If Errors Then
@@ -3775,19 +3775,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'location' Then
+  Else If oChild.Name = 'location' Then
           Result.location := ParsePlace(sPath+'\location', oChild)
-	Else If oChild.Name = 'serviceProviderOrganization' Then
+  Else If oChild.Name = 'serviceProviderOrganization' Then
           Result.serviceProviderOrganization := ParseOrganization(sPath+'\serviceProviderOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3826,16 +3826,16 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
         // choice :
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
-	Else If oChild.Name = 'relatedEntity' Then
+  Else If oChild.Name = 'relatedEntity' Then
           Result.relatedEntity := ParseRelatedEntity(sPath+'\relatedEntity', oChild)
         // end choice
         Else If Errors Then
@@ -3873,13 +3873,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'intendedRecipient' Then
+  Else If oChild.Name = 'intendedRecipient' Then
           Result.intendedRecipient := ParseIntendedRecipient(sPath+'\intendedRecipient', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3918,13 +3918,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'order' Then
+  Else If oChild.Name = 'order' Then
           Result.order := ParseOrder(sPath+'\order', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -3961,21 +3961,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'informationRecipient' Then
+  Else If oChild.Name = 'informationRecipient' Then
           Result.informationRecipient := ParsePerson(sPath+'\informationRecipient', oChild)
-	Else If oChild.Name = 'receivedOrganization' Then
+  Else If oChild.Name = 'receivedOrganization' Then
           Result.receivedOrganization := ParseOrganization(sPath+'\receivedOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4014,15 +4014,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.Name := ParseEN(sPath+'\name', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4059,19 +4059,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'modeCode' Then
+  Else If oChild.Name = 'modeCode' Then
           Result.modeCode := ParseCD(sPath+'\modeCode', oChild)
-	Else If oChild.Name = 'proficiencyLevelCode' Then
+  Else If oChild.Name = 'proficiencyLevelCode' Then
           Result.proficiencyLevelCode := ParseCD(sPath+'\proficiencyLevelCode', oChild)
-	Else If oChild.Name = 'preferenceInd' Then
+  Else If oChild.Name = 'preferenceInd' Then
           Result.preferenceInd := ParseBL(sPath+'\preferenceInd', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4108,15 +4108,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id := ParseII(sPath+'\id', oChild)
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4153,17 +4153,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseTS(sPath+'\time', oChild)
-	Else If oChild.Name = 'signatureCode' Then
+  Else If oChild.Name = 'signatureCode' Then
           Result.signatureCode := ParseCS(sPath+'\signatureCode', oChild)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4200,13 +4200,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'healthCareFacility' Then
+  Else If oChild.Name = 'healthCareFacility' Then
           Result.healthCareFacility := ParseHealthCareFacility(sPath+'\healthCareFacility', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4243,15 +4243,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'maintainingPerson' Then
+  Else If oChild.Name = 'maintainingPerson' Then
           Result.maintainingPerson := ParsePerson(sPath+'\maintainingPerson', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4288,21 +4288,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
         // choice :
-	Else If oChild.Name = 'manufacturedLabeledDrug' Then
+  Else If oChild.Name = 'manufacturedLabeledDrug' Then
           Result.manufacturedLabeledDrug := ParseLabeledDrug(sPath+'\manufacturedLabeledDrug', oChild)
-	Else If oChild.Name = 'manufacturedMaterial' Then
+  Else If oChild.Name = 'manufacturedMaterial' Then
           Result.manufacturedMaterial := ParseMaterial(sPath+'\manufacturedMaterial', oChild)
         // end choice
-	Else If oChild.Name = 'manufacturerOrganization' Then
+  Else If oChild.Name = 'manufacturerOrganization' Then
           Result.manufacturerOrganization := ParseOrganization(sPath+'\manufacturerOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4339,17 +4339,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.Name := ParseEN(sPath+'\name', oChild)
-	Else If oChild.Name = 'lotNumberText' Then
+  Else If oChild.Name = 'lotNumberText' Then
           Result.lotNumberText := ParseST(sPath+'\lotNumberText', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4386,15 +4386,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4431,55 +4431,55 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
-	Else If oChild.Name = 'repeatNumber' Then
+  Else If oChild.Name = 'repeatNumber' Then
           Result.repeatNumber := ParseIVL(sPath+'\repeatNumber', oChild, Tv3INT)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'value' Then
+  Else If oChild.Name = 'value' Then
           Result.value.Add(ParseANY(sPath+'\value', oChild))
-	Else If oChild.Name = 'interpretationCode' Then
+  Else If oChild.Name = 'interpretationCode' Then
           Result.interpretationCode.Add(ParseCD(sPath+'\interpretationCode', oChild))
-	Else If oChild.Name = 'methodCode' Then
+  Else If oChild.Name = 'methodCode' Then
           Result.methodCode.Add(ParseCD(sPath+'\methodCode', oChild))
-	Else If oChild.Name = 'targetSiteCode' Then
+  Else If oChild.Name = 'targetSiteCode' Then
           Result.targetSiteCode.Add(ParseCD(sPath+'\targetSiteCode', oChild))
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
-	Else If oChild.Name = 'referenceRange' Then
+  Else If oChild.Name = 'referenceRange' Then
           Result.referenceRange.Add(ParseReferenceRange(sPath+'\referenceRange', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4522,33 +4522,33 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'value' Then
+  Else If oChild.Name = 'value' Then
           Result.value := ParseED(sPath+'\value', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4591,19 +4591,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'value' Then
+  Else If oChild.Name = 'value' Then
           Result.value := ParseANY(sPath+'\value', oChild)
-	Else If oChild.Name = 'interpretationCode' Then
+  Else If oChild.Name = 'interpretationCode' Then
           Result.interpretationCode := ParseCD(sPath+'\interpretationCode', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4642,17 +4642,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4691,23 +4691,23 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.name.Add(ParseEN(sPath+'\name', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'standardIndustryClassCode' Then
+  Else If oChild.Name = 'standardIndustryClassCode' Then
           Result.standardIndustryClassCode := ParseCD(sPath+'\standardIndustryClassCode', oChild)
-	Else If oChild.Name = 'asOrganizationPartOf' Then
+  Else If oChild.Name = 'asOrganizationPartOf' Then
           Result.asOrganizationPartOf := ParseOrganizationPartOf(sPath+'\asOrganizationPartOf', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4744,21 +4744,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'wholeOrganization' Then
+  Else If oChild.Name = 'wholeOrganization' Then
           Result.wholeOrganization := ParseOrganization(sPath+'\wholeOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4795,37 +4795,37 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
-	Else If oChild.Name = 'component' Then
+  Else If oChild.Name = 'component' Then
           Result.component.Add(ParseComponent4(sPath+'\component', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4866,21 +4866,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'setId' Then
+  Else If oChild.Name = 'setId' Then
           Result.setId := ParseII(sPath+'\setId', oChild)
-	Else If oChild.Name = 'versionNumber' Then
+  Else If oChild.Name = 'versionNumber' Then
           Result.versionNumber := ParseINT(sPath+'\versionNumber', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4917,17 +4917,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'functionCode' Then
+  Else If oChild.Name = 'functionCode' Then
           Result.functionCode := ParseCD(sPath+'\functionCode', oChild)
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseIVL(sPath+'\time', oChild, Tv3TS)
-	Else If oChild.Name = 'associatedEntity' Then
+  Else If oChild.Name = 'associatedEntity' Then
           Result.associatedEntity := ParseAssociatedEntity(sPath+'\associatedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -4966,17 +4966,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseIVL(sPath+'\time', oChild, Tv3TS)
-	Else If oChild.Name = 'awarenessCode' Then
+  Else If oChild.Name = 'awarenessCode' Then
           Result.awarenessCode := ParseCD(sPath+'\awarenessCode', oChild)
-	Else If oChild.Name = 'participantRole' Then
+  Else If oChild.Name = 'participantRole' Then
           Result.participantRole := ParseParticipantRole(sPath+'\participantRole', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5015,27 +5015,27 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
         // choice :
-	Else If oChild.Name = 'playingDevice' Then
+  Else If oChild.Name = 'playingDevice' Then
           Result.playingDevice := ParseDevice(sPath+'\playingDevice', oChild)
-	Else If oChild.Name = 'playingEntity' Then
+  Else If oChild.Name = 'playingEntity' Then
           Result.playingEntity := ParsePlayingEntity(sPath+'\playingEntity', oChild)
         // end choice
-	Else If oChild.Name = 'scopingEntity' Then
+  Else If oChild.Name = 'scopingEntity' Then
           Result.scopingEntity := ParseEntity(sPath+'\scopingEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5074,35 +5074,35 @@ Begin
     Begin
       If checkNS(oChild, ['asEntityIdentifier']) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id := ParseII(sPath+'\id', oChild)
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.name.Add(ParseEN(sPath+'\name', oChild))
-	Else If oChild.Name = 'administrativeGenderCode' Then
+  Else If oChild.Name = 'administrativeGenderCode' Then
           Result.administrativeGenderCode := ParseCD(sPath+'\administrativeGenderCode', oChild)
-	Else If oChild.Name = 'birthTime' Then
+  Else If oChild.Name = 'birthTime' Then
           Result.birthTime := ParseTS(sPath+'\birthTime', oChild)
-	Else If oChild.Name = 'maritalStatusCode' Then
+  Else If oChild.Name = 'maritalStatusCode' Then
           Result.maritalStatusCode := ParseCD(sPath+'\maritalStatusCode', oChild)
-	Else If oChild.Name = 'religiousAffiliationCode' Then
+  Else If oChild.Name = 'religiousAffiliationCode' Then
           Result.religiousAffiliationCode := ParseCD(sPath+'\religiousAffiliationCode', oChild)
-	Else If oChild.Name = 'raceCode' Then
+  Else If oChild.Name = 'raceCode' Then
           Result.raceCode := ParseCD(sPath+'\raceCode', oChild)
-	Else If oChild.Name = 'ethnicGroupCode' Then
+  Else If oChild.Name = 'ethnicGroupCode' Then
           Result.ethnicGroupCode := ParseCD(sPath+'\ethnicGroupCode', oChild)
-	Else If oChild.Name = 'guardian' Then
+  Else If oChild.Name = 'guardian' Then
           Result.guardian.Add(ParseGuardian(sPath+'\guardian', oChild))
-	Else If oChild.Name = 'birthplace' Then
+  Else If oChild.Name = 'birthplace' Then
           Result.birthplace := ParseBirthplace(sPath+'\birthplace', oChild)
-	Else If oChild.Name = 'languageCommunication' Then
+  Else If oChild.Name = 'languageCommunication' Then
           Result.languageCommunication.Add(ParseLanguageCommunication(sPath+'\languageCommunication', oChild))
-	Else If oChild.Name = 'asEntityIdentifier' Then
+  Else If oChild.Name = 'asEntityIdentifier' Then
           Result.asEntityIdentifier.Add(ParseEntityIdentifier(sPath+'\EntityIdentifier', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5139,21 +5139,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'patient' Then
+  Else If oChild.Name = 'patient' Then
           Result.patient := ParsePatient(sPath+'\patient', oChild)
-	Else If oChild.Name = 'providerOrganization' Then
+  Else If oChild.Name = 'providerOrganization' Then
           Result.providerOrganization := ParseOrganization(sPath+'\providerOrganization', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5190,17 +5190,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'functionCode' Then
+  Else If oChild.Name = 'functionCode' Then
           Result.functionCode := ParseCD(sPath+'\functionCode', oChild)
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseIVL(sPath+'\time', oChild, Tv3TS)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5239,17 +5239,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'time' Then
+  Else If oChild.Name = 'time' Then
           Result.time := ParseIVL(sPath+'\time', oChild, Tv3TS)
-	Else If oChild.Name = 'modeCode' Then
+  Else If oChild.Name = 'modeCode' Then
           Result.modeCode := ParseCD(sPath+'\modeCode', oChild)
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5286,13 +5286,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.name.Add(ParseEN(sPath+'\name', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5329,15 +5329,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.Name := ParseEN(sPath+'\name', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr := ParseAD(sPath+'\addr', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5374,19 +5374,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'quantity' Then
+  Else If oChild.Name = 'quantity' Then
           Result.quantity.Add(ParsePQ(sPath+'\quantity', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.name.Add(ParseEN(sPath+'\name', oChild))
-	Else If oChild.Name = 'desc' Then
+  Else If oChild.Name = 'desc' Then
           Result.desc := ParseED(sPath+'\desc', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5425,13 +5425,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'criterion' Then
+  Else If oChild.Name = 'criterion' Then
           Result.criterion := ParseCriterion(sPath+'\criterion', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5468,49 +5468,49 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'methodCode' Then
+  Else If oChild.Name = 'methodCode' Then
           Result.methodCode.Add(ParseCD(sPath+'\methodCode', oChild))
-	Else If oChild.Name = 'approachSiteCode' Then
+  Else If oChild.Name = 'approachSiteCode' Then
           Result.approachSiteCode.Add(ParseCD(sPath+'\approachSiteCode', oChild))
-	Else If oChild.Name = 'targetSiteCode' Then
+  Else If oChild.Name = 'targetSiteCode' Then
           Result.targetSiteCode.Add(ParseCD(sPath+'\targetSiteCode', oChild))
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5553,13 +5553,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'manufacturedProduct' Then
+  Else If oChild.Name = 'manufacturedProduct' Then
           Result.manufacturedProduct := ParseManufacturedProduct(sPath+'\manufacturedProduct', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5596,13 +5596,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'patientRole' Then
+  Else If oChild.Name = 'patientRole' Then
           Result.patientRole := ParsePatientRole(sPath+'\patientRole', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5639,22 +5639,22 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'seperatableInd' Then
+  Else If oChild.Name = 'seperatableInd' Then
           Result.seperatableInd := ParseBL(sPath+'\seperatableInd', oChild)
         // choice :
-	Else If oChild.Name = 'externalAct' Then
+  Else If oChild.Name = 'externalAct' Then
           Result.externalAct := ParseExternalAct(sPath+'\externalAct', oChild)
-	Else If oChild.Name = 'externalObservation' Then
+  Else If oChild.Name = 'externalObservation' Then
           Result.externalObservation := ParseExternalObservation(sPath+'\externalObservation', oChild)
-	Else If oChild.Name = 'externalProcedure' Then
+  Else If oChild.Name = 'externalProcedure' Then
           Result.externalProcedure := ParseExternalProcedure(sPath+'\externalProcedure', oChild)
-	Else If oChild.Name = 'externalDocument' Then
+  Else If oChild.Name = 'externalDocument' Then
           Result.externalDocument := ParseExternalDocument(sPath+'\externalDocument', oChild)
         // end choice
         Else If Errors Then
@@ -5694,13 +5694,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'observationRange' Then
+  Else If oChild.Name = 'observationRange' Then
           Result.observationRange := ParseObservationRange(sPath+'\observationRange', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5737,35 +5737,35 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCS(sPath+'\code', oChild)
-	Else If oChild.Name = 'value' Then
+  Else If oChild.Name = 'value' Then
           Result.value.Add(ParseRegionOfInterestValue(sPath+'\value', oChild))
         Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5804,13 +5804,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'parentDocument' Then
+  Else If oChild.Name = 'parentDocument' Then
           Result.parentDocument := ParseParentDocument(sPath+'\parentDocument', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5849,21 +5849,21 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'relatedPerson' Then
+  Else If oChild.Name = 'relatedPerson' Then
           Result.relatedPerson := ParsePerson(sPath+'\relatedPerson', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5902,19 +5902,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'addr' Then
+  Else If oChild.Name = 'addr' Then
           Result.addr.Add(ParseAD(sPath+'\addr', oChild))
-	Else If oChild.Name = 'telecom' Then
+  Else If oChild.Name = 'telecom' Then
           Result.telecom.Add(ParseTEL(sPath+'\telecom', oChild))
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubjectPerson(sPath+'\subject', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5953,13 +5953,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'assignedEntity' Then
+  Else If oChild.Name = 'assignedEntity' Then
           Result.assignedEntity := ParseAssignedEntity(sPath+'\assignedEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -5996,33 +5996,33 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id := ParseII(sPath+'\id', oChild)
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'title' Then
+  Else If oChild.Name = 'title' Then
           Result.title := ParseST(sPath+'\title', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseSNText(sPath+'\text', oChild)
-	Else If oChild.Name = 'confidentialityCode' Then
+  Else If oChild.Name = 'confidentialityCode' Then
           Result.confidentialityCode := ParseCD(sPath+'\confidentialityCode', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'entry' Then
+  Else If oChild.Name = 'entry' Then
           Result.entry.Add(ParseEntry(sPath+'\entry', oChild))
-	Else If oChild.Name = 'component' Then
+  Else If oChild.Name = 'component' Then
           Result.component.Add(ParseComponentSect(sPath+'\component', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6061,19 +6061,19 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseIVL(sPath+'\effectiveTime', oChild, Tv3TS)
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer1(sPath+'\performer', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6112,13 +6112,13 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'specimenRole' Then
+  Else If oChild.Name = 'specimenRole' Then
           Result.specimenRole := ParseSpecimenRole(sPath+'\specimenRole', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6155,15 +6155,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'specimenPlayingEntity' Then
+  Else If oChild.Name = 'specimenPlayingEntity' Then
           Result.specimenPlayingEntity := ParsePlayingEntity(sPath+'\specimenPlayingEntity', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6200,17 +6200,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'confidentialityCode' Then
+  Else If oChild.Name = 'confidentialityCode' Then
           Result.confidentialityCode := ParseCD(sPath+'\confidentialityCode', oChild)
-	Else If oChild.Name = 'languageCode' Then
+  Else If oChild.Name = 'languageCode' Then
           Result.languageCode := ParseCS(sPath+'\languageCode', oChild)
-	Else If oChild.Name = 'component' Then
+  Else If oChild.Name = 'component' Then
           Result.component.Add(ParseComponentSect(sPath+'\component', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6247,15 +6247,15 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'awarenessCode' Then
+  Else If oChild.Name = 'awarenessCode' Then
           Result.awarenessCode := ParseCD(sPath+'\awarenessCode', oChild)
-	Else If oChild.Name = 'relatedSubject' Then
+  Else If oChild.Name = 'relatedSubject' Then
           Result.relatedSubject := ParseRelatedSubject(sPath+'\relatedSubject', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6292,17 +6292,17 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'name' Then
+  Else If oChild.Name = 'name' Then
           Result.name.Add(ParseEN(sPath+'\name', oChild))
-	Else If oChild.Name = 'administrativeGenderCode' Then
+  Else If oChild.Name = 'administrativeGenderCode' Then
           Result.administrativeGenderCode := ParseCD(sPath+'\administrativeGenderCode', oChild)
-	Else If oChild.Name = 'birthTime' Then
+  Else If oChild.Name = 'birthTime' Then
           Result.birthTime := ParseTS(sPath+'\birthTime', oChild)
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6339,57 +6339,57 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseGTS(sPath+'\effectiveTime', oChild) // note is var
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode := ParseCD(sPath+'\priorityCode', oChild)
-	Else If oChild.Name = 'repeatNumber' Then
+  Else If oChild.Name = 'repeatNumber' Then
           Result.repeatNumber := ParseIVL(sPath+'\repeatNumber', oChild, Tv3INT)
-	Else If oChild.Name = 'routeCode' Then
+  Else If oChild.Name = 'routeCode' Then
           Result.routeCode := ParseCD(sPath+'\routeCode', oChild)
-	Else If oChild.Name = 'approachSiteCode' Then
+  Else If oChild.Name = 'approachSiteCode' Then
           Result.approachSiteCode.Add(ParseCD(sPath+'\approachSiteCode', oChild))
-	Else If oChild.Name = 'doseQuantity' Then
+  Else If oChild.Name = 'doseQuantity' Then
           Result.doseQuantity := ParseIVL(sPath+'\doseQuantity', oChild, Tv3PQ)
-	Else If oChild.Name = 'rateQuantity' Then
+  Else If oChild.Name = 'rateQuantity' Then
           Result.rateQuantity := ParseIVL(sPath+'\rateQuantity', oChild, Tv3PQ)
-	Else If oChild.Name = 'maxDoseQuantity' Then
+  Else If oChild.Name = 'maxDoseQuantity' Then
           Result.maxDoseQuantity := ParseRTO(sPath+'\maxDoseQuantity', oChild, Tv3PQ, Tv3PQ)
-	Else If oChild.Name = 'administrationUnitCode' Then
+  Else If oChild.Name = 'administrationUnitCode' Then
           Result.administrationUnitCode := ParseCD(sPath+'\administrationUnitCode', oChild)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'consumable' Then
+  Else If oChild.Name = 'consumable' Then
           Result.consumable := ParseConsumable(sPath+'\consumable', oChild)
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);
@@ -6430,51 +6430,51 @@ Begin
     Begin
       If checkNS(oChild) Then
       Begin
-	If oChild.Name = 'realmCode' Then
+  If oChild.Name = 'realmCode' Then
           Result.realmCode.Add(ParseCS(sPath+'\realmCode', oChild))
-	Else If oChild.Name = 'typeId' Then
+  Else If oChild.Name = 'typeId' Then
           Result.typeId := ParseII(sPath+'\typeId', oChild)
-	Else If oChild.Name = 'templateId' Then
+  Else If oChild.Name = 'templateId' Then
           Result.templateId.Add(ParseII(sPath+'\templateId', oChild))
-	Else If oChild.Name = 'id' Then
+  Else If oChild.Name = 'id' Then
           Result.id.Add(ParseII(sPath+'\id', oChild))
-	Else If oChild.Name = 'code' Then
+  Else If oChild.Name = 'code' Then
           Result.code := ParseCD(sPath+'\code', oChild)
-	Else If oChild.Name = 'text' Then
+  Else If oChild.Name = 'text' Then
           Result.text := ParseED(sPath+'\text', oChild)
-	Else If oChild.Name = 'statusCode' Then
+  Else If oChild.Name = 'statusCode' Then
           Result.statusCode := ParseCS(sPath+'\statusCode', oChild)
-	Else If oChild.Name = 'effectiveTime' Then
+  Else If oChild.Name = 'effectiveTime' Then
           Result.effectiveTime := ParseGTS(sPath+'\effectiveTime', oChild) // var
-	Else If oChild.Name = 'priorityCode' Then
+  Else If oChild.Name = 'priorityCode' Then
           Result.priorityCode.Add(ParseCD(sPath+'\priorityCode', oChild))
-	Else If oChild.Name = 'repeatNumber' Then
+  Else If oChild.Name = 'repeatNumber' Then
           Result.repeatNumber := ParseIVL(sPath+'\repeatNumber', oChild, Tv3INT)
-	Else If oChild.Name = 'independentInd' Then
+  Else If oChild.Name = 'independentInd' Then
           Result.independentInd := ParseBL(sPath+'\independentInd', oChild)
-	Else If oChild.Name = 'quantity' Then
+  Else If oChild.Name = 'quantity' Then
           Result.quantity := ParsePQ(sPath+'\quantity', oChild)
-	Else If oChild.Name = 'expectedUseTime' Then
+  Else If oChild.Name = 'expectedUseTime' Then
           Result.expectedUseTime := ParseIVL(sPath+'\expectedUseTime', oChild, Tv3TS)
-	Else If oChild.Name = 'subject' Then
+  Else If oChild.Name = 'subject' Then
           Result.subject := ParseSubject(sPath+'\subject', oChild)
-	Else If oChild.Name = 'specimen' Then
+  Else If oChild.Name = 'specimen' Then
           Result.specimen.Add(ParseSpecimen(sPath+'\specimen', oChild))
-	Else If oChild.Name = 'product' Then
+  Else If oChild.Name = 'product' Then
           Result.product := ParseProduct(sPath+'\product', oChild)
-	Else If oChild.Name = 'performer' Then
+  Else If oChild.Name = 'performer' Then
           Result.performer.Add(ParsePerformer2(sPath+'\performer', oChild))
-	Else If oChild.Name = 'author' Then
+  Else If oChild.Name = 'author' Then
           Result.author.Add(ParseAuthor(sPath+'\author', oChild))
-	Else If oChild.Name = 'informant' Then
+  Else If oChild.Name = 'informant' Then
           Result.informant.Add(ParseInformant12(sPath+'\informant', oChild))
-	Else If oChild.Name = 'participant' Then
+  Else If oChild.Name = 'participant' Then
           Result.participant.Add(ParseParticipant2(sPath+'\participant', oChild))
-	Else If oChild.Name = 'entryRelationship' Then
+  Else If oChild.Name = 'entryRelationship' Then
           Result.entryRelationship.Add(ParseEntryRelationship(sPath+'\entryRelationship', oChild))
-	Else If oChild.Name = 'reference' Then
+  Else If oChild.Name = 'reference' Then
           Result.reference.Add(ParseReference(sPath+'\reference', oChild))
-	Else If oChild.Name = 'precondition' Then
+  Else If oChild.Name = 'precondition' Then
           Result.precondition.Add(ParsePrecondition(sPath+'\precondition', oChild))
         Else If Errors Then
           RaiseError('Parse', 'Unexpected element '+oChild.Name+' @'+sPath);

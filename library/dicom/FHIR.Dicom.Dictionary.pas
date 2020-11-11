@@ -52,13 +52,13 @@ Type
     {
     Unique Identifier (UID)  a globally unique dotted decimal string that
     identifies a specific object or a class of objects;
-	an ISO-8824 Object Identifier.
+  an ISO-8824 Object Identifier.
 
     DICOM Unique Identifiers (UIDs) provide the capability to uniquely identify
     a wide variety of items. They guarantee uniqueness across multiple countries,
     sites, vendors and equipment. Different classes of objects, instance of objects
     and information entities can be distinguished from one another across the
-	DICOM universe of discourse irrespective of any semantic context.
+  DICOM universe of discourse irrespective of any semantic context.
     }
     Property UID : String read FUID write FUID;
   End;
@@ -452,14 +452,14 @@ Type
     // don't need to expose this to script
     Function VRTypes : TDicomVRTypes;
 
-	{
-	True if this element is a sequence
-	}
+  {
+  True if this element is a sequence
+  }
     Function IsSequence : Boolean;
 
-	{
-	Return a string representation of this element
-	}
+  {
+  Return a string representation of this element
+  }
     Function AsString : String;
   
   Published
@@ -468,37 +468,37 @@ Type
     }
     Property GroupId : String read FGroupId write FGroupId;
     
-	{
+  {
     The element id of the element tag
     }
     Property ElementId : String read FElementId write FElementId;
     
-	{
+  {
     The name of the group this element belongs to
     }
     Property GroupName : String read FGroupName write FGroupName;
 
-	{
+  {
     The name of this element
     }
     Property Name: String Read FName Write FName;
     
-	{
+  {
     Code Name of this element
     }
     Property Code: String Read FCode Write FCode;
     
-	{
+  {
     List of VR that values of this element can be encoded in
     }
     Property VRs : TDicomDictionaryVRList read FVRs;
     
-	{
+  {
     The minimum number of values that this element contains
     }
     Property Min: integer Read FMin Write FMin;
     
-	{
+  {
     The maximum number of values that this element contains
     }
     Property Max: integer Read FMax Write FMax;
@@ -592,8 +592,8 @@ Type
 
 
     {
-	Get a list of elements of the same group, key by the group key
-	}
+  Get a list of elements of the same group, key by the group key
+  }
     Property ElementGroup[sKey : String] : TDicomDictionaryElementList Read GetElementGroup; Default;
   End;
 
@@ -602,7 +602,7 @@ Type
   List of possible DICOM Message Service Element (DIMSE) types
   }
   TDicomDimseType = (dimseCStore, dimseCFind, dimseCGet, dimseCMove, dimseCEcho,
-  	dimseNEvent, dimseNGet, dimseNSet, dimseNAction, dimseNCreate, dimseNDelete);
+    dimseNEvent, dimseNGet, dimseNSet, dimseNAction, dimseNCreate, dimseNDelete);
 
   {
   List of possible Dicom param types
@@ -638,23 +638,23 @@ Type
 
   Published
     {
-	The parameter name
-	}
+  The parameter name
+  }
     Property Name: String Read FName Write FName;
 
     {
-	The fixed value, if it exists, for this parameter
-	}
+  The fixed value, if it exists, for this parameter
+  }
     Property FixedValue: String Read FFixedValue Write FFixedValue;
 
     {
-	The parameter type (fixed/auto-calculated or to be supplied)
-	}
+  The parameter type (fixed/auto-calculated or to be supplied)
+  }
     Property ParamType: TDicomDimseParamType Read FParamType Write FParamType;
 
     {
-	The element tag id, used to connected this parameter to a valid element instance
-	}
+  The element tag id, used to connected this parameter to a valid element instance
+  }
     Property ElementId: String Read FElementId Write FElementId;
 
     {
@@ -722,14 +722,14 @@ Type
 
   Published
     {
-	The DIMSE message name (e.g. E-Echo Request/Response etc.)
-	}
+  The DIMSE message name (e.g. E-Echo Request/Response etc.)
+  }
     Property Name: String Read FName Write FName;
 
-	{
-	List of data elements used as parameter for this DIMSE message
-	}
-	Property Params: TDicomDimseParamList Read FParams;  // make this readonly ?
+  {
+  List of data elements used as parameter for this DIMSE message
+  }
+  Property Params: TDicomDimseParamList Read FParams;  // make this readonly ?
   End;
 
   {
@@ -768,8 +768,8 @@ Type
     Property DimseMessage[iIndex : integer] : TDicomDimseMessage read GetDimseMessage; default;
   Published
     {
-	The DIMSE service type
-	}
+  The DIMSE service type
+  }
     Property ServiceType: TDicomDimseType Read FServiceType Write FServiceType;
   End;
 
@@ -795,8 +795,8 @@ Type
 
 
     {
-	Get a DIMSE service, key by the service name
-	}
+  Get a DIMSE service, key by the service name
+  }
     Property Service[sKey : String] : TDicomDimseService Read GetDimseService; Default;
   End;
 
@@ -837,18 +837,18 @@ Type
 
   Published
     {
-	The entry name, which is a human-readable name
-	}
+  The entry name, which is a human-readable name
+  }
     Property Name: String Read FName Write FName;
     
-	{
-	List of entries that are children of this entry
-	}
+  {
+  List of entries that are children of this entry
+  }
     Property Children: TDicomInfoEntryList Read FChildren;
     
-	{
-	Further comment about this entry, can be used as the entry documentation
-	}
+  {
+  Further comment about this entry, can be used as the entry documentation
+  }
     Property Comment: String Read FComment Write FComment;
   End;
 
@@ -907,34 +907,34 @@ Type
 
   Published
     
-	{
-	The referenced module/macro unique key, which can be used to resolved this
-	entry into a module/macro
-	}
+  {
+  The referenced module/macro unique key, which can be used to resolved this
+  entry into a module/macro
+  }
     Property RefId: String Read FRefId Write SetRefId;
     
-	{
-	The referenced module/macro.
-	
-	Initially, this would be null. After reference resolution, it would be set
-	to be the referenced module/macro
-	}
+  {
+  The referenced module/macro.
+  
+  Initially, this would be null. After reference resolution, it would be set
+  to be the referenced module/macro
+  }
     Property RefEntry: TDicomInfoGroup Read FRefEntry Write SetRefEntry;
     
-	{
-	}
+  {
+  }
     Property ContextId: String Read FContextId Write FContextId;
     
-	{
-	}
+  {
+  }
     Property BaselineContextId: String Read FBaselineContextId Write FBaselineContextId;
     
-	{
-	}
+  {
+  }
     Property DefinedTemplateId: String Read FDefinedTemplateId Write FDefinedTemplateId;
 
-	{
-	}
+  {
+  }
     Property BaselineTemplateId: String Read FBaselineTemplateId Write FBaselineTemplateId;
   End;
 
@@ -946,11 +946,11 @@ Type
     FTag: String; // should we split the tag or not ?
     FRequiredType: TDicomInfoRequiredType;
 
-    FRefElement: TDicomDictionaryElement;	// the resolved tag element
+    FRefElement: TDicomDictionaryElement;  // the resolved tag element
 
     Procedure SetRefElement(oValue: TDicomDictionaryElement);
   Public
-  	destructor Destroy; Override;
+    destructor Destroy; Override;
 
     Function Clone : TDicomInfoEntryAttr; Overload;
     Function Link : TDicomInfoEntryAttr; Overload;
@@ -958,19 +958,19 @@ Type
 
   Published
 
-	{
-	The unique tag to identify the data element that corresponds to this attribute
-	}
+  {
+  The unique tag to identify the data element that corresponds to this attribute
+  }
     Property Tag: String Read FTag Write FTag;
     
-	{
-	The compulsary requirement for this attribute (e.g. required, nullable, optional, etc.)
-	}
+  {
+  The compulsary requirement for this attribute (e.g. required, nullable, optional, etc.)
+  }
     Property RequiredType: TDicomInfoRequiredType Read FRequiredType Write FRequiredType;
     
-	{
-	The resolved data element corresponding to this attribute
-	}
+  {
+  The resolved data element corresponding to this attribute
+  }
     Property RefElement: TDicomDictionaryElement Read FRefElement Write SetRefElement;
   End;
 
@@ -999,26 +999,26 @@ Type
 
   Published
     
-	{
-	The unique key of this group (e.g. Table number)
-	}
+  {
+  The unique key of this group (e.g. Table number)
+  }
     Property Key: String Read FKey Write SetKey;
     
-	{
-	Human-readable name of this group
-	}
+  {
+  Human-readable name of this group
+  }
     Property Name: String Read FName Write FName;
     
-	{
-	Documentational comment about this group
-	}
+  {
+  Documentational comment about this group
+  }
     Property Comment: String Read FComment Write FComment;
     
-	{
-	The list of attributes and references contained in this group
-	The attributes and references my contain further attributes and references
-	within themselves.
-	}
+  {
+  The list of attributes and references contained in this group
+  The attributes and references my contain further attributes and references
+  within themselves.
+  }
     Property Children: TDicomInfoEntryList Read FChildren;
   End;
 
@@ -1061,9 +1061,9 @@ Type
     }
     Function FindMacroByName(name : String): TDicomMacro;
 
-	{
-	Retrieve a macro using its reference key (i.e. table number)
-	}
+  {
+  Retrieve a macro using its reference key (i.e. table number)
+  }
     Property Macro[sKey : String] : TDicomMacro Read GetMacro; Default;
   End;
 
@@ -1101,8 +1101,8 @@ Type
     Function FindModuleByName(name : String): TDicomModule;
 
     {
-	Retrieve a module using its reference key (i.e. table number)
-	}
+  Retrieve a module using its reference key (i.e. table number)
+  }
     Property Module[sKey : String] : TDicomModule Read GetModule; Default;
   End;
 
@@ -1116,12 +1116,12 @@ Type
   }
   TDicomModuleReference = Class (TFslObject)
   Private
-    FName: String;		// will be used as key to work out the table reference
-    FKey: String;    			// this is the module key, to be resolved from name
-    FRefEntry: TDicomModule;	// this is the real entry
+    FName: String;    // will be used as key to work out the table reference
+    FKey: String;          // this is the module key, to be resolved from name
+    FRefEntry: TDicomModule;  // this is the real entry
     FUsageType: TDicomModuleUsageType;
 
-    FSectionReference: String;	// not used yet
+    FSectionReference: String;  // not used yet
     FComment: String;
 
     Procedure SetRefEntry(sValue: TDicomModule);
@@ -1134,36 +1134,36 @@ Type
 
   Published
   
-  	{
-	The referenced module name, currently used to resolved this reference
-	}
+    {
+  The referenced module name, currently used to resolved this reference
+  }
     Property Name: String Read FName Write FName;
     
-	{
-	The key of the referenced module, after reference resolution
-	(i.e. table number)
-	}
+  {
+  The key of the referenced module, after reference resolution
+  (i.e. table number)
+  }
     Property Key: String Read FKey Write FKey;
     
-	{
-	The referenced module, after reference resolution
-	}
+  {
+  The referenced module, after reference resolution
+  }
     Property RefEntry: TDicomModule Read FRefEntry Write SetRefEntry;
     
-	{
-	The usage type of this module, within the parent IOD
-	(e.g. Mandatory, Conditional or User Option)
-	}
+  {
+  The usage type of this module, within the parent IOD
+  (e.g. Mandatory, Conditional or User Option)
+  }
     Property UsageType: TDicomModuleUsageType Read FUsageType Write FUsageType;
 
     {
-	The section number, which refer to the section that defined the referenced module
-	}
+  The section number, which refer to the section that defined the referenced module
+  }
     Property SectionReference: String Read FSectionReference Write FSectionReference;
 
-	{
-	Documentational comment about the referenced module usage within the parent	IOD
-	}
+  {
+  Documentational comment about the referenced module usage within the parent  IOD
+  }
     Property Comment: String Read FComment Write FComment;
   End;
 
@@ -1215,20 +1215,20 @@ Type
     Function Link : TDicomIOD; Overload;
     Procedure Assign(oSource : TFslObject); Override;
   Published
-	
+  
     {
-	The human-readable name of this IOD
-	}
+  The human-readable name of this IOD
+  }
     Property Name: String Read FName Write FName;
     
-	{
-	The unique key identified this IOD (e.g. table number)
-	}
+  {
+  The unique key identified this IOD (e.g. table number)
+  }
     Property Key: String Read FKey Write FKey;
 
     {
-	The list of modules that make up this Information Object Definition
-	}
+  The list of modules that make up this Information Object Definition
+  }
     Property Modules: TDicomModuleReferenceList Read FModules;
   End;
 
@@ -1296,23 +1296,23 @@ Type
   Published
   
     {
-	The human-readable name of this SOP
-	}
+  The human-readable name of this SOP
+  }
     Property Name : String read FName write FName;
     
-	{
-	The IOD stated in the document, but doesn't semantically matched the SOP
-	}
+  {
+  The IOD stated in the document, but doesn't semantically matched the SOP
+  }
     Property StatedIOD : String read FStatedIOD write FStatedIOD;
     
-	{
-	The referenced key to the IOD used for this SOP
-	}
+  {
+  The referenced key to the IOD used for this SOP
+  }
     Property IODRef : String read FIODRef write FIODRef;
     
-	{
-	The IOD referenced by this SOP
-	}
+  {
+  The IOD referenced by this SOP
+  }
     Property IOD : TDicomIOD read FIOD write SetIOD;
   End;
 
@@ -1377,27 +1377,27 @@ Type
     Function Link : TDicomDictionary; Overload;
     Procedure Assign(oSource : TFslObject); Override;
 
-	{
-	Determinine the VR matching the given VR code
-	}
+  {
+  Determinine the VR matching the given VR code
+  }
     Function DetermineVRType(sCode : String) : TDicomVRType;
 
-	{
-	Deterimine if the given VR code is valid
-	}
-	Function isValidVRType(sCode : String) : Boolean;
+  {
+  Deterimine if the given VR code is valid
+  }
+  Function isValidVRType(sCode : String) : Boolean;
 
-	{
-	Find a matching element in the dictionary, giving the element tag
-	(i.e. group id and element id)
-	}
-	Function FindMatchingElement(Const iGroup, iElement: Integer; bErrorIfNotFound : Boolean) : TDicomDictionaryElement;
+  {
+  Find a matching element in the dictionary, giving the element tag
+  (i.e. group id and element id)
+  }
+  Function FindMatchingElement(Const iGroup, iElement: Integer; bErrorIfNotFound : Boolean) : TDicomDictionaryElement;
 
-	{
-	Find a matching element in the dictionary, giving the element tag
-	(i.e. group id and element id as 0000,0000)
-	}
-	Function FindMatchingElementForTag(Const sTag: String; bErrorIfNotFound : Boolean) : TDicomDictionaryElement;
+  {
+  Find a matching element in the dictionary, giving the element tag
+  (i.e. group id and element id as 0000,0000)
+  }
+  Function FindMatchingElementForTag(Const sTag: String; bErrorIfNotFound : Boolean) : TDicomDictionaryElement;
 
 
     Procedure FinishLoading;
@@ -1442,54 +1442,54 @@ Type
 
     {
     The set of VR defined in this dictionary
-	}
+  }
     Property VRSet : TDicomDictionaryVRSet read FVRSet;
 
   Published
 
     {
-	The human-readable name of this dictionary
-	}
+  The human-readable name of this dictionary
+  }
     Property Name : String read FName write FName;
 
-	{
-	The list of transfer syntaxes defined in this dictionary
-	}
+  {
+  The list of transfer syntaxes defined in this dictionary
+  }
     Property TransferSyntaxes : TDicomDictionaryTransferSyntaxList read FTransferSyntaxes;
     
-	{
-	The list of Service-Object pair defined in this dictionary
-	}
+  {
+  The list of Service-Object pair defined in this dictionary
+  }
     Property SOPs : TDicomDictionarySOPList read FSOPs;
     
-	{
-	The list of elements defined in this dictionary
-	}
+  {
+  The list of elements defined in this dictionary
+  }
     Property Elements : TDicomDictionaryElementList Read FElements;
     
-	{
-	The list of element groups defined in this dictionary
-	}
+  {
+  The list of element groups defined in this dictionary
+  }
     Property ElementGroups : TDicomDictionaryElementGroupList Read FElementGroups;
 
-	{
-	The list of DICOM Message service element defined in this dictionary
-	}
+  {
+  The list of DICOM Message service element defined in this dictionary
+  }
     Property Dimses: TDicomDimseServiceDict Read FDimses;
-	
+  
     {
-	The list of Macros defined in this dictionary
-	}
+  The list of Macros defined in this dictionary
+  }
     Property Macros: TDicomMacroDict Read FMacros;
     
-	{
-	The list of Modules defined in this dictionary
-	}
+  {
+  The list of Modules defined in this dictionary
+  }
     Property Modules: TDicomModuleDict Read FModules;
     
-	{
-	The list of Information Object Definition (IOD) defined in this dictionary
-	}
+  {
+  The list of Information Object Definition (IOD) defined in this dictionary
+  }
     Property IODs: TDicomIODDict Read FIODs;
   End;
 
@@ -1552,10 +1552,10 @@ Const
     ('Proposed', 'Accept', 'RejectUser', 'RejectNoReason', 'RejectAbstractSyntaxNotSupported', 'RejectTransferSyntaxesNotSupported');
 
   DICOM_DIMSE_PARAM_TYPE_NAMES : Array[TDicomDimseParamType] of String =
-  	('Fixed Value', 'Auto Calculated', 'Required');
+    ('Fixed Value', 'Auto Calculated', 'Required');
 
   DICOM_DIMSE_TYPE_NAMES : Array [TDicomDimseType] of String =
-  	('C-STORE', 'C-FIND', 'C-GET', 'C-MOVE', 'C-ECHO',
+    ('C-STORE', 'C-FIND', 'C-GET', 'C-MOVE', 'C-ECHO',
     'N-EVENT', 'N-GET', 'N-SET', 'N-ACTION', 'N-CREATE', 'N-DELETE');
 
   DICOM_VR_TYPE_NAMES : Array [TDicomVRType] of String =
@@ -1922,7 +1922,7 @@ Begin
     While (oChild <> Nil) Do
     Begin
       If oChild.name = 'param' Then
-	  Begin
+    Begin
         oDimseMsg.Params.Add(ReadDimseParam(oChild));
       End
       Else
@@ -2182,7 +2182,7 @@ Begin
         // clean up module name
         oRef.Name := StringStrip(oRef.Name, 'MODULE');
         oRef.Name := StringStrip(oRef.Name, 'ATTRIBUTES');
-      	oRef.Name := StringTrimWhitespace(oRef.Name);
+        oRef.Name := StringTrimWhitespace(oRef.Name);
 
         oReferences.Add(oRef.Link);
       Finally
@@ -2735,7 +2735,7 @@ Begin
     Begin
       // Avoid the simple case of reference itself
       If oRef.RefId <> sSelfId Then
-      	oRef.RefEntry := FMacros[oRef.RefId].Link;
+        oRef.RefEntry := FMacros[oRef.RefId].Link;
     End
     Else
       oMissingRefs.Add(oRef.RefId);
@@ -2841,8 +2841,8 @@ Begin
     Begin
       If (oMacro.Children[iY] is TDicomInfoEntryAttr) Then
       Begin
-      	oAttr := TDicomInfoEntryAttr(oMacro.Children[iY]);
-		StringSplit(oAttr.Tag, ',', sGroup, sElement);
+        oAttr := TDicomInfoEntryAttr(oMacro.Children[iY]);
+    StringSplit(oAttr.Tag, ',', sGroup, sElement);
         If (Elements.FindByTags(sGroup, sElement, iIndex)) Then
           oAttr.RefElement := Elements[iIndex].Link
         Else
@@ -2858,8 +2858,8 @@ Begin
     Begin
       If (oModule.Children[iY] is TDicomInfoEntryAttr) Then
       Begin
-      	oAttr := TDicomInfoEntryAttr(oModule.Children[iY]);
-		StringSplit(oAttr.Tag, ',', sGroup, sElement);
+        oAttr := TDicomInfoEntryAttr(oModule.Children[iY]);
+    StringSplit(oAttr.Tag, ',', sGroup, sElement);
         If (Elements.FindByTags(sGroup, sElement, iIndex)) Then
           oAttr.RefElement := Elements[iIndex].Link
         Else

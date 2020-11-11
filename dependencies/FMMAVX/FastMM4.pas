@@ -2259,8 +2259,8 @@ type
     {True = Block type is locked}
 
     SmallBlockTypeLocked: Byte; {The type is Byte for strict
-				type checking when the typed "@" operator
-				compiler option is ON.}
+        type checking when the typed "@" operator
+        compiler option is ON.}
 
     {Bitmap indicating which of the first 8 medium block groups contain blocks
      of a suitable size for a block pool.}
@@ -2439,7 +2439,7 @@ const
     SmallBlockTypeRecSizePowerOf2 = 5;
   {$endif}
   {$ifdef 64bit}
-	SmallBlockTypeRecSizePowerOf2 = 6;
+  SmallBlockTypeRecSizePowerOf2 = 6;
   {$endif}
   SmallBlockTypeRecSize = UnsignedBit shl SmallBlockTypeRecSizePowerOf2;
 {$endif}
@@ -3247,7 +3247,7 @@ asm
    lock xchg [rcx], al
    cmp  al, cLockByteLocked
    je   @DidntLock
-   jmp	@Finish
+   jmp  @Finish
 @SwitchToThread:
    push rcx
    call SwitchToThreadIfSupported
@@ -3273,7 +3273,7 @@ asm
    lock xchg [ecx], al
    cmp  al, cLockByteLocked
    je   @DidntLock
-   jmp	@Finish
+   jmp  @Finish
 @SwitchToThread:
    push ecx
    call SwitchToThreadIfSupported
@@ -8021,7 +8021,7 @@ like IsMultithreaded or MediumBlocksLocked}
    cmp  al, cLockByteLocked
    je   @DidntLock
    {Congratulations! We've got the lock!}
-   jmp	@GotLockOnSmallBlockType
+   jmp  @GotLockOnSmallBlockType
   {$ifdef AsmCodeAlign}.align 4{$endif}
 @SwitchToThread:
    push  ebx
@@ -8585,7 +8585,7 @@ asm
   je   @DidntLock
   pop   rcx
   {Congratulations! We've got the lock!}
-  jmp	@GotLockOnSmallBlockType
+  jmp  @GotLockOnSmallBlockType
   {$ifdef AsmCodeAlign}.align 4{$endif}
 @SwitchToThread:
   call  SwitchToThreadIfSupported
@@ -9694,7 +9694,7 @@ for flags like IsMultiThreaded or MediumBlocksLocked}
   je   @DidntLock
   {Congratulations! We've got the lock!}
   pop  edx
-  jmp	@GotLockOnSmallBlockType
+  jmp  @GotLockOnSmallBlockType
   {$ifdef AsmCodeAlign}.align 4{$endif}
   @SwitchToThread:
   push  ebx
@@ -10147,7 +10147,7 @@ asm
    {Congratulations! We've got the lock!}
    pop  rdx
    pop  rcx
-   jmp	@GotLockOnSmallBlockType
+   jmp  @GotLockOnSmallBlockType
   {$ifdef AsmCodeAlign}.align 4{$endif}
 @SwitchToThread:
    call  SwitchToThreadIfSupported
@@ -15815,7 +15815,7 @@ var
   LPLargeBlock,
   LPNextLargeBlock: PLargeBlockHeader;
   LPSmallBlockPoolHeader: PSmallBlockPoolHeader; {This is needed for simplicity, to
-												  mitigate typecasts when used "typed @".}
+                          mitigate typecasts when used "typed @".}
   LPSmallBlockType: PSmallBlockType;
   LInd: Integer;
 begin

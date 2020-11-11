@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.XmlEditor;
+unit ftk_editor_xml;
 
 {$i fhir.inc}
 
@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
   FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 
@@ -18,9 +18,13 @@ type
   private
     FParser : TMXmlParser;
     FXml : TMXmlDocument;
+    procedure DoMnuPretty(sender : TObject);
+    procedure DoMnuCondense(sender : TObject);
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
+    function hasFormatCommands: boolean; override;
+    procedure makeTextTab; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -33,6 +37,30 @@ type
 
 
 implementation
+
+procedure TXmlEditor.DoMnuPretty(sender: TObject);
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+  try
+    SetContentUndoable(x.ToXml(true, false));
+  finally
+    x.Free;
+  end;
+end;
+
+procedure TXmlEditor.DoMnuCondense(sender: TObject);
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+  try
+    SetContentUndoable(x.ToXml(false, false));
+  finally
+    x.Free;
+  end;
+end;
 
 function TXmlEditor.makeHighlighter: TSynCustomHighlighter;
 begin
@@ -65,16 +93,28 @@ begin
           if e.NodeType = ntElement then
           begin
             if (e.HasAttribute['name']) then
-              navpoints.AddObject(e.Name+' ('+e.attribute['name']+')', TObject(e.Start.line-1))
+              navpoints.AddObject(e.Name+' ('+e.attribute['name']+')', TObject(e.Start.line))
             else if (e.HasAttribute['id']) then
-              navpoints.AddObject(e.Name+' ('+e.attribute['id']+')', TObject(e.Start.line-1))
+              navpoints.AddObject(e.Name+' ('+e.attribute['id']+')', TObject(e.Start.line))
             else
-              navpoints.AddObject(e.Name, TObject(e.Start.line-1));
+              navpoints.AddObject(e.Name, TObject(e.Start.line));
           end;
         end;
       end;
     end;
   end;
+end;
+
+function TXmlEditor.hasFormatCommands: boolean;
+begin
+  Result := true;
+end;
+
+procedure TXmlEditor.makeTextTab;
+begin
+  inherited makeTextTab;
+  makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
+  makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
 end;
 
 constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
@@ -133,8 +173,6 @@ begin
     FXml := nil;
     try
       FXml := FParser.parse(FContent.text, [xpResolveNamespaces]);
-      inc(cursor.line);
-      inc(cursor.col);
       path := FXml.findLocation(cursor);
       try
         inspection.AddPair('Path', FXml.describePath(path));
@@ -144,11 +182,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing XML: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing XML: '+e.message);
       end;
     end;
   finally

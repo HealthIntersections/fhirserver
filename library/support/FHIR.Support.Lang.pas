@@ -151,7 +151,7 @@ begin
   doLoad('BHD', 3, '', 'Bahraini dinar', 'Bahrain');
   doLoad('BIF', 0, '', 'Burundian franc', 'Burundi');
   doLoad('BMD', 2, '', 'Bermudian dollar', 'Bermuda');
-  doLoad('BND', 2, '	$', 'Brunei dollar', 'Brunei');
+  doLoad('BND', 2, '  $', 'Brunei dollar', 'Brunei');
   doLoad('BOB', 2, '', 'Boliviano', 'Bolivia');
   doLoad('BOV', 2, '', 'Bolivian Mvdol (funds code)', 'Bolivia');
   doLoad('BRL', 2, 'R$', 'Brazilian real', 'Brazil');

@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.FHIREditor;
+unit ftk_editor_fhir;
 
 {$i fhir.inc}
 
@@ -8,14 +8,14 @@ uses
   Classes, SysUtils,
   Controls, StdCtrls, ComCtrls,
   SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
   {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
   FHIR.R4.Resources.Canonical,
   FHIR.LCL.Synchroniser,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 
@@ -31,14 +31,22 @@ type
     FTree : TTreeView;
     FMemo : TMemo;
     FSync : TFHIRSynEditSynchroniser;
+    actSwitch : TContentSubAction;
     function parseResource(source : String) : TFHirResourceV;
     procedure DoTestEditing(sender : TObject);
     procedure DoTreeClick(sender : TObject);
     procedure LoadObject(item : TTreeNode; obj : TFHIRObject);
+    procedure DoMnuPretty(sender : TObject);
+    procedure DoMnuCondense(sender : TObject);
+    procedure DoMnuSwitch(sender : TObject);
+    function getCurrentFormat : TFHIRFormat;
   protected
     function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
+    function hasFormatCommands: boolean; override;
+    procedure makeTextTab; override;
+    procedure updateFormatMenu; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -74,7 +82,7 @@ function TFHIREditor.parseResource(source: String): TFHirResourceV;
 var
   p : TFHIRParser;
 begin
-  p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.Create('en'));
   try
     p.KeepParseLocations := true;
     result := p.parseResource(source);
@@ -87,6 +95,11 @@ procedure TFHIREditor.DoTestEditing(sender: TObject);
 var
   cs : TFHIRCodeSystem;
 begin
+  if FSync.resource <> nil then
+  begin
+    FSync.Format := getCurrentFormat;
+    FSync.load;
+  end;
   cs := FSync.resource as TFHIRCodeSystem;
   Fsync.changeProperty(cs, cs.nameElement);
   cs.name := 'My Test';
@@ -190,6 +203,37 @@ begin
   end;
 end;
 
+function TFHIREditor.hasFormatCommands: boolean;
+begin
+  Result := true;
+end;
+
+procedure TFHIREditor.makeTextTab;
+begin
+  inherited makeTextTab;
+  makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
+  makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
+  if FFormat = ffJson then
+    actSwitch := makeSubAction(actFormat, 'To XML', 90, 0, DoMnuSwitch)
+  else
+    actSwitch := makeSubAction(actFormat, 'To Json', 91, 0, DoMnuSwitch);
+end;
+
+procedure TFHIREditor.updateFormatMenu;
+begin
+  inherited updateFormatMenu;
+  if getCurrentFormat = ffJson then
+  begin
+    actSwitch.caption := 'To XML';
+    actSwitch.imageIndex := 90;
+  end
+  else
+  begin
+    actSwitch.caption := 'To Json';
+    actSwitch.imageIndex := 91;
+  end;
+end;
+
 procedure TFHIREditor.ContentChanged;
 begin
   FResource.Free;
@@ -224,7 +268,7 @@ begin
     if loc.prop = nil then
       result := loc.value.fhirType
     else if loc.prop.IsList then
-      result := result + '.'+ loc.prop.Name+'['+inttostr(loc.prop.values.IndexByReference(loc.prop))+']'
+      result := result + '.'+ loc.prop.Name+'['+inttostr(loc.prop.values.IndexByReference(loc.value))+']'
     else if loc.prop.name.endsWith('[x]') then
       result := result + '.'+ loc.prop.Name.replace('[x]', '.ofType('+loc.value.fhirType+')')
     else
@@ -254,8 +298,6 @@ begin
     FResource := nil;
     try
       FResource := parseResource(FContent.text);
-      inc(cursor.line);
-      inc(cursor.col);
       path := FResource.findLocation(cursor);
       try
         inspection.AddPair('Version', FFactory.versionString);
@@ -277,11 +319,11 @@ begin
     except
       on e : EParserException do
       begin
-        validationError(e.Line, e.Col, e.message);
+        validationError(e.Location, e.message);
       end;
       on e : Exception do
       begin
-        validationError(1, 1, 'Error Parsing Resource: '+e.message);
+        validationError(TSourceLocation.CreateNull, 'Error Parsing Resource: '+e.message);
       end;
     end;
   finally
@@ -291,7 +333,7 @@ end;
 
 function TFHIREditor.hasDesigner: boolean;
 begin
-  Result := true;
+  Result := ;
 end;
 
 procedure TFHIREditor.makeDesigner;
@@ -337,12 +379,102 @@ begin
 
 end;
 
+procedure TFHIREditor.DoMnuPretty(sender: TObject);
+var
+  x : TMXmlDocument;
+  j : TJsonObject;
+begin
+  if getCurrentFormat = ffXml then
+  begin
+    x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+    try
+      SetContentUndoable(x.ToXml(true, false));
+    finally
+      x.Free;
+    end;
+  end
+  else
+  begin
+    j := TJSONParser.Parse(TextEditor.text);
+    try
+      SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
+    finally
+      j.Free;
+    end;
+  end;
+end;
+
+procedure TFHIREditor.DoMnuCondense(sender: TObject);
+var
+  x : TMXmlDocument;
+  j : TJsonObject;
+begin
+  if getCurrentFormat = ffXml then
+  begin
+    x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+    try
+      SetContentUndoable(x.ToXml(false, false));
+    finally
+      x.Free;
+    end;
+  end
+  else
+  begin
+    j := TJSONParser.Parse(TextEditor.text);
+    try
+      SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
+    finally
+      j.Free;
+    end;
+  end;
+end;
+
+procedure TFHIREditor.DoMnuSwitch(sender: TObject);
+var
+  res : TFHIRResourceV;
+  p : TFHIRParser;
+  c : TFHIRComposer;
+  tgt : TFHIRFormat;
+begin
+  if getCurrentFormat = ffJson then
+    tgt := ffXml
+  else
+    tgt := ffJson;
+
+  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.create('en'));
+  try
+    c := FFactory.makeComposer(nil, tgt, THTTPLanguages.create('en'), OutputStylePretty);
+    try
+      res := p.parseResource(TextEditor.text);
+      try
+        SetContentUndoable(c.Compose(res));
+      finally
+        res.free;
+      end;
+    finally
+      c.Free;
+    end;
+  finally
+    p.free;
+  end;
+  FFormat := tgt;
+end;
+
+function TFHIREditor.getCurrentFormat: TFHIRFormat;
+begin
+  if TextEditor.Text.trim.StartsWith('{') then
+    result := ffJson
+  else
+    result := ffXml;
+end;
+
 procedure TFHIREditor.updateDesigner;
 var
   root : TTreeNode;
 begin
   FResource.Free;
   FResource := nil;
+  FSync.Format := getCurrentFormat;
   FSync.load;
   FResource := FSync.Resource.link;
   FTree.items.Clear;
@@ -350,6 +482,7 @@ begin
   root.Data := FResource;
   loadObject(root, FResource);
 end;
+
 
 
 end.

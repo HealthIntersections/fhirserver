@@ -483,7 +483,7 @@ var
   canBeAbbreviated : boolean;
 begin
   b.append(StringPadLeft('', ' ', indent));
-	canBeAbbreviated := checkisSimple(r);
+  canBeAbbreviated := checkisSimple(r);
   first := true;
   for rs in r.sourceList do
   begin
@@ -493,7 +493,7 @@ begin
       b.append(', ');
     renderSource(b, rs, canBeAbbreviated);
   end;
-	if (r.targetList.count > 1) then
+  if (r.targetList.count > 1) then
   begin
     b.append(' -> ');
     first := true;
@@ -527,14 +527,14 @@ begin
     for ir in r.ruleList do
       renderRule(b, ir, indent+2);
     b.append(StringPadLeft('', ' ', indent));
-	  b.append('}');
+    b.append('}');
   end
   else
   begin
     if r.dependentList.Count > 0 then
     begin
       b.append(' then ');
-	    first := true;
+      first := true;
       for rd in r.dependentList do
       begin
        if (first) then
@@ -561,7 +561,7 @@ begin
     if not matchesName(r.name, r.sourceList) then
     begin
       b.append(' "');
-	    b.append(r.name);
+      b.append(r.name);
       b.append('"');
     end;
   end;
@@ -601,11 +601,11 @@ begin
     b.append(' ');
     b.append(CODES_TFhirStructureMapSourceListModeEnum[rs.ListMode]);
   end;
-	if (rs.defaultValue <> nil) then
+  if (rs.defaultValue <> nil) then
   begin
     b.append(' default ');
-		assert(rs.defaultValue is TFhirString);
-	  b.append('''+jsonEscape((rs.defaultValue as TFhirString).value, true)+''');
+    assert(rs.defaultValue is TFhirString);
+    b.append('''+jsonEscape((rs.defaultValue as TFhirString).value, true)+''');
   end;
   if not canbeAbbreviated and (rs.Variable <> '') then
   begin
@@ -2062,9 +2062,9 @@ begin
       end;
     end;
 
-		if (src.listMode <> StructureMapSourceListModeNull) and not items.Empty then
+    if (src.listMode <> StructureMapSourceListModeNull) and not items.Empty then
     begin
-		  case src.listMode of
+      case src.listMode of
         StructureMapSourceListModeFirst: if items.Count > 1 then items.DeleteRange(1, items.Count-1);
         StructureMapSourceListModeNotFirst: items.Delete(0);
         StructureMapSourceListModeLast: if items.Count > 1 then items.DeleteRange(0, items.Count-2);
@@ -2086,7 +2086,7 @@ begin
           v.free;
         end;
       end;
-  		result.link;
+      result.link;
     finally
       result.free;
     end;
@@ -2105,9 +2105,9 @@ begin
   begin
     dest := vars.get(vmOUTPUT, tgt.Context);
     if (dest = nil) then
-  		  raise EFHIRException.create('Rule "'+ruleId+'": target context not known: '+tgt.context);
+        raise EFHIRException.create('Rule "'+ruleId+'": target context not known: '+tgt.context);
     if (tgt.element = '') then
-  		  raise EFHIRException.create('Rule "'+ruleId+'": Not supported yet');
+        raise EFHIRException.create('Rule "'+ruleId+'": Not supported yet');
   end;
 
   v := nil;
@@ -2178,7 +2178,7 @@ begin
       try
         if (result.isResource and (result.fhirType <> 'Parameters')) then
         begin
-  //	        res.setIdBase(tgt.getParameter().size() > 1 ? getParamString(vars, tgt.getParameter().get(0)) : UUID.randomUUID().toString().toLowerCase());
+  //          res.setIdBase(tgt.getParameter().size() > 1 ? getParamString(vars, tgt.getParameter().get(0)) : UUID.randomUUID().toString().toLowerCase());
           if (Fservices <> nil) then
             FServices.createResource(appInfo, result, root);
           if (tgt.HasTag('profile')) then
@@ -2310,9 +2310,9 @@ var
 begin
   // if we can get this as a valueSet, we will
 //
-//	  ValidationResult vr = worker.validateCode(system, code, null);
-//	  if (vr != null && vr.getDisplay() != null)
-//	    display = vr.getDisplay();
+//    ValidationResult vr = worker.validateCode(system, code, null);
+//    if (vr != null && vr.getDisplay() != null)
+//      display = vr.getDisplay();
   result := TFhirCoding.Create(uri, code);
   try
     result.display := display;

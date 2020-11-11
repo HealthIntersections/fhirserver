@@ -57,10 +57,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="FHIR.Toolkit.Context.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="..\library\support\FHIR.Support.Base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -101,59 +97,11 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="editors\FHIR.Toolkit.IniEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.TextEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="stores\FHIR.Toolkit.FileStore.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="stores\FHIR.Toolkit.Store.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.XmlEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.Factory.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.JsonEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="stores\FHIR.Toolkit.TempStorage.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.BaseEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.HtmlEditor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="views\FHIR.Toolkit.Console.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="frm_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ToolkitSettingsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.JavascriptEditor.pas"/>
-        <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\ui\SynHighlighterHL7.pas"/>
@@ -191,10 +139,6 @@
       </Unit>
       <Unit>
         <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="editors\FHIR.Toolkit.HL7Editor.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -263,11 +207,72 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="FHIR.Toolkit.Search.pas"/>
+        <Filename Value="..\library\ui\FHIR.LCL.Synchroniser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\ui\FHIR.LCL.Synchroniser.pas"/>
+        <Filename Value="editors\ftk_editor_md.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\ftk_store_temp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frames\ftk_frame_codesystem.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_fhir.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ftk_context.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_hl7.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_html.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_ini.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_js.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_json.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_text.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="editors\ftk_editor_xml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\ftk_store.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="stores\ftk_store_files.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="views\ftk_console.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
@@ -280,18 +285,13 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\ucum;..\library\client;..\library\r4;..\library\cda;..\library\smart"/>
+      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\ucum;..\library\client;..\library\r4;..\library\cda;..\library\smart;frames"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>
@@ -307,6 +307,9 @@
       </Item>
       <Item>
         <Name Value="EParserException"/>
+      </Item>
+      <Item>
+        <Name Value="EJsonParserException"/>
       </Item>
     </Exceptions>
   </Debugging>

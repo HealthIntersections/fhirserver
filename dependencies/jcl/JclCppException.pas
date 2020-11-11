@@ -503,7 +503,7 @@ var
   FastcallDestructor: TFastcallDestructor;
   StdcallDestructor: TStdcallDestructor;
 begin
-  // 		callDestructor(objAddr, objType, 0, dtorAddr, dtorMask, 1);
+  //     callDestructor(objAddr, objType, 0, dtorAddr, dtorMask, 1);
   Flags := 2;
 
   Assert((ObjType.tpcDtorMask and $0080) = 0, 'fastthis (-po) not supported');

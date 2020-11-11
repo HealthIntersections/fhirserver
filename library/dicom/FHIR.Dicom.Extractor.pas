@@ -612,7 +612,7 @@ Begin
     UnloadDll;
   End;
   If Not bOk Then
-  	raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
+    raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
 End; }
 
 End.

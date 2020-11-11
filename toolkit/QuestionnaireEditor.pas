@@ -1264,11 +1264,11 @@ result :=
 '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
 ' <style>'+#13#10+
 '  body { background-color: rgb(255, 254, 245);'+#13#10+
-'	margin: 0px;'+#13#10+
-'	padding: 0px;'+#13#10+
-'	height: 100%;'+#13#10+
-'	font-size: 12px;'+#13#10+
-'	font-family: verdana;'+#13#10+
+'  margin: 0px;'+#13#10+
+'  padding: 0px;'+#13#10+
+'  height: 100%;'+#13#10+
+'  font-size: 12px;'+#13#10+
+'  font-family: verdana;'+#13#10+
 '}'+#13#10+
 ' </style>'+#13#10+
 '</head>'+#13#10+
