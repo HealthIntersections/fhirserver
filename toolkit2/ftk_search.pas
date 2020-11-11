@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.Search;
+unit ftk_search;
 
 {$i fhir.inc}
 
@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
-  FHIR.Toolkit.Context;
+  ftk_context;
 
 const
   FRAGMENT_UNDERHANG = 15;

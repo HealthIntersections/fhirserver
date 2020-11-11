@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.Context;
+unit ftk_context;
 
 {$i fhir.inc}
 
@@ -9,7 +9,7 @@ uses
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
   FHIR.Base.Objects,
-  FHIR.Toolkit.Store, FHIR.Toolkit.Console;
+  ftk_store, ftk_console;
 
 // supported formats:
 // ini

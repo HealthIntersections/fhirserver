@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.TempStorage;
+unit ftk_store_temp;
 
 {$i fhir.inc}
 
@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, IOUtils, IniFiles,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Toolkit.Context;
+  ftk_context;
 
 type
 

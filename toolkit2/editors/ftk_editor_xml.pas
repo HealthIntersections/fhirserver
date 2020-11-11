@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.XmlEditor;
+unit ftk_editor_xml;
 
 {$i fhir.inc}
 
@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterXml,
   FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 
@@ -18,9 +18,13 @@ type
   private
     FParser : TMXmlParser;
     FXml : TMXmlDocument;
+    procedure DoMnuPretty(sender : TObject);
+    procedure DoMnuCondense(sender : TObject);
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
+    function hasFormatCommands: boolean; override;
+    procedure makeTextTab; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -33,6 +37,30 @@ type
 
 
 implementation
+
+procedure TXmlEditor.DoMnuPretty(sender: TObject);
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+  try
+    SetContentUndoable(x.ToXml(true, false));
+  finally
+    x.Free;
+  end;
+end;
+
+procedure TXmlEditor.DoMnuCondense(sender: TObject);
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(TextEditor.Text, [xpDropWhitespace]);
+  try
+    SetContentUndoable(x.ToXml(false, false));
+  finally
+    x.Free;
+  end;
+end;
 
 function TXmlEditor.makeHighlighter: TSynCustomHighlighter;
 begin
@@ -75,6 +103,18 @@ begin
       end;
     end;
   end;
+end;
+
+function TXmlEditor.hasFormatCommands: boolean;
+begin
+  Result := true;
+end;
+
+procedure TXmlEditor.makeTextTab;
+begin
+  inherited makeTextTab;
+  makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
+  makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
 end;
 
 constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);

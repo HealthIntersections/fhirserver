@@ -32,8 +32,8 @@ type
     FOpInProgress : TFHIRSynEditSynchroniserOpStatus;
     FContainer : TFHIRObject;
     FFocus : TFHIRObject;
-    FStart : TPoint;
-    FFinish : TPoint;
+    FStart : TSourceLocation;
+    FFinish : TSourceLocation;
 
     procedure SetFactory(AValue: TFHIRFactory);
 
@@ -42,7 +42,7 @@ type
 
     function writeToSource : String;
     function extractFromLines(lines : TStringList; start, finish : TSourceLocation) : String;
-    function measure(source : String) : TSourceLocation;
+    function measure(source : String) : TSourceRange;
 
     procedure finishOpChange;
   public
@@ -194,25 +194,25 @@ begin
   end;
 end;
 
-function TFHIRSynEditSynchroniser.measure(source: String): TSourceLocation;
+function TFHIRSynEditSynchroniser.measure(source: String): TSourceRange;
 var
   i : integer;
 begin
-  result := TSourceLocation.Create;
+  result := TSourceRange.Create;
   i := 1;
   while i <= source.length do
   begin
     case source[i] of
       #10:
-          result.incLine;
+          result.incLines;
       #13:
         begin
-          result.incLine;
+          result.incLines;
           if (i < source.Length) and (source[i + 1] = #10) then
             inc(i);
         end;
       else
-        result.incCol;
+        result.incCols;
     end;
     inc(i);
   end;
@@ -222,7 +222,7 @@ procedure TFHIRSynEditSynchroniser.finishOpChange;
 var
   src : String;
   lines : TStringList;
-  span : TSourceLocation;
+  added, removed : TSourceRange;
   ps, pf : TPoint;
   do1, do2 : boolean;
 begin
@@ -242,10 +242,10 @@ begin
     else
       src := extractFromLines(lines, FFocus.LocationData.composeStart2, FFocus.LocationData.composeFinish2).Trim;
 
-    if (FFormat = ffJson) and (src.EndsWith(',') then
+    if (FFormat = ffJson) and src.EndsWith(',') then
       src := src.Substring(0, src.length-1);
 
-    span := measure(src);
+    added := measure(src);
   finally
     lines.Free;
   end;
@@ -258,20 +258,22 @@ begin
   begin
     ps := FFocus.LocationData.parseStart.toPoint;
     pf := FFocus.LocationData.parseFinish.toPoint;
+    removed := FFocus.LocationData.parseFinish - FFocus.LocationData.parseStart;
   end
   else
   begin
     ps := FFocus.LocationData.parseStart2.toPoint;
     pf := FFocus.LocationData.parseFinish2.toPoint;
+    removed := FFocus.LocationData.parseFinish2 - FFocus.LocationData.parseStart2;
   end;
   SynEdit.SetTextBetweenPoints(ps, pf, src, [setSelect], scamIgnore, smaMoveUp, smNormal);
   SynEdit.EndUndoBlock;
 
   // update remaining content for new content metrics
   if (do1) then
-    FResource.updateLocationData(FFocus.LocationData.parseStart, FFocus.LocationData.parseFinish, span)
+    FResource.updateLocationData(FFocus.LocationData.parseStart, removed, added, FFocus)
   else
-    FResource.updateLocationData(FFocus.LocationData.parseStart2, FFocus.LocationData.parseFinish2, span);
+    FResource.updateLocationData(FFocus.LocationData.parseStart2, removed, added, FFocus);
 end;
 
 procedure TFHIRSynEditSynchroniser.load;
@@ -287,8 +289,8 @@ end;
 procedure TFHIRSynEditSynchroniser.changeProperty(container : TFHIRObject; obj: TFHIRObject);
 begin
   FOpInProgress := opChange;
-  FStart := obj.LocationData.ParseStart.toPoint;
-  FFinish := obj.LocationData.parseFinish.toPoint;
+  FStart := obj.LocationData.ParseStart;
+  FFinish := obj.LocationData.parseFinish;
   FContainer := container.link;
   FFocus := obj.link;
 end;
@@ -326,6 +328,11 @@ begin
   else
     raise Exception.create('not done yet');
   end;
+  FOpInProgress := opNone;
+  FContainer := nil;
+  FFocus := nil;
+  FStart := TSourceLocation.CreateNull;
+  FFinish := TSourceLocation.CreateNull;
 end;
 
 procedure TFHIRSynEditSynchroniser.abandon;

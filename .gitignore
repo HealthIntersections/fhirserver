@@ -249,3 +249,4 @@ testcases/snomed/
 toolkit2/lib/x86_64-darwin/
 
 toolkit2/lib/x86_64-linux/
+/toolkit2/frames/backup

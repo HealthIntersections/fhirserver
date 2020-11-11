@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.IniEditor;
+unit ftk_editor_ini;
 
 {$i fhir.inc}
 
@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterIni,
   FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_editor_base;
 
 type
 

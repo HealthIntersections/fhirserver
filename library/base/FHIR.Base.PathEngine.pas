@@ -297,7 +297,7 @@ begin
     list[i] := context[i];
   list[length(list)-1] := base;
 
-  if TSourceLocation.greatorOrEqual(loc, base.LocationData.parseFinish) then
+  if loc >= base.LocationData.parseFinish then
   begin
     result := path;
     focus := list;
@@ -312,13 +312,13 @@ begin
         p := pl[i];
         if (p.hasValue) then
         begin
-          if TSourceLocation.greatorOrEqual(loc, p.Values[0].LocationData.ParseStart) then
+          if loc >= p.Values[0].LocationData.ParseStart then
           begin
             path := path + '.'+p.Name;
             if p.IsList then
             begin
               for j := p.Values.Count - 1 downto 0 do
-                if (result = '') and TSourceLocation.greatorOrEqual(loc, p.Values[j].LocationData.ParseStart) then
+                if (result = '') and (loc >= p.Values[j].LocationData.ParseStart) then
                   result := findPath(path+'['+inttostr(j)+']', loc, list, p.Values[j], focus);
             end
             else
@@ -331,7 +331,7 @@ begin
       pl.Free;
     end;
   end;
-  if (result = '') and TSourceLocation.greatorOrEqual(loc, base.LocationData.ParseStart) and TSourceLocation.lessOrEqual(loc, base.LocationData.ParseFinish)  then
+  if (result = '') and (loc >= base.LocationData.ParseStart) and (loc <= base.LocationData.ParseFinish)  then
   begin
     result := path;
     focus := list;

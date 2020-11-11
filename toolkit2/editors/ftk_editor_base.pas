@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.BaseEditor;
+unit ftk_editor_base;
 
 {$i fhir.inc}
 
@@ -9,7 +9,7 @@ uses
   Graphics, Controls, ExtCtrls, ComCtrls, Menus,
   SynEdit, SynEditHighlighter, SynEditTypes,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc, FHIR.Support.Logging,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store;
+  ftk_context, ftk_store;
 
 type
   TCurrentViewMode = (vmText, vmDesigner);
@@ -53,6 +53,7 @@ type
     FButton: TToolButton;
     FMenuItem: TMenuItem;
     FNoContextMenu: boolean;
+    FOnShow: TNotifyEvent;
     FPopup : TPopupMenu;
     FOnPopulate: TNotifyEvent;
     FSubItems: TFslList<TContentSubAction>;
@@ -84,6 +85,7 @@ type
     property noContextMenu : boolean read FNoContextMenu write FNoContextMenu;
 
     property OnPopulate : TNotifyEvent read FOnPopulate write FOnPopulate;
+    property OnShow : TNotifyEvent read FOnShow write FOnShow;
   end;
 
   { TBaseEditor }
@@ -121,6 +123,7 @@ type
     procedure DoTextEditorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure DoShowDesigner(sender : TObject);
     procedure DoShowTextTab(sender : TObject);
+    procedure DoMnuFormat(sender : TObject);
   protected
     // if hasText
     FContent : TStringList;
@@ -128,6 +131,7 @@ type
     FTextPanelWork : TPanel;
     FDesignerPanelWork : TPanel;
     FMode : TCurrentViewMode;
+    actFormat : TContentAction;
 
 
     TextEditor : TSynEdit;
@@ -161,9 +165,13 @@ type
     procedure makeTextTab; virtual;
     procedure doResize(sender : TObject); virtual;
 
+    function hasFormatCommands : boolean; virtual;
+    procedure updateFormatMenu; virtual;
     procedure makeDesigner; virtual;
     procedure updateDesigner; virtual;
     procedure commitDesigner; virtual;
+
+    procedure SetContentUndoable(src : string);
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -369,6 +377,8 @@ begin
     action.FPopup.Items.Clear;
     action.OnPopulate(self);
   end;
+  if (assigned(action.OnShow)) then
+    action.OnShow(self);
   pt := Context.locateOnScreen(action.FButton.Left, action.FButton.top + action.FButton.Height);
   action.FPopup.PopUp(pt.x, pt.y);
 end;
@@ -1090,6 +1100,13 @@ begin
   makeDivider(tb);
   if AddActions(tb) then
     makeDivider(tb);
+
+  if (hasFormatCommands) then
+  begin
+    actFormat := makeAction(tb, 'Format', 86);
+    actFormat.OnShow := DoMnuFormat;
+  end;
+
   actEncoding := makeAction(tb, 'Encoding', 0);
   makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
   makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
@@ -1143,9 +1160,33 @@ begin
   // nothing here
 end;
 
+procedure TBaseEditor.SetContentUndoable(src : string);
+var
+  ps, pf : TPoint;
+begin
+  FContent.Text := src;
+  ps := TPoint.Create(1, 1);
+  TextEditor.SelStart := length(TextEditor.Text);
+  pf := TextEditor.CaretXY;
+  TextEditor.BeginUndoBlock;
+  TextEditor.SetTextBetweenPoints(ps, pf, src);
+  TextEditor.EndUndoBlock;
+  TextEditor.CaretXY := ps;
+end;
+
 procedure TBaseEditor.doResize(sender: TObject);
 begin
   FTextPanelBase.Width := (tab.width div 2) - 4;
+end;
+
+function TBaseEditor.hasFormatCommands: boolean;
+begin
+  result := false;
+end;
+
+procedure TBaseEditor.updateFormatMenu;
+begin
+
 end;
 
 procedure TBaseEditor.DoTextEditorChange(sender: TObject);
@@ -1177,6 +1218,11 @@ end;
 procedure TBaseEditor.DoShowTextTab(sender: TObject);
 begin
   showTextTab;
+end;
+
+procedure TBaseEditor.DoMnuFormat(sender: TObject);
+begin
+  updateFormatMenu;
 end;
 
 procedure TBaseEditor.MakeNavigationItems(sender: TObject);

@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.HtmlEditor;
+unit ftk_editor_html;
 
 {$i fhir.inc}
 
@@ -8,8 +8,8 @@ uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
   FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 

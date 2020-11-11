@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.JavascriptEditor;
+unit ftk_editor_js;
 
 {$i fhir.inc}
 
@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJscript,
   FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 

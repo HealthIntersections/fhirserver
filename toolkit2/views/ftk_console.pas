@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.Console;
+unit ftk_console;
 
 {$i fhir.inc}
 

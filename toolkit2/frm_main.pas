@@ -10,9 +10,9 @@ uses
   lclintf, ValEdit,
 
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc, FHIR.Support.Logging,
-  FHIR.Toolkit.Context, FHIR.Toolkit.TempStorage,
-  FHIR.Toolkit.Store, FHIR.Toolkit.FileStore,
-  FHIR.Toolkit.Factory, FHIR.Toolkit.Search,
+  ftk_context, ftk_store_temp,
+  ftk_store, ftk_store_files,
+  ftk_factory, ftk_search,
 
   frm_npm_manager, frm_file_format, frm_settings;
 

@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.HL7Editor;
+unit ftk_editor_hl7;
 
 {$i fhir.inc}
 
@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterHL7,
   FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
   FHIR.v2.Message,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store, FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store, ftk_editor_base;
 
 type
 

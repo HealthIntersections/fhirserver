@@ -1,4 +1,4 @@
-unit FHIR.Toolkit.JsonEditor;
+unit ftk_editor_json;
 
 {$i fhir.inc}
 
@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJson,
   FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Toolkit.Context, FHIR.Toolkit.Store,
-  FHIR.Toolkit.BaseEditor;
+  ftk_context, ftk_store,
+  ftk_editor_base;
 
 type
 
@@ -18,10 +18,16 @@ type
   private
     FParser : TJsonParser;
     FJson : TJsonNode;
+    actPretty : TContentSubAction;
+    actDense : TContentSubAction;
+    procedure DoMnuPretty(sender : TObject);
+    procedure DoMnuCondense(sender : TObject);
   protected
     function makeHighlighter : TSynCustomHighlighter; override;
     procedure getNavigationList(navpoints : TStringList); override;
     procedure ContentChanged; override;
+    function hasFormatCommands: boolean; override;
+    procedure makeTextTab; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -45,6 +51,30 @@ begin
   FParser.free;
   FJson.free;
   inherited Destroy;
+end;
+
+procedure TJsonEditor.DoMnuPretty(sender: TObject);
+var
+  j : TJsonObject;
+begin
+  j := TJSONParser.Parse(TextEditor.text);
+  try
+    SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
+  finally
+    j.Free;
+  end;
+end;
+
+procedure TJsonEditor.DoMnuCondense(sender: TObject);
+var
+  j : TJsonObject;
+begin
+  j := TJSONParser.Parse(TextEditor.text);
+  try
+    SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
+  finally
+    j.Free;
+  end;
 end;
 
 function TJsonEditor.makeHighlighter: TSynCustomHighlighter;
@@ -156,6 +186,18 @@ procedure TJsonEditor.ContentChanged;
 begin
   FJson.Free;
   FJson := nil;
+end;
+
+function TJsonEditor.hasFormatCommands: boolean;
+begin
+  Result := true;
+end;
+
+procedure TJsonEditor.makeTextTab;
+begin
+  inherited makeTextTab;
+  makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
+  makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
 end;
 
 end.

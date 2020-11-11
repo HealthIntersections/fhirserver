@@ -450,7 +450,7 @@ type
     // finish is the content that was deleted
     // new content is ths line/col count of the content inserted
     // focus is the object that was the focus of the change (inner content for this has to be adjusted from as composed
-    procedure updateLocationData(start, finish, newContent : TSourceLocation; focus : TFHIRObject);
+    procedure updateLocationData(start : TSourceLocation; removed, added: TSourceRange; focus : TFHIRObject);
 
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
@@ -964,7 +964,7 @@ begin
   end;
 end;
 
-procedure TFHIRObject.updateLocationData(start, finish, newContent: TSourceLocation; focus: TFHIRObject);
+procedure TFHIRObject.updateLocationData(start : TSourceLocation; removed, added: TSourceRange; focus : TFHIRObject);
 var
   nc : TFHIRNamedValue;
 begin
@@ -972,13 +972,13 @@ begin
   begin
     raise exception.create('not done yet');
   end
-  else if TSourceLocation.lessOrEqual(start, LocationData.parseFinish) then // if start is after this, then we don't need to do anything
+  else if start >= LocationData.parseFinish then // if start is after this, then we don't need to do anything
   begin
-    if TSourceLocation.lessOrEqual(start, LocationData.parseStart) then
-      LocationData.parseStart.move(start, finish, newContent);
-    LocationData.parseFinish.move(start, finish, newContent);
+    if start <= LocationData.parseStart then
+      LocationData.parseStart := (LocationData.parseStart - removed) + added;
+    LocationData.parseFinish := (LocationData.parseFinish - removed) + added;
     for nc in getNamedChildren do
-      updateLocationData(strat, finish, newContent);
+      nc.value.updateLocationData(start, removed, added, focus);
   end;
 end;
 
