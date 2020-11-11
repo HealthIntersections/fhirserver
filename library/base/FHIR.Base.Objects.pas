@@ -445,6 +445,13 @@ type
     property HasLocationData : boolean read GetHasLocationData;
     function findLocation(loc : TSourceLocation) : TFslList<TFHIRLocatedNode>; overload;
 
+    // called when content is added to the source from which this was parsed.
+    // start is where the insertion was
+    // finish is the content that was deleted
+    // new content is ths line/col count of the content inserted
+    // focus is the object that was the focus of the change (inner content for this has to be adjusted from as composed
+    procedure updateLocationData(start, finish, newContent : TSourceLocation; focus : TFHIRObject);
+
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
@@ -954,6 +961,24 @@ begin
     result.Link;
   finally
     result.free;
+  end;
+end;
+
+procedure TFHIRObject.updateLocationData(start, finish, newContent: TSourceLocation; focus: TFHIRObject);
+var
+  nc : TFHIRNamedValue;
+begin
+  if self = focus then
+  begin
+    raise exception.create('not done yet');
+  end
+  else if TSourceLocation.lessOrEqual(start, LocationData.parseFinish) then // if start is after this, then we don't need to do anything
+  begin
+    if TSourceLocation.lessOrEqual(start, LocationData.parseStart) then
+      LocationData.parseStart.move(start, finish, newContent);
+    LocationData.parseFinish.move(start, finish, newContent);
+    for nc in getNamedChildren do
+      updateLocationData(strat, finish, newContent);
   end;
 end;
 

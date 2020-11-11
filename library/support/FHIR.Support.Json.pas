@@ -1202,7 +1202,7 @@ function TJsonWriterDirect.GetSourceLocation: TSourceLocation;
 begin
   result := Location;
   if FCache <> '' then
-    !
+    result := AdjustLocation(result, BeforeWhitespace + FCache + AfterWhitespace);
 end;
 
 function TJsonWriterDirect.UseName: String;

@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, Math,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus,
   SynEdit, SynEditHighlighter, SynEditTypes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc, FHIR.Support.Logging,
   FHIR.Toolkit.Context, FHIR.Toolkit.Store;
 
 type
@@ -837,7 +837,12 @@ begin
   LastMoveChecked := true;
   updateToContent;
   if Context.SideBySide then
+  try
     updateDesigner;
+  except
+    on E : Exception do
+      Logging.Log('Exception updating designer: '+e.message);
+  end;
 
   loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
   ts := TStringList.create;

@@ -64,6 +64,8 @@ type
     function describe : String;
     function exception(msg : String) : EParserException;
 
+    procedure move(start, finish, newContent : TSourceLocation);
+
     class function Create : TSourceLocation; overload; static;
     class function Create(l, c : integer) : TSourceLocation; overload; static;
     class function CreateNull : TSourceLocation; static;
@@ -870,6 +872,8 @@ Type
       Function More : Boolean; Virtual;
   End;
 
+  { TFslTextFormatter }
+
   TFslTextFormatter = Class(TFslFormatter)
     Private
       FLocation : TSourceLocation;
@@ -885,6 +889,7 @@ Type
       Function BeforeWhitespace : String;
       Function AfterWhitespace : String;
 
+      function AdjustLocation(location: TSourceLocation; const sText: String): TSourceLocation;
     Public
       constructor Create; Override;
 
@@ -3900,32 +3905,37 @@ Begin
     Result := '';
 End;
 
-
-procedure TFslTextFormatter.Produce(const sText: String);
+function TFslTextFormatter.AdjustLocation(location : TSourceLocation; const sText: String) : TSourceLocation;
 var
   i : integer;
   nl : boolean;
 begin
-  nl := false;
+  result := location;
   for i := 1 to length(sText) do
-  case sText[i] of
-    #13:
+  begin
+    case sText[i] of
+      #13:
+        begin
+        nl := true;
+        result.incLine;
+        end;
+      #10:
+        if not nl then
+        begin
+        result.incLine;
+        end;
+    else
       begin
-      nl := true;
-      Flocation.incLine;
+        nl := false;
+        result.incCol;
       end;
-    #10:
-      if not nl then
-      begin
-      Flocation.incLine;
-      end;
-  else
-    begin
-      nl := false;
-      FLocation.incCol;
     end;
   end;
+end;
 
+procedure TFslTextFormatter.Produce(const sText: String);
+begin
+  FLocation := AdjustLocation(FLocation, sText);
   inherited;
 end;
 
@@ -7208,6 +7218,11 @@ end;
 function TSourceLocation.exception(msg: String) : EParserException;
 begin
   result := EParserException.create(msg + ' at '+describe, self);
+end;
+
+procedure TSourceLocation.move(start, finish, newContent: TSourceLocation);
+begin
+  !
 end;
 
 class function TSourceLocation.fromPoint(p : TPoint) : TSourceLocation;

@@ -236,13 +236,15 @@ begin
     // write the parent object to the selected format
     lines.Text := writeToSource; // for more efficiency, try just the immediate parent (not ready yet)
 
-    writeln(inttostr(FFocus.serialNumber)+': ?? = '+FFocus.primitiveValue+': '+FFocus.LocationData.ComposeStart2.describe+' -> '+FFocus.LocationData.ComposeFinish2.describe);
-
     // figure out the new text to insert
     if do1 then
       src := extractFromLines(lines, FFocus.LocationData.composeStart, FFocus.LocationData.composeFinish).Trim
     else
       src := extractFromLines(lines, FFocus.LocationData.composeStart2, FFocus.LocationData.composeFinish2).Trim;
+
+    if (FFormat = ffJson) and (src.EndsWith(',') then
+      src := src.Substring(0, src.length-1);
+
     span := measure(src);
   finally
     lines.Free;
@@ -250,6 +252,7 @@ begin
 
   // start a transaction
   SynEdit.BeginUndoBlock;
+
   // replace the existing content
   if (do1) then
   begin
@@ -265,8 +268,10 @@ begin
   SynEdit.EndUndoBlock;
 
   // update remaining content for new content metrics
-
-  // todo: update locations
+  if (do1) then
+    FResource.updateLocationData(FFocus.LocationData.parseStart, FFocus.LocationData.parseFinish, span)
+  else
+    FResource.updateLocationData(FFocus.LocationData.parseStart2, FFocus.LocationData.parseFinish2, span);
 end;
 
 procedure TFHIRSynEditSynchroniser.load;

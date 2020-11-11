@@ -3629,7 +3629,6 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
-    writeln(inttostr(value.serialNumber)+': '+name+'= [code]: '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -3843,7 +3842,6 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
-    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -3986,7 +3984,6 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
-    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -4484,7 +4481,6 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
-    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 
@@ -4982,7 +4978,6 @@ begin
     if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
     if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
-    writeln(inttostr(value.serialNumber)+': '+name+'= '+value.value+': '+value.LocationData.ComposeStart2.describe+' -> '+value.LocationData.ComposeFinish2.describe);
   end;
 end;
 

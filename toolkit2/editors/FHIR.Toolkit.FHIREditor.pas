@@ -87,6 +87,8 @@ procedure TFHIREditor.DoTestEditing(sender: TObject);
 var
   cs : TFHIRCodeSystem;
 begin
+  if FSync.resource <> nil then
+    FSync.load;
   cs := FSync.resource as TFHIRCodeSystem;
   Fsync.changeProperty(cs, cs.nameElement);
   cs.name := 'My Test';
