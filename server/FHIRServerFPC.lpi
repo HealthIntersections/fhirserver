@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\library\fsl;..\library\fsl\tests;..\library\fhir;..\library\fhir\tests;..\library\fhir2;..\library\fhir3;..\library\fhir4;..\library\fhir4\tests;..\library\fhir5;..\library\ftx;..\dependencies\Indy10\Core;..\dependencies\Jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\v2;..\library\cda;..\library\cda\tests;..\library;..\library\fdb;..\library\fdb\tests;..\library\tools;..\library\version;..\library\xversion;..\library\client;..\dependencies\FMMAVX;..\dependencies\chakracore-delphi;tests;Modules"/>
+            <OtherUnitFiles Value="..\library\fsl;..\library\fsl\tests;..\library\fhir;..\library\fhir\tests;..\library\fhir2;..\library\fhir3;..\library\fhir4;..\library\fhir4\tests;..\library\fhir5;..\library\ftx;..\library\ftx\tests;..\dependencies\Indy10\Core;..\dependencies\Jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\v2;..\library\cda;..\library\cda\tests;..\library;..\library\fdb;..\library\fdb\tests;..\library\tools;..\library\version;..\library\xversion;..\library\client;..\dependencies\FMMAVX;..\dependencies\chakracore-delphi;tests;Modules"/>
             <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>

@@ -202,7 +202,7 @@ uses
   FHIR.XVersion.ConvBase,
   FHIR.Server.Tags,
   fhir_codesystem_service,
-  fhir_valuesets.pas,
+  fhir_valuesets,
   FHIR.Server.Context,
   FHIR.Server.Indexing,
   fhir2_indexinfo,
