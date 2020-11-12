@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_json,
+  fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Parser, FHIR.Base.Utilities,
-  FHIR.R4.Types, FHIR.R4.Resources.Base, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.OpBase, FHIR.R4.Operations, FHIR.R4.PathEngine,
-  FHIR.R4.PathNode, FHIR.R4.Common, FHIR.R4.Questionnaire, FHIR.R4.Validator, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Narrative, FHIR.R4.GraphDefinition, FHIR.R4.MapUtilities,
+  fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
+  fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_constants, fhir4_utilities, fhir4_opbase, fhir4_operations, fhir4_pathengine,
+  fhir4_pathnode, fhir4_common, fhir4_questionnaire, fhir4_validator, fhir4_context, fhir4_profiles, fhir4_narrative, fhir4_graphdefinition, fhir4_maputils,
   FHIR.Tools.CodeGen, FHIR.Tools.DiffEngine,
   FHIR.Tx.Operations, FHIR.Ucum.Services,
   FHIR.Server.Operations,

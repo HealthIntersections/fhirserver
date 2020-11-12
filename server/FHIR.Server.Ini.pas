@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities;
+  fsl_base, fsl_utilities;
 
 type
   TFHIRServerIniComplex = class (TFslObject)

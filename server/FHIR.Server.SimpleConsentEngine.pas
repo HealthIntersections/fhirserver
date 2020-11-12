@@ -52,8 +52,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Client.Base,
+  fsl_base, fsl_utilities, fsl_threads,
+  fhir_objects, fhir_factory, fhir_common, fhir_client,
   FHIR.Server.ConsentEngine, FHIR.Server.Session;
 
 type

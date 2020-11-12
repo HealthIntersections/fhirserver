@@ -40,7 +40,7 @@ uses
 {$ENDIF}
   fmx.Types, fmx.Controls, fmx.Forms, fmx.Graphics, fmx.Dialogs, fmx.StdCtrls, fmx.Edit, fmx.Controls.Presentation, System.ImageList, fmx.ImgList,
   FMX.ScrollBox, FMX.Memo,
-  FHIR.Support.Base;
+  fsl_base;
 
 type
   TProjectDialog = class(TForm)

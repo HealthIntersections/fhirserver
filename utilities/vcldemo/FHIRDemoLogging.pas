@@ -41,8 +41,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Logging,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Smart.Utilities,
+  fsl_utilities, fsl_json, fsl_logging,
+  fhir_objects,  fhir_oauth,
   FHIR.Version.Types, FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Utilities;
 
 type

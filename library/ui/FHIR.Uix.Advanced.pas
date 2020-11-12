@@ -35,9 +35,9 @@ Interface
 Uses
   SysUtils, Classes, Controls, ExtCtrls, Forms, Graphics, Messages, StdCtrls, Windows, Dialogs, MultiMon,
   GdipApi, GdipObj,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections,
+  fsl_utilities, fsl_base, fsl_collections,
   FHIR.Uix.Base, FHIR.Uix.Controls,
-  FHIR.Ui.GdiPlus;
+  fsl_gdiplus;
 
 
 Type

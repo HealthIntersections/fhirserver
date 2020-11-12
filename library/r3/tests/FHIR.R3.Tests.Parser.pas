@@ -35,10 +35,10 @@ interface
 uses
   Windows, SysUtils, Classes, System.IOUtils,
   DUnitX.TestFramework,
-  FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.R3.Parser, FHIR.Base.Parser,
-  FHIR.R3.Resources, FHIR.R3.ElementModel, FHIR.R3.Context, FHIR.R3.Tests.Worker,
-  FHIR.Support.Tests, FHIR.Support.Comparisons;
+  fsl_stream,
+  fhir_objects, fhir3_parser, fhir_parser,
+  fhir3_resources, fhir3_elementmodel, fhir3_context, FHIR.R3.Tests.Worker,
+  fsl_tests, fsl_comparisons;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

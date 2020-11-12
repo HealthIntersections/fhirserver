@@ -39,10 +39,10 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Threads,
-  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Web.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Web.Crypto, FHIR.Smart.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_threads,
+  fsl_http, FHIR.Database.Manager, FHIR.Database.Dialects,
+  fsl_oauth, FHIR.Scim.Server, fsl_scim, fsl_crypto, fhir_oauth,
+  fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
   FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.Ini,
   FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage,
   FHIR.Server.Jwt;
@@ -195,7 +195,7 @@ const
 implementation
 
 uses
-  FHIR.Support.Logging;
+  fsl_logging;
 
 { TAuth2Server }
 

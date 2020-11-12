@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Web.Parsers,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http,
   FHIR.Database.Manager,
   FHIR.Tx.Service;
 

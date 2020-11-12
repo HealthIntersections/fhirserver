@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Factory,  FHIR.Client.Base,
+  fsl_base,
+  fhir_objects, fhir_factory,  fhir_client,
   FHIR.Server.Session;
 
 type

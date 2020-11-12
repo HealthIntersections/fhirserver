@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Types,
   FHIR.Database.SQLite3.Objects,
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 type
   ESQLite3Error = class(Exception);

@@ -35,21 +35,21 @@ interface
 uses
   SysUtils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
+  fsl_utilities, fsl_stream, fsl_tests,
+  fsl_http,
+  fhir_objects, fhir_parser, fhir_factory, fhir_common,
   FHIR.Version.Parser,
   {$IFDEF FHIR2}
-  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common,
+  FHIR.R2.Tests.Worker, fhir2_resources, fhir2_types, fhir2_factory, fhir2_common,
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Common,
+  FHIR.R3.Tests.Worker, fhir3_resources, fhir3_types, fhir3_factory, fhir3_common,
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Common,
+  fhir4_tests_worker, fhir4_resources, fhir4_types, fhir4_factory, fhir4_common,
   {$ENDIF}
   FHIR.Tools.DiffEngine,
-  FHIR.Support.MXml;
+  fsl_xml;
 
 {$IFNDEF FPC}
 Type

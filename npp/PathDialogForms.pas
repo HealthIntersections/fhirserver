@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, FHIR.Npp.Form, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, FHIR.Npp.Base, 
-  FHIR.Base.Objects, FHIR.Base.PathEngine;
+  fhir_objects, fhir_pathengine;
 
 type
   TPathOutcomeDialogMode = (pomError, pomNoMatch, pomMatch);

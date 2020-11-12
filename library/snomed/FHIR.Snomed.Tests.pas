@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Testing,
-  FHIR.Support.Base,
+  fsl_testing,
+  fsl_base,
   FHIR.Snomed.Services, FHIR.Snomed.Expressions;
 
 type

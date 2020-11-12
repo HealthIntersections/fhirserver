@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Xml, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common;
+  fsl_base, fsl_xml, fsl_stream,
+  fhir_objects,  fhir_parser, fhir_factory, fhir_common;
 
 type
   TFHIRNDJsonComposer = class (TFHIRComposer)

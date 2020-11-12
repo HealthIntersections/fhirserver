@@ -35,12 +35,12 @@ interface
 uses
   {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd,
-  FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
+  fsl_utilities,
+  fhir_objects,  fhir_common, fhir_factory,
   FHIR.Version.Parser,
-  FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Context, FHIR.R5.Profiles, FHIR.R5.PathEngine,
-  FHIR.Npm.Cache,
-  FHIR.Support.Json, DUnitX.TestFramework;
+  fhir5_types, fhir5_resources, fhir5_constants, fhir5_context, fhir5_profiles, fhir5_pathengine,
+  fsl_npm_cache,
+  fsl_json, DUnitX.TestFramework;
 
 Type
   FHIRFolderBasedTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -86,7 +86,7 @@ Type
 implementation
 
 uses
-  IdGlobalProtocols, FHIR.R5.Factory;
+  IdGlobalProtocols, fhir5_factory;
 
 
 
@@ -120,10 +120,10 @@ begin
   begin
     GWorkerContext := TTestingWorkerContext.create(TFHIRFactoryR4.create);
     pcm := TFHIRPackageManager.Create(false);
-    li := TPackageLoadingInformation.create(FHIR.R5.Constants.FHIR_GENERATED_VERSION);
+    li := TPackageLoadingInformation.create(fhir5_constants.FHIR_GENERATED_VERSION);
     try
       li.OnLoadEvent := GWorkerContext.loadResourceJson;
-      pcm.loadPackage('hl7.fhir.core', FHIR.R5.Constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
+      pcm.loadPackage('hl7.fhir.core', fhir5_constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
         li);
     finally
       li.Free;

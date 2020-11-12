@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, IOUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
+  fsl_base, fsl_utilities, fsl_threads, fsl_stream,
   ftk_context;
 
 const

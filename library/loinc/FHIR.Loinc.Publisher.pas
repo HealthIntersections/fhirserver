@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Math, FHIR.Support.Threads,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
-  FHIR.Web.HtmlGen, FHIR.LOINC.Services;
+  SysUtils, Classes, Math, fsl_threads,
+  fsl_base, fsl_collections, fsl_http,
+  fhir_htmlgen, FHIR.LOINC.Services;
 
 Const
   MAX_ROWS = 50;
@@ -74,7 +74,7 @@ Type
 Implementation
 
 Uses
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 function StringToBoolDef(s : String; def : boolean):boolean;
 begin

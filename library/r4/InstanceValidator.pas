@@ -34,9 +34,9 @@ interface
 
 uses
   Windows, SysUtils, Classes, RegularExpressions, Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
-  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Lang,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Utilities, FHIR.R4.ElementModel, FHIR.R4.Validator, FHIR.R4.Adaptor, FHIR.R4.Context, FHIR.R4.PathNode, FHIR.R4.PathEngine;
+  fsl_base, fsl_utilities, fsl_fpc,
+  fhir_objects, fhir_utilities, fhir_xhtml, fhir_factory, 
+  fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_utilities, fhir4_elementmodel, fhir4_validator, fhir4_adaptor, fhir4_context, fhir4_pathnode, fhir4_pathengine;
 
 Type
   TFHIRRferenceRefetcher = class (TFslObject)

@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Fpc,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
   FHIR.Loinc.Services;
 
 Const

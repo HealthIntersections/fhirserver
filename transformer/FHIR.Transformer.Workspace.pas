@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXML;
+  fsl_base, fsl_utilities, fsl_stream, fsl_xml;
 
 Const
   UI_NAME = 'Workspace';
@@ -46,7 +46,7 @@ type
 function detectFormat(fn : String) : TTransformerFormat;
 
 Type
-  TBreakPointInfo = class (TFSLObject)
+  TBreakPointInfo = class (TFslObject)
   private
     Fline: integer;
     Finvalid: boolean;
@@ -60,7 +60,7 @@ Type
 
   TWorkspace = class;
 
-  TWorkspaceFile = class (TFSLObject)
+  TWorkspaceFile = class (TFslObject)
   private
     FFilename: String;
     FRow: integer;
@@ -99,7 +99,7 @@ Type
     property fmtInfo : String read FFmtInfo write FFmtInfo;
   end;
 
-  TWorkspaceExecConfig = class (TFSLObject)
+  TWorkspaceExecConfig = class (TFslObject)
   private
     FFocus: String;
     FScript: String;
@@ -116,7 +116,7 @@ Type
     property focus : String read FFocus write FFocus;
   end;
 
-  TWorkspace = class (TFSLObject)
+  TWorkspace = class (TFslObject)
   private
     FFolder: String;
     FName: String;

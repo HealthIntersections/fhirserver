@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Threads,
-  FHIR.Base.Common;
+  fsl_base, fsl_threads,
+  fhir_common;
 
 Const
   DWELL_TIME = 30 / (24*60) {min};

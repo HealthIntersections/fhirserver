@@ -18,7 +18,7 @@ interface
 uses
   DropSource,
   Windows, ActiveX, Classes, Controls, CommCtrl, ExtCtrls,
-  FHIR.Support.Base;
+  fsl_base;
 
 {$include DragDrop.inc}
 

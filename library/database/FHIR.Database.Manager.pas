@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,  FHIR.Support.Fpc,
+  fsl_base, fsl_utilities, fsl_threads,  fsl_fpc,
   FHIR.Database.Logging, FHIR.Database.Dialects;
 
 const
@@ -216,7 +216,7 @@ type
     procedure BindKeyV(AParamName: String; AParamValue: Integer); virtual; abstract;
     procedure BindDoubleV(AParamName: String; AParamValue: Double); virtual; abstract;
     procedure BindStringV(AParamName: String; AParamValue: String); virtual; abstract;
-    procedure BindTimeStampV(AParamName: String; AParamValue: FHIR.Support.Utilities.TTimeStamp); virtual; abstract;
+    procedure BindTimeStampV(AParamName: String; AParamValue: fsl_utilities.TTimeStamp); virtual; abstract;
     procedure BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime); virtual; abstract;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); virtual; abstract;
     procedure BindNullV(AParamName: String); virtual; abstract;
@@ -227,7 +227,7 @@ type
     function GetColDoubleV(ACol: Word): Double; Virtual; Abstract;
     function GetColBlobV(ACol: Word): TBytes; Virtual; Abstract;
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
-    function GetColTimestampV(ACol: Word): FHIR.Support.Utilities.TTimestamp; Virtual; Abstract;
+    function GetColTimestampV(ACol: Word): fsl_utilities.TTimestamp; Virtual; Abstract;
     function GetColDateTimeExV(ACol: Word): TFslDateTime; Virtual; Abstract;
     function GetColTypeV(ACol: Word): TFslDBColumnType; Virtual; Abstract;
     function GetColKeyV(ACol: Word): Integer; Virtual; Abstract;
@@ -294,7 +294,7 @@ type
     function GetColDouble(ACol: Integer): Double;
     function GetColBlob(ACol: Integer): TBytes;
     function GetColNull(ACol: Integer): Boolean;
-    function GetColTimestamp(ACol: Integer): FHIR.Support.Utilities.TTimestamp;
+    function GetColTimestamp(ACol: Integer): fsl_utilities.TTimestamp;
     function GetColDateTimeEx(ACol: Integer): TFslDateTime;
     function GetColType(ACol: Integer): TFslDBColumnType;
     function GetRowsAffected: Integer;
@@ -304,7 +304,7 @@ type
     function GetColIntegerByName(AName: String): Integer;
     function GetColInt64ByName(AName: String): Int64;
     function GetColDoubleByName(AName: String): Double;
-    function GetColTimeStampByName(AName: String): FHIR.Support.Utilities.TTimestamp;
+    function GetColTimeStampByName(AName: String): fsl_utilities.TTimestamp;
     function GetColDateTimeExByName(AName: String): TFslDateTime;
     function GetColTypeByName(AName: String): TFslDBColumnType;
     function GetColNullByName(AName: String): Boolean;
@@ -494,7 +494,7 @@ type
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
-    procedure BindTimeStamp(AParamName: String; AParamValue: FHIR.Support.Utilities.TTimeStamp);
+    procedure BindTimeStamp(AParamName: String; AParamValue: fsl_utilities.TTimeStamp);
 
     {
       Bind a DateTime value to a named parameter. You can call this
@@ -571,7 +571,7 @@ type
     {
     Get Column ACol(index) as a TTimestamp
     }
-    property ColTimestamp [ACol: Integer]: FHIR.Support.Utilities.TTimestamp Read GetColTimestamp;
+    property ColTimestamp [ACol: Integer]: fsl_utilities.TTimestamp Read GetColTimestamp;
 
     {
     Get Column ACol(index) as a DateAndTime
@@ -604,7 +604,7 @@ type
     property ColBlobAsStringByName[AName: String]: String Read GetColBlobAsStringByName;
     {
       Get Column "AName" as a TTimeStamp}
-    property ColTimeStampByName [AName: String]: FHIR.Support.Utilities.TTimeStamp Read GetColTimeStampByName;
+    property ColTimeStampByName [AName: String]: fsl_utilities.TTimeStamp Read GetColTimeStampByName;
     {
       Get Column "AName" as a TFslDateTime}
     property ColDateTimeExByName [AName: String]: TFslDateTime Read GetColDateTimeExByName;
@@ -915,7 +915,7 @@ begin
   result := GetColString(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColTimeStampByName(AName: String): FHIR.Support.Utilities.TTimestamp;
+function TFslDBConnection.GetColTimeStampByName(AName: String): fsl_utilities.TTimestamp;
 begin
   result := GetColTimestamp(ColByName(AName));
 end;

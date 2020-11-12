@@ -47,14 +47,14 @@ interface
 
 uses
   SysUtils, Classes, SyncObjs,
-  IdHTTP, IdSMTP, IdMessage, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPOP3, IdMessageParts, IdExplicitTLSClientServerBase,
+  IdHTTP, IdSMTP, IdMessage, idGlobal, fsl_websocket, IdText, IdAttachment, IdPOP3, IdMessageParts, IdExplicitTLSClientServerBase,
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Fpc,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_threads, fsl_fpc,
+  fsl_http,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
-  FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Base.Parser, FHIR.Support.Logging;
+  fsl_collections, fsl_stream, fsl_json,
+  fhir_objects,  fhir_utilities, fhir_factory, fhir_client, fhir_common,
+  FHIR.Server.Session, FHIR.Server.Utilities, fhir_parser, fsl_logging;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -273,7 +273,7 @@ implementation
 
 uses
   FHIR.Server.Context,
-  FHIR.Web.Twilio;
+  fsl_twilio;
 
 { TSubscriptionManager }
 

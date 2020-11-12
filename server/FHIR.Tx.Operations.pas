@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_logging, fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
   FHIR.Tools.ValueSets,
   FHIR.Server.Session, FHIR.Server.Storage, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Server.ClosureMgr;
 

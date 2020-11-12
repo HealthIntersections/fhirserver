@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Utilities,
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Web.Crypto;
+  fsl_utilities,
+  fsl_base, fsl_json,
+  fsl_crypto;
 
 type
   TJWTServices = class (TFslObject)

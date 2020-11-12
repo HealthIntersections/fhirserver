@@ -145,7 +145,7 @@ implementation
 {$R *.fmx}
 
 uses
-  FHIR.Support.Base,
+  fsl_base,
   ImplementationGuideEditor;
 
 

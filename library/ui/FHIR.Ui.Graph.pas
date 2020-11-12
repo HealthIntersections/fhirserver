@@ -40,7 +40,7 @@ uses
   {$ELSE}
   WinApi.Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
   {$ENDIF}
-  FHIR.Support.Base;
+  fsl_base;
 
 const
   tiny = 1.0e-20;  { used to avoid divide by zero errors }

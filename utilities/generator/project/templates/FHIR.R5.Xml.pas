@@ -1,6 +1,6 @@
-unit FHIR.R5.Xml;
+unit fhir5_xml;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,9 +37,9 @@ interface
 
 uses
   SysUtils, Classes, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml, 
-  FHIR.Base.Parser, FHIR.Base.Objects, 
-  FHIR.R5.ParserBase, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Base, FHIR.R5.Enums, FHIR.R5.Types;
+  fsl_base, fsl_utilities, fsl_collections, fsl_xml, fsl_xml, 
+  fhir_parser, fhir_objects, 
+  fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
 
 Type
 

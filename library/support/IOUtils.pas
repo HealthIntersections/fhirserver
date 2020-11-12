@@ -35,7 +35,7 @@ interface
 
 uses
   Classes, SysUtils, Types, FileUtil,
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 Type
 
@@ -78,11 +78,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(FHIR.Support.Utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -99,11 +99,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(FHIR.Support.Utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if SearchRec.Attr and SysUtils.faDirectory = 0 then
-          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 
@@ -120,11 +120,11 @@ var
 begin
   ts := TStringList.create;
   try
-    if FindFirst(FHIR.Support.Utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
       repeat
         if (SearchRec.Attr and SysUtils.faDirectory <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
-          ts.add(FHIR.Support.Utilities.path([Path, SearchRec.Name]));
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
       until FindNext(SearchRec) <> 0;
     end;
 

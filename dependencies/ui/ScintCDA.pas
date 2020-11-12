@@ -33,8 +33,8 @@ interface
 uses
   SysUtils, Classes, Graphics,
   ScintEdit,
-  FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Cda.Base, FHIR.CDA.Objects, FHIR.CDA.Documents;
+  fsl_base, fsl_stream,
+  cda_base, cda_objects, cda_documents;
 
 
 type

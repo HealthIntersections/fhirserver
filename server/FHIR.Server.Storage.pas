@@ -35,11 +35,11 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging, FHIR.Support.Json,
-  FHIR.Web.Parsers,
-  FHIR.Database.Dialects, FHIR.Web.GraphQL,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities, FHIR.Base.PathEngine,
-  FHIR.Client.Base, FHIR.CdsHooks.Utilities,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json,
+  fsl_http,
+  FHIR.Database.Dialects, fsl_graphql,
+  fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine,
+  fhir_client, fhir_cdshooks,
   FHIR.Server.Session,
   FHIR.Tools.Indexing, FHIR.Tools.GraphQL,
   FHIR.Server.XhtmlComp, FHIR.Server.Subscriptions, FHIR.Server.Utilities, FHIR.Server.Constants, FHIR.Server.Indexing, FHIR.Server.BundleBuilder,

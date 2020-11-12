@@ -1,6 +1,6 @@
-unit FHIR.R5.Operations;
+unit fhir5_operations;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,8 +37,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.R5.Base, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.OpBase;
+  fsl_base, fsl_utilities, fsl_stream, fsl_http,
+  fhir5_base, fhir5_types, fhir5_resources, fhir5_opbase;
 
 Type
 
@@ -47,7 +47,7 @@ Type
 implementation
 
 uses
-  FHIR.R5.Utilities;
+  fhir5_utilities;
 
 {{op.impl}}
 

@@ -90,29 +90,29 @@ end;
 procedure TCodeSystemFrame.initialize;
 begin
   FManager := TObjectManager.create;
-  FManager.registerControl('url', edtURL)
-  FManager.registerControl('name', edtName, btnName);
-  FManager.registerControl('version', edtVersion);
-  FManager.registerControl('title', editTitle);
-
-  FManager.registerControl('status', cbxStatus);
-  FManager.registerControl('experimental', chkExperimental);
-  FManager.registerControl('jurisdiction', cbxJurisdiction);
-  FManager.registerControl('date', edtDate);
-  FManager.registerControl('publisher', edtPublisher, btnPublisher);
-  FManager.registerControl('description', edtDescription, btnDescription);
-  FManager.registerControl('purpose', edtPurpose, btnPurpose);
-  FManager.registerControl('copyright', edtCopyright, btnCopyright);
-
-  FManager.registerControl('valueSet', edtValueSet);
-  FManager.registerControl('count', edtConceptCount);
-  FManager.registerControl('supplements', edtSupplements);
-  FManager.registerControl('heirarchy', cbxHeirarchy);
-  FManager.registerControl('content', cbxContent);
-
-  FManager.registerControl('caseSensitive', chkCase);
-  FManager.registerControl('grammar', chkGrammar);
-  FManager.registerControl('needsVersion', chkNeedsVersion);
+  //FManager.registerControl('url', edtURL);
+  //FManager.registerControl('name', edtName, btnName);
+  //FManager.registerControl('version', edtVersion);
+  //FManager.registerControl('title', editTitle);
+  //
+  //FManager.registerControl('status', cbxStatus);
+  //FManager.registerControl('experimental', chkExperimental);
+  //FManager.registerControl('jurisdiction', cbxJurisdiction);
+  //FManager.registerControl('date', edtDate);
+  //FManager.registerControl('publisher', edtPublisher, btnPublisher);
+  //FManager.registerControl('description', edtDescription, btnDescription);
+  //FManager.registerControl('purpose', edtPurpose, btnPurpose);
+  //FManager.registerControl('copyright', edtCopyright, btnCopyright);
+  //
+  //FManager.registerControl('valueSet', edtValueSet);
+  //FManager.registerControl('count', edtConceptCount);
+  //FManager.registerControl('supplements', edtSupplements);
+  //FManager.registerControl('heirarchy', cbxHeirarchy);
+  //FManager.registerControl('content', cbxContent);
+  //
+  //FManager.registerControl('caseSensitive', chkCase);
+  //FManager.registerControl('grammar', chkGrammar);
+  //FManager.registerControl('needsVersion', chkNeedsVersion);
 end;
 
 procedure TCodeSystemFrame.GroupBox1Click(Sender: TObject);

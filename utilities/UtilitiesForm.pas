@@ -34,8 +34,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.Utilities, Inifiles, FHIR.Support.Shell,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry, FHIR.Npm.CacheDialog;
+  Vcl.ExtCtrls, Vcl.ImgList, fsl_utilities, Inifiles, fsl_shell,
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry, fsl_npm_cacheDialog;
 
 type
   TForm4 = class(TForm)

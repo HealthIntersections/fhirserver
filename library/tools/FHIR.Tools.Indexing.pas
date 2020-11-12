@@ -35,8 +35,8 @@ interface
 uses
   SysUtils,
   Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Collections, 
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
+  fsl_base, fsl_collections, 
+  fhir_objects, fhir_common, fhir_pathengine, fhir_factory;
 
 type
   TFhirIndex = class (TFslObject)

@@ -7,8 +7,8 @@ interface
 uses
   SysUtils, Classes, Graphics, Math,
   SynEditTypes, SynEditHighlighter,
-  FHIR.Support.Utilities,
-  FHIR.v2.Base, FHIR.v2.Dictionary;
+  fsl_utilities,
+  v2_base, v2_dictionary;
 
 type
   TtkTokenKind = (

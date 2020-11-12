@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Threads,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Crypto,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
+  SysUtils, Classes, fsl_threads,
+  fsl_base, fsl_utilities, fsl_json, fsl_crypto,
+  fhir_objects,  fhir_common, fhir_factory,
   FHIR.Scim.Server,
   FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Storage;
 

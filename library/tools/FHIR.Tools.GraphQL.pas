@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Web.Parsers, FHIR.Web.GraphQL,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
+  fsl_utilities, fsl_base,
+  fsl_http, fsl_graphql,
+  fhir_objects, fhir_common, fhir_pathengine, fhir_factory;
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean of Object;

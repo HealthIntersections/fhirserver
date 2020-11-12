@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Utilities,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http,
+  fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities,
   FHIR.Tx.Service;
 
 type

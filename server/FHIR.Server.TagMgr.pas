@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Threads,
-  FHIR.Support.Base,
-  FHIR.Base.Factory,
+  SysUtils, Classes, fsl_threads,
+  fsl_base,
+  fhir_factory,
   FHIR.Server.Tags;
 
 type

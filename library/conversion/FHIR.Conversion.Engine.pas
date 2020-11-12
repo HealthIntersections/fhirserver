@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Javascript,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
-  FHIR.R4.Client, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Utilities; // Terminology Layer
+  fsl_base, fsl_utilities,
+  fsl_http,
+  fhir_objects, fhir_factory, fhir_client,
+  fhir4_client, fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_utilities; // Terminology Layer
 
 (*
 function lookup(coded, params) : Parameters;

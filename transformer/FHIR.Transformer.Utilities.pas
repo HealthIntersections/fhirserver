@@ -35,7 +35,7 @@ interface
 uses
   WinApi.Windows, SysUtils, Messages, Forms, Classes, Dialogs, Graphics, Controls, StdCtrls, Consts,
   ScintEdit, ScintInt,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
+  fsl_base, fsl_utilities, fsl_stream;
 
 const
   { Memo marker numbers }

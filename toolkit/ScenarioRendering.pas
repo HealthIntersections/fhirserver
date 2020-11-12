@@ -37,7 +37,7 @@ uses
   {$IFDEF WINDOWS}
   winapi.shellapi, fmx.platform.win, winapi.windows, jclshell,
   {$ENDIF}
-  FHIR.Version.Utilities, FHIR.Base.Objects,FHIR.Version.Resources,
+  FHIR.Version.Utilities, fhir_objects,FHIR.Version.Resources,
   FMX.dialogservice, FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FDownloadForm,
   FMX.ListBox, FMX.ScrollBox, FMX.Memo;
 

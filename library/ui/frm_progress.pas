@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   Buttons, ExtCtrls,
-  FHIR.Support.Threads;
+  fsl_threads;
 
 type
   { TProgressForm }

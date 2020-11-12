@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Character,
-  FHIR.Web.Parsers,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base,
+  fsl_http,
+  fsl_base, fsl_utilities, fsl_fpc,
+  fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Tools.Indexing,
   FHIR.Server.Indexing, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Constants,

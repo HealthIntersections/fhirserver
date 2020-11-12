@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  FHIR.Support.Base, 
-  FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Base.Lang;
+  fsl_base, 
+  fhir_objects, fhir_factory, fsl_scim;
 
 Const
 //  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';

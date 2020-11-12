@@ -32,13 +32,13 @@ Interface
 
 Uses
   Windows, Graphics, Math, StdCtrls, ExtCtrls, Dialogs, SysUtils, Controls, Forms, Classes, Menus,
-  FHIR.Support.Graphics, FHIR.Support.Utilities, FHIR.Support.Collections;
+  fsl_graphics, fsl_utilities, fsl_collections;
 
 
 Type
-  TRect = FHIR.Support.Graphics.TRect;
-  TPoint = FHIR.Support.Graphics.TPoint;
-  TColour = FHIR.Support.Utilities.TColour;
+  TRect = fsl_graphics.TRect;
+  TPoint = fsl_graphics.TPoint;
+  TColour = fsl_utilities.TColour;
   TUixIdentifier = Integer;
   TUixEvent = Procedure (oSender : TObject) Of Object;
 
@@ -1999,7 +1999,7 @@ Begin
 
   For iLoop := Low(aButtons) To High(aButtons) Do
   Begin
-    aTextRect := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+    aTextRect := fsl_graphics.Rect(0, 0, 0, 0);
     Windows.DrawText(oDialog.Canvas.Handle, PChar(aButtons[iLoop]), -1, aTextRect, DT_CALCRECT Or DT_LEFT Or DT_SINGLELINE Or oDialog.DrawTextBiDiModeFlagsReadingOnly);
     aButtonWidths[iLoop] := aTextRect.Right - aTextRect.Left + 8;
 

@@ -38,9 +38,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Javascript,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  fsl_base, fsl_utilities, fsl_http,
+  fsl_javascript,
+  fhir_objects, 
   FHIR.Server.Session;
 
 type

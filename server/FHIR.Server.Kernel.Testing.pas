@@ -39,9 +39,9 @@ uses
   TestInsight.DUnit, DUnitTestRunner, GUITestRunner,
   {$ENDIF}
   {$IFDEF FPC}
-  XGuiTestRunner, FHIR.Support.Fpc.ConsoleTester,
+  XGuiTestRunner, fsl_tests_console,
   {$ENDIF}
-  FHIR.Support.Utilities, FHIR.Support.Testing,
+  fsl_utilities, fsl_testing,
   FHIR.Server.Ini,
   FHIR.Server.TestRegistry;
 

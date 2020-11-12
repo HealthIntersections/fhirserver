@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base,
+  fsl_base,
   IdCustomHttpServer, IdContext, IdHttp;
 
 Const

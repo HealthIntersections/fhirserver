@@ -34,9 +34,10 @@ interface
 
 uses
   SysUtils,
-  FHIR.Web.Parsers, FHIR.Support.Utilities,
-  FHIR.Support.Base, 
-  FHIR.Base.Lang,
+  fsl_base, fsl_http, fsl_utilities,
+  fhir_objects,
+
+  
   FHIR.Database.Manager,
   FHIR.Server.Session, FHIR.Tools.Indexing,
   FHIR.Server.Indexing;

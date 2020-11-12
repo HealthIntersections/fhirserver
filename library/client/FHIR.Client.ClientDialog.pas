@@ -36,9 +36,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Json, FHIR.Support.Certs,
-  FHIR.Base.Lang,
-  FHIR.Smart.Utilities;
+  fsl_json, FHIR.Support.Certs,
+  
+  fhir_oauth;
 
 type
   TRegisterClientForm = class(TForm)

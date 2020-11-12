@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Web.Parsers,
+  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http,
   FHIR.Database.Manager,
   FHIR.Tx.Service;
 
@@ -108,7 +108,7 @@ Procedure ImportUnii(filename : String; dbm : TFslDBManager);
 implementation
 
 uses
-  FHIR.Support.Logging;
+  fsl_logging;
 
 { TUniiServices }
 

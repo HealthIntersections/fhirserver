@@ -57,10 +57,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\support\FHIR.Support.Base.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="..\library\npm\frm_npm_browser.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PackageRegistryForm"/>
@@ -73,14 +69,6 @@
         <ComponentName Value="PackageCacheForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\library\ui\FHIR.LCL.Managers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\library\support\FHIR.Support.Threads.pas"/>
-        <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\ui\frm_progress.pas"/>
@@ -108,26 +96,18 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\v2\FHIR.v2.Objects.pas"/>
+        <Filename Value="..\library\v2\v2_objects.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\v2\FHIR.v2.Base.pas"/>
+        <Filename Value="..\library\v2\v2_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.V2.Base"/>
+        <UnitName Value="v2_base"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\support\FHIR.Support.Collections.pas"/>
+        <Filename Value="..\library\v2\v2_dictionary_pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\library\v2\FHIR.v2.Dictionary.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.V2.Dictionary"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\library\support\FHIR.Support.MXml.pas"/>
-        <IsPartOfProject Value="True"/>
+        <UnitName Value="v2_dictionary"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\base\FHIR.Base.Xhtml.pas"/>
@@ -138,13 +118,9 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\support\FHIR.Support.Json.pas"/>
+        <Filename Value="..\library\v2\v2_dictionary_v231.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\library\v2\FHIR.v2.Dictionary.v231.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.V2.Dictionary.v231"/>
+        <UnitName Value="v2_dictionary_v231"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\base\FHIR.Base.Lang.pas"/>
@@ -159,47 +135,47 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Parser.pas"/>
+        <Filename Value="..\library\r4\fhir4_parser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Types.pas"/>
+        <Filename Value="..\library\r4\fhir4_types.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Base.pas"/>
+        <Filename Value="..\library\r4\fhir4_base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Resources.pas"/>
+        <Filename Value="..\library\r4\fhir4_resources.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Xml.pas"/>
+        <Filename Value="..\library\r4\fhir4_xml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Json.pas"/>
+        <Filename Value="..\library\r4\fhir4_json.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Turtle.pas"/>
+        <Filename Value="..\library\r4\fhir4_turtle.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\r4\FHIR.R4.Context.pas"/>
+        <Filename Value="..\library\r4\fhir4_context.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\cda\FHIR.Cda.Narrative.pas"/>
+        <Filename Value="..\library\cda\cda_narrative.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\cda\FHIR.Cda.Base.pas"/>
+        <Filename Value="..\library\cda\cda_base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\library\cda\FHIR.Cda.Types.pas"/>
+        <Filename Value="..\library\cda\cda_types.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>

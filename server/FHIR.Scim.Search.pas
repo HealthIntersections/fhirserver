@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-   FHIR.Support.Base;
+   fsl_base;
 
 Type
   TSCIMSearchItemType = (sitTest, sitCriteria, sitValuePath);

@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Base.Lang,
-  FHIR.R3.Resources, FHIR.R3.Utilities,
+  
+  fhir3_resources, fhir3_utilities,
   FHIR.CdsHooks.Server;
 
 type

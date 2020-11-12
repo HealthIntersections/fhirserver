@@ -33,7 +33,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
   FHIR.Npp.Form,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Lang,
+  fhir_objects, fhir_factory, 
   FHIR.Tools.CodeGen;
 
 type

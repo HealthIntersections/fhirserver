@@ -34,9 +34,9 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Support.Base, FHIR.Support.Collections,
-  FHIR.Web.HtmlGen, FHIR.Snomed.Services;
+  fsl_utilities, fsl_threads,
+  fsl_base, fsl_collections,
+  fhir_htmlgen, FHIR.Snomed.Services;
 
 Const
   MAX_ROWS = 100;

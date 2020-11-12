@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-uses SysUtils, Classes, FHIR.Support.Base;
+uses SysUtils, Classes, fsl_base;
 
 type
 

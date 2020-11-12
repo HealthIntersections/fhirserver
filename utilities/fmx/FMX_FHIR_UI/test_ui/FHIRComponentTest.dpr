@@ -3,8 +3,8 @@ program FHIRComponentTest;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  FHIR.Base.Objects in '..\..\..\..\base\FHIR.Base.Objects.pas',
-  FHIR.R4.Resources in '..\..\..\..\R4\FHIR.R4.Resources.pas',
+  fhir_objects in '..\..\..\..\base\fhir_objects.pas',
+  fhir4_resources in '..\..\..\..\R4\fhir4_resources.pas',
   FHIR.Server.Session in '..\..\..\..\tools\FHIR.Server.Session.pas',
   FHIR.Tools.Indexing in '..\..\..\..\tools\FHIR.Tools.Indexing.pas',
   FHIR.Server.Security in '..\..\..\..\tools\FHIR.Server.Security.pas',

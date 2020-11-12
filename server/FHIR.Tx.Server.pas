@@ -40,9 +40,9 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Factory,
+  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory,
   FHIR.Tools.ValueSets,
   FHIR.Server.Session,
   FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
@@ -126,7 +126,7 @@ Type
 implementation
 
 uses
-  FHIR.Support.Logging;
+  fsl_logging;
 
 
 { TTerminologyServer }

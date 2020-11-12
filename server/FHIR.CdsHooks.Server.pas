@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Parsers,
-  FHIR.Base.Lang, FHIR.Client.Base,
+  fsl_base, fsl_json, fsl_http,
+  fhir_objects, fhir_client,
   FHIR.Server.Session,
-  FHIR.CdsHooks.Utilities, FHIR.Server.Utilities, FHIR.Server.Context;
+  fhir_cdshooks, FHIR.Server.Utilities, FHIR.Server.Context;
 
 type
   TCDSHooksProcessor = class (TFslObject)

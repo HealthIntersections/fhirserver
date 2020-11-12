@@ -34,9 +34,9 @@ interface
 
 Uses
   Sysutils, Classes,
-  FHIR.Support.Testing,
+  fsl_testing,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  fsl_base, fsl_utilities, fsl_stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 

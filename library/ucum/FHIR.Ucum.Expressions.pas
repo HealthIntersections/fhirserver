@@ -34,7 +34,7 @@ Interface
 
 uses
   SysUtils, Generics.Defaults,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
+  fsl_base, fsl_utilities, fsl_fpc,
   FHIR.Ucum.Handlers, FHIR.Ucum.Base;
 
 Type

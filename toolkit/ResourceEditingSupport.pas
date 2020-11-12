@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Utilities, FHIR.Web.Parsers,
+  fsl_utilities, fsl_http,
   FHIR.Version.Types, FHIR.Version.Resources,
   FMX.DateTimeCtrls;
 

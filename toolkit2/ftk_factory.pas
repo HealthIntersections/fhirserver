@@ -8,8 +8,8 @@ uses
   SysUtils, Classes,
   Dialogs,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json,
-  FHIR.Base.Objects,
+  fsl_base, fsl_utilities, fsl_xml, fsl_json,
+  fhir_objects,
 
   ftk_context, ftk_store,
   ftk_editor_text, ftk_editor_ini, ftk_editor_xml, ftk_editor_json, ftk_editor_html,

@@ -32,8 +32,8 @@ Interface
 
 Uses
   Windows, SysUtils, Graphics, Controls, Classes, Forms, StdCtrls, ExtCtrls, Spin, Math, ComCtrls, Dialogs, Contnrs,
-  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Graphics,
-  FHIR.Ui.GdiPlus,
+  fsl_utilities, fsl_collections, fsl_graphics,
+  fsl_gdiplus,
   FHIR.Uix.Base, FHIR.Uix.Controls, FHIR.Uix.Forms, FHIR.Uix.Images, FHIR.Uix.Advanced, FHIR.Uix.Dialogs,
 
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Settings, FHIR.WP.Icons, FHIR.WP.Working, FHIR.WP.Engine, FHIR.WP.Control, FHIR.WP.Format;

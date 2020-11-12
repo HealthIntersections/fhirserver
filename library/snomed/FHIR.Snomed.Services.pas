@@ -58,9 +58,9 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Web.Parsers, FHIR.Support.Fpc, FHIR.Support.Threads,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
-  FHIR.CdsHooks.Utilities,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities,
+  fhir_cdshooks,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
 
 Const

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, IniFiles, Forms,
   Vcl.Dialogs,
   JclSysUtils,
-  FHIR.Support.Base, FHIR.Support.Threads;
+  fsl_base, fsl_threads;
 
 type
   TProgressProc = procedure (pct : integer);

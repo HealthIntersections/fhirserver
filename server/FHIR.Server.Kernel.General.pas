@@ -36,22 +36,22 @@ Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging,
-  FHIR.Ucum.Services, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Common,
-  {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}
-  FHIR.Npm.Cache,
+  fsl_base, fsl_utilities, fsl_logging,
+  FHIR.Ucum.Services, fsl_http,
+  fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common,
+  {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
+  fsl_npm_cache,
 
-  FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
-  FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context, FHIR.R5.Context,
-  FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo, FHIR.R5.IndexInfo,
+  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
+  fhir2_context, fhir3_context, fhir4_context, fhir5_context,
+  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
   FHIR.Server.IndexingR2, FHIR.Server.IndexingR3, FHIR.Server.IndexingR4, FHIR.Server.IndexingR5,
   FHIR.Server.SubscriptionsR2, FHIR.Server.SubscriptionsR3, FHIR.Server.SubscriptionsR4, FHIR.Server.SubscriptionsR5,
   FHIR.Server.OperationsR2, FHIR.Server.OperationsR3, FHIR.Server.OperationsR4, FHIR.Server.OperationsR5,
-  FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator, FHIR.R5.Validator,
+  fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
-  {$IFNDEF NO_JS} FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript, FHIR.R5.Javascript, {$ENDIF}
-  FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine, FHIR.R5.PathEngine,
+  {$IFNDEF NO_JS} fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript, {$ENDIF}
+  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
 
   FHIR.Database.Manager,
   FHIR.Tools.Indexing,
@@ -298,11 +298,11 @@ end;
 {$IFNDEF NO_JS}
 procedure TFHIRServiceGeneral.registerJs(sender : TObject; js : TJsHost);
 begin
-  js.engine.registerFactory(FHIR.R2.Javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
-  js.engine.registerFactory(FHIR.R3.Javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
-  js.engine.registerFactory(FHIR.R5.Javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
+  js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
+  js.engine.registerFactory(fhir3_javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
 {$ENDIF}
 

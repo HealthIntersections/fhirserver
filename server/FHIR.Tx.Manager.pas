@@ -33,14 +33,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Threads, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Web.Parsers,
+  SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
+  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Factory,
+  fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory,
   FHIR.Tools.CodeSystemProvider, FHIR.Tools.ValueSets,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR,
   FHIR.Tx.Uri, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217,
-  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging, FHIR.Tx.NDC, FHIR.Tx.HGVS,
+  FHIR.Tx.MimeTypes, FHIR.Tx.Lang, fsl_logging, FHIR.Tx.NDC, FHIR.Tx.HGVS,
   FHIR.Server.Utilities, FHIR.Server.Ini;
 
 const

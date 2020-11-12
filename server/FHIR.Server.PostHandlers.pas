@@ -32,9 +32,9 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  fsl_base, fsl_utilities,
+  fsl_http,
+  fhir_objects, 
   FHIR.Server.Context, FHIR.Server.Session;
 
 Type

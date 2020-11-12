@@ -35,7 +35,7 @@ interface
 (*
 
 
-FHIR.R4.Tests.Maps
+fhir4_tests_Maps
 
 
 
@@ -51,12 +51,12 @@ FHIR.XVersion.Tests
 
 uses
   SysUtils, IniFiles,
-  FHIR.Support.Testing, FHIR.Support.Utilities,
+  fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  FHIR.Support.Tests, FHIR.Web.Tests, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, FHIR.v2.Tests, FHIR.Cda.Tests, FHIR.Support.SCrypt.Tests,
-  FHIR.Npm.Tests,
-  {$IFNDEF NO_JS} FHIR.Javascript.Tests, {$ENDIF}
-  FHIR.R4.Tests.Parser, FHIR.R4.Tests.Context, FHIR.R4.Tests.Utilities, FHIR.R4.Tests.Client, FHIR.R4.Tests.Liquid, FHIR.R4.Tests.PathEngine;
+  fsl_tests, fsl_tests_web, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, v2_tests, cda_tests, fsl_tests_scrypt,
+  fsl_npm_tests,
+  {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
+  fhir4_tests_Parser, fhir4_tests_Context, fhir4_tests_Utilities, fhir4_tests_Client, fhir4_tests_Liquid, fhir4_tests_PathEngine;
 
 procedure registerTests;
 
@@ -132,25 +132,25 @@ begin
 
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;
-  FHIR.Support.Tests.registerTests;
-  FHIR.Support.SCrypt.Tests.registerTests;
-  FHIR.Web.Tests.registerTests;
-  FHIR.Cda.Tests.registerTests;
+  fsl_tests.registerTests;
+  fsl_tests_scrypt.registerTests;
+  fsl_tests_web.registerTests;
+  cda_tests.registerTests;
   FHIR.Tx.IETFLang.Tests.registerTests;
   FHIR.Database.Tests.registerTests;
   FHIR.Ucum.Tests.registerTests;
   FHIR.Snomed.Tests.registerTests;
-  FHIR.v2.Tests.registerTests;
+  v2_tests.registerTests;
   {$IFNDEF NO_JS}
-  FHIR.Javascript.Tests.registerTests;
+  fhir_tests_javascript.registerTests;
   {$ENDIF}
-  FHIR.Npm.Tests.registerTests;
-  FHIR.R4.Tests.Parser.registerTests;
-  FHIR.R4.Tests.Context.registerTests;
-  FHIR.R4.Tests.Utilities.registerTests;
-  FHIR.R4.Tests.Client.registerTests;
-  FHIR.R4.Tests.Liquid.registerTests;
-  FHIR.R4.Tests.PathEngine.registerTests;
+  fsl_npm_tests.registerTests;
+  fhir4_tests_Parser.registerTests;
+  fhir4_tests_Context.registerTests;
+  fhir4_tests_Utilities.registerTests;
+  fhir4_tests_Client.registerTests;
+  fhir4_tests_Liquid.registerTests;
+  fhir4_tests_PathEngine.registerTests;
 end;
 
 end.

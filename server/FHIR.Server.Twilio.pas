@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_json,
+  fsl_http,
   FHIR.DataBase.Manager;
 
 

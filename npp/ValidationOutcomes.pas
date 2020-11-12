@@ -40,8 +40,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, clipbrd, Vcl.OleCtrls,
   SHDocVw, ActiveX,
   VirtualTrees, FHIR.Npp.Form, FHIR.Npp.Base,
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Narrative;
+  fsl_utilities, fsl_stream, fsl_base,
+  fhir_objects, fhir_common, fhir_factory, fhir_narrative;
 
 const
   MIN_COL_WIDTH = 260;

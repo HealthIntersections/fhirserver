@@ -33,9 +33,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Tests.Worker,
+  fsl_utilities,
+  fhir_objects, FHIR.Version.Parser,
+  fhir3_types, fhir3_resources, fhir3_constants, fhir3_context, fhir3_pathengine, FHIR.R3.Tests.Worker,
   DUnitX.TestFramework;
 
 

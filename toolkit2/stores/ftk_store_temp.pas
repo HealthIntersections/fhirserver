@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IOUtils, IniFiles,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json,
   ftk_context;
 
 type

@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils, Classes, Controls,
   Ad3SpellBase, ad3Spell, ad3ParserBase, ad3CustomDictionary, ad3Configuration, ad3ConfigurationDialogCtrl,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  fsl_base, fsl_utilities, fsl_collections,
   FHIR.WP.Spelling, FHIR.WP.Working, FHIR.WP.Control;
 
 Type

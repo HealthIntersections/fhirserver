@@ -32,8 +32,8 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Support.Stream,
-  FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory;
+  fsl_base, fsl_utilities, fsl_json, FHIR.Support.Certs, fsl_stream,
+   fhir_common, fhir_factory;
 
 type
   TClientApplicationVerifier = class (TFslObject)

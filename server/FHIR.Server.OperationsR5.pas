@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_json,
+  fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Parser, FHIR.Base.Utilities,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources.Base, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Utilities, FHIR.R5.OpBase, FHIR.R5.Operations, FHIR.R5.PathEngine, FHIR.R5.PathNode,
-  FHIR.R5.Common, FHIR.R5.Questionnaire, FHIR.R5.Validator, FHIR.R5.Context, FHIR.R5.Profiles, FHIR.R5.Narrative, FHIR.R5.GraphDefinition, FHIR.R5.MapUtilities,
+  fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
+  fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_constants, fhir5_utilities, fhir5_opbase, fhir5_operations, fhir5_pathengine, fhir5_pathnode,
+  fhir5_common, fhir5_questionnaire, fhir5_validator, fhir5_context, fhir5_profiles, fhir5_narrative, fhir5_graphdefinition, fhir5_maputils,
   FHIR.Tools.CodeGen, FHIR.Tools.DiffEngine,
   FHIR.Tx.Operations, FHIR.Ucum.Services,
   FHIR.Server.Operations,

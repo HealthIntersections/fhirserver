@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base;
+  fsl_base;
 
 Type
   TSCIMStorageServiceConnection = class (TFslObject)

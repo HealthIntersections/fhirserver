@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Logging,
+  fsl_base, fsl_utilities, fsl_threads, fsl_logging,
   FHIR.Server.Context;
 
 type

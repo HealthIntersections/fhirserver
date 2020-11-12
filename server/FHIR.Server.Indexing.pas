@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Threads,
+  fsl_base, fsl_threads, fsl_utilities,
+  fhir_objects, fhir_common, fhir_factory,  fhir_pathengine,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.PathEngine,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services, FHIR.Tx.Server,
   FHIR.Server.Constants, FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Utilities;
@@ -256,8 +256,8 @@ begin
       end;
     sptString :
       begin
-        value1 := removeCaseAndAccents(value1);
-        value2 := removeCaseAndAccents(value2);
+        value1 := RemoveAccents(value1).ToLower;
+        value2 := RemoveAccents(value2).ToLower;
       end;
     sptDate : ; // nothing
 
@@ -265,7 +265,7 @@ begin
 
     sptToken :
       begin
-      value2 := removeCaseAndAccents(value2);
+      value2 := removeAccents(value2).ToLower;
       end;
     sptReference : ; // nothing
   else

@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Graphics,
   ScintEdit,
-  FHIR.Support.Base, FHIR.Support.Stream;
+  fsl_base, fsl_stream;
 
 type
   TXMLStylerStyle = (

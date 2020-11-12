@@ -32,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base,
-  FHIR.Base.Factory, FHIR.Base.PathEngine,
+  fsl_base,
+  fhir_factory, fhir_pathengine,
   FHIR.Ucum.Services,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 

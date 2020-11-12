@@ -31,10 +31,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Npm.Cache,
-  FHIR.Base.Factory,
-  FHIR.Smart.Utilities, FHIR.Client.Registry;
+  fsl_json, fsl_utilities,
+  fsl_npm_cache,
+  fhir_factory,
+  fhir_oauth, fhir_client_registry;
 
 const
   DEF_TIMEOUT = 10;

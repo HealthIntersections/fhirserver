@@ -62,15 +62,15 @@ interface
 
 Uses
   SysUtils, StrUtils, Classes, IniFiles,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Threads,
-  FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_collections, fsl_threads,
+  fsl_stream, fsl_json,
+  fsl_http,
   FHIR.Ucum.Services,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Validator, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.SCIM,
+  fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
 
   // change which version is implemented by changing these imports
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory, FHIR.R3.PathEngine,
-  FHIR.R3.Validator, FHIR.R3.IndexInfo, FHIR.Server.ValidatorR3,
+  fhir3_types, fhir3_resources, fhir3_constants, fhir3_utilities, fhir3_factory, fhir3_pathengine,
+  fhir3_validator, fhir3_indexinfo, FHIR.Server.ValidatorR3,
 
   FHIR.Tools.Indexing,
   FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.UserMgr,
@@ -327,8 +327,8 @@ begin
   FPath := path;
   FPatients := TCSVData.Create;
   FObservations := TCSVData.Create;
-  FPatients.load(FHIR.Support.Utilities.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
-  FObservations.load(FHIR.Support.Utilities.Path([path, 'observations.csv']), ['Version', 'LastModified']);
+  FPatients.load(fsl_utilities.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
+  FObservations.load(fsl_utilities.Path([path, 'observations.csv']), ['Version', 'LastModified']);
 end;
 
 destructor TExampleServerData.Destroy;
@@ -346,8 +346,8 @@ end;
 
 procedure TExampleServerData.save;
 begin
-  FPatients.save(FHIR.Support.Utilities.Path([Fpath, 'patients.csv']));
-  FObservations.save(FHIR.Support.Utilities.Path([Fpath, 'observations.csv']));
+  FPatients.save(fsl_utilities.Path([Fpath, 'patients.csv']));
+  FObservations.save(fsl_utilities.Path([Fpath, 'observations.csv']));
 end;
 
 { TExampleFHIROperationEngine }

@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
   StdCtrls, Buttons, lclintf,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   FHIR.Server.Ini, FHIR.Server.Gui.Controller;
 
 type

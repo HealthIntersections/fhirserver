@@ -34,22 +34,22 @@ interface
 
 uses
   SysUtils, Classes, IOUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Ucum.Services, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Base.Utilities,
-  {$IFNDEF NO_JS}FHIR.Javascript.Base, {$ENDIF}
-  FHIR.Npm.Cache, FHIR.Npm.Package,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream,
+  FHIR.Ucum.Services, fsl_http,
+  fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
+  {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
+  fsl_npm_cache, fsl_npm,
 
-  FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory, FHIR.R5.Factory,
-  FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo, FHIR.R5.IndexInfo,
-  FHIR.R2.Context, FHIR.R3.Context, FHIR.R4.Context, FHIR.R5.Context,
-  FHIR.R2.PathEngine, FHIR.R3.PathEngine, FHIR.R4.PathEngine, FHIR.R5.PathEngine,
-  FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator, FHIR.R5.Validator,
+  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
+  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
+  fhir2_context, fhir3_context, fhir4_context, fhir5_context,
+  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
+  fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
 
   FHIR.Tools.Indexing, FHIR.Tools.Search,
   FHIR.Database.Manager,
-  FHIR.Base.Scim,
+  fsl_scim,
   FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Tx.Operations, FHIR.Server.Operations,
   FHIR.Server.Storage, FHIR.Server.Context, FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Ini, FHIR.Server.BundleBuilder,
   FHIR.Server.Utilities, FHIR.Server.Security, FHIR.Server.Indexing, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Web,

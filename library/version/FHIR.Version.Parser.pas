@@ -36,46 +36,46 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Xml,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
+  fsl_base, fsl_stream, fsl_xml,
+  fhir_objects, fhir_parser, 
 
   {$IFDEF FHIR2}
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Xml, FHIR.R2.Json, FHIR.R2.Context, FHIR.R2.Parser;
+  fhir2_types, fhir2_resources, fhir2_xml, fhir2_json, fhir2_context, fhir2_parser;
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Xml, FHIR.R3.Json, FHIR.R3.Turtle, FHIR.R3.Context, FHIR.R3.Parser;
+  fhir3_types, fhir3_resources, fhir3_xml, fhir3_json, fhir3_turtle, fhir3_context, fhir3_parser;
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Turtle, FHIR.R4.Context, FHIR.R4.Parser;
+  fhir4_types, fhir4_resources, fhir4_xml, fhir4_json, fhir4_turtle, fhir4_context, fhir4_parser;
   {$ENDIF}
 
 Type
-  TFHIRParser = FHIR.Base.Parser.TFHIRParser;
-  TFHIRComposer = FHIR.Base.Parser.TFHIRComposer;
+  TFHIRParser = fhir_parser.TFHIRParser;
+  TFHIRComposer = fhir_parser.TFHIRComposer;
 
   {$IFDEF FHIR2}
-  TFHIRXmlParser = FHIR.R2.Xml.TFHIRXmlParser;
-  TFHIRXmlComposer = FHIR.R2.Xml.TFHIRXmlComposer;
-  TFHIRJsonParser = FHIR.R2.Json.TFHIRJsonParser;
-  TFHIRJsonComposer = FHIR.R2.Json.TFHIRJsonComposer;
+  TFHIRXmlParser = fhir2_xml.TFHIRXmlParser;
+  TFHIRXmlComposer = fhir2_xml.TFHIRXmlComposer;
+  TFHIRJsonParser = fhir2_json.TFHIRJsonParser;
+  TFHIRJsonComposer = fhir2_json.TFHIRJsonComposer;
   TFHIRParsers = TFHIRParsers2;
   {$ENDIF}
   {$IFDEF FHIR3}
-  TFHIRXmlParser = FHIR.R3.Xml.TFHIRXmlParser;
-  TFHIRXmlComposer = FHIR.R3.Xml.TFHIRXmlComposer;
-  TFHIRJsonParser = FHIR.R3.Json.TFHIRJsonParser;
-  TFHIRJsonComposer = FHIR.R3.Json.TFHIRJsonComposer;
-  TFHIRTurtleComposer = FHIR.R3.Turtle.TFHIRTurtleComposer;
-  TFHIRTurtleParser = FHIR.R3.Turtle.TFHIRTurtleParser;
+  TFHIRXmlParser = fhir3_xml.TFHIRXmlParser;
+  TFHIRXmlComposer = fhir3_xml.TFHIRXmlComposer;
+  TFHIRJsonParser = fhir3_json.TFHIRJsonParser;
+  TFHIRJsonComposer = fhir3_json.TFHIRJsonComposer;
+  TFHIRTurtleComposer = fhir3_turtle.TFHIRTurtleComposer;
+  TFHIRTurtleParser = fhir3_turtle.TFHIRTurtleParser;
   TFHIRParsers = TFHIRParsers3;
   {$ENDIF}
   {$IFDEF FHIR4}
-  TFHIRXmlParser = FHIR.R4.Xml.TFHIRXmlParser;
-  TFHIRXmlComposer = FHIR.R4.Xml.TFHIRXmlComposer;
-  TFHIRJsonParser = FHIR.R4.Json.TFHIRJsonParser;
-  TFHIRJsonComposer = FHIR.R4.Json.TFHIRJsonComposer;
-  TFHIRTurtleComposer = FHIR.R4.Turtle.TFHIRTurtleComposer;
-  TFHIRTurtleParser = FHIR.R4.Turtle.TFHIRTurtleParser;
+  TFHIRXmlParser = fhir4_xml.TFHIRXmlParser;
+  TFHIRXmlComposer = fhir4_xml.TFHIRXmlComposer;
+  TFHIRJsonParser = fhir4_json.TFHIRJsonParser;
+  TFHIRJsonComposer = fhir4_json.TFHIRJsonComposer;
+  TFHIRTurtleComposer = fhir4_turtle.TFHIRTurtleComposer;
+  TFHIRTurtleParser = fhir4_turtle.TFHIRTurtleParser;
   TFHIRParsers = TFHIRParsers4;
   {$ENDIF}
 

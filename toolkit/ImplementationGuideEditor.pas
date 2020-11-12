@@ -39,11 +39,11 @@ uses
   System.IOUtils,
   System.types,
   System.UITypes,
-  FHIR.Base.Objects,
+  fhir_objects,
   FHIR.Version.types,
   FHIR.Version.Resources,
   FHIR.Version.Utilities,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   System.ImageList, FMX.types, FMX.ScrollBox, System.Classes,
   FMX.Controls.Presentation, FMX.DateTimeCtrls, FMX.Edit,
   FMX.Memo, FMX.TreeView, FMX.Dialogs, FMX.DialogService,
@@ -280,7 +280,7 @@ implementation
 
 {$R *.fmx}
 
-uses Import2html, FHIR.Support.Base;
+uses Import2html, fsl_base;
 
 procedure TImplementationGuideEditorFrame.cancel;
 begin

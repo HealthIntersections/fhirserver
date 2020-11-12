@@ -35,12 +35,12 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_json,
+  fsl_http,
   FHIR.Database.Manager,
-  FHIR.Npm.Package, FHIR.Npm.Spider,
-  FHIR.Base.Objects, FHIR.Support.Stream,
-  FHIR.R4.Types, // choice of R4 is totally arbitrary
+  fsl_npm, fsl_npm_spider,
+  fhir_objects, fsl_stream,
+  fhir4_types, // choice of R4 is totally arbitrary
   FHIR.Server.WebBase, FHIR.Server.Session;
 
 type

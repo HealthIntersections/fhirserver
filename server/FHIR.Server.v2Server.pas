@@ -31,12 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base,
-  FHIR.v2.Protocol,
+  fsl_base,
+  v2_protocol,
   FHIR.Server.Web;
 
 type
-  Tv2ServerInstance = class (TFSLObject)
+  Tv2ServerInstance = class (TFslObject)
   private
     FScript: String;
     FPort: word;

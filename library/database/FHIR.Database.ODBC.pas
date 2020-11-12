@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPC} fpcodbc {$ELSE} FHIR.Database.ODBC.Headers {$ENDIF},
-  FHIR.Support.Base, FHIR.Support.Utilities,  
+  fsl_base, fsl_utilities,  
   FHIR.Database.Dialects, FHIR.Database.Manager,
   FHIR.Database.ODBC.Objects;
 
@@ -215,7 +215,7 @@ begin
   Result := FStmt.ColNull[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColTimestampV(ACol: Word): FHIR.Support.Utilities.TTimestamp;
+function TFslDBOdbcConnection.GetColTimestampV(ACol: Word): fsl_utilities.TTimestamp;
 begin
   Result := FStmt.ColTimestamp[ACol];
 end;
@@ -470,7 +470,7 @@ type
 
   TOdbcBoundDate = class (TFslDBBoundParam)
   private
-    FDate: FHIR.Support.Utilities.TTimeStamp
+    FDate: fsl_utilities.TTimeStamp
   end;
 
   TOdbcBoundDouble = class (TFslDBBoundParam)
@@ -538,7 +538,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: FHIR.Support.Utilities.TTimeStamp);
+procedure TFslDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: fsl_utilities.TTimeStamp);
 var
   LBind: TOdbcBoundDate;
 begin

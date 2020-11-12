@@ -47,8 +47,8 @@ uses
   SysUtils, Classes,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs,
   SynEdit, SynEditTypes,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser;
+  fsl_base, fsl_stream, fsl_http,
+  fhir_objects, fhir_factory, fhir_parser;
 
 type
   TNodeOperation = (opAdd, opDelete, opEdit, opExecute, opOrder, opHeirarchy);

@@ -35,8 +35,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Edit, FMX.ListBox, FMX.StdCtrls, FMX.Grid, FMX.ScrollBox,
   FMX.Controls.Presentation,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Fetcher,
-  FHIR.Npm.Cache;
+  fsl_base, fsl_utilities, fsl_json, fsl_fetcher,
+  fsl_npm_cache;
 
 type
   TOnLoadUrlEvent = procedure (sender : TObject; url : String; pbar : TProgressBar) of object;

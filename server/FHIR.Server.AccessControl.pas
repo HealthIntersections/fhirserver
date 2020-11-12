@@ -32,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base,
-  FHIR.Base.Objects,
+  fsl_base,
+  fhir_objects,
   FHIR.Server.Session, FHIR.Server.Security;
 
 Type

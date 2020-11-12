@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Liquid, FHIR.R3.PathEngine, FHIR.R3.Xml,
-  DUnitX.TestFramework, FHIR.Support.Tests, FHIR.R3.Tests.Worker;
+  fsl_base, fsl_json,
+  fhir3_resources, fhir3_parser, fhir3_liquid, fhir3_pathengine, fhir3_xml,
+  DUnitX.TestFramework, fsl_tests, FHIR.R3.Tests.Worker;
 
 type
   LiquidTestCaseAttribute = class (CustomTestCaseSourceAttribute)

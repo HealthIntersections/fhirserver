@@ -78,20 +78,20 @@ Uses
   {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
-  IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, FHIR.Web.Socket,
+  IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Crypto, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Json, FHIR.Support.MXml,
-  {$IFDEF WINDOWS} FHIR.Support.MsXml, FHIR.Support.Service, {$ENDIF}
-  FHIR.Web.OpenSSL, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects, FHIR.Web.Rdf, FHIR.Web.GraphQL, FHIR.Web.Twilio,
+  fsl_base, fsl_utilities, fsl_crypto, fsl_logging, fsl_stream, fsl_collections, fsl_threads, fsl_json, fsl_xml,
+  {$IFDEF WINDOWS} fsl_msxml, fsl_service_win, {$ENDIF}
+  fsl_openssl, fsl_http, FHIR.Database.Manager, fhir_htmlgen, FHIR.Database.Dialects, fsl_rdf, fsl_graphql, fsl_twilio,
 
   {$IFDEF WINDOWS}
   FHIR.Database.ODBC,
   {$ENDIF}
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
-  FHIR.Client.HTTP,
-  FHIR.Npm.Spider, FHIR.Npm.Client, FHIR.Npm.Package, FHIR.Npm.Cache,
-  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  fhir_objects, fhir_parser,  fhir_xhtml, fhir_utilities, fhir_common, fhir_factory, fhir_client, fhir_pathengine,
+  fhir_client_http,
+  fsl_npm_spider, fsl_npm_client, fsl_npm, fsl_npm_cache,
+  fhir_oauth, fhir_cdshooks,
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
   {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}
   FHIR.Tx.Server, FHIR.Tx.Manager, FHIR.Snomed.Expressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher, FHIR.Tx.Web, FHIR.Tx.Service,
@@ -651,7 +651,7 @@ Uses
 {$IFDEF WINDOWS}
   Registry,
 {$ENDIF}
-  FHIR.Web.Facebook{$IFDEF COVID}, FHIR.Server.Covid{$ENDIF};
+  fsl_oauth{$IFDEF COVID}, FHIR.Server.Covid{$ENDIF};
 
 type
   THtmlFormScriptPlugin = class (TFHIRWebServerScriptPlugin)
@@ -2970,7 +2970,7 @@ begin
         FContext.Storage.MarkTaskDeleted(key);
         for n in names do
         begin
-          f := FHIR.Support.Utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+          f := fsl_utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
           if FileExists(f) then
             DeleteFile(f);
         end;
@@ -2988,7 +2988,7 @@ begin
               zip.Stream := m.Link;
               for n in names do
               begin
-                f := FHIR.Support.Utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+                f := fsl_utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
                 zip.addFile(n+EXT_WEB_TFHIRFormat[fmt], f);
               end;
               zip.WriteZip;
@@ -3007,7 +3007,7 @@ begin
         end
         else
         begin
-          f := FHIR.Support.Utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+request.SubId]);
+          f := fsl_utilities.Path([FContext.TaskFolder, 'task-'+inttostr(key)+'-'+request.SubId]);
           if not FileExists(f) then
           begin
             response.HTTPCode := 500;
@@ -3802,7 +3802,7 @@ begin
       FContext.Storage.MarkTaskDeleted(task.key);
       for n in task.names do
       begin
-        fn := FHIR.Support.Utilities.Path([FContext.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
+        fn := fsl_utilities.Path([FContext.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
         if FileExists(fn) then
           DeleteFile(fn);
       end;
@@ -4140,7 +4140,7 @@ function TFhirWebServerEndPoint.loadFromRsaDer(cert: string): TJWKList;
 var
   fn : String;
 begin
-  fn := FHIR.Support.Utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
+  fn := fsl_utilities.Path([SystemTemp, TFslDateTime.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
   StringToFile(cert, fn, TEncoding.UTF8);
   try
     result := TJWKList.create;

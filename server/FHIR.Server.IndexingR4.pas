@@ -47,9 +47,9 @@ combinations to enable:
 }
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Xml,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.PathEngine,
-  FHIR.R4.Types, FHIR.R4.Resources.Base, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.IndexInfo, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Context,
+  fsl_base, fsl_utilities, fsl_xml,
+  fhir_objects, fhir_xhtml, fhir_common,  fhir_utilities, fhir_pathengine,
+  fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_constants, fhir4_indexinfo, fhir4_utilities, fhir4_pathengine, fhir4_context,
   FHIR.Tools.Indexing,
   FHIR.Ucum.Services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;

@@ -33,7 +33,7 @@ Interface
 Uses
   Windows,
   SysUtils, Classes, Vcl.Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Stream;
+  fsl_base, fsl_utilities, fsl_collections, fsl_graphics, fsl_stream;
 
 Const
   TOUCH_ICON_HOTSPOT = 89;

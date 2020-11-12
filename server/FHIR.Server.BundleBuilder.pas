@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory;
+  fsl_base, fsl_utilities,
+  fhir_objects, fhir_common, fhir_factory;
 
 type
   TFHIRBundleBuilder = class (TFslObject)

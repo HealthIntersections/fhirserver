@@ -50,8 +50,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.OleCtrls,
   SHDocVw, PngImage, Generics.Collections, Generics.Defaults, VirtualTrees,
   IdSSLOpenSSLHeaders, IdSSLOpenSSL, IdResourceStringsOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Base.Xhtml,
+  fsl_base, fsl_utilities,
+  fhir_objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, fhir_xhtml,
   ServerLoginDialog, ProgressDialog, FHIRDemoLogging;
 
 type

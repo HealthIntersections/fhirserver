@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Base,
+  fsl_utilities, fsl_collections, fsl_base,
   FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers;
 
 Type

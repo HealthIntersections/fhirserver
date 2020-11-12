@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Common,
+  fsl_base, fsl_json, fsl_utilities,
+  fhir_objects,  fhir_factory, fhir_common,
   FHIR.Server.Session;
 
 type

@@ -8,9 +8,9 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, DateUtils,
   StdCtrls, IniFiles, Clipbrd, Menus,
   frm_progress, frm_npm_browser,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging,
-  FHIR.Web.Fetcher,
-  FHIR.Npm.Package, FHIR.Npm.Cache, fui_orchestrators;
+  fsl_base, fsl_utilities, fsl_logging,
+  fsl_fetcher,
+  fsl_npm, fsl_npm_cache, fui_orchestrators;
 
 type
 

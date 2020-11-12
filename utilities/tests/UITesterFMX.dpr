@@ -5,11 +5,11 @@ uses
   FMX.Forms,
   UITesterFormFMX in 'UITesterFormFMX.pas' {Form10},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
-  FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
-  FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
-  FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Utilities in '..\library\support\FHIR.Support.Utilities.pas',
-  FHIR.Support.Collections in '..\library\support\FHIR.Support.Collections.pas';
+  fsl_base in '..\library\support\fsl_base.pas',
+  fsl_fpc in '..\library\support\fsl_fpc.pas',
+  fsl_stream in '..\library\support\fsl_stream.pas',
+  fsl_utilities in '..\library\support\fsl_utilities.pas',
+  fsl_collections in '..\library\support\fsl_collections.pas';
 
 {$R *.res}
 

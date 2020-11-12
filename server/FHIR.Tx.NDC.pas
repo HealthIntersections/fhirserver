@@ -34,10 +34,10 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.base.Utilities,
-  FHIR.CdsHooks.Utilities,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities,
+  fhir_cdshooks,
   FHIR.Tx.Service;
 
 type

@@ -34,17 +34,17 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.OIDs,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client, FHIR.R4.Utilities;
+  fsl_utilities, fsl_threads, fsl_base, fsl_stream,
+  fhir_objects, fhir_factory, fhir_common, fhir_oids,
+  fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_context, fhir4_profiles, fhir4_client, fhir4_utilities;
 
 type
   TFHIRTransformerContext = class (TBaseWorkerContextR4)
   private
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
-    FValueSets : TFslMap<FHIR.R4.Resources.TFHIRValueSet>;
-    FCodeSystems : TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>;
-    FConceptMaps : TFslMap<FHIR.R4.Resources.TFHIRConceptMap>;
+    FValueSets : TFslMap<fhir4_resources.TFHIRValueSet>;
+    FCodeSystems : TFslMap<fhir4_resources.TFHIRCodeSystem>;
+    FConceptMaps : TFslMap<fhir4_resources.TFHIRConceptMap>;
 
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
   public
@@ -80,10 +80,10 @@ end;
 constructor TFHIRTransformerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create('Value Sets');
-  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create('Code Systems');
+  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.create('Value Sets');
+  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.create('Code Systems');
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('Questionnaires');
-  FConceptMaps := TFslMap<FHIR.R4.Resources.TFHIRConceptMap>.create('Concept Maps');
+  FConceptMaps := TFslMap<fhir4_resources.TFHIRConceptMap>.create('Concept Maps');
 end;
 
 destructor TFHIRTransformerContext.Destroy;

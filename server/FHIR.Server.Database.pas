@@ -34,17 +34,17 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml,
-  FHIR.Web.Crypto, FHIR.Support.Collections, FHIR.Support.Json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_xml,
+  fsl_crypto, fsl_collections, fsl_json,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Web.Parsers, FHIR.Web.GraphQL,
-  FHIR.Npm.Cache,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.CdsHooks.Utilities,
-  FHIR.Base.Validator, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Narrative,
-  FHIR.Client.Base,
+  fsl_http, fsl_graphql,
+  fsl_npm_cache,
+  fhir_objects, fhir_parser, fhir_xhtml,  fhir_utilities, fhir_cdshooks,
+  fhir_validator, fhir_common, fhir_factory, fhir_narrative,
+  fhir_client,
   FHIR.Tools.ValueSets, FHIR.Tools.DiffEngine, FHIR.Tools.GraphQL, FHIR.Tools.CodeGen,
   FHIR.Tx.Service, FHIR.Tx.Server, FHIR.Ucum.Services,
-  FHIR.Base.Scim, FHIR.Scim.Server,
+  fsl_scim, FHIR.Scim.Server,
   FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Server.Subscriptions, FHIR.Server.Security, FHIR.Server.ObsStats, FHIR.Server.BundleBuilder,
   FHIR.Server.ClosureMgr, FHIR.Server.GraphDefinition, FHIR.Server.Tags, FHIR.Server.Utilities,
   {$IFNDEF NO_JS}FHIR.Server.Javascript,{$ENDIF}
@@ -435,7 +435,7 @@ implementation
 
 uses
   IdMessage, IdSMTP,
-  FHIR.Support.Logging,
+  fsl_logging,
   FHIR.Tx.Manager, FHIR.Tx.Operations,
   FHIR.Server.Search;
 

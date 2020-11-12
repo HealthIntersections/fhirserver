@@ -5,6 +5,7 @@ interface
 uses
   SysUtils, Classes,
   Forms,
+  fhir_objects,
   fui_orchestrators,
   ftk_context;
 

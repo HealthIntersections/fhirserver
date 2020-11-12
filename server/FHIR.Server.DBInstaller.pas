@@ -35,10 +35,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Utilities,
-  FHIR.Support.Base,
-  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Utilities,
+  SysUtils, Classes, fsl_utilities,
+  fsl_base,
+  FHIR.Database.Manager, FHIR.Database.Dialects, fsl_stream,
+  fhir_objects, fhir_factory, fhir_utilities,
   FHIR.Server.Indexing, FHIR.Server.Factory, FHIR.Server.Version,
   FHIR.Scim.Server;
 

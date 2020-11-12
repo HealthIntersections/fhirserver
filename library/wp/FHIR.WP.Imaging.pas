@@ -33,9 +33,9 @@ Interface
 Uses
   Windows, SysUtils,
   VCL.Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Stream,
-  FHIR.Ui.GdiPlus,
-  FHIR.Dicom.Dictionary, FHIR.Dicom.Objects, FHIR.Dicom.Parser, FHIR.Dicom.Extractor,
+  fsl_base, fsl_utilities, fsl_graphics, fsl_stream,
+  fsl_gdiplus,
+  dicom_Dictionary, dicom_Objects, dicom_Parser, dicom_Extractor,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working;
 
 Const

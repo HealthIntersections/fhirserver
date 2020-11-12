@@ -34,10 +34,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream;
+  fsl_utilities, fsl_base, fsl_stream;
 
 type
-  TIso4217Currency = class (TFSLObject)
+  TIso4217Currency = class (TFslObject)
   private
     FDisplay: String;
     FCode: String;
@@ -52,7 +52,7 @@ type
     property symbol : String read FSymbol write FSymbol;
   end;
 
-  TIso4217CurrencySet = class (TFSLObject)
+  TIso4217CurrencySet = class (TFslObject)
   private
     FCodes : TFslList<TIso4217Currency>;
     FMap : TFslMap<TIso4217Currency>;

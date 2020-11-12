@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.WP.Documents, FHIR.UCUM.Base;
 
 Const

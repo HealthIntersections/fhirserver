@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json,
-  FHIR.Snomed.Services, FHIR.Base.Parser,
-  FHIR.Support.Base;
+  fsl_utilities, fsl_http, fsl_stream, fsl_collections, fsl_json,
+  FHIR.Snomed.Services, fhir_parser,
+  fsl_base;
 
 type
   TRelationship = class (TFslObject)

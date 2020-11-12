@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, RegularExpressions,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Base.Lang;
+  fsl_utilities, fsl_base,
+  fhir_objects;
 
 Type
   TFSCompareOperation = (fscoEQ, fscoNE, fscoCO, fscoSW, fscoEW, fscoGT, fscoLT, fscoGE, fscoLE, fscoPR, fscoPO, fscoSS, fscoSB, fscoIN, fscoRE);

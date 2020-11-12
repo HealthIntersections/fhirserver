@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Menus, Dialogs,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   FHIR.Uix.Base, FHIR.Uix.Controls,
   FHIR.Wp.Types;
 
@@ -225,7 +225,7 @@ Implementation
 
 
 Uses
-  FHIR.Support.Collections,
+  fsl_collections,
 
   FHIR.WP.Icons, FHIR.WP.Control, FHIR.WP.Definers, FHIR.WP.Engine, FHIR.WP.Working;
 

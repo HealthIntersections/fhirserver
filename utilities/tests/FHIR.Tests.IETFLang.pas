@@ -35,7 +35,7 @@ interface
 uses
   Windows, Sysutils,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Stream,
+  fsl_stream,
   FHIR.Tx.Lang;
 
 {$IFNDEF FPC}

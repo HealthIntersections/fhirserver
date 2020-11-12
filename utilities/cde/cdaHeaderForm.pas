@@ -32,8 +32,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  FHIR.Support.Utilities,
-  FHIR.Cda.Base, FHIR.Cda.Types, FHIR.CDA.Objects, FHIR.Cda.Documents,
+  fsl_utilities,
+  cda_base, cda_types, cda_objects, cda_documents,
   IIEditor, OIDCache;
 
 type

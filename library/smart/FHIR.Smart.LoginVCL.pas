@@ -41,8 +41,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} FHIR.Npp.Form,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   ActiveX, ole2, SHDocVw,
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle,
-  FHIR.Web.Parsers, FHIR.Support.Utilities,
-  FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
+  fsl_http, fsl_utilities,
+  fhir_client, fhir_oauth, FHIR.Smart.Login;
 
 const
   UMSG = WM_USER + 1;

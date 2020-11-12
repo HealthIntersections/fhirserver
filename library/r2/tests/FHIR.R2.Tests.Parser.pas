@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIR.Base.Objects, FHIR.R2.Resources, FHIR.R2.Parser, FHIR.R2.ElementModel,
-  FHIR.R2.Context, FHIR.R2.Tests.Worker, FHIR.Support.Tests, FHIR.Support.Comparisons;
+  fhir_objects, fhir2_resources, fhir2_parser, fhir2_elementmodel,
+  fhir2_context, FHIR.R2.Tests.Worker, fsl_tests, fsl_comparisons;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

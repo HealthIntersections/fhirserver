@@ -37,9 +37,8 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Threads,
-   FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Base.Lang;
+  fsl_base, fsl_threads, fsl_utilities,
+  fhir_objects;
 
 type
   TGoogleAnalyaticsEventData = class (TFslObject)

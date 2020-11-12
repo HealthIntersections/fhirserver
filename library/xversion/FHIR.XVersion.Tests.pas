@@ -35,9 +35,9 @@ interface
 uses
   SysUtils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Stream, FHIR.Support.Tests, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Parser,
-  FHIR.R3.Parser, FHIR.R4.Parser,
+  fsl_stream, fsl_tests, fsl_http,
+  fhir_objects, fhir_parser,
+  fhir3_parser, fhir4_parser,
   FHIR.XVersion.Convertors;
 
 {$IFNDEF FPC}

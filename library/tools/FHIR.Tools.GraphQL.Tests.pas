@@ -35,9 +35,9 @@ interface
 uses
   SysUtils, Classes, Variants,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml, FHIR.Web.Parsers,
-  FHIR.Web.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.R4.Factory,
-  FHIR.R4.Tests.Worker, FHIR.Support.Tests, FHIR.Support.Comparisons;
+  fsl_utilities, fsl_stream, fsl_base, fsl_xml, fsl_http,
+  fsl_graphql, fhir_objects, fhir_common, fhir4_types, fhir4_resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, fhir4_factory,
+  fhir4_tests_worker, fsl_tests, fsl_comparisons;
 
 {$IFNDEF FPC}
 type

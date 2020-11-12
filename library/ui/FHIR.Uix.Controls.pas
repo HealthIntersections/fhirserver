@@ -36,8 +36,8 @@ Uses
   System.UITypes, UxTheme, ToolWin, ComCtrls, Menus, ImgList, Mask, CommCtrl, VirtualTrees, ActiveX,
   Winapi.GdipApi, WinApi.GdipObj,
   SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads,
-  FHIR.Ui.GdiPlus, FHIR.Uix.Base, FHIR.Uix.Images;
+  fsl_base, fsl_utilities, fsl_graphics, fsl_stream, fsl_collections, fsl_threads,
+  fsl_gdiplus, FHIR.Uix.Base, FHIR.Uix.Images;
 
   {$IFNDEF VER130}  {$ENDIF}
 
@@ -3026,7 +3026,7 @@ Implementation
 {$R Resources\UixToolbars.dcr}
 
 uses
-  FHIR.Support.Shell;
+  fsl_shell;
 
 Procedure Register;
 Begin
@@ -6087,8 +6087,8 @@ Begin
 
   MaxLength := Length(sFormat);
   sFormat := StringReplace(sFormat, ['d', 'm', 'y', 'h', 'n', 's'], '9');
-  sFormat := StringReplace(sFormat, ['/'], FHIR.Support.Utilities.DateSeparator);
-  sFormat := StringReplace(sFormat, [':'], FHIR.Support.Utilities.TimeSeparator);
+  sFormat := StringReplace(sFormat, ['/'], fsl_utilities.DateSeparator);
+  sFormat := StringReplace(sFormat, [':'], fsl_utilities.TimeSeparator);
   Mask := sFormat;
 
   If TimeOptional Then
@@ -6119,9 +6119,9 @@ Begin
   If DateTimeEquals(aValue, 0, DATETIME_MILLISECOND_ONE) Then
     Result := ''
   Else If FIncludeDate Then
-    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, DateTimeFormat)
+    Result := fsl_utilities.DateTimeFormat(aValue, DateTimeFormat)
   Else If FIncludeTime Then
-    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, TimeFormat)
+    Result := fsl_utilities.DateTimeFormat(aValue, TimeFormat)
   Else
     Result := '';
 End;
@@ -6132,9 +6132,9 @@ Begin
   If DateTimeOffsetEquals(aValue, DateTimeOffsetZero, DATETIME_MILLISECOND_ONE) Then
     Result := ''
   Else If FIncludeDate Then
-    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, DateTimeFormat)
+    Result := fsl_utilities.DateTimeFormat(aValue, DateTimeFormat)
   Else If FIncludeTime Then
-    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, TimeFormat)
+    Result := fsl_utilities.DateTimeFormat(aValue, TimeFormat)
   Else
     Result := '';
 End;
@@ -6425,7 +6425,7 @@ Begin
     hT := OpenThemeData(Handle, 'Edit');
     hD := GetWindowDC(Handle);
     Try
-      aRect := FHIR.Support.Graphics.Rect(0, 0, Width, Height);
+      aRect := fsl_graphics.Rect(0, 0, Width, Height);
       DrawThemeBackground(hT, hD, GetEditPart, GetEditState, aRect, Nil);
       Invalidate;
     Finally
@@ -7089,7 +7089,7 @@ Begin
   EnforceValidationModeDateTime;
 
   If Not bValue And (DisplayDateTime(ValueAsDateTime) <> '') Then
-    Text := FHIR.Support.Utilities.DateTimeFormat(ValueAsDateTime, DateFormat);
+    Text := fsl_utilities.DateTimeFormat(ValueAsDateTime, DateFormat);
 End;
 
 
@@ -8730,7 +8730,7 @@ Begin
     If sSeparatorHint <> '' Then
     Begin
       //Initialize
-      aRectangle := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+      aRectangle := fsl_graphics.Rect(0, 0, 0, 0);
       aCanvas.Font.Style := [fsBold];
 
       //Make windows calculate needed space
@@ -8753,7 +8753,7 @@ Begin
   Begin
     //Caption
     sCaption := oMenuItem.Caption;
-    aCaptionRectangle := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+    aCaptionRectangle := fsl_graphics.Rect(0, 0, 0, 0);
     aCanvas.Font.Style := [fsBold];
 
 //    bHasGutter := (oMenuItem.GetImageList <> Nil) Or Checked;
@@ -8769,7 +8769,7 @@ Begin
 
     If UseShortCut And (sShortCut <> '') Then
     Begin
-      aShortCutRectangle := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+      aShortCutRectangle := fsl_graphics.Rect(0, 0, 0, 0);
 
       DrawText(aCanvas.Handle, PChar(sShortCut), Length(sShortCut), aShortCutRectangle, DT_CALCRECT Or DT_LEFT Or DT_EXTERNALLEADING);
 
@@ -8778,7 +8778,7 @@ Begin
     End;
 
     //Hint:
-    aHintRectangle := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+    aHintRectangle := fsl_graphics.Rect(0, 0, 0, 0);
     sHint := oMenuItem.Hint;
     aCanvas.Font.Style := [];
 
@@ -8912,7 +8912,7 @@ Begin
     If Default Then
       aCanvas.Font.Style := [fsBold];
 
-    aRectangle := FHIR.Support.Graphics.Rect(0, 0, 0, 0);
+    aRectangle := fsl_graphics.Rect(0, 0, 0, 0);
 
     iOffset := DrawText(aCanvas.Handle, PChar(sCaption), Length(sCaption), aRectangle, DT_CALCRECT Or DT_EXTERNALLEADING Or DT_TOP);
 
@@ -8962,18 +8962,18 @@ Begin
         aRectangle := ARect;
         aRectangle.Bottom := aRectangle.Top + iOffset + EXTENDED_MARG_Y * 2;
 
-        ColourGradientVertical(aCanvas.Handle, FHIR.Support.Graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
+        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
 
         //Second gradient - description
         aRectangle.Top := aRectangle.Bottom;
         aRectangle.Bottom := ARect.Bottom;
-        ColourGradientVertical(aCanvas.Handle, FHIR.Support.Graphics.TRect(aRectangle), ExtendedGradientStart2, ExtendedGradientEnd2);
+        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart2, ExtendedGradientEnd2);
       End
       Else
       Begin
         //Only one gradient under caption
         aRectangle := ARect;
-        ColourGradientVertical(aCanvas.Handle, FHIR.Support.Graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
+        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
       End;
 
       //Release clipregion
@@ -9446,7 +9446,7 @@ Begin
 
     Canvas.Brush.Color := ReadColor(Items[Index], clGray);
 
-    aTarget := FHIR.Support.Graphics.Rect(aRect.Left - ColorRectWidth, aRect.Top + 1, aRect.Left - 2, aRect.Bottom - 1);
+    aTarget := fsl_graphics.Rect(aRect.Left - ColorRectWidth, aRect.Top + 1, aRect.Left - 2, aRect.Bottom - 1);
 
     Canvas.Rectangle(aTarget.Left, aTarget.Top, aTarget.Right, aTarget.Bottom);
 
@@ -9635,9 +9635,9 @@ Begin
     Canvas.Font.Style := [fsBold];
 
     If Not UseRightToLeftAlignment Then
-      aRect := FHIR.Support.Graphics.Rect(8, 0, 0, Canvas.TextHeight('0'))
+      aRect := fsl_graphics.Rect(8, 0, 0, Canvas.TextHeight('0'))
     Else
-      aRect := FHIR.Support.Graphics.Rect(aRect.Right - Canvas.TextWidth(Text) - 8, 0, 0, Canvas.TextHeight('0'));
+      aRect := fsl_graphics.Rect(aRect.Right - Canvas.TextWidth(Text) - 8, 0, 0, Canvas.TextHeight('0'));
 
     DrawText(Canvas.Handle, PChar(Text), Length(Text), aRect, DrawTextBiDiModeFlags(DT_SINGLELINE) Or DT_CALCRECT);
     Canvas.Brush.Color := Color;
@@ -9699,9 +9699,9 @@ Begin
   Canvas.Font.Style := [fsBold];
 
   If Not UseRightToLeftAlignment Then
-    Result := FHIR.Support.Graphics.Rect(8, 0, 0, 0)
+    Result := fsl_graphics.Rect(8, 0, 0, 0)
   Else
-    Result := FHIR.Support.Graphics.Rect(Result.Right - Canvas.TextWidth(Text) - 8, 0, 0, 0);
+    Result := fsl_graphics.Rect(Result.Right - Canvas.TextWidth(Text) - 8, 0, 0, 0);
 
   DrawText(Canvas.Handle, PChar(Text), Length(Text), Result, DrawTextBiDiModeFlags(DT_SINGLELINE) Or DT_CALCRECT);
 End;

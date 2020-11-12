@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Version.Parser, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.R3.Context, FHIR.R3.Tests.Worker, FHIR.R3.Validator,
+  fsl_utilities, fsl_base, fsl_stream, fsl_tests,
+  fhir_objects, FHIR.Server.Session, FHIR.Version.Parser, fhir_factory, fhir_common,
+  fhir3_context, FHIR.R3.Tests.Worker, fhir3_validator,
   DUnitX.TestFramework;
 
 type
@@ -118,7 +118,7 @@ implementation
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Parser, FHIR.Version.Types, FHIR.Version.Resources;
+  fhir_parser, FHIR.Version.Types, FHIR.Version.Resources;
 
 { TFHIRValidatorTests }
 
@@ -189,7 +189,7 @@ end;
 //  else
 //    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
 //  try
-//    f := TFilestream.create(FHIR.Support.Utilities.path([PUB_HOME, path]), fmOpenRead + fmShareDenywrite);
+//    f := TFilestream.create(fsl_utilities.path([PUB_HOME, path]), fmOpenRead + fmShareDenywrite);
 //    try
 //      p.source := f;
 //      p.Parse;

@@ -34,10 +34,10 @@ Interface
 
 Uses
   Sysutils,
-  FHIR.Support.Utilities,
-  FHIR.Support.Base,
+  fsl_utilities,
+  fsl_base,
   
-  FHIR.Support.Collections;
+  fsl_collections;
 
 Const Ucum_CACHE_VERSION = 3;
 

@@ -38,10 +38,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Threads,
-  FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
-  FHIR.Javascript.Base,
+  fsl_threads,
+  fsl_javascript, fsl_utilities, fsl_base,
+  fhir_objects, fhir_factory, fhir_client, fhir_common,
+  fhir_javascript,
   FHIR.Server.Session;
 
 Const

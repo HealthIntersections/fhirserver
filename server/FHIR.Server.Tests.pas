@@ -32,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Shell, IniFiles,
-  FHIR.Support.Base, GuidSupport, AdvXmlBuilders,
+  SysUtils, Classes, fsl_shell, IniFiles,
+  fsl_base, GuidSupport, AdvXmlBuilders,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Tx.Server, FHIRDataStore, FHIR.Version.Client, FHIR.Version.PathEngine;
 
@@ -73,7 +73,7 @@ implementation
 uses
   FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Scim.Search, FHIR.Server.SearchSyntax,
   FHIR.Ucum.Tests, TwilioClient, FHIR.Support.Signatures, FHIR.Version.Questionnaire,
-  MarkdownDaringFireballTests, FHIR.Support.Json;
+  MarkdownDaringFireballTests, fsl_json;
 
 const
   !{$IFDEF FHIR2}

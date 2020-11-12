@@ -33,8 +33,8 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Npm.Cache,
+  fsl_base, fsl_utilities,
+  fsl_npm_cache,
   FHIR.Base.Lang;
 
 type

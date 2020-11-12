@@ -35,13 +35,13 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
-  FHIR.Support.SCrypt, FHIR.Web.Parsers,
+  fsl_base, fsl_json, fsl_utilities, fsl_threads, fsl_stream,
+  fsl_scrypt, fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects,
+  fhir_objects,
   FHIR.Server.Session,
   FHIR.Server.Utilities,
-  FHIR.Server.UserMgr, FHIR.Scim.Search, FHIR.Base.Scim, FHIR.Base.Lang;
+  FHIR.Server.UserMgr, FHIR.Scim.Search, fsl_scim;
 
 Type
   TSCIMCharIssuer = class (TFslObject)

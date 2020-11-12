@@ -40,9 +40,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Common;
+  fhir_objects,  fhir_factory, fhir_common;
 
 type
   TObservationStatsParameter = (

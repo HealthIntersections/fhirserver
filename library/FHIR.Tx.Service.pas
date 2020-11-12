@@ -34,10 +34,10 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Fpc,
-  FHIR.Web.Parsers,
-  FHIR.Base.Common, FHIR.Base.Factory,
-  FHIR.CdsHooks.Utilities;
+  fsl_utilities, fsl_base, fsl_collections, fsl_fpc,
+  fsl_http,
+  fhir_common, fhir_factory,
+  fhir_cdshooks;
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -45,7 +45,7 @@ const
 
 Type
 
-  TFhirFilterOperator = FHIR.Base.Common.TFilterOperator;
+  TFhirFilterOperator = fhir_common.TFilterOperator;
 
   TCodeSystemProviderContext = class (TFslObject)
   public

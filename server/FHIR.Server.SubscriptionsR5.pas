@@ -34,10 +34,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Utilities, FHIR.R5.Constants, FHIR.R5.PathEngine, FHIR.R5.PathNode, FHIR.R5.Common, FHIR.R5.Context,
+  fhir_objects, fhir_common, 
+  fhir5_enums, fhir5_types, fhir5_resources, fhir5_utilities, fhir5_constants, fhir5_pathengine, fhir5_pathnode, fhir5_common, fhir5_context,
   FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.Context;
 
 Type
@@ -247,8 +247,8 @@ begin
 //            rule(evd.triggerList[0].dataList[0].profileList.IsEmpty, 'DataRequirement profile must be absent');
 //            if evd.triggerList[0].condition <> nil then
 //            begin
-//              rule(evd.triggerList[0].condition.language = 'text\FHIR.R2.PathEngine', 'Condition language must be FHIR.R2.PathEngine');
-//              rule(evd.triggerList[0].condition.expression <> '', 'Condition FHIR.R2.PathEngine must not be blank');
+//              rule(evd.triggerList[0].condition.language = 'text\fhir2_pathengine', 'Condition language must be fhir2_pathengine');
+//              rule(evd.triggerList[0].condition.expression <> '', 'Condition fhir2_pathengine must not be blank');
 //              try
 //                expr := fpp.parse(evd.triggerList[0].condition.expression);
 //                evd.triggerList[0].condition.expressionElement.Tag := expr;

@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.Database.Manager,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.PathEngine,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Utilities, // first...
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.Constants, FHIR.R4.PathEngine, FHIR.R4.PathNode, FHIR.R4.Common, FHIR.R4.Context,
+  fsl_http,
+  fhir_objects, fhir_common,  fhir_pathengine,
+  fhir5_enums, fhir5_types, fhir5_resources, fhir5_utilities, // first...
+  fhir4_types, fhir4_resources, fhir4_utilities, fhir4_constants, fhir4_pathengine, fhir4_pathnode, fhir4_common, fhir4_context,
   FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.Context;
 
 Type
@@ -132,7 +132,7 @@ end;
 
 function TSubscriptionManagerR4.MeetsTopicResourceType(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String): boolean;
 var
-  enum : FHIR.R5.Types.TFhirEnum;
+  enum : fhir5_types.TFhirEnum;
 begin
   if topic.resourceTypeList.Count = 0 then
     result := true
@@ -188,7 +188,7 @@ end;
 function TSubscriptionManagerR4.MeetsTopicFhirPathCriteria(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String; newRes, oldRes : TFHIRResource): boolean;
 var
   ctxt : TFHIRPathSubscriptionContext;
-  expr : FHIR.R5.Types.TFHIRString;
+  expr : fhir5_types.TFHIRString;
 begin
   ctxt := TFHIRPathSubscriptionContext.Create(oldres.Link, newRes.Link);
   try
@@ -397,8 +397,8 @@ begin
 ////            rule(evd.triggerList[0].dataList[0].profileList.IsEmpty, 'DataRequirement profile must be absent');
 ////            if evd.triggerList[0].condition <> nil then
 ////            begin
-////              rule(evd.triggerList[0].condition.language = 'text\FHIR.R2.PathEngine', 'Condition language must be FHIR.R2.PathEngine');
-////              rule(evd.triggerList[0].condition.expression <> '', 'Condition FHIR.R2.PathEngine must not be blank');
+////              rule(evd.triggerList[0].condition.language = 'text\fhir2_pathengine', 'Condition language must be fhir2_pathengine');
+////              rule(evd.triggerList[0].condition.expression <> '', 'Condition fhir2_pathengine must not be blank');
 ////              try
 ////                expr := fpp.parse(evd.triggerList[0].condition.expression);
 ////                evd.triggerList[0].condition.expressionElement.Tag := expr;

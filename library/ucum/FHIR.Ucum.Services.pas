@@ -34,15 +34,15 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
-  FHIR.Web.Parsers,
-  FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
-  FHIR.Base.Common,
-  FHIR.CdsHooks.Utilities,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml,
+  fsl_http,
+  FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, fhir_ucum,
+  fhir_common,
+  fhir_cdshooks,
   FHIR.Tx.Service;
 
 Type
-  TUcumPair = FHIR.Ucum.IFace.TUcumPair;
+  TUcumPair = fhir_ucum.TUcumPair;
 
   TUCUMContext = class (TCodeSystemProviderContext)
   private
@@ -277,7 +277,7 @@ Type
 Implementation
 
 Uses
-  FHIR.Ucum.Search, FHIR.Base.Objects;
+  FHIR.Ucum.Search, fhir_objects;
 
 type
   TFhirValueSetComposeIncludeConceptLocal = class (TFhirValueSetComposeIncludeConceptW)

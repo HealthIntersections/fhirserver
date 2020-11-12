@@ -35,9 +35,9 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Json;
+  IdSSLOpenSSLHeaders, FHIR.Support.Certs, fsl_stream, fsl_tests,
+  fhir_objects, FHIR.Version.Parser,
+  fhir5_types, fhir5_resources, fhir5_json;
 
 type
   [TextFixture]

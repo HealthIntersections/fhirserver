@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Base;
+  fsl_base;
 
 type
   TFHIRServerIniComplex = class (TFslObject)

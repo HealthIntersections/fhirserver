@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, RegularExpressions,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Web.Parsers,
-  FHIR.Base.Common,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http,
+  fhir_common,
   FHIR.Tx.Service;
 
 type

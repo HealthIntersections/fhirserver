@@ -35,10 +35,10 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils, {$IFDEF FPC} LazUTF8, {$ENDIF}
   RegularExpressions,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Fpc,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
-  FHIR.CdsHooks.Utilities,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc,
+  fsl_http,
+  fhir_objects, fhir_common, fhir_utilities, fhir_factory,
+  fhir_cdshooks,
   FHIR.Tx.Service;
 
 {axes

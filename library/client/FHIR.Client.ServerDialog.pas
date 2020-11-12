@@ -35,9 +35,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
   FHIR.Npp.Form,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.CdsHooks.Utilities, FHIR.Smart.Utilities;
+  fsl_utilities, fsl_base,
+  fhir_objects, fhir_factory, fhir_common, 
+  fhir_cdshooks, fhir_oauth;
 
 type
   TEditRegisteredServerForm = class(TNppForm)
@@ -143,7 +143,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Npp.Settings, FHIR.Client.Base, FHIR.Client.ClientDialog;
+  FHIR.Npp.Settings, fhir_client, FHIR.Client.ClientDialog;
 
 procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var

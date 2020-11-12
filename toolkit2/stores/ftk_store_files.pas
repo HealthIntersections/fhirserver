@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes, Dialogs,
-  FHIR.Support.Utilities, FHIR.Support.Stream,
+  fsl_utilities, fsl_stream,
   ftk_store;
 
 type

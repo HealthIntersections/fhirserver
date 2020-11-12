@@ -35,11 +35,11 @@ interface
 
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
-  FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory,
+  fsl_utilities,
+  fhir_objects,  fhir_factory,
   FHIR.Version.Parser,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.PathEngine, FHIR.R2.Context,
-  FHIR.Support.MsXml, FHIR.Support.Json,
+  fhir2_types, fhir2_resources, fhir2_constants, fhir2_profiles, fhir2_pathengine, fhir2_context,
+  fsl_msxml, fsl_json,
   DUnitX.TestFramework;
 
 var
@@ -73,7 +73,7 @@ Type
 implementation
 
 uses
-  FHIR.Support.Stream, IdGlobalProtocols;
+  fsl_stream, IdGlobalProtocols;
 
 
 

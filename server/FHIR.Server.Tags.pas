@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory;
+  fsl_base, fsl_json, fsl_stream,
+  fhir_objects, fhir_common, fhir_factory;
 
 const
   TAG_FHIR_SYSTEM = 'http://healthintersections.com.au/fhir/tags';
@@ -109,7 +109,7 @@ type
 implementation
 
 //uses
-//  FHIR.R4.Utilities;
+//  fhir4_utilities;
 
 { TFHIRTag }
 

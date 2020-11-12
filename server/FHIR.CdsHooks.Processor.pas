@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base,
+  fsl_base,
   FHIR.Version.Client,
-  FHIR.CdsHooks.Utilities;
+  fhir_cdshooks;
 
 implementation
 

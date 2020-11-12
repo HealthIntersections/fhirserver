@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Base,
-  FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Xml,
-  DUnitX.TestFramework, FHIR.Support.Tests, FHIR.R4.Tests.Worker;
+  fsl_base,
+  fhir4_resources, fhir4_parser, fhir4_liquid, fhir4_pathengine, fhir4_xml,
+  DUnitX.TestFramework, fsl_tests, fhir4_tests_worker;
 
 type
   [TextFixture]

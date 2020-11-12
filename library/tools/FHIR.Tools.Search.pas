@@ -34,11 +34,10 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Web.Parsers,
-  FHIR.Base.Common, FHIR.Base.Lang,
+  fsl_base, fsl_utilities, fsl_http,
+  fhir_objects, fhir_common,
   FHIR.Tools.Indexing, FHIR.Server.Indexing;{,
-  FHIR.Version.Types, FHIR.Base.Objects, FHIR.Version.PathEngine, , , FHIR.Version.Utilities}
+  FHIR.Version.Types, fhir_objects, FHIR.Version.PathEngine, , , FHIR.Version.Utilities}
 
 Type
   TFHIRSearchParamModifier = (spmNull, spmMissing, spmExact, spmContains, spmText, spmIn, spmBelow, spmAbove, spmNotIn, spmType);

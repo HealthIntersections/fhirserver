@@ -34,7 +34,7 @@ Interface
 
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Contnrs, ExtCtrls, StdCtrls, ComCtrls, Consts,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  fsl_base, fsl_utilities, fsl_collections,
   FHIR.Uix.Base, FHIR.Uix.Controls;
 
 

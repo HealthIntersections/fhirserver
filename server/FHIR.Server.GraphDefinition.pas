@@ -31,9 +31,9 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Web.Parsers, FHIR.Web.GraphQL,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Factory,
+  fsl_base, fsl_utilities, fsl_json,
+  fsl_http, fsl_graphql,
+  fhir_objects,  fhir_pathengine, fhir_common, fhir_factory,
   FHIR.Tools.GraphQL;
 
 implementation

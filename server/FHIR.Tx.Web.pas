@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Generics.Defaults,
-  FHIR.Web.Parsers,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  fsl_http,
+  fsl_base, fsl_utilities, fsl_stream,
   IdContext, IdCustomHTTPServer,
-  FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Parser,
+   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   FHIR.Tools.ValueSets,
-  FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
+  fhir_htmlgen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
   FHIR.Server.Session, FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants, FHIR.Server.WebBase;
 
 Type
@@ -119,7 +119,7 @@ Type
 implementation
 
 uses
-  FHIR.Support.Logging;
+  fsl_logging;
 
 { TTerminologyWebServer }
 

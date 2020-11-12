@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterHL7,
-  FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.v2.Message,
+  fsl_base, fsl_logging, fsl_stream,
+  v2_message,
   ftk_context, ftk_store, ftk_editor_base;
 
 type

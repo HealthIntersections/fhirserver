@@ -41,7 +41,7 @@ format changes
 
 Uses
   SysUtils, Vcl.Graphics, Vcl.Imaging.PNGImage, ZLib, Contnrs,
-  FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Signatures, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.XML, FHIR.Support.MXML,
+  fsl_utilities, fsl_graphics, FHIR.Support.Signatures, fsl_stream, fsl_collections, fsl_xml, fsl_xml,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format, FHIR.WP.Renderer, FHIR.WP.Imaging,
   FHIR.WP.Engine, FHIR.WP.Settings;
 
@@ -4248,7 +4248,7 @@ End;
 Procedure TWPSnapshotWriter.Start(Const sCause : String);
 Begin
   ProduceHeader;
-  Attributes.Match['Time'] := FHIR.Support.Utilities.DateTimeFormat(LocalDateTime, 'yyyymmddhhnnss');
+  Attributes.Match['Time'] := fsl_utilities.DateTimeFormat(LocalDateTime, 'yyyymmddhhnnss');
   Attributes.Match['cause'] := sCause;
   ProduceOpen('snapshot');
 

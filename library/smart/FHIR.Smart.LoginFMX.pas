@@ -33,7 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.WebBrowser,
   FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   FHIR.Version.Resources, FHIR.Version.Client, FHIR.Client.SmartUtilities;
 
 type

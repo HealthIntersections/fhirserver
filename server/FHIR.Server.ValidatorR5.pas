@@ -34,12 +34,12 @@ interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  fsl_utilities, fsl_threads,
+  fsl_base, fsl_stream,
+  fhir_objects, fhir_factory, fhir_common,
   FHIR.Tx.Service,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources.Base, FHIR.R5.Resources, FHIR.R5.Context, FHIR.R5.Profiles, FHIR.R5.Client, FHIR.R5.Utilities,
-  FHIR.R5.PathNode, FHIR.R5.PathEngine,
+  fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_context, fhir5_profiles, fhir5_client, fhir5_utilities,
+  fhir5_pathnode, fhir5_pathengine,
   FHIR.Tools.ValueSets,
   FHIR.Tx.Server;
 

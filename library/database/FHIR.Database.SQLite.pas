@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.Database.Dialects, FHIR.Database.Manager,
   FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 

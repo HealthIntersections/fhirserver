@@ -33,8 +33,8 @@ interface
 uses
   SysUtils, Classes,
   JNI, JNIWrapper, JavaRuntime,
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Utilities;
+  fsl_base, fsl_json,
+  fhir_objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Utilities;
 
 
 type

@@ -32,9 +32,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.R5.Context, FHIR.R5.PathEngine, FHIR.R5.Tests.Worker,
+  fsl_utilities,
+  fhir_objects, FHIR.Version.Parser,
+  fhir5_types, fhir5_resources, fhir5_constants, fhir5_context, fhir5_pathengine, FHIR.R5.Tests.Worker,
   DUnitX.TestFramework;
 
 

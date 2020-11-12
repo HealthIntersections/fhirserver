@@ -34,13 +34,13 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Version.Parser,
-  FHIR.R5.Tests.Worker, FHIR.R5.Resources, FHIR.R5.PathEngine, FHIR.R5.Types, FHIR.R5.PathNode,
+  fsl_base, fsl_utilities,
+  fhir_objects, FHIR.Version.Parser,
+  FHIR.R5.Tests.Worker, fhir5_resources, fhir5_pathengine, fhir5_types, fhir5_pathnode,
   {$IFNDEF SIMPLETEST}
   FHIR.Ucum.Services,
   {$ENDIF}
-  FHIR.Support.MXml, FHIR.Support.Tests,
+  fsl_xml, fsl_tests,
   DUnitX.TestFramework;
 
 Type

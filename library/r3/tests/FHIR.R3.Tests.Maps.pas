@@ -36,11 +36,11 @@ interface
 uses
   SysUtils, Classes, IOUtils,
   DUnitX.TestFramework,
-  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Support.Base, FHIR.Support.Comparisons,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  fsl_utilities, fsl_stream, fsl_tests,
+  fsl_base, fsl_comparisons,
+  fhir_objects, 
   FHIR.Version.Parser,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.ElementModel, FHIR.R3.Context, FHIR.R3.Tests.Worker, FHIR.R3.MapUtilities, FHIR.R3.Profiles;
+  fhir3_types, fhir3_resources, fhir3_elementmodel, fhir3_context, FHIR.R3.Tests.Worker, fhir3_maputils, fhir3_profiles;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

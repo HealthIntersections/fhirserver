@@ -36,7 +36,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.FileCtrl, Vcl.Menus, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ExtCtrls,
-  FHIR.Support.Utilities, FHIR.Support.Shell,
+  fsl_utilities, fsl_shell,
   FHIR.Server.Ini, FHIR.Server.Constants, FHIR.Server.Gui.Controller;
 
 type

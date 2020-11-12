@@ -8,8 +8,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, IniFiles, DateUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  fui_orchestrators, FHIR.Npm.Client;
+  fsl_base, fsl_utilities,
+  fui_orchestrators, fsl_npm_client;
 
 type
   { TPackageRegistryManager }

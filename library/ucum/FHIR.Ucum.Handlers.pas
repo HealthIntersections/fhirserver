@@ -34,10 +34,10 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   FHIR.Ucum.Base,
   
-  FHIR.Support.Base, FHIR.Support.Collections;
+  fsl_base, fsl_collections;
 
 Type
   TUcumUnitHandler = class (TFslName)

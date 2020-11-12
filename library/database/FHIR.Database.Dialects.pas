@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base;
+  fsl_base;
 
 {------------------------------------------------------------------------------
    Cross Platform SQL Support
@@ -91,7 +91,7 @@ function CreateTableIndex(ADBIndexType: String; ADBIndexName: String; ADBTableNa
 implementation
 
 uses
-  FHIR.Support.Utilities,
+  fsl_utilities,
   SysUtils;
 
 function RecogniseDriver(ADriverDesc: String): TFslDBPlatform;

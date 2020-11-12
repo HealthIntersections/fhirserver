@@ -34,8 +34,8 @@ interface
 
 uses
   Sysutils, Classes,
-  FHIR.Support.Testing,
-  FHIR.Support.Stream,
+  fsl_testing,
+  fsl_stream,
   FHIR.Tx.Lang;
 
 

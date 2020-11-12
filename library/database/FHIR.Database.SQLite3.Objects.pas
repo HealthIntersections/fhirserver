@@ -51,7 +51,7 @@ unit FHIR.Database.SQLite3.Objects;
 interface
 
 uses
-  FHIR.Support.Fpc;
+  fsl_fpc;
 
 type
   PPAnsiCharArray = ^TPAnsiCharArray;

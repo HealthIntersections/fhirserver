@@ -35,7 +35,7 @@ Interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Inifiles, Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Fpc,
+  fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects;
 

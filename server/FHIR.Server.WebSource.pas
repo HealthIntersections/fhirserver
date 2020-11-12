@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
+  fsl_base, fsl_utilities, fsl_stream;
 
 type
   TFHIRWebServerSourceProvider = class abstract (TFslObject)
@@ -118,7 +118,7 @@ var
   fn : String;
 begin
   fn := path([FSourcePath, filename]);
-  result := FHIR.Support.Stream.FileToString(fn, TEncoding.UTF8);
+  result := fsl_stream.FileToString(fn, TEncoding.UTF8);
 end;
 
 { TFHIRWebServerSourceZipProvider }

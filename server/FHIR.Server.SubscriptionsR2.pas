@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
+  fhir_objects, fhir_common, 
   FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.Context;
 
 Type
@@ -59,8 +59,8 @@ Type
 implementation
 
 uses
-  FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Constants, FHIR.R2.PathEngine, FHIR.R2.PathNode, FHIR.R2.Common,
-  FHIR.R2.Resources.Base, FHIR.R2.Resources.Admin, FHIR.R2.Resources.Clinical, FHIR.R2.Resources.Canonical, FHIR.R2.Resources.Other;
+  fhir2_types, fhir2_utilities, fhir2_constants, fhir2_pathengine, fhir2_pathnode, fhir2_common,
+  fhir2_resources_base, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_canonical, fhir2_resources_other;
 
 function TSubscriptionManagerR2.checkSubscription(sub : TFHIRResourceV): TFHIRSubscriptionW;
 var

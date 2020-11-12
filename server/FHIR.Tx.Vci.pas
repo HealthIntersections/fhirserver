@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Base, AdvObjectLists,
+  fsl_utilities, fsl_base, AdvObjectLists,
   YuStemmer,
   FHIR.Database.Manager,
   FHIR.Version.Types, FHIRComponents, FHIR.Version.Resources, FHIR.Tx.Service, DateAndTime;

@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
-  FHIR.Web.Parsers,
+  fsl_base, fsl_utilities, fsl_json,
+  fsl_http,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Parser, FHIR.Base.Utilities,
-  FHIR.R3.Types, FHIR.R3.Resources.Base, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.OpBase, FHIR.R3.Operations, FHIR.R3.PathEngine,
-  FHIR.R3.PathNode, FHIR.R3.Common, FHIR.R3.Questionnaire, FHIR.R3.Validator, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Narrative,
+  fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
+  fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_constants, fhir3_utilities, fhir3_opbase, fhir3_operations, fhir3_pathengine,
+  fhir3_pathnode, fhir3_common, fhir3_questionnaire, fhir3_validator, fhir3_context, fhir3_profiles, fhir3_narrative,
   FHIR.Tools.CodeGen, FHIR.Tools.DiffEngine,
   FHIR.Tx.Operations, FHIR.Ucum.Services,
   FHIR.Server.Operations,

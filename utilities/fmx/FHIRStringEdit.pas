@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, FMX.Types, FMX.Controls,
   FMX.Controls.Presentation, FMX.Edit,
-  FHIR.R4.Types;
+  fhir4_types;
 
 type
   TFHIRStringEdit = class(TEdit)

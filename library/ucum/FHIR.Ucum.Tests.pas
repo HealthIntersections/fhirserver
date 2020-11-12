@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Testing,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml,
+  fsl_testing,
+  fsl_base, fsl_utilities, fsl_xml,
   FHIR.Ucum.Services;
 
 type

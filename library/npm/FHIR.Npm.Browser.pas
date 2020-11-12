@@ -35,8 +35,8 @@ uses
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   VirtualTrees,
-  FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Fetcher, FHIR.Support.Utilities,
-  FHIR.Npm.Cache, FHIR.Npm.Client, Vcl.ComCtrls, FHIR.Ui.WorkerTask,
+  fsl_base, fsl_json, fsl_fetcher, fsl_utilities,
+  fsl_npm_cache, fsl_npm_client, Vcl.ComCtrls, FHIR.Ui.WorkerTask,
   FHIR.Npm.VersionBrowser;
 
 const

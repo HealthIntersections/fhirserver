@@ -34,10 +34,10 @@ interface
 
 Uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Threads,
-  FHIR.Support.Base, 
+  fsl_utilities, fsl_threads,
+  fsl_base, 
   FHIR.Database.Manager,
-  FHIR.Base.Common,
+  fhir_common,
   FHIR.Tx.Manager;
 
 Type

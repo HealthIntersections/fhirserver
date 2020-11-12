@@ -38,7 +38,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc,
+  fsl_base, fsl_utilities, fsl_fpc,
 
   {$IFDEF FPC} {odbcsqldyn, }FHIR.Server.Gui.Lcl, {$ELSE} FHIR.Server.Gui.Vcl, {$ENDIF}
 
@@ -51,7 +51,7 @@ procedure ExecuteFhirServer; overload;
 implementation
 
 uses
-  FHIR.Support.Logging {$IFDEF WINDOWS}, JclDebug {$ENDIF};
+  fsl_logging {$IFDEF WINDOWS}, JclDebug {$ENDIF};
 
 procedure RunGui(ini : TFHIRServerIniFile);
 begin

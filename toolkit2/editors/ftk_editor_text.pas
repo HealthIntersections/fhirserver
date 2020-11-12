@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,
   Controls, ComCtrls, Menus, SynEdit, SynEditHighlighter,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging,
   ftk_context, ftk_editor_base;
 
 type

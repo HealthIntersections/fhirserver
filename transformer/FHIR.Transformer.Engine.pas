@@ -34,14 +34,14 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser,
+  fsl_base, fsl_utilities, fsl_stream,
+  fhir_objects,  fhir_parser,
   FHIR.Javascript,
-  FHIR.v2.Message, FHIR.v2.Javascript,
-  FHIR.Cda.Objects, FHIR.Cda.Javascript,
-  FHIR.R4.Context, FHIR.R4.Factory, FHIR.R4.MapUtilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.ElementModel, FHIR.R4.Profiles,
-  FHIR.R4.Xml, FHIR.R4.Json, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Client, FHIR.Client.HTTP, FHIR.R4.Javascript,
-  FHIR.Conversion.Engine, FHIR.Javascript.Base,
+  v2_message, v2_javascript,
+  cda_objects, cda_javascript,
+  fhir4_context, fhir4_factory, fhir4_maputils, fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_elementmodel, fhir4_profiles,
+  fhir4_xml, fhir4_json, fhir4_liquid, fhir4_pathengine, fhir4_client, fhir_client_http, fhir4_javascript,
+  FHIR.Conversion.Engine, fhir_javascript,
   FHIR.Transformer.Utilities, FHIR.Transformer.Workspace, FHIR.Transformer.Context, FHIR.Transformer.Editor;
 
 type

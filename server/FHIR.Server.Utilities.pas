@@ -36,9 +36,9 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Threads, FHIR.Web.Parsers,
+  fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,
+  fhir_objects,  fhir_utilities, fhir_factory, fhir_common,
   FHIR.Server.Ini, FHIR.Server.Session;
 
 var

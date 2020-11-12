@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes,
   IdCustomHTTPServer,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.PathEngine,
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Liquid, FHIR.R4.PathEngine, FHIR.R4.Context, FHIR.R4.Client, FHIR.R4.Resources.Base,
+  fsl_base, fsl_utilities,
+  fsl_http,
+  fhir_objects, fhir_factory, fhir_client, fhir_pathengine,
+  fhir4_resources, fhir4_types, fhir4_liquid, fhir4_pathengine, fhir4_context, fhir4_client, fhir4_resources_base,
   FHIR.Server.Session, FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Context;
 
 type

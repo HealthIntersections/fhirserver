@@ -38,7 +38,7 @@ uses
   ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
   IniFiles, Math,
   IdTelnet, IdGlobal,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Fpc,  FHIR.Support.Utilities, FHIR.Support.Logging,
+  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
   FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm;
 

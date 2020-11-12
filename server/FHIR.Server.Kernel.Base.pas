@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, StrUtils, Classes, IniFiles,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Logging,
-  {$IFDEF WINDOWS} Windows, FHIR.Support.Service, {$ELSE} FHIR.Support.SystemService, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_logging,
+  {$IFDEF WINDOWS} Windows, fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   FHIR.Database.Manager,
   FHIR.Tx.Manager,
   FHIR.Server.Ini, FHIR.Server.Telnet, FHIR.Server.Utilities, FHIR.Server.WebSource,

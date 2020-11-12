@@ -40,14 +40,14 @@ todo:
 }
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Tx.Service, FHIR.Base.Factory, FHIR.Base.Xhtml, FHIR.Base.Lang,
+  fsl_base, fsl_collections, fsl_utilities, fsl_http,
+  fhir_objects, fhir_common, FHIR.Tx.Service, fhir_factory, fhir_xhtml, 
   FHIR.Tools.CodeSystemProvider;
 
-{  SysUtils, Classes, FHIR.Support.Utilities, FHIR.Support.Utilities,
-  FHIR.Support.Utilities,
-  FHIR.Support.Collections, FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
+{  SysUtils, Classes, fsl_utilities, fsl_utilities,
+  fsl_utilities,
+  fsl_collections, fsl_base,
+  fhir_objects,  fhir_common, fhir_factory,
   FHIR.Tx.Service;
   //, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services, FHIR.Tx.Server, FHIR.Tx.Manager;}
 

@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes,
   IdContext,
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Base.Lang, FHIR.Base.Common,
+  fsl_base, fsl_json,
+   fhir_common,
   FHIR.Server.Session,
-  FHIR.CdsHooks.Utilities,
+  fhir_cdshooks,
   FHIR.CdsHooks.Server, FHIR.Server.Context, FHIR.Server.Storage;
 
 type

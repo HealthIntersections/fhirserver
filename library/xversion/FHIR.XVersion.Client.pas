@@ -38,10 +38,10 @@ This is an R4 client that can actually talk to any server / any version.
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Parser,
-  FHIR.Client.Base,
-  FHIR.R4.Types, FHIR.R4.Resources;
+  fsl_stream, fsl_json,
+  fhir_objects, fhir_parser,
+  fhir_client,
+  fhir4_types, fhir4_resources;
 
 type
   TFhirXVersionClient = class (TFhirClientV)

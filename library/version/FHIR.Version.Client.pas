@@ -33,33 +33,33 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser, FHIR.Base.Factory,
+  fsl_base, fsl_utilities, fsl_stream,
+  fhir_objects, fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_factory,
   {$IFDEF FHIR2}
-  FHIR.R2.Client, FHIR.R2.Context;
+  fhir2_client, fhir2_context;
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIR.R3.Client, FHIR.R3.Context;
+  fhir3_client, fhir3_context;
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIR.R4.Client, FHIR.R4.Context;
+  fhir4_client, fhir4_context;
   {$ENDIF}
 
 
 Type
-  EFHIRClientException = FHIR.Client.Base.EFHIRClientException;
-  THTTPHeaders = FHIR.Client.Base.THTTPHeaders;
-  TFHIRClientLogger = FHIR.Client.Base.TFHIRClientLogger;
-  TFHIRHTTPCommunicator = FHIR.Client.HTTP.TFHIRHTTPCommunicator;
-  TFhirThreadedCommunicator = FHIR.Client.Threaded.TFhirThreadedCommunicator;
+  EFHIRClientException = fhir_client.EFHIRClientException;
+  THTTPHeaders = fhir_client.THTTPHeaders;
+  TFHIRClientLogger = fhir_client.TFHIRClientLogger;
+  TFHIRHTTPCommunicator = fhir_client_http.TFHIRHTTPCommunicator;
+  TFhirThreadedCommunicator = fhir_client_threaded.TFhirThreadedCommunicator;
   {$IFDEF FHIR2}
-  TFhirClient = FHIR.R2.Client.TFhirClient2;
+  TFhirClient = fhir2_client.TFhirClient2;
   {$ENDIF}
   {$IFDEF FHIR3}
-  TFhirClient = FHIR.R3.Client.TFhirClient3;
+  TFhirClient = fhir3_client.TFhirClient3;
   {$ENDIF}
   {$IFDEF FHIR4}
-  TFhirClient = FHIR.R4.Client.TFhirClient4;
+  TFhirClient = fhir4_client.TFhirClient4;
   {$ENDIF}
 
   TFhirClients = class

@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-  FHIR.Support.Base;
+  fsl_base;
 
 const
   MAX_TERM_LENGTH = 1024;

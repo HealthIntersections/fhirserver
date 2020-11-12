@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Tests,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.R2.Parser, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.R2.Context, FHIR.R2.Tests.Worker, FHIR.R2.Validator,
+  fsl_utilities, fsl_base, fsl_stream, fsl_tests,
+  fhir_objects, FHIR.Server.Session, fhir2_parser, fhir_factory, fhir_common,
+  fhir2_context, FHIR.R2.Tests.Worker, fhir2_validator,
   DUnitX.TestFramework;
 
 type
@@ -116,7 +116,7 @@ implementation
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Parser, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Xml, FHIR.R2.Json;
+  fhir_parser, fhir2_types, fhir2_resources, fhir2_xml, fhir2_json;
 
 { TFHIRValidatorTests }
 

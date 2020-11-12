@@ -34,8 +34,8 @@ interface
 
 uses
   Classes,
-  FHIR.Support.Base,
-  FHIR.Support.Threads,
+  fsl_base,
+  fsl_threads,
   SysUtils;
 
 type
@@ -83,7 +83,7 @@ type
 implementation
 
 uses
-  FHIR.Support.Utilities,
+  fsl_utilities,
   Math,
   IdGlobal;
 

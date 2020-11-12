@@ -36,11 +36,11 @@ uses
   SysUtils, Classes, Variants, IOUtils,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml,
-  FHIR.Base.Objects, FHIR.R4.Types, FHIR.R4.Resources, FHIR.Version.Parser,
-  FHIR.Web.Parsers, FHIR.Web.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
-  FHIR.R4.GraphDefinition,
-  FHIR.R4.Tests.Worker, FHIR.Support.Tests;
+  fsl_base, fsl_utilities, fsl_stream, fsl_xml,
+  fhir_objects, fhir4_types, fhir4_resources, FHIR.Version.Parser,
+  fsl_http, fsl_graphql, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
+  fhir4_graphdefinition,
+  fhir4_tests_worker, fsl_tests;
 
 {$IFNDEF FPC}
 type

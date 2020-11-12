@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, Character,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Fpc, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang;
+  fsl_base, fsl_utilities, fsl_fpc, fsl_http,
+  fhir_objects, fhir_xhtml, fhir_common, fhir_factory;
 
 type
   TFHIRCodeGenerator = class (TFslObject)
@@ -654,7 +654,7 @@ begin
     line(indent, an+' := '''+value.primitiveValue+''';')
   else if StringArrayExistsSensitive(['date', 'dateTime', 'instant'], t) then
   begin
-    units.add('FHIR.Support.Utilities');
+    units.add('fsl_utilities');
     line(indent, an+' := TFslDateTime.fromXML('''+value.primitiveValue+''');')
   end
   // we assume this is an object
@@ -774,7 +774,7 @@ end;
 
 procedure TFHIRCodeGeneratorPascal.processXhtml(indent: integer; variableName: String; value: TFHIRObject);
 begin
-  units.add('FHIR.Base.Xhtml');
+  units.add('fhir_xhtml');
   line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(THTTPLanguages.create(''en''), xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
 end;
 

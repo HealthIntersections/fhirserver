@@ -33,8 +33,8 @@ Interface
 
 Uses
   SysUtils, Graphics,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Dicom.Dictionary,
+  fsl_utilities, fsl_base,
+  dicom_Dictionary,
   FHIR.WP.Types, FHIR.WP.Definers;
 
 
