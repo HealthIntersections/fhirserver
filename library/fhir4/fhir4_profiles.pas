@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IOUtils, Types,
-  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_http,
+  SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF} Types,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_threads, fsl_stream, fsl_collections, fsl_http,
   fhir_objects, fhir_parser, fhir_factory,  fhir_oids,
   fhir4_resources, fhir4_parser, fhir4_types, fhir4_context, fhir4_utilities, fhir4_constants, fhir4_resources_base;
 

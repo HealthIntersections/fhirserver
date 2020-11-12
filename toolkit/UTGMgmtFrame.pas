@@ -38,7 +38,7 @@ uses
   fsl_utilities,
   fhir_objects, fhir_factory, fhir_common,
   FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Factory,
-  FHIR.Tools.DiffEngine, FMX.ListView.Types, FMX.ListView.Appearances,
+  fhir_diff, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView;
 
 type

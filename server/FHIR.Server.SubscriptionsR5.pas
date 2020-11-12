@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects, fhir_common, 
   fhir5_enums, fhir5_types, fhir5_resources, fhir5_utilities, fhir5_constants, fhir5_pathengine, fhir5_pathnode, fhir5_common, fhir5_context,
   FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.Context;

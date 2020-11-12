@@ -36,9 +36,9 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_threads, fsl_utilities,
   fhir_objects, fhir_common, fhir_factory,  fhir_pathengine,
-  FHIR.Database.Manager,
-  FHIR.Tools.Indexing,
-  FHIR.Ucum.Services, FHIR.Tx.Server,
+  fdb_manager,
+  fhir_indexing,
+  ftx_ucum_services, FHIR.Tx.Server,
   FHIR.Server.Constants, FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Utilities;
 
 Const

@@ -38,7 +38,7 @@ uses
   fhir_objects,
   fsl_npm_cache,
   fhir4_factory,
-  FHIR.Database.Manager, FHIR.Database.SQLite,
+  fdb_manager, fdb_sqlite3,
   FHIR.Scim.Server,
   FHIR.Server.Ini, FHIR.Server.Web, FHIR.Server.Kernel.Tx, FHIR.Server.DBInstaller;
 

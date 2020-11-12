@@ -12,10 +12,10 @@ uses
   Forms,
   datetimectrls,
   fsl_base,
-  FHIR.Snomed.Combiner, fsl_http, fhir_utilities, fhir_ucum,
+  ftx_sct_combiner, fsl_http, fhir_utilities, fhir_ucum,
   fsl_npm_cache, fhir_client, fhir_cdshooks,
-  fhir_oauth, FHIR.Tx.Service, FHIR.Database.Manager,
-  FHIR.Loinc.Services,
+  fhir_oauth, ftx_service, fdb_manager,
+  ftx_loinc_services,
   { you can add units after this }
   FHIR.Server.Console,
   FHIR.Server.Connection.Lcl, IdGlobal;

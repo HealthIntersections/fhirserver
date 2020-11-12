@@ -41,13 +41,13 @@ uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects, fhir_common, fhir_cdshooks, fhir_factory,
-  FHIR.Tools.ValueSets,
+  fhir_valuesets,
   FHIR.Server.Session,
-  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
+  ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Tx.Lang, FHIR.Server.ClosureMgr, FHIR.Server.Adaptations, FHIR.Server.Utilities, FHIR.Server.BundleBuilder,
-  FHIR.Tx.Manager, FHIR.Snomed.Expressions;
+  FHIR.Tx.Manager, ftx_sct_expressions;
 
 Type
   TTerminologyServer = class (TTerminologyServerStore)

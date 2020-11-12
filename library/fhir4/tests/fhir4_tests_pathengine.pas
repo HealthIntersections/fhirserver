@@ -41,7 +41,7 @@ uses
   fsl_base, fsl_utilities, fsl_http,
   fhir_objects, fhir4_parser, fhir4_xml,
   fhir4_tests_worker, fhir4_resources, fhir4_pathengine, fhir4_types, fhir4_pathnode,
-  FHIR.Ucum.Services,
+  ftx_ucum_services,
   fsl_xml, fsl_tests;
 
 Type

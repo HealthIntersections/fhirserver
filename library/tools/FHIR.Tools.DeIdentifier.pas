@@ -33,7 +33,7 @@ uses
   SysUtils,
   fsl_utilities, fsl_threads, fsl_utilities,
   fsl_base,  AdvCSVExtractors, AdvStringLists, AdvFiles,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects{, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources};
 
 // fake name generator

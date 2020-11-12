@@ -69,10 +69,10 @@ begin
       'DropPIDLSource',
       'DropBMPSource',
       'FHIR.Java.JNI',
-      'FHIR.Database.SQLite3.Wrapper',
-      'FHIR.Database.SQLite3.Utilities',
-      'FHIR.Database.SQLite3.Objects',
-      'FHIR.Database.ODBC.Headers'
+      'fdb_sqlite3_wrapper',
+      'fdb_sqlite3_utilities',
+      'fdb_sqlite3_objects',
+      'fdb_odbc_headers'
   ], s);
 end;
 

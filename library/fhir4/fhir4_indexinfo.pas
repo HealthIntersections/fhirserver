@@ -41,7 +41,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_stream,
   fhir_common,
-  fhir4_resources, fhir4_types, fhir4_constants, FHIR.Tools.Indexing;
+  fhir4_resources, fhir4_types, fhir4_constants, fhir_indexing;
 
 Type
 

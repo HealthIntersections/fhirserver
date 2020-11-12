@@ -34,7 +34,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
   FHIR.Npp.Form,
   fhir_objects, fhir_factory, 
-  FHIR.Tools.CodeGen;
+  fhir_codegen;
 
 type
   TCodeGeneratorForm = class(TNppForm)

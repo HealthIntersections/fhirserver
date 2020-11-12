@@ -38,7 +38,7 @@ uses
   fsl_utilities, fsl_http,
   fhir_objects, fhir_factory, fhir_common,
   FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Factory,
-  FHIR.Tools.DiffEngine;
+  fhir_diff;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug

@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_http,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TACIRConcept = class (TCodeSystemProviderContext)

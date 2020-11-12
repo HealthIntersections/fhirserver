@@ -38,8 +38,8 @@ uses
   fhir_objects,
 
   
-  FHIR.Database.Manager,
-  FHIR.Server.Session, FHIR.Tools.Indexing,
+  fdb_manager,
+  FHIR.Server.Session, fhir_indexing,
   FHIR.Server.Indexing;
 
 Type

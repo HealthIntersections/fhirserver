@@ -34,7 +34,7 @@ interface
 
 
 Uses
-  SysUtils, Classes, Character, RegularExpressions,
+  SysUtils, Classes, Character, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
 
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc,
 

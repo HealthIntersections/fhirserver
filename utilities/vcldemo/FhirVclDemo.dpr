@@ -21,7 +21,7 @@ uses
   fhir2_resources in '..\..\library\r2\fhir2_resources.pas',
   fsl_scim in '..\..\library\base\fsl_scim.pas',
   fsl_xml in '..\..\library\support\fsl_xml.pas',
-  FHIR.Tools.Indexing in '..\..\library\tools\FHIR.Tools.Indexing.pas',
+  fhir_indexing in '..\..\library\tools\fhir_indexing.pas',
   fhir2_constants in '..\..\library\r2\fhir2_constants.pas',
   FHIR.R2.Tags in '..\..\library\r2\FHIR.R2.Tags.pas',
   FHIR.Base.Lang in '..\..\library\base\FHIR.Base.Lang.pas',

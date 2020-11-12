@@ -29,12 +29,13 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
+{$i fhir.inc}
 
 interface
 
 uses
-  SysUtils, RegularExpressions,
-  fsl_utilities, fsl_base,
+  SysUtils, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
+  fsl_utilities, fsl_base, fsl_fpc,
   fhir_objects;
 
 Type

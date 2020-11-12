@@ -51,8 +51,8 @@ uses
   fhir_objects, fhir_xhtml, fhir_common,  fhir_utilities, fhir_pathengine,
   fhir2_types, fhir2_constants, fhir2_indexinfo, fhir2_utilities, fhir2_pathengine, fhir2_context,
   fhir2_resources_base, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_canonical, fhir2_resources_other,
-  FHIR.Tools.Indexing,
-  FHIR.Ucum.Services,
+  fhir_indexing,
+  ftx_ucum_services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;
 
 Type

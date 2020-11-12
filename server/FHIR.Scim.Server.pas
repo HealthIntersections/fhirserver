@@ -37,7 +37,7 @@ uses
   IdContext, IdCustomHTTPServer, IdHashSHA,
   fsl_base, fsl_json, fsl_utilities, fsl_threads, fsl_stream,
   fsl_scrypt, fsl_http,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects,
   FHIR.Server.Session,
   FHIR.Server.Utilities,

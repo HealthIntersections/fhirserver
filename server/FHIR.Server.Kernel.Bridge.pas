@@ -65,14 +65,14 @@ Uses
   fsl_base, fsl_utilities, fsl_collections, fsl_threads,
   fsl_stream, fsl_json,
   fsl_http,
-  FHIR.Ucum.Services,
+  ftx_ucum_services,
   fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
 
   // change which version is implemented by changing these imports
   fhir3_types, fhir3_resources, fhir3_constants, fhir3_utilities, fhir3_factory, fhir3_pathengine,
   fhir3_validator, fhir3_indexinfo, FHIR.Server.ValidatorR3,
 
-  FHIR.Tools.Indexing,
+  fhir_indexing,
   FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Session, FHIR.Server.UserMgr,
   FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Kernel.Base;
 

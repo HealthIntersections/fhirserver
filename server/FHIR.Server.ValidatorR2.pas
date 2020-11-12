@@ -37,10 +37,10 @@ Uses
   fsl_utilities, fsl_threads,
   fsl_base, fsl_stream,
   fhir_objects, fhir_factory, fhir_common,
-  FHIR.Tx.Service,
+  ftx_service,
   fhir2_types, fhir2_context, fhir2_profiles, fhir2_client,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other,
-  FHIR.Tools.ValueSets,
+  fhir_valuesets,
   FHIR.Tx.Server;
 
 Type

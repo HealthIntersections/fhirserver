@@ -37,7 +37,7 @@ uses
   IdContext, IdCustomHTTPServer,
   fsl_base, fsl_utilities, fsl_json,
   fsl_http,
-  FHIR.Database.Manager,
+  fdb_manager,
   fsl_npm, fsl_npm_spider,
   fhir_objects, fsl_stream,
   fhir4_types, // choice of R4 is totally arbitrary

@@ -41,7 +41,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_stream,
   fhir_common,
-  fhir5_enums, fhir5_types, fhir5_resources, fhir5_constants, FHIR.Tools.Indexing;
+  fhir5_enums, fhir5_types, fhir5_resources, fhir5_constants, fhir_indexing;
 
 Type
 

@@ -37,10 +37,10 @@ uses
   fsl_http,
   fsl_base, fsl_utilities, fsl_fpc,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client,
-  FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Tools.Indexing,
+  fdb_manager, fdb_dialects,
+  fhir_indexing,
   FHIR.Server.Indexing, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Constants,
-  FHIR.Ucum.Services;
+  ftx_ucum_services;
 
 type
   TQuantityOperation = (qopEqual, qopNotEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopStartsAfter, qopEndsBefore, qopApproximate);

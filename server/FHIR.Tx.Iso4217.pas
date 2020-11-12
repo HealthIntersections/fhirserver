@@ -35,9 +35,9 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, FHIR.Support.Lang, fsl_http,
+  fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http,
   fhir_common,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TIso4217Concept = class (TCodeSystemProviderContext)

@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IOUtils,
+  SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   IdHTTPServer, IdCustomHTTPServer, IdContext,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json;
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc;
 
 type
   TUsageStatsServer = class (TFslObject)

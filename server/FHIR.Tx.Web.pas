@@ -38,9 +38,9 @@ uses
   fsl_base, fsl_utilities, fsl_stream,
   IdContext, IdCustomHTTPServer,
    fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
-  FHIR.Tools.ValueSets,
-  fhir_htmlgen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
-  FHIR.Server.Session, FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants, FHIR.Server.WebBase;
+  fhir_valuesets,
+  fhir_htmlgen, ftx_sct_publisher, ftx_sct_services, ftx_loinc_publisher, ftx_loinc_services, ftx_sct_expressions, ftx_sct_analysis,
+  FHIR.Server.Session, FHIR.Tx.Server, ftx_service, FHIR.Tx.Manager, FHIR.Server.Constants, FHIR.Server.WebBase;
 
 Type
 

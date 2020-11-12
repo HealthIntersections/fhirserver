@@ -37,7 +37,7 @@ uses
   fsl_utilities, fsl_http,
   fsl_base, fsl_stream, 
   fhir_common,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TAreaCodeConcept = class (TCodeSystemProviderContext)

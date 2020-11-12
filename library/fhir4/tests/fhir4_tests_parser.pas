@@ -33,11 +33,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IOUtils,
+  SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_testing,
   IdGlobalProtocols,
-  fsl_utilities, fsl_stream, fsl_tests, fsl_comparisons,
-  fsl_http,
+  fsl_utilities, fsl_stream, fsl_tests, fsl_comparisons, fsl_http, fsl_fpc,
   fhir_objects, fhir4_parser, fhir_parser,
   fhir4_resources, fhir4_elementmodel, fhir4_context, fhir4_tests_worker;
 

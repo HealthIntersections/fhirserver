@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
+  SysUtils, Classes, Generics.Collections, Character, {$IFDEF DELPHI}RegularExpressions, {$ENDIF}
   MarkdownHTMLEntities,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc;
 

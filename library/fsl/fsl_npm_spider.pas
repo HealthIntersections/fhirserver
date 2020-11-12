@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging,
   fsl_fetcher,
-  FHIR.Database.Manager,
+  fdb_manager,
   fsl_npm;
 
 const

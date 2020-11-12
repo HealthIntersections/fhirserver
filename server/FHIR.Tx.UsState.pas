@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http,
   fhir_common,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TUSStateConcept = class (TCodeSystemProviderContext)

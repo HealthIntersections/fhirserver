@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_threads, fsl_utilities, fsl_collections,
-  fhir_objects, fhir_factory, fhir_common, fhir_validator, FHIR.Database.Manager,
-  FHIR.Tools.Indexing,
+  fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager,
+  fhir_indexing,
   FHIR.Server.Indexing, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,
   FHIR.Server.Subscriptions, FHIR.Server.SessionMgr, FHIR.Server.TagMgr, FHIR.Server.Jwt, FHIR.Server.Factory, FHIR.Server.ConsentEngine,
   FHIR.Server.ClientCacheManager

@@ -51,7 +51,7 @@ uses
   fsl_logging,
   fhir_objects, fhir_factory, fhir_client, fhir_common, 
   fsl_fetcher,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, fhir_indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, fsl_utilities, fsl_stream, fsl_npm_cache,
   fhir_oauth, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, NamingSystemEditor, HelpContexts, ProcessForm, SettingsDialog,

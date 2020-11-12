@@ -35,10 +35,10 @@ interface
 uses
   SysUtils,
   fsl_base, fsl_utilities, fsl_logging, fsl_http,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
-  FHIR.Tools.ValueSets,
-  FHIR.Server.Session, FHIR.Server.Storage, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Server.ClosureMgr;
+  fhir_valuesets,
+  FHIR.Server.Session, FHIR.Server.Storage, ftx_service, FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Server.ClosureMgr;
 
 type
   TFhirTerminologyOperation = class (TFhirOperation)

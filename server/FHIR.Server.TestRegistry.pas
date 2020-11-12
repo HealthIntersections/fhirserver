@@ -40,7 +40,7 @@ fhir4_tests_Maps
 
 
 
-FHIR.Tools.GraphQL.Tests
+fhir_graphql.Tests
 FHIR.Tests.FullServer
 FHIR.Tests.GraphDefinition
 FHIR.Tests.RestFulServer
@@ -53,10 +53,10 @@ uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  fsl_tests, fsl_tests_web, FHIR.Database.Tests, FHIR.Ucum.Tests, FHIR.Tx.IETFLang.Tests, FHIR.Snomed.Tests, v2_tests, cda_tests, fsl_tests_scrypt,
-  fsl_npm_tests,
+  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, FHIR.Tx.IETFLang.Tests, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
+  fsl_tests_npm,
   {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
-  fhir4_tests_Parser, fhir4_tests_Context, fhir4_tests_Utilities, fhir4_tests_Client, fhir4_tests_Liquid, fhir4_tests_PathEngine;
+  fhir4_tests_parser, fhir4_tests_Context, fhir4_tests_Utilities, fhir4_tests_Client, fhir4_tests_Liquid, fhir4_tests_PathEngine;
 
 procedure registerTests;
 
@@ -137,14 +137,14 @@ begin
   fsl_tests_web.registerTests;
   cda_tests.registerTests;
   FHIR.Tx.IETFLang.Tests.registerTests;
-  FHIR.Database.Tests.registerTests;
-  FHIR.Ucum.Tests.registerTests;
-  FHIR.Snomed.Tests.registerTests;
+  fdb_tests.registerTests;
+  ftx_ucum_tests.registerTests;
+  ftx_sct_tests.registerTests;
   v2_tests.registerTests;
   {$IFNDEF NO_JS}
   fhir_tests_javascript.registerTests;
   {$ENDIF}
-  fsl_npm_tests.registerTests;
+  fsl_tests_npm.registerTests;
   fhir4_tests_Parser.registerTests;
   fhir4_tests_Context.registerTests;
   fhir4_tests_Utilities.registerTests;

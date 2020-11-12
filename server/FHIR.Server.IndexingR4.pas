@@ -50,8 +50,8 @@ uses
   fsl_base, fsl_utilities, fsl_xml,
   fhir_objects, fhir_xhtml, fhir_common,  fhir_utilities, fhir_pathengine,
   fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_constants, fhir4_indexinfo, fhir4_utilities, fhir4_pathengine, fhir4_context,
-  FHIR.Tools.Indexing,
-  FHIR.Ucum.Services,
+  fhir_indexing,
+  ftx_ucum_services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;
 
 Type

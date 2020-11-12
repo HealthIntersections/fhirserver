@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http,
-  FHIR.Database.Manager, FHIR.Database.Dialects,
+  fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities,
   fhir_cdshooks,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TNdcImporter = class (TFslObject)

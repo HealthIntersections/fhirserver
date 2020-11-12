@@ -33,10 +33,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, RegularExpressions,
-  fsl_utilities, fsl_base, fsl_stream, fsl_http,
+  SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc,
   fhir_common,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TCountryCodeConcept = class (TCodeSystemProviderContext)

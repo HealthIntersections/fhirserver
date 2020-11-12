@@ -36,8 +36,8 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http,
-  FHIR.Database.Manager,
-  FHIR.Tx.Service;
+  fdb_manager,
+  ftx_service;
 
 type
   TUniiConcept = class (TCodeSystemProviderContext)

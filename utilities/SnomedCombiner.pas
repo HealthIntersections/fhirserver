@@ -34,7 +34,7 @@ interface
 uses
   Windows, SysUtils, Classes,
   fsl_base, fsl_utilities,
-  FHIR.Snomed.Services;
+  ftx_sct_services;
 
 Type
   TTabWriter = class (TFslObject)

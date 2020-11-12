@@ -102,12 +102,10 @@
       <Unit>
         <Filename Value="..\library\v2\v2_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="v2_base"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\v2\v2_dictionary_pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="v2_dictionary"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\base\FHIR.Base.Xhtml.pas"/>
@@ -120,7 +118,6 @@
       <Unit>
         <Filename Value="..\library\v2\v2_dictionary_v231.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="v2_dictionary_v231"/>
       </Unit>
       <Unit>
         <Filename Value="..\library\base\FHIR.Base.Lang.pas"/>
@@ -263,7 +260,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core"/>
-      <OtherUnitFiles Value="..\library\support;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\library\base;..\library\web;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\ucum;..\library\client;..\library\r4;..\library\cda;..\library\smart;frames"/>
+      <OtherUnitFiles Value="..\library\fsl;..\library\fhir;..\library\fhir4;..\library\npm;..\library\ui;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\FMMAVX;editors;stores;views;..\library\v2;..\library\client;..\library\cda;..\library\smart;frames"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

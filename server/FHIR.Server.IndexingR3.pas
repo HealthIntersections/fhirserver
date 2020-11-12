@@ -48,8 +48,8 @@ uses
   fsl_base, fsl_utilities, fsl_xml,
   fhir_objects, fhir_xhtml, fhir_common,  fhir_utilities, fhir_pathengine,
   fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_constants, fhir3_indexinfo, fhir3_utilities, fhir3_pathengine, fhir3_context,
-  FHIR.Tools.Indexing,
-  FHIR.Ucum.Services,
+  fhir_indexing,
+  ftx_ucum_services,
   FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Tags, FHIR.Server.Utilities, FHIR.Server.Constants;
 
 Type

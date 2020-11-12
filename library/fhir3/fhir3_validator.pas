@@ -35,9 +35,9 @@ interface
 
 
 Uses
-  SysUtils, Classes, Character, RegularExpressions,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections,
-  fsl_xml, fsl_json, fsl_fpc,
+  SysUtils, Classes, Character, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc,
+  fsl_xml, fsl_json,
   fhir_objects,  fhir_xhtml, fhir_factory, fhir_common, fhir_pathengine,
   fhir3_pathnode, fhir3_context, fhir3_resources, fhir3_types, fhir3_pathengine, fhir3_elementmodel, fhir3_resources_base;
 

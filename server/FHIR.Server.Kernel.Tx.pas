@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IOUtils,
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream,
-  FHIR.Ucum.Services, fsl_http,
+  SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc,
+  ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
   fsl_npm_cache, fsl_npm,
@@ -47,8 +47,8 @@ uses
   fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
   FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4, FHIR.Server.ValidatorR5,
 
-  FHIR.Tools.Indexing, FHIR.Tools.Search,
-  FHIR.Database.Manager,
+  fhir_indexing, FHIR.Tools.Search,
+  fdb_manager,
   fsl_scim,
   FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Tx.Operations, FHIR.Server.Operations,
   FHIR.Server.Storage, FHIR.Server.Context, FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Ini, FHIR.Server.BundleBuilder,

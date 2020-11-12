@@ -35,7 +35,7 @@ interface
 
 uses
   fsl_utilities,
-  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Database.ODBC,
+  fdb_manager, fdb_dialects, fdb_odbc,
   v2_base, v2_dictionary;
 
 const

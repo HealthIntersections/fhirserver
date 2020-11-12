@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections,  fsl_http,
-  fhir_objects,  fhir5_parser, fhir_factory, FHIR.Tx.Service, fhir_utilities, fhir_common,
+  fhir_objects,  fhir5_parser, fhir_factory, ftx_service, fhir_utilities, fhir_common,
   fhir5_resources, fhir5_enums, fhir5_types, fhir5_constants, fhir5_utilities, fhir5_profiles;
 
 Const

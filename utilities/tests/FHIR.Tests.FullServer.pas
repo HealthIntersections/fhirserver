@@ -39,16 +39,16 @@ uses
   fsl_base, fsl_utilities, fsl_json,
 
   fsl_fetcher, fsl_http,
-  FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
-  FHIR.Loinc.Importer, FHIR.Loinc.Services,
-  FHIR.Ucum.Services,
-  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
+  ftx_sct_importer, ftx_sct_services, ftx_sct_expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
+  ftx_loinc_importer, ftx_loinc_services,
+  ftx_ucum_services,
+  fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
   fhir_factory, fsl_npm_cache, fhir_parser,  fhir_javascript, fhir_client, fhir_pathengine,
 
   fhir4_factory, fhir4_indexinfo, fhir4_resources, fhir4_types, fhir4_json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
   fhir4_validator, fhir4_context, FHIR.Server.ValidatorR4, fhir4_javascript, fhir4_client, fhir4_utilities, fhir4_pathengine, fhir4_resources_base,
 
-  FHIR.Tools.Indexing, FHIR.Version.Client,
+  fhir_indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Server.Storage, FHIR.Server.Ini, FHIR.Server.Version,
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, fhir_objects,

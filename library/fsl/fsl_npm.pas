@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Types, IOUtils, zlib,
+  SysUtils, Classes, Types, {$IFDEF DELPHI}IOUtils, {$ENDIF} zlib,
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads;
 
 Type

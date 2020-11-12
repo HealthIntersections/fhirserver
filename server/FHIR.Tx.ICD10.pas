@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_http,
   fhir_objects, fhir_common, fhir_factory,
   fhir_cdshooks,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TICD10Node = class (TCodeSystemProviderContext)

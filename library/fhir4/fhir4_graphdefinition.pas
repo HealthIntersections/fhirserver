@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities,
   fsl_graphql, fsl_http,
   fhir_objects, fhir_graphdefinition, fhir_pathengine,  fhir_factory,
-  FHIR.Tools.GraphQL,
+  fhir_graphql,
   fhir4_resources, fhir4_types, fhir4_pathengine, fhir4_pathnode, fhir4_context, fhir4_utilities;
 
 type

@@ -37,7 +37,7 @@ Uses
   SysUtils, StrUtils, Classes, IniFiles,
 
   fsl_base, fsl_utilities, fsl_logging,
-  FHIR.Ucum.Services, fsl_http,
+  ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
   fsl_npm_cache,
@@ -53,8 +53,8 @@ Uses
   {$IFNDEF NO_JS} fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript, {$ENDIF}
   fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
 
-  FHIR.Database.Manager,
-  FHIR.Tools.Indexing,
+  fdb_manager,
+  fhir_indexing,
   FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Tx.Unii,
   FHIR.Scim.Server,

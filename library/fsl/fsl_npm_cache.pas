@@ -34,7 +34,7 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
+  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads,
   fsl_stream, fsl_fetcher,
   fsl_npm, fsl_npm_client,
@@ -187,9 +187,6 @@ var
 
 
 implementation
-
-uses
-  IOUtils;
 
 function getVersFromDeps(json : TJsonObject) : String;
 var

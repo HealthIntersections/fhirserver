@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, RegularExpressions, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml,
+  SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_fpc,
   v2_base, v2_dictionary;
 
 Type

@@ -39,8 +39,8 @@ uses
   IniFiles, Math,
   IdTelnet, IdGlobal,
   fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging,
-  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects,
-  FHIR.Snomed.Combiner, FHIR.Snomed.Services, FHIR.Snomed.Importer, FHIR.Loinc.Importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm;
+  fdb_manager, fdb_odbc, fdb_dialects,
+  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, FHIR.Tx.NDC, FHIR.Tx.RxNorm;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';

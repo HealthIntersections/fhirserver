@@ -38,7 +38,7 @@ uses
   fhir_objects,  fhir_factory, fhir_utilities, fhir_common,
   fhir2_parser, fhir2_factory, fhir2_types, fhir2_constants, fhir2_profiles, fhir2_utilities,
   fhir2_resources_base, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_canonical, fhir2_resources_other,
-  FHIR.Tx.Service;
+  ftx_service;
 
 Const
   TYPE_EXTENSION = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-type';

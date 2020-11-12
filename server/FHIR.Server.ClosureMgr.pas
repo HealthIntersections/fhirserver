@@ -36,7 +36,7 @@ Uses
   SysUtils, Generics.Collections,
   fsl_utilities, fsl_threads,
   fsl_base, 
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_common,
   FHIR.Tx.Manager;
 

@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, fsl_utilities,
   fsl_base,
-  FHIR.Database.Manager, FHIR.Database.Dialects, fsl_stream,
+  fdb_manager, fdb_dialects, fsl_stream,
   fhir_objects, fhir_factory, fhir_utilities,
   FHIR.Server.Indexing, FHIR.Server.Factory, FHIR.Server.Version,
   FHIR.Scim.Server;

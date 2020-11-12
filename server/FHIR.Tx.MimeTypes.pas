@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
    fsl_utilities, fsl_stream, fsl_base, fsl_http,
   fhir_common,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TMTCodeSystemProviderContext = class (TCodeSystemProviderContext)

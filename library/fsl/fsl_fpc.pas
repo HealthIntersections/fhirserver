@@ -39,8 +39,8 @@ uses
   {$IFDEF LINUX}
   baseunix, unix,
   {$ENDIF}
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib
-  {$IFDEF FPC}, dateutils, upascaltz {$ENDIF};
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
+  {$IFDEF FPC}, RegExpr, dateutils, upascaltz {$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -227,11 +227,46 @@ var
 
 procedure initialiseTZData(filename : String);
 
+{$IFDEF FPC}
+type
+  TRegExOption = (roNone, roIgnoreCase, roMultiLine, roExplicitCapture,
+    roCompiled, roSingleLine, roIgnorePatternSpace, roNotEmpty);
+  TRegExOptions = set of TRegExOption;
+
+  { TRegEx }
+
+  TRegEx = class (Regexpr.TRegExpr)
+  private
+  public
+    constructor Create(const Pattern: string; Options: TRegExOptions); overload;
+    function IsMatch(const Input: string): Boolean; overload;
+
+    class function isMatch(const input, pattern: string): Boolean; overload;
+  end;
+
+
+  { TDirectory }
+
+  TDirectory = record
+    class function GetFiles(const Path: string): TStringDynArray; overload; inline; static;
+    class function GetFiles(const Path, Mask: string): TStringDynArray; overload; inline; static;
+    class function getDirectories(const Path: string): TStringDynArray; overload; inline; static;
+  end;
+
+  { TFile }
+
+  TFile = record
+    class procedure copy(src, dest : String; dummy : boolean); overload; inline; static;
+    class procedure delete(path : String); overload; inline; static;
+  end;
+
+{$ENDIF}
+
 implementation
 
 {$IFDEF FPC}
 uses
-  RegExpr, FileUtil, LazUTF8, uPascalTZ_Types,
+  FileUtil, LazUTF8, uPascalTZ_Types,
   fsl_base, fsl_stream, fsl_utilities;
 {$ENDIF}
 
@@ -796,6 +831,111 @@ end;
 {$ELSE}
 begin
 end;
+{$ENDIF}
+
+{$IFDEF FPC}
+{ TRegEx }
+
+constructor TRegEx.Create(const Pattern: string; Options: TRegExOptions);
+begin
+  inherited Create(pattern);
+end;
+
+function TRegEx.IsMatch(const Input: string): Boolean;
+begin
+  result := Exec(input);
+end;
+
+class function TRegEx.isMatch(const input, pattern : string): Boolean;
+var
+  this : TRegEx;
+begin
+  this := TRegEx.create(pattern);
+  try
+    result := this.isMatch(input);
+  finally
+    this.free;
+  end;
+end;
+
+{ TFile }
+
+class procedure TFile.copy(src, dest: String; dummy: boolean);
+begin
+  CopyFile(src, dest);
+end;
+
+class procedure TFile.delete(path: String);
+begin
+  FileDelete(path);
+
+end;
+
+{ TDirectory }
+
+class function TDirectory.GetFiles(const Path: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if SearchRec.Attr and SysUtils.faDirectory = 0 then
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
+
+class function TDirectory.GetFiles(const Path, Mask: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(fsl_utilities.path([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if SearchRec.Attr and SysUtils.faDirectory = 0 then
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
+
+class function TDirectory.getDirectories(const Path: string): TStringDynArray;
+var
+  ts: TStringList;
+  SearchRec: TSearchRec;
+begin
+  ts := TStringList.create;
+  try
+    if FindFirst(fsl_utilities.path([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
+    begin
+      repeat
+        if (SearchRec.Attr and SysUtils.faDirectory <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
+          ts.add(fsl_utilities.path([Path, SearchRec.Name]));
+      until FindNext(SearchRec) <> 0;
+    end;
+
+    result := ts.ToStringArray;
+  finally
+     ts.free;
+  end;
+end;
+
 {$ENDIF}
 
 initialization

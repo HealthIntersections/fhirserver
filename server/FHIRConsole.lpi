@@ -33,7 +33,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\Core;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\library\support;..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+            <OtherUnitFiles Value="..\library\fsl;..\library\fhir;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\dependencies\FMMAVX;..\library\npm;..\library\client;..\library\smart;..\library;..\library\fdb;..\library\ftx"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -79,7 +79,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\library\snomed;..\library\support;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <OtherUnitFiles Value="..\library\snomed;..\library\support;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -110,7 +110,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\library\support;..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\library\support;..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -133,7 +133,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -164,7 +164,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -219,7 +219,7 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\library\snomed\FHIR.Snomed.Combiner.pas"/>
+        <Filename Value="..\library\snomed\ftx_sct_combiner.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
@@ -227,15 +227,15 @@
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\library\FHIR.Tx.Service.pas"/>
+        <Filename Value="..\library\ftx_service.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\library\loinc\FHIR.Loinc.Services.pas"/>
+        <Filename Value="..\library\loinc\ftx_loinc_services.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\library\database\FHIR.Database.Manager.pas"/>
+        <Filename Value="..\library\fdb\fdb_manager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
@@ -267,7 +267,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-      <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\database"/>
+      <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>

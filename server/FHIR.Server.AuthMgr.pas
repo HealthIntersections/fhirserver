@@ -40,7 +40,7 @@ uses
   SysUtils, Classes, Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_threads,
-  fsl_http, FHIR.Database.Manager, FHIR.Database.Dialects,
+  fsl_http, fdb_manager, fdb_dialects,
   fsl_oauth, FHIR.Scim.Server, fsl_scim, fsl_crypto, fhir_oauth,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
   FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.Ini,

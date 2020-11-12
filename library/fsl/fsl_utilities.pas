@@ -42,10 +42,10 @@ Uses
   {$IFDEF FPC}
   base64,
   {$ELSE}
-  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts,
+  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions,
   {$ENDIF}
   SysUtils, Types,
-  Classes, Generics.Collections, Math, TypInfo, Character, RegularExpressions, SysConst,
+  Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
   fsl_fpc, fsl_base;
 
 
@@ -2010,8 +2010,8 @@ Implementation
 
 Uses
   {$IFDEF WINDOWS} ActiveX, ComObj, {$ENDIF}
-  {$IFDEF FPC} Graphics, {$ENDIF}
-  IOUtils, DateUtils, fsl_stream;
+  {$IFDEF FPC} Graphics, {$ELSE} IOUtils, {$ENDIF}
+  DateUtils, fsl_stream;
 
 
 Function Percentage(Const iPart, iTotal : Integer) : Real;

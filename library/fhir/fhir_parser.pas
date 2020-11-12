@@ -37,7 +37,7 @@ Interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Math, Generics.Collections, Character, {$IFNDEF VER260} system.NetEncoding, {$ENDIF}
+  SysUtils, Classes, Math, Generics.Collections, Character, {$IFDEF DELPHI} system.NetEncoding, RegularExpressions, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_turtle, fsl_http,
   fhir_objects,  fhir_xhtml;
 
@@ -358,9 +358,6 @@ Type
 procedure RemoveBOM(var s : String);
 
 Implementation
-
-uses
-  RegularExpressions;
 
 Function TFHIRXmlParserBase.LoadXml(stream : TStream) : TMXmlDocument;
 begin

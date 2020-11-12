@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
-  FHIR.Tx.Service,
+  ftx_service,
   fhir_objects,  fhir_factory, fhir_utilities, fhir_common,
   fhir3_parser, fhir3_resources, fhir3_types, fhir3_constants, fhir3_utilities, fhir3_profiles;
 

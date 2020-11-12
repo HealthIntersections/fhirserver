@@ -224,7 +224,7 @@ Type
 implementation
 
 uses
-  fhir4_profiles, FHIR.Support.Lang;
+  fhir4_profiles, fsl_lang;
 
 function tail(path: String): String;
 begin

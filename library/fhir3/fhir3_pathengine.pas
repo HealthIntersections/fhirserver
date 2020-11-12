@@ -34,7 +34,7 @@ unit fhir3_pathengine;
 interface
 
 uses
-  SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
+  SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
   fhir_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, 

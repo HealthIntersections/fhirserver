@@ -37,7 +37,7 @@ uses
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseFrame,
   fsl_base, fsl_utilities, FHIR.Ui.Fmx,
-  fhir_objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
+  fhir_objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, fhir_indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
   fsl_npm_cache, fsl_npm;
 
 type

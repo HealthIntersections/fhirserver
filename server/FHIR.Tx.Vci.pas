@@ -35,8 +35,8 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, AdvObjectLists,
   YuStemmer,
-  FHIR.Database.Manager,
-  FHIR.Version.Types, FHIRComponents, FHIR.Version.Resources, FHIR.Tx.Service, DateAndTime;
+  fdb_manager,
+  FHIR.Version.Types, FHIRComponents, FHIR.Version.Resources, ftx_service, DateAndTime;
 
 type
   TNciMetaConcept = class (TCodeSystemProviderContext)

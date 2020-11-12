@@ -34,7 +34,7 @@ interface
 uses
   fsl_base,
   fhir_factory, fhir_pathengine,
-  FHIR.Ucum.Services,
+  ftx_ucum_services,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
 {

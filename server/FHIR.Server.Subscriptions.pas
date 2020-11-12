@@ -51,7 +51,7 @@ uses
   IdOpenSSLIOHandlerClient, IdOpenSSLVersion,
   fsl_base, fsl_utilities, fsl_threads, fsl_fpc,
   fsl_http,
-  FHIR.Database.Manager, FHIR.Database.Dialects,
+  fdb_manager, fdb_dialects,
   fsl_collections, fsl_stream, fsl_json,
   fhir_objects,  fhir_utilities, fhir_factory, fhir_client, fhir_common,
   FHIR.Server.Session, FHIR.Server.Utilities, fhir_parser, fsl_logging;

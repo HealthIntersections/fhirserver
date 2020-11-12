@@ -51,28 +51,28 @@ uses
   fsl_fetcher, fsl_http, fsl_graphql,
 
   // Database
-  FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Utilities, FHIR.Database.SQLite3.Wrapper, FHIR.Database.Utilities, FHIR.Database.Dialects, FHIR.Database.Logging, FHIR.Database.Manager, FHIR.Database.ODBC.Headers, FHIR.Database.ODBC.Objects, FHIR.Database.ODBC, FHIR.Database.SQLite,
+  fdb_sqlite3_objects, fdb_sqlite3_utilities, fdb_sqlite3_wrapper, FHIR.Database.Utilities, fdb_dialects, fdb_logging, fdb_manager, fdb_odbc_headers, fdb_odbc_objects, fdb_odbc, fdb_sqlite3,
 
   // FHIR.Base + others
-    fhir_common, fhir_cdshooks, fhir_oauth, fhir_client, FHIR.Tx.Service,
+    fhir_common, fhir_cdshooks, fhir_oauth, fhir_client, ftx_service,
 
   // FHIR.Cache
   fsl_npm_cache, FHIR.Npm.Client, fsl_npm,
 
   // UCUM
-  FHIR.Ucum.Search, FHIR.Ucum.Services, FHIR.Ucum.Validators, FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers, fhir_ucum,
+  ftx_ucum_search, ftx_ucum_services, ftx_ucum_validators, ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, fhir_ucum,
 
   // LOINC
-  FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Loinc.Importer,
+  ftx_loinc_publisher, ftx_loinc_services, ftx_loinc_importer,
 
   // SNOMED
-  FHIR.Snomed.Importer, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Snomed.Analysis, FHIR.Snomed.Combiner, FHIR.Snomed.Expressions,
+  ftx_sct_importer, ftx_sct_publisher, ftx_sct_services, ftx_sct_analysis, ftx_sct_combiner, ftx_sct_expressions,
 
   // CDA
   cda_narrative, cda_objects, cda_parser, cda_types, cda_writer, cda_base, cda_documents,
 
   // Tools
-  FHIR.Tools.GraphQL,
+  fhir_graphql,
 
   // R2:
   FHIR.R2.Tags, fhir2_types, fhir2_utilities, fhir2_xml, fhir2_authmap, fhir2_base, fhir2_client, fhir2_common,

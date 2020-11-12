@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
+  SysUtils, Classes, Math, Generics.Collections, Character, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
   fhir_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, 

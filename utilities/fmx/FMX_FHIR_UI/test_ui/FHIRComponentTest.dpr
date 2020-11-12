@@ -6,7 +6,7 @@ uses
   fhir_objects in '..\..\..\..\base\fhir_objects.pas',
   fhir4_resources in '..\..\..\..\R4\fhir4_resources.pas',
   FHIR.Server.Session in '..\..\..\..\tools\FHIR.Server.Session.pas',
-  FHIR.Tools.Indexing in '..\..\..\..\tools\FHIR.Tools.Indexing.pas',
+  fhir_indexing in '..\..\..\..\tools\fhir_indexing.pas',
   FHIR.Server.Security in '..\..\..\..\tools\FHIR.Server.Security.pas',
   FHIR.Version.Parser in '..\..\..\..\version\FHIR.Version.Parser.pas',
   FHIR.FMX.Ctrls in '..\..\..\..\ui\fmx\FMX_FHIR_UI\FHIR.FMX.Ctrls.pas',

@@ -36,7 +36,7 @@ uses
   SysUtils, StrUtils, Classes, IniFiles,
   fsl_base, fsl_utilities, fsl_logging,
   {$IFDEF WINDOWS} Windows, fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
-  FHIR.Database.Manager,
+  fdb_manager,
   FHIR.Tx.Manager,
   FHIR.Server.Ini, FHIR.Server.Telnet, FHIR.Server.Utilities, FHIR.Server.WebSource,
   {$IFNDEF NO_JS}FHIR.Server.Javascript, {$ENDIF}

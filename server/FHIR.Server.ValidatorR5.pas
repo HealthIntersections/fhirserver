@@ -37,10 +37,10 @@ Uses
   fsl_utilities, fsl_threads,
   fsl_base, fsl_stream,
   fhir_objects, fhir_factory, fhir_common,
-  FHIR.Tx.Service,
+  ftx_service,
   fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_context, fhir5_profiles, fhir5_client, fhir5_utilities,
   fhir5_pathnode, fhir5_pathengine,
-  FHIR.Tools.ValueSets,
+  fhir_valuesets,
   FHIR.Tx.Server;
 
 type

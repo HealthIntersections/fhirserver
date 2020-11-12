@@ -34,7 +34,7 @@ uses
   fsl_base, fsl_utilities, fsl_json,
   fsl_http, fsl_graphql,
   fhir_objects,  fhir_pathengine, fhir_common, fhir_factory,
-  FHIR.Tools.GraphQL;
+  fhir_graphql;
 
 implementation
 

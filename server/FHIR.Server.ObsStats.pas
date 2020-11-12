@@ -41,7 +41,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   fsl_base, fsl_utilities,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects,  fhir_factory, fhir_common;
 
 type

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
   fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http,
-  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
+  fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
   fhir_objects,  fhir_utilities, fhir_factory, fhir_common,
   FHIR.Server.Ini, FHIR.Server.Session;
 

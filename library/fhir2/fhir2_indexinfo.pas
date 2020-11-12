@@ -40,7 +40,7 @@ uses
   SysUtils, Classes, 
   fsl_base, fsl_utilities, fsl_stream,
   fhir_common,
-  fhir2_resources, fhir2_types, fhir2_constants, FHIR.Tools.Indexing;
+  fhir2_resources, fhir2_types, fhir2_constants, fhir_indexing;
 
 Type
 

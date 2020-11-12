@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_fetcher,
   fhir_objects, fhir_common, fhir_factory,
   fhir_cdshooks,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
  THGVSCode = class (TCodeSystemProviderContext)

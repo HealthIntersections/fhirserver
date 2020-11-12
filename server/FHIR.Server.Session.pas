@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_crypto, fsl_scim, fsl_xml,
   fsl_http, fsl_graphql,
   fhir_objects,  fhir_xhtml, fhir_common, fhir_factory,
-  FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Server.Tags, FHIR.Server.BundleBuilder;
+  fhir_indexing, FHIR.Server.Security, FHIR.Server.Tags, FHIR.Server.BundleBuilder;
 
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload, roRestInternal);

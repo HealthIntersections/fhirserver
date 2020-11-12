@@ -35,10 +35,10 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_http,
-  FHIR.Database.Manager,
+  fdb_manager,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities,
   fhir_cdshooks,
-  FHIR.Tx.Service;
+  ftx_service;
 
 type
   TUMLSConcept = class (TCodeSystemProviderContext)

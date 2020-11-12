@@ -38,7 +38,7 @@ uses
 
   fsl_base, fsl_utilities, fsl_stream, fsl_xml,
   fhir_objects, fhir4_types, fhir4_resources, FHIR.Version.Parser,
-  fsl_http, fsl_graphql, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
+  fsl_http, fsl_graphql, fhir_graphql, FHIR.Server.GraphDefinition,
   fhir4_graphdefinition,
   fhir4_tests_worker, fsl_tests;
 

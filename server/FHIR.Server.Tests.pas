@@ -71,8 +71,8 @@ procedure ExecuteFhirServerTests(all: boolean);
 implementation
 
 uses
-  FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Scim.Search, FHIR.Server.SearchSyntax,
-  FHIR.Ucum.Tests, TwilioClient, FHIR.Support.Signatures, FHIR.Version.Questionnaire,
+  ftx_sct_services, ftx_sct_expressions, FHIR.Scim.Search, FHIR.Server.SearchSyntax,
+  ftx_ucum_tests, TwilioClient, FHIR.Support.Signatures, FHIR.Version.Questionnaire,
   MarkdownDaringFireballTests, fsl_json;
 
 const
