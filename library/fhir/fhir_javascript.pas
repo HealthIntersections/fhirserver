@@ -35,8 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities,
-  fsl_javascript,
+  fsl_base, fsl_utilities, fsl_javascript,
   fhir_objects, fhir_factory;
 
 type

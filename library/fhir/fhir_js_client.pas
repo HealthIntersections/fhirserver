@@ -34,10 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_javascript,
-  fsl_base,
-  fhir_objects, fhir_factory,
-  fhir_client;
+  fsl_base, fsl_javascript,  
+  fhir_objects, fhir_factory, fhir_client;
 
 type
   TFHIRClientJSHelper = class (TFslObject)
