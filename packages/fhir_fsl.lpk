@@ -8,7 +8,7 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\jcl"/>
+        <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fsl"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>

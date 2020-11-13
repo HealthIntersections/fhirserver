@@ -136,8 +136,8 @@
             <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <OtherUnitFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library\cda\tests;..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fdb\tests;..\library\v2\tests;..\library\ftx\tests;tests;module"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
