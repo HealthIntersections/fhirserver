@@ -100,12 +100,12 @@ Type
   TFHIRClientLogger = class (TFslObject)
   public
     function Link : TFHIRClientLogger; overload;
-    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual; abstract;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TBytes);  virtual; abstract;
   end;
 
   TNullLogger = class (TFHIRClientLogger)
   public
-    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  override;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TBytes);  override;
   end;
 
   // client architecture:
@@ -291,7 +291,7 @@ end;
 
 { TNullLogger }
 
-procedure TNullLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
+procedure TNullLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes);
 begin
   // nothing
 end;

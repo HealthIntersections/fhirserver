@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ComCtrls, EditBtn, Buttons, Types,
-  fui_orchestrators,
+  fui_lcl_managers,
   ftk_frame_resource;
 
 type

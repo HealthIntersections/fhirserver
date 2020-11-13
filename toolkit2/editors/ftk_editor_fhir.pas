@@ -13,7 +13,7 @@ uses
   fhir_objects, fhir_factory, fhir_parser,
   {fhir2_parsers, fhir3_parsers, }fhir4_factory, {fhir5_parsers, }
   fhir4_resources_canonical,
-  fui_orchestrators,
+  fui_lcl_managers,
   ftk_context, ftk_store,
   ftk_editor_base;
 

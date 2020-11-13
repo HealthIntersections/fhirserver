@@ -32,7 +32,7 @@ interface
 
 uses
   Windows,
-  SysUtils, Classes, Vcl.Graphics, Types,
+  SysUtils, Classes, Graphics, Types,
   GraphicEx, Jpeg, PNGImage,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell;
 

@@ -33,7 +33,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\Core;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\library\fsl;..\library\fhir;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\dependencies\FMMAVX;..\library\npm;..\library\client;..\library\smart;..\library;..\library\fdb;..\library\ftx"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -79,7 +78,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\library\snomed;..\library\support;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <OtherUnitFiles Value="..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -110,7 +109,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\library\support;..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -133,7 +132,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
+            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -164,7 +163,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
+            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -199,64 +198,48 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fhir_ftx"/>
       </Item1>
       <Item2>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="fhir_fdb"/>
       </Item2>
       <Item3>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="fhir"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="fhir_fsl"/>
       </Item4>
+      <Item5>
+        <PackageName Value="MarkdownEngine"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="PascalTZ"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="LCL"/>
+      </Item8>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="3">
       <Unit0>
         <Filename Value="FHIRConsole.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\library\snomed\ftx_sct_combiner.pas"/>
+        <Filename Value="console_form.pas"/>
         <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\library\cdshooks\FHIR.CdsHooks.Utilities.pas"/>
+        <Filename Value="console_server_form.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="..\library\ftx_service.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\library\loinc\ftx_loinc_services.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="..\library\fdb\fdb_manager.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="..\library\support\IOUtils.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="..\library\support\RegularExpressions.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="..\dependencies\Indy10\System\IdGlobal.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="FHIR.Server.Console.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="MainConsoleForm"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit9>
+        <UnitName Value="FHIR.Server.Connection.Lcl"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -267,7 +250,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-      <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\snomed;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\cdshooks;..\library\smart;..\library;..\library\loinc;..\library\fdb"/>
+      <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>

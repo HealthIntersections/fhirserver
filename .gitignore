@@ -256,3 +256,5 @@ toolkit2/lib/x86_64-linux/
 /library/fhir5/backup
 /library/fhir5/backup
 /library/fdb/backup
+/library/fui/backup
+/packages/lib/x86_64-win64

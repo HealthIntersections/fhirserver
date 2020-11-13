@@ -91,10 +91,10 @@ var
 begin
   for csr in res.restList do
   begin
-    csr.resourceList.SortedBy({$IFDEF FPC}@{$ENDIF}sortCSRest);
+    csr.resourceList.SortedBy(sortCSRest);
     for csrr in csr.resourceList do
     begin
-      csrr.interactionList.SortedBy({$IFDEF FPC}@{$ENDIF}sortCSRInteraction);
+      csrr.interactionList.SortedBy(sortCSRInteraction);
     end;
   end;
 end;

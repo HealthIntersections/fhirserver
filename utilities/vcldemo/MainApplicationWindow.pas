@@ -51,7 +51,7 @@ uses
   SHDocVw, PngImage, Generics.Collections, Generics.Defaults, VirtualTrees,
   IdSSLOpenSSLHeaders, IdSSLOpenSSL, IdResourceStringsOpenSSL,
   fsl_base, fsl_utilities,
-  fhir_objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, fhir_xhtml,
+  fhir_objects, fhir2_client, fhir2_constants, fhir2_types, fhir2_resources_base, fhir2_resources, fhir2_utilities, fhir_xhtml,
   ServerLoginDialog, ProgressDialog, FHIRDemoLogging;
 
 type
@@ -145,7 +145,7 @@ type
     procedure vtDisplayInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure Button1Click(Sender: TObject);
   private
-    FClient : TFHIRClient;
+    FClient : TFHIRClient2;
     FIni : TIniFile;
     FPatientId : String;
     FProgressForm : TProgressWindow;
@@ -306,7 +306,7 @@ var
   rxn : TFhirAllergyIntoleranceReaction;
   cc : TFhirCodeableConcept;
 begin
-  FLogService.recordResourceReadSuccess('n/a', frtAllergyIntolerance, allergy.id, allergy);
+  FLogService.recordResourceReadSuccess('n/a', CODES_TFhirResourceType[frtAllergyIntolerance], allergy.id, allergy);
   displayResourceNarrative(allergy);
   FValues.Clear;
   vtDisplay.Clear;
@@ -333,7 +333,7 @@ var
   inst : TFhirMedicationOrderDosageInstruction;
   v : TValueNode;
 begin
-  FLogService.recordResourceReadSuccess('n/a', frtMedicationOrder, med.id, med);
+  FLogService.recordResourceReadSuccess('n/a', CODES_TFhirResourceType[frtMedicationOrder], med.id, med);
   displayResourceNarrative(med);
   FValues.Clear;
   vtDisplay.Clear;
@@ -372,7 +372,7 @@ var
 //  disp : TFhirMedicationOrderDispenseRequest;
   v : TValueNode;
 begin
-  FLogService.recordResourceReadSuccess('n/a', frtMedicationStatement, med.id, med);
+  FLogService.recordResourceReadSuccess('n/a', CODES_TFhirResourceType[frtMedicationStatement], med.id, med);
   displayResourceNarrative(med);
   FValues.Clear;
   vtDisplay.Clear;
@@ -441,12 +441,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtAllergyIntolerance, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtAllergyIntolerance], params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtAllergyIntolerance, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtAllergyIntolerance], params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -488,12 +488,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtMedicationOrder, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtMedicationOrder], params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtMedicationOrder, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtMedicationOrder], params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -509,12 +509,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtMedicationStatement, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtMedicationStatement], params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtMedicationStatement, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtMedicationStatement], params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -552,11 +552,11 @@ begin
   FProgressForm.Message := 'Loading Patient';
   try
     pat := FClient.readResource(frtPatient, FPatientId) as TFhirPatient;
-    FLogService.recordResourceReadSuccess(FClient.LastHeaders.lastOperationId, frtPatient, FPatientId, pat);
+    FLogService.recordResourceReadSuccess(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtPatient], FPatientId, pat);
   except
     on e : Exception do
     begin
-      FLogService.recordResourceReadFail(FClient.LastHeaders.lastOperationId, frtPatient, FPatientId, e);
+      FLogService.recordResourceReadFail(FClient.LastHeaders.lastOperationId, CODES_TFhirResourceType[frtPatient], FPatientId, e);
       showMessage('Unable to retrieve patient: '+e.Message);
       exit;
     end;

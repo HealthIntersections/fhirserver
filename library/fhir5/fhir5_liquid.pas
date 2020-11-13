@@ -609,7 +609,7 @@ begin
         else if (cnt.Trim= 'comment') then
           list.add(parseComment(cnt.substring(7).trim()))
         else
-          raise EParserException.create(sourceName+': Unknown flow control statement '+cnt, FLast.line, FLast.col);
+          raise EParserException.create(sourceName+': Unknown flow control statement '+cnt, FLast);
       end
       else // next2() == '{'
       begin
@@ -658,7 +658,7 @@ begin
   while (i <= cnt.length) and (not cnt[i].isWhitespace) do
     inc(i);
   if (i > cnt.Length) or (i = 0) then
-    raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+    raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
   res := TFHIRLiquidInclude.create();
   try
     res.page := cnt.substring(0, i-1);
@@ -670,10 +670,10 @@ begin
       while (i <= cnt.length) and (cnt[i] <> '=') do
         inc(i);
       if (i > cnt.Length) or (j = i) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
       n := cnt.substring(j-1, i-j);
       if (res.params.ContainsKey(n)) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast.line, FLast.col);
+        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
       inc(i);
       res.params.AddOrSetValue(n, fpe.parse(cnt, i));
       while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -704,7 +704,7 @@ begin
       inc(i);
     s := cnt.substring(j-1, i-j);
     if ('in' <> s) then
-      raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast.line, FLast.col);
+      raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast);
     res.condition := cnt.substring(i).trim();
     res.FCompiled := fpe.parse(res.condition);
     parseList(res.body, ['endloop']);
@@ -726,7 +726,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
     if not ((next1() = '}') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent.line, FCurrent.col);
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent);
     grab();
     grab();
     res := TFHIRLiquidStatement.create();
@@ -754,7 +754,7 @@ begin
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
     if not ((next1() = '%') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent.line, FCurrent.col);
+      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent);
     grab();
     grab();
     result := b.ToString().trim();

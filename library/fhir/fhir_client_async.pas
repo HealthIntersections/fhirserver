@@ -28,15 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
+{$i fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_stream, fsl_json,
-  fhir_objects,  fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_utilities,
-  FHIR.Version.Context, FHIR.Version.Constants, FHIR.Version.Resources;
+  fhir_objects,  fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_utilities, fhir_factory, fhir_common;
 
 const
   WAIT_CYCLE_LENGTH = 10;
@@ -78,7 +77,7 @@ type
     FClient : TFhirClientV;
     FFiles : TFslList<TDownloadFile>;
     FFolder: String;
-    FTypes: TFhirResourceTypeSet;
+    FTypes: TStringList;
     FQuery: string;
     FFormat : TFHIRFormat;
     FSince: TFslDateTime;
@@ -88,19 +87,19 @@ type
     FTaskLocation : String;
     FLastStatus : TDateTime;
     FError : String;
+    FFactory : TFHIRFactory;
 
     function getNextFile : TDownloadFile;
     function waitingCount : integer;
 
 
-    procedure SetTypes(const Value: TFhirResourceTypeSet);
     procedure log(s : String);
     procedure makeInitialRequest;
     procedure checkDelay;
     procedure doPing;
     procedure doDownload;
   public
-    constructor Create(client : TFhirClientV);
+    constructor Create(client : TFhirClientV; factory : TFHIRFactory);
     destructor Destroy; override;
 
     // setup
@@ -108,7 +107,7 @@ type
     property format : TFHIRFormat read FFormat write FFormat;
     property folder : String read FFolder write FFolder;
     property since : TFslDateTime read FSince write FSince;
-    property types : TFhirResourceTypeSet read FTypes write SetTypes;
+    property types : TStringList read FTypes;
 
     // operation
     function logText : String;
@@ -120,9 +119,6 @@ type
 
 
 implementation
-
-uses
-  FHIR.Version.Utilities;
 
 { TFHIRClientAsyncTask }
 
@@ -145,21 +141,25 @@ begin
   end;
 end;
 
-constructor TFHIRClientAsyncTask.create(client: TFhirClientV);
+constructor TFHIRClientAsyncTask.create(client: TFhirClientV; factory : TFHIRFactory);
 begin
   inherited Create;
   FClient := client;
   FLog := '';
   FStart := now;
+  FFactory := factory;
   FStatus := asyncReady;
   FFiles := TFslList<TDownloadFile>.create;
+  FTypes := TStringList.create;
   log('Initialised at '+FormatDateTime('c', now));
 end;
 
 destructor TFHIRClientAsyncTask.Destroy;
 begin
   FFiles.Free;
+  FTypes.Free;
   FClient.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -201,6 +201,8 @@ var
   headers : THTTPHeaders;
   buf : TFslBuffer;
   p : TFHIRParser;
+  r : TFHIRResourceV;
+  w : TFhirOperationOutcomeW;
   json, o : TJsonObject;
   i : TJsonNode;
 begin
@@ -242,7 +244,17 @@ begin
           try
             p := FClient.makeParser(ffJson);
             try
-              FError := (p.parseResource(buf.AsBytes) as TFhirOperationOutcome).asExceptionMessage;
+              r := p.parseResource(buf.AsBytes);
+              try
+                w := FFactory.wrapOperationOutcome(r.link);
+                try
+                  FError := w.text;
+                finally
+                  w.free;
+                end;
+              finally
+                r.free;
+              end;
             finally
               p.Free;
             end;
@@ -297,8 +309,7 @@ end;
 procedure TFHIRClientAsyncTask.makeInitialRequest;
 var
   headers : THTTPHeaders;
-  p, t : String;
-  a : TFhirResourceType;
+  p, t, v : String;
   buf : TFslBuffer;
 begin
   FStatus := asyncInitialQueryInProgress;
@@ -308,9 +319,8 @@ begin
   if since.notNull then
     p := p + '&_since='+since.toXML;
   t := '';
-  for a := low(TFhirResourceType) to high(TFhirResourceType) do
-    if a in types then
-      CommaAdd(t, CODES_TFHIRResourceType[a]);
+  for v in FTypes do
+      CommaAdd(t, v);
   if t <> '' then
     p := '&_type='+t;
   log('Make request of '+p+' with headers '+headers.asString);
@@ -346,11 +356,6 @@ begin
     asyncDownloading: ; // nothing
     asyncFailed: raise EFHIRException.create('Error: '+FError);
   end;
-end;
-
-procedure TFHIRClientAsyncTask.SetTypes(const Value: TFhirResourceTypeSet);
-begin
-  FTypes := Value;
 end;
 
 function TFHIRClientAsyncTask.status: String;

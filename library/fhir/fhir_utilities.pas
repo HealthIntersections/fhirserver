@@ -59,10 +59,8 @@ function fullResourceUri(base: String; url : String) : String; overload;
 function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
 
 type
-  TFHIRVersions = class (TFslObject)
+  TFHIRVersions = class (TSemVer)
   public
-    class function matches(v1, v2 : String) : boolean;
-    class function getMajMin(v : String) : String; overload;
     class function getMajMin(v : TFHIRVersion) : String; overload;
   end;
 
@@ -467,43 +465,9 @@ begin
 
 end;
 
-class function TFHIRVersions.getMajMin(v: String): String;
-var
-  p : TArray<String>;
-begin
-  if (v = '') then
-    exit('');
-
-  if (v = 'R2') then
-    exit('1.0');
-  if (v = 'R2B') then
-    exit('1.4');
-  if (v = 'R3') then
-    exit('3.0');
-  if (v = 'R4') then
-    exit('4.0');
-  if (v = 'R5') then
-    exit('5.0');
-
-  if (v.CountChar('.') = 2) then
-  begin
-    p := v.split(['.']);
-    result := p[0]+'.'+p[1];
-  end
-  else
-    result := '';
-end;
-
 class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;
 begin
   result := getMajMin(FHIR_VERSIONS[v])
-end;
-
-class function TFHIRVersions.matches(v1, v2 : String) : boolean;
-begin
-  v1 := getMajMin(v1);
-  v2 := getMajMin(v2);
-  result := v1 = v2;
 end;
 
 

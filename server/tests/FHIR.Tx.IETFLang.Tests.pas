@@ -36,7 +36,7 @@ uses
   Sysutils, Classes,
   fsl_testing,
   fsl_stream,
-  FHIR.Tx.Lang;
+  tx_lang;
 
 
 type

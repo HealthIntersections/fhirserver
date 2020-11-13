@@ -1,4 +1,4 @@
-unit FHIR.Java.Wrapper;
+unit fsl_java_wrapper;
 {
   Copyright (c) 1998+ Jonathan Revusky
   All rights reserved.
@@ -44,7 +44,7 @@ interface
 uses 
   Windows,
   Classes, SysUtils,
-  FHIR.Java.Strings, FHIR.Java.JNI, FHIR.Java.Utilities;
+  fsl_java_strings, fsl_java_jni, fsl_java_utilities;
 
 type
 
@@ -257,7 +257,7 @@ function JintArrayToDintArray(jarr: jIntArray): TDintArray;
 implementation
 
 uses
-  FHIR.Java.Runtime;
+  fsl_java_runtime;
 
 function typeToSig(type_: TJavaType; clss: TJavaClass): String;
 begin

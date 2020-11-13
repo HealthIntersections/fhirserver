@@ -33,7 +33,7 @@ uses
   SysUtils,
   
   fhir3_resources, fhir3_utilities,
-  FHIR.CdsHooks.Server;
+  cds_hooks_server;
 
 type
   THackingHealthBNPLogic = class (TCDSHooksProcessor)

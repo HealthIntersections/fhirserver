@@ -2006,6 +2006,14 @@ function hasCommandLineParam(name : String) : boolean;
 function getCommandLineParam(name : String; var res : String) : boolean;
 function commandLineAsString : String;
 
+
+type
+  TSemVer = class (TFslObject)
+  public
+    class function matches(v1, v2 : String) : boolean;
+    class function getMajMin(v : String) : String; overload;
+  end;
+
 Implementation
 
 Uses
@@ -14301,6 +14309,7 @@ begin
     begin
     AStream.Position := 0;
     AStream.Read(Result[0], AStream.Size);
+    AStream.Position := 0;
     end;
 end;
 
@@ -16681,6 +16690,44 @@ begin
   for i := 1 to length(s) do
     Result := Result and ((Upcase(s[i]) >= '0') and (Upcase(s[i]) <= '9')) or ((s[i] >= 'A') and (s[i] <= 'F'));
 end;
+
+{ TSemVer }
+
+class function TSemVer.getMajMin(v: String): String;
+var
+  p : TArray<String>;
+begin
+  if (v = '') then
+    exit('');
+
+  if (v = 'R2') then
+    exit('1.0');
+  if (v = 'R2B') then
+    exit('1.4');
+  if (v = 'R3') then
+    exit('3.0');
+  if (v = 'R4') then
+    exit('4.0');
+  if (v = 'R5') then
+    exit('5.0');
+
+  if (v.CountChar('.') = 2) then
+  begin
+    p := v.split(['.']);
+    result := p[0]+'.'+p[1];
+  end
+  else
+    result := '';
+end;
+
+class function TSemVer.matches(v1, v2 : String) : boolean;
+begin
+  v1 := getMajMin(v1);
+  v2 := getMajMin(v2);
+  result := v1 = v2;
+end;
+
+
 
 Initialization
   init;

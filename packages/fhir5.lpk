@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir5"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\fhir5"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_adaptor.pas"/>
+        <UnitName Value="fhir5_adaptor"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_authmap.pas"/>
+        <UnitName Value="fhir5_authmap"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_base.pas"/>
+        <UnitName Value="fhir5_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_client.pas"/>
+        <UnitName Value="fhir5_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_common.pas"/>
+        <UnitName Value="fhir5_common"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_constants.pas"/>
+        <UnitName Value="fhir5_constants"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_context.pas"/>
+        <UnitName Value="fhir5_context"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_elementmodel.pas"/>
+        <UnitName Value="fhir5_elementmodel"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_factory.pas"/>
+        <UnitName Value="fhir5_factory"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_graphdefinition.pas"/>
+        <UnitName Value="fhir5_graphdefinition"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_indexinfo.pas"/>
+        <UnitName Value="fhir5_indexinfo"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_javascript.pas"/>
+        <UnitName Value="fhir5_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_json.pas"/>
+        <UnitName Value="fhir5_json"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_liquid.pas"/>
+        <UnitName Value="fhir5_liquid"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_maputils.pas"/>
+        <UnitName Value="fhir5_maputils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_opbase.pas"/>
+        <UnitName Value="fhir5_opbase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_operations.pas"/>
+        <UnitName Value="fhir5_operations"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_organiser.pas"/>
+        <UnitName Value="fhir5_organiser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_parser.pas"/>
+        <UnitName Value="fhir5_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_parserbase.pas"/>
+        <UnitName Value="fhir5_parserBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_patch.pas"/>
+        <UnitName Value="fhir5_patch"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_pathengine.pas"/>
+        <UnitName Value="fhir5_pathengine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_pathnode.pas"/>
+        <UnitName Value="fhir5_pathnode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_profiles.pas"/>
+        <UnitName Value="fhir5_profiles"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources.pas"/>
+        <UnitName Value="fhir5_resources"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_admin.pas"/>
+        <UnitName Value="fhir5_resources_admin"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_base.pas"/>
+        <UnitName Value="fhir5_resources_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_canonical.pas"/>
+        <UnitName Value="fhir5_resources_canonical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_clinical.pas"/>
+        <UnitName Value="fhir5_resources_clinical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_financial.pas"/>
+        <UnitName Value="fhir5_resources_financial"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_medications.pas"/>
+        <UnitName Value="fhir5_resources_medications"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_resources_other.pas"/>
+        <UnitName Value="fhir5_resources_other"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_tags.pas"/>
+        <UnitName Value="fhir5_tags"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_turtle.pas"/>
+        <UnitName Value="fhir5_turtle"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_types.pas"/>
+        <UnitName Value="fhir5_types"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_utilities.pas"/>
+        <UnitName Value="fhir5_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_xml.pas"/>
+        <UnitName Value="fhir5_xml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir5\fhir5_questionnaire.pas"/>
+        <UnitName Value="fhir5_questionnaire"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

@@ -1,4 +1,4 @@
-unit FHIR.Java.Strings;
+unit fsl_java_strings;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

@@ -30,7 +30,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
-unit FHIR.Java.Utilities;
+unit fsl_java_utilities;
 
 // Global utility routines
 
@@ -42,7 +42,7 @@ interface
 uses 
   Windows,
   Classes,
-  FHIR.Java.Strings;
+  fsl_java_strings;
 
 
 {$IF Declared(PUTF8Char)} {$ELSE} type PUTF8char = PAnsiChar;
@@ -78,7 +78,7 @@ uses
 implementation
 
 uses 
-  SysUtils, FHIR.Java.Runtime;
+  SysUtils, fsl_java_runtime;
   
     
 var
@@ -148,7 +148,7 @@ qualified Class names.}
     p : UTF8String;
     PC : PUTF8Char;
   begin
-    p := FHIR.Java.Strings.StrNew(filename);
+    p := fsl_java_strings.StrNew(filename);
     if SearchPath(Nil, PUTF8Char(p), Nil, MAX_PATH, @Buf, PC)<>0 then
     Result := String(Buf);
   end;

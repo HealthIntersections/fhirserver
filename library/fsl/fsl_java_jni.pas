@@ -9,7 +9,7 @@
                                             
 ********************************************}
 
-unit FHIR.Java.JNI;
+unit fsl_java_jni;
 
 interface
 

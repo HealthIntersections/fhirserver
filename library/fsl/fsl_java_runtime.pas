@@ -1,4 +1,4 @@
-unit FHIR.Java.Runtime;
+unit fsl_java_runtime;
 
 {
   Copyright (c) 1998+ Jonathan Revusky
@@ -44,7 +44,7 @@ interface
 uses
   Windows, Registry,
   Classes, SysUtils,
-  FHIR.Java.JNI, FHIR.Java.Utilities, FHIR.Java.Strings, FHIR.Java.Wrapper;
+  fsl_java_jni, fsl_java_utilities, fsl_java_strings, fsl_java_wrapper;
 
 type
 
@@ -310,7 +310,7 @@ end;
 procedure TJavaRuntime.InitJava11;
 begin
   vmargs.properties := convertStrings(FProperties);
-  vmargs.Classpath := FHIR.Java.Strings.strNew(Classpath);
+  vmargs.Classpath := fsl_java_strings.strNew(Classpath);
   vmargs.Verbose := FVerbose;
   vmargs.DisableAsyncGC := FDisableAsyncGC;
   vmargs.EnableVerboseGC := FVerboseGC;

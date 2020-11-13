@@ -38,8 +38,10 @@ uses
   IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   fsl_json, fsl_utilities,
-  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto,
-  fsl_npm_spider;
+  fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto;
+
+const
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';
 
 type
   TIdUriParserTests = Class (TFslTestCase)

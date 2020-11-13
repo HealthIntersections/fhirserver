@@ -1,4 +1,4 @@
-unit FHIR.R2.Tags;
+unit fhir2_tags;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

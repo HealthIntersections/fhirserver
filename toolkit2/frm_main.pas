@@ -14,7 +14,7 @@ uses
   ftk_store, ftk_store_files,
   ftk_factory, ftk_search,
 
-  frm_npm_manager, frm_file_format, frm_settings;
+  fui_lcl_cache, frm_file_format, frm_settings;
 
 type
 

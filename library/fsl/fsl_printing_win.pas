@@ -31,7 +31,7 @@ Interface
 
 
 Uses
-  Windows, WinSpool, SysUtils, Vcl.Graphics, Consts,
+  Windows, WinSpool, SysUtils, Graphics, Consts,
   Winapi.GdipObj, Winapi.GdipApi,
   fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_graphics,
   fsl_gdiplus;

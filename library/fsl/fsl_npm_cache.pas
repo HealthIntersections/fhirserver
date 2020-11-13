@@ -37,8 +37,7 @@ uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads,
   fsl_stream, fsl_fetcher,
-  fsl_npm, fsl_npm_client,
-  fhir_utilities;
+  fsl_npm, fsl_npm_client;
 
 type
   TCheckEvent = function(sender : TObject; msg : String):boolean of object;
@@ -321,7 +320,7 @@ begin
   begin
     npm := TNpmPackage.fromFolderQuick(s);
     try
-      if TFHIRVersions.matches(npm.fhirVersion, ver) then
+      if TSemVer.matches(npm.fhirVersion, ver) then
       begin
         found := false;
         for t in list do
@@ -1024,7 +1023,7 @@ constructor TPackageLoadingInformation.Create(ver : string);
 begin
   inherited Create;
   FLoaded := TStringList.Create;
-  FVersion := TFHIRVersions.getMajMin(ver);
+  FVersion := TSemVer.getMajMin(ver);
 end;
 
 destructor TPackageLoadingInformation.Destroy;
@@ -1035,7 +1034,7 @@ end;
 
 procedure TPackageLoadingInformation.checkVersion(ver: String);
 begin
-  ver := TFHIRVersions.getMajMin(ver);
+  ver := TSemVer.getMajMin(ver);
   if FVersion = '' then
     FVersion := ver
   else if FVersion <> ver then

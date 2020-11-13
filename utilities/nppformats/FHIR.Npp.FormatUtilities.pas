@@ -258,7 +258,7 @@ begin
     on e : EParserException do
     begin
       // goto location....
-      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.location.Line-1, e.location.Col-1);
       SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
       ShowMessage('Parser Exception: '+e.Message);
     end;
@@ -326,7 +326,7 @@ begin
     on e : EParserException do
     begin
       // goto location....
-      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.location.Line-1, e.location.Col-1);
       SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
       ShowMessage('Parser Exception: '+e.Message);
     end;

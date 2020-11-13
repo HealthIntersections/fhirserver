@@ -445,7 +445,7 @@ begin
         raise EFHIRException.create('Unknown HTTP method '+inttostr(ord(verb)));
       end;
 
-      FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, source, result);
+      FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, streamToBytes(source), streamToBytes(result));
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
         raise EFHIRException.create('unexpected condition');
       ok := true;
@@ -461,7 +461,7 @@ begin
     except
       on E:EIdHTTPProtocolException do
       begin
-        FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, source, result);
+        FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, streamToBytes(source), streamToBytes(result));
         cnt := e.ErrorMessage;
         if cnt = '' then
           cnt := e.message;
