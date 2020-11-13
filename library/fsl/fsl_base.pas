@@ -34,7 +34,7 @@ Interface
 
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections;
+  SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections, fsl_fpc;
 
 const
   {$IFDEF FPC}

@@ -26,6 +26,21 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="fhir_ftx"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_dep"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fui"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_v2"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir4"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir"/>
       </Item>
       <Item>

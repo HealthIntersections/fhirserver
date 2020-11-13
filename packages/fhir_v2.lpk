@@ -93,6 +93,9 @@
     </Files>
     <RequiredPkgs>
       <Item>
+        <PackageName Value="fhir"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir_fdb"/>
       </Item>
       <Item>

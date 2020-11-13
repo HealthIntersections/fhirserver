@@ -77,8 +77,7 @@
             <Filename Value="..\exec\64\FHIRConsole.exe"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -198,31 +197,34 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="8">
+    <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="fhir_ftx"/>
+        <PackageName Value="fhir_dep"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir_fdb"/>
+        <PackageName Value="fhir_ftx"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir_fdb"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir"/>
       </Item4>
       <Item5>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fhir_fsl"/>
       </Item5>
       <Item6>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item6>
       <Item7>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCL"/>
+        <PackageName Value="PascalTZ"/>
       </Item8>
+      <Item9>
+        <PackageName Value="LCL"/>
+      </Item9>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>

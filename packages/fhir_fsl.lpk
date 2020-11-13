@@ -51,26 +51,6 @@
         <UnitName Value="fsl_http"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fsl\fsl_java_jni.pas"/>
-        <UnitName Value="fsl_java_jni"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_runtime.pas"/>
-        <UnitName Value="fsl_java_runtime"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_strings.pas"/>
-        <UnitName Value="fsl_java_strings"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_utilities.pas"/>
-        <UnitName Value="fsl_java_utilities"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_java_wrapper.pas"/>
-        <UnitName Value="fsl_java_wrapper"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fsl\fsl_javascript.pas"/>
         <UnitName Value="fsl_javascript"/>
       </Item>
@@ -85,10 +65,6 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_logging.pas"/>
         <UnitName Value="fsl_logging"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_msxml.pas"/>
-        <UnitName Value="fsl_msxml"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_npm.pas"/>
@@ -127,14 +103,6 @@
         <UnitName Value="fsl_service"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fsl\fsl_service_win.pas"/>
-        <UnitName Value="fsl_service_win"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_shell.pas"/>
-        <UnitName Value="fsl_shell"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fsl\fsl_stream.pas"/>
         <UnitName Value="fsl_stream"/>
       </Item>
@@ -157,10 +125,6 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_websocket.pas"/>
         <UnitName Value="fsl_websocket"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fsl\fsl_wininet.pas"/>
-        <UnitName Value="fsl_wininet"/>
       </Item>
       <Item>
         <Filename Value="..\library\fsl\fsl_xml.pas"/>
