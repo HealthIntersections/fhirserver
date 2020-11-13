@@ -35,10 +35,10 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   BaseFrame, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.ComboEdit, FMX.Layouts,
   FMX.ListBox, FMX.Controls.Presentation, FMX.Platform,
-  FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  fsl_utilities, fsl_http,
+  fhir_objects, fhir_factory, fhir_common,
   FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Factory,
-  FHIR.Tools.DiffEngine;
+  fhir_diff;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug

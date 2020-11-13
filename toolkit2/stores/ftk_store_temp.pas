@@ -5,8 +5,8 @@ unit ftk_store_temp;
 interface
 
 uses
-  Classes, SysUtils, IOUtils, IniFiles,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
+  Classes, SysUtils, IniFiles,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc,
   ftk_context;
 
 type

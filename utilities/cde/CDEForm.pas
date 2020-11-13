@@ -39,9 +39,9 @@ Uses
 
   ScintInt, ScintEdit, ScintCDA,
 
-  FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.Utilities, FHIR.Support.Shell, FHIR.Support.Graphics,
-  FHIR.Dicom.Dictionary,
-  FHIR.Cda.Documents, FHIR.Cda.Objects,
+  fsl_stream, fsl_printing_win, fsl_utilities, fsl_shell, fsl_graphics,
+  dicom_Dictionary,
+  cda_documents, cda_objects,
 
   FHIR.Uix.Forms, FHIR.Uix.Controls,
 
@@ -435,7 +435,7 @@ var
 Implementation
 
 Uses
-  FHIR.Support.Collections,
+  fsl_collections,
   FHIR.Uix.Base,
   FHIR.WP.FieldDefiners, FHIR.WP.AnnotationDefiners;
 

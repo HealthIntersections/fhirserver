@@ -35,7 +35,7 @@ Interface
 
 Uses
   Windows, Classes, SysUtils, Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics, FHIR.Support.Collections,
+  fsl_base, fsl_utilities, fsl_stream, fsl_graphics, fsl_collections,
   FHIR.WP.Types;
 
 Type

@@ -34,9 +34,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, FHIR.Npp.Base, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  VirtualTrees, Vcl.ComCtrls, FHIR.Smart.Utilities, FHIR.Client.ServerDialog,
-  FHIR.Support.Base, FHIR.Base.Objects, FHIR.Base.Factory,
-  FHIR.Npm.Cache,
+  VirtualTrees, Vcl.ComCtrls, fhir_oauth, FHIR.Client.ServerDialog,
+  fsl_base, fhir_objects, fhir_factory,
+  fsl_npm_cache,
   FHIR.Npp.Context, FHIR.Npp.Form;
 
 type
@@ -127,7 +127,7 @@ implementation
 
 uses
   FHIR.Npp.Settings,
-  FHIR.R4.Constants,
+  fhir4_constants,
   FHIR.Npp.Plugin,
   FHIR.Npp.Visualiser,
   FHIR.Npp.Toolbox, FHIR.Npm.Manager;

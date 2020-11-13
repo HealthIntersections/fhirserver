@@ -115,7 +115,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R2.AuthMap;FHIR.Version.Constants=FHIR.R2.Constants;FHIR.Version.Context=FHIR.R2.Context;FHIR.Version.IndexInfo=FHIR.R2.IndexInfo;FHIR.Version.Javascript=FHIR.R2.Javascript;FHIR.Version.ElementModel=FHIR.R2.ElementModel;FHIR.Version.Narrative=FHIR.R2.Narrative;FHIR.Version.Operations=FHIR.R2.Operations;FHIR.Version.Json=FHIR.R2.Json;FHIR.Version.Turtle=FHIRParserTurtle2;FHIR.Version.Xml=FHIR.R2.Xml;FHIR.Version.PathNode=FHIR.R2.PathNode;FHIR.Version.Profiles=FHIR.R2.Profiles;FHIR.Version.Resources=FHIR.R2.Resources;FHIR.Version.MapUtilities=FHIRStructureMapUtilities2;FHIR.Version.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Version.Types=FHIR.R2.Types;FHIR.Version.Utilities=FHIR.R2.Utilities;FHIR.Version.Validator=FHIR.R2.Validator;FHIR.Version.OpBase=FHIR.R2.OpBase;FHIR.Version.PathEngine=FHIR.R2.PathEngine;FHIR.Version.Narrative2=FHIR.R2.Narrative2;FHIR.Version.Questionnaire=FHIR.R2.Questionnaire;FHIR.Version.Resources.Base=FHIR.R2.Resources.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r264\</DCC_DcuOutput>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\library;..\..\library\fsl;..\..\library\fhir;..\..\library\fhir2;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\dependencies\Indy10\Protocols;..\..\dependencies\FMM;..\..\..\markdown\source;..\..\dependencies\Indy10\OpenSSL;..\..\dependencies\Indy10\OpenSSL\dynamic;..\..\library\fui;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UseMSBuildExternally>true</DCC_UseMSBuildExternally>
@@ -140,90 +140,9 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\..\dependencies\FMM\FastMM4.pas">
-            <Form>Vcl.Forms</Form>
-        </DCCReference>
         <DCCReference Include="MainApplicationWindow.pas">
             <Form>MainWindowForm</Form>
         </DCCReference>
-        <DCCReference Include="..\..\dependencies\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Objects.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Utilities.pas"/>
-        <DCCReference Include="..\..\library\web\FHIR.Web.Parsers.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\..\library\web\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Context.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Types.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Scim.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.MXml.pas"/>
-        <DCCReference Include="..\..\library\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Constants.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Tags.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\..\library\version\FHIR.Version.Parser.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Parser.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Turtle.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Xml.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Json.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.ElementModel.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Profiles.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Threads.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.PathEngine.pas"/>
-        <DCCReference Include="..\..\library\version\FHIR.Version.Client.pas"/>
-        <DCCReference Include="..\..\library\web\FHIR.Web.WinInet.pas"/>
-        <DCCReference Include="..\..\library\cdshooks\FHIR.CdsHooks.Utilities.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="..\..\library\ucum\FHIR.Ucum.IFace.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.PathNode.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Base.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Parser.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.ParserBase.pas"/>
-        <DCCReference Include="..\..\library\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\..\library\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\..\library\client\FHIR.Client.Threaded.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Client.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\..\library\web\FHIR.Web.GraphQL.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Factory.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Common.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Narrative.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Common.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\..\library\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.Utilities.pas"/>
-        <DCCReference Include="..\..\library\smart\FHIR.Smart.Utilities.pas"/>
-        <DCCReference Include="..\..\library\smart\FHIR.Smart.Login.pas"/>
-        <DCCReference Include="..\..\library\smart\FHIR.Smart.LoginVCL.pas">
-            <Form>SmartOnFhirLoginForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Operations.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.OpBase.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Osx.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Logging.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.OIDs.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.ElementModel.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
-        <DCCReference Include="..\..\library\npm\FHIR.Npm.Cache.pas"/>
-        <DCCReference Include="..\..\library\npm\FHIR.Npm.Package.pas"/>
-        <DCCReference Include="..\..\library\npm\FHIR.Npm.Client.pas"/>
-        <DCCReference Include="..\..\library\base\FHIR.Base.PathEngine.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Other.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Clinical.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Canonical.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Base.pas"/>
-        <DCCReference Include="..\..\library\r2\FHIR.R2.Resources.Admin.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

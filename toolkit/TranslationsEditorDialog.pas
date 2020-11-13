@@ -35,8 +35,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Memo,
   FMX.ScrollBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Support.Base, FHIR.Ui.Fmx,
-  FHIR.Base.Lang,
+  fsl_base, FHIR.Ui.Fmx,
+  
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolKitUtilities;
 

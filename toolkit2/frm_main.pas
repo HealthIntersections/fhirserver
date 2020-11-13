@@ -9,12 +9,12 @@ uses
   ComCtrls, ActnList, StdActns, IniFiles, Clipbrd, Buttons, StdCtrls, SynEdit,
   lclintf, ValEdit,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Fpc, FHIR.Support.Logging,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_fpc, fsl_logging,
   ftk_context, ftk_store_temp,
   ftk_store, ftk_store_files,
   ftk_factory, ftk_search,
 
-  frm_npm_manager, frm_file_format, frm_settings;
+  fui_lcl_cache, frm_file_format, frm_settings;
 
 type
 

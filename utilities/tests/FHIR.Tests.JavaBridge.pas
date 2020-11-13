@@ -33,8 +33,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   TextUtilities,
-  FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIRJavascript, FHIR.Version.Parser,
+  fsl_json,
+  fhir_objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIRJavascript, FHIR.Version.Parser,
   FHIR.Server.Java,
   DUnitX.TestFramework;
 

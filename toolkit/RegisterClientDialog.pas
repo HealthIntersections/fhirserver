@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Edit,
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Json,
+  fsl_json,
   JWT,
   FHIR.Client.SmartUtilities;
 

@@ -34,7 +34,7 @@ Uses
   Windows, SysUtils, Classes, Graphics, StdCtrls,
   IdUri,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Shell, FHIR.Web.WinInet, FHIR.Support.Xml,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_graphics, fsl_shell, fsl_wininet, fsl_xml,
 
   FHIR.Uix.Base,
   FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.v2Ft, FHIR.WP.Format,

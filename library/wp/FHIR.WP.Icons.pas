@@ -34,7 +34,7 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics, Forms,
-  FHIR.Support.Base, FHIR.Support.Graphics, FHIR.Support.Utilities,
+  fsl_base, fsl_graphics, fsl_utilities,
   FHIR.Uix.Images, FHIR.WP.Widgets;
 
 

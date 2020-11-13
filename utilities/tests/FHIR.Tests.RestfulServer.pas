@@ -35,14 +35,14 @@ uses
   Windows, Sysutils, Classes, IniFiles,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Tests, FHIR.Support.Json, FHIR.Web.Parsers,
-  FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.Ucum.Services,
-  FHIR.R4.Constants, FHIR.R4.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.Base.PathEngine,
-  FHIR.R4.Utilities, FHIR.R4.Validator, FHIR.R4.IndexInfo, FHIR.R4.Javascript,
-  FHIR.R4.Factory, FHIR.Tools.Indexing, FHIR.Javascript.Base, FHIR.R4.PathEngine,
-  FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
-  FHIR.Smart.Utilities, FHIR.Tests.SmartLogin,
+  fsl_base, fsl_utilities, fsl_tests, fsl_json, fsl_http,
+  fhir_factory, fhir_common,
+  ftx_ucum_services,
+  fhir4_constants, fhir4_context, fhir_objects,  fhir_utilities, fhir4_types, fhir4_resources, fhir4_resources_base, fhir_pathengine,
+  fhir4_utilities, fhir4_validator, fhir4_indexinfo, fhir4_javascript,
+  fhir4_factory, fhir_indexing, fhir_javascript, fhir4_pathengine,
+  fhir_client, FHIR.Version.Client, fsl_scim,
+  fhir_oauth, FHIR.Tests.SmartLogin,
   FHIR.Tx.Server,
   FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Server.Ini,
   FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT, FHIR.Server.Telnet,
@@ -675,8 +675,8 @@ end;
 
 procedure TRestFulServerTests.registerJs(snder: TObject; js: TJsHost);
 begin
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
 end;
 
 procedure TRestFulServerTests.Setup;

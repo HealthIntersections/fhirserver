@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Lang, FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
+  fsl_base, fsl_utilities, fsl_stream,
+   fhir_client, fhir_oauth, FHIR.Smart.Login;
 
 type
   TSmartTestMode = (stmAllOk, stmBadRedirect, stmBadLogin);

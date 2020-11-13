@@ -9,7 +9,7 @@ uses
   System.SysUtils, System.Classes, System.types, System.RTLConsts, System.Generics.Collections,
   FMX.Types, FMX.Controls, FMX.TreeView, FMX.Controls.Presentation, FMX.Edit , FMX.Layouts, FMX.StdCtrls
 {$IFDEF USEFHIROBJ}
-, FHIR.R4.Types
+, fhir4_types
 {$ENDIF}
   ;
 

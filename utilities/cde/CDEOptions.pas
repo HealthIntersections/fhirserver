@@ -33,7 +33,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  FHIR.Support.Printing, IniFiles,
+  fsl_printing_win, IniFiles,
   FHIR.WP.Control, FHIR.WP.Settings;
 
 type
@@ -89,7 +89,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 
 { TForm1 }

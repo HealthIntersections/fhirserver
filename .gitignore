@@ -250,3 +250,11 @@ toolkit2/lib/x86_64-darwin/
 
 toolkit2/lib/x86_64-linux/
 /toolkit2/frames/backup
+/library/fhir2/backup
+/library/fhir3/backup
+/library/fhir4/backup
+/library/fhir5/backup
+/library/fhir5/backup
+/library/fdb/backup
+/library/fui/backup
+/packages/lib/x86_64-win64

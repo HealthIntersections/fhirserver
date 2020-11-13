@@ -35,8 +35,8 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   IdComponent,
-  FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  fsl_base,
+  fhir_objects, 
   FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client,
   ToolkitSettings;
 

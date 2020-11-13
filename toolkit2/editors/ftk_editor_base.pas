@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, Math,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus,
   SynEdit, SynEditHighlighter, SynEditTypes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Fpc, FHIR.Support.Logging,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_logging,
   ftk_context, ftk_store;
 
 type

@@ -8,12 +8,12 @@ uses
   Classes, SysUtils,
   Controls, StdCtrls, ComCtrls,
   SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml, FHIR.Support.Json, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Parser,
-  {FHIR.R2.Parsers, FHIR.R3.Parsers, }FHIR.R4.Factory, {FHIR.R5.Parsers, }
-  FHIR.R4.Resources.Canonical,
-  FHIR.LCL.Synchroniser,
+  fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_logging, fsl_stream,
+  fsl_http,
+  fhir_objects, fhir_factory, fhir_parser,
+  {fhir2_parsers, fhir3_parsers, }fhir4_factory, {fhir5_parsers, }
+  fhir4_resources_canonical,
+  fui_lcl_managers,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -333,7 +333,7 @@ end;
 
 function TFHIREditor.hasDesigner: boolean;
 begin
-  Result := ;
+  Result := false;
 end;
 
 procedure TFHIREditor.makeDesigner;

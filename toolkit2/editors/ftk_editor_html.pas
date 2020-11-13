@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Controls,
   SynEditHighlighter, SynHighlighterHtml, HTMLView,
-  FHIR.Support.Base, FHIR.Support.MXml, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Web.Parsers,
+  fsl_base, fsl_xml, fsl_logging, fsl_stream, fsl_http,
   ftk_context, ftk_store,
   ftk_editor_base;
 

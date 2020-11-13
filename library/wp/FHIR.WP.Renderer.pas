@@ -35,7 +35,7 @@ Interface
 Uses
   Windows, SysUtils, Classes, Vcl.Graphics, Vcl.Imaging.PNGImage,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Printing,
+  fsl_base, fsl_utilities, fsl_graphics, fsl_threads, fsl_collections, fsl_printing_win,
 
   FHIR.WP.Types, FHIR.WP.Working, FHIR.WP.Icons, FHIR.WP.Engine, FHIR.WP.Settings, FHIR.WP.Definers;
 

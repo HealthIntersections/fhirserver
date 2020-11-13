@@ -36,22 +36,22 @@ uses
   Windows, Sysutils, Classes, IniFiles,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
+  fsl_base, fsl_utilities, fsl_json,
 
-  FHIR.Web.Fetcher, FHIR.Web.Parsers,
-  FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
-  FHIR.Loinc.Importer, FHIR.Loinc.Services,
-  FHIR.Ucum.Services,
-  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Npm.Cache, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base, FHIR.Base.PathEngine,
+  fsl_fetcher, fsl_http,
+  ftx_sct_importer, ftx_sct_services, ftx_sct_expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
+  ftx_loinc_importer, ftx_loinc_services,
+  ftx_ucum_services,
+  fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
+  fhir_factory, fsl_npm_cache, fhir_parser,  fhir_javascript, fhir_client, fhir_pathengine,
 
-  FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
-  FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Resources.Base,
+  fhir4_factory, fhir4_indexinfo, fhir4_resources, fhir4_types, fhir4_json, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4,
+  fhir4_validator, fhir4_context, FHIR.Server.ValidatorR4, fhir4_javascript, fhir4_client, fhir4_utilities, fhir4_pathengine, fhir4_resources_base,
 
-  FHIR.Tools.Indexing, FHIR.Version.Client,
+  fhir_indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Server.Storage, FHIR.Server.Ini, FHIR.Server.Version,
-  FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
+  FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, fhir_objects,
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource, FHIR.Server.Telnet,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
@@ -162,8 +162,8 @@ end;
 
 procedure TFullServerTests.registerJs(sender : TObject; js : TJsHost);
 begin
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
-  js.engine.registerFactory(FHIR.R4.Javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
 end;
 
 procedure TFullServerTests.checkDatabase(db: TFslDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\fhir;..\library\cda"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_cdshooks.pas"/>
+        <UnitName Value="fhir_cdshooks"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client.pas"/>
+        <UnitName Value="fhir_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client_async.pas"/>
+        <UnitName Value="fhir_client_async"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client_debugger.pas"/>
+        <UnitName Value="fhir_client_debugger"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client_http.pas"/>
+        <UnitName Value="fhir_client_http"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client_registry.pas"/>
+        <UnitName Value="fhir_client_registry"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_client_threaded.pas"/>
+        <UnitName Value="fhir_client_threaded"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_codegen.pas"/>
+        <UnitName Value="fhir_codegen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_common.pas"/>
+        <UnitName Value="fhir_common"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_consentengine.pas"/>
+        <UnitName Value="fhir_consentengine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_diff.pas"/>
+        <UnitName Value="fhir_diff"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_elementmodel.pas"/>
+        <UnitName Value="fhir_elementmodel"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_factory.pas"/>
+        <UnitName Value="fhir_factory"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_graphdefinition.pas"/>
+        <UnitName Value="fhir_graphdefinition"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_graphql.pas"/>
+        <UnitName Value="fhir_graphql"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_htmlgen.pas"/>
+        <UnitName Value="fhir_htmlgen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_indexing.pas"/>
+        <UnitName Value="fhir_indexing"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_javascript.pas"/>
+        <UnitName Value="fhir_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_js_client.pas"/>
+        <UnitName Value="fhir_js_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_narrative.pas"/>
+        <UnitName Value="fhir_narrative"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_ndjson.pas"/>
+        <UnitName Value="fhir_ndjson"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_oauth.pas"/>
+        <UnitName Value="fhir_oauth"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_objects.pas"/>
+        <UnitName Value="fhir_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_oids.pas"/>
+        <UnitName Value="fhir_oids"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_parser.pas"/>
+        <UnitName Value="fhir_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_pathengine.pas"/>
+        <UnitName Value="fhir_pathengine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_ucum.pas"/>
+        <UnitName Value="fhir_ucum"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_utilities.pas"/>
+        <UnitName Value="fhir_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_validator.pas"/>
+        <UnitName Value="fhir_validator"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_xhtml.pas"/>
+        <UnitName Value="fhir_xhtml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_base.pas"/>
+        <UnitName Value="cda_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_documents.pas"/>
+        <UnitName Value="cda_documents"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_javascript.pas"/>
+        <UnitName Value="cda_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_narrative.pas"/>
+        <UnitName Value="cda_narrative"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_objects.pas"/>
+        <UnitName Value="cda_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_parser.pas"/>
+        <UnitName Value="cda_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_types.pas"/>
+        <UnitName Value="cda_types"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\cda\cda_writer.pas"/>
+        <UnitName Value="cda_writer"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

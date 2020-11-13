@@ -31,9 +31,9 @@ interface
 
 uses
   SysUtils,
-  FHIR.Base.Lang,
-  FHIR.R3.Resources, FHIR.R3.Utilities,
-  FHIR.CdsHooks.Server;
+  
+  fhir3_resources, fhir3_utilities,
+  cds_hooks_server;
 
 type
   THackingHealthBNPLogic = class (TCDSHooksProcessor)

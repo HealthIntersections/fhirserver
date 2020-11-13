@@ -34,11 +34,11 @@ interface
 
 uses
   SysUtils, Classes, Controls, Vcl.ComCtrls, IOUtils,
-  ScintEdit, ScintFormats, FHIR.Cda.Scint, FHIR.V2.Scint,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Parser,
-  FHIR.v2.Message,
-  FHIR.R4.Scint, FHIR.R4.Context, FHIR.R4.ElementModel, FHIR.R4.Parser, FHIR.R4.Xml, FHIR.R4.Json,
+  ScintEdit, ScintFormats, cda_scint, v2_scint,
+  fsl_base, fsl_utilities,
+  fhir_objects, fhir_parser,
+  v2_message,
+  fhir4_scintilla, fhir4_context, fhir4_elementmodel, fhir4_parser, fhir4_xml, fhir4_json,
   FHIR.Transformer.Workspace, FHIR.Transformer.Utilities;
 
 type

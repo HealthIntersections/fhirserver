@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJscript,
-  FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
+  fsl_base, fsl_logging, fsl_stream,
   ftk_context, ftk_store,
   ftk_editor_base;
 

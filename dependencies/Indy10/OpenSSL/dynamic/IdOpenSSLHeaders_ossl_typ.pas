@@ -206,8 +206,8 @@ type
   PEVP_PKEY_CTX = ^EVP_PKEY_CTX;
   PPEVP_PKEY_CTX = ^PEVP_PKEY_CTX;
   
-  evp_Encode_Ctx_st = type Pointer;
-  EVP_ENCODE_CTX = evp_Encode_Ctx_st;
+  evp_Encode_Cftx_st = type Pointer;
+  EVP_ENCODE_CTX = evp_Encode_Cftx_st;
   PEVP_ENCODE_CTX = ^EVP_ENCODE_CTX;
 
   hmac_ctx_st = type Pointer;

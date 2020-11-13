@@ -1,6 +1,6 @@
-unit FHIR.R5.Constants;
+unit fhir5_constants;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,8 +37,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.R5.Types, FHIR.R5.Resources;
+  fsl_utilities, fsl_stream,
+  fhir_objects, fhir5_types, fhir5_resources;
 
 const
   currentFHIRVersionRelease = fhirVersionRelease5;

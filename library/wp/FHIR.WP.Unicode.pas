@@ -32,7 +32,7 @@ interface
 
 Uses
   Windows, SysUtils, Classes, Graphics, Generics.Collections,
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 Const
   Unicode_Zero_Width_Joiner = #$200D;

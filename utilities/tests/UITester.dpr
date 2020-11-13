@@ -34,13 +34,13 @@ uses
   Vcl.Forms,
   UITesterForm in 'UITesterForm.pas' {Form10},
   FHIR.Ui.Graph in '..\library\ui\FHIR.Ui.Graph.pas',
-  FHIR.Support.Utilities in '..\library\support\FHIR.Support.Utilities.pas',
-  FHIR.Support.Base in '..\library\support\FHIR.Support.Base.pas',
+  fsl_utilities in '..\library\support\fsl_utilities.pas',
+  fsl_base in '..\library\support\fsl_base.pas',
   FHIR.Ui.GraphDesigner in '..\library\ui\FHIR.Ui.GraphDesigner.pas' {GraphDesignerForm},
   FastMM4Messages in '..\dependencies\FMM\FastMM4Messages.pas',
-  FHIR.Support.Fpc in '..\library\support\FHIR.Support.Fpc.pas',
-  FHIR.Support.Collections in '..\library\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Stream in '..\library\support\FHIR.Support.Stream.pas',
+  fsl_fpc in '..\library\support\fsl_fpc.pas',
+  fsl_collections in '..\library\support\fsl_collections.pas',
+  fsl_stream in '..\library\support\fsl_stream.pas',
   GraphTester in 'GraphTester.pas';
 
 {$R *.res}

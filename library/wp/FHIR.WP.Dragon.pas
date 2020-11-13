@@ -31,7 +31,7 @@ Interface
 
 
 Uses
-  FHIR.Support.Base;
+  fsl_base;
 
 
 Type

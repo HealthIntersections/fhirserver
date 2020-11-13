@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-   FHIR.Support.Collections,
+   fsl_collections,
   FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
 
 Type

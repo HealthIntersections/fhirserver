@@ -1,6 +1,6 @@
-unit FHIR.R5.Javascript;
+unit fhir5_javascript;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,7 +36,7 @@ interface
 {{mark}}
 
 uses
-  FHIR.Javascript, FHIR.Javascript.Base;
+  FHIR.Javascript, fhir_javascript;
 
 procedure registerFHIRTypes(js : TFHIRJavascript);
 procedure registerFHIRTypesDef(js : TFHIRJavascript);

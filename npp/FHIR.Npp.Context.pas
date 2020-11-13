@@ -33,11 +33,11 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Base,
-  FHIR.Npm.Cache,
-  FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Utilities,
-  FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Client.Base, FHIR.Base.Common;
+  fsl_base,
+  fsl_npm_cache,
+  fhir_objects, 
+  fhir_parser, fhir_validator, fhir_narrative, fhir_utilities,
+  fhir_factory, fhir_pathengine, fhir_client, fhir_common;
 
 type
   TFHIRNppContext = class;

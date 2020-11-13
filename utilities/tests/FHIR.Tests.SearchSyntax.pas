@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  FHIR.Support.Base,
+  fsl_base,
   FHIR.Server.SearchSyntax;
 
 {$IFNDEF FPC}

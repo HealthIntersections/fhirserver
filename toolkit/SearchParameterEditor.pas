@@ -33,7 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
   FMX.Memo, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Base.Lang,
+  
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
@@ -69,7 +69,7 @@ implementation
 {$R *.fmx}
 
 uses
-  FHIR.Base.Utilities;
+  fhir_utilities;
 
 function IsValidSearchParam(s : String) : boolean;
 begin

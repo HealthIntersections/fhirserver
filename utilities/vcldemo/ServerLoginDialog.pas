@@ -134,10 +134,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, IniFiles,
-  FHIR.Support.Utilities, FHIR.Support.Shell,
-  FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R2.Common,
-  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  fsl_utilities, fsl_shell, fsl_http,
+  fhir_utilities, fhir_common, fhir_oauth, fui_vcl_smart, fhir_objects, fhir_client_http,
+  fhir2_client, fhir2_types, fhir2_resources, fhir2_utilities, fhir2_common,
   ProgressDialog, FHIRDemoLogging;
 
 type
@@ -182,16 +181,16 @@ type
     procedure btnLoginClick(Sender: TObject);
   private
     FIni : TIniFile;
-    FClient: TFhirClient;
+    FClient: TFhirClient2;
     FProgressForm : TProgressWindow;
     FLogService: TLoggingService;
-    procedure SetClient(const Value: TFhirClient);
+    procedure SetClient(const Value: TFhirClient2);
     procedure DoOpenURL(url : UnicodeString);
     procedure DoIdle(out stop : boolean);
   public
     destructor Destroy; override;
     Property Ini : TIniFile read FIni write FIni;
-    Property Client : TFhirClient read FClient write SetClient;
+    Property Client : TFhirClient2 read FClient write SetClient;
     property ProgressForm : TProgressWindow read FProgressForm write FProgressForm;
     property LogService : TLoggingService read FLogService write FLogService;
   end;
@@ -250,7 +249,7 @@ begin
   ini.WriteBool('Server', 'InProcess', chkInProgress.Checked);
   ini.WriteString('Server','AuthScope',cbAuthScope.Text);
 
-  FClient := TFhirClients.makeIndy(nil, cbxServer.Text, true);
+  FClient := TFhirClient2.Create(nil, THTTPLanguages.create('en'), TFHIRHTTPCommunicator.create(cbxServer.Text));
   FClient.Logger := TDemoHttpLogger.Create;
   server := TRegisteredFHIRServer.create;
   try
@@ -360,7 +359,7 @@ begin
   ExecuteOpen(url);
 end;
 
-procedure TServerLoginForm.SetClient(const Value: TFhirClient);
+procedure TServerLoginForm.SetClient(const Value: TFhirClient2);
 begin
   FClient.Free;
   FClient := Value;

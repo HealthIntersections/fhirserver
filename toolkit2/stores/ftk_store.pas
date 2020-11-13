@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  FHIR.Support.Base;
+  fsl_base;
 
 type
 

@@ -34,10 +34,10 @@ Interface
 Uses
   Windows, SysUtils, Classes, Vcl.Graphics, System.UITypes,
   GraphicEx,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Xml,
+  fsl_base, fsl_utilities, fsl_stream,
+  fsl_collections, fsl_graphics, fsl_xml,
 
-  FHIR.Support.Printing, FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document;
+  fsl_printing_win, FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document;
 
 Const
   MARK__IN = 5;

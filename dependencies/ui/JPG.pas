@@ -6,7 +6,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics,
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 type
   TJPGColorDepth = (jpgAuto, jpgGray, jpg8Bit, jpg24Bit);

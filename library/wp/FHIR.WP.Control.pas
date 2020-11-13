@@ -35,8 +35,8 @@ uses
 
   DropBMPTarget, DropSource, DropTarget,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.Shell,
-  FHIR.Web.Mapi,
+  fsl_base, fsl_utilities, fsl_graphics, fsl_collections, fsl_stream, fsl_printing_win, fsl_shell,
+  fsl_mapi,
 
   FHIR.Uix.Base, FHIR.Uix.Controls,
 

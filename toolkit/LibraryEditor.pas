@@ -35,9 +35,9 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
-  FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  fsl_utilities, fsl_http, fsl_stream,
+  fhir_objects, 
+  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, fhir_indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   CodeSystemConceptDialog, FMX.Platform, System.ImageList, TranslationsEditorDialog;

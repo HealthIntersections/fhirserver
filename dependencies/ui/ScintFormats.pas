@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, Graphics, Generics.Collections,
   MarkdownCommonMark,
   ScintEdit,
-  FHIR.Support.Base;
+  fsl_base;
 
 type
   TXmlStylerStyle = (

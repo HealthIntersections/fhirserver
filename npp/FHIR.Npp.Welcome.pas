@@ -36,8 +36,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage,
   FHIR.Npp.Base, FHIR.Npp.Form,
-  FHIR.Support.Utilities,
-  FHIR.Npm.Cache, FHIR.Npm.Manager,
+  fsl_utilities,
+  fsl_npm_cache, FHIR.Npm.Manager,
   FHIR.Npp.Context;
 
 type

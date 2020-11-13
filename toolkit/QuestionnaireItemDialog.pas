@@ -35,7 +35,7 @@ uses
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ComboEdit, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.TabControl,
   FMX.ListBox, FMX.Edit, FMX.DialogService, System.ImageList, FMX.ImgList,
-  FHIR.Support.Base, FHIR.Support.Utilities,
+  fsl_base, fsl_utilities,
   ToolkitSettings,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Constants, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseDialog,
@@ -896,10 +896,10 @@ end;
 
 procedure TQuestionnaireItemForm.FormDestroy(Sender: TObject);
 begin
-  (edtInitialValue.TagObject as TFSLObject).Free;
-  (edtCalculatedValue.TagObject as TFSLObject).Free;
-  (edtEnableWhen.TagObject as TFSLObject).Free;
-  (edtContext.TagObject as TFSLObject).Free;
+  (edtInitialValue.TagObject as TFslObject).Free;
+  (edtCalculatedValue.TagObject as TFslObject).Free;
+  (edtEnableWhen.TagObject as TFslObject).Free;
+  (edtContext.TagObject as TFslObject).Free;
   Settings.storeValue('Questionnaire.item', 'tab-visible', tabMode.TabIndex);
   inherited;
 end;

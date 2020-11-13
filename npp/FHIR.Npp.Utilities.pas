@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Base, System.Generics.Defaults, FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine;
+  fsl_base, System.Generics.Defaults, fhir_objects, fhir_factory, fhir_pathengine;
 
 type
   TFHIRAnnotationLevel = (alError, alWarning, alHint, alMatch);

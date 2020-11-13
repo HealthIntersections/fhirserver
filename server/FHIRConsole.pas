@@ -11,14 +11,12 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms,
   datetimectrls,
-  FHIR.Support.Base,
-  FHIR.Snomed.Combiner, FHIR.Web.Parsers, FHIR.Base.Utilities, FHIR.Ucum.IFace,
-  FHIR.Npm.Cache, FHIR.Client.Base, FHIR.CdsHooks.Utilities,
-  FHIR.Smart.Utilities, FHIR.Tx.Service, FHIR.Database.Manager,
-  FHIR.Loinc.Services,
-  { you can add units after this }
-  FHIR.Server.Console,
-  FHIR.Server.Connection.Lcl, IdGlobal;
+  fsl_base,
+  fsl_http, fhir_utilities, fhir_ucum,
+  fsl_npm_cache, fhir_client, fhir_cdshooks,
+  fhir_oauth,
+  console_form,
+  console_server_form;
 
 {$R *.res}
 

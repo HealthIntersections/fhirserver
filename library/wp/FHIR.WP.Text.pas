@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format;
 
 Const

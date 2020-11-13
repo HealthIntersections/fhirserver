@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils,
   Graphics, Controls, ExtCtrls, ComCtrls, Menus, ActnList,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Logging,
-  FHIR.Base.Objects,
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging,
+  fhir_objects,
   ftk_store, ftk_console;
 
 // supported formats:

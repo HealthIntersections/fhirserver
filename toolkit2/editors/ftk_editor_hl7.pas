@@ -5,9 +5,9 @@ unit ftk_editor_hl7;
 interface
 
 uses
-  Classes, SysUtils, SynEditHighlighter, SynHighlighterHL7,
-  FHIR.Support.Base, FHIR.Support.Logging, FHIR.Support.Stream,
-  FHIR.v2.Message,
+  Classes, SysUtils, SynEditHighlighter, fui_syn_hl7,
+  fsl_base, fsl_logging, fsl_stream,
+  v2_message,
   ftk_context, ftk_store, ftk_editor_base;
 
 type

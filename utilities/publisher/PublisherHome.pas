@@ -37,7 +37,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.ImageList, System.AnsiStrings,
   Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.Clipbrd,
   JclSysUtils,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_shell,
  // FHIR.Tools.IGPublisher,
   Vcl.Buttons;
 

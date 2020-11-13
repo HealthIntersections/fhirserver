@@ -35,9 +35,9 @@ uses
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
-  FHIR.Support.Utilities, FHIR.Support.Utilities,
+  fsl_utilities, fsl_utilities,
   
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Base.Xhtml,
+  fhir_objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, fhir_xhtml,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor, FMX.WebBrowser,
   FMX.Memo;
 

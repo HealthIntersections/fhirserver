@@ -35,7 +35,7 @@ uses
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Ui.Fmx,
+  fsl_base, fsl_utilities, FHIR.Ui.Fmx,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
   ProviderDirectoryForm, PatientHomeForm, BulkDataForm;

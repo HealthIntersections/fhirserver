@@ -1,6 +1,6 @@
-unit FHIR.R5.IndexInfo;
+unit fhir5_indexinfo;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,9 +37,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Common,
-  FHIR.R5.Enums, FHIR.R5.Types, FHIR.R5.Resources, FHIR.R5.Constants, FHIR.Tools.Indexing;
+  fsl_base, fsl_utilities, fsl_stream,
+  fhir_common,
+  fhir5_enums, fhir5_types, fhir5_resources, fhir5_constants, fhir_indexing;
 
 Type
 

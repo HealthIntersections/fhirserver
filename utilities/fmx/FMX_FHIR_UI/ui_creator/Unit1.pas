@@ -6,9 +6,9 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.TabControl, FMX.Edit,
-  FHIR.Base.Objects, System.ImageList, FMX.ImgList, FMX.Menus, FMX.ScrollBox, FMX.Memo,
-  FMX.DateTimeCtrls, FMX.ListBox,   FHIR.Support.Utilities  , FHIR.Support.Collections   ,
-  FHIR.R4.Factory , FHIR.R4.Resources, FHIR.R4.Types , Fhir.R4.Utilities, FHIR.FMX.Ctrls ;
+  fhir_objects, System.ImageList, FMX.ImgList, FMX.Menus, FMX.ScrollBox, FMX.Memo,
+  FMX.DateTimeCtrls, FMX.ListBox,   fsl_utilities  , fsl_collections   ,
+  fhir4_factory , fhir4_resources, fhir4_types , Fhir.R4.Utilities, FHIR.FMX.Ctrls ;
 
 const
  ButtonColumns=3;
