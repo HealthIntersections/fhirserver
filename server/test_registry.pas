@@ -53,7 +53,7 @@ uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, FHIR.Tx.IETFLang.Tests, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
+  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, tx_tests_ietf, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
   fsl_tests_npm,
   {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
   fhir4_tests_parser, fhir4_tests_Context, fhir4_tests_Utilities, fhir4_tests_Client, fhir4_tests_Liquid, fhir4_tests_PathEngine;
@@ -136,7 +136,7 @@ begin
   fsl_tests_scrypt.registerTests;
   fsl_tests_web.registerTests;
   cda_tests.registerTests;
-  FHIR.Tx.IETFLang.Tests.registerTests;
+  tx_tests_ietf.registerTests;
   fdb_tests.registerTests;
   ftx_ucum_tests.registerTests;
   ftx_sct_tests.registerTests;

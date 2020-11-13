@@ -84,8 +84,8 @@
             <Filename Value="..\exec\64\FHIRServer"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic"/>
+            <IncludeFiles Value="..\library;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\ftx\tests;..\library\fhir4\tests;..\library\cda\tests;..\library\fdb\tests;..\library\v2\tests;tests;modules"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>

@@ -1,4 +1,4 @@
-unit FHIR.Tx.IETFLang.Tests;
+unit tx_tests_ietf;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
