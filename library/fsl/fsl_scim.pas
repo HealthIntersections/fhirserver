@@ -73,6 +73,7 @@ Type
   protected
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(json : TJsonObject); virtual;
     destructor Destroy; override;
@@ -98,6 +99,8 @@ Type
     procedure SetValue(const Value: String);
     function GetPrimary: Boolean;
     procedure SetPrimary(const Value: Boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(FJson : TJsonObject);
     destructor Destroy; override;
@@ -135,6 +138,8 @@ Type
     procedure SetPostalCode(const Value: String);
     procedure SetRegion(const Value: String);
     procedure SetStreetAddress(const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(FJson : TJsonObject);
     destructor Destroy; override;
@@ -205,6 +210,8 @@ Type
     function GetAddresses: TSCIMAddressList;
     function GetEntitlement(i: integer): String;
     function GetEntitlementCount: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(FJson : TJsonObject); override;
     constructor CreateNew;
@@ -454,6 +461,12 @@ begin
     raise ESCIMException.Create(400, 'BAD REQUEST', 'invalidValue', 'Unable to find the expected schema '+s);
 end;
 
+
+function TSCIMObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FJson.sizeInBytes);
+end;
 
 { TSCIMUser }
 
@@ -903,6 +916,16 @@ begin
     FJson.clear('userType');
 end;
 
+function TSCIMUser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEmails.sizeInBytes);
+  inc(result, FPhoneNums.sizeInBytes);
+  inc(result, FIMs.sizeInBytes);
+  inc(result, FAddresses.sizeInBytes);
+  inc(result, (FHash.length * sizeof(char)) + 12);
+end;
+
 { TSCIMContact }
 
 constructor TSCIMContact.Create(FJson: TJsonObject);
@@ -948,6 +971,12 @@ end;
 procedure TSCIMContact.SetValue(const Value: String);
 begin
   FJson['value'] := value;
+end;
+
+function TSCIMContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FJson.sizeInBytes);
 end;
 
 { TSCIMContactList }
@@ -1054,6 +1083,12 @@ end;
 procedure TSCIMAddress.SetType(const Value: String);
 begin
   FJson['type'] := value;
+end;
+
+function TSCIMAddress.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FJson.sizeInBytes);
 end;
 
 { TSCIMAddressList }

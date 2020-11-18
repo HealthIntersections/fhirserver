@@ -52,6 +52,8 @@ type
     FDescription : String;
     FFHIRVersion : String;
     FUrl: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function link : TPackageDefinition; overload;
 
@@ -69,6 +71,8 @@ type
     FVersion: String;
     FLoaded: TStringList;
     FOnLoadEvent: TPackageLoadingEvent;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(ver : string);
     destructor Destroy; override;
@@ -99,6 +103,8 @@ type
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(user : boolean);
     destructor Destroy; override;
@@ -145,6 +151,8 @@ type
   TFHIRLoadPackagesTaskRequest = class (TBackgroundTaskRequestPackage)
   private
     FManager: TFHIRPackageManager;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(manager : TFHIRPackageManager);
     destructor Destroy; override;
@@ -157,6 +165,8 @@ type
   TFHIRLoadPackagesTaskResponse = class (TBackgroundTaskResponsePackage)
   private
     FPackages : TFslList<TNpmPackage>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -255,6 +265,12 @@ begin
   inherited Destroy;
 end;
 
+function TFHIRLoadPackagesTaskResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPackages.sizeInBytes);
+end;
+
 { TFHIRLoadPackagesTaskRequest }
 
 constructor TFHIRLoadPackagesTaskRequest.Create(manager: TFHIRPackageManager);
@@ -267,6 +283,12 @@ destructor TFHIRLoadPackagesTaskRequest.Destroy;
 begin
   FManager.free;
   inherited Destroy;
+end;
+
+function TFHIRLoadPackagesTaskRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FManager.sizeInBytes);
 end;
 
 { TFHIRPackageManager }
@@ -1017,6 +1039,14 @@ begin
 end;
 
 
+function TFHIRPackageManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFolder.length * sizeof(char)) + 12);
+  inc(result, FCache.sizeInBytes);
+  inc(result, (FTaskDesc.length * sizeof(char)) + 12);
+end;
+
 { TPackageLoadingInformation }
 
 constructor TPackageLoadingInformation.Create(ver : string);
@@ -1051,11 +1081,29 @@ begin
   FLoaded.Add(id+'#'+ver);
 end;
 
+function TPackageLoadingInformation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, FLoaded.sizeInBytes);
+end;
+
 { TPackageDefinition }
 
 function TPackageDefinition.link: TPackageDefinition;
 begin
   result := TPackageDefinition(inherited link);
+end;
+
+function TPackageDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FCanonical.length * sizeof(char)) + 12);
+  inc(result, (FDescription.length * sizeof(char)) + 12);
+  inc(result, (FFHIRVersion.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
 
 initialization

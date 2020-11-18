@@ -49,6 +49,8 @@ type
   TFhirCodeSystemProviderContext = class (TCodeSystemProviderContext)
   private
     context : TFhirCodeSystemConceptW;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFhirCodeSystemConceptW); overload;
     destructor Destroy; override;
@@ -58,6 +60,8 @@ type
   private
     FItem : TFhirCodeSystemConceptW;
     FRating : double;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(item : TFhirCodeSystemConceptW; rating : double);
     destructor Destroy; override;
@@ -66,6 +70,8 @@ type
   TCodeSystemAdornment = class (TFslObject)
   private
     FMap : TFhirCodeSystemConceptMapW;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(map : TFhirCodeSystemConceptMapW);
     destructor Destroy; override;
@@ -84,6 +90,8 @@ type
     function GetVersion: String;
     function GetId: String;
     procedure SetId(const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(cs : TFhirCodeSystemW);
     destructor Destroy; override;
@@ -104,6 +112,8 @@ type
     FList : TFslList<TFHIRCodeSystemEntry>;
     function sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
     procedure updateList(url, version: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -140,6 +150,8 @@ type
 
     procedure Add(item : TFhirCodeSystemConceptW; rating : double);
     procedure sort;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -167,6 +179,8 @@ type
     function locCode(list: TFhirCodeSystemConceptListW; code: String): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
@@ -220,6 +234,12 @@ begin
   inherited;
 end;
 
+function TFhirCodeSystemProviderContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, context.sizeInBytes);
+end;
+
 { TFhirCodeSystemConceptMatch }
 
 constructor TFhirCodeSystemConceptMatch.Create(item: TFhirCodeSystemConceptW; rating: double);
@@ -233,6 +253,12 @@ destructor TFhirCodeSystemConceptMatch.Destroy;
 begin
   FItem.Free;
   inherited;
+end;
+
+function TFhirCodeSystemConceptMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FItem.sizeInBytes);
 end;
 
 { TFHIRCodeSystemEntry }
@@ -293,6 +319,13 @@ begin
   FCodeSystem.id := value;
 end;
 
+function TFHIRCodeSystemEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCodeSystem.sizeInBytes);
+  inc(result, FSupplements.sizeInBytes);
+end;
+
 { TFhirCodeSystemProviderFilterSorter }
 
 function TFhirCodeSystemProviderFilterSorter.Compare(const Left, Right: TFhirCodeSystemConceptMatch): Integer;
@@ -330,6 +363,12 @@ begin
   concepts.sort(TFhirCodeSystemProviderFilterSorter.Create);
 end;
 
+function TFhirCodeSystemProviderFilterContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, concepts.sizeInBytes);
+end;
+
 { TCodeSystemAdornment }
 
 constructor TCodeSystemAdornment.Create(map: TFhirCodeSystemConceptMapW);
@@ -342,6 +381,12 @@ destructor TCodeSystemAdornment.destroy;
 begin
   FMap.Free;
   inherited;
+end;
+
+function TCodeSystemAdornment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
 end;
 
 { TFhirCodeSystemProvider }
@@ -1173,6 +1218,14 @@ begin
 end;
 
 
+function TFhirCodeSystemProvider.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCs.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FFactory.sizeInBytes);
+end;
+
 { TFHIRCodeSystemManager }
 
 constructor TFHIRCodeSystemManager.Create;
@@ -1443,5 +1496,12 @@ begin
   FMap.clear();
 end;
 
+
+function TFHIRCodeSystemManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FList.sizeInBytes);
+end;
 
 end.

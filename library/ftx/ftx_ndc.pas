@@ -33,6 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  SysUtils,
   fsl_base,
   fdb_manager;
 
@@ -42,6 +43,8 @@ type
     FSource: String;
     FDatabase: TFslDBManager;
     procedure SetDatabase(const Value: TFslDBManager);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(source : String);
     destructor Destroy; override;
@@ -69,6 +72,13 @@ end;
 procedure TNdcImporter.SetDatabase(const Value: TFslDBManager);
 begin
   FDatabase := Value;
+end;
+
+function TNdcImporter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSource.length * sizeof(char)) + 12);
+  inc(result, FDatabase.sizeInBytes);
 end;
 
 end.

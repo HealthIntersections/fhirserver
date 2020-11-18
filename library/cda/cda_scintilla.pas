@@ -97,6 +97,7 @@ type
     procedure GetStyleAttributes(const Style: Integer; var Attributes: TScintStyleAttributes); override;
     function LineTextSpans(const S: TScintRawString): Boolean; override;
     procedure StyleNeeded; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; Override;
@@ -506,5 +507,14 @@ begin
     scanStartElement;
 end;
 
+
+function TCDAStyler.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDoc.sizeInBytes);
+  inc(result, FLastType.sizeInBytes);
+  inc(result, FLastCategory.sizeInBytes);
+  inc(result, FMode.sizeInBytes);
+end;
 
 end.

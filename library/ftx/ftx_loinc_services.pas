@@ -92,6 +92,8 @@ type
     FMaster : TBytes;
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
 
     procedure GetEntry(iIndex : byte; var lang, country : String);
@@ -111,6 +113,8 @@ type
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Property IsUtf16 : boolean read FIsUtf16 write FIsUtf16;
       Function GetEntry(iIndex : Cardinal; var lang : byte):String;
@@ -143,6 +147,8 @@ Type
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -159,6 +165,8 @@ Type
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
       Function Count : Integer;
@@ -176,6 +184,8 @@ Type
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
       Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -194,6 +204,8 @@ Type
       FLength : Cardinal;
       FBuilder : TFslBytesBuilder;
       function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(refs : TLOINCReferences);
       Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
@@ -242,6 +254,8 @@ Type
       FBuilder : TFslBytesBuilder;
       procedure SetCodeLength(const Value: Cardinal);
       function getForLang(langs : TLangArray;  ref : cardinal) : cardinal;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(refs : TLOINCReferences);
       destructor Destroy; override;
@@ -285,6 +299,8 @@ Type
   Private
     FMaster : TBytes;
     FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal);
@@ -304,6 +320,8 @@ Type
   Private
     FMaster : TBytes;
     FBuilder : TFslBytesBuilder;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, description, answers : Cardinal);
@@ -372,6 +390,8 @@ Type
     function FilterByIsA(value: String; this: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -451,6 +471,7 @@ Type
     function GetDefinition: TLOINCServices;
   Protected
     Function ItemClass : TFslObjectClass; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -573,6 +594,13 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
+function TLoincStrings.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
+
 { TLOINCReferences }
 
 Function TLOINCReferences.GetCardinals(iIndex: Cardinal) : TCardinalArray;
@@ -639,6 +667,13 @@ begin
   move(FMaster[iIndex], result, 4);
 end;
 
+function TLOINCReferences.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
+
 { TLOINCConcepts }
 
 Procedure TLOINCConcepts.GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
@@ -700,6 +735,14 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
+
+function TLOINCConcepts.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRefs.sizeInBytes);
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
 
 { TLOINCCodeList }
 
@@ -885,6 +928,14 @@ begin
   if (offset + 4 > length(FMaster)) then
     raise ETerminologyError.create('Write off end');
   Move(iValue, FMaster[offset], 4);
+end;
+
+function TLOINCCodeList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRefs.sizeInBytes);
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
 end;
 
 { TLOINCServices }
@@ -1549,6 +1600,21 @@ end;
 *)
 
 
+function TLOINCServices.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLang.sizeInBytes);
+  inc(result, FDesc.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FRefs.sizeInBytes);
+  inc(result, FConcepts.sizeInBytes);
+  inc(result, FWords.sizeInBytes);
+  inc(result, FStems.sizeInBytes);
+  inc(result, FEntries.sizeInBytes);
+  inc(result, FAnswerLists.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+end;
+
 { TLOINCServiceList }
 
 destructor TLOINCServiceList.Destroy;
@@ -1619,6 +1685,12 @@ begin
   FDefinition := Value;
 end;
 
+function TLOINCServiceList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinition.sizeInBytes);
+end;
+
 { TLoincWords }
 
 procedure TLoincWords.AddWord(index: Cardinal; Flags: Byte);
@@ -1662,6 +1734,13 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
+function TLoincWords.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
+
 { TLoincStems }
 
 procedure TLoincStems.AddStem(index : Cardinal);
@@ -1699,6 +1778,13 @@ end;
 procedure TLoincStems.StartBuild;
 begin
   FBuilder := TFslBytesBuilder.Create;
+end;
+
+function TLoincStems.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
 end;
 
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
@@ -2615,6 +2701,13 @@ end;
 
 
 
+function TLOINCHeirarchyEntryList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
+
 { TLOINCAnswersList }
 
 function TLOINCAnswersList.AddEntry(code, description, answers: Cardinal): Cardinal;
@@ -2686,6 +2779,13 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
+function TLOINCAnswersList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
+end;
+
 function TLOINCServices.GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
 var
   iName : Cardinal;
@@ -2747,6 +2847,13 @@ function nolang : TLangArray;
 begin
   SetLength(result, 1);
   result[0] := 0;
+end;
+
+function TLoincLanguages.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FMaster));
+  inc(result, FBuilder.sizeInBytes);
 end;
 
 { TLoincFilterHolder }

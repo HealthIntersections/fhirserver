@@ -60,6 +60,8 @@ type
     FExpires : integer;
     FScopes : string;
     FToken : string;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Property Expires : integer read FExpires write FExpires;
     Property Scopes : string read FScopes write FScopes;
@@ -81,6 +83,8 @@ type
     FPreFetch : TFslMap<TFhirObject>;
     FBaseUrl: String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -111,6 +115,8 @@ type
     FUUID: String;
     FCreate: String;
     FDelete: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -130,6 +136,8 @@ type
     FLabel: String;
     FUrl: String;
     FType: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -152,6 +160,8 @@ type
     Findicator: String;
     FSuggestions: TFslList<TCDSHookCardSuggestion>;
     FLinks: TFslList<TCDSHookCardLink>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -177,6 +187,8 @@ type
   private
     FCreate: TStringList;
     FDelete: TStringList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -193,6 +205,8 @@ type
   private
     FCards: TFslList<TCDSHookCard>;
     FDecisions : TFslList<TCDSHookDecision>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -229,6 +243,8 @@ type
     FToken: TClientAccessToken;
     procedure Setinfo(const Value: TRegisteredFHIRServer);
     procedure SetToken(const Value: TClientAccessToken);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TCDSHooksManagerServerInfo; overload;
@@ -244,6 +260,8 @@ type
     FResponse: TCDSHookResponse;
     FError: String;
     procedure SetResponse(const Value: TCDSHookResponse);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TCDSHooksManagerCachedResponse; overload;
@@ -272,6 +290,7 @@ type
     function readBody(body : TFslBuffer) : TCDSHookResponse;
   protected
     Procedure Execute; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(manager : TCDSHooksManager);
     destructor Destroy; override;
@@ -302,6 +321,8 @@ type
     procedure closeThread(thread : TCDSHooksManagerWorkThread);
     procedure cacheResponse(hash : String; server : TRegisteredFHIRServer; response : TCDSHookResponse); overload;
     procedure cacheResponse(hash : String; server : TRegisteredFHIRServer; error : String); overload;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -744,6 +765,22 @@ begin
   result := TCDSHookRequest(inherited Link);
 end;
 
+function TCDSHookRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FHook.length * sizeof(char)) + 12);
+  inc(result, (FHookInstance.length * sizeof(char)) + 12);
+  inc(result, (FFhirServer.length * sizeof(char)) + 12);
+  inc(result, Foauth.sizeInBytes);
+  inc(result, (Fredirect.length * sizeof(char)) + 12);
+  inc(result, (Fuser.length * sizeof(char)) + 12);
+  inc(result, (Fpatient.length * sizeof(char)) + 12);
+  inc(result, (Fencounter.length * sizeof(char)) + 12);
+  inc(result, FContext.sizeInBytes);
+  inc(result, FPreFetch.sizeInBytes);
+  inc(result, (FBaseUrl.length * sizeof(char)) + 12);
+end;
+
 { TCDSHookCardSuggestion }
 
 procedure TCDSHookCardSuggestion.AsJson(json: TJsonWriter);
@@ -784,6 +821,15 @@ begin
   FDelete := json.str['delete'];
 end;
 
+function TCDSHookCardSuggestion.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FLabel.length * sizeof(char)) + 12);
+  inc(result, (FUUID.length * sizeof(char)) + 12);
+  inc(result, (FCreate.length * sizeof(char)) + 12);
+  inc(result, (FDelete.length * sizeof(char)) + 12);
+end;
+
 { TCDSHookCardLink }
 
 procedure TCDSHookCardLink.AsJson(json: TJsonWriter);
@@ -818,6 +864,14 @@ begin
   FLabel := json.str['label'];
   FUrl := json.str['url'];
   FType := json.str['type'];
+end;
+
+function TCDSHookCardLink.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FLabel.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
 end;
 
 { TCDSHookCard }
@@ -927,6 +981,18 @@ end;
 
 
 
+function TCDSHookCard.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSourceURL.length * sizeof(char)) + 12);
+  inc(result, (Fdetail.length * sizeof(char)) + 12);
+  inc(result, (FsourceLabel.length * sizeof(char)) + 12);
+  inc(result, (Fsummary.length * sizeof(char)) + 12);
+  inc(result, (Findicator.length * sizeof(char)) + 12);
+  inc(result, FSuggestions.sizeInBytes);
+  inc(result, FLinks.sizeInBytes);
+end;
+
 { TCDSHookResponse }
 
 function TCDSHookResponse.addCard: TCDSHookCard;
@@ -1012,6 +1078,13 @@ end;
 
 
 
+
+function TCDSHookResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCards.sizeInBytes);
+  inc(result, FDecisions.sizeInBytes);
+end;
 
 { TCDSHookCache }
 
@@ -1109,6 +1182,13 @@ end;
 function TCDSHookDecision.Link: TCDSHookDecision;
 begin
   result := TCDSHookDecision(inherited Link);
+end;
+
+function TCDSHookDecision.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCreate.sizeInBytes);
+  inc(result, FDelete.sizeInBytes);
 end;
 
 { TCDSHooksManager }
@@ -1338,6 +1418,14 @@ begin
   end;
 end;
 
+function TCDSHooksManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FServers.sizeInBytes);
+  inc(result, FThreads.sizeInBytes);
+  inc(result, FCache.sizeInBytes);
+end;
+
 { TCDSHooksManagerServerInfo }
 
 destructor TCDSHooksManagerServerInfo.Destroy;
@@ -1367,6 +1455,13 @@ procedure TCDSHooksManagerServerInfo.SetToken(const Value: TClientAccessToken);
 begin
   FToken.Free;
   FToken := Value;
+end;
+
+function TCDSHooksManagerServerInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Finfo.sizeInBytes);
+  inc(result, FToken.sizeInBytes);
 end;
 
 { TCDSHooksManagerWorkThread }
@@ -1507,6 +1602,18 @@ begin
   FToken := Value;
 end;
 
+function TCDSHooksManagerWorkThread.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fmanager.sizeInBytes);
+  inc(result, Frequest.sizeInBytes);
+  inc(result, Fserver.sizeInBytes);
+  inc(result, FToken.sizeInBytes);
+  inc(result, (FHash.length * sizeof(char)) + 12);
+  inc(result, (FID.length * sizeof(char)) + 12);
+  inc(result, FHeaders.sizeInBytes);
+end;
+
 { TCDSHooksManagerCachedResponse }
 
 destructor TCDSHooksManagerCachedResponse.Destroy;
@@ -1526,5 +1633,19 @@ begin
   FResponse := Value;
 end;
 
+
+function TCDSHooksManagerCachedResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResponse.sizeInBytes);
+  inc(result, (FError.length * sizeof(char)) + 12);
+end;
+
+function TCDSRequestOAuthDetails.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FScopes.length * sizeof(char)) + 12);
+  inc(result, (FToken.length * sizeof(char)) + 12);
+end;
 
 end.

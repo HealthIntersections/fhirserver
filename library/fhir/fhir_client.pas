@@ -60,6 +60,7 @@ Type
     function asString : string;
 
     procedure addToHeaders(list : TStringList);
+    function sizeInBytes : cardinal;
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -72,6 +73,8 @@ Type
     Fexpires: TDateTime;
     FPatient: String;
     procedure SetidToken(const Value: TJWT);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -126,6 +129,7 @@ Type
     procedure notify(msg : String);
     function ProvenanceString : string;
     function opWrapper : TFhirOperationOutcomeWClass;
+    function sizeInBytesV : cardinal; override;
   public
 
     // version independent API
@@ -282,6 +286,18 @@ begin
 end;
 
 
+function THTTPHeaders.sizeInBytes: cardinal;
+begin
+  result := sizeof(self);
+  inc(result, (contentType.Length * sizeof(char))+12);
+  inc(result, (accept.Length * sizeof(char))+12);
+  inc(result, (prefer.Length * sizeof(char))+12);
+  inc(result, (location.Length * sizeof(char))+12);
+  inc(result, (contentLocation.Length * sizeof(char))+12);
+  inc(result, (lastOperationId.Length * sizeof(char))+12);
+  inc(result, (progress.Length * sizeof(char))+12);
+end;
+
 { TFHIRClientLogger }
 
 function TFHIRClientLogger.Link: TFHIRClientLogger;
@@ -316,6 +332,12 @@ end;
 function TFHIRClientCommunicator.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
   result := FClient.getResourceVersionId(res);
+end;
+
+function TFHIRClientCommunicator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FClient.sizeInBytes);
 end;
 
 { TFhirClientV }
@@ -553,6 +575,15 @@ begin
     result := '??'
   else
     result := idtoken.name
+end;
+
+function TClientAccessToken.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FidToken.sizeInBytes);
+  inc(result, (Fscopes.length * sizeof(char)) + 12);
+  inc(result, (FaccessToken.length * sizeof(char)) + 12);
+  inc(result, (FPatient.length * sizeof(char)) + 12);
 end;
 
 end.

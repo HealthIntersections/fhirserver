@@ -43,6 +43,8 @@ type
   private
     FName: String;
     FContent: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     property name : String read FName write FName;
     property content : String read FContent write FContent;
@@ -62,6 +64,8 @@ type
     procedure SetClient(const Value: TFhirClientV);
     procedure SetMessage(const Value: TV2Message);
     procedure SetFactory(const Value: TFHIRFactory);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TV2ConversionEngine; overload;
@@ -137,6 +141,24 @@ begin
   finally
     fpe.free;
   end;
+end;
+
+function TV2ConversionEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMessage.sizeInBytes);
+  inc(result, (FScriptName.length * sizeof(char)) + 12);
+  inc(result, FClient.sizeInBytes);
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FJSFactory.sizeInBytes);
+  inc(result, FOnGetScript.sizeInBytes);
+end;
+
+function TV2ConversionEngineScript.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
 end.

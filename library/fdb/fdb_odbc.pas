@@ -119,6 +119,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
@@ -474,16 +475,22 @@ type
   TOdbcBoundString = class (TFslDBBoundParam)
   private
     FString: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundInt = class (TFslDBBoundParam)
   private
     FInt: Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundInt64 = class (TFslDBBoundParam)
   private
     FInt64: Int64;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundDate = class (TFslDBBoundParam)
@@ -499,6 +506,8 @@ type
   TOdbcBoundBytes  = class (TFslDBBoundParam)
   private
     FBytes: TManagedMemoryStream;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
   end;
@@ -949,6 +958,17 @@ begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
 end;
 
+function TFslDBOdbcManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDriver.length * sizeof(char)) + 12);
+  inc(result, (FServer.length * sizeof(char)) + 12);
+  inc(result, (FDatabase.length * sizeof(char)) + 12);
+  inc(result, (FUsername.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, FAttributes.sizeInBytes);
+end;
+
 class function TFslDBOdbcManager.IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean;
 begin
   result := false;
@@ -1022,6 +1042,29 @@ destructor TOdbcBoundBytes.Destroy;
 begin
   FBytes.Free;
   inherited;
+end;
+
+function TOdbcBoundBytes.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBytes.Size);
+end;
+
+function TOdbcBoundString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FString.length * sizeof(char)) + 12);
+end;
+
+function TOdbcBoundInt.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
+function TOdbcBoundInt64.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, sizeof(FInt64));
 end;
 
 end.

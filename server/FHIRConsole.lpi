@@ -198,31 +198,25 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="8">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="fhir_ftx"/>
+        <PackageName Value="fhir"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir_fdb"/>
+        <PackageName Value="fhir_fsl"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item4>
       <Item5>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="PascalTZ"/>
       </Item5>
       <Item6>
-        <PackageName Value="DateTimeCtrls"/>
-      </Item6>
-      <Item7>
-        <PackageName Value="PascalTZ"/>
-      </Item7>
-      <Item8>
         <PackageName Value="LCL"/>
-      </Item8>
+      </Item6>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>
@@ -232,7 +226,9 @@
       <Unit1>
         <Filename Value="console_form.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainConsoleForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
         <Filename Value="console_server_form.pas"/>

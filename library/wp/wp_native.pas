@@ -108,6 +108,7 @@ Type
       Procedure ReadAttachments(oDocument : TWPWorkingDocument);
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -182,6 +183,7 @@ Type
 
       Function SupportsNestedRows : Boolean; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -252,6 +254,7 @@ Type
       Procedure ReadStyle;
       Procedure ReadDocument(oDocument : TWPWorkingDocument);
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -300,6 +303,8 @@ Type
       Procedure WriteTableRow(oTableRow : TWPDocumentTableRow);
       Procedure WriteTableCell(oTableCell : TWPDocumentTableCell);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -402,6 +407,7 @@ Type
       Procedure ProducePieceSectionStart(oPiece : TWPWorkingDocumentSectionStartPiece);
       Procedure ProducePiece(oPiece : TWPWorkingDocumentPiece);
       Procedure ProduceStyle(oStyle : TWPStyle);
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1248,6 +1254,14 @@ End;
 
 
 
+function TWPNativeReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAnnotationMap.sizeInBytes);
+  inc(result, FActiveExtractor.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+end;
+
 Constructor TWPNativeWriter.Create;
 Begin
   Inherited;
@@ -1963,6 +1977,14 @@ Begin
   End;
 End;
 
+
+function TWPNativeWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FActiveFormatter.sizeInBytes);
+  inc(result, (FText.length * sizeof(char)) + 12);
+  inc(result, FTextPiece.sizeInBytes);
+end;
 
 Constructor TWPNativeDocumentReader.Create;
 Begin
@@ -2719,6 +2741,13 @@ Begin
 End;
 
 
+function TWPNativeDocumentReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FActiveExtractor.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+end;
+
 Destructor TWPNativeDocumentWriter.Destroy;
 Begin
   FFormatter.Free;
@@ -3360,6 +3389,12 @@ Begin
   FFormatter.Attributes.Add(ATTR_NAME_Y, IntegerToString(oCoordinate.Y));
   FFormatter.ProduceTAG(TAG_NAME_COORD);
 End;
+
+function TWPNativeDocumentWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFormatter.sizeInBytes);
+end;
 
 procedure TWPNativeReader.ReadAdornment(oAdornments: TWPDocumentImageAdornments);
 var
@@ -4575,6 +4610,12 @@ Begin
 End;
 
 
+
+function TWPSnapshotWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
+end;
 
 End.
 

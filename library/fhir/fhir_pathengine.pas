@@ -60,6 +60,7 @@ type
     FTag : integer;
   protected
     FUniqueId : integer;
+    function sizeInBytesV : cardinal; override;
   public
     function link : TFHIRPathExpressionNodeV;
     property tag : integer read FTag write FTag;
@@ -165,6 +166,8 @@ type
     FTotal : TFHIRSelectionList;
      FThis : TFHIRObject;
     procedure SetTotal(const Value: TFHIRSelectionList);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
     destructor Destroy; override;
@@ -192,6 +195,8 @@ type
     procedure Setinput1(const Value: TFHIRSelectionList);
     procedure Setinput2(const Value: TFHIRSelectionList);
     procedure Setoutcome(const Value: TFHIRSelectionList);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TFHIRPathDebugPackage; overload;
@@ -231,6 +236,7 @@ type
     FOnResolveReference: TFHIRResolveReferenceEvent;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -352,11 +358,22 @@ begin
   FExtensions.Add(extension);
 end;
 
+function TFHIRPathEngineV.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExtensions.sizeInBytes);
+end;
+
 { TFHIRPathExpressionNodeV }
 
 function TFHIRPathExpressionNodeV.link: TFHIRPathExpressionNodeV;
 begin
   result := TFHIRPathExpressionNodeV(inherited link);
+end;
+
+function TFHIRPathExpressionNodeV.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TFHIRPathExecutionContext }
@@ -398,6 +415,16 @@ procedure TFHIRPathExecutionContext.SetTotal(const Value: TFHIRSelectionList);
 begin
   FTotal.free;
   FTotal := Value;
+end;
+
+function TFHIRPathExecutionContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAppInfo.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+  inc(result, FTotal.sizeInBytes);
+  inc(result, FThis.sizeInBytes);
 end;
 
 { TFHIRPathDebugPackage }
@@ -447,6 +474,16 @@ begin
   Foutcome := Value;
 end;
 
+
+function TFHIRPathDebugPackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcontext.sizeInBytes);
+  inc(result, Finput2.sizeInBytes);
+  inc(result, Finput1.sizeInBytes);
+  inc(result, FExpression.sizeInBytes);
+  inc(result, Foutcome.sizeInBytes);
+end;
 
 { TFHIRTypeDetailsV }
 

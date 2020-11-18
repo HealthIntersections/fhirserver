@@ -83,6 +83,8 @@ Type
     FDefinition : TFHIRElementDefinition;
     FChildren : TFslList<TFHIRElementDefinition>;
     FList : TFslList<TPropertyWrapper>;
+  protected
+    function sizeInBytesV : cardinal; override;
     public
     constructor Create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
     end;
@@ -97,6 +99,8 @@ Type
   private
     FWrapped: TFHIRProperty;
     FList: TFslList<TBaseWrapper>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(wrapped: TFHIRProperty);
     destructor Destroy; override;
@@ -114,6 +118,8 @@ Type
   TResourceWrapperDirect = class(TResourceWrapper)
   private
     FWrapped: TFHIRResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(wrapped: TFHIRResource);
     destructor Destroy; override;
@@ -129,6 +135,8 @@ Type
     FWrapped: TFHIRObject;
     FList: TFslList<TPropertyWrapper>;
     FOtherList: TFslList<TPropertyWrapper>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(wrapped: TFHIRObject);
     destructor Destroy; override;
@@ -302,6 +310,13 @@ begin
   result := nil; // FWrapped.getStructure();
 end;
 
+function TPropertyWrapperDirect.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWrapped.sizeInBytes);
+  inc(result, FList.sizeInBytes);
+end;
+
 Constructor TBaseWrapperDirect.create(wrapped: TFHIRObject);
 begin
   inherited create;
@@ -368,6 +383,14 @@ begin
       list.Free;
     end;
   end;
+
+function TBaseWrapperDirect.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWrapped.sizeInBytes);
+  inc(result, FList.sizeInBytes);
+  inc(result, FOtherList.sizeInBytes);
+end;
 
 Constructor TResourceWrapperDirect.create(wrapped: TFHIRResource);
 begin
@@ -445,6 +468,12 @@ begin
   finally
     pList.Free;
   end;
+end;
+
+function TResourceWrapperDirect.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWrapped.sizeInBytes);
 end;
 
 { TFHIRNarrativeGenerator }
@@ -3395,6 +3424,15 @@ end;
 *)
 
 (*
+function TFHIRNarrativeGenerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPrefix.length * sizeof(char)) + 12);
+  inc(result, context.sizeInBytes);
+  inc(result, (FBasePath.length * sizeof(char)) + 12);
+  inc(result, (FTooCostlyNote.length * sizeof(char)) + 12);
+end;
+
   Constructor TBaseWrapperElement.create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
   begin
   inherited Create;

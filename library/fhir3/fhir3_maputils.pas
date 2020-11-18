@@ -51,6 +51,8 @@ type
     Fname: String;
     Fmode: TVariableMode;
     Fobj: TFHIRObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -65,6 +67,8 @@ type
   TVariables = class (TFslObject)
   private
     list : TFslList<TVariable>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -129,6 +133,8 @@ type
     function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
@@ -614,7 +620,7 @@ begin
   try
     if (lexer.done()) then
       raise EFHIRException.create('Map Input cannot be empty');
-    lexer.skipComments();
+    lexer.skipWhitespaceAndComments();
     lexer.token('map');
     result := TFHIRStructureMap.Create;
     try
@@ -622,7 +628,7 @@ begin
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
       result.Name := lexer.readConstant('name');
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       result.status := PublicationStatusDraft;
 
       while (lexer.hasToken('conceptmap')) do
@@ -670,7 +676,7 @@ begin
     raise lexer.error('Concept Map identifier must start with #');
   map.Id := id.substring(1);
   lexer.token('{');
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   //    lexer.token('source');
   //    map.Source := new UriType(lexer.readConstant('source')));
   //    lexer.token('target');
@@ -772,7 +778,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -782,7 +788,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     lexer.next();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -797,7 +803,7 @@ begin
     lexer.next();
     group.Extends := lexer.take();
   end;
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   while lexer.hasToken('input') do
     parseInput(group, lexer);
   while (not lexer.hasToken('endgroup')) do
@@ -807,7 +813,7 @@ begin
     parseRule(group.ruleList, lexer);
   end;
   lexer.token('endgroup');
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseInput(group : TFHIRStructureMapGroup; lexer : TFHIRPathLexer);
@@ -827,7 +833,7 @@ begin
   if (lexer.hasComment()) then
     input.Documentation := lexer.take().substring(2).trim();
   lexer.skipToken(';');
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseRule(list : TFhirStructureMapGroupRuleList; lexer : TFHIRPathLexer);
@@ -867,7 +873,7 @@ begin
       lexer.token('{');
       if (lexer.hasComment()) then
         rule.Documentation := lexer.take().substring(2).trim();
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       while (not lexer.hasToken('}')) do
       begin
         if (lexer.done()) then
@@ -890,7 +896,7 @@ begin
   end
   else if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseRuleReference(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
@@ -1607,6 +1613,16 @@ begin
 end;
 
 
+function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWorker.sizeInBytes);
+  inc(result, fpp.sizeInBytes);
+  inc(result, fpe.sizeInBytes);
+  inc(result, FLib.sizeInBytes);
+  inc(result, FServices.sizeInBytes);
+end;
+
 { TVariable }
 
 function TVariable.copy: TVariable;
@@ -1626,6 +1642,13 @@ end;
 function TVariable.link: TVariable;
 begin
   result := TVariable(inherited link);
+end;
+
+function TVariable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, Fobj.sizeInBytes);
 end;
 
 { TVariables }
@@ -1688,6 +1711,12 @@ begin
   result := TVariables(inherited Link);
 end;
 
+
+function TVariables.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, list.sizeInBytes);
+end;
 
 end.
 

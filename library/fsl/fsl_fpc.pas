@@ -834,6 +834,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FPC}
+
 { TRegEx }
 
 constructor TRegEx.Create(const Pattern: string; Options: TRegExOptions);

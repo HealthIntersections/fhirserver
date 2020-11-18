@@ -93,6 +93,8 @@ type
     Furi : String;
     FProfiles : TStringList; // or, not and
     FBindings : TFslList<TFHIRElementDefinitionBinding>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(s : string);
     destructor Destroy; override;
@@ -120,6 +122,8 @@ type
     FCollectionStatus : TFHIRCollectionStatus;
     function typesContains(t : String) : boolean;
     function getSystemType(url : string) : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
     constructor CreateList(status : TFHIRCollectionStatus; types : TFslList<TFHIRProfiledType>); overload;
@@ -175,6 +179,8 @@ type
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
     procedure SetConstant(const Value: TFHIRObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -228,6 +234,8 @@ type
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
 
@@ -633,6 +641,19 @@ begin
   FGroup := Value;
 end;
 
+function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FConstant.sizeInBytes);
+  inc(result, FParameters.sizeInBytes);
+  inc(result, FInner.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, FOpNext.sizeInBytes);
+  inc(result, FTypes.sizeInBytes);
+  inc(result, FOpTypes.sizeInBytes);
+end;
+
 { TFHIRProfiledType }
 
 constructor TFHIRProfiledType.Create(s: string);
@@ -693,6 +714,14 @@ end;
 function TFHIRProfiledType.isSystemType : boolean;
 begin
   result := Furi.startsWith(FP_NS);
+end;
+
+function TFHIRProfiledType.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Furi.length * sizeof(char)) + 12);
+  inc(result, FProfiles.sizeInBytes);
+  inc(result, FBindings.sizeInBytes);
 end;
 
 class function TFHIRProfiledType.ns(s: String): String;
@@ -1021,6 +1050,12 @@ begin
      CommaAdd(result, pt.uri);
 end;
 
+function TFHIRTypeDetails.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTypes.sizeInBytes);
+end;
+
 { TFHIRExpressionNodeComposer }
 
 constructor TFHIRExpressionNodeComposer.Create(style: TFHIROutputStyle; const lang : THTTPLanguages);
@@ -1247,5 +1282,11 @@ begin
     json.value('op-types', expr.optypes.ToString);
 end;
 
+
+function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLang.sizeInBytes);
+end;
 
 end.

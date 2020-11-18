@@ -47,6 +47,8 @@ Type
     procedure checkCodes;
     procedure checkUnits;
     procedure checkUnitCode(code : String; primary : boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oModel : TUcumModel; handlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -168,5 +170,13 @@ Begin
 End;
 
 
+
+function TUcumValidator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fmodel.sizeInBytes);
+  inc(result, Fresult.sizeInBytes);
+  inc(result, Fhandlers.sizeInBytes);
+end;
 
 End.

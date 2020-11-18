@@ -219,6 +219,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     function Link : Tv3HXIT; Overload;
@@ -243,6 +244,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Virtual;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -281,6 +283,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Overload; Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
 
@@ -328,6 +331,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -395,6 +399,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -423,6 +428,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -448,6 +454,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -500,6 +507,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -541,6 +549,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     procedure Assign(oSource : TFslObject); Override;
@@ -565,6 +574,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -601,6 +611,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     procedure Assign(oSource : TFslObject); Override;
@@ -635,6 +646,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     function Link : Tv3XP; Overload;
@@ -688,6 +700,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -751,6 +764,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -822,6 +836,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -877,6 +892,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -927,6 +943,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -956,6 +973,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -990,6 +1008,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1013,6 +1032,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1036,6 +1056,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     function Link : Tv3TS; Overload;
@@ -1063,6 +1084,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Virtual;
     destructor Destroy; Override;
@@ -1093,6 +1115,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1115,6 +1138,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1139,6 +1163,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1164,6 +1189,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1187,6 +1213,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1208,6 +1235,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1242,6 +1270,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1300,6 +1329,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1331,6 +1361,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1355,6 +1386,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1376,6 +1408,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2498,6 +2531,15 @@ begin
   FcontrolInformationRoot := '';
 end;
 
+function Tv3HXIT.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FvalidTimeHigh.length * sizeof(char)) + 12);
+  inc(result, (FvalidTimeLow.length * sizeof(char)) + 12);
+  inc(result, (FcontrolInformationExtension.length * sizeof(char)) + 12);
+  inc(result, (FcontrolInformationRoot.length * sizeof(char)) + 12);
+end;
+
 { Tv3ANY }
 
 Function Tv3ANY.RIMClassNameV : String;
@@ -2585,6 +2627,12 @@ begin
   FupdateMode := umNull;
 end;
 
+function Tv3ANY.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FflavorId.length * sizeof(char)) + 12);
+end;
+
 { Tv3BL }
 
 Function Tv3BL.RIMClassNameV : String;
@@ -2653,6 +2701,11 @@ procedure Tv3BL.DoClear;
 begin
   inherited;
   FHasValue := false;
+end;
+
+function Tv3BL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { Tv3ED }
@@ -2948,6 +3001,23 @@ begin
   value := '';
 end;
 
+function Tv3ED.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FmediaType.length * sizeof(char)) + 12);
+  inc(result, (Fcharset.length * sizeof(char)) + 12);
+  inc(result, (Flanguage.length * sizeof(char)) + 12);
+  inc(result, Fdata.sizeInBytes);
+  inc(result, FintegrityCheck.sizeInBytes);
+  inc(result, Fxml.sizeInBytes);
+  inc(result, Fthumbnail.sizeInBytes);
+  inc(result, Ftranslation.sizeInBytes);
+  inc(result, Fdescription.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
+  inc(result, (FRepresentation.length * sizeof(char)) + 12);
+end;
+
 { Tv3ST }
 
 Function Tv3ST.RIMClassNameV : String;
@@ -3066,6 +3136,14 @@ begin
   Fvalue := '';
 end;
 
+function Tv3ST.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Flanguage.length * sizeof(char)) + 12);
+  inc(result, Ftranslation.sizeInBytes);
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
+end;
+
 { Tv3SC }
 
 Function Tv3SC.RIMClassNameV : String;
@@ -3123,6 +3201,12 @@ procedure Tv3SC.DoClear;
 begin
   inherited;
   Code := nil;
+end;
+
+function Tv3SC.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
 end;
 
 { Tv3CD }
@@ -3304,6 +3388,21 @@ begin
   qualifier.ClearItems;
 end;
 
+function Tv3CD.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ForiginalText.sizeInBytes);
+  inc(result, FdisplayName.sizeInBytes);
+  inc(result, (FvalueSetVersion.length * sizeof(char)) + 12);
+  inc(result, (FvalueSet.length * sizeof(char)) + 12);
+  inc(result, (FcodeSystem.length * sizeof(char)) + 12);
+  inc(result, (FcodeSystemName.length * sizeof(char)) + 12);
+  inc(result, (Fcode.length * sizeof(char)) + 12);
+  inc(result, (FcodeSystemVersion.length * sizeof(char)) + 12);
+  inc(result, Ftranslation.sizeInBytes);
+  inc(result, Fqualifier.sizeInBytes);
+end;
+
 { Tv3CS }
 
 Function Tv3CS.RIMClassNameV : String;
@@ -3361,6 +3460,12 @@ procedure Tv3CS.DoClear;
 begin
   inherited;
   code := '';
+end;
+
+function Tv3CS.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fcode.length * sizeof(char)) + 12);
 end;
 
 { Tv3TEL }
@@ -3475,6 +3580,13 @@ begin
   useablePeriod := nil;
   use := [];
   capabilities := [];
+end;
+
+function Tv3TEL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
+  inc(result, FuseablePeriod.sizeInBytes);
 end;
 
 { Tv3II }
@@ -3606,6 +3718,14 @@ begin
   FHasDisplayable := false;
 end;
 
+function Tv3II.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fextension.length * sizeof(char)) + 12);
+  inc(result, (FidentifierName.length * sizeof(char)) + 12);
+  inc(result, (Froot.length * sizeof(char)) + 12);
+end;
+
 { Tv3XP }
 
 Function Tv3XP.RIMClassNameV : String;
@@ -3679,6 +3799,16 @@ begin
   language := '';
   nullFlavor := nfNull;
   value := '';
+end;
+
+function Tv3XP.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FcodeSystem.length * sizeof(char)) + 12);
+  inc(result, (FcodeSystemVersion.length * sizeof(char)) + 12);
+  inc(result, (Fcode.length * sizeof(char)) + 12);
+  inc(result, (Flanguage.length * sizeof(char)) + 12);
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
 end;
 
 { Tv3ADXP }
@@ -3861,6 +3991,13 @@ begin
   part.ClearItems;
   useablePeriod := nil;
   use := [];
+end;
+
+function Tv3AD.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fpart.sizeInBytes);
+  inc(result, FuseablePeriod.sizeInBytes);
 end;
 
 { Tv3ENXP }
@@ -4117,6 +4254,12 @@ begin
   use := [];
 end;
 
+function Tv3EN.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fpart.sizeInBytes);
+end;
+
 { Tv3QTY }
 
 Function Tv3QTY.RIMClassNameV : String;
@@ -4147,6 +4290,15 @@ begin
   FuncertainRange.Free;
   Funcertainty.Free;
   inherited;
+end;
+
+function Tv3QTY.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ForiginalText.sizeInBytes);
+  inc(result, Fexpression.sizeInBytes);
+  inc(result, FuncertainRange.sizeInBytes);
+  inc(result, Funcertainty.sizeInBytes);
 end;
 
 class function Tv3QTY.DiffType: Tv3QTYDatatype;
@@ -4331,6 +4483,12 @@ begin
   inherited;
 end;
 
+function Tv3CO.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+end;
+
 class function Tv3CO.DiffType: Tv3QTYDatatype;
 begin
   Result := Tv3CO;
@@ -4486,6 +4644,13 @@ begin
   inherited;
 end;
 
+function Tv3RTO.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fdenominator.sizeInBytes);
+  inc(result, Fnumerator.sizeInBytes);
+end;
+
 class function Tv3RTO.DiffType: Tv3QTYDatatype;
 begin
   result := Tv3RTO;
@@ -4573,6 +4738,13 @@ destructor Tv3PQ.Destroy;
 begin
   Ftranslation.Free;
   inherited;
+end;
+
+function Tv3PQ.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Funit.length * sizeof(char)) + 12);
+  inc(result, Ftranslation.sizeInBytes);
 end;
 
 class function Tv3PQ.DiffType: Tv3QTYDatatype;
@@ -4774,6 +4946,11 @@ begin
   value := TFslDecimal.makeNull;
 end;
 
+function Tv3PQR.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { Tv3MO }
 
 Function Tv3MO.RIMClassNameV : String;
@@ -4793,6 +4970,12 @@ begin
   Result := Tv3MO(inherited Clone(parent));
 end;
 
+
+function Tv3MO.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fcurrency.length * sizeof(char)) + 12);
+end;
 
 class function Tv3MO.DiffType: Tv3QTYDatatype;
 begin
@@ -4870,6 +5053,12 @@ begin
   Result := Tv3TS(inherited Clone(parent));
 end;
 
+
+function Tv3TS.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
+end;
 
 class function Tv3TS.DiffType: Tv3QTYDatatype;
 begin
@@ -5042,6 +5231,12 @@ begin
   Flat := false;
 end;
 
+function Tv3QSET.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ForiginalText.sizeInBytes);
+end;
+
 { Tv3QSU }
 
 Function Tv3QSU.AddComp(oComp: Tv3QSET) : Boolean;
@@ -5114,6 +5309,12 @@ procedure Tv3QSU.DoClear;
 begin
   inherited;
   terms.clearItems;
+end;
+
+function Tv3QSU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fterms.sizeInBytes);
 end;
 
 { Tv3QSI }
@@ -5189,6 +5390,12 @@ procedure Tv3QSI.DoClear;
 begin
   inherited;
   terms.ClearItems;
+end;
+
+function Tv3QSI.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fterms.sizeInBytes);
 end;
 
 { Tv3QSD }
@@ -5281,6 +5488,13 @@ begin
   minuend := nil;
 end;
 
+function Tv3QSD.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fsubtrahend.sizeInBytes);
+  inc(result, Fminuend.sizeInBytes);
+end;
+
 { Tv3QSP }
 
 function Tv3QSP.AddComp(oComp: Tv3QSET): Boolean;
@@ -5371,6 +5585,13 @@ begin
   low := nil;
 end;
 
+function Tv3QSP.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fhigh.sizeInBytes);
+  inc(result, Flow.sizeInBytes);
+end;
+
 { Tv3QSS }
 
 Function Tv3QSS.RIMClassNameV : String;
@@ -5437,6 +5658,12 @@ begin
   Terms.ClearItems;
 end;
 
+function Tv3QSS.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fterms.sizeInBytes);
+end;
+
 { Tv3QSC }
 
 Function Tv3QSC.RIMClassNameV : String;
@@ -5500,6 +5727,12 @@ procedure Tv3QSC.DoClear;
 begin
   inherited;
   code := nil;
+end;
+
+function Tv3QSC.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
 end;
 
 { Tv3IVL }
@@ -5657,6 +5890,15 @@ begin
   anyIsValue := false;
 end;
 
+function Tv3IVL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Flow.sizeInBytes);
+  inc(result, Fany.sizeInBytes);
+  inc(result, Fwidth.sizeInBytes);
+  inc(result, Fhigh.sizeInBytes);
+end;
+
 { Tv3PIVL }
 
 Function Tv3PIVL.RIMClassNameV : String;
@@ -5782,6 +6024,15 @@ begin
   HasisFlexible := False;
 end;
 
+function Tv3PIVL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcount.sizeInBytes);
+  inc(result, Fphase.sizeInBytes);
+  inc(result, Fperiod.sizeInBytes);
+  inc(result, Ffrequency.sizeInBytes);
+end;
+
 { Tv3EIVL }
 
 Function Tv3EIVL.RIMClassNameV : String;
@@ -5850,6 +6101,12 @@ begin
   inherited;
   offset := nil;
   event := teNull;
+end;
+
+function Tv3EIVL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Foffset.sizeInBytes);
 end;
 
 { Tv3UVP }
@@ -5921,6 +6178,12 @@ begin
   value := nil;
 end;
 
+function Tv3UVP.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fvalue.sizeInBytes);
+end;
+
 { Tv3NPPD }
 
 Function Tv3NPPD.RIMClassNameV : String;
@@ -5984,6 +6247,12 @@ procedure Tv3NPPD.DoClear;
 begin
   inherited;
   item := nil;
+end;
+
+function Tv3NPPD.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fitem.sizeInBytes);
 end;
 
 { Tv3SetED }
@@ -7537,6 +7806,13 @@ procedure Tv3CR.Setvalue(const Value: Tv3CD);
 begin
   Fvalue.Free;
   Fvalue := Value;
+end;
+
+function Tv3CR.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
 end;
 
 { Tv3PropertyDefinition }

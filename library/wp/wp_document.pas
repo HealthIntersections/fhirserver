@@ -79,6 +79,7 @@ Type
 
       Function CanHaveHotspot : Boolean; Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -165,6 +166,8 @@ Type
       FOwner : String;
       FText : String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TWPDocumentAnnotation; Overload;
       Function Clone : TWPDocumentAnnotation; Overload;
@@ -216,6 +219,8 @@ Type
       FMimeType: String;
       FExtension: String;
       procedure SetContent(const Value: TFslBuffer);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -268,6 +273,8 @@ Type
       Function GetFont : TWPSFontDetails;
       Procedure SetFont(Const Value : TWPSFontDetails);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -428,6 +435,8 @@ Type
 
       Procedure SetValue(Const Value : String);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(Const sValue : String); Overload; Virtual;
 
@@ -502,6 +511,7 @@ Type
     Protected
       Function CanHaveHotspot : Boolean; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -661,6 +671,7 @@ Type
       Function GetChildren : TWPDocumentObjects; Overload; Override;
       Function CanHaveHotspot : Boolean; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -871,6 +882,7 @@ Type
     Protected
       Function GetChildren : TWPDocumentObjects; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -986,6 +998,7 @@ Type
     Protected
       Function GetChildren : TWPDocumentObjects; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1128,6 +1141,7 @@ Type
 
     Protected
       Function CanHaveHotspot : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1218,6 +1232,8 @@ Type
       Procedure SetRightBorder(Const Value : TWPBorder);
       Function GetBottomBorder : TWPBorder;
       Procedure SetBottomBorder(Const Value : TWPBorder);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1297,6 +1313,7 @@ Type
       Function GetChildren : TWPDocumentObjects; Override;
       Function CanHaveHotspot : Boolean; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1442,6 +1459,7 @@ Type
       Function GetChildren : TWPDocumentObjects; Overload; Override;
       Function CanHaveHotspot : Boolean; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1579,6 +1597,7 @@ Type
       Procedure SetRows(Const Value : TWPDocumentTableRows);
     Protected
       Function GetChildren : TWPDocumentObjects; Overload; Override;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1669,6 +1688,8 @@ Type
 
       Function GetStyles : TWPStyles;
       Procedure SetStyles(Const Value : TWPStyles);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1824,6 +1845,8 @@ Type
 
       Procedure SetItem(Const Value : TWPDocumentIteratorContextItem);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1875,6 +1898,7 @@ Type
       Procedure SetDocument(Const Value : TWPDocument);
     Protected
       Function Included(oObject : TWPDocumentObject) : Boolean; Overload; Virtual;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1898,6 +1922,8 @@ Type
       Function GetObject: TWPDocumentObject;
       Procedure SetObject(Const Value: TWPDocumentObject);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1940,6 +1966,7 @@ Type
     Protected
       Procedure ValidateTableRow(oTableRow : TWPDocumentTableRow);
       Procedure ValidateTable(oTable : TWPDocumentTable);
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -2041,6 +2068,15 @@ Begin
   Result := Blocks.AsText;
 End;
 
+
+function TWPDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FAllowedWords.sizeInBytes);
+  inc(result, FAnnotations.sizeInBytes);
+  inc(result, FAttachments.sizeInBytes);
+end;
 
 Function TWPDocuments.Link : TWPDocuments;
 Begin
@@ -2155,6 +2191,12 @@ Begin
 End;
 
 
+function TWPDocumentContainer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBlocks.sizeInBytes);
+end;
+
 Function TWPDocumentContainers.Link : TWPDocumentContainers;
 Begin
   Result := TWPDocumentContainers(Inherited Link);
@@ -2237,8 +2279,6 @@ Begin
 
   ReadOnly := TWPDocumentBlock(oObject).ReadOnly;
 End;
-
-
 
 Function TWPDocumentBlocks.Link : TWPDocumentBlocks;
 Begin
@@ -2381,6 +2421,14 @@ Begin
   Result := '<Error>';
 End;
 
+
+function TWPDocumentObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FHotspot.sizeInBytes);
+end;
 
 Function TWPDocumentObjects.Link : TWPDocumentObjects;
 Begin
@@ -2611,6 +2659,13 @@ Begin
 End;
 
 
+function TWPDocumentField.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FData.sizeInBytes);
+  inc(result, FContents.sizeInBytes);
+end;
+
 Function TWPDocumentFields.Link : TWPDocumentFields;
 Begin
   Result := TWPDocumentFields(Inherited Link);
@@ -2829,6 +2884,13 @@ Begin
 End;
 
 
+function TWPDocumentContent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FStyle.length * sizeof(char)) + 12);
+  inc(result, FFont.sizeInBytes);
+end;
+
 Function TWPDocumentContents.Link : TWPDocumentContents;
 Begin
   Result := TWPDocumentContents(Inherited Link);
@@ -2901,6 +2963,14 @@ Begin
   Result := '====' +Name+' : '+Title+' =============================================='+cReturn + Blocks.AsText;
 End;
 
+
+function TWPDocumentSection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, (FKey.length * sizeof(char)) + 12);
+  inc(result, FData.sizeInBytes);
+end;
 
 Function TWPDocumentSections.Link : TWPDocumentSections;
 Begin
@@ -3068,6 +3138,13 @@ Begin
   FValue := StringReplace(Value, #9, StringMultiply(' ', TAB_CHAR_COUNT));
 End;
 
+
+function TWPDocumentText.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, (FDrawnFont.length * sizeof(char)) + 12);
+end;
 
 Function TWPDocumentTexts.Link : TWPDocumentTexts;
 Begin
@@ -3274,6 +3351,16 @@ Begin
 End;
 
 
+function TWPDocumentImage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, FImage.sizeInBytes);
+  inc(result, FSelectionImage.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FAdornments.sizeInBytes);
+end;
+
 Function TWPDocumentImages.Link : TWPDocumentImages;
 Begin
   Result := TWPDocumentImages(Inherited Link);
@@ -3447,6 +3534,13 @@ End;
 
 
 
+function TWPDocumentAnnotation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FOwner.length * sizeof(char)) + 12);
+  inc(result, (FText.length * sizeof(char)) + 12);
+end;
+
 Function TWPDocumentAnnotations.Link : TWPDocumentAnnotations;
 Begin
   Result := TWPDocumentAnnotations(Inherited Link);
@@ -3562,6 +3656,15 @@ Begin
 End;
 
 
+
+function TWPDocumentAttachment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, FContent.sizeInBytes);
+  inc(result, (FMimeType.length * sizeof(char)) + 12);
+  inc(result, (FExtension.length * sizeof(char)) + 12);
+end;
 
 Constructor TWPDocumentLineBreak.Create;
 Begin
@@ -3772,6 +3875,15 @@ Begin
 End;
 
 
+function TWPDocumentParagraph.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FStyle.length * sizeof(char)) + 12);
+  inc(result, FFormat.sizeInBytes);
+  inc(result, FFont.sizeInBytes);
+  inc(result, FContents.sizeInBytes);
+end;
+
 Function TWPDocumentParagraphs.Link : TWPDocumentParagraphs;
 Begin
   Result := TWPDocumentParagraphs(Inherited Link);
@@ -3974,6 +4086,15 @@ Begin
 End;
 
 
+function TWPDocumentTableItem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLeftBorder.sizeInBytes);
+  inc(result, FTopBorder.sizeInBytes);
+  inc(result, FRightBorder.sizeInBytes);
+  inc(result, FBottomBorder.sizeInBytes);
+end;
+
 Function TWPDocumentTableItems.Link : TWPDocumentTableItems;
 Begin
   Result := TWPDocumentTableItems(Inherited Link);
@@ -4107,6 +4228,12 @@ Begin
   Result := Assigned(FParagraphs);
 End;
 
+
+function TWPDocumentTableCell.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FParagraphs.sizeInBytes);
+end;
 
 Function TWPDocumentTableCells.Link : TWPDocumentTableCells;
 Begin
@@ -4278,6 +4405,13 @@ Begin
   For iLoop := 0 To FRows.Count - 1 Do
     Result := Result + FRows[iLoop].asText;
 End;
+
+function TWPDocumentTableRow.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCells.sizeInBytes);
+  inc(result, FRows.sizeInBytes);
+end;
 
 Function TWPDocumentTableRows.Link : TWPDocumentTableRows;
 Begin
@@ -4519,6 +4653,14 @@ Begin
   Result := '#'+Rows.AsText+'#';
 End;
 
+
+function TWPDocumentTable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCenterHorizontalBorder.sizeInBytes);
+  inc(result, FCenterVerticalBorder.sizeInBytes);
+  inc(result, FRows.sizeInBytes);
+end;
 
 Function TWPDocumentTables.Link : TWPDocumentTables;
 Begin
@@ -5127,6 +5269,12 @@ Begin
 End;
 
 
+function TWPDocumentIteratorContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FItem.sizeInBytes);
+end;
+
 Function TWPDocumentIteratorContexts.Link : TWPDocumentIteratorContexts;
 Begin
   Result := TWPDocumentIteratorContexts(Inherited Link);
@@ -5286,6 +5434,13 @@ Begin
 End;
 
 
+function TWPDocumentIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FStack.sizeInBytes);
+end;
+
 Constructor TWPDocumentValidator.Create;
 Begin
   Inherited;
@@ -5329,6 +5484,12 @@ Begin
 
 End;
 
+
+function TWPDocumentValidator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProblems.sizeInBytes);
+end;
 
 Class Procedure TWPDocumentValidator.ValidateAssert(oDocument : TWPDocument);
 Var
@@ -5426,6 +5587,13 @@ Begin
   FObject := TWPDocumentValidationProblem(oObject).FObject.Link;
 End;
 
+
+function TWPDocumentValidationProblem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMessage.length * sizeof(char)) + 12);
+  inc(result, FObject.sizeInBytes);
+end;
 
 Function TWPDocumentValidationProblems.Link : TWPDocumentValidationProblems;
 Begin

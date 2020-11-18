@@ -128,6 +128,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -153,6 +154,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -200,6 +202,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -286,6 +289,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -320,6 +324,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -358,6 +363,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -406,6 +412,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -432,6 +439,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -456,6 +464,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -481,6 +490,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -514,6 +524,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -536,6 +547,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -576,6 +588,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -599,6 +612,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -623,6 +637,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -642,6 +657,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -664,6 +680,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -687,6 +704,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -763,6 +781,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -792,6 +811,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -823,6 +843,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -843,6 +864,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -866,6 +888,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -898,6 +921,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1578,6 +1602,12 @@ begin
   ID := '';
 end;
 
+function TsnBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FstyleCode.sizeInBytes);
+end;
+
 { TsnText }
 
 Function TsnText.RIMClassNameV : String;
@@ -1661,6 +1691,13 @@ begin
   Result := TsnText(Inherited Link);
 end;
 
+function TsnText.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FstyleCode.sizeInBytes);
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnTitle }
 
 Function TsnTitle.RIMClassNameV : String;
@@ -1742,6 +1779,13 @@ end;
 function TsnTitle.Link: TsnTitle;
 begin
   Result := TsnTitle(Inherited Link);
+end;
+
+function TsnTitle.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FstyleCode.sizeInBytes);
+  inc(result, Fparts.sizeInBytes);
 end;
 
 { TsnCMFootnotes }
@@ -1854,6 +1898,15 @@ begin
     builder.Append(FText.value);
 end;
 
+function TsnCMFootnotes.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Ftext.sizeInBytes);
+  inc(result, Fentity.sizeInBytes);
+  inc(result, Ffootnote.sizeInBytes);
+  inc(result, FfootnoteRef.sizeInBytes);
+end;
+
 { TsnCMInline }
 
 Function TsnCMInline.RIMClassNameV : String;
@@ -1958,6 +2011,14 @@ begin
   FlinkHtml := Value;
   if FlinkHtml <> nil then  linkHtml.parent := self;
 
+end;
+
+function TsnCMInline.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fsub.sizeInBytes);
+  inc(result, Fsup.sizeInBytes);
+  inc(result, FlinkHtml.sizeInBytes);
 end;
 
 { TsnCMTitle }
@@ -2153,6 +2214,20 @@ begin
     inherited;
 end;
 
+function TsnCMTitle.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fbr.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FfootnoteRef.sizeInBytes);
+  inc(result, Fsup.sizeInBytes);
+  inc(result, Fsub.sizeInBytes);
+  inc(result, Fcontent.sizeInBytes);
+  inc(result, Ffootnote.sizeInBytes);
+  inc(result, FlinkHtml.sizeInBytes);
+  inc(result, Fentity.sizeInBytes);
+end;
+
 { TsnCMContent }
 
 Function TsnCMContent.RIMClassNameV : String;
@@ -2255,6 +2330,14 @@ begin
   FrenderMultiMedia := Value;
   if FrenderMultiMedia <> nil then  renderMultiMedia.parent := self;
 
+end;
+
+function TsnCMContent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fbr.sizeInBytes);
+  inc(result, Fcontent.sizeInBytes);
+  inc(result, FrenderMultiMedia.sizeInBytes);
 end;
 
 { TsnCMGeneral }
@@ -2362,6 +2445,14 @@ begin
 
 end;
 
+function TsnCMGeneral.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Flist.sizeInBytes);
+  inc(result, Fparagraph.sizeInBytes);
+  inc(result, Ftable.sizeInBytes);
+end;
+
 { TsnRenderMultiMedia }
 
 Function TsnRenderMultiMedia.RIMClassNameV : String;
@@ -2439,6 +2530,13 @@ begin
     builder.Append('['+FreferencedObject.AsCSV+']');
   if Fcaption <> nil then
     Fcaption.GetText(builder);
+end;
+
+function TsnRenderMultiMedia.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FreferencedObject.sizeInBytes);
+  inc(result, Fcaption.sizeInBytes);
 end;
 
 { TsnLinkHtml }
@@ -2535,6 +2633,12 @@ begin
   Result := TsnLinkHtml(Inherited Link);
 end;
 
+function TsnLinkHtml.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnFootnote }
 
 Function TsnFootnote.RIMClassNameV : String;
@@ -2599,6 +2703,12 @@ end;
 function TsnFootnote.Link: TsnFootnote;
 begin
   Result := TsnFootnote(Inherited Link);
+end;
+
+function TsnFootnote.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
 end;
 
 { TsnTitleFootnote }
@@ -2667,6 +2777,12 @@ begin
   Result := TsnTitleFootnote(Inherited Link);
 end;
 
+function TsnTitleFootnote.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnFootnoteRef }
 
 Function TsnFootnoteRef.RIMClassNameV : String;
@@ -2723,6 +2839,7 @@ begin
   FIDREF := '';
 end;
 
+
 { TsnCaption }
 
 Function TsnCaption.RIMClassNameV : String;
@@ -2757,6 +2874,12 @@ end;
 function TsnCaption.Link: TsnCaption;
 begin
   Result := TsnCaption(Inherited Link);
+end;
+
+function TsnCaption.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
 end;
 
 { TsnContent }
@@ -2830,6 +2953,12 @@ begin
   Result := TsnContent(Inherited Link);
 end;
 
+function TsnContent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnCaptioned }
 
 Function TsnCaptioned.RIMClassNameV : String;
@@ -2900,6 +3029,12 @@ begin
   Fcaption := Value;
   if Fcaption <> nil then  caption.parent := self;
 
+end;
+
+function TsnCaptioned.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcaption.sizeInBytes);
 end;
 
 procedure TsnCaption.ListProperties(oList: Tv3PropertyDefinitionList; bInheritedProperties : Boolean);
@@ -2998,6 +3133,12 @@ begin
   Result := TsnParagraph(Inherited Link);
 end;
 
+function TsnParagraph.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnItem }
 
 Function TsnItem.RIMClassNameV : String;
@@ -3068,6 +3209,12 @@ begin
 end;
 
 
+function TsnItem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnList }
 
 Function TsnList.RIMClassNameV : String;
@@ -3136,6 +3283,12 @@ end;
 function TsnList.Link: TsnList;
 begin
   Result := TsnList(Inherited Link);
+end;
+
+function TsnList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fitem.sizeInBytes);
 end;
 
 { TsnTableItem }
@@ -3327,6 +3480,12 @@ begin
   Result := TsnColGroup(Inherited Link);
 end;
 
+function TsnColGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcol.sizeInBytes);
+end;
+
 { TsnCol }
 
 Function TsnCol.RIMClassNameV : String;
@@ -3404,6 +3563,13 @@ end;
 function TsnTCell.Link: TsnTCell;
 begin
   Result := TsnTCell(Inherited Link);
+end;
+
+function TsnTCell.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fheaders.sizeInBytes);
+  inc(result, Fparts.sizeInBytes);
 end;
 
 { TsnTRowPart }
@@ -3617,6 +3783,12 @@ begin
   Result := TsnTRow(Inherited Link);
 end;
 
+function TsnTRow.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fparts.sizeInBytes);
+end;
+
 { TsnTRowGroup }
 
 Function TsnTRowGroup.RIMClassNameV : String;
@@ -3683,6 +3855,12 @@ end;
 function TsnTRowGroup.Link: TsnTRowGroup;
 begin
   Result := TsnTRowGroup(Inherited Link);
+end;
+
+function TsnTRowGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Ftr.sizeInBytes);
 end;
 
 { TsnTable }
@@ -3832,6 +4010,16 @@ begin
 end;
 
 
+
+function TsnTable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Ftfoot.sizeInBytes);
+  inc(result, Fthead.sizeInBytes);
+  inc(result, Fcolgroup.sizeInBytes);
+  inc(result, Fcol.sizeInBytes);
+  inc(result, Ftbody.sizeInBytes);
+end;
 
 function TsnTRowGroupList.Count: Integer;
 begin
@@ -4920,6 +5108,13 @@ end;
 function TsnBr.RIMClassNameV: String;
 begin
   result := 'Br';
+end;
+
+function TsnTRowPart {Choice}.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fth.sizeInBytes);
+  inc(result, Ftd.sizeInBytes);
 end;
 
 End.

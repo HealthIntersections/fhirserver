@@ -45,6 +45,8 @@ Type
     FUnits: String;
     FValue: TFslDecimal;
     FCode: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(Code : String); Overload;
 
@@ -128,6 +130,13 @@ begin
   FCode := Code;
 end;
 
+
+function TUcumUnitHandler.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FUnits.length * sizeof(char)) + 12);
+  inc(result, (FCode.length * sizeof(char)) + 12);
+end;
 
 { TUcumCelsiusHandler }
 

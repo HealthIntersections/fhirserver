@@ -58,6 +58,7 @@ Type
     procedure SetValueSet(value : TFhirValueSet);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -80,6 +81,7 @@ Type
     procedure SetReturn(value : TFhirValueSet);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -100,6 +102,7 @@ Type
     procedure SetCoding(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -121,6 +124,7 @@ Type
     procedure SetUse(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(params : TFhirParametersParameter); overload; override;
@@ -140,6 +144,7 @@ Type
     FDesignationList : TFslList<TFHIRLookupOpRespDesignation>;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -172,6 +177,7 @@ Type
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -198,6 +204,7 @@ Type
     FDisplay : String;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -218,6 +225,7 @@ Type
     procedure SetResource(value : TFhirResource);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -235,6 +243,7 @@ Type
     procedure SetReturn(value : TFhirOperationOutcome);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -263,6 +272,7 @@ Type
     procedure SetReturn(value : TFhirMeta);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -279,6 +289,7 @@ Type
     procedure SetMeta(value : TFhirMeta);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -294,6 +305,7 @@ Type
     procedure SetReturn(value : TFhirMeta);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -310,6 +322,7 @@ Type
     procedure SetMeta(value : TFhirMeta);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -325,6 +338,7 @@ Type
     procedure SetReturn(value : TFhirMeta);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -340,6 +354,7 @@ Type
     FPersist : Boolean;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -369,6 +384,7 @@ Type
     procedure SetConcept(value : TFhirCodeableConcept);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(params : TFhirParametersParameter); overload; override;
@@ -392,6 +408,7 @@ Type
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -415,6 +432,7 @@ Type
     procedure SetConcept(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(params : TFhirParametersParameter); overload; override;
@@ -432,6 +450,7 @@ Type
     procedure SetConcept(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(params : TFhirParametersParameter); overload; override;
@@ -449,6 +468,7 @@ Type
     FMatchList : TFslList<TFHIRTranslateOpRespMatch>;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -468,6 +488,7 @@ Type
     FVersion : String;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -485,6 +506,7 @@ Type
     procedure SetReturn(value : TFhirConceptMap);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -513,6 +535,7 @@ Type
     procedure SetReturn(value : TFhirBundle);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -529,6 +552,7 @@ Type
     FName : String;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -560,6 +584,7 @@ Type
     procedure SetContent(value : TFhirBundle);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -577,6 +602,7 @@ Type
     procedure SetReturn(value : TFhirBundle);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -600,6 +626,7 @@ Type
     procedure SetSubject(value : TFhirReference);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -620,6 +647,7 @@ Type
     procedure SetReturn(value : TFhirQuestionnaireResponse);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -638,6 +666,7 @@ Type
     FSupportedOnly : Boolean;
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -656,6 +685,7 @@ Type
     procedure SetReturn(value : TFhirQuestionnaire);
   protected
     function isKnownName(name : String) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -744,6 +774,18 @@ begin
   result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count'], name);
 end;
 
+function TFHIRExpandOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FIdentifier.length * sizeof(char)) + 12);
+  inc(result, FValueSet.sizeInBytes);
+  inc(result, (FContext.length * sizeof(char)) + 12);
+  inc(result, (FFilter.length * sizeof(char)) + 12);
+  inc(result, (FProfile.length * sizeof(char)) + 12);
+  inc(result, (FOffset.length * sizeof(char)) + 12);
+  inc(result, (FCount.length * sizeof(char)) + 12);
+end;
+
 procedure TFHIRExpandOpResponse.SetReturn(value : TFhirValueSet);
 begin
   FReturn.free;
@@ -788,6 +830,12 @@ end;
 function TFHIRExpandOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRExpandOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 procedure TFHIRLookupOpRequest.SetCoding(value : TFhirCoding);
@@ -853,6 +901,15 @@ begin
   result := StringArrayExists(['code', 'system', 'version', 'coding', 'date'], name);
 end;
 
+function TFHIRLookupOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
+  inc(result, (FSystem.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, FCoding.sizeInBytes);
+end;
+
 procedure TFHIRLookupOpRespDesignation.SetUse(value : TFhirCoding);
 begin
   FUse.free;
@@ -901,6 +958,14 @@ end;
 function TFHIRLookupOpRespDesignation.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['language', 'use', 'value'], name);
+end;
+
+function TFHIRLookupOpRespDesignation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FLanguage.length * sizeof(char)) + 12);
+  inc(result, FUse.sizeInBytes);
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 constructor TFHIRLookupOpResponse.create;
@@ -963,6 +1028,15 @@ end;
 function TFHIRLookupOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['name', 'version', 'display', 'abstract', 'designation'], name);
+end;
+
+function TFHIRLookupOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FDisplay.length * sizeof(char)) + 12);
+  inc(result, FDesignationList.sizeInBytes);
 end;
 
 procedure TFHIRValidateCodeOpRequest.SetValueSet(value : TFhirValueSet);
@@ -1064,6 +1138,20 @@ begin
   result := StringArrayExists(['identifier', 'context', 'valueSet', 'code', 'system', 'version', 'display', 'coding', 'codeableConcept', 'date', 'abstract'], name);
 end;
 
+function TFHIRValidateCodeOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FIdentifier.length * sizeof(char)) + 12);
+  inc(result, (FContext.length * sizeof(char)) + 12);
+  inc(result, FValueSet.sizeInBytes);
+  inc(result, (FCode.length * sizeof(char)) + 12);
+  inc(result, (FSystem.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FDisplay.length * sizeof(char)) + 12);
+  inc(result, FCoding.sizeInBytes);
+  inc(result, FCodeableConcept.sizeInBytes);
+end;
+
 constructor TFHIRValidateCodeOpResponse.create;
 begin
   inherited create();
@@ -1109,6 +1197,13 @@ end;
 function TFHIRValidateCodeOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['result', 'message', 'display'], name);
+end;
+
+function TFHIRValidateCodeOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMessage.length * sizeof(char)) + 12);
+  inc(result, (FDisplay.length * sizeof(char)) + 12);
 end;
 
 procedure TFHIRValidateOpRequest.SetResource(value : TFhirResource);
@@ -1165,6 +1260,14 @@ begin
   result := StringArrayExists(['resource', 'mode', 'profile'], name);
 end;
 
+function TFHIRValidateOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResource.sizeInBytes);
+  inc(result, (FMode.length * sizeof(char)) + 12);
+  inc(result, (FProfile.length * sizeof(char)) + 12);
+end;
+
 procedure TFHIRValidateOpResponse.SetReturn(value : TFhirOperationOutcome);
 begin
   FReturn.free;
@@ -1209,6 +1312,12 @@ end;
 function TFHIRValidateOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRValidateOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 constructor TFHIRMetaOpRequest.create;
@@ -1294,6 +1403,12 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+function TFHIRMetaOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
+end;
+
 procedure TFHIRMetaAddOpRequest.SetMeta(value : TFhirMeta);
 begin
   FMeta.free;
@@ -1339,6 +1454,12 @@ end;
 function TFHIRMetaAddOpRequest.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['meta'], name);
+end;
+
+function TFHIRMetaAddOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMeta.sizeInBytes);
 end;
 
 procedure TFHIRMetaAddOpResponse.SetReturn(value : TFhirMeta);
@@ -1388,6 +1509,12 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+function TFHIRMetaAddOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
+end;
+
 procedure TFHIRMetaDeleteOpRequest.SetMeta(value : TFhirMeta);
 begin
   FMeta.free;
@@ -1433,6 +1560,12 @@ end;
 function TFHIRMetaDeleteOpRequest.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['meta'], name);
+end;
+
+function TFHIRMetaDeleteOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMeta.sizeInBytes);
 end;
 
 procedure TFHIRMetaDeleteOpResponse.SetReturn(value : TFhirMeta);
@@ -1482,6 +1615,12 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+function TFHIRMetaDeleteOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
+end;
+
 constructor TFHIRDocumentOpRequest.create;
 begin
   inherited create();
@@ -1519,6 +1658,11 @@ end;
 function TFHIRDocumentOpRequest.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['persist'], name);
+end;
+
+function TFHIRDocumentOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 constructor TFHIRDocumentOpResponse.create;
@@ -1569,6 +1713,19 @@ begin
   FCodeableConcept := value;
 end;
 
+function TFHIRTranslateOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
+  inc(result, (FSystem.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FValueSet.length * sizeof(char)) + 12);
+  inc(result, FCoding.sizeInBytes);
+  inc(result, FCodeableConcept.sizeInBytes);
+  inc(result, (FTarget.length * sizeof(char)) + 12);
+  inc(result, FDependencyList.sizeInBytes);
+end;
+
 procedure TFHIRTranslateOpReqDependency.SetConcept(value : TFhirCodeableConcept);
 begin
   FConcept.free;
@@ -1614,6 +1771,13 @@ end;
 function TFHIRTranslateOpReqDependency.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['element', 'concept'], name);
+end;
+
+function TFHIRTranslateOpReqDependency.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FElement.length * sizeof(char)) + 12);
+  inc(result, FConcept.sizeInBytes);
 end;
 
 constructor TFHIRTranslateOpRequest.create;
@@ -1699,6 +1863,14 @@ begin
   FConcept := value;
 end;
 
+function TFHIRTranslateOpRespMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FEquivalence.length * sizeof(char)) + 12);
+  inc(result, FConcept.sizeInBytes);
+  inc(result, FProductList.sizeInBytes);
+end;
+
 procedure TFHIRTranslateOpRespProduct.SetConcept(value : TFhirCoding);
 begin
   FConcept.free;
@@ -1744,6 +1916,13 @@ end;
 function TFHIRTranslateOpRespProduct.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['element', 'concept'], name);
+end;
+
+function TFHIRTranslateOpRespProduct.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FElement.length * sizeof(char)) + 12);
+  inc(result, FConcept.sizeInBytes);
 end;
 
 constructor TFHIRTranslateOpRespMatch.create;
@@ -1853,6 +2032,13 @@ begin
   result := StringArrayExists(['result', 'message', 'match'], name);
 end;
 
+function TFHIRTranslateOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMessage.length * sizeof(char)) + 12);
+  inc(result, FMatchList.sizeInBytes);
+end;
+
 constructor TFHIRClosureOpRequest.create;
 begin
   inherited create();
@@ -1908,6 +2094,14 @@ begin
   result := StringArrayExists(['name', 'concept', 'version'], name);
 end;
 
+function TFHIRClosureOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FConceptList.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+end;
+
 procedure TFHIRClosureOpResponse.SetReturn(value : TFhirConceptMap);
 begin
   FReturn.free;
@@ -1952,6 +2146,12 @@ end;
 function TFHIRClosureOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRClosureOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 constructor TFHIREverythingOpRequest.create;
@@ -2036,6 +2236,12 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+function TFHIREverythingOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
+end;
+
 constructor TFHIRFindOpRequest.create;
 begin
   inherited create();
@@ -2078,6 +2284,13 @@ end;
 function TFHIRFindOpRequest.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['patient', 'name'], name);
+end;
+
+function TFHIRFindOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPatient.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
 constructor TFHIRFindOpResponse.create;
@@ -2169,6 +2382,13 @@ begin
   result := StringArrayExists(['content', 'async', 'response-url'], name);
 end;
 
+function TFHIRProcessMessageOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContent.sizeInBytes);
+  inc(result, (FResponseUrl.length * sizeof(char)) + 12);
+end;
+
 procedure TFHIRProcessMessageOpResponse.SetReturn(value : TFhirBundle);
 begin
   FReturn.free;
@@ -2213,6 +2433,12 @@ end;
 function TFHIRProcessMessageOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRProcessMessageOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 procedure TFHIRPopulateOpRequest.SetQuestionnaire(value : TFhirQuestionnaire);
@@ -2301,6 +2527,16 @@ begin
   result := StringArrayExists(['identifier', 'questionnaire', 'questionnaireRef', 'subject', 'content', 'local'], name);
 end;
 
+function TFHIRPopulateOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FIdentifier.length * sizeof(char)) + 12);
+  inc(result, FQuestionnaire.sizeInBytes);
+  inc(result, FQuestionnaireRef.sizeInBytes);
+  inc(result, FSubject.sizeInBytes);
+  inc(result, FContentList.sizeInBytes);
+end;
+
 procedure TFHIRPopulateOpResponse.SetReturn(value : TFhirQuestionnaireResponse);
 begin
   FReturn.free;
@@ -2345,6 +2581,12 @@ end;
 function TFHIRPopulateOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRPopulateOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 constructor TFHIRQuestionnaireOpRequest.create;
@@ -2398,6 +2640,14 @@ begin
   result := StringArrayExists(['identifier', 'profile', 'url', 'supportedOnly'], name);
 end;
 
+function TFHIRQuestionnaireOpRequest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FIdentifier.length * sizeof(char)) + 12);
+  inc(result, (FProfile.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+end;
+
 procedure TFHIRQuestionnaireOpResponse.SetReturn(value : TFhirQuestionnaire);
 begin
   FReturn.free;
@@ -2442,6 +2692,12 @@ end;
 function TFHIRQuestionnaireOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+function TFHIRQuestionnaireOpResponse.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FReturn.sizeInBytes);
 end;
 
 end.

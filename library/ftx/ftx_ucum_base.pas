@@ -47,6 +47,8 @@ type
   TUcumProperty = class (TFslName)
   private
     FCommonUnits : TFslStringList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -64,6 +66,7 @@ type
     FText: String;
   protected
     Function GetKind : TConceptKind; virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -82,6 +85,7 @@ type
     Fvalue : TFslDecimal;
   protected
     Function GetKind : TConceptKind; Override;
+    function sizeInBytesV : cardinal; override;
   public
 
     function Link : TUcumPrefix; Overload;
@@ -93,6 +97,8 @@ type
   TUcumUnit = class (TUcumConcept)
   private
     FProperty : string;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     function Link : TUcumUnit; Overload;
     Property PropertyType : string read FProperty write FProperty; // the kind of thing this represents
@@ -103,6 +109,7 @@ type
     Fdim : Char;
   protected
     Function GetKind : TConceptKind; Override;
+    function sizeInBytesV : cardinal; override;
   public
     function Link : TUcumBaseUnit; Overload;
     Property dim : Char read FDim write FDim;
@@ -114,6 +121,8 @@ type
     FunitUC : String;
     Fvalue : TFslDecimal;
     Ftext : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function Link : TUcumValue; Overload;
     Property unit_ : String read Funit write FUnit;
@@ -132,6 +141,7 @@ type
     Fvalue : TUcumValue;
   protected
     Function GetKind : TConceptKind; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -150,6 +160,8 @@ type
     FdefinedUnits : TFslMap<TUcumDefinedUnit>;
     FVersion : String;
     FRevisionDate : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -198,6 +210,16 @@ begin
 end;
 
 
+function TUcumConcept.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fcode.length * sizeof(char)) + 12);
+  inc(result, (FcodeUC.length * sizeof(char)) + 12);
+  inc(result, (FprintSymbol.length * sizeof(char)) + 12);
+  inc(result, Fnames.sizeInBytes);
+  inc(result, (FText.length * sizeof(char)) + 12);
+end;
+
 { TUcumPrefix }
 
 function TUcumPrefix.GetKind: TConceptKind;
@@ -216,11 +238,22 @@ begin
   FValue.Precision := i;
 end;
 
+function TUcumPrefix.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TUcumUnit }
 
 function TUcumUnit.Link: TUcumUnit;
 begin
   result := TUcumUnit(Inherited Link);
+end;
+
+function TUcumUnit.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FProperty.length * sizeof(char)) + 12);
 end;
 
 { TUcumBaseUnit }
@@ -236,6 +269,11 @@ begin
 
 end;
 
+function TUcumBaseUnit.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TUcumValue }
 
 function TUcumValue.Link: TUcumValue;
@@ -247,6 +285,14 @@ end;
 procedure TUcumValue.SetPrecision(i: integer);
 begin
   FValue.Precision  := i;
+end;
+
+function TUcumValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Funit.length * sizeof(char)) + 12);
+  inc(result, (FunitUC.length * sizeof(char)) + 12);
+  inc(result, (Ftext.length * sizeof(char)) + 12);
 end;
 
 { TUcumDefinedUnit }
@@ -271,6 +317,13 @@ end;
 function TUcumDefinedUnit.Link: TUcumDefinedUnit;
 begin
   result := TUcumDefinedUnit(Inherited Link);
+end;
+
+function TUcumDefinedUnit.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fclass_.length * sizeof(char)) + 12);
+  inc(result, Fvalue.sizeInBytes);
 end;
 
 { TUcumModel }
@@ -317,6 +370,17 @@ begin
   result := TUcumModel(inherited Link);
 end;
 
+function TUcumModel.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProperties.sizeInBytes);
+  inc(result, Fprefixes.sizeInBytes);
+  inc(result, FbaseUnits.sizeInBytes);
+  inc(result, FdefinedUnits.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FRevisionDate.length * sizeof(char)) + 12);
+end;
+
 { TUcumProperty }
 
 constructor TUcumProperty.Create;
@@ -334,6 +398,12 @@ end;
 function TUcumProperty.Link: TUcumProperty;
 begin
   result := TUcumProperty(Inherited Link);
+end;
+
+function TUcumProperty.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCommonUnits.sizeInBytes);
 end;
 
 End.

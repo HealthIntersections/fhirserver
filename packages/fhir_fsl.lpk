@@ -666,6 +666,14 @@
         <Filename Value="..\library\fsl\fsl_ucum.pas"/>
         <UnitName Value="fsl_ucum"/>
       </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Core\IdLogDebug.pas"/>
+        <UnitName Value="IdLogDebug"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdServerInterceptLogFile.pas"/>
+        <UnitName Value="IdServerInterceptLogFile"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

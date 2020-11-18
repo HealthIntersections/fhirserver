@@ -51,6 +51,8 @@ type
     FVars : TFslMap<TFHIRObject>;
     FEngine: TFHIRLiquidEngine;
     FDocument : TFHIRLiquidDocument;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(engine: TFHIRLiquidEngine; document : TFHIRLiquidDocument; externalContext : TFslObject); overload;
     constructor Create(existing : TFHIRLiquidEngineContext); overload;
@@ -73,6 +75,7 @@ type
   protected
     procedure closeUp; override;
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -86,6 +89,7 @@ type
     FCompiled : TFHIRPathExpressionNode;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFHIRLiquidStatement; overload;
@@ -101,6 +105,7 @@ type
     FElseBody : TFSLList<TFHIRLiquidNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -119,6 +124,7 @@ type
     FBody : TFSLList<TFHIRLiquidNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -135,6 +141,7 @@ type
     FParams : TFslMap<TFHIRPathExpressionNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -148,6 +155,8 @@ type
   private
     FBody : TFSLList<TFHIRLiquidNode>;
     FSource: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -173,6 +182,8 @@ type
     function parseStatement() : TFHIRLiquidStatement;
     function parseList(list : TFslList<TFHIRLiquidNode>; terminators : Array of String) : String;
     function parse : TFHIRLiquidDocument;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(source : String);
     property sourceName : String read FSourceName  write FSourceName ;
@@ -187,6 +198,8 @@ type
 
     function resolveConstant(source : TFHIRPathEngine; appInfo : TFslObject; name : String; beforeContext : boolean) : TFHIRObject;
     function findInclude(page, source : String) : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(fpe : TFHIRPathEngine);
     destructor Destroy; override;
@@ -229,6 +242,15 @@ end;
 function TFHIRLiquidEngineContext.link: TFHIRLiquidEngineContext;
 begin
   result := TFHIRLiquidEngineContext(inherited Link);
+end;
+
+function TFHIRLiquidEngineContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExternalContext.sizeInBytes);
+  inc(result, FVars.sizeInBytes);
+  inc(result, FEngine.sizeInBytes);
+  inc(result, FDocument.sizeInBytes);
 end;
 
 { TFHIRLiquidNode }
@@ -278,6 +300,12 @@ begin
   result := TFHIRLiquidConstant(inherited Link);
 end;
 
+function TFHIRLiquidConstant.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FConstant.length * sizeof(char)) + 12);
+end;
+
 { TFHIRLiquidStatement }
 
 destructor TFHIRLiquidStatement.Destroy;
@@ -296,6 +324,13 @@ end;
 function TFHIRLiquidStatement.link: TFHIRLiquidStatement;
 begin
   result := TFHIRLiquidStatement(inherited Link);
+end;
+
+function TFHIRLiquidStatement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FStatement.length * sizeof(char)) + 12);
+  inc(result, FCompiled.sizeInBytes);
 end;
 
 { TFHIRLiquidIf }
@@ -335,6 +370,15 @@ end;
 function TFHIRLiquidIf.link: TFHIRLiquidIf;
 begin
   result := TFHIRLiquidIf(inherited Link);
+end;
+
+function TFHIRLiquidIf.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCondition.length * sizeof(char)) + 12);
+  inc(result, FCompiled.sizeInBytes);
+  inc(result, FThenBody.sizeInBytes);
+  inc(result, FElseBody.sizeInBytes);
 end;
 
 { TFHIRLiquidLoop }
@@ -384,6 +428,15 @@ begin
   result := TFHIRLiquidLoop(inherited Link);
 end;
 
+function TFHIRLiquidLoop.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FVarName.length * sizeof(char)) + 12);
+  inc(result, (FCondition.length * sizeof(char)) + 12);
+  inc(result, FCompiled.sizeInBytes);
+  inc(result, FBody.sizeInBytes);
+end;
+
 { TFHIRLiquidDocument }
 
 constructor TFHIRLiquidDocument.Create;
@@ -401,6 +454,13 @@ end;
 function TFHIRLiquidDocument.link: TFHIRLiquidDocument;
 begin
   result := TFHIRLiquidDocument(inherited Link);
+end;
+
+function TFHIRLiquidDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBody.sizeInBytes);
+  inc(result, (FSource.length * sizeof(char)) + 12);
 end;
 
 { TFHIRLiquidParser }
@@ -620,6 +680,14 @@ begin
   end;
 end;
 
+function TFHIRLiquidParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (source.length * sizeof(char)) + 12);
+  inc(result, fpe.sizeInBytes);
+  inc(result, (FSourceName.length * sizeof(char)) + 12);
+end;
+
 { TFHIRLiquidEngine }
 
 constructor TFHIRLiquidEngine.Create(fpe: TFHIRPathEngine);
@@ -694,6 +762,12 @@ begin
 
 end;
 
+function TFHIRLiquidEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, fpe.sizeInBytes);
+end;
+
 { TFHIRLiquidInclude }
 
 constructor TFHIRLiquidInclude.Create;
@@ -743,6 +817,13 @@ end;
 function TFHIRLiquidInclude.link: TFHIRLiquidInclude;
 begin
   result := TFHIRLiquidInclude(inherited link);
+end;
+
+function TFHIRLiquidInclude.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPage.length * sizeof(char)) + 12);
+  inc(result, FParams.sizeInBytes);
 end;
 
 end.

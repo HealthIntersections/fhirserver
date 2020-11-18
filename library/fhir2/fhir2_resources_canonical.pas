@@ -244,6 +244,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -277,6 +278,8 @@ Type
     FIndex : integer;
     FList : TFhirConceptMapContactList;
     function GetCurrent : TFhirConceptMapContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapContactList);
     destructor Destroy; override;
@@ -353,6 +356,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -391,6 +395,8 @@ Type
     FIndex : integer;
     FList : TFhirConceptMapElementList;
     function GetCurrent : TFhirConceptMapElement;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementList);
     destructor Destroy; override;
@@ -478,6 +484,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -529,6 +536,8 @@ Type
     FIndex : integer;
     FList : TFhirConceptMapElementTargetList;
     function GetCurrent : TFhirConceptMapElementTarget;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementTargetList);
     destructor Destroy; override;
@@ -606,6 +615,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -645,6 +655,8 @@ Type
     FIndex : integer;
     FList : TFhirConceptMapElementTargetDependsOnList;
     function GetCurrent : TFhirConceptMapElementTargetDependsOn;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementTargetDependsOnList);
     destructor Destroy; override;
@@ -766,6 +778,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -866,6 +879,8 @@ Type
     FIndex : integer;
     FList : TFhirConceptMapList;
     function GetCurrent : TFhirConceptMap;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapList);
     destructor Destroy; override;
@@ -942,6 +957,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -975,6 +991,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceContactList;
     function GetCurrent : TFhirConformanceContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceContactList);
     destructor Destroy; override;
@@ -1052,6 +1070,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1091,6 +1110,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceSoftwareList;
     function GetCurrent : TFhirConformanceSoftware;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceSoftwareList);
     destructor Destroy; override;
@@ -1164,6 +1185,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1198,6 +1220,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceImplementationList;
     function GetCurrent : TFhirConformanceImplementation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceImplementationList);
     destructor Destroy; override;
@@ -1292,6 +1316,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1354,6 +1379,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestList;
     function GetCurrent : TFhirConformanceRest;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestList);
     destructor Destroy; override;
@@ -1433,6 +1460,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1475,6 +1503,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestSecurityList;
     function GetCurrent : TFhirConformanceRestSecurity;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestSecurityList);
     destructor Destroy; override;
@@ -1548,6 +1578,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1582,6 +1613,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestSecurityCertificateList;
     function GetCurrent : TFhirConformanceRestSecurityCertificate;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestSecurityCertificateList);
     destructor Destroy; override;
@@ -1689,6 +1722,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1766,6 +1800,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestResourceList;
     function GetCurrent : TFhirConformanceRestResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceList);
     destructor Destroy; override;
@@ -1839,6 +1875,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1872,6 +1909,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestResourceInteractionList;
     function GetCurrent : TFhirConformanceRestResourceInteraction;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceInteractionList);
     destructor Destroy; override;
@@ -1964,6 +2003,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2018,6 +2058,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestResourceSearchParamList;
     function GetCurrent : TFhirConformanceRestResourceSearchParam;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceSearchParamList);
     destructor Destroy; override;
@@ -2091,6 +2133,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2124,6 +2167,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestInteractionList;
     function GetCurrent : TFhirConformanceRestInteraction;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestInteractionList);
     destructor Destroy; override;
@@ -2195,6 +2240,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2229,6 +2275,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceRestOperationList;
     function GetCurrent : TFhirConformanceRestOperation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestOperationList);
     destructor Destroy; override;
@@ -2308,6 +2356,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2350,6 +2399,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceMessagingList;
     function GetCurrent : TFhirConformanceMessaging;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingList);
     destructor Destroy; override;
@@ -2421,6 +2472,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2455,6 +2507,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceMessagingEndpointList;
     function GetCurrent : TFhirConformanceMessagingEndpoint;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingEndpointList);
     destructor Destroy; override;
@@ -2542,6 +2596,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2598,6 +2653,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceMessagingEventList;
     function GetCurrent : TFhirConformanceMessagingEvent;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingEventList);
     destructor Destroy; override;
@@ -2673,6 +2730,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2711,6 +2769,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceDocumentList;
     function GetCurrent : TFhirConformanceDocument;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceDocumentList);
     destructor Destroy; override;
@@ -2851,6 +2911,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2971,6 +3032,8 @@ Type
     FIndex : integer;
     FList : TFhirConformanceList;
     function GetCurrent : TFhirConformance;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirConformanceList);
     destructor Destroy; override;
@@ -3047,6 +3110,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3080,6 +3144,8 @@ Type
     FIndex : integer;
     FList : TFhirDataElementContactList;
     function GetCurrent : TFhirDataElementContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirDataElementContactList);
     destructor Destroy; override;
@@ -3161,6 +3227,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3205,6 +3272,8 @@ Type
     FIndex : integer;
     FList : TFhirDataElementMappingList;
     function GetCurrent : TFhirDataElementMapping;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirDataElementMappingList);
     destructor Destroy; override;
@@ -3322,6 +3391,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3409,6 +3479,8 @@ Type
     FIndex : integer;
     FList : TFhirDataElementList;
     function GetCurrent : TFhirDataElement;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirDataElementList);
     destructor Destroy; override;
@@ -3485,6 +3557,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3518,6 +3591,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuideContactList;
     function GetCurrent : TFhirImplementationGuideContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideContactList);
     destructor Destroy; override;
@@ -3591,6 +3666,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3624,6 +3700,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuideDependencyList;
     function GetCurrent : TFhirImplementationGuideDependency;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideDependencyList);
     destructor Destroy; override;
@@ -3700,6 +3778,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3738,6 +3817,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuidePackageList;
     function GetCurrent : TFhirImplementationGuidePackage;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePackageList);
     destructor Destroy; override;
@@ -3823,6 +3904,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3876,6 +3958,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuidePackageResourceList;
     function GetCurrent : TFhirImplementationGuidePackageResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePackageResourceList);
     destructor Destroy; override;
@@ -3947,6 +4031,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3980,6 +4065,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuideGlobalList;
     function GetCurrent : TFhirImplementationGuideGlobal;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideGlobalList);
     destructor Destroy; override;
@@ -4070,6 +4157,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4124,6 +4212,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuidePageList;
     function GetCurrent : TFhirImplementationGuidePage;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePageList);
     destructor Destroy; override;
@@ -4250,6 +4340,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4352,6 +4443,8 @@ Type
     FIndex : integer;
     FList : TFhirImplementationGuideList;
     function GetCurrent : TFhirImplementationGuide;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideList);
     destructor Destroy; override;
@@ -4428,6 +4521,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4461,6 +4555,8 @@ Type
     FIndex : integer;
     FList : TFhirNamingSystemContactList;
     function GetCurrent : TFhirNamingSystemContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemContactList);
     destructor Destroy; override;
@@ -4540,6 +4636,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4583,6 +4680,8 @@ Type
     FIndex : integer;
     FList : TFhirNamingSystemUniqueIdList;
     function GetCurrent : TFhirNamingSystemUniqueId;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemUniqueIdList);
     destructor Destroy; override;
@@ -4694,6 +4793,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4778,6 +4878,8 @@ Type
     FIndex : integer;
     FList : TFhirNamingSystemList;
     function GetCurrent : TFhirNamingSystem;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemList);
     destructor Destroy; override;
@@ -4854,6 +4956,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4887,6 +4990,8 @@ Type
     FIndex : integer;
     FList : TFhirOperationDefinitionContactList;
     function GetCurrent : TFhirOperationDefinitionContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionContactList);
     destructor Destroy; override;
@@ -4983,6 +5088,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5049,6 +5155,8 @@ Type
     FIndex : integer;
     FList : TFhirOperationDefinitionParameterList;
     function GetCurrent : TFhirOperationDefinitionParameter;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionParameterList);
     destructor Destroy; override;
@@ -5120,6 +5228,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5153,6 +5262,8 @@ Type
     FIndex : integer;
     FList : TFhirOperationDefinitionParameterBindingList;
     function GetCurrent : TFhirOperationDefinitionParameterBinding;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionParameterBindingList);
     destructor Destroy; override;
@@ -5290,6 +5401,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5403,6 +5515,8 @@ Type
     FIndex : integer;
     FList : TFhirOperationDefinitionList;
     function GetCurrent : TFhirOperationDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionList);
     destructor Destroy; override;
@@ -5501,6 +5615,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5562,6 +5677,8 @@ Type
     FIndex : integer;
     FList : TFhirQuestionnaireGroupList;
     function GetCurrent : TFhirQuestionnaireGroup;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireGroupList);
     destructor Destroy; override;
@@ -5658,6 +5775,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5723,6 +5841,8 @@ Type
     FIndex : integer;
     FList : TFhirQuestionnaireGroupQuestionList;
     function GetCurrent : TFhirQuestionnaireGroupQuestion;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireGroupQuestionList);
     destructor Destroy; override;
@@ -5816,6 +5936,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5875,6 +5996,8 @@ Type
     FIndex : integer;
     FList : TFhirQuestionnaireList;
     function GetCurrent : TFhirQuestionnaire;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireList);
     destructor Destroy; override;
@@ -5951,6 +6074,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5984,6 +6108,8 @@ Type
     FIndex : integer;
     FList : TFhirSearchParameterContactList;
     function GetCurrent : TFhirSearchParameterContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirSearchParameterContactList);
     destructor Destroy; override;
@@ -6108,6 +6234,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6200,6 +6327,8 @@ Type
     FIndex : integer;
     FList : TFhirSearchParameterList;
     function GetCurrent : TFhirSearchParameter;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirSearchParameterList);
     destructor Destroy; override;
@@ -6276,6 +6405,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6309,6 +6439,8 @@ Type
     FIndex : integer;
     FList : TFhirStructureDefinitionContactList;
     function GetCurrent : TFhirStructureDefinitionContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionContactList);
     destructor Destroy; override;
@@ -6390,6 +6522,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6434,6 +6567,8 @@ Type
     FIndex : integer;
     FList : TFhirStructureDefinitionMappingList;
     function GetCurrent : TFhirStructureDefinitionMapping;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionMappingList);
     destructor Destroy; override;
@@ -6502,6 +6637,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6530,6 +6666,8 @@ Type
     FIndex : integer;
     FList : TFhirStructureDefinitionSnapshotList;
     function GetCurrent : TFhirStructureDefinitionSnapshot;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionSnapshotList);
     destructor Destroy; override;
@@ -6598,6 +6736,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6626,6 +6765,8 @@ Type
     FIndex : integer;
     FList : TFhirStructureDefinitionDifferentialList;
     function GetCurrent : TFhirStructureDefinitionDifferential;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionDifferentialList);
     destructor Destroy; override;
@@ -6782,6 +6923,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6922,6 +7064,8 @@ Type
     FIndex : integer;
     FList : TFhirStructureDefinitionList;
     function GetCurrent : TFhirStructureDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionList);
     destructor Destroy; override;
@@ -6998,6 +7142,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7031,6 +7176,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptContactList;
     function GetCurrent : TFhirTestScriptContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptContactList);
     destructor Destroy; override;
@@ -7102,6 +7249,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7134,6 +7282,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptMetadataList;
     function GetCurrent : TFhirTestScriptMetadata;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataList);
     destructor Destroy; override;
@@ -7207,6 +7357,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7241,6 +7392,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptMetadataLinkList;
     function GetCurrent : TFhirTestScriptMetadataLink;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataLinkList);
     destructor Destroy; override;
@@ -7327,6 +7480,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7380,6 +7534,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptMetadataCapabilityList;
     function GetCurrent : TFhirTestScriptMetadataCapability;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataCapabilityList);
     destructor Destroy; override;
@@ -7455,6 +7611,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7494,6 +7651,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptFixtureList;
     function GetCurrent : TFhirTestScriptFixture;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptFixtureList);
     destructor Destroy; override;
@@ -7575,6 +7734,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7619,6 +7779,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptVariableList;
     function GetCurrent : TFhirTestScriptVariable;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptVariableList);
     destructor Destroy; override;
@@ -7689,6 +7851,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7722,6 +7885,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptSetupList;
     function GetCurrent : TFhirTestScriptSetup;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupList);
     destructor Destroy; override;
@@ -7791,6 +7956,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7825,6 +7991,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptSetupActionList;
     function GetCurrent : TFhirTestScriptSetupAction;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionList);
     destructor Destroy; override;
@@ -7943,6 +8111,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8034,6 +8203,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptSetupActionOperationList;
     function GetCurrent : TFhirTestScriptSetupActionOperation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionOperationList);
     destructor Destroy; override;
@@ -8107,6 +8278,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8141,6 +8313,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptSetupActionOperationRequestHeaderList;
     function GetCurrent : TFhirTestScriptSetupActionOperationRequestHeader;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionOperationRequestHeaderList);
     destructor Destroy; override;
@@ -8278,6 +8452,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8388,6 +8563,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptSetupActionAssertList;
     function GetCurrent : TFhirTestScriptSetupActionAssert;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionAssertList);
     destructor Destroy; override;
@@ -8466,6 +8643,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8509,6 +8687,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptTestList;
     function GetCurrent : TFhirTestScriptTest;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTestList);
     destructor Destroy; override;
@@ -8578,6 +8758,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8612,6 +8793,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptTestActionList;
     function GetCurrent : TFhirTestScriptTestAction;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTestActionList);
     destructor Destroy; override;
@@ -8680,6 +8863,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8708,6 +8892,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptTeardownList;
     function GetCurrent : TFhirTestScriptTeardown;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTeardownList);
     destructor Destroy; override;
@@ -8775,6 +8961,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8804,6 +8991,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptTeardownActionList;
     function GetCurrent : TFhirTestScriptTeardownAction;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTeardownActionList);
     destructor Destroy; override;
@@ -8940,6 +9129,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9062,6 +9252,8 @@ Type
     FIndex : integer;
     FList : TFhirTestScriptList;
     function GetCurrent : TFhirTestScript;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptList);
     destructor Destroy; override;
@@ -9138,6 +9330,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9171,6 +9364,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetContactList;
     function GetCurrent : TFhirValueSetContact;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetContactList);
     destructor Destroy; override;
@@ -9251,6 +9446,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9294,6 +9490,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetCodeSystemList;
     function GetCurrent : TFhirValueSetCodeSystem;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemList);
     destructor Destroy; override;
@@ -9381,6 +9579,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9433,6 +9632,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetCodeSystemConceptList;
     function GetCurrent : TFhirValueSetCodeSystemConcept;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemConceptList);
     destructor Destroy; override;
@@ -9508,6 +9709,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9547,6 +9749,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetCodeSystemConceptDesignationList;
     function GetCurrent : TFhirValueSetCodeSystemConceptDesignation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemConceptDesignationList);
     destructor Destroy; override;
@@ -9621,6 +9825,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9657,6 +9862,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetComposeList;
     function GetCurrent : TFhirValueSetCompose;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeList);
     destructor Destroy; override;
@@ -9736,6 +9943,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9778,6 +9986,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetComposeIncludeList;
     function GetCurrent : TFhirValueSetComposeInclude;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeList);
     destructor Destroy; override;
@@ -9854,6 +10064,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9892,6 +10103,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetComposeIncludeConceptList;
     function GetCurrent : TFhirValueSetComposeIncludeConcept;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeConceptList);
     destructor Destroy; override;
@@ -9969,6 +10182,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10007,6 +10221,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetComposeIncludeFilterList;
     function GetCurrent : TFhirValueSetComposeIncludeFilter;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeFilterList);
     destructor Destroy; override;
@@ -10094,6 +10310,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10146,6 +10363,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetExpansionList;
     function GetCurrent : TFhirValueSetExpansion;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionList);
     destructor Destroy; override;
@@ -10217,6 +10436,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10251,6 +10471,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetExpansionParameterList;
     function GetCurrent : TFhirValueSetExpansionParameter;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionParameterList);
     destructor Destroy; override;
@@ -10339,6 +10561,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10392,6 +10615,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetExpansionContainsList;
     function GetCurrent : TFhirValueSetExpansionContains;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionContainsList);
     destructor Destroy; override;
@@ -10524,6 +10749,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10640,6 +10866,8 @@ Type
     FIndex : integer;
     FList : TFhirValueSetList;
     function GetCurrent : TFhirValueSet;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirValueSetList);
     destructor Destroy; override;
@@ -10894,6 +11122,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirConceptMapContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirConceptMapContactListEnumerator }
 
 Constructor TFhirConceptMapContactListEnumerator.Create(list : TFhirConceptMapContactList);
@@ -10918,6 +11153,12 @@ end;
 function TFhirConceptMapContactListEnumerator.GetCurrent : TFhirConceptMapContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConceptMapContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConceptMapContactList }
@@ -11243,6 +11484,14 @@ begin
   result := (FTargetList <> nil) and (FTargetList.count > 0);
 end;
 
+function TFhirConceptMapElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCodeSystem.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FtargetList.sizeInBytes);
+end;
+
 { TFhirConceptMapElementListEnumerator }
 
 Constructor TFhirConceptMapElementListEnumerator.Create(list : TFhirConceptMapElementList);
@@ -11267,6 +11516,12 @@ end;
 function TFhirConceptMapElementListEnumerator.GetCurrent : TFhirConceptMapElement;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConceptMapElementListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConceptMapElementList }
@@ -11709,6 +11964,17 @@ begin
   result := (FProductList <> nil) and (FProductList.count > 0);
 end;
 
+function TFhirConceptMapElementTarget.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCodeSystem.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FEquivalence.sizeInBytes);
+  inc(result, FComments.sizeInBytes);
+  inc(result, FdependsOnList.sizeInBytes);
+  inc(result, FproductList.sizeInBytes);
+end;
+
 { TFhirConceptMapElementTargetListEnumerator }
 
 Constructor TFhirConceptMapElementTargetListEnumerator.Create(list : TFhirConceptMapElementTargetList);
@@ -11733,6 +11999,12 @@ end;
 function TFhirConceptMapElementTargetListEnumerator.GetCurrent : TFhirConceptMapElementTarget;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConceptMapElementTargetListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConceptMapElementTargetList }
@@ -12059,6 +12331,14 @@ begin
     FCode.value := '';
 end;
 
+function TFhirConceptMapElementTargetDependsOn.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FElement.sizeInBytes);
+  inc(result, FCodeSystem.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+end;
+
 { TFhirConceptMapElementTargetDependsOnListEnumerator }
 
 Constructor TFhirConceptMapElementTargetDependsOnListEnumerator.Create(list : TFhirConceptMapElementTargetDependsOnList);
@@ -12083,6 +12363,12 @@ end;
 function TFhirConceptMapElementTargetDependsOnListEnumerator.GetCurrent : TFhirConceptMapElementTargetDependsOn;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConceptMapElementTargetDependsOnListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConceptMapElementTargetDependsOnList }
@@ -12873,6 +13159,27 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
+function TFhirConceptMap.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FIdentifier.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FSource.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+  inc(result, FelementList.sizeInBytes);
+end;
+
 { TFhirConceptMapListEnumerator }
 
 Constructor TFhirConceptMapListEnumerator.Create(list : TFhirConceptMapList);
@@ -12897,6 +13204,12 @@ end;
 function TFhirConceptMapListEnumerator.GetCurrent : TFhirConceptMap;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConceptMapListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConceptMapList }
@@ -13184,6 +13497,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirConformanceContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirConformanceContactListEnumerator }
 
 Constructor TFhirConformanceContactListEnumerator.Create(list : TFhirConformanceContactList);
@@ -13208,6 +13528,12 @@ end;
 function TFhirConformanceContactListEnumerator.GetCurrent : TFhirConformanceContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceContactList }
@@ -13529,6 +13855,14 @@ begin
   FReleaseDate.value := value
 end;
 
+function TFhirConformanceSoftware.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FReleaseDate.sizeInBytes);
+end;
+
 { TFhirConformanceSoftwareListEnumerator }
 
 Constructor TFhirConformanceSoftwareListEnumerator.Create(list : TFhirConformanceSoftwareList);
@@ -13553,6 +13887,12 @@ end;
 function TFhirConformanceSoftwareListEnumerator.GetCurrent : TFhirConformanceSoftware;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceSoftwareListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceSoftwareList }
@@ -13837,6 +14177,13 @@ begin
     FUrl.value := '';
 end;
 
+function TFhirConformanceImplementation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FUrl.sizeInBytes);
+end;
+
 { TFhirConformanceImplementationListEnumerator }
 
 Constructor TFhirConformanceImplementationListEnumerator.Create(list : TFhirConformanceImplementationList);
@@ -13861,6 +14208,12 @@ end;
 function TFhirConformanceImplementationListEnumerator.GetCurrent : TFhirConformanceImplementation;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceImplementationListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceImplementationList }
@@ -14397,6 +14750,20 @@ begin
   result := (FCompartmentList <> nil) and (FCompartmentList.count > 0);
 end;
 
+function TFhirConformanceRest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMode.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+  inc(result, FSecurity.sizeInBytes);
+  inc(result, FresourceList.sizeInBytes);
+  inc(result, FinteractionList.sizeInBytes);
+  inc(result, FTransactionMode.sizeInBytes);
+  inc(result, FsearchParamList.sizeInBytes);
+  inc(result, FoperationList.sizeInBytes);
+  inc(result, FcompartmentList.sizeInBytes);
+end;
+
 { TFhirConformanceRestListEnumerator }
 
 Constructor TFhirConformanceRestListEnumerator.Create(list : TFhirConformanceRestList);
@@ -14421,6 +14788,12 @@ end;
 function TFhirConformanceRestListEnumerator.GetCurrent : TFhirConformanceRest;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestList }
@@ -14780,6 +15153,15 @@ begin
   result := (FCertificateList <> nil) and (FCertificateList.count > 0);
 end;
 
+function TFhirConformanceRestSecurity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCors.sizeInBytes);
+  inc(result, FserviceList.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FcertificateList.sizeInBytes);
+end;
+
 { TFhirConformanceRestSecurityListEnumerator }
 
 Constructor TFhirConformanceRestSecurityListEnumerator.Create(list : TFhirConformanceRestSecurityList);
@@ -14804,6 +15186,12 @@ end;
 function TFhirConformanceRestSecurityListEnumerator.GetCurrent : TFhirConformanceRestSecurity;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestSecurityListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestSecurityList }
@@ -15088,6 +15476,13 @@ begin
     FBlob.value := nil;
 end;
 
+function TFhirConformanceRestSecurityCertificate.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FBlob.sizeInBytes);
+end;
+
 { TFhirConformanceRestSecurityCertificateListEnumerator }
 
 Constructor TFhirConformanceRestSecurityCertificateListEnumerator.Create(list : TFhirConformanceRestSecurityCertificateList);
@@ -15112,6 +15507,12 @@ end;
 function TFhirConformanceRestSecurityCertificateListEnumerator.GetCurrent : TFhirConformanceRestSecurityCertificate;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestSecurityCertificateListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestSecurityCertificateList }
@@ -15749,6 +16150,23 @@ begin
   result := (FSearchParamList <> nil) and (FSearchParamList.count > 0);
 end;
 
+function TFhirConformanceRestResource.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+  inc(result, FinteractionList.sizeInBytes);
+  inc(result, FVersioning.sizeInBytes);
+  inc(result, FReadHistory.sizeInBytes);
+  inc(result, FUpdateCreate.sizeInBytes);
+  inc(result, FConditionalCreate.sizeInBytes);
+  inc(result, FConditionalUpdate.sizeInBytes);
+  inc(result, FConditionalDelete.sizeInBytes);
+  inc(result, FsearchIncludeList.sizeInBytes);
+  inc(result, FsearchRevIncludeList.sizeInBytes);
+  inc(result, FsearchParamList.sizeInBytes);
+end;
+
 { TFhirConformanceRestResourceListEnumerator }
 
 Constructor TFhirConformanceRestResourceListEnumerator.Create(list : TFhirConformanceRestResourceList);
@@ -15773,6 +16191,12 @@ end;
 function TFhirConformanceRestResourceListEnumerator.GetCurrent : TFhirConformanceRestResource;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestResourceListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestResourceList }
@@ -16052,6 +16476,13 @@ begin
     FDocumentation.value := '';
 end;
 
+function TFhirConformanceRestResourceInteraction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCode.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+end;
+
 { TFhirConformanceRestResourceInteractionListEnumerator }
 
 Constructor TFhirConformanceRestResourceInteractionListEnumerator.Create(list : TFhirConformanceRestResourceInteractionList);
@@ -16076,6 +16507,12 @@ end;
 function TFhirConformanceRestResourceInteractionListEnumerator.GetCurrent : TFhirConformanceRestResourceInteraction;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestResourceInteractionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestResourceInteractionList }
@@ -16574,6 +17011,18 @@ begin
   result := (FChainList <> nil) and (FChainList.count > 0);
 end;
 
+function TFhirConformanceRestResourceSearchParam.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+  inc(result, FModifier.sizeInBytes);
+  inc(result, FchainList.sizeInBytes);
+end;
+
 { TFhirConformanceRestResourceSearchParamListEnumerator }
 
 Constructor TFhirConformanceRestResourceSearchParamListEnumerator.Create(list : TFhirConformanceRestResourceSearchParamList);
@@ -16598,6 +17047,12 @@ end;
 function TFhirConformanceRestResourceSearchParamListEnumerator.GetCurrent : TFhirConformanceRestResourceSearchParam;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestResourceSearchParamListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestResourceSearchParamList }
@@ -16877,6 +17332,13 @@ begin
     FDocumentation.value := '';
 end;
 
+function TFhirConformanceRestInteraction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCode.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+end;
+
 { TFhirConformanceRestInteractionListEnumerator }
 
 Constructor TFhirConformanceRestInteractionListEnumerator.Create(list : TFhirConformanceRestInteractionList);
@@ -16901,6 +17363,12 @@ end;
 function TFhirConformanceRestInteractionListEnumerator.GetCurrent : TFhirConformanceRestInteraction;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestInteractionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestInteractionList }
@@ -17165,6 +17633,13 @@ begin
   FDefinition := value;
 end;
 
+function TFhirConformanceRestOperation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+end;
+
 { TFhirConformanceRestOperationListEnumerator }
 
 Constructor TFhirConformanceRestOperationListEnumerator.Create(list : TFhirConformanceRestOperationList);
@@ -17189,6 +17664,12 @@ end;
 function TFhirConformanceRestOperationListEnumerator.GetCurrent : TFhirConformanceRestOperation;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceRestOperationListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceRestOperationList }
@@ -17553,6 +18034,15 @@ begin
   result := (FEventList <> nil) and (FEventList.count > 0);
 end;
 
+function TFhirConformanceMessaging.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FendpointList.sizeInBytes);
+  inc(result, FReliableCache.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+  inc(result, FeventList.sizeInBytes);
+end;
+
 { TFhirConformanceMessagingListEnumerator }
 
 Constructor TFhirConformanceMessagingListEnumerator.Create(list : TFhirConformanceMessagingList);
@@ -17577,6 +18067,12 @@ end;
 function TFhirConformanceMessagingListEnumerator.GetCurrent : TFhirConformanceMessaging;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceMessagingListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceMessagingList }
@@ -17841,6 +18337,13 @@ begin
     FAddress.value := '';
 end;
 
+function TFhirConformanceMessagingEndpoint.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProtocol.sizeInBytes);
+  inc(result, FAddress.sizeInBytes);
+end;
+
 { TFhirConformanceMessagingEndpointListEnumerator }
 
 Constructor TFhirConformanceMessagingEndpointListEnumerator.Create(list : TFhirConformanceMessagingEndpointList);
@@ -17865,6 +18368,12 @@ end;
 function TFhirConformanceMessagingEndpointListEnumerator.GetCurrent : TFhirConformanceMessagingEndpoint;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceMessagingEndpointListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceMessagingEndpointList }
@@ -18282,6 +18791,18 @@ begin
     FDocumentation.value := '';
 end;
 
+function TFhirConformanceMessagingEvent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCode.sizeInBytes);
+  inc(result, FCategory.sizeInBytes);
+  inc(result, FMode.sizeInBytes);
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FRequest.sizeInBytes);
+  inc(result, FResponse.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+end;
+
 { TFhirConformanceMessagingEventListEnumerator }
 
 Constructor TFhirConformanceMessagingEventListEnumerator.Create(list : TFhirConformanceMessagingEventList);
@@ -18306,6 +18827,12 @@ end;
 function TFhirConformanceMessagingEventListEnumerator.GetCurrent : TFhirConformanceMessagingEvent;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceMessagingEventListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceMessagingEventList }
@@ -18607,6 +19134,14 @@ begin
   FProfile := value;
 end;
 
+function TFhirConformanceDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMode.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+end;
+
 { TFhirConformanceDocumentListEnumerator }
 
 Constructor TFhirConformanceDocumentListEnumerator.Create(list : TFhirConformanceDocumentList);
@@ -18631,6 +19166,12 @@ end;
 function TFhirConformanceDocumentListEnumerator.GetCurrent : TFhirConformanceDocument;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceDocumentListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceDocumentList }
@@ -19633,6 +20174,32 @@ begin
   result := (FDocumentList <> nil) and (FDocumentList.count > 0);
 end;
 
+function TFhirConformance.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FKind.sizeInBytes);
+  inc(result, FSoftware.sizeInBytes);
+  inc(result, FImplementation_.sizeInBytes);
+  inc(result, FFhirVersion.sizeInBytes);
+  inc(result, FAcceptUnknown.sizeInBytes);
+  inc(result, FformatList.sizeInBytes);
+  inc(result, FprofileList.sizeInBytes);
+  inc(result, FrestList.sizeInBytes);
+  inc(result, FmessagingList.sizeInBytes);
+  inc(result, FdocumentList.sizeInBytes);
+end;
+
 { TFhirConformanceListEnumerator }
 
 Constructor TFhirConformanceListEnumerator.Create(list : TFhirConformanceList);
@@ -19657,6 +20224,12 @@ end;
 function TFhirConformanceListEnumerator.GetCurrent : TFhirConformance;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirConformanceListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirConformanceList }
@@ -19944,6 +20517,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirDataElementContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirDataElementContactListEnumerator }
 
 Constructor TFhirDataElementContactListEnumerator.Create(list : TFhirDataElementContactList);
@@ -19968,6 +20548,12 @@ end;
 function TFhirDataElementContactListEnumerator.GetCurrent : TFhirDataElementContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirDataElementContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirDataElementContactList }
@@ -20335,6 +20921,15 @@ begin
     FComments.value := '';
 end;
 
+function TFhirDataElementMapping.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FIdentity.sizeInBytes);
+  inc(result, FUri.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FComments.sizeInBytes);
+end;
+
 { TFhirDataElementMappingListEnumerator }
 
 Constructor TFhirDataElementMappingListEnumerator.Create(list : TFhirDataElementMappingList);
@@ -20359,6 +20954,12 @@ end;
 function TFhirDataElementMappingListEnumerator.GetCurrent : TFhirDataElementMapping;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirDataElementMappingListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirDataElementMappingList }
@@ -21117,6 +21718,25 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
+function TFhirDataElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FidentifierList.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FStringency.sizeInBytes);
+  inc(result, FmappingList.sizeInBytes);
+  inc(result, FelementList.sizeInBytes);
+end;
+
 { TFhirDataElementListEnumerator }
 
 Constructor TFhirDataElementListEnumerator.Create(list : TFhirDataElementList);
@@ -21141,6 +21761,12 @@ end;
 function TFhirDataElementListEnumerator.GetCurrent : TFhirDataElement;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirDataElementListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirDataElementList }
@@ -21428,6 +22054,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirImplementationGuideContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirImplementationGuideContactListEnumerator }
 
 Constructor TFhirImplementationGuideContactListEnumerator.Create(list : TFhirImplementationGuideContactList);
@@ -21452,6 +22085,12 @@ end;
 function TFhirImplementationGuideContactListEnumerator.GetCurrent : TFhirImplementationGuideContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuideContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuideContactList }
@@ -21731,6 +22370,13 @@ begin
     FUri.value := '';
 end;
 
+function TFhirImplementationGuideDependency.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FUri.sizeInBytes);
+end;
+
 { TFhirImplementationGuideDependencyListEnumerator }
 
 Constructor TFhirImplementationGuideDependencyListEnumerator.Create(list : TFhirImplementationGuideDependencyList);
@@ -21755,6 +22401,12 @@ end;
 function TFhirImplementationGuideDependencyListEnumerator.GetCurrent : TFhirImplementationGuideDependency;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuideDependencyListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuideDependencyList }
@@ -22080,6 +22732,14 @@ begin
   result := (FResourceList <> nil) and (FResourceList.count > 0);
 end;
 
+function TFhirImplementationGuidePackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FresourceList.sizeInBytes);
+end;
+
 { TFhirImplementationGuidePackageListEnumerator }
 
 Constructor TFhirImplementationGuidePackageListEnumerator.Create(list : TFhirImplementationGuidePackageList);
@@ -22104,6 +22764,12 @@ end;
 function TFhirImplementationGuidePackageListEnumerator.GetCurrent : TFhirImplementationGuidePackage;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuidePackageListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuidePackageList }
@@ -22509,6 +23175,17 @@ begin
   FExampleFor := value;
 end;
 
+function TFhirImplementationGuidePackageResource.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPurpose.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FAcronym.sizeInBytes);
+  inc(result, FSource.sizeInBytes);
+  inc(result, FExampleFor.sizeInBytes);
+end;
+
 { TFhirImplementationGuidePackageResourceListEnumerator }
 
 Constructor TFhirImplementationGuidePackageResourceListEnumerator.Create(list : TFhirImplementationGuidePackageResourceList);
@@ -22533,6 +23210,12 @@ end;
 function TFhirImplementationGuidePackageResourceListEnumerator.GetCurrent : TFhirImplementationGuidePackageResource;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuidePackageResourceListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuidePackageResourceList }
@@ -22792,6 +23475,13 @@ begin
   FProfile := value;
 end;
 
+function TFhirImplementationGuideGlobal.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+end;
+
 { TFhirImplementationGuideGlobalListEnumerator }
 
 Constructor TFhirImplementationGuideGlobalListEnumerator.Create(list : TFhirImplementationGuideGlobalList);
@@ -22816,6 +23506,12 @@ end;
 function TFhirImplementationGuideGlobalListEnumerator.GetCurrent : TFhirImplementationGuideGlobal;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuideGlobalListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuideGlobalList }
@@ -23294,6 +23990,18 @@ begin
   result := (FPageList <> nil) and (FPageList.count > 0);
 end;
 
+function TFhirImplementationGuidePage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSource.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FKind.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FpackageList.sizeInBytes);
+  inc(result, FFormat.sizeInBytes);
+  inc(result, FpageList.sizeInBytes);
+end;
+
 { TFhirImplementationGuidePageListEnumerator }
 
 Constructor TFhirImplementationGuidePageListEnumerator.Create(list : TFhirImplementationGuidePageList);
@@ -23318,6 +24026,12 @@ end;
 function TFhirImplementationGuidePageListEnumerator.GetCurrent : TFhirImplementationGuidePage;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuidePageListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuidePageList }
@@ -24184,6 +24898,28 @@ begin
   FPage := value;
 end;
 
+function TFhirImplementationGuide.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FFhirVersion.sizeInBytes);
+  inc(result, FdependencyList.sizeInBytes);
+  inc(result, FpackageList.sizeInBytes);
+  inc(result, FglobalList.sizeInBytes);
+  inc(result, FbinaryList.sizeInBytes);
+  inc(result, FPage.sizeInBytes);
+end;
+
 { TFhirImplementationGuideListEnumerator }
 
 Constructor TFhirImplementationGuideListEnumerator.Create(list : TFhirImplementationGuideList);
@@ -24208,6 +24944,12 @@ end;
 function TFhirImplementationGuideListEnumerator.GetCurrent : TFhirImplementationGuide;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirImplementationGuideListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirImplementationGuideList }
@@ -24495,6 +25237,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirNamingSystemContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirNamingSystemContactListEnumerator }
 
 Constructor TFhirNamingSystemContactListEnumerator.Create(list : TFhirNamingSystemContactList);
@@ -24519,6 +25268,12 @@ end;
 function TFhirNamingSystemContactListEnumerator.GetCurrent : TFhirNamingSystemContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirNamingSystemContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirNamingSystemContactList }
@@ -24856,6 +25611,15 @@ begin
   FPeriod := value;
 end;
 
+function TFhirNamingSystemUniqueId.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+  inc(result, FPreferred.sizeInBytes);
+  inc(result, FPeriod.sizeInBytes);
+end;
+
 { TFhirNamingSystemUniqueIdListEnumerator }
 
 Constructor TFhirNamingSystemUniqueIdListEnumerator.Create(list : TFhirNamingSystemUniqueIdList);
@@ -24880,6 +25644,12 @@ end;
 function TFhirNamingSystemUniqueIdListEnumerator.GetCurrent : TFhirNamingSystemUniqueId;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirNamingSystemUniqueIdListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirNamingSystemUniqueIdList }
@@ -25566,6 +26336,24 @@ begin
   FReplacedBy := value;
 end;
 
+function TFhirNamingSystem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FKind.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FResponsible.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FUsage.sizeInBytes);
+  inc(result, FuniqueIdList.sizeInBytes);
+  inc(result, FReplacedBy.sizeInBytes);
+end;
+
 { TFhirNamingSystemListEnumerator }
 
 Constructor TFhirNamingSystemListEnumerator.Create(list : TFhirNamingSystemList);
@@ -25590,6 +26378,12 @@ end;
 function TFhirNamingSystemListEnumerator.GetCurrent : TFhirNamingSystem;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirNamingSystemListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirNamingSystemList }
@@ -25877,6 +26671,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirOperationDefinitionContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirOperationDefinitionContactListEnumerator }
 
 Constructor TFhirOperationDefinitionContactListEnumerator.Create(list : TFhirOperationDefinitionContactList);
@@ -25901,6 +26702,12 @@ end;
 function TFhirOperationDefinitionContactListEnumerator.GetCurrent : TFhirOperationDefinitionContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirOperationDefinitionContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirOperationDefinitionContactList }
@@ -26425,6 +27232,20 @@ begin
   result := (FPartList <> nil) and (FPartList.count > 0);
 end;
 
+function TFhirOperationDefinitionParameter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FUse.sizeInBytes);
+  inc(result, FMin.sizeInBytes);
+  inc(result, FMax.sizeInBytes);
+  inc(result, FDocumentation.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+  inc(result, FBinding.sizeInBytes);
+  inc(result, FpartList.sizeInBytes);
+end;
+
 { TFhirOperationDefinitionParameterListEnumerator }
 
 Constructor TFhirOperationDefinitionParameterListEnumerator.Create(list : TFhirOperationDefinitionParameterList);
@@ -26449,6 +27270,12 @@ end;
 function TFhirOperationDefinitionParameterListEnumerator.GetCurrent : TFhirOperationDefinitionParameter;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirOperationDefinitionParameterListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirOperationDefinitionParameterList }
@@ -26708,6 +27535,13 @@ begin
   FValueSet := value;
 end;
 
+function TFhirOperationDefinitionParameterBinding.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStrength.sizeInBytes);
+  inc(result, FValueSet.sizeInBytes);
+end;
+
 { TFhirOperationDefinitionParameterBindingListEnumerator }
 
 Constructor TFhirOperationDefinitionParameterBindingListEnumerator.Create(list : TFhirOperationDefinitionParameterBindingList);
@@ -26732,6 +27566,12 @@ end;
 function TFhirOperationDefinitionParameterBindingListEnumerator.GetCurrent : TFhirOperationDefinitionParameterBinding;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirOperationDefinitionParameterBindingListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirOperationDefinitionParameterBindingList }
@@ -27663,6 +28503,30 @@ begin
   result := (FParameterList <> nil) and (FParameterList.count > 0);
 end;
 
+function TFhirOperationDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FKind.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FIdempotent.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FNotes.sizeInBytes);
+  inc(result, FBase.sizeInBytes);
+  inc(result, FSystem.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FInstance.sizeInBytes);
+  inc(result, FparameterList.sizeInBytes);
+end;
+
 { TFhirOperationDefinitionListEnumerator }
 
 Constructor TFhirOperationDefinitionListEnumerator.Create(list : TFhirOperationDefinitionList);
@@ -27687,6 +28551,12 @@ end;
 function TFhirOperationDefinitionListEnumerator.GetCurrent : TFhirOperationDefinition;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirOperationDefinitionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirOperationDefinitionList }
@@ -28209,6 +29079,19 @@ begin
   result := (FQuestionList <> nil) and (FQuestionList.count > 0);
 end;
 
+function TFhirQuestionnaireGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLinkId.sizeInBytes);
+  inc(result, FTitle.sizeInBytes);
+  inc(result, FconceptList.sizeInBytes);
+  inc(result, FText.sizeInBytes);
+  inc(result, FRequired.sizeInBytes);
+  inc(result, FRepeats.sizeInBytes);
+  inc(result, FgroupList.sizeInBytes);
+  inc(result, FquestionList.sizeInBytes);
+end;
+
 { TFhirQuestionnaireGroupListEnumerator }
 
 Constructor TFhirQuestionnaireGroupListEnumerator.Create(list : TFhirQuestionnaireGroupList);
@@ -28233,6 +29116,12 @@ end;
 function TFhirQuestionnaireGroupListEnumerator.GetCurrent : TFhirQuestionnaireGroup;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirQuestionnaireGroupListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirQuestionnaireGroupList }
@@ -28768,6 +29657,20 @@ begin
   result := (FGroupList <> nil) and (FGroupList.count > 0);
 end;
 
+function TFhirQuestionnaireGroupQuestion.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLinkId.sizeInBytes);
+  inc(result, FconceptList.sizeInBytes);
+  inc(result, FText.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FRequired.sizeInBytes);
+  inc(result, FRepeats.sizeInBytes);
+  inc(result, FOptions.sizeInBytes);
+  inc(result, FoptionList.sizeInBytes);
+  inc(result, FgroupList.sizeInBytes);
+end;
+
 { TFhirQuestionnaireGroupQuestionListEnumerator }
 
 Constructor TFhirQuestionnaireGroupQuestionListEnumerator.Create(list : TFhirQuestionnaireGroupQuestionList);
@@ -28792,6 +29695,12 @@ end;
 function TFhirQuestionnaireGroupQuestionListEnumerator.GetCurrent : TFhirQuestionnaireGroupQuestion;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirQuestionnaireGroupQuestionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirQuestionnaireGroupQuestionList }
@@ -29291,6 +30200,19 @@ begin
   FGroup := value;
 end;
 
+function TFhirQuestionnaire.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FidentifierList.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+  inc(result, FSubjectType.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+end;
+
 { TFhirQuestionnaireListEnumerator }
 
 Constructor TFhirQuestionnaireListEnumerator.Create(list : TFhirQuestionnaireList);
@@ -29315,6 +30237,12 @@ end;
 function TFhirQuestionnaireListEnumerator.GetCurrent : TFhirQuestionnaire;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirQuestionnaireListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirQuestionnaireList }
@@ -29602,6 +30530,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirSearchParameterContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirSearchParameterContactListEnumerator }
 
 Constructor TFhirSearchParameterContactListEnumerator.Create(list : TFhirSearchParameterContactList);
@@ -29626,6 +30561,12 @@ end;
 function TFhirSearchParameterContactListEnumerator.GetCurrent : TFhirSearchParameterContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirSearchParameterContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirSearchParameterContactList }
@@ -30418,6 +31359,26 @@ begin
   result := (FTarget <> nil) and (FTarget.count > 0);
 end;
 
+function TFhirSearchParameter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FBase.sizeInBytes);
+  inc(result, FType_.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FXpath.sizeInBytes);
+  inc(result, FXpathUsage.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+end;
+
 { TFhirSearchParameterListEnumerator }
 
 Constructor TFhirSearchParameterListEnumerator.Create(list : TFhirSearchParameterList);
@@ -30442,6 +31403,12 @@ end;
 function TFhirSearchParameterListEnumerator.GetCurrent : TFhirSearchParameter;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirSearchParameterListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirSearchParameterList }
@@ -30729,6 +31696,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirStructureDefinitionContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirStructureDefinitionContactListEnumerator }
 
 Constructor TFhirStructureDefinitionContactListEnumerator.Create(list : TFhirStructureDefinitionContactList);
@@ -30753,6 +31727,12 @@ end;
 function TFhirStructureDefinitionContactListEnumerator.GetCurrent : TFhirStructureDefinitionContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirStructureDefinitionContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirStructureDefinitionContactList }
@@ -31120,6 +32100,15 @@ begin
     FComments.value := '';
 end;
 
+function TFhirStructureDefinitionMapping.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FIdentity.sizeInBytes);
+  inc(result, FUri.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FComments.sizeInBytes);
+end;
+
 { TFhirStructureDefinitionMappingListEnumerator }
 
 Constructor TFhirStructureDefinitionMappingListEnumerator.Create(list : TFhirStructureDefinitionMappingList);
@@ -31144,6 +32133,12 @@ end;
 function TFhirStructureDefinitionMappingListEnumerator.GetCurrent : TFhirStructureDefinitionMapping;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirStructureDefinitionMappingListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirStructureDefinitionMappingList }
@@ -31386,6 +32381,12 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
+function TFhirStructureDefinitionSnapshot.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FelementList.sizeInBytes);
+end;
+
 { TFhirStructureDefinitionSnapshotListEnumerator }
 
 Constructor TFhirStructureDefinitionSnapshotListEnumerator.Create(list : TFhirStructureDefinitionSnapshotList);
@@ -31410,6 +32411,12 @@ end;
 function TFhirStructureDefinitionSnapshotListEnumerator.GetCurrent : TFhirStructureDefinitionSnapshot;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirStructureDefinitionSnapshotListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirStructureDefinitionSnapshotList }
@@ -31652,6 +32659,12 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
+function TFhirStructureDefinitionDifferential.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FelementList.sizeInBytes);
+end;
+
 { TFhirStructureDefinitionDifferentialListEnumerator }
 
 Constructor TFhirStructureDefinitionDifferentialListEnumerator.Create(list : TFhirStructureDefinitionDifferentialList);
@@ -31676,6 +32689,12 @@ end;
 function TFhirStructureDefinitionDifferentialListEnumerator.GetCurrent : TFhirStructureDefinitionDifferential;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirStructureDefinitionDifferentialListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirStructureDefinitionDifferentialList }
@@ -32839,6 +33858,36 @@ begin
   FDifferential := value;
 end;
 
+function TFhirStructureDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FidentifierList.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FDisplay.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FcodeList.sizeInBytes);
+  inc(result, FFhirVersion.sizeInBytes);
+  inc(result, FmappingList.sizeInBytes);
+  inc(result, FKind.sizeInBytes);
+  inc(result, FConstrainedType.sizeInBytes);
+  inc(result, FAbstract.sizeInBytes);
+  inc(result, FContextType.sizeInBytes);
+  inc(result, FcontextList.sizeInBytes);
+  inc(result, FBase.sizeInBytes);
+  inc(result, FSnapshot.sizeInBytes);
+  inc(result, FDifferential.sizeInBytes);
+end;
+
 { TFhirStructureDefinitionListEnumerator }
 
 Constructor TFhirStructureDefinitionListEnumerator.Create(list : TFhirStructureDefinitionList);
@@ -32863,6 +33912,12 @@ end;
 function TFhirStructureDefinitionListEnumerator.GetCurrent : TFhirStructureDefinition;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirStructureDefinitionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirStructureDefinitionList }
@@ -33150,6 +34205,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirTestScriptContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirTestScriptContactListEnumerator }
 
 Constructor TFhirTestScriptContactListEnumerator.Create(list : TFhirTestScriptContactList);
@@ -33174,6 +34236,12 @@ end;
 function TFhirTestScriptContactListEnumerator.GetCurrent : TFhirTestScriptContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptContactList }
@@ -33455,6 +34523,13 @@ begin
   result := (FCapabilityList <> nil) and (FCapabilityList.count > 0);
 end;
 
+function TFhirTestScriptMetadata.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Flink_List.sizeInBytes);
+  inc(result, FcapabilityList.sizeInBytes);
+end;
+
 { TFhirTestScriptMetadataListEnumerator }
 
 Constructor TFhirTestScriptMetadataListEnumerator.Create(list : TFhirTestScriptMetadataList);
@@ -33479,6 +34554,12 @@ end;
 function TFhirTestScriptMetadataListEnumerator.GetCurrent : TFhirTestScriptMetadata;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptMetadataListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptMetadataList }
@@ -33763,6 +34844,13 @@ begin
     FDescription.value := '';
 end;
 
+function TFhirTestScriptMetadataLink.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+end;
+
 { TFhirTestScriptMetadataLinkListEnumerator }
 
 Constructor TFhirTestScriptMetadataLinkListEnumerator.Create(list : TFhirTestScriptMetadataLinkList);
@@ -33787,6 +34875,12 @@ end;
 function TFhirTestScriptMetadataLinkListEnumerator.GetCurrent : TFhirTestScriptMetadataLink;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptMetadataLinkListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptMetadataLinkList }
@@ -34206,6 +35300,17 @@ begin
   FConformance := value;
 end;
 
+function TFhirTestScriptMetadataCapability.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRequired.sizeInBytes);
+  inc(result, FValidated.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FDestination.sizeInBytes);
+  inc(result, Flink_List.sizeInBytes);
+  inc(result, FConformance.sizeInBytes);
+end;
+
 { TFhirTestScriptMetadataCapabilityListEnumerator }
 
 Constructor TFhirTestScriptMetadataCapabilityListEnumerator.Create(list : TFhirTestScriptMetadataCapabilityList);
@@ -34230,6 +35335,12 @@ end;
 function TFhirTestScriptMetadataCapabilityListEnumerator.GetCurrent : TFhirTestScriptMetadataCapability;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptMetadataCapabilityListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptMetadataCapabilityList }
@@ -34526,6 +35637,14 @@ begin
   FResource := value;
 end;
 
+function TFhirTestScriptFixture.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAutocreate.sizeInBytes);
+  inc(result, FAutodelete.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+end;
+
 { TFhirTestScriptFixtureListEnumerator }
 
 Constructor TFhirTestScriptFixtureListEnumerator.Create(list : TFhirTestScriptFixtureList);
@@ -34550,6 +35669,12 @@ end;
 function TFhirTestScriptFixtureListEnumerator.GetCurrent : TFhirTestScriptFixture;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptFixtureListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptFixtureList }
@@ -34917,6 +36042,15 @@ begin
     FSourceId.value := '';
 end;
 
+function TFhirTestScriptVariable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FHeaderField.sizeInBytes);
+  inc(result, FPath.sizeInBytes);
+  inc(result, FSourceId.sizeInBytes);
+end;
+
 { TFhirTestScriptVariableListEnumerator }
 
 Constructor TFhirTestScriptVariableListEnumerator.Create(list : TFhirTestScriptVariableList);
@@ -34941,6 +36075,12 @@ end;
 function TFhirTestScriptVariableListEnumerator.GetCurrent : TFhirTestScriptVariable;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptVariableListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptVariableList }
@@ -35204,6 +36344,13 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
+function TFhirTestScriptSetup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMetadata.sizeInBytes);
+  inc(result, FactionList.sizeInBytes);
+end;
+
 { TFhirTestScriptSetupListEnumerator }
 
 Constructor TFhirTestScriptSetupListEnumerator.Create(list : TFhirTestScriptSetupList);
@@ -35228,6 +36375,12 @@ end;
 function TFhirTestScriptSetupListEnumerator.GetCurrent : TFhirTestScriptSetup;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptSetupListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptSetupList }
@@ -35472,6 +36625,13 @@ begin
   FAssert := value;
 end;
 
+function TFhirTestScriptSetupAction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOperation.sizeInBytes);
+  inc(result, FAssert.sizeInBytes);
+end;
+
 { TFhirTestScriptSetupActionListEnumerator }
 
 Constructor TFhirTestScriptSetupActionListEnumerator.Create(list : TFhirTestScriptSetupActionList);
@@ -35496,6 +36656,12 @@ end;
 function TFhirTestScriptSetupActionListEnumerator.GetCurrent : TFhirTestScriptSetupAction;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptSetupActionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptSetupActionList }
@@ -36242,6 +37408,25 @@ begin
     FUrl.value := '';
 end;
 
+function TFhirTestScriptSetupActionOperation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FType_.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+  inc(result, FLabel_.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FAccept.sizeInBytes);
+  inc(result, FContentType.sizeInBytes);
+  inc(result, FDestination.sizeInBytes);
+  inc(result, FEncodeRequestUrl.sizeInBytes);
+  inc(result, FParams.sizeInBytes);
+  inc(result, FrequestHeaderList.sizeInBytes);
+  inc(result, FResponseId.sizeInBytes);
+  inc(result, FSourceId.sizeInBytes);
+  inc(result, FTargetId.sizeInBytes);
+  inc(result, FUrl.sizeInBytes);
+end;
+
 { TFhirTestScriptSetupActionOperationListEnumerator }
 
 Constructor TFhirTestScriptSetupActionOperationListEnumerator.Create(list : TFhirTestScriptSetupActionOperationList);
@@ -36266,6 +37451,12 @@ end;
 function TFhirTestScriptSetupActionOperationListEnumerator.GetCurrent : TFhirTestScriptSetupActionOperation;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptSetupActionOperationListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptSetupActionOperationList }
@@ -36550,6 +37741,13 @@ begin
     FValue.value := '';
 end;
 
+function TFhirTestScriptSetupActionOperationRequestHeader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FField.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator }
 
 Constructor TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.Create(list : TFhirTestScriptSetupActionOperationRequestHeaderList);
@@ -36574,6 +37772,12 @@ end;
 function TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.GetCurrent : TFhirTestScriptSetupActionOperationRequestHeader;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptSetupActionOperationRequestHeaderList }
@@ -37493,6 +38697,29 @@ begin
   FWarningOnly.value := value
 end;
 
+function TFhirTestScriptSetupActionAssert.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLabel_.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FDirection.sizeInBytes);
+  inc(result, FCompareToSourceId.sizeInBytes);
+  inc(result, FCompareToSourcePath.sizeInBytes);
+  inc(result, FContentType.sizeInBytes);
+  inc(result, FHeaderField.sizeInBytes);
+  inc(result, FMinimumId.sizeInBytes);
+  inc(result, FNavigationLinks.sizeInBytes);
+  inc(result, FOperator.sizeInBytes);
+  inc(result, FPath.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+  inc(result, FResponse.sizeInBytes);
+  inc(result, FResponseCode.sizeInBytes);
+  inc(result, FSourceId.sizeInBytes);
+  inc(result, FValidateProfileId.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+  inc(result, FWarningOnly.sizeInBytes);
+end;
+
 { TFhirTestScriptSetupActionAssertListEnumerator }
 
 Constructor TFhirTestScriptSetupActionAssertListEnumerator.Create(list : TFhirTestScriptSetupActionAssertList);
@@ -37517,6 +38744,12 @@ end;
 function TFhirTestScriptSetupActionAssertListEnumerator.GetCurrent : TFhirTestScriptSetupActionAssert;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptSetupActionAssertListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptSetupActionAssertList }
@@ -37863,6 +39096,15 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
+function TFhirTestScriptTest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FMetadata.sizeInBytes);
+  inc(result, FactionList.sizeInBytes);
+end;
+
 { TFhirTestScriptTestListEnumerator }
 
 Constructor TFhirTestScriptTestListEnumerator.Create(list : TFhirTestScriptTestList);
@@ -37887,6 +39129,12 @@ end;
 function TFhirTestScriptTestListEnumerator.GetCurrent : TFhirTestScriptTest;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptTestListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptTestList }
@@ -38131,6 +39379,13 @@ begin
   FAssert := value;
 end;
 
+function TFhirTestScriptTestAction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOperation.sizeInBytes);
+  inc(result, FAssert.sizeInBytes);
+end;
+
 { TFhirTestScriptTestActionListEnumerator }
 
 Constructor TFhirTestScriptTestActionListEnumerator.Create(list : TFhirTestScriptTestActionList);
@@ -38155,6 +39410,12 @@ end;
 function TFhirTestScriptTestActionListEnumerator.GetCurrent : TFhirTestScriptTestAction;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptTestActionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptTestActionList }
@@ -38397,6 +39658,12 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
+function TFhirTestScriptTeardown.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FactionList.sizeInBytes);
+end;
+
 { TFhirTestScriptTeardownListEnumerator }
 
 Constructor TFhirTestScriptTeardownListEnumerator.Create(list : TFhirTestScriptTeardownList);
@@ -38421,6 +39688,12 @@ end;
 function TFhirTestScriptTeardownListEnumerator.GetCurrent : TFhirTestScriptTeardown;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptTeardownListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptTeardownList }
@@ -38644,6 +39917,12 @@ begin
   FOperation := value;
 end;
 
+function TFhirTestScriptTeardownAction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOperation.sizeInBytes);
+end;
+
 { TFhirTestScriptTeardownActionListEnumerator }
 
 Constructor TFhirTestScriptTeardownActionListEnumerator.Create(list : TFhirTestScriptTeardownActionList);
@@ -38668,6 +39947,12 @@ end;
 function TFhirTestScriptTeardownActionListEnumerator.GetCurrent : TFhirTestScriptTeardownAction;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptTeardownActionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptTeardownActionList }
@@ -39635,6 +40920,32 @@ begin
   FTeardown := value;
 end;
 
+function TFhirTestScript.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FIdentifier.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FMetadata.sizeInBytes);
+  inc(result, FMultiserver.sizeInBytes);
+  inc(result, FfixtureList.sizeInBytes);
+  inc(result, FprofileList.sizeInBytes);
+  inc(result, FvariableList.sizeInBytes);
+  inc(result, FSetup.sizeInBytes);
+  inc(result, FtestList.sizeInBytes);
+  inc(result, FTeardown.sizeInBytes);
+end;
+
 { TFhirTestScriptListEnumerator }
 
 Constructor TFhirTestScriptListEnumerator.Create(list : TFhirTestScriptList);
@@ -39659,6 +40970,12 @@ end;
 function TFhirTestScriptListEnumerator.GetCurrent : TFhirTestScript;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirTestScriptListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirTestScriptList }
@@ -39946,6 +41263,13 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
+function TFhirValueSetContact.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FtelecomList.sizeInBytes);
+end;
+
 { TFhirValueSetContactListEnumerator }
 
 Constructor TFhirValueSetContactListEnumerator.Create(list : TFhirValueSetContactList);
@@ -39970,6 +41294,12 @@ end;
 function TFhirValueSetContactListEnumerator.GetCurrent : TFhirValueSetContact;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetContactListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetContactList }
@@ -40331,6 +41661,15 @@ begin
   result := (FConceptList <> nil) and (FConceptList.count > 0);
 end;
 
+function TFhirValueSetCodeSystem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSystem.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FCaseSensitive.sizeInBytes);
+  inc(result, FconceptList.sizeInBytes);
+end;
+
 { TFhirValueSetCodeSystemListEnumerator }
 
 Constructor TFhirValueSetCodeSystemListEnumerator.Create(list : TFhirValueSetCodeSystemList);
@@ -40355,6 +41694,12 @@ end;
 function TFhirValueSetCodeSystemListEnumerator.GetCurrent : TFhirValueSetCodeSystem;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetCodeSystemListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetCodeSystemList }
@@ -40797,6 +42142,17 @@ begin
   result := (FConceptList <> nil) and (FConceptList.count > 0);
 end;
 
+function TFhirValueSetCodeSystemConcept.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCode.sizeInBytes);
+  inc(result, FAbstract.sizeInBytes);
+  inc(result, FDisplay.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+  inc(result, FdesignationList.sizeInBytes);
+  inc(result, FconceptList.sizeInBytes);
+end;
+
 { TFhirValueSetCodeSystemConceptListEnumerator }
 
 Constructor TFhirValueSetCodeSystemConceptListEnumerator.Create(list : TFhirValueSetCodeSystemConceptList);
@@ -40821,6 +42177,12 @@ end;
 function TFhirValueSetCodeSystemConceptListEnumerator.GetCurrent : TFhirValueSetCodeSystemConcept;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetCodeSystemConceptListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetCodeSystemConceptList }
@@ -41127,6 +42489,14 @@ begin
     FValue.value := '';
 end;
 
+function TFhirValueSetCodeSystemConceptDesignation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLanguage.sizeInBytes);
+  inc(result, FUse.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TFhirValueSetCodeSystemConceptDesignationListEnumerator }
 
 Constructor TFhirValueSetCodeSystemConceptDesignationListEnumerator.Create(list : TFhirValueSetCodeSystemConceptDesignationList);
@@ -41151,6 +42521,12 @@ end;
 function TFhirValueSetCodeSystemConceptDesignationListEnumerator.GetCurrent : TFhirValueSetCodeSystemConceptDesignation;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetCodeSystemConceptDesignationListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetCodeSystemConceptDesignationList }
@@ -41472,6 +42848,14 @@ begin
   result := (FExcludeList <> nil) and (FExcludeList.count > 0);
 end;
 
+function TFhirValueSetCompose.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FimportList.sizeInBytes);
+  inc(result, FincludeList.sizeInBytes);
+  inc(result, FexcludeList.sizeInBytes);
+end;
+
 { TFhirValueSetComposeListEnumerator }
 
 Constructor TFhirValueSetComposeListEnumerator.Create(list : TFhirValueSetComposeList);
@@ -41496,6 +42880,12 @@ end;
 function TFhirValueSetComposeListEnumerator.GetCurrent : TFhirValueSetCompose;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetComposeListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetComposeList }
@@ -41860,6 +43250,15 @@ begin
   result := (FFilterList <> nil) and (FFilterList.count > 0);
 end;
 
+function TFhirValueSetComposeInclude.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSystem.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FconceptList.sizeInBytes);
+  inc(result, FfilterList.sizeInBytes);
+end;
+
 { TFhirValueSetComposeIncludeListEnumerator }
 
 Constructor TFhirValueSetComposeIncludeListEnumerator.Create(list : TFhirValueSetComposeIncludeList);
@@ -41884,6 +43283,12 @@ end;
 function TFhirValueSetComposeIncludeListEnumerator.GetCurrent : TFhirValueSetComposeInclude;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetComposeIncludeListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetComposeIncludeList }
@@ -42209,6 +43614,14 @@ begin
   result := (FDesignationList <> nil) and (FDesignationList.count > 0);
 end;
 
+function TFhirValueSetComposeIncludeConcept.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCode.sizeInBytes);
+  inc(result, FDisplay.sizeInBytes);
+  inc(result, FdesignationList.sizeInBytes);
+end;
+
 { TFhirValueSetComposeIncludeConceptListEnumerator }
 
 Constructor TFhirValueSetComposeIncludeConceptListEnumerator.Create(list : TFhirValueSetComposeIncludeConceptList);
@@ -42233,6 +43646,12 @@ end;
 function TFhirValueSetComposeIncludeConceptListEnumerator.GetCurrent : TFhirValueSetComposeIncludeConcept;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetComposeIncludeConceptListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetComposeIncludeConceptList }
@@ -42554,6 +43973,14 @@ begin
     FValue.value := '';
 end;
 
+function TFhirValueSetComposeIncludeFilter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProperty_.sizeInBytes);
+  inc(result, FOp.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TFhirValueSetComposeIncludeFilterListEnumerator }
 
 Constructor TFhirValueSetComposeIncludeFilterListEnumerator.Create(list : TFhirValueSetComposeIncludeFilterList);
@@ -42578,6 +44005,12 @@ end;
 function TFhirValueSetComposeIncludeFilterListEnumerator.GetCurrent : TFhirValueSetComposeIncludeFilter;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetComposeIncludeFilterListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetComposeIncludeFilterList }
@@ -43020,6 +44453,17 @@ begin
   result := (FContainsList <> nil) and (FContainsList.count > 0);
 end;
 
+function TFhirValueSetExpansion.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FIdentifier.sizeInBytes);
+  inc(result, FTimestamp.sizeInBytes);
+  inc(result, FTotal.sizeInBytes);
+  inc(result, FOffset.sizeInBytes);
+  inc(result, FparameterList.sizeInBytes);
+  inc(result, FcontainsList.sizeInBytes);
+end;
+
 { TFhirValueSetExpansionListEnumerator }
 
 Constructor TFhirValueSetExpansionListEnumerator.Create(list : TFhirValueSetExpansionList);
@@ -43044,6 +44488,12 @@ end;
 function TFhirValueSetExpansionListEnumerator.GetCurrent : TFhirValueSetExpansion;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetExpansionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetExpansionList }
@@ -43308,6 +44758,13 @@ begin
   FValue := value;
 end;
 
+function TFhirValueSetExpansionParameter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TFhirValueSetExpansionParameterListEnumerator }
 
 Constructor TFhirValueSetExpansionParameterListEnumerator.Create(list : TFhirValueSetExpansionParameterList);
@@ -43332,6 +44789,12 @@ end;
 function TFhirValueSetExpansionParameterListEnumerator.GetCurrent : TFhirValueSetExpansionParameter;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetExpansionParameterListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetExpansionParameterList }
@@ -43776,6 +45239,17 @@ begin
   result := (FContainsList <> nil) and (FContainsList.count > 0);
 end;
 
+function TFhirValueSetExpansionContains.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSystem.sizeInBytes);
+  inc(result, FAbstract.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
+  inc(result, FDisplay.sizeInBytes);
+  inc(result, FcontainsList.sizeInBytes);
+end;
+
 { TFhirValueSetExpansionContainsListEnumerator }
 
 Constructor TFhirValueSetExpansionContainsListEnumerator.Create(list : TFhirValueSetExpansionContainsList);
@@ -43800,6 +45274,12 @@ end;
 function TFhirValueSetExpansionContainsListEnumerator.GetCurrent : TFhirValueSetExpansionContains;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetExpansionContainsListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetExpansionContainsList }
@@ -44682,6 +46162,30 @@ begin
   FExpansion := value;
 end;
 
+function TFhirValueSet.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUrl.sizeInBytes);
+  inc(result, FIdentifier.sizeInBytes);
+  inc(result, FVersion.sizeInBytes);
+  inc(result, FName.sizeInBytes);
+  inc(result, FStatus.sizeInBytes);
+  inc(result, FExperimental.sizeInBytes);
+  inc(result, FPublisher.sizeInBytes);
+  inc(result, FcontactList.sizeInBytes);
+  inc(result, FDate.sizeInBytes);
+  inc(result, FLockedDate.sizeInBytes);
+  inc(result, FDescription.sizeInBytes);
+  inc(result, FuseContextList.sizeInBytes);
+  inc(result, FImmutable.sizeInBytes);
+  inc(result, FRequirements.sizeInBytes);
+  inc(result, FCopyright.sizeInBytes);
+  inc(result, FExtensible.sizeInBytes);
+  inc(result, FCodeSystem.sizeInBytes);
+  inc(result, FCompose.sizeInBytes);
+  inc(result, FExpansion.sizeInBytes);
+end;
+
 { TFhirValueSetListEnumerator }
 
 Constructor TFhirValueSetListEnumerator.Create(list : TFhirValueSetList);
@@ -44706,6 +46210,12 @@ end;
 function TFhirValueSetListEnumerator.GetCurrent : TFhirValueSet;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirValueSetListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirValueSetList }

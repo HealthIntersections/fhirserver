@@ -51,6 +51,8 @@ type
     FCanBePrimitive : integer;
 
     function GetName: string;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -88,6 +90,8 @@ type
     FIsChecked: boolean;
     FDefn: TFHIRStructureDefinition;
     procedure SetDefn(const Value: TFHIRStructureDefinition);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TProfileUsage; overload;
@@ -100,6 +104,8 @@ type
     FEntries : TFslList<TProfileUsage>;
     FIsProcessed: boolean;
     function GetIsEmpty: boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -139,6 +145,7 @@ type
     function GetProfiles: TProfileUsages;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(name : String); overload;
     constructor Create(name : String; prop : TFHIRMMProperty); overload;
@@ -207,6 +214,7 @@ type
     function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
     function getDefinition(loc : TSourceLocation; ns, name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
     function getDefinition(loc : TSourceLocation; name : String; noException : boolean = false) : TFHIRStructureDefinition; overload;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
@@ -283,6 +291,8 @@ type
     procedure primitiveValue(name : String; item : TFHIRMMElement);
     procedure composeElement(path : String; element : TFHIRMMElement); overload;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function parse(stream : TStream; noException : boolean = false) : TFHIRMMElement; overload; override;
     function parse(obj : TJsonObject; noException : boolean = false) : TFHIRMMElement; overload;
@@ -307,6 +317,7 @@ type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function GetResourceType : TFhirResourceType; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(root : TFHIRMMElement);
     destructor Destroy; override;
@@ -798,6 +809,14 @@ begin
       exit(p);
 end;
 
+function TFHIRMMProperty.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContext.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+  inc(result, FStructure.sizeInBytes);
+end;
+
 { TFHIRMMElement }
 
 constructor TFHIRMMElement.Create(name: String);
@@ -1195,6 +1214,21 @@ begin
   FXhtml := Value;
 end;
 
+function TFHIRMMElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FComments.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
+  inc(result, (FExplicitType.length * sizeof(char)) + 12);
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, FChildren.sizeInBytes);
+  inc(result, FProperty.sizeInBytes);
+  inc(result, FElementProperty.sizeInBytes);
+  inc(result, FXhtml.sizeInBytes);
+  inc(result, FProfiles.sizeInBytes);
+end;
+
 { TFHIRMMParserBase }
 
 constructor TFHIRMMParserBase.create(context: TFHIRWorkerContext);
@@ -1465,6 +1499,13 @@ begin
     children.Free;
     sd.Free;
   end;
+end;
+
+function TFHIRMMParserBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContext.sizeInBytes);
+  inc(result, FErrors.sizeInBytes);
 end;
 
 { TFHIRMMManager }
@@ -2565,6 +2606,12 @@ begin
 end;
 
 
+function TFHIRMMJsonParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, json.sizeInBytes);
+end;
+
 { TFHIRMMResourceLoader }
 
 function TFHIRMMResourceLoader.parse(r: TFHIRResource): TFHIRMMElement;
@@ -2683,6 +2730,12 @@ constructor TFHIRCustomResource.Create(root: TFHIRMMElement);
 begin
   inherited Create;
   FRoot := root;
+end;
+
+function TFHIRCustomResource.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRoot.sizeInBytes);
 end;
 
 class function TFHIRCustomResource.CreateFromBase(context : TFHIRWorkerContext; base: TFHIRObject): TFHIRCustomResource;
@@ -2827,6 +2880,12 @@ begin
   result := FEntries.Count = 0;
 end;
 
+function TProfileUsages.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEntries.sizeInBytes);
+end;
+
 { TProfileUsage }
 
 destructor TProfileUsage.Destroy;
@@ -2844,6 +2903,12 @@ procedure TProfileUsage.SetDefn(const Value: TFHIRStructureDefinition);
 begin
   FDefn.free;
   FDefn := Value;
+end;
+
+function TProfileUsage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefn.sizeInBytes);
 end;
 
 end.

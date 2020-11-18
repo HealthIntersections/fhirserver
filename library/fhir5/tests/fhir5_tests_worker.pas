@@ -65,6 +65,8 @@ Type
 
     class function Use : TFHIRWorkerContext;
     class procedure closeUp;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
 
@@ -73,6 +75,7 @@ Type
     FProc : TThreadProcedure;
   protected
     procedure Execute; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(proc : TThreadProcedure);
   end;
@@ -93,6 +96,12 @@ uses
 { TTestingWorkerContext }
 var
   GWorkerContext : TBaseWorkerContext;
+
+function TTestingWorkerContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, class function Use.sizeInBytes);
+end;
 
 class procedure TTestingWorkerContext.closeUp;
 begin
@@ -202,6 +211,12 @@ end;
 procedure TTestObjectThread.execute;
 begin
   Fproc;
+end;
+
+function TTestObjectThread.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProc.sizeInBytes);
 end;
 
 { TTestObject }

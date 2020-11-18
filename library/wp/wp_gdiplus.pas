@@ -446,6 +446,8 @@ Type
       FClickable : Boolean;
       FHintStringList : TFslStringList;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -618,6 +620,8 @@ Type
 
       Function GetNativeFont : TGPFont;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -660,6 +664,8 @@ Type
     procedure SetFontName(const Value: String);
     procedure SetFontSize(const Value: Double);
     procedure SetImage(const Value: TGdiPlusBitmapImage);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1585,6 +1591,14 @@ End;
 
 
 {$IFDEF VER130}
+function TGdiPlusBitmapImage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBitmap.sizeInBytes);
+  inc(result, FTransparentColour.sizeInBytes);
+  inc(result, FBytes.sizeInBytes);
+end;
+
 Function TFixedStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: Integer): HResult;
 {$ELSE}
 Function TFixedStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: DWord): HResult;
@@ -2187,6 +2201,12 @@ Begin
   Result := FRegion.IsVisible(X, Y);
 End;
 
+
+function TGdiPlusHotSpot.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHintStringList.sizeInBytes);
+end;
 
 Function TGdiPlusHotSpotList.GetRegionByIndex(Const iIndex: Integer): TGdiPlusHotSpot;
 Begin
@@ -2911,6 +2931,12 @@ End;
     End;
     *)
 
+function TGdiPlusFont.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFontFamily.length * sizeof(char)) + 12);
+end;
+
 { TGdiPlusImageAnnotator }
 
 destructor TGdiPlusImageAnnotator.Destroy;
@@ -2986,6 +3012,13 @@ begin
   FontSize := (FImage.Height / iGridCount) * 0.6;
   FStride := FImage.Height / iGridCount;
   FTop := MARGIN * FImage.Height;
+end;
+
+function TGdiPlusImageAnnotator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFontName.length * sizeof(char)) + 12);
+  inc(result, FImage.sizeInBytes);
 end;
 
 End.

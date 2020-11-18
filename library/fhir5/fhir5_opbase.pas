@@ -43,6 +43,8 @@ type
     FName : String;
     FValue : TFHIRDataType;
     procedure SetValue(const Value: TFHIRDataType);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -61,6 +63,7 @@ type
     procedure loadExtensions(params : TFhirParametersParameter); overload;
     procedure writeExtensions(params : TFHIRParameters); overload;
     procedure writeExtensions(params : TFhirParametersParameter); overload;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     property extensions : TFslList<TFHIROpExtension> read GetExtensions;
@@ -233,6 +236,12 @@ begin
       end;
 end;
 
+function TFHIROperationBaseObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExtensions.sizeInBytes);
+end;
+
 { TFHIROpExtension }
 
 destructor TFHIROpExtension.Destroy;
@@ -245,6 +254,13 @@ procedure TFHIROpExtension.SetValue(const Value: TFHIRDataType);
 begin
   FValue.Free;
   FValue := Value;
+end;
+
+function TFHIROpExtension.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FValue.sizeInBytes);
 end;
 
 end.

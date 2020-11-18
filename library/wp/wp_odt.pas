@@ -43,6 +43,8 @@ Type
     Private
       FMimeType : String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TWPOpenDocPackagePart;
       Function Clone : TWPOpenDocPackagePart;
@@ -147,6 +149,8 @@ Type
     Procedure ReadManifest(oExtractor: TFslXMLExtractor);
     Procedure LoadManifest; Virtual;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -172,6 +176,7 @@ Type
     Procedure WriteManifest; Virtual;
 
     Function GetByName(Const sName, sMimeType : String) : TFslBuffer;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -298,6 +303,7 @@ Type
     Function GetCapitalization: TWPSCapsState; Overload; Virtual;
     Procedure SetCapitalization(Const oCapitalize: TWPSCapsState); Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtTextFormat); Overload;
@@ -376,6 +382,7 @@ Type
     Function GetMarginBottom: Integer; Overload; Virtual;
     Procedure SetMarginBottom(Const aValue: Integer); Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtParagraphFormat); Overload;
@@ -422,6 +429,7 @@ Type
     Procedure SetNumberStyle(Const oType: TWPSParagraphNumberType); Virtual;
     Procedure SetNumberFormat(Const oFormat: TWPSParagraphNumberFormat); Virtual;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListLevelFormat); Overload;
@@ -459,6 +467,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListFormat); Overload;
@@ -504,6 +513,7 @@ Type
     Function GetVerticalMargin: Integer; Overload; Virtual;
     Procedure SetVerticalMargin(Const aValue: Integer); Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableFormat); Overload;
@@ -538,7 +548,6 @@ Type
   TOdtTableRowFormat = Class(TFslObject)
   Private
     FBackgroundColor: TColour;
-  Protected
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableRowFormat); Overload;
@@ -584,6 +593,7 @@ Type
     Property WPBorderLeft: TWPBorder Read GetBorderLeft Write SetBorderLeft;
     Property WPBorderRight: TWPBorder Read GetBorderRight Write SetBorderRight;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableCellFormat); Overload;
@@ -633,6 +643,8 @@ Type
     Function GetCellFormat: TOdtTableCellFormat;
     Procedure SetCellFormat(oFormat: TOdtTableCellFormat);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtStyle); Overload;
@@ -817,6 +829,7 @@ Type
     Procedure ReadOdtStyleRowProperties(oFormat: TOdtTableRowFormat; oReader:TFslXMLExtractor); Overload;
     Procedure ReadOdtStyleCellProperties(oFormat: TOdtTableCellFormat; oReader:TFslXMLExtractor); Overload;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -896,6 +909,7 @@ Type
       Procedure WriteTableRowFormat(oFormatter: TFslXMLFormatter; oRowFormat: TOdtTableRowFormat);
       Procedure WriteTableCellFormat(oFormatter: TFslXMLFormatter; oCellFormat: TOdtTableCellFormat);
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -2038,6 +2052,17 @@ Begin
   FCurrentListStyle.ListFormat.ApplyStyle(oParaFormat, FCurrentListLevel, iItemCount);
 End;
 
+function TWPOdtReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOdtAdapter.sizeInBytes);
+  inc(result, FFontDecls.sizeInBytes);
+  inc(result, FDefaultStyles.sizeInBytes);
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FStyleStack.sizeInBytes);
+  inc(result, FCurrentListStyle.sizeInBytes);
+end;
+
 Constructor TWPOdtWriter.Create;
 Begin
   Inherited;
@@ -2816,6 +2841,17 @@ Begin
 End;
 
 
+function TWPOdtWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOdtAdapter.sizeInBytes);
+  inc(result, FFormatter.sizeInBytes);
+  inc(result, FFontDecls.sizeInBytes);
+  inc(result, FDefaultStyles.sizeInBytes);
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FStyleStack.sizeInBytes);
+end;
+
 Procedure TWPOpenDocPackagePart.Assign(oObject : TFslObject);
 Begin
   Inherited;
@@ -2835,6 +2871,12 @@ Begin
   Result := TWPOpenDocPackagePart(Inherited Clone);
 End;
 
+
+function TWPOpenDocPackagePart.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMimeType.length * sizeof(char)) + 12);
+end;
 
 Function TWPOpenDocPackage.Clone : TWPOpenDocPackage;
 Begin
@@ -3020,6 +3062,14 @@ End;
 
 
 
+
+function TOdtReaderAdapter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FMediaType.length * sizeof(char)) + 12);
+  inc(result, FPackage.sizeInBytes);
+end;
 
 { TOdtWriterAdapter }
 
@@ -3248,6 +3298,12 @@ Function SimpleCapsStateMatches(Const aVal, aVal2 : TWPSCapsState): Boolean;
 Begin
   Result := (aVal = aVal2) Or ((aVal = fcsUnknown) And (aVal2 = fcsNormal));
 End;
+
+function TOdtWriterAdapter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPackage.sizeInBytes);
+end;
 
 { TOdtTextFormat }
 
@@ -3600,6 +3656,22 @@ Begin
   Result := FWeight <> '';
 End;
 
+function TOdtTextFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FFamily.length * sizeof(char)) + 12);
+  inc(result, (FSize.length * sizeof(char)) + 12);
+  inc(result, (FStyle.length * sizeof(char)) + 12);
+  inc(result, (FWeight.length * sizeof(char)) + 12);
+  inc(result, (FPosition.length * sizeof(char)) + 12);
+  inc(result, (FUnderlineType.length * sizeof(char)) + 12);
+  inc(result, (FUnderlineStyle.length * sizeof(char)) + 12);
+  inc(result, (FLineThroughType.length * sizeof(char)) + 12);
+  inc(result, (FLineThroughStyle.length * sizeof(char)) + 12);
+  inc(result, (FTextTransform.length * sizeof(char)) + 12);
+end;
+
 { TOdtParagraphFormat }
 
 Constructor TOdtParagraphFormat.Create;
@@ -3738,6 +3810,17 @@ Begin
   Result := (FBreakBefore <> '') And (FBreakAfter = '');
 End;
 
+
+function TOdtParagraphFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FTextAlign.length * sizeof(char)) + 12);
+  inc(result, (FMarginLeft.length * sizeof(char)) + 12);
+  inc(result, ( FMarginRight.length * sizeof(char)) + 12);
+  inc(result, ( FMarginBottom.length * sizeof(char)) + 12);
+  inc(result, (FBreakBefore.length * sizeof(char)) + 12);
+  inc(result, ( FBreakAfter.length * sizeof(char)) + 12);
+end;
 
 { TOdtStyle }
 
@@ -3959,6 +4042,18 @@ Begin
 End;
 
 
+function TOdtStyle.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FTextFormat.sizeInBytes);
+  inc(result, FParagraphFormat.sizeInBytes);
+  inc(result, FListFormat.sizeInBytes);
+  inc(result, FTableFormat.sizeInBytes);
+  inc(result, FRowFormat.sizeInBytes);
+  inc(result, FCellFormat.sizeInBytes);
+end;
+
 { TOdtStyleList }
 
 Function TOdtStyleList.GetStyle(iIndex: Integer): TOdtStyle;
@@ -4163,6 +4258,14 @@ Begin
 End;
 
 
+function TOdtListLevelFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNumberStyle.length * sizeof(char)) + 12);
+  inc(result, (FNumberFormat.length * sizeof(char)) + 12);
+  inc(result, (FStartValue.length * sizeof(char)) + 12);
+end;
+
 { TOdtListFormat }
 
 Constructor TOdtListFormat.Create;
@@ -4244,6 +4347,12 @@ Begin
   If Result Then
     Result := Self[0].Matches(oFormat, iCount);
 End;
+
+function TOdtListFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
 
 { TOdtTableFormat }
 
@@ -4377,6 +4486,15 @@ Begin
 End;
 
 
+function TOdtTableFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMarginLeft.length * sizeof(char)) + 12);
+  inc(result, ( FMarginRight.length * sizeof(char)) + 12);
+  inc(result, (FMarginTop.length * sizeof(char)) + 12);
+  inc(result, ( FMarginBottom.length * sizeof(char)) + 12);
+end;
+
 { TOdtTableRowFormat }
 
 Constructor TOdtTableRowFormat.Create;
@@ -4424,6 +4542,7 @@ Function TOdtTableRowFormat.Matches(Const oRow: TWPWorkingDocumentTableRowStartP
 Begin
   Result := (BackgroundColor = oRow.Background);
 End;
+
 
 { TOdtTableCellFormat }
 
@@ -4545,5 +4664,14 @@ Begin
     End;
   End;
 End;
+
+function TOdtTableCellFormat.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FBorderTop.length * sizeof(char)) + 12);
+  inc(result, ( FBorderBottom.length * sizeof(char)) + 12);
+  inc(result, (FBorderLeft.length * sizeof(char)) + 12);
+  inc(result, ( FBorderRight.length * sizeof(char)) + 12);
+end;
 
 End.

@@ -47,6 +47,8 @@ type
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
 //    procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
 //    procedure testBuildPatientExampleB;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
 
     [SetupFixture] Procedure SetUp;
@@ -530,4 +532,10 @@ end;
 initialization
   if FindCmdLineSwitch('dev') then
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
+function TFHIRValidatorTests.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FServices.sizeInBytes);
+end;
+
 end.

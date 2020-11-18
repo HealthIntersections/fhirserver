@@ -56,6 +56,8 @@ Type
     function GetText: String;
     procedure SetText(const Value: String);
     procedure SetBuffer(const Value: TFslBuffer);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -173,6 +175,8 @@ Type
     Procedure Decode(Const sSource : TBytes); Overload;
     Procedure Decode(Const sSource : TStream); Overload;
     function GetCDAPatientID(const sOid: String): TIdentity;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(Const sSource : TBytes); Overload;
     constructor Create(Const sSource : TStream); Overload;
@@ -837,6 +841,16 @@ begin
   end;
 end;
 
+function TCDADocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDom.sizeInBytes);
+  inc(result, FRoot.sizeInBytes);
+  inc(result, FAttachments.sizeInBytes);
+  inc(result, (FCDAName.length * sizeof(char)) + 12);
+  inc(result, FIdentifiedObjects.sizeInBytes);
+end;
+
 { TCDAAttachment }
 
 constructor TCDAAttachment.Create;
@@ -878,6 +892,13 @@ end;
 procedure TCDAAttachment.SetText(const Value: String);
 begin
   FBuffer.AsText := value;
+end;
+
+function TCDAAttachment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FBuffer.sizeInBytes);
 end;
 
 { TcdaAttachmentList }

@@ -174,6 +174,7 @@ Type
 
     Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
+    function sizeInBytesV : cardinal; virtual;
   Public
     constructor Create; Overload; Virtual;
     destructor Destroy; Override;
@@ -192,6 +193,7 @@ Type
     Function Assignable : Boolean; Overload; Virtual;
     Function Duplicate : TFslObject; Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Virtual;
+    function sizeInBytes : cardinal;
 
     // Determine if self is a valid reference of the specified class.
     Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
@@ -310,6 +312,7 @@ Type
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure NotifyChange(const Item: T; Action: TCollectionNotification);
+    function sizeInBytesV : cardinal; override;
   public
 
     constructor Create; Overload; Override;
@@ -512,6 +515,7 @@ Type
     property IsEmpty : Boolean read GetEmpty;
     property defaultValue : T read FDefault write SetDefault;
     property hasDefault : Boolean read FHasDefault write SetHasDefault;
+    function sizeInBytes : cardinal;
 
     type
       TFslPairEnumerator = class(TEnumerator<TFslPair<T>>)
@@ -621,12 +625,15 @@ Type
     Procedure Free; Overload;
     Function Link : TFslStringDictionary; Overload;
     property Values[const Key: String]: String read GetValue write SetValue; default;
+    function sizeInBytes : cardinal;
   end;
 
   TFslStringSet = class (TFslObject)
   private
     // not sorted - this doesn't get long enough to make it worth sorting
     FItems : TArray<String>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(initial : String); overload;
     constructor Create(initial : array of String); overload;
@@ -666,6 +673,8 @@ Type
     FDict : TFslStringDictionary;
     function GetItem(const Key: String): String;
     procedure SetItem(const Key, Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -1225,6 +1234,21 @@ Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
 Begin
   Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
+
+function TFslObject.sizeInBytes : cardinal;
+begin
+  if self = nil then
+    result := 0
+  else
+    result := sizeInBytesV;
+end;
+
+function TFslObject.sizeInBytesV : cardinal;
+begin
+  result := sizeof(self);
+  inc(result, (FNamedClass.length*2)+12);
+  inc(result, length(FThreadName)+12);
+end;
 
 { TFslEnumerable<T> }
 
@@ -2086,6 +2110,18 @@ begin
   Result := TFslEnumerator.Create(Self);
 end;
 
+function TFslList<T>.sizeInBytesV : cardinal;
+var
+  i : T;
+begin
+  result := sizeof(self);
+  inc(result, length(FItems) * sizeof(Pointer));
+  inc(result, FComparer.sizeInBytes);
+  inc(result, sizeof(FArrayManager));
+  for i in FItems do
+    inc(result, TFslObject(t).sizeInBytes);
+end;
+
 { TFslList<T>.TFslEnumerator }
 
 constructor TFslList<T>.TFslEnumerator.Create(const AList: TFslList<T>);
@@ -2607,6 +2643,29 @@ begin
   Result := FValueCollection;
 end;
 
+function TFslMap<T>.sizeInBytes : cardinal;
+var
+  p : TFslPair<T>;
+begin
+  if self = nil then
+    result := 0
+  else
+  begin
+    result := sizeOf(self);
+    inc(result, length(FItems) * Sizeof(TItem));
+    inc(result, sizeof(FSortedKeys) + FSortedKeys.Count * 2 * sizeof(pointer));
+    inc(result, sizeof(FAsAddedKeys) + FAsAddedKeys.Count * 2 * sizeof(pointer));
+    inc(result, TFslObject(FDefault).sizeInBytes);
+    inc(result, (length(FName) * sizeof(char))+12);
+    for p in self do
+    begin
+      inc(result, (length(p.Key) * sizeof(char))+12);
+      inc(result, p.Value.sizeInBytes);
+    end;
+  end;
+end;
+
+
 // Pairs
 
 constructor TFslMap<T>.TFslPairEnumerator.Create(const AMap: TFslMap<T>);
@@ -2811,6 +2870,14 @@ begin
   Items[key] := value;
 end;
 
+function TFslStringDictionary.sizeInBytes : cardinal;
+begin
+  if self = nil then
+    result := 0
+  else
+    result := sizeOf(self);
+end;
+
 { TArrayMoveManager<T> }
 
 procedure TMoveArrayManager<T>.Finalize(var AArray: array of T; Index, Count: Integer);
@@ -3001,6 +3068,17 @@ begin
   result := false;
 end;
 
+function TFslStringSet.sizeInBytesV : cardinal;
+var
+  s : String;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, length(FItems) * sizeof(pointer));
+  for s in FItems do
+    inc(result, (length(s) * 2) + 12);
+
+end;
+
 { TFslStringSet.TFslStringSetEnumerator }
 
 constructor TFslStringSet.TFslStringSetEnumerator.Create(const aSet: TFslStringSet);
@@ -3061,6 +3139,12 @@ end;
 procedure TFslStringMap.SetItem(const Key, Value: String);
 begin
   FDict.AddOrSetValue(key, value);
+end;
+
+function TFslStringMap.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FDict.sizeInBytes);
 end;
 
 { ETodo }

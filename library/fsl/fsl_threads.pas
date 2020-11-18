@@ -214,6 +214,8 @@ Type
   private
     FException : String;
     FExceptionClass : ExceptClass;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function link : TBackgroundTaskResponsePackage; overload;
     property Exception : String read FException write FException;
@@ -230,6 +232,8 @@ Type
     FOnNotify: TBackgroundTaskEvent;
     FRequest: TBackgroundTaskRequestPackage;
     FResponse: TBackgroundTaskResponsePackage;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
     destructor Destroy; override;
@@ -261,6 +265,8 @@ Type
     FStatus: TBackgroundTaskStatus;
     FPct: integer;
     FMessage: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function link : TBackgroundTaskStatusInfo; overload;
 
@@ -332,6 +338,8 @@ Type
     FLock : TFslLock;
     FEngines : TFslList<TBackgroundTaskEngine>;
     procedure log(s : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -653,11 +661,24 @@ begin
   result := TBackgroundTaskPackagePair(inherited link);
 end;
 
+function TBackgroundTaskPackagePair.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRequest.sizeInBytes);
+  inc(result, FResponse.sizeInBytes);
+end;
+
 { TBackgroundTaskResponsePackage }
 
 function TBackgroundTaskResponsePackage.link: TBackgroundTaskResponsePackage;
 begin
   result := TBackgroundTaskResponsePackage(inherited link);
+end;
+
+function TBackgroundTaskResponsePackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FException.length * sizeof(char)) + 12);
 end;
 
 { TBackgroundTaskRequestPackage }
@@ -1218,8 +1239,6 @@ begin
   end;
 end;
 
-
-
 { TBackgroundTaskManager }
 
 constructor TBackgroundTaskManager.Create;
@@ -1479,6 +1498,12 @@ End;
 
 
 
+function TBackgroundTaskManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEngines.sizeInBytes);
+end;
+
 { TBackgroundTaskUIRequest }
 
 function TBackgroundTaskUIRequest.link: TBackgroundTaskUIRequest;
@@ -1519,6 +1544,13 @@ begin
     result := ''
   else
     result := inttostr(pct);
+end;
+
+function TBackgroundTaskStatusInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FMessage.length * sizeof(char)) + 12);
 end;
 
 Initialization

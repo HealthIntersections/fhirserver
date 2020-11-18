@@ -249,6 +249,8 @@ type
     FClass : TClass;
     FEnumName : String;
     function GetHasValue: Boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
     constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
@@ -306,6 +308,8 @@ type
     FProperties : TFHIRPropertyList;
     FCursor : Integer;
     Function GetCurrent : TFHIRProperty;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(oFocus : TFHIRObject; bInheritedProperties, bPrimitiveValues : Boolean); overload;
     destructor Destroy; Override;
@@ -325,6 +329,8 @@ type
     FType: String;
     FValue: TFhirObject;
     FList : TFhirObjectList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor create; override;
     constructor Create(name, type_ : String; value : TFhirObject; list : TFHIRObjectList); overload;
@@ -373,6 +379,8 @@ type
   private
     FProp: TFHIRProperty;
     FValue: TFHIRObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor create(prop : TFHIRProperty; value : TFHIRObject);
     destructor Destroy; override;
@@ -416,6 +424,7 @@ type
 
     function GetDateValue: TFslDateTime; virtual;
     procedure SetDateValue(Value: TFslDateTime); virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -552,6 +561,7 @@ type
     function getTags(name: String): String;
   protected
     function ItemClass : TFslObjectClass; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(item : TFHIRObject); overload;
     constructor Create(items : TFHIRObjectList); overload;
@@ -608,6 +618,7 @@ type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String); Overload;
     constructor Create(value : TFslDateTime); Overload;
@@ -635,6 +646,8 @@ type
     FParent : TFHIRObject;
     FName : String;
     FValue : TFHIRObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(focus : TFHIRObject); overload;
     constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
@@ -661,6 +674,8 @@ type
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
   private
     FOneBased : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(focus : TFHIRObject); overload;
@@ -685,6 +700,8 @@ type
     FSeverity : TIssueSeverity;
     FMessage  : String;
     FDisplay: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(Severity : TIssueSeverity; Message : String); overload; virtual;
@@ -702,6 +719,7 @@ type
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(v : String);
     function getId : String; override;
@@ -725,6 +743,7 @@ type
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -816,6 +835,15 @@ begin
   inherited Destroy;
 end;
 
+function TFHIRNamedValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
+  inc(result, FValue.sizeInBytes);
+  inc(result, FList.sizeInBytes);
+end;
+
 { TFHIRObjectLocationData }
 
 function TFHIRObjectLocationData.hasLocation2: boolean;
@@ -861,6 +889,13 @@ begin
   FProp.Free;
   FValue.Free;
   inherited Destroy;
+end;
+
+function TFHIRLocatedNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProp.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
 end;
 
 { TFHIRObject }
@@ -1323,6 +1358,16 @@ begin
   result := (FCommentsEnd <> nil) and (FCommentsEnd.count > 0);
 end;
 
+function TFHIRObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTags.sizeInBytes);
+  inc(result, FTag.sizeInBytes);
+  inc(result, FLocationData.sizeInBytes);
+  inc(result, FCommentsStart.sizeInBytes);
+  inc(result, FCommentsEnd.sizeInBytes);
+end;
+
 { TFHIRObjectText }
 
 constructor TFHIRObjectText.create(value: String);
@@ -1413,6 +1458,12 @@ end;
 function TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TFHIRObjectList }
@@ -1507,6 +1558,13 @@ begin
     result := result + ObjByIndex[i].ToString;
   end;
   result := result + ')';
+end;
+
+function TFHIRObjectList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTags.sizeInBytes);
+  inc(result, FLocationData.sizeInBytes);
 end;
 
 { TFHIRProperty }
@@ -1618,6 +1676,16 @@ begin
   FList := TFHIRObjectList.Create;
 end;
 
+function TFHIRProperty.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOwner.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
+  inc(result, FList.sizeInBytes);
+  inc(result, (FEnumName.length * sizeof(char)) + 12);
+end;
+
 class function TFHIRProperty.create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty;
 var
   o : TFslObject;
@@ -1711,6 +1779,13 @@ end;
 procedure TFHIRPropertyIterator.Reset;
 begin
   FCursor := 0;
+end;
+
+function TFHIRPropertyIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FProperties.sizeInBytes);
 end;
 
 { TFhirPropertyListEnumerator }
@@ -1936,6 +2011,13 @@ begin
   result := value.setProperty(propName, propValue);
 end;
 
+function TFHIRSelection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TFHIRSelectionList }
 
 constructor TFHIRSelectionList.Create(parent : TFHIRObject; name : String; focus: TFHIRObject);
@@ -2025,6 +2107,11 @@ begin
     else
       result := result + '.'+sel.name;
   end;
+end;
+
+function TFHIRSelectionList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 class function TFHIRSelectionList.compareDeep(e1, e2: TFHIRSelectionList; allowNull: boolean): boolean;
@@ -2141,6 +2228,13 @@ begin
 end;
 
 
+function TValidationResult.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMessage.length * sizeof(char)) + 12);
+  inc(result, (FDisplay.length * sizeof(char)) + 12);
+end;
+
 { EFHIRUnsupportedVersion }
 
 constructor EFHIRUnsupportedVersion.Create(version: TFHIRVersion; action: String);
@@ -2228,6 +2322,12 @@ end;
 function TFHIRSystemString.ToString: String;
 begin
   result := FValue;
+end;
+
+function TFHIRSystemString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TFHIRSystemTuple }
@@ -2324,6 +2424,12 @@ begin
   result := FFields.ToString;
 end;
 
+function TFHIRSystemTuple.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFields.sizeInBytes);
+end;
+
 class function TFHIRSystemTuple.fromParams(pm: THTTPParameters): TFHIRSystemTuple;
 var
   this : TFHIRSystemTuple;
@@ -2345,6 +2451,8 @@ Type
   TFHIRMessage = class (TFslObject)
   private
     FMessages : TFslStringDictionary;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -2433,6 +2541,12 @@ destructor TFHIRMessage.Destroy;
 begin
   FMessages.Free;
   inherited;
+end;
+
+function TFHIRMessage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMessages.sizeInBytes);
 end;
 
 { EFHIRException }

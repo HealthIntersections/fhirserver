@@ -47,6 +47,8 @@ Type
     FAccount: String;
 
 //    procedure handleAuthentication(Sender: TObject; Authentication: TIdAuthentication; var Handled: Boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -111,6 +113,16 @@ begin
   end;
 end;
 
+
+function TTwilioClient.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FBody.length * sizeof(char)) + 12);
+  inc(result, (FFrom.length * sizeof(char)) + 12);
+  inc(result, (FTo.length * sizeof(char)) + 12);
+  inc(result, (FToken.length * sizeof(char)) + 12);
+  inc(result, (FAccount.length * sizeof(char)) + 12);
+end;
 
 class procedure TTwilioClient.RunTests;
 var

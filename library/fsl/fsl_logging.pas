@@ -53,6 +53,8 @@ Type
     FDescription: String;
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override; //
 
@@ -97,6 +99,8 @@ Type
     Procedure CutFile(sName : String);
     Procedure CycleFile(sName : String);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(filename : String);
     destructor Destroy; Override;
@@ -139,6 +143,8 @@ Type
 
     procedure checkDay;
     procedure close;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -188,6 +194,13 @@ begin
   Result.FDescription := FDescription;
   Result.FHeader := FHeader;
   Result.FFullPolicy := FFullPolicy;
+end;
+
+function TLoggerPolicy.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDescription.length * sizeof(char)) + 12);
+  inc(result, (FHeader.length * sizeof(char)) + 12);
 end;
 
 { TLogger }
@@ -395,6 +408,14 @@ begin
   Finally
     FLock.UnLock;
   End;
+end;
+
+function TLogger.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
+  inc(result, FPolicy.sizeInBytes);
+  inc(result, (FOpenName.length * sizeof(char)) + 12);
 end;
 
 { TLogListener }
@@ -717,6 +738,14 @@ function TLogging.Counter: String;
 begin
   inc(FCount);
   result := ' #'+inttostr(FCount);
+end;
+
+function TLogging.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFileLogger.sizeInBytes);
+  inc(result, FListeners.sizeInBytes);
+  inc(result, (FWorkingLine.length * sizeof(char)) + 12);
 end;
 
 Initialization

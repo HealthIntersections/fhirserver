@@ -207,6 +207,8 @@ Type
       Procedure SetParagraphType(Const sValue : String);
       Procedure SetParagraphNumberFormat(Const sValue : String);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -253,6 +255,7 @@ Type
 
       Procedure ConfigureTextWriter(oWriter : TWPTextWriterModelWriter); Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -856,6 +859,15 @@ Const
   HIGHLIGHT_CODE_ON = #1+'H'+#1;
   HIGHLIGHT_CODE_OFF = #1+'N'+#1;
 
+function TWPHL7FTReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHL7Font.sizeInBytes);
+  inc(result, FHL7Para.sizeInBytes);
+  inc(result, (FText.length * sizeof(char)) + 12);
+  inc(result, (FWord.length * sizeof(char)) + 12);
+end;
+
 Constructor TWPHL7FTWriter.Create;
 Begin
   Inherited;
@@ -956,6 +968,11 @@ Begin
 End;
 
 
+
+function TWPHL7FTWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 End.
 

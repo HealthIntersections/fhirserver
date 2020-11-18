@@ -39,6 +39,8 @@ Type
   private
     FUnitCode: String;
     FValue: TFslDecimal;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
@@ -64,6 +66,12 @@ begin
   UnitCode := sUnitCode;
 end;
 
+
+function TUcumPair.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FUnitCode.length * sizeof(char)) + 12);
+end;
 
 { TUcumServiceInterface }
 

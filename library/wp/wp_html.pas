@@ -130,6 +130,8 @@ Type
       Procedure ReadContent(oDocument : TWPWorkingDocument; oSource : TFslHTMLItems; aAllowed : TWPHTMLReaderAllowedItems);
       procedure AddParaPiece(oDocument: TWPWorkingDocument);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -231,6 +233,7 @@ Type
     Function HTMLStream : TFslStream; Overload; Virtual;
     Function CanSaveImage : Boolean; Overload; Virtual;
     Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Overload; Virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -270,6 +273,7 @@ Type
       Function HTMLStream : TFslStream; Override;
       Function CanSaveImage : Boolean; Override;
       Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Override;
+    function sizeInBytesV : cardinal; override;
   End;
 
 Implementation
@@ -1668,6 +1672,13 @@ End;
 
 
 
+function TWPHTMLReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDom.sizeInBytes);
+  inc(result, FContextStack.sizeInBytes);
+end;
+
 { TWPHTMLWriterEngine }
 
 Constructor TWPHTMLWriterEngine.Create;
@@ -2422,6 +2433,18 @@ Begin
 End;
 
 
+function TWPHTMLWriterEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFormatter.sizeInBytes);
+  inc(result, FCSSStyles.sizeInBytes);
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, FParaFont.sizeInBytes);
+  inc(result, FSpanFont.sizeInBytes);
+  inc(result, (FParaStyle.length * sizeof(char)) + 12);
+  inc(result, (FSpanStyle.length * sizeof(char)) + 12);
+end;
+
 Function TWPHTMLWriter.HTMLStream : TFslStream;
 Begin
   Result := Stream;
@@ -2526,6 +2549,13 @@ Begin
     s.Free;
   end;
 End;
+
+function TWPMHTWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHTMLStream.sizeInBytes);
+  inc(result, FPackage.sizeInBytes);
+end;
 
 Procedure TWPHTMLReader.ReadAnchor(oDocument: TWPWorkingDocument; oAnchor: TFslHTMLAnchor);
 Var

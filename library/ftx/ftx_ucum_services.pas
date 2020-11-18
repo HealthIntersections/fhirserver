@@ -48,6 +48,8 @@ Type
   private
     FConcept: TFhirValueSetComposeIncludeConceptW;
     procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     constructor Create(code : String); overload;
@@ -59,6 +61,8 @@ Type
   private
     FCursor : integer; // used on the first
     FCanonical: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(canonical : String);
     property canonical : String read FCanonical write FCanonical;
@@ -80,6 +84,8 @@ Type
     Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -253,6 +259,7 @@ Type
     procedure SetDefinition(Value: TUcumServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -266,6 +273,8 @@ Type
   TUcumServiceImplementation = class (TUcumServiceInterface)
   private
     FSvc : TUcumServices;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(svc : TUcumServices);
     destructor Destroy; override;
@@ -289,6 +298,7 @@ type
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
+    function sizeInBytesV : cardinal; override;
   end;
 
 { TFhirValueSetComposeIncludeConceptLocal }
@@ -315,6 +325,12 @@ end;
 
 procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
 { TUcumServices }
@@ -711,6 +727,17 @@ end;
 
 
 
+function TUcumServices.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FModel.sizeInBytes);
+  inc(result, FHandlers.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, FCommonUnits.sizeInBytes);
+  inc(result, FCommonUnitList.sizeInBytes);
+end;
+
 { TUcumServiceList }
 
 destructor TUcumServiceList.Destroy;
@@ -771,6 +798,12 @@ begin
   FDefinition := Value;
 end;
 
+
+function TUcumServiceList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinition.sizeInBytes);
+end;
 
 function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
 begin
@@ -1087,6 +1120,12 @@ begin
   FCanonical := canonical;
 end;
 
+function TUcumFilterContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCanonical.length * sizeof(char)) + 12);
+end;
+
 { TUCUMContext }
 
 constructor TUCUMContext.Create(concept: TFhirValueSetComposeIncludeConceptW);
@@ -1112,6 +1151,12 @@ procedure TUCUMContext.SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
 begin
   FConcept.Free;
   FConcept := Value;
+end;
+
+function TUCUMContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FConcept.sizeInBytes);
 end;
 
 { TUcumServiceImplementation }
@@ -1141,6 +1186,12 @@ end;
 function TUcumServiceImplementation.multiply(o1, o2: TUcumPair): TUcumPair;
 begin
   result := FSvc.multiply(o1, o2);
+end;
+
+function TUcumServiceImplementation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSvc.sizeInBytes);
 end;
 
 End.

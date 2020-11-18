@@ -56,6 +56,8 @@ Type
     definition: TFHIRElementDefinition;
     type_: TFHIRElementDefinition;
     // extension : TFHIRElementDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
@@ -80,6 +82,8 @@ Type
     Fsliceindex : integer;
     FadditionalSlice : boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
     property additionalSlice : boolean read FadditionalSlice write FadditionalSlice;
@@ -101,6 +105,8 @@ Type
     basePath: String;
     cursor, lastCount: integer;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(path: String; element: TFHIRMMElement);
     destructor Destroy; override;
@@ -115,6 +121,8 @@ Type
   private
     FChecked : boolean;
     Fprofile : TFhirStructureDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function uncheckedProfiles : TFhirStructureDefinitionList;
     property Checked : boolean read FChecked write FChecked;
@@ -128,6 +136,8 @@ Type
     FIsProcessed : boolean;
     FUncheckedProfiles : TFslList<TFhirProfileUsage>;
     function GetHasProfiles : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
@@ -240,6 +250,8 @@ Type
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
@@ -349,6 +361,16 @@ begin
     end;
   end;
   result := false;
+end;
+
+function TElementInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, Felement.sizeInBytes);
+  inc(result, (Fpath.length * sizeof(char)) + 12);
+  inc(result, Fdefinition.sizeInBytes);
+  inc(result, Fslice.sizeInBytes);
 end;
 
 { TNodeStack }
@@ -461,6 +483,16 @@ begin
   finally
     b.Free;
   end;
+end;
+
+function TNodeStack.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (literalPath.length * sizeof(char)) + 12);
+  inc(result, logicalPaths.sizeInBytes);
+  inc(result, FElement.sizeInBytes);
+  inc(result, definition.sizeInBytes);
+  inc(result, type_.sizeInBytes);
 end;
 
 { TFHIRValidator }
@@ -3583,6 +3615,14 @@ begin
   result := (inherited Context) as TFHIRWorkerContext;
 end;
 
+function TFHIRValidator4.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExtensionDomains.sizeInBytes);
+  inc(result, FPathEngine.sizeInBytes);
+  inc(result, FEntryElement.sizeInBytes);
+end;
+
 { TChildIterator }
 
 constructor TChildIterator.Create(path: String; element: TFHIRMMElement);
@@ -3661,6 +3701,13 @@ begin
   result := basePath + '.' + name + sfx;
 end;
 
+function TChildIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, parent.sizeInBytes);
+  inc(result, (basePath.length * sizeof(char)) + 12);
+end;
+
 { TValidationProfileSet }
 
 constructor TValidationProfileSet.create;
@@ -3705,11 +3752,25 @@ begin
   result := false; // todo
 end;
 
+function TValidationProfileSet.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCanonical.sizeInBytes);
+  inc(result, FDefinitions.sizeInBytes);
+  inc(result, FUncheckedProfiles.sizeInBytes);
+end;
+
 { TFhirProfileUsage }
 
 function TFhirProfileUsage.uncheckedProfiles : TFhirStructureDefinitionList;
 begin
   result := nil;
+end;
+
+function TFhirProfileUsage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fprofile.sizeInBytes);
 end;
 
 end.

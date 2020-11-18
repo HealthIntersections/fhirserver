@@ -83,6 +83,8 @@ Type
     procedure SetSelected(const Value: Boolean);
     Procedure SetDefinitionProvider(Const Value : TWPAnnotationDefinitionProvider);
     function GetWorkingText: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -202,6 +204,8 @@ Type
     Procedure SetBackHotspot(Const Value: TWPHotspot);
 
     Function GetAnnotation(iId : Integer): TWPWorkingAnnotation;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oPiece : TFslObject); Overload; Virtual;
     destructor Destroy; Override;
@@ -285,6 +289,8 @@ Type
     Procedure SetForeHotspot(Const Value: TWPHotspot);
     procedure SetAnnotationColour(const Value: TColour);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
     Function Link : TWPMapItem; Overload;
@@ -352,6 +358,8 @@ Type
     Procedure SetItems(Const Value: TWPMapItems);
     Procedure ReParent;
     Function GetItems : TWPMapItems;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -423,6 +431,8 @@ Type
     Procedure ReParent;
     Function GetChildren : TWPMapContainers;
     Function GetRows : TWPMapRows;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -544,6 +554,7 @@ Type
 
     Function GetPieceType: TWPWorkingDocumentPieceType; Virtual;
     Function DefaultCharCount : Integer; Virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -645,6 +656,7 @@ Type
     Function GetVoiceText : String; Override;
     Function XmlName : String; Override;
     Procedure CollectAttributes(oXml : TFslXmlFormatter); Override;
+    function sizeInBytesV : cardinal; override;
   Public
     Function Link : TWPWorkingDocumentTextPiece; Overload;
     Function Clone : TWPWorkingDocumentTextPiece; Overload;
@@ -683,6 +695,7 @@ Type
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
     Function GetVoiceText : String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -769,6 +782,7 @@ Type
   Protected
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -857,6 +871,7 @@ Type
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
     Function GetLogicalText: String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -905,6 +920,7 @@ Type
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
     Function GetLogicalText: String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -932,6 +948,7 @@ Type
       Function DefaultCharCount : Integer; Override;
       Function XmlName : String; Override;
       Procedure CollectAttributes(oXml : TFslXmlFormatter); Override;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -961,6 +978,8 @@ Type
     Procedure SetContainer(Const Value: TWPMapContainer);
     Procedure SetReadOnly(Const Value: TWPSTriState);
     Function GetContainer : TWPMapContainer;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1000,6 +1019,7 @@ Type
     Function DefaultCharCount : Integer; Override;
     Function GetVisualText: String; Override;
     Function GetVoiceText : String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1103,6 +1123,7 @@ Type
     Procedure SetDataValue(Const sKey, sValue: String);
   Protected
     Function DefaultCharCount : Integer; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1180,6 +1201,8 @@ Type
       Function GetWorkingTopBorder : TWPBorder;
       Function GetWorkingBottomBorder : TWPBorder;
       Function GetWorkingRightBorder : TWPBorder;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1338,6 +1361,7 @@ Type
       Function GetCells : TWPWorkingDocumentTableCellStartPieces;
       Function GetTable : TObject;
       Procedure SetTable(Const Value : TObject);
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1434,6 +1458,7 @@ Type
       Function GetRows : TWPWorkingDocumentTableRowStartPieces;
     Protected
       Function DefaultCharCount : Integer; Override;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1502,6 +1527,7 @@ Type
 //    FPDF : TgtExProPDFDocument;
   protected
     Procedure Loaded; virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1582,6 +1608,8 @@ Type
     Procedure SetAnnotationDefinitionProviders(Const Value : TWPAnnotationDefinitionProviderList);
     procedure SetSourceObjectModel(const Value: TFslObject);
     procedure SetSourceBytes(const Value: TFslBuffer);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1673,6 +1701,7 @@ Type
   Protected
     Function WorkingMinimum : Integer;
     Function WorkingMaximum : Integer;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
@@ -1705,6 +1734,8 @@ Type
     Function GetCurrent: Char;
     Function GetCurrentPosition: Integer;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure First; Override;
     Procedure Next; Override;
@@ -1729,6 +1760,8 @@ Type
 
     Function GetCurrent : TWPWorkingDocumentPiece;
     Function GetPeek : TWPWorkingDocumentPiece;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure First; Override;
     Procedure Next; Override;
@@ -1795,6 +1828,8 @@ Type
       Function TranslateAttachment(oSource : TWPWorkingAttachment): TWPDocumentAttachment; Overload;
       Function TranslateAttachment(oSource : TWPDocumentAttachment): TWPWorkingAttachment; Overload;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1824,6 +1859,8 @@ Type
 //      FSMOffset : Integer;
 //      FRemoved : Boolean;
       Procedure SetPiece(Const Value: TWPWorkingDocumentPiece);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1873,6 +1910,8 @@ type
 
       Procedure Validate(oIterator : TWPPieceIterator; aAllowed : TWPWorkingDocumentPieceTypes; aTerminate : TWPWorkingDocumentPieceType); Overload;
       Procedure Validate(oIterator : TWPPieceIterator; aAllowed : TWPWorkingDocumentPieceTypes); Overload;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(oDocument : TWPWorkingDocument); Overload; Virtual;
       destructor Destroy; Override;
@@ -2245,6 +2284,21 @@ begin
   End;
 end;
 
+function TWPWorkingDocumentPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMaps.sizeInBytes);
+  inc(result, FMetrics.sizeInBytes);
+  inc(result, FFont.sizeInBytes);
+  inc(result, (FStyle.length * sizeof(char)) + 12);
+  inc(result, FPrev.sizeInBytes);
+  inc(result, FNext.sizeInBytes);
+  inc(result, FHotspot.sizeInBytes);
+  inc(result, (FFieldHint.length * sizeof(char)) + 12);
+  inc(result, (FFieldError.length * sizeof(char)) + 12);
+  inc(result, FSourceObject.sizeInBytes);
+end;
+
 { TWPWorkingDocumentPieces }
 
 Function TWPWorkingDocumentPieces.GetPiece(iIndex: Integer): TWPWorkingDocumentPiece;
@@ -2587,6 +2641,13 @@ begin
     raise EWPException.create('root element doesn''t point to document');
 end;
 
+function TWPMapObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPiece.sizeInBytes);
+  inc(result, FBackHotspot.sizeInBytes);
+end;
+
 { TWPMapObjects }
 
 Function TWPMapObjects.GetObject(iIndex: Integer): TWPMapObject;
@@ -2730,6 +2791,12 @@ begin
     WantPainting;
     FAnnotationColour := Value;
   End;
+end;
+
+function TWPMapItem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FForeHotspot.sizeInBytes);
 end;
 
 { TWPMapItems }
@@ -2882,8 +2949,6 @@ Function TWPMetrics.GetWidth : Integer;
 Begin
   Result := Offset[OffsetCount];
 End;
-
-
 
 { TWPWorkingDocument }
 
@@ -4180,6 +4245,20 @@ begin
   End;
 end;
 
+function TWPWorkingDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPieces.sizeInBytes);
+  inc(result, FFieldDefinitionProviders.sizeInBytes);
+  inc(result, FAnnotationDefinitionProviders.sizeInBytes);
+  inc(result, FSourceObjectModel.sizeInBytes);
+  inc(result, FSourceBytes.sizeInBytes);
+  inc(result, FAllowedWords.sizeInBytes);
+  inc(result, FAllAnnotations.sizeInBytes);
+  inc(result, FDrawnAnnotations.sizeInBytes);
+  inc(result, FAttachments.sizeInBytes);
+end;
+
 { TWPWorkingDocumentTextPiece }
 
 Procedure TWPWorkingDocumentTextPiece.Assign(oSource: TFslObject);
@@ -4312,6 +4391,13 @@ Begin
   Result := 'text';
 End;
 
+function TWPWorkingDocumentTextPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FContent.length * sizeof(char)) + 12);
+  inc(result, (FDrawnFont.length * sizeof(char)) + 12);
+end;
+
 { TWPWorkingDocumentLineBreakPiece }
 
 Constructor TWPWorkingDocumentLineBreakPiece.Create;
@@ -4369,6 +4455,11 @@ Begin
   Inherited;
   FIsSpeechMagicParagraph := TWPWorkingDocumentLineBreakPiece(oSource).FIsSpeechMagicParagraph;
 End;
+
+function TWPWorkingDocumentLineBreakPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 { TWPWorkingDocumentImagePiece }
 
@@ -5452,6 +5543,17 @@ End;
 
 
 
+function TWPWorkingDocumentImagePiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FImage.sizeInBytes);
+  inc(result, FSelectionImage.sizeInBytes);
+  inc(result, FWorkingImage.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FImageMap.sizeInBytes);
+  inc(result, FAdornments.sizeInBytes);
+end;
+
 { TWPWorkingDocumentFieldStartPiece }
 
 
@@ -5682,6 +5784,18 @@ begin
     result := Name;
 end;
 
+function TWPWorkingDocumentFieldStartPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FDocField.sizeInBytes);
+  inc(result, FDefinitionProvider.sizeInBytes);
+  inc(result, FData.sizeInBytes);
+  inc(result, FCheckables.sizeInBytes);
+  inc(result, (FLastUpdateValue.length * sizeof(char)) + 12);
+end;
+
 { TWPWorkingDocumentFieldStopPiece }
 
 Function TWPWorkingDocumentFieldStopPiece.Clone: TWPWorkingDocumentFieldStopPiece;
@@ -5725,6 +5839,12 @@ Begin
   FMatchingStart.Free;
   FMatchingStart := Value;
 End;
+
+function TWPWorkingDocumentFieldStopPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMatchingStart.sizeInBytes);
+end;
 
 Constructor TWPWorkingDocumentStopPiece.Create;
 Begin
@@ -5810,6 +5930,12 @@ Begin
   FMatchingStart := Value;
 End;
 
+function TWPWorkingDocumentStopPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMatchingStart.sizeInBytes);
+end;
+
 { TWPWorkingDocumentContainerPiece }
 
 Procedure TWPWorkingDocumentContainerPiece.Assign(oSource: TFslObject);
@@ -5863,6 +5989,12 @@ Begin
   Result := True;
 End;
 
+
+function TWPWorkingDocumentContainerPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContainer.sizeInBytes);
+end;
 
 Function TWPWorkingDocumentContainerPieces.GetElements(iIndex : Integer):TWPWorkingDocumentContainerPiece;
 Begin
@@ -5982,6 +6114,12 @@ End;
 
 
 
+function TWPWorkingDocumentParaPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFormat.sizeInBytes);
+end;
+
 { TWPWorkingDocumentBreakPiece }
 
 Function TWPWorkingDocumentBreakPiece.Clone: TWPWorkingDocumentBreakPiece;
@@ -6095,7 +6233,6 @@ Begin
   FEndStyle := Value;
   Change(ctPresentation, Self);
 End;
-
 
 { TWPWorkingDocumentSectionStartPiece }
 
@@ -6286,6 +6423,18 @@ Procedure TWPWorkingDocumentSectionStartPiece.SetDataValue(Const sKey, sValue: S
 Begin
   FData.SetValueByKey(sKey, sValue);
 End;
+
+function TWPWorkingDocumentSectionStartPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDisplayName.length * sizeof(char)) + 12);
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FKey.length * sizeof(char)) + 12);
+  inc(result, FDocSection.sizeInBytes);
+  inc(result, FDefinitionProvider.sizeInBytes);
+  inc(result, FData.sizeInBytes);
+end;
 
 { TWPWorkingDocumentTableItemPiece }
 
@@ -6531,6 +6680,19 @@ Begin
     BottomBorder.Assign(oItem.BottomBorder);
   End;
 End;
+
+function TWPWorkingDocumentTableItemPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLeftBorder.sizeInBytes);
+  inc(result, FRightBorder.sizeInBytes);
+  inc(result, FTopBorder.sizeInBytes);
+  inc(result, FBottomBorder.sizeInBytes);
+  inc(result, FWorkingLeftBorder.sizeInBytes);
+  inc(result, FWorkingRightBorder.sizeInBytes);
+  inc(result, FWorkingTopBorder.sizeInBytes);
+  inc(result, FWorkingBottomBorder.sizeInBytes);
+end;
 
 { TWPWorkingDocumentTableCellStartPiece }
 
@@ -6815,7 +6977,6 @@ Begin
   End;
 End;
 
-
 Function TWPWorkingDocumentTableCellStartPieces.GetCell(iIndex: Integer): TWPWorkingDocumentTableCellStartPiece;
 Begin
   Result := TWPWorkingDocumentTableCellStartPiece(ObjectByIndex[iIndex]);
@@ -7023,6 +7184,17 @@ Begin
   Result := Assigned(FOwner);
 End;
 
+
+function TWPWorkingDocumentTableRowStartPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCells.sizeInBytes);
+  inc(result, FOwner.sizeInBytes);
+  inc(result, FTablePrev.sizeInBytes);
+  inc(result, FTablePrevLevel.sizeInBytes);
+  inc(result, FTableNext.sizeInBytes);
+  inc(result, FTableNextLevel.sizeInBytes);
+end;
 
 Function TWPWorkingDocumentTableRowStartPieces.GetElements(iIndex : Integer):TWPWorkingDocumentTableRowStartPiece;
 Begin
@@ -7556,6 +7728,14 @@ begin
   End;
 end;
 
+function TWPWorkingDocumentTableStartPiece.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCenterHorizontalBorder.sizeInBytes);
+  inc(result, FCenterVerticalBorder.sizeInBytes);
+  inc(result, FRows.sizeInBytes);
+end;
+
 { TWPWorkingDocumentTableStartPieces }
 
 Function TWPWorkingDocumentTableStartPieces.GetElements(iIndex: Integer): TWPWorkingDocumentTableStartPiece;
@@ -7725,6 +7905,13 @@ Begin
   Result := FRows;
 End;
 
+function TWPMapContainer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FChildren.sizeInBytes);
+  inc(result, FRows.sizeInBytes);
+end;
+
 { TWPMapContainers }
 
 Function TWPMapContainers.GetContainer(iIndex: Integer): TWPMapContainer;
@@ -7883,6 +8070,12 @@ Begin
     FItems[iLoop].AdjustTop(iOffset, iLineOffset, bPaint);
 End;
 
+function TWPMapRow.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FItems.sizeInBytes);
+end;
+
 { TWPMapRows }
 
 Function TWPMapRows.GetRow(iIndex: Integer): TWPMapRow;
@@ -8020,6 +8213,12 @@ Begin
     End;
 End;
 
+function TWPCharIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCurrent.sizeInBytes);
+end;
+
 Constructor TWPIterator.Create;
 Begin
   Inherited;
@@ -8119,6 +8318,12 @@ Begin
   Result := IntegerMax(0, FMinimum);
 End;
 
+
+function TWPIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+end;
 
 Constructor TWPDocumentTranslator.Create;
 Begin
@@ -9097,6 +9302,16 @@ Begin
 End;
 
 
+function TWPDocumentTranslator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FWorkingDocument.sizeInBytes);
+  inc(result, FWorkingStyles.sizeInBytes);
+  inc(result, FRowMap.sizeInBytes);
+  inc(result, FSplitter.sizeInBytes);
+end;
+
 { TWPPieceIterator }
 
 
@@ -9204,6 +9419,12 @@ Begin
     RaiseError('GetCurrentParagraph', 'End of paragraph not found');
 End;
 
+function TWPPieceIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCurrent.sizeInBytes);
+end;
+
 { TWPWorkingDocumentPieceTracker }
 
 Destructor TWPWorkingDocumentPieceTracker.Destroy;
@@ -9217,6 +9438,12 @@ Begin
   FPiece.Free;
   FPiece := Value;
 End;
+
+function TWPWorkingDocumentPieceTracker.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPiece.sizeInBytes);
+end;
 
 { TWPWorkingDocumentPieceTrackers }
 
@@ -9375,6 +9602,15 @@ begin
   if (FWorkingText = '') And (FDefinitionProvider <> nil) Then
     FWorkingText := FDefinitionProvider.GetDisplay(FText);
   result := FWorkingText;
+end;
+
+function TWPWorkingAnnotation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinitionProvider.sizeInBytes);
+  inc(result, (FOwner.length * sizeof(char)) + 12);
+  inc(result, (FText.length * sizeof(char)) + 12);
+  inc(result, (FWorkingText.length * sizeof(char)) + 12);
 end;
 
 { TWPWorkingAnnotationList }
@@ -9569,6 +9805,15 @@ begin
 end;
 
 
+function TWPWorkingAttachment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, FContent.sizeInBytes);
+  inc(result, (FMimeType.length * sizeof(char)) + 12);
+  inc(result, (FExtension.length * sizeof(char)) + 12);
+end;
+
 function TWPDocumentTranslator.TranslateAttachment(oSource: TWPWorkingAttachment): TWPDocumentAttachment;
 begin
   result := TWPDocumentAttachment.create;
@@ -9629,6 +9874,12 @@ Begin
   Inherited;
 End;
 
+
+function TWPWorkingDocumentValidator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+end;
 
 Class Procedure TWPWorkingDocumentValidator.Validate(oDocument : TWPWorkingDocument);
 Var

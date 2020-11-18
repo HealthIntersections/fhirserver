@@ -43,6 +43,8 @@ Type
       FDriver : String;
       FIsDefault : Boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -80,6 +82,8 @@ Type
       FPitch : TFslFontPitch;
       FTypes : TFslFontTypeSet;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -736,6 +740,8 @@ Type
       FID : Integer;
       FName : String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslPrinterTray;
 
@@ -811,6 +817,7 @@ Type
       Function GetUseColour : Boolean; Virtual;
       Procedure SetUseColour(Const bValue: Boolean); Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslJobSettings;
       Function Clone : TFslJobSettings;
@@ -913,6 +920,8 @@ Type
       Procedure PrintBitmapPixels(oBitmap: TBitmap; iX, iY, iWidth, iHeight: Integer);
       function GetHandle: TFslGraphicHandle;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1026,6 +1035,7 @@ Type
       Function GetUseColour : Boolean; Override;
       Procedure SetUseColour(Const bValue: Boolean); Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1105,6 +1115,7 @@ Type
 
       Function CanvasClass : TFslPrinterCanvasClass; Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1241,6 +1252,7 @@ Type
 
       Property ActivePage : TFslPrinterPreviewPage Read GetActivePage Write SetActivePage;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1292,6 +1304,7 @@ Type
       Procedure ProduceDriverInfo2(Out aInfoPointer : PDriverInfo2; Out iInfoLength : Cardinal);
       Procedure ConsumeDriverInfo2(Var aInfoPointer : PDriverInfo2; Const iInfoLength : Cardinal);
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1408,6 +1421,8 @@ Type
 
       Function GetDefaultDefinition: TFslPrinterDefinition;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1924,6 +1939,16 @@ Begin
 End;
 
 
+function TFslPrinter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinition.sizeInBytes);
+  inc(result, FFontList.sizeInBytes);
+  inc(result, FPaperSizeList.sizeInBytes);
+  inc(result, FTrayList.sizeInBytes);
+  inc(result, FSettings.sizeInBytes);
+end;
+
 Function TFslPrinterList.GetPrinter(iIndex: Integer): TFslPrinter;
 Begin
   Result := TFslPrinter(ObjectByIndex[iIndex]);
@@ -2154,6 +2179,13 @@ Begin
 End;
 
 
+function TFslPrinterDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPort.length * sizeof(char)) + 12);
+  inc(result, (FDriver.length * sizeof(char)) + 12);
+end;
+
 Function TFslPrinterDefinitionList.GetByName(Const sName: String): TFslPrinterDefinition;
 Begin
   Result := TFslPrinterDefinition(Inherited GetByName(sName));
@@ -2228,6 +2260,11 @@ Begin
   Result := 1;
 End;
 
+
+function TFslPrinterFont.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 Procedure TFslPrinterFontList.Add(Const sName : String; aPitch : TFslFontPitch; aTypes : TFslFontTypeSet);
 Var
@@ -2398,7 +2435,6 @@ Begin
   End;
 End;
 
-
 Function TFslPrinterPaperSizeList.AddFromText(Const sText : String) : Integer;
 Var
   oSize : TFslPrinterPaperSize;
@@ -2459,6 +2495,12 @@ Begin
   Result := TFslPrinterTray(Inherited Link);
 End;
 
+
+function TFslPrinterTray.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
 
 Function TFslPrinterTrayList.CompareByID(pA, pB: Pointer): Integer;
 Begin
@@ -2974,6 +3016,12 @@ Begin
 End;
 
 
+function TFslPrinterSettings.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinition.sizeInBytes);
+end;
+
 Procedure TFslJobSettings.Open;
 Begin
   FOpened := True;
@@ -3080,6 +3128,11 @@ Begin
   End;
 End;
 
+
+function TFslJobSettings.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 Procedure TFslPrinterJob.InitialiseDC;
 Var
@@ -3199,7 +3252,6 @@ Begin
 
   Canvas.AttachToPrinter(FDC);
 End;
-
 
 Constructor TFslRenderJob.Create;
 Begin
@@ -3370,6 +3422,15 @@ Begin
 End;
 
 
+
+function TFslRenderJob.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCanvas.sizeInBytes);
+  inc(result, FSettings.sizeInBytes);
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, (FDestinationFileName.length * sizeof(char)) + 12);
+end;
 
 Procedure TFslPrinterDelphiCanvas.CreateHandle;
 Begin
@@ -4247,6 +4308,14 @@ Begin
 End;
 
 
+function TFslPrinterCanvas.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPen.sizeInBytes);
+  inc(result, FBrush.sizeInBytes);
+  inc(result, FFont.sizeInBytes);
+end;
+
 Function TFslPrinterDelphiCanvas.GetOwnerCanvas: TFslPrinterCanvas;
 Begin
   Result := FOwner;
@@ -4626,6 +4695,13 @@ Begin
   Inherited;
 End;
 
+function TFslPrinterPreviewJob.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPages.sizeInBytes);
+  inc(result, FActivePage.sizeInBytes);
+end;
+
 Function TFslPrinterPreviewPageList.GetPage(iIndex: Integer): TFslPrinterPreviewPage;
 Begin
   Result := TFslPrinterPreviewPage(ObjectByIndex[iIndex]);
@@ -4845,6 +4921,13 @@ Begin
   End;
 End;
 
+
+function TFslPrinterManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinitionList.sizeInBytes);
+  inc(result, FDefaultDefinition.sizeInBytes);
+end;
 
 Function TFslMetafile.HandleClass : TGraphicClass;
 Begin

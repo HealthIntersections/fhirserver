@@ -45,6 +45,8 @@ Type
       FTitle: String;
       FTitleStyle : TWPStyle;
       procedure SetTitleStyle(const Value: TWPStyle);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -110,6 +112,8 @@ Type
     Procedure PublishDictHomeInternal(Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
     procedure SetDict(const Value: THL7V2Dictionary);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -264,6 +268,13 @@ begin
   if sSuffix <> '' Then
     AddTextStyledByContext(sSuffix);
   EndParagraph;
+end;
+
+function THL7V2DocumentPublisher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, FTitleStyle.sizeInBytes);
 end;
 
 { THL7V2HTMLPublisher }
@@ -1209,5 +1220,11 @@ Begin
     oBuilder.EndParagraph;
   End;
 End;
+
+function THL7V2HTMLPublisher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDict.sizeInBytes);
+end;
 
 end.

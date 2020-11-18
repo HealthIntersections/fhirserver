@@ -52,6 +52,8 @@ type
     Fname: String;
     Fmode: TVariableMode;
     Fobj: TFHIRObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -70,6 +72,8 @@ type
     function GetSummary: string;
     function GetCount: Integer;
     function GetVariable(index: integer): TVariable;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -100,6 +104,8 @@ type
   private
     FMap: TFhirStructureMap;
     FGroup: TFhirStructureMapGroup;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(map : TFhirStructureMap; group : TFhirStructureMapGroup);
     destructor Destroy; override;
@@ -124,6 +130,8 @@ type
     function GetFocus: TFHIRObject;
     function GetName: String;
     function GetLine: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor create(parent : TFHIRStructureMapDebugContext; appInfo : TFslObject;
        map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget;
@@ -211,6 +219,8 @@ type
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
     function checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
     procedure SetServices(const Value: TTransformerServices);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices; factory : TFHIRFactoryR4);
     destructor Destroy; override;
@@ -753,12 +763,25 @@ type
     FMode: TPrefixMode;
     FAbbrev: String;
     FUrl: String;
+  protected
+    function sizeInBytesV : cardinal; override;
    public
      constructor create(mode : TPrefixMode; abbrev, url : String);
      property mode : TPrefixMode read FMode write FMode;
      property abbrev : String read FAbbrev write FAbbrev;
      property url : String read FUrl write FUrl;
    end;
+
+function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWorker.sizeInBytes);
+  inc(result, fpp.sizeInBytes);
+  inc(result, fpe.sizeInBytes);
+  inc(result, FLib.sizeInBytes);
+  inc(result, FServices.sizeInBytes);
+  inc(result, FFactory.sizeInBytes);
+end;
 
 { TPrefixInformation }
 
@@ -777,6 +800,13 @@ begin
     result := ''
   else
     result := inttostr(i);
+end;
+
+function TPrefixInformation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FAbbrev.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
@@ -2647,6 +2677,13 @@ begin
     result := CODES_TVariableMode[Fmode]+': ' +result;
 end;
 
+function TVariable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, Fobj.sizeInBytes);
+end;
+
 { TVariables }
 
 constructor TVariables.create;
@@ -2739,6 +2776,12 @@ begin
   result := TVariables(inherited Link);
 end;
 
+function TVariables.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
+end;
+
 { TTransformerServices }
 
 function TTransformerServices.link: TTransformerServices;
@@ -2760,6 +2803,13 @@ begin
   FMap.Free;
   FGroup.Free;
   inherited;
+end;
+
+function TResolvedGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
 end;
 
 { TFHIRStructureMapDebugContext }
@@ -2845,6 +2895,18 @@ end;
 function TFHIRStructureMapDebugContext.link: TFHIRStructureMapDebugContext;
 begin
   result := TFHIRStructureMapDebugContext(inherited link);
+end;
+
+function TFHIRStructureMapDebugContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRule.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FAppInfo.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+  inc(result, FVariables.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, map.sizeInBytes);
 end;
 
 end.

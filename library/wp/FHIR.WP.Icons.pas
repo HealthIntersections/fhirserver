@@ -780,9 +780,6 @@ begin
   result := FCURSOR_CIRCLE;
 end;
 
-
-
-
 Initialization
 Finalization
   gWPIconModule.Free;

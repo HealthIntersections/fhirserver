@@ -64,6 +64,8 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
     destructor Destroy; Override;
@@ -976,6 +978,14 @@ begin
   for b in langs do
     if b = lang then
       exit(true);
+end;
+
+function TloincPublisher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSearchCache.sizeInBytes);
+  inc(result, FLoinc.sizeInBytes);
+  inc(result, (FFHIRPath.length * sizeof(char)) + 12);
 end;
 
 End.

@@ -44,6 +44,8 @@ Type
   private
     index : TJsonObject;
     files : TJsonArray;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -66,6 +68,8 @@ Type
     FSize: Integer;
     FKind: String;
     FResourceType: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function Link : TNpmPackageResource; overload;
 
@@ -89,6 +93,8 @@ Type
     FResources : TFslList<TNpmPackageResource>;
     procedure readIndex(index : TJsonObject);
     function dump : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(); overload; override;
     constructor Create(name : String); overload; virtual;
@@ -134,6 +140,8 @@ Type
     function findFolder(name : String) : TNpmPackageFolder;
     function GetAuthor: String;
     function GetNotForPublication: Boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -289,6 +297,13 @@ begin
   files := nil;
 end;
 
+function TNpmPackageIndexBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, index.sizeInBytes);
+  inc(result, files.sizeInBytes);
+end;
+
 { TNpmPackageFolder }
 
 constructor TNpmPackageFolder.Create;
@@ -405,6 +420,15 @@ begin
   end;
 end;
 
+function TNpmPackageFolder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FFolder.length * sizeof(char)) + 12);
+  inc(result, FContent.sizeInBytes);
+  inc(result, FResources.sizeInBytes);
+end;
+
 { TNpmPackage }
 
 constructor TNpmPackage.Create;
@@ -454,6 +478,14 @@ begin
       end;
     end;
   end;
+end;
+
+function TNpmPackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, FNpm.sizeInBytes);
+  inc(result, FFolders.sizeInBytes);
 end;
 
 class function TNpmPackage.fromFolder(path: String): TNpmPackage;
@@ -1060,6 +1092,18 @@ end;
 function isMoreRecentVersion(test, base : String) : boolean;
 begin
   result := test > base;
+end;
+
+function TNpmPackageResource.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, (FURL.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FKind.length * sizeof(char)) + 12);
+  inc(result, (FResourceType.length * sizeof(char)) + 12);
 end;
 
 end.

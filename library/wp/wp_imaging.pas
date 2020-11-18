@@ -60,6 +60,8 @@ Type
     Function LoadAndConvertDicom : TFslBitmapGraphic;
     Procedure WriteIcon(oIcon : TIcon; oBmp : TBitmap);
     procedure SetDicomDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -353,6 +355,14 @@ Begin
   Format := ifUnknown;
 End;
 
+
+function TWPImageLoader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
+  inc(result, FSource.sizeInBytes);
+  inc(result, FDicomDictionary.sizeInBytes);
+end;
 
 Class Function TWPImageLoader.Wrap(oImage : TFslGraphic) : TWPDocumentImage;
 Var

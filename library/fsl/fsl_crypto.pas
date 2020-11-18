@@ -127,6 +127,8 @@ Type
     function GetHasQ: boolean;
     function GetHasX: boolean;
     function GetHasY: boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(obj : TJsonObject); overload;
     constructor Create(pkey : PRSA; loadPrivate : Boolean); overload;
@@ -273,6 +275,8 @@ Type
     FUrl: String;
     FTransforms: TStringList;
     FContent: TBytes;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -751,6 +755,12 @@ begin
     BN_bn2bin(pPriv, @b[0]);
     X := b;
   end;
+end;
+
+function TJWK.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FObj.sizeInBytes);
 end;
 
 { TJWKList }
@@ -2019,6 +2029,13 @@ destructor TDigitalSignatureReference.Destroy;
 begin
   FTransforms.Free;
   inherited;
+end;
+
+function TDigitalSignatureReference.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, FTransforms.sizeInBytes);
 end;
 
 end.

@@ -67,6 +67,8 @@ Type
 
     class function Use : TFHIRWorkerContext;
     class procedure closeUp;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
 
@@ -80,6 +82,12 @@ uses
 { TTestingWorkerContext }
 var
   GWorkerContext : TBaseWorkerContext;
+
+function TTestingWorkerContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, class function Use.sizeInBytes);
+end;
 
 class procedure TTestingWorkerContext.closeUp;
 begin

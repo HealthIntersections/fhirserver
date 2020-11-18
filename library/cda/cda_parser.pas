@@ -235,6 +235,7 @@ Type
     Function ParseSupply(Const sPath : String; oElement : TMXmlElement) : TcdaSupply;
   Protected
     Function ErrorClass : EFslExceptionClass; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -7254,6 +7255,13 @@ Begin
   Finally
     Result.Free;
   End;
+end;
+
+function TCDAParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FComments.sizeInBytes);
+  inc(result, FIdentifiedObjects.sizeInBytes);
 end;
 
 end.

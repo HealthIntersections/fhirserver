@@ -63,6 +63,8 @@ type
   private
     FValue : String;
     FType : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
   end;
@@ -71,6 +73,8 @@ type
   private
     FGen : TRDFGenerator;
     FPredicates : TFslList<TRDFPredicate>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -87,6 +91,8 @@ type
     FPredicate : String;
     FObj : TRDFTriple;
     FComment : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TRDFPredicate; overload;
@@ -95,6 +101,8 @@ type
   TRDFSubject = class (TRDFComplex)
   private
     id : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -110,6 +118,8 @@ type
     FGen : TRDFGenerator;
     FName : String;
     FSubjects : TFslList<TRDFSubject>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -147,6 +157,8 @@ type
     procedure writeNTripleComplex(b: TStringBuilder; complex: TRDFComplex);
     procedure writeNTriple(b: TStringBuilder; url1, url2, url3: String);
     function fullUrl(s: String): String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -210,6 +222,13 @@ constructor TRDFString.create(value: String);
 begin
   inherited Create;
   FValue := value;
+end;
+
+function TRDFString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, (FType.length * sizeof(char)) + 12);
 end;
 
 { TRDFComplex }
@@ -318,6 +337,13 @@ begin
   s.FType := xtype;
 end;
 
+function TRDFComplex.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FGen.sizeInBytes);
+  inc(result, FPredicates.sizeInBytes);
+end;
+
 { TRDFPredicate }
 
 destructor TRDFPredicate.Destroy;
@@ -329,6 +355,14 @@ end;
 function TRDFPredicate.Link: TRDFPredicate;
 begin
   result := TRDFPredicate(inherited Link);
+end;
+
+function TRDFPredicate.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPredicate.length * sizeof(char)) + 12);
+  inc(result, FObj.sizeInBytes);
+  inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
 { TRDFSubject }
@@ -389,6 +423,12 @@ begin
   end;
 end;
 
+
+function TRDFSubject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (id.length * sizeof(char)) + 12);
+end;
 
 { TRDFSection }
 
@@ -460,6 +500,14 @@ begin
     triple(subject, 'rdfs:label', literal(labl));
     triple(subject, 'dc:title', literal(labl));
   end;
+end;
+
+function TRDFSection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FGen.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FSubjects.sizeInBytes);
 end;
 
 { TRDFGenerator }
@@ -718,6 +766,13 @@ begin
         writeNTripleSection(b, s);
       end;
   end;
+end;
+
+function TRDFGenerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSections.sizeInBytes);
+  inc(result, FPrefixes.sizeInBytes);
 end;
 
 end.

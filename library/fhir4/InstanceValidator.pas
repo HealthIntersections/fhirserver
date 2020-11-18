@@ -209,6 +209,8 @@ Type
     function matchSlice(hostContext : TFhirValidatorHostContext; errors : TFslList<TFhirValidationMessage>; profile : TFhirStructureDefinition; stack : TNodeStack;
       slicer : TFHIRElementDefinition; unsupportedSlicing : boolean; problematicPaths : TStringList; sliceOffset, i : integer; ed : TFHIRElementDefinition;
       childUnsupportedSlicing : boolean; ei : TElementInfo) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function getContext() : TFHIRWorkerContext; virtual;
     Property Context : TFHIRWorkerContext read GetContext;
@@ -2032,6 +2034,20 @@ var
 begin
   parts :=  path.split(['.']);
   result := (length(parts) > 2) and (parts[length(parts) - 1] = 'outcome') and pathEntryHasName(parts[length(parts) - 2], 'response');
+end;
+
+function TInstanceValidator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, extensionDomains.sizeInBytes);
+  inc(result, bpWarnings.sizeInBytes);
+  inc(result, txTime.sizeInBytes);
+  inc(result,  sdTime.sizeInBytes);
+  inc(result,  fpeTime.sizeInBytes);
+  inc(result,  overall.sizeInBytes);
+  inc(result,  loadTime.sizeInBytes);
+  inc(result, fetcher.sizeInBytes);
+  inc(result, fpe.sizeInBytes);
 end;
 
 class function TInstanceValidator.pathEntryHasName(thePathEntry : String; theName : String) : boolean;

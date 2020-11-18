@@ -122,6 +122,7 @@ type
     function InternalRead(const AName: String; var VValue: String): Boolean; Override;
     procedure InternalWrite(const AName, AValue: String; ATransient: Boolean = False); Override;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(const ACopyFrom: TStrings = NIL);
     destructor Destroy; Override;
@@ -844,4 +845,5 @@ begin
   Result := FStrings.IndexOfName(AName) <> -1;
 end;
     *)
+
 end.

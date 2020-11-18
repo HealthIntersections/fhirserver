@@ -53,7 +53,8 @@ uses
   fsl_logging, fsl_msxml, fsl_npm, fsl_npm_cache, fsl_npm_client, fsl_oauth, 
   fsl_openssl, fsl_rdf, fsl_scim, fsl_scrypt, fsl_service, fsl_service_win, 
   fsl_shell, fsl_stream, fsl_threads, fsl_turtle, fsl_twilio, fsl_utilities, 
-  fsl_websocket, fsl_wininet, fsl_xml, fsl_ucum, LazarusPackageIntf;
+  fsl_websocket, fsl_wininet, fsl_xml, fsl_ucum, IdLogDebug, 
+  IdServerInterceptLogFile, LazarusPackageIntf;
 
 implementation
 

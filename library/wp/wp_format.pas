@@ -95,6 +95,7 @@ Type
     Procedure CheckForEmpty(oDocument : TWPWorkingDocument);
     Procedure DoneReading(oDocument : TWPWorkingDocument);
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -181,6 +182,7 @@ Type
 
 
       Function SupportsNestedRows : Boolean; Overload; Virtual;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -432,6 +434,18 @@ End;
 
 
 
+
+function TWPReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStream.sizeInBytes);
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FFont.sizeInBytes);
+  inc(result, (FStyle.length * sizeof(char)) + 12);
+  inc(result, FSplitter.sizeInBytes);
+  inc(result, (FContext.length * sizeof(char)) + 12);
+  inc(result, FDicomDictionary.sizeInBytes);
+end;
 
 Constructor TWPWriter.Create;
 Begin
@@ -895,6 +909,14 @@ begin
     result := fffFixed
   else
     result := fffAnyPart;
+end;
+
+function TWPWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FStream.sizeInBytes);
+  inc(result, FImageContext.sizeInBytes);
 end;
 
 End.

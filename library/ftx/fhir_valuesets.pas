@@ -68,6 +68,8 @@ Type
     Fsystem : String;
     Fversion : String;
     FMode : TFhirExpansionParamsFixedVersionMode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(system, version : String); overload;
     constructor Create(system, version : String; mode : TFhirExpansionParamsFixedVersionMode); overload;
@@ -90,6 +92,8 @@ Type
     FincludeDefinition: boolean;
     FUid: String;
     FValueSetMode: TValueSetValidationMode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -125,6 +129,8 @@ Type
 
     function findValueSet(url : String) : TFHIRValueSetW;
     function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList); overload;
     destructor Destroy; override;
@@ -143,6 +149,8 @@ Type
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
     function getName: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; id : String); overload;
     destructor Destroy; override;
@@ -279,6 +287,14 @@ begin
       end;
   end;
   result := FOnGetValueSet(self, url);
+end;
+
+function TValueSetWorker.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FParams.sizeInBytes);
+  inc(result, FAdditionalResources.sizeInBytes);
 end;
 
 { TValueSetChecker }
@@ -1054,6 +1070,14 @@ begin
   end;
 end;
 
+function TValueSetChecker.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOthers.sizeInBytes);
+  inc(result, FValueSet.sizeInBytes);
+  inc(result, (FId.length * sizeof(char)) + 12);
+end;
+
 { TFHIRValueSetExpander }
 
 
@@ -1684,6 +1708,14 @@ begin
   FFixedVersions := TFslList<TFhirExpansionParamsFixedVersion>.create;
 end;
 
+function TFHIRExpansionParams.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFixedVersions.sizeInBytes);
+  inc(result, FdisplayLanguage.sizeInBytes);
+  inc(result, (FUid.length * sizeof(char)) + 12);
+end;
+
 class function TFHIRExpansionParams.defaultProfile: TFHIRExpansionParams;
 begin
   result := TFHIRExpansionParams.Create;
@@ -1732,6 +1764,13 @@ begin
   inherited Create;
   FSystem := system;
   FVersion := version;
+end;
+
+function TFhirExpansionParamsFixedVersion.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fsystem.length * sizeof(char)) + 12);
+  inc(result, (Fversion.length * sizeof(char)) + 12);
 end;
 
 end.

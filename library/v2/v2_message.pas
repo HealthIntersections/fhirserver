@@ -50,6 +50,7 @@ type
     function GetFhirObjectVersion: TFHIRVersion; override;
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     property id : String read Fid write FId;
     function makeStringValue(v : String) : TFHIRObject; override;
@@ -72,6 +73,7 @@ type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(kind : TV2ContentKind; value : String);
     function link : TV2Content; overload;
@@ -95,6 +97,7 @@ type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -118,6 +121,7 @@ type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -138,6 +142,7 @@ type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(code : String); overload;
@@ -161,6 +166,7 @@ type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -273,6 +279,8 @@ type
     procedure SetSegment(AValue: TV2Segment);
     procedure SetSubComponent(AValue: TV2Cell);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -337,6 +345,16 @@ procedure TV2Location.SetSubComponent(AValue: TV2Cell);
 begin
   FSubComponent.Free;
   FSubComponent:=AValue;
+end;
+
+function TV2Location.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FComponent.sizeInBytes);
+  inc(result, FElement.sizeInBytes);
+  inc(result, FField.sizeInBytes);
+  inc(result, FSegment.sizeInBytes);
+  inc(result, FSubComponent.sizeInBytes);
 end;
 
 { TV2Object }
@@ -408,6 +426,12 @@ begin
   result := true;
 end;
 
+function TV2Object.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+end;
+
 { TV2Content }
 
 constructor TV2Content.Create(kind: TV2ContentKind; value: String);
@@ -450,6 +474,12 @@ begin
     inherited;
   oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFHIRObjectText, TFHIRObjectText.Create(FValue)));
   oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFHIRObjectText, TFHIRObjectText.Create(CODES_TV2ContentKind[FKind])));
+end;
+
+function TV2Content.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TV2Cell }
@@ -569,6 +599,13 @@ begin
   end;
 end;
 
+function TV2Cell.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContentList.sizeInBytes);
+  inc(result, FComponentList.sizeInBytes);
+end;
+
 { TV2Field }
 
 constructor TV2Field.Create;
@@ -631,6 +668,12 @@ begin
   p := TFHIRProperty.create(self, 'element', 'Cell', true, TV2Cell);
   for v in FElementList do
     p.Values.add(v.link);
+end;
+
+function TV2Field.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FElementList.sizeInBytes);
 end;
 
 { TV2Segment }
@@ -709,6 +752,13 @@ begin
   p := TFHIRProperty.create(self, 'field', 'Field', true, TV2Field);
   for v in FFieldList do
     p.Values.add(v.link);
+end;
+
+function TV2Segment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFieldList.sizeInBytes);
+  inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
 { TV2Message }
@@ -835,6 +885,12 @@ begin
   p := TFHIRProperty.create(self, 'segment', 'Segment', true, TV2Segment);
   for v in FSegmentList do
     p.Values.add(v.link);
+end;
+
+function TV2Message.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSegmentList.sizeInBytes);
 end;
 
 { TV2Parser }

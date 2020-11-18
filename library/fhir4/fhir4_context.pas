@@ -45,6 +45,8 @@ type
     FName: String;
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(definition : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -60,6 +62,8 @@ type
     FList : TFslList<T>;
     procedure updateList(url, version: String);
     function doSort(sender : TObject; const L, R: T): Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -128,6 +132,8 @@ type
     FPackages: TArray<String>;
     FOnLog: TWorkProgressEvent;
     FLoadPackage : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -257,6 +263,14 @@ begin
   result := TFHIRCustomResourceInformation(inherited Link);
 end;
 
+
+function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FSearchParameters.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+end;
 
 { TResourceMemoryCache }
 
@@ -552,6 +566,23 @@ procedure TFHIRMetadataResourceManager<T>.clear();
 begin
   FList.clear();
   FMap.clear();
+end;
+
+function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FList.sizeInBytes);
+end;
+
+function TResourceMemoryCache.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Flist.sizeInBytes);
+  inc(result, FLoadInfo.sizeInBytes);
+//  inc(result, FResourceTypes.sizeInBytes);
+//  inc(result, FPackages.sizeInBytes);
+  inc(result, (FLoadPackage.length * sizeof(char)) + 12);
 end;
 
 end.

@@ -55,6 +55,8 @@ type
     FUrl : String;
     FDate: TDateTime;
     FCanonical : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(id, version, fhirVersion, description, canonical, url : String); overload;
     constructor Create(id, version, fhirVersion, description, canonical, url : String; date : TDateTime); overload;
@@ -74,6 +76,8 @@ type
   private
     FAddress : String;
     function readDate(df: String): TDateTime;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(address : String);
     property address : String read FAddress;
@@ -182,6 +186,12 @@ begin
   finally
     result.free;
   end;
+end;
+
+function TFHIRPackageClient.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FAddress.length * sizeof(char)) + 12);
 end;
 
 class procedure TFHIRPackageClient.loadPackages(list : TFslList<TFHIRPackageInfo>; server, id: String);
@@ -324,6 +334,17 @@ begin
     result := ''
   else
     result := FormatDateTime('c', FDate)
+end;
+
+function TFHIRPackageInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FFhirVersion.length * sizeof(char)) + 12);
+  inc(result, (FDescription.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, (FCanonical.length * sizeof(char)) + 12);
 end;
 
 end.

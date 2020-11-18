@@ -45,6 +45,8 @@ Type
   private
     FWorker : TFHIRWorkerContext;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -58,6 +60,12 @@ implementation
 
 { TFhirHTTPClientTests }
 (*
+function TFhirHTTPClientTests.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWorker.sizeInBytes);
+end;
+
 class function TFhirHTTPClientTests.LoadResource(filename: String): TFHIRResource;
 var
   f : TFileStream;

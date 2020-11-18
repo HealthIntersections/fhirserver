@@ -173,6 +173,7 @@ type
   protected
     FRes : TFHIRResourceV;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
@@ -195,6 +196,7 @@ type
   TFHIRXVersionOperationObjectWrapper = class (TFslObject)
   protected
     FObj : TFslObject;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -204,6 +206,7 @@ type
   TFHIRXVersionOperationWrapper = class (TFslObject)
   protected
     FOp : TFslObject;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -495,6 +498,7 @@ type
     function getParameterParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     function getResourceParameter(name: String): TFHIRResourceV;  virtual; abstract;
     function getStringParameter(name: String): String;  virtual; abstract;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirParametersParameterW; overload;
@@ -524,6 +528,7 @@ type
     FList : TFslList<TFhirParametersParameterW>;
     function getParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     procedure populateList; virtual;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFHIRParametersW; overload;
@@ -565,6 +570,7 @@ type
   TFhirCodeSystemConceptW = class (TFHIRXVersionElementWrapper)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
   public
@@ -646,6 +652,7 @@ type
     procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
     function getCount: integer; virtual; abstract;
     procedure setCount(Value: integer); virtual; abstract;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirCodeSystemW; overload;
@@ -1248,6 +1255,8 @@ type
     FList : TFslList<T>;
     procedure updateList(url, version: String);
     function compare(sender : TObject; const l, r : T) : integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1349,6 +1358,12 @@ begin
 end;
 
 
+function TFHIRXVersionResourceWrapper.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRes.sizeInBytes);
+end;
+
 { TFhirOperationOutcomeW }
 
 function TFhirOperationOutcomeW.error(source: String; typeCode: TFhirIssueType; path: string; test: boolean; msg: string): boolean;
@@ -1422,6 +1437,12 @@ begin
   if FList = nil then
     FList := TFslList<TFhirParametersParameterW>.create;
   FList.Clear;
+end;
+
+function TFhirParametersParameterW.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFHIRXVersionElementWrapper }
@@ -1552,6 +1573,12 @@ begin
   FList.Clear;
 end;
 
+function TFHIRParametersW.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
+end;
+
 function TFHIRSearchParamDefinitionW.link: TFHIRSearchParamDefinitionW;
 begin
   result := TFHIRSearchParamDefinitionW(inherited link);
@@ -1616,6 +1643,12 @@ begin
   result := TFhirCodeSystemW(inherited link);
 end;
 
+function TFhirCodeSystemW.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FConceptList.sizeInBytes);
+end;
+
 { TFhirCodeSystemConceptW }
 
 destructor TFhirCodeSystemConceptW.Destroy;
@@ -1627,6 +1660,12 @@ end;
 function TFhirCodeSystemConceptW.link: TFhirCodeSystemConceptW;
 begin
   result := TFhirCodeSystemConceptW(inherited link);
+end;
+
+function TFhirCodeSystemConceptW.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FConceptList.sizeInBytes);
 end;
 
 { TFHIRValueSetCodeSystemW }
@@ -1659,6 +1698,12 @@ destructor TFHIRXVersionOperationWrapper.Destroy;
 begin
   FOp.Free;
   inherited;
+end;
+
+function TFHIRXVersionOperationWrapper.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOp.sizeInBytes);
 end;
 
 { TFHIRLookupOpResponseW }
@@ -1924,6 +1969,12 @@ begin
 end;
 
 
+function TFHIRXVersionOperationObjectWrapper.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FObj.sizeInBytes);
+end;
+
 { TFHIRGroupW }
 
 function TFHIRGroupW.Link: TFHIRGroupW;
@@ -2102,6 +2153,13 @@ begin
     end;
     updateList(r.url, r.version);
   end;
+end;
+
+function TFHIRMetadataResourceManagerW<T>.sizeInBytesV: cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FList.sizeInBytes);
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.updateList(url, version : String);

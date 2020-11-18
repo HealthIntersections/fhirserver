@@ -60,6 +60,8 @@ type
     FSize : integer;
     FCount: integer;
     FError: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(resourceType, url : String);
 
@@ -98,6 +100,8 @@ type
     procedure checkDelay;
     procedure doPing;
     procedure doDownload;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(client : TFhirClientV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -383,6 +387,20 @@ begin
   result := 'Downloaded '+inttostr(FFiles.Count)+' count for '+DescribeBytes(i)+' bytes';
 end;
 
+function TFHIRClientAsyncTask.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FClient.sizeInBytes);
+  inc(result, FFiles.sizeInBytes);
+  inc(result, (FFolder.length * sizeof(char)) + 12);
+  inc(result, FTypes.sizeInBytes);
+  inc(result, (FQuery.length * sizeof(char)) + 12);
+  inc(result, (FLog.length * sizeof(char)) + 12);
+  inc(result, (FTaskLocation.length * sizeof(char)) + 12);
+  inc(result, (FError.length * sizeof(char)) + 12);
+  inc(result, FFactory.sizeInBytes);
+end;
+
 { TDownloadFile }
 
 constructor TDownloadFile.Create(resourceType, url : String);
@@ -395,6 +413,14 @@ end;
 function TDownloadFile.Link: TDownloadFile;
 begin
   result := TDownloadFile(inherited Link);
+end;
+
+function TDownloadFile.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, (FResourceType.length * sizeof(char)) + 12);
+  inc(result, (FError.length * sizeof(char)) + 12);
 end;
 
 end.

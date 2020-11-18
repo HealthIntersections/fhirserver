@@ -84,6 +84,8 @@ Type
 //    Function GetByPath(oRoot : TDicomObject; sRoot : String; var iFrameIndex : Integer) : TDicomObject;
     Procedure CheckForImages(oRoot : TDicomObject; sTransferSyntax : String);
     Procedure LoadBytes(oRoot : TDicomObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -614,5 +616,20 @@ Begin
   If Not bOk Then
     raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
 End; }
+
+function TDicomImageExtractor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FInstance.sizeInBytes);
+  inc(result, FRoot.sizeInBytes);
+  inc(result, (FTransferSyntax.length * sizeof(char)) + 12);
+  inc(result, (FInstanceId.length * sizeof(char)) + 12);
+  inc(result, (FDateTime.length * sizeof(char)) + 12);
+  inc(result, (FAccessionNumber.length * sizeof(char)) + 12);
+  inc(result, (FModality.length * sizeof(char)) + 12);
+  inc(result, (FPatientName.length * sizeof(char)) + 12);
+  inc(result, (FPatientDOB.length * sizeof(char)) + 12);
+  inc(result, (FPatientSex.length * sizeof(char)) + 12);
+end;
 
 End.

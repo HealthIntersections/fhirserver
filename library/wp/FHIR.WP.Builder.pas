@@ -56,6 +56,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -177,6 +178,8 @@ Type
       Function ProcessSection(oStack : TFslStringList; oSection : TWPDocumentSection; oList : TWPDocumentBlocks; iIndex : Integer) : Integer; Overload;
       Function ProcessField(oField : TWPDocumentField; oList : TWPDocumentContents; iIndex : Integer) : Integer; Overload;
     procedure SetDicomDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       constructor Create(oDocument : TWPDocument); Overload; Virtual;
@@ -395,6 +398,12 @@ Begin
   FObject := Value;
 End;
 
+
+function TWPDocumentBuilderScope.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FObject.sizeInBytes);
+end;
 
 Function TWPDocumentBuilderScopes.Link : TWPDocumentBuilderScopes;
 Begin
@@ -1877,6 +1886,17 @@ Begin
   End;
 End;
 
+
+function TWPDocumentBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FScopeList.sizeInBytes);
+  inc(result, FIterator.sizeInBytes);
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FFieldValueProviders.sizeInBytes);
+  inc(result, FDicomDictionary.sizeInBytes);
+end;
 
 { TWPFieldValueProviderList }
 

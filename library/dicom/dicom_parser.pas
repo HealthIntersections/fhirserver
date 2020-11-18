@@ -102,6 +102,8 @@ Type
     Procedure SetContext(oValue : TDicomParserContext);
     Function MakeError(iBack : cardinal; sMessage : AnsiString) : Exception;
 //    Function BufferFactory(iSize : Integer): TFslBuffer;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(iMaxLength : Integer);
     destructor Destroy; Override;
@@ -176,6 +178,8 @@ Type
     Function ParseReleaseRequest : TDicomReleaseRequestPDU;
     Function ParseReleaseResponse : TDicomReleaseResponsePDU;
     Function ParseAbort : TDicomAbortPDU;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Function Execute : TDicomPDU;
     Function ExecuteInstance : TDicomInstance;
@@ -302,6 +306,18 @@ End;
 
 
 (*
+function TDicomParserContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FInput.sizeInBytes);
+  inc(result, FDictionary.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FMapBig.sizeInBytes);
+  inc(result, FMapOffset.sizeInBytes);
+  inc(result, (FErrorMessage.length * sizeof(char)) + 12);
+  inc(result, FVRRepresentation.sizeInBytes);
+end;
+
       function TDicomParser.IsPDU: Boolean;
 var
   iPos, iLength : int64;
@@ -331,7 +347,6 @@ begin
   End;
 end;
 *)
-
 
 function TDicomParserContext.Link: TDicomParserContext;
 begin
@@ -394,6 +409,12 @@ begin
   FOffset := FContext.FMapOffset;
 end;
 
+
+function TDicomParserBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContext.sizeInBytes);
+end;
 
 { TDicomParser }
 
@@ -1283,6 +1304,11 @@ Begin
   FContext.Input.Read(pc^, 1);
   Inc(FOffset, 2);
   FContext.Mark(aRole, 2);
+end;
+
+function TDicomPDUDecoder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TDicomFileDecoder }

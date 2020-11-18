@@ -69,6 +69,8 @@ type
     FTotal : Integer;
     FLock : TFslLock;
     function GetLogEntry(AUsage : String) : TFslDBLogEntry;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -206,6 +208,12 @@ begin
   finally
     FLock.UnLock;
   end;
+end;
+
+function TFslDBLogger.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFslDBLogEntry }

@@ -66,6 +66,8 @@ type
     FReference: String;
     FResource: TFHIRResourceV;
     procedure SetResource(const Value: TFHIRResourceV);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(reference : String; resource : TFHIRResourceV);
     destructor Destroy; override;
@@ -418,6 +420,13 @@ begin
   else
     result := ffJson;
 
+end;
+
+function TResourceWithReference.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FReference.length * sizeof(char)) + 12);
+  inc(result, FResource.sizeInBytes);
 end;
 
 class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;

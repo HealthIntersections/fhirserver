@@ -99,6 +99,7 @@ Type
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Virtual; Abstract;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Virtual;
+    function sizeInBytesV : cardinal; override;
 
       Function CompareItem(pA, pB : Pointer) : Integer; Virtual;
       Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Virtual;
@@ -274,6 +275,7 @@ Type
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Override;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
+    function sizeInBytesV : cardinal; override;
 
       Procedure InternalResize(iCapacity : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -316,6 +318,8 @@ Type
 
       Procedure SetIntegerList(Const Value: TFslIntegerList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -348,7 +352,7 @@ Type
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
-
+    
       Procedure InternalResize(iValue : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
       Procedure InternalEmpty(iIndex, iLength : Integer); Override;
@@ -378,6 +382,8 @@ Type
 
       Procedure SetPointers(Const Value: TFslPointerList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -424,6 +430,8 @@ Type
 
       Procedure SetClassList(Const Value : TFslClassList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -558,6 +566,7 @@ Type
     function AddressOfItem(iIndex: integer): PFslObject;
 
     procedure AssignItem(oItems: TFslItemList; iIndex: integer); override;
+    function sizeInBytesV : cardinal; override;
 
     procedure InternalTruncate(iValue: integer); override;
     procedure InternalResize(iValue: integer); override;
@@ -682,6 +691,7 @@ Type
     procedure StepNext;
     function Skip: boolean; virtual;
 
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -723,6 +733,8 @@ Type
       Function GetHashTable: TFslHashTable;
       Procedure SetHashTable(Const Value: TFslHashTable);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -788,6 +800,7 @@ Type
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
+    function sizeInBytesV : cardinal; override;
 
       Function ValidateIndex(Const sMethod: String; iIndex: Integer): Boolean; Override;
       Function ValidateItem(Const sMethod: String; oObject: TFslObject; Const sObject: String): Boolean; Virtual;
@@ -901,6 +914,7 @@ Type
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
+    function sizeInBytesV : cardinal; override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -984,6 +998,7 @@ Type
     Protected
       Procedure Generate; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Assign(oSource : TFslObject); Override;
       
@@ -1037,6 +1052,8 @@ Type
       Function GetHashTable: TFslObjectClassHashTable;
       Procedure SetHashTable(Const Value: TFslObjectClassHashTable);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1074,6 +1091,7 @@ Type
       Procedure SetAsText(Const sValue : String); Virtual;
 
       Procedure AssignItem(Items : TFslItemList; iIndex : Integer); Override;
+    function sizeInBytesV : cardinal; override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1139,6 +1157,8 @@ Type
 
       Procedure SetStringList(Const Value: TFslStringList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1385,6 +1405,7 @@ Type
       Procedure SetItem(iIndex : Integer; aValue: Pointer); Override;
 
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
+    function sizeInBytesV : cardinal; override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1460,6 +1481,7 @@ Type
       Function GetName: String; Virtual;
       Procedure SetName(Const Value: String); Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslName;
       Function Clone : TFslName;
@@ -1491,6 +1513,7 @@ Type
       Function FindByName(Const sName: String; Out iIndex: Integer): Boolean; Overload;
       Function FindByName(oName : TFslName; Out iIndex: Integer): Boolean; Overload;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -1550,6 +1573,8 @@ Type
     Private
       FObject : TFslObject;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1618,6 +1643,8 @@ Type
       Function GetBooleanList : TFslBooleanList;
       Procedure SetBooleanList(Const Value : TFslBooleanList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1634,22 +1661,22 @@ Type
   End;
 
   TFslCharacterSet = Class(TFslOrdinalSet)
-    Private
-      FDataSet : TCharSet;
+  Private
+    FDataSet : TCharSet;
 
-      Function GetAsText: String;
-      Procedure SetAsText(Const Value: String);
+    Function GetAsText: String;
+    Procedure SetAsText(Const Value: String);
 
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
 
-      Procedure AddRange(Const aFromValue, aToValue : Char);
-      Procedure AddValue(Const aValue : Char);
-      Function ContainsValue(Const aValue : Char) : Boolean;
+    Procedure AddRange(Const aFromValue, aToValue : Char);
+    Procedure AddValue(Const aValue : Char);
+    Function ContainsValue(Const aValue : Char) : Boolean;
 
-      Property AsText : String Read GetAsText Write SetAsText;
-      Property Data : TCharSet Read FDataSet Write FDataSet;
+    Property AsText : String Read GetAsText Write SetAsText;
+    Property Data : TCharSet Read FDataSet Write FDataSet;
   End;
 
 
@@ -1679,6 +1706,7 @@ Type
 
       Procedure Reparent; Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -1993,6 +2021,12 @@ Begin
 End;
 
 
+function TFslIntegerList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Capacity * sizeof(Integer));
+end;
+
 Constructor TFslIntegerListIterator.Create;
 Begin 
   Inherited;
@@ -2059,6 +2093,12 @@ Begin
   FIntegerList := Value;
 End;
 
+
+function TFslIntegerListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FIntegerList.sizeInBytes);
+end;
 
 Function TFslIntegerList.GetIntegers(iIndex : Integer) : TFslIntegerListItem;
 Begin
@@ -2228,6 +2268,12 @@ Begin
   FClassList := Value;
 End;
 
+function TFslClassListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FClassList.sizeInBytes);
+end;
+
 Procedure TFslObjectClassHashEntry.Assign(oSource: TFslObject);
 Begin
   Inherited;
@@ -2251,6 +2297,12 @@ Begin
   Inherited;
 End;  
 
+
+function TFslObjectClassHashTableIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FInternal.sizeInBytes);
+end;
 
 Function TFslObjectClassHashTable.ItemClass : TFslHashEntryClass;
 Begin 
@@ -2836,6 +2888,14 @@ Begin
 End;
 
 
+function TFslStringObjectMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Capacity * sizeof(TFslStringObjectMatchItem));
+  inc(result, FDefaultValue.sizeInBytes);
+  inc(result, (FSymbol.length * sizeof(char)) + 12);
+end;
+
 Constructor TFslStringMatch.Create;
 Begin
   Inherited;
@@ -3336,6 +3396,14 @@ End;
 
 
 
+function TFslStringMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, capacity * sizeof(TFslStringMatchItem));
+  inc(result, (FSymbol.length * sizeof(char)) + 12);
+  inc(result, (FSeparator.length * sizeof(char)) + 12);
+end;
+
 Constructor TFslStringList.Create;
 Begin
   Inherited;
@@ -3687,6 +3755,12 @@ Begin
 End;
 
 
+function TFslStringList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSymbol.length * sizeof(char)) + 12);
+end;
+
 Constructor TFslStringListIterator.Create;
 Begin
   Inherited;
@@ -3753,6 +3827,12 @@ Begin
   FStringList := Value;
 End;
 
+
+function TFslStringListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStringList.sizeInBytes);
+end;
 
 Function TFslStringList.GetAsCSV : String;
 Var
@@ -4277,6 +4357,12 @@ End;
 
 
 
+function TFslStringHashEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
+
 Function TFslStringHashTable.Equal(oA, oB: TFslHashEntry): Integer;
 Begin
   Result := Inherited Equal(oA, oB);
@@ -4315,6 +4401,16 @@ Function TFslObjectList.ItemClass : TFslObjectClass;
 Begin
   Result := TFslObject;
 End;
+
+function TFslObjectList.sizeInBytesV : cardinal;
+var
+  i : integer;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Capacity * Sizeof(pointer));
+  for i := 0 to count - 1 do
+    inc(result, Objects[i].sizeInBytes);
+end;
 
 Destructor TFslOrdinalSet.Destroy;
 Begin
@@ -5104,6 +5200,14 @@ Begin
   Result := FMatchArray^[iIndex];
 End;
 
+
+function TFslObjectMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, capacity * sizeof(TFslObjectMatchItem));
+  inc(result, FDefaultKey.sizeInBytes);
+  inc(result, FDefaultValue.sizeInBytes);
+end;
 
 constructor TFslObjectList.Create;
 begin
@@ -5931,6 +6035,12 @@ begin
 end;
 
 
+function TFslObjectListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
+end;
+
 function TFslObjectList.ContainsAllByReference(oObjectList: TFslObjectList): boolean;
 var
   iObjectIndex: integer;
@@ -6602,6 +6712,11 @@ Begin
 End;
 
 
+function TFslItemList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 Procedure TFslPointerList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin
   FPointerArray^[iIndex] := TFslPointerList(oItems).FPointerArray^[iIndex];
@@ -6775,7 +6890,6 @@ Begin
   TFslPointerListIterator(Result).Pointers := TFslPointerList(Self.Link);
 End;
 
-
 Constructor TFslPointerListIterator.Create;
 Begin
   Inherited;
@@ -6843,6 +6957,12 @@ Begin
 End;
 
 
+
+function TFslPointerListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPointerArray.sizeInBytes);
+end;
 
 Procedure TFslHashEntry.Assign(oSource: TFslObject);
 Begin
@@ -7329,6 +7449,14 @@ Begin
 End;
 
 
+function TFslHashTableIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHashTable.sizeInBytes);
+  inc(result, FCurrentHashEntry.sizeInBytes);
+  inc(result, FNextHashEntry.sizeInBytes);
+end;
+
 Function TFslHashTable.ProduceHashEntry: TFslHashEntry;
 Begin
   Result := ItemNew;
@@ -7534,6 +7662,12 @@ Begin
   FName := Value;
 End;
 
+
+function TFslName.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
 
 Constructor TFslNameList.Create;
 Begin
@@ -7772,6 +7906,12 @@ Begin
 End;
 
 
+function TFslNameList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSymbol.length * sizeof(char)) + 12);
+end;
+
 Procedure TFslCharacter.Assign(oObject : TFslObject);
 Begin
   Inherited;
@@ -7939,6 +8079,12 @@ Begin
 End;
 
 
+
+function TFslObjectChoice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FObject.sizeInBytes);
+end;
 
 Procedure TFslBooleanList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin
@@ -8199,6 +8345,12 @@ Begin
   FBooleanList := Value;
 End;
 
+function TFslBooleanListIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBooleanList.sizeInBytes);
+end;
+
 Constructor TFslCharacterSet.Create;
 Begin
   Inherited;
@@ -8417,6 +8569,12 @@ Begin
   FParent := Value;
 End;
 
+
+function TFslTree.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FChildren.sizeInBytes);
+end;
 
 Function TFslTreeList.GetTree(iIndex: Integer): TFslTree;
 Begin

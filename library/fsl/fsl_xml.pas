@@ -75,6 +75,8 @@ Type
   TMXmlBoolean = class (TMXmlPrimitive)
   private
     FValue: boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : boolean);
     property value : boolean read FValue write FValue;
@@ -84,6 +86,8 @@ Type
   TMXmlNumber = class (TMXmlPrimitive)
   private
     FValue: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : integer);
     property value : integer read FValue write FValue;
@@ -93,6 +97,8 @@ Type
   TMXmlString = class (TMXmlPrimitive)
   private
     FValue: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     property value : String read FValue write FValue;
@@ -112,6 +118,8 @@ Type
     FStart : TSourceLocation;
     FStop : TSourceLocation;
     function containsLocation(loc : TSourceLocation) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
@@ -126,6 +134,8 @@ Type
   TMXmlAttribute = class (TMXmlNamedNode)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(); override;
     constructor Create(name, value : String); overload;
@@ -163,6 +173,8 @@ Type
     function GetHasAttribute(name: String): boolean;
     function GetAllChildrenAreText: boolean;
     function findLocation(loc : TSourceLocation; path : TFslList<TMXmlNamedNode>) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -224,6 +236,8 @@ Type
     function GetParams: TFslList<TMXPathExpressionNode>;
     function GetFilters: TFslList<TMXPathExpressionNode>;
     function buildConstant : TMXmlNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     Function Link : TMXPathExpressionNode; overload;
@@ -246,6 +260,8 @@ Type
   TXPathVariables = class (TFslObject)
   private
     FMap : TFslMap<TMXmlNode>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(name : String; value : TMXmlNode); overload;
@@ -307,6 +323,8 @@ Type
     function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode) : TFslList<TMXmlNode>; overload;
     function evaluateString(nodes : TFslList<TMXmlNode>): String;
     function GetDocElement: TMXmlElement;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
@@ -362,6 +380,8 @@ Type
     function readXpathExpression(node : TMXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : string;
     function parseXPath : TMXPathExpressionNode; overload;
     function newGroup(next: TMXPathExpressionNode): TMXPathExpressionNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -393,6 +413,8 @@ type
     FNew: TStringList;
     FDefaultSet: boolean;
     procedure SetDefaultNS(const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -471,6 +493,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslXMLAttribute;
       Function Clone : TFslXMLAttribute;
@@ -558,6 +581,8 @@ Type
 
       Function GetValue: String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -592,6 +617,8 @@ Type
     Private
       FEntryList : TFslXMLNamespaceEntryList;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -618,6 +645,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -652,6 +680,7 @@ Type
       Function UseAttributes : String;
 
       Procedure ProducePretty(sValue : String);
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -693,6 +722,8 @@ Type
     FCanonicalEntities: boolean;
     function getNSRep(uri, name : String):String;
     procedure SetCanonicalEntities(const Value: boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -747,6 +778,8 @@ Type
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; override;
@@ -795,6 +828,7 @@ Type
 
       Function SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -899,6 +933,12 @@ begin
   result := FValue;
 end;
 
+function TMXmlAttribute.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+end;
+
 { TMXmlNamedNode }
 
 function TMXmlNamedNode.containsLocation(loc : TSourceLocation): boolean;
@@ -917,6 +957,14 @@ begin
   result := ((other is TMXmlNamedNode) and (FNamespaceURI = TMXmlNamedNode(other).FNamespaceURI) and (FLocalName = TMXmlNamedNode(other).FLocalName));
 end;
 
+function TMXmlNamedNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FNamespaceURI.length * sizeof(char)) + 12);
+  inc(result, (FLocalName.length * sizeof(char)) + 12);
+end;
+
 { TMXmlElement }
 
 constructor TMXmlElement.Create(nodeType: TMXmlElementType; name: String);
@@ -930,6 +978,15 @@ begin
   Create(nodeType);
   FNamespaceURI := ns;
   FLocalName := local;
+end;
+
+function TMXmlElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FChildren.sizeInBytes);
+  inc(result, (FText.length * sizeof(char)) + 12);
+  inc(result, FNext.sizeInBytes);
 end;
 
 class function TMXmlElement.createComment(text: String): TMXmlElement;
@@ -1482,6 +1539,12 @@ begin
 end;
 
 { TMXmlParser }
+
+function TMXmlParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, reader.sizeInBytes);
+end;
 
 class function TMXmlParser.parse(content: TStream; options : TMXmlParserOptions): TMXmlDocument;
 var
@@ -2554,6 +2617,17 @@ begin
   finally
     b.Free;
   end;
+end;
+
+function TMXPathExpressionNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, FFilters.sizeInBytes);
+  inc(result, FNext.sizeInBytes);
+  inc(result, FNextOp.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, FParams.sizeInBytes);
 end;
 
 { TMXmlDocument }
@@ -3798,6 +3872,12 @@ begin
   addElementNS(ns, local);
 end;
 
+function TMXmlDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FNamespaceAbbreviations.sizeInBytes);
+end;
+
 { TMXmlNode }
 
 function TMXmlNode.equal(other: TMXmlNode): boolean;
@@ -3823,6 +3903,11 @@ begin
   result := BooleanToString(value);
 end;
 
+function TMXmlBoolean.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TMXmlNumber }
 
 constructor TMXmlNumber.Create(value: integer);
@@ -3834,6 +3919,11 @@ end;
 function TMXmlNumber.ToString: String;
 begin
   result := IntToStr(value);
+end;
+
+function TMXmlNumber.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TXPathVariables }
@@ -3881,6 +3971,12 @@ begin
   end;
 end;
 
+function TXPathVariables.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+end;
+
 { TMXmlString }
 
 constructor TMXmlString.Create(value: String);
@@ -3892,6 +3988,12 @@ end;
 function TMXmlString.ToString: String;
 begin
   result := FValue;
+end;
+
+function TMXmlString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TMXmlPrimitive }
@@ -4148,6 +4250,14 @@ begin
   result := xml.FLocation;
 end;
 
+function TFslXmlBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, mem.sizeInBytes);
+  inc(result, buf.sizeInBytes);
+  inc(result, xml.sizeInBytes);
+end;
+
 { TXmlBuilderNamespaceList }
 
 procedure TXmlBuilderNamespaceList.Assign(oObject: TFslObject);
@@ -4185,6 +4295,13 @@ begin
   if FDefaultNS <> Value then
     FDefaultSet := true;
   FDefaultNS := Value;
+end;
+
+function TXmlBuilderNamespaceList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDefaultNS.length * sizeof(char)) + 12);
+  inc(result, FNew.sizeInBytes);
 end;
 
 { TXmlBuilder }
@@ -4745,6 +4862,14 @@ begin
 end;
 
 
+function TFslXMLFormatter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes);
+  inc(result, (FPending.length * sizeof(char)) + 12);
+end;
+
 Function TFslXMLAttribute.Link : TFslXMLAttribute;
 Begin
   Result := TFslXMLAttribute(Inherited Link);
@@ -4773,6 +4898,15 @@ Begin
   Result := EFslXMLObject;
 End;
 
+
+function TFslXMLAttribute.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, (FSortKey.length * sizeof(char)) + 12);
+end;
 
 Function TFslXMLAttributeList.Link : TFslXMLAttributeList;
 Begin
@@ -5125,6 +5259,13 @@ Begin
 End;
 
 
+function TFslXMLNamespaceEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FKey.length * sizeof(char)) + 12);
+  inc(result, FValues.sizeInBytes);
+end;
+
 Function TFslXMLNamespaceEntryList.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompare(TFslXMLNamespaceEntry(pA).Key, TFslXMLNamespaceEntry(pB).Key);
@@ -5180,6 +5321,12 @@ Begin
   Inherited;
 End;
 
+
+function TFslXMLNamespaceLevel.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEntryList.sizeInBytes);
+end;
 
 Function TFslXMLNamespaceLevelList.ItemClass: TFslObjectClass;
 Begin
@@ -5384,6 +5531,13 @@ Begin
     oLevel.Free;
   End;
 End;
+
+function TFslXMLNamespaceManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEntryList.sizeInBytes);
+  inc(result, FLevelList.sizeInBytes);
+end;
 
 { TMXmlBuilder }
 
@@ -5656,6 +5810,14 @@ end;
 procedure TMXmlBuilder.StartFragment;
 begin
   Start(nil);
+end;
+
+function TMXmlBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStack.sizeInBytes);
+  inc(result, FDoc.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes);
 end;
 
 { TFslXMLExtractor }
@@ -6193,6 +6355,15 @@ End;
 function TFslXMLExtractor.PeekString: String;
 begin
   result := PeekXml;
+end;
+
+function TFslXMLExtractor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FElement.length * sizeof(char)) + 12);
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FNamespaceManager.sizeInBytes);
+  inc(result, (FNodeName.length * sizeof(char)) + 12);
 end;
 
 end.

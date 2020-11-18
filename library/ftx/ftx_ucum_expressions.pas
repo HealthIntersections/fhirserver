@@ -47,6 +47,8 @@ Type
   private
     FFactor: Integer;
     FAnnotation : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(iFactor : integer); overload;
     constructor Create(iFactor : integer; Annotation : String); overload;
@@ -65,6 +67,8 @@ Type
     procedure SetPrefix(const Value: TUcumPrefix);
     procedure SetUnit_(const Value: TUcumUnit);
     procedure SetExponent(const Value: Integer);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(oUnit_ : TUcumUnit; oPrefix : TUcumPrefix; iExponent : Integer); Overload;
     destructor Destroy; Override;
@@ -83,6 +87,8 @@ Type
     FTerm : TUcumTerm;
     procedure SetComponent(const Value: TUcumComponent);
     procedure SetTerm(const Value: TUcumTerm);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -113,6 +119,8 @@ Type
     function checkSingle(ch : UnicodeChar; test : UnicodeChar; atype : TUcumLexerTokenType ) : boolean;
     function nextChar() : UnicodeChar;
     function peekChar() : UnicodeChar;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(sSource : String);
 
@@ -128,6 +136,8 @@ Type
     FBase : TUcumBaseUnit;
     FExponent : integer;
     procedure SetBase(value : TUcumBaseUnit);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(base : TUcumBaseUnit; exponent : integer); overload;
     destructor Destroy; Override;
@@ -140,6 +150,8 @@ Type
   private
     FValue : TFslDecimal;
     FUnits : TFslList<TUcumCanonicalUnit>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -163,6 +175,8 @@ Type
     function expandDefinedUnit(indent : String; unit_ : TUcumDefinedUnit) : TUcumCanonical; overload;
      function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
      function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -176,6 +190,8 @@ Type
     function parseSymbol : TUcumSymbol;
     function parseComp : TUcumComponent;
     function ParseTerm(bFirst : Boolean) : TUcumTerm;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
     class function Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
@@ -234,6 +250,12 @@ begin
   result := TUcumFactor(Inherited Link);
 end;
 
+function TUcumFactor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FAnnotation.length * sizeof(char)) + 12);
+end;
+
 { TUcumSymbol }
 
 constructor TUcumSymbol.Create(oUnit_: TUcumUnit; oPrefix: TUcumPrefix; iExponent: Integer);
@@ -278,6 +300,13 @@ begin
   FUnit_ := Value;
 end;
 
+function TUcumSymbol.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPrefix.sizeInBytes);
+  inc(result, FUnit_.sizeInBytes);
+end;
+
 { TUcumTerm }
 
 constructor TUcumTerm.Create;
@@ -318,7 +347,21 @@ begin
     Operator := NOOP;
 end;
 
+function TUcumTerm.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FComponent.sizeInBytes);
+  inc(result, FTerm.sizeInBytes);
+end;
+
 { TUcumExpressionParser }
+
+function TUcumExpressionParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FModel.sizeInBytes);
+  inc(result, FLexer.sizeInBytes);
+end;
 
 class function TUcumExpressionParser.Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
 var
@@ -652,6 +695,14 @@ Begin
 End;
 
 
+function TUcumLexer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSourceString.length * sizeof(char)) + 12);
+  inc(result, length(Fsource) * Sizeof(UnicodeChar));
+  inc(result, (Ftoken.length * sizeof(char)) + 12);
+end;
+
 class Function TUcumExpressionComposer.compose(Term : TUcumTerm) : String;
 var
   oBuilder : TFslStringBuilder;
@@ -970,6 +1021,14 @@ begin
 end;
 
 
+function TUcumConverter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fmodel.sizeInBytes);
+  inc(result, Fhandlers.sizeInBytes);
+  inc(result, Fone.sizeInBytes);
+end;
+
 { TUcumComponent }
 
 function TUcumComponent.Link: TUcumComponent;
@@ -1009,6 +1068,12 @@ end;
 procedure TUcumCanonical.multiplyValue(i: TFslDecimal);
 begin
   Value := FValue.Multiply(i);
+end;
+
+function TUcumCanonical.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FUnits.sizeInBytes);
 end;
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;
@@ -1105,5 +1170,11 @@ begin
   FBase := value;
 end;
 
+
+function TUcumCanonicalUnit.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBase.sizeInBytes);
+end;
 
 End.

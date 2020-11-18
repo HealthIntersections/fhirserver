@@ -2011,6 +2011,12 @@ function commandLineAsString : String;
 
 
 type
+  TStringListHelper = class helper for TStringList
+  public
+    function sizeInBytes : cardinal;
+  end;
+
+type
   TSemVer = class (TFslObject)
   public
     class function matches(v1, v2 : String) : boolean;
@@ -7011,7 +7017,6 @@ Begin
   if System.length(a) > 0 then
     aStream.Write(a[0], System.length(a));
 End;
-
 
 { TCommaBuilder }
 
@@ -12569,7 +12574,7 @@ Begin
         assert(false, 'not implemented yet?');
 //        s[i-1] := s[i-1] + cdig(t mod 10);
  //       c := t div 10;
-      end;
+end;
 
     iDec := Length(res) + 1 - ((length(s1)-iMax)*2);
 
@@ -15392,7 +15397,7 @@ begin
   b := TStringBuilder.create;
   try
     for c in sValue do
-    begin
+begin
       if CharInSet(c, ['a'..'z', 'A'..'Z', '0'..'9']) then
         b.append(c)
       else
@@ -16856,6 +16861,24 @@ begin
 end;
 {$ENDIF}
 
+
+{ TStringListHelper }
+
+function TStringListHelper.sizeInBytes: cardinal;
+var
+  s : String;
+begin
+  if (self = nil) then
+    result := 0
+  else
+  begin
+    result := sizeof(TStringList)+ (Count * 2 * sizeof(pointer));
+    for s in self do
+      inc(result, (s.Length * sizeOf(Char))+12);
+  end;
+
+
+end;
 
 Initialization
   init;

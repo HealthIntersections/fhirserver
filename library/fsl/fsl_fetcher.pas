@@ -63,6 +63,8 @@ Type
     procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -195,6 +197,18 @@ begin
       oUri.Free;
     End;
   End;
+end;
+
+function TInternetFetcher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FURL.length * sizeof(char)) + 12);
+  inc(result, FBuffer.sizeInBytes);
+  inc(result, (FUsername.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, (FContentType.length * sizeof(char)) + 12);
+  inc(result, (FUserAgent.length * sizeof(char)) + 12);
+  inc(result, (FAccept.length * sizeof(char)) + 12);
 end;
 
 class function TInternetFetcher.fetchUrl(url : String) : TBytes;

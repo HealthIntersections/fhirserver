@@ -144,6 +144,7 @@ Type
 
     Procedure checkOtherAttributes(value : TMXmlElement; path : String);
     function GetFormat: TFHIRFormat; override;
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
     procedure Parse; Override;
@@ -270,6 +271,7 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
     function GetFormat: TFHIRFormat; override;
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Override;
@@ -309,6 +311,7 @@ Type
     procedure finishElement(json : TJSONWriter; name : String; value : TFHIRObject; noObj : boolean);
     procedure startArray(json : TJSONWriter; name : String; list : TFHIRObjectList; loc2 : boolean = false);
     procedure finishArray(json : TJSONWriter; list : TFHIRObjectList);
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload; override;
@@ -334,6 +337,7 @@ Type
     Procedure ComposeResourceV(parent :  TTurtleComplex; oResource : TFhirResourceV); overload; virtual; abstract;
     Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResourceV; useType : boolean; index : integer); overload;
     function GetFormat: TFHIRFormat; override;
+    function sizeInBytesV : cardinal; override;
   public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Override;
@@ -392,6 +396,13 @@ begin
   finally
     xml.free;
   end;
+end;
+
+function TFHIRXmlParserBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FElement.sizeInBytes);
+  inc(result, FComments.sizeInBytes);
 end;
 
 { TFHIRJsonParserBase }
@@ -792,6 +803,12 @@ begin
   end;
 end;
 
+function TFHIRXmlComposerBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FComment.length * sizeof(char)) + 12);
+end;
+
 { TFHIRJsonComposerBase }
 
 
@@ -1102,6 +1119,11 @@ begin
   json.ValueNull(name);
 end;
 
+
+function TFHIRJsonComposerBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 { TFHIRParser }
 
@@ -1757,6 +1779,13 @@ end;
 function TFHIRTurtleComposerBase.MimeType: String;
 begin
   result := 'text/turtle';
+end;
+
+function TFHIRTurtleComposerBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FURL.length * sizeof(char)) + 12);
+  inc(result, FTtl.sizeInBytes);
 end;
 
 { TFHIRTextParser }

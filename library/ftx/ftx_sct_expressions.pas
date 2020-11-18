@@ -50,6 +50,8 @@ Type
   private
     Fstop: integer;
     Fstart: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Function Link : TSnomedExpressionBase; overload;
     property start : integer read Fstart write Fstart;
@@ -63,6 +65,8 @@ Type
     Fdescription: String;
     FLiteral: String;
     FDecimal: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(reference : cardinal); overload;
@@ -91,6 +95,8 @@ Type
     FStatus: TSnomedExpressionStatus;
     function GetRefinementGroups: TFslList<TSnomedRefinementGroup>;
     function GetRefinements: TSnomedRefinementList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -120,6 +126,8 @@ Type
     Fvalue: TSnomedExpression;
     procedure SetName(const Value: TSnomedConcept);
     procedure SetValue(const Value: TSnomedExpression);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -136,6 +144,8 @@ Type
   TSnomedRefinementGroup = class (TSnomedExpressionBase)
   private
     Frefinements: TSnomedRefinementList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -185,6 +195,8 @@ Type
     Function attributeGroup : TSnomedRefinementGroup;
     procedure refinements(expr : TSnomedExpression);
     function expression : TSnomedExpression;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function parse(source : String) : TSnomedExpression;
   end;
@@ -196,6 +208,11 @@ implementation
 function TSnomedExpressionBase.Link: TSnomedExpressionBase;
 begin
   result := TSnomedExpressionBase(inherited Link);
+end;
+
+function TSnomedExpressionBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TSnomedConcept }
@@ -273,6 +290,15 @@ begin
     result := literal = other.literal
   else
     result := false;
+end;
+
+function TSnomedConcept.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fcode.length * sizeof(char)) + 12);
+  inc(result, (Fdescription.length * sizeof(char)) + 12);
+  inc(result, (FLiteral.length * sizeof(char)) + 12);
+  inc(result, (FDecimal.length * sizeof(char)) + 12);
 end;
 
 { TSnomedExpression }
@@ -490,6 +516,14 @@ begin
   end;
 end;
 
+function TSnomedExpression.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FrefinementGroups.sizeInBytes);
+  inc(result, Frefinements.sizeInBytes);
+  inc(result, Fconcepts.sizeInBytes);
+end;
+
 { TSnomedRefinement }
 
 function TSnomedRefinement.canonical: TSnomedRefinement;
@@ -550,6 +584,13 @@ procedure TSnomedRefinement.SetValue(const Value: TSnomedExpression);
 begin
   Fvalue.Free;
   Fvalue := value;
+end;
+
+function TSnomedRefinement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fname.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes);
 end;
 
 { TSnomedRefinementGroup }
@@ -635,6 +676,12 @@ begin
     if not hasRefinement(refinement) then
       exit(false);
   result := true;
+end;
+
+function TSnomedRefinementGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Frefinements.sizeInBytes);
 end;
 
 { TSnomedConceptSorter }
@@ -969,6 +1016,12 @@ begin
   SetLength(result, i);
 end;
 
+
+function TSnomedExpressionParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (source.length * sizeof(char)) + 12);
+end;
 
 end.
 

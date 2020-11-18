@@ -524,6 +524,8 @@ Type
       FStrikethrough : TWPSTriState;
       FCapitalization : TWPSCapsState;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -715,6 +717,8 @@ Type
       Function GetParagraph : TWPSParagraphDetails;
       Procedure SetParagraph(Const Value : TWPSParagraphDetails);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -865,6 +869,8 @@ Type
     Procedure SetHighOuterLimit(Const Value : Word);
 
     Function MapToPredefinedBorderStyle: TPredefinedBorderStyles;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -936,6 +942,8 @@ Type
       Procedure SetLinkColour(Const Value: TColour);
       Procedure SetURL(Const Value: String);
       Procedure SetTitle(Const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       constructor Create(Const sURL : String); Overload; Virtual;
@@ -1006,6 +1014,8 @@ Type
       FX : Integer;
       FY : Integer;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TWPCoordinate; Overload;
       Function Clone : TWPCoordinate; Overload;
@@ -1057,6 +1067,8 @@ Type
       FSelected : Boolean;
     Procedure SetSelected(Const Value: Boolean);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1096,6 +1108,8 @@ Type
   TWPImageMap = Class (TWPTrackable)
     Private
       FAreas : TWPImageMapAreaList;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1130,6 +1144,8 @@ Type
       FCaptionPoint : TWPCoordinate;
       FFont : TWPSFontDetails;
       FCaption : String;
+  protected
+    function sizeInBytesV : cardinal; override;
     public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1225,6 +1241,8 @@ Type
       Procedure SetHotspot(Const Value: TWPHotspot);
       Procedure SetSubject(Const Value: TFslObject);
       procedure SetAdornment(const Value: TWPDocumentImageAdornment);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1248,6 +1266,8 @@ Type
     Private
       FText : String;
       FCursor : Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Init(Const sText : String); Overload; Virtual;
       Function More : Boolean; Overload; Virtual;
@@ -1259,6 +1279,8 @@ Type
     Private
       FText : String;
       FCursor : Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Init(const sText : String); Overload; Virtual;
       Function More : Boolean; Overload; Virtual;
@@ -1281,6 +1303,7 @@ Type
     Protected
       Function ItemClass : TFslObjectClass; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1635,6 +1658,8 @@ Type
       FChildren: TWPPropertyList;
       Procedure SetChildren(Const Value: TWPPropertyList);
       Procedure SetKind(Const Value: TWPPropertyKind);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1682,6 +1707,8 @@ Type
       FSortIndex: Integer;
       FIsAscend: Boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(Const iIndex: Integer; Const bIsAscend: Boolean); Overload;
 
@@ -1727,6 +1754,7 @@ type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -1773,6 +1801,8 @@ Type
       FDescription : String;
       FSection : Boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(Const sCode : String; Const sName : String; Const sDescription : String; Const bSection : Boolean); Overload; Virtual;
 
@@ -1799,6 +1829,8 @@ Type
     FEntries : TWPFieldEntryList;
     Function GetEntries : TWPFieldEntryList;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2030,6 +2062,12 @@ Begin
   End;
 End;
 
+
+function TWPSFontDetails.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
 
 Procedure TWPSParagraphDetails.Assign(oSource: TFslObject);
 Begin
@@ -2299,7 +2337,6 @@ Procedure TWPSParagraphDetails.AlignRight;
 Begin
   FAlign := WordProcessorParagraphAlignmentRight;
 End;
-
 
 Constructor TWPStyle.Create;
 Begin
@@ -2598,6 +2635,13 @@ Begin
 End;
 
 
+function TWPStyle.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFont.sizeInBytes);
+  inc(result, FParagraph.sizeInBytes);
+end;
+
 Constructor TWPStyles.Create;
 Begin
   Inherited;
@@ -2707,6 +2751,12 @@ Begin
   End;
 End;
 
+
+function TWPStyles.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefaultStyle.sizeInBytes);
+end;
 
 Function TWPStyleStack.Empty: Boolean;
 Begin
@@ -3202,6 +3252,12 @@ Begin
 End;
 
 
+function TWPBorder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBrushImage.sizeInBytes);
+end;
+
 Destructor TWPTrackable.Destroy;
 Begin
   If Assigned(FOnChange) Then
@@ -3241,7 +3297,6 @@ Begin
   If Assigned(FOnChange) Then
     FOnChange(aType, oSource);
 End;
-
 
 Constructor TWPTrackableList.Create;
 Begin
@@ -3383,8 +3438,6 @@ Function IsWordBreak(Const sWord : String) : Boolean;
 Begin
   Result := (Length(sWord) = 1) And CharInSet(sWord[1], CHAR_WORD_BREAK);
 End;
-
-
 
 Constructor TWPHotspot.Create;
 Begin
@@ -3541,6 +3594,14 @@ Begin
   Change(ctPresentation, Self);
 End;
 
+
+function TWPHotspot.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FURL.length * sizeof(char)) + 12);
+  inc(result, (FKey.length * sizeof(char)) + 12);
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+end;
 
 Function TWPHotspotList.Link : TWPHotspotList;
 Begin
@@ -3699,6 +3760,12 @@ Begin
 End;
 
 
+function TWPImageMap.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAreas.sizeInBytes);
+end;
+
 { TWPImageMapArea }
 
 Constructor TWPImageMapArea.Create;
@@ -3733,6 +3800,12 @@ Begin
 End;
 
 
+
+function TWPImageMapArea.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCoordinates.sizeInBytes);
+end;
 
 Function TWPImageMapAreaList.Link : TWPImageMapAreaList;
 Begin
@@ -3817,6 +3890,11 @@ Begin
 End;
 
 
+
+function TWPCoordinate.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 function TWPCoordinateList.LastIs(iX, iY: Integer): Boolean;
 Begin
@@ -3953,6 +4031,16 @@ begin
   FCoordinates.Free;
   FFont.Free;
   inherited;
+end;
+
+function TWPDocumentImageAdornment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, FCoordinates.sizeInBytes);
+  inc(result, FCaptionPoint.sizeInBytes);
+  inc(result, FFont.sizeInBytes);
+  inc(result, (FCaption.length * sizeof(char)) + 12);
 end;
 
 Function TWPDocumentImageAdornments.Link : TWPDocumentImageAdornments;
@@ -4303,6 +4391,15 @@ begin
   result := TWPMouseInfo(Inherited Link);
 end;
 
+function TWPMouseInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHotspot.sizeInBytes);
+  inc(result, FSubject.sizeInBytes);
+  inc(result, FAdornment.sizeInBytes);
+  inc(result, (FHint.length * sizeof(char)) + 12);
+end;
+
 Procedure TWPWordIterator.Init(Const sText : String);
 Begin
   FText := sText;
@@ -4357,6 +4454,12 @@ End;
 
 
 
+function TWPWordIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FText.length * sizeof(char)) + 12);
+end;
+
 Procedure TWPLineIterator.Init(const sText : String);
 Begin
   FText := sText;
@@ -4404,6 +4507,12 @@ Begin
 End;
 
 
+
+function TWPLineIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FText.length * sizeof(char)) + 12);
+end;
 
 Function TWPCompletionItem.Link : TWPCompletionItem;
 Begin
@@ -4735,6 +4844,14 @@ Begin
     FChildren := TWPPropertyList.Create;
 End;
 
+function TWPProperty.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FChildren.sizeInBytes);
+end;
+
 { TWPPropertyList }
 
 Procedure TWPPropertyList.Add(Const iId : Integer; Const bEditable : Boolean; Const sName: String; aKind: TWPPropertyKind; Const sValue: String);
@@ -5019,6 +5136,11 @@ Begin
   FIsAscend := bIsAscend;
 End;
 
+function TWPSortDetail.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TWPSortDetailList }
 
 Function TWPSortDetailList.ItemClass: TFslObjectClass;
@@ -5168,6 +5290,13 @@ Begin
 End;
 
 
+function TWPRendererTableColumnMetric.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDeadLefts.sizeInBytes);
+  inc(result, FDeadRights.sizeInBytes);
+end;
+
 Function TWPTableColumnMetrics.Link : TWPTableColumnMetrics;
 Begin
   Result := TWPTableColumnMetrics(Inherited Link);
@@ -5249,6 +5378,13 @@ Begin
 End;
 
 
+function TWPFieldModel.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FTitle.length * sizeof(char)) + 12);
+  inc(result, FEntries.sizeInBytes);
+end;
+
 Function TWPFieldEntryList.GetFieldName(iIndex: Integer): TWPFieldEntry;
 Begin
   Result := TWPFieldEntry(ObjectByIndex[iIndex]);
@@ -5270,6 +5406,13 @@ begin
   FCode := sCode;
   FDescription := sDescription;
   FSection := bSection;
+end;
+
+function TWPFieldEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
+  inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
 function TWPFieldEntryList.Link: TWPFieldEntryList;
