@@ -68,6 +68,7 @@ type
 
     procedure incCol;
     procedure incLine;
+    function checkChar(ch : char; last13 : boolean) : boolean;
 
     function nonZero : boolean;
     function isNull : boolean;
@@ -7282,6 +7283,26 @@ end;
 function TSourceLocation.lineForHuman : integer;
 begin
   result := line + 1;
+end;
+
+function TSourceLocation.checkChar(ch: char; last13: boolean): boolean;
+begin
+  if (ch = #13) then
+  begin
+    incLine();
+    exit(true);
+  end
+  else if (ch = #10) then
+  begin
+    if (not last13) then
+      incLine();
+    exit(false);
+  end
+  else
+  begin
+    incCol;
+    exit(false);
+  end;
 end;
 
 function TSourceLocation.colForHuman : integer;

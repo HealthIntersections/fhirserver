@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Classes, Math,
   fsl_base, fsl_utilities,
-  FHIR.WP.Documents, ftx_ucum_base;
+  wp_documents, ftx_ucum_base;
 
 Const
   MAX_ROWS = 200;

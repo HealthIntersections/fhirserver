@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
-  fhir_ucum,
+  fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, 
   fhir3_pathnode, fhir3_types, fhir3_resources, fhir3_utilities, fhir3_context, fhir3_constants, fhir3_resources_base;
 

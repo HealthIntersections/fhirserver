@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="fhir4"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir"/>
       </Item>
       <Item>

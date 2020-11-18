@@ -289,6 +289,8 @@ begin
   FId := id;
   FOthers := TFslStringObjectMatch.create;
   FOthers.PreventDuplicates;
+  FOthers.DefaultValue := nil;
+  FOthers.Forced := true;
 end;
 
 destructor TValueSetChecker.destroy;

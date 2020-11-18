@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Controls;
+Unit fui_vclx_controls;
 
 {
 Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -36,8 +36,9 @@ Uses
   System.UITypes, UxTheme, ToolWin, ComCtrls, Menus, ImgList, Mask, CommCtrl, VirtualTrees, ActiveX,
   Winapi.GdipApi, WinApi.GdipObj,
   SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
-  fsl_base, fsl_utilities, fsl_graphics, fsl_stream, fsl_collections, fsl_threads,
-  fsl_gdiplus, FHIR.Uix.Base, FHIR.Uix.Images;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_threads,
+  fui_vclx_base, fui_vclx_images,
+  wp_graphics, wp_gdiplus;
 
   {$IFNDEF VER130}  {$ENDIF}
 
@@ -6425,7 +6426,7 @@ Begin
     hT := OpenThemeData(Handle, 'Edit');
     hD := GetWindowDC(Handle);
     Try
-      aRect := fsl_graphics.Rect(0, 0, Width, Height);
+      aRect := wp_graphics.Rect(0, 0, Width, Height);
       DrawThemeBackground(hT, hD, GetEditPart, GetEditState, aRect, Nil);
       Invalidate;
     Finally
@@ -8730,7 +8731,7 @@ Begin
     If sSeparatorHint <> '' Then
     Begin
       //Initialize
-      aRectangle := fsl_graphics.Rect(0, 0, 0, 0);
+      aRectangle := wp_graphics.Rect(0, 0, 0, 0);
       aCanvas.Font.Style := [fsBold];
 
       //Make windows calculate needed space
@@ -8753,7 +8754,7 @@ Begin
   Begin
     //Caption
     sCaption := oMenuItem.Caption;
-    aCaptionRectangle := fsl_graphics.Rect(0, 0, 0, 0);
+    aCaptionRectangle := wp_graphics.Rect(0, 0, 0, 0);
     aCanvas.Font.Style := [fsBold];
 
 //    bHasGutter := (oMenuItem.GetImageList <> Nil) Or Checked;
@@ -8769,7 +8770,7 @@ Begin
 
     If UseShortCut And (sShortCut <> '') Then
     Begin
-      aShortCutRectangle := fsl_graphics.Rect(0, 0, 0, 0);
+      aShortCutRectangle := wp_graphics.Rect(0, 0, 0, 0);
 
       DrawText(aCanvas.Handle, PChar(sShortCut), Length(sShortCut), aShortCutRectangle, DT_CALCRECT Or DT_LEFT Or DT_EXTERNALLEADING);
 
@@ -8778,7 +8779,7 @@ Begin
     End;
 
     //Hint:
-    aHintRectangle := fsl_graphics.Rect(0, 0, 0, 0);
+    aHintRectangle := wp_graphics.Rect(0, 0, 0, 0);
     sHint := oMenuItem.Hint;
     aCanvas.Font.Style := [];
 
@@ -8912,7 +8913,7 @@ Begin
     If Default Then
       aCanvas.Font.Style := [fsBold];
 
-    aRectangle := fsl_graphics.Rect(0, 0, 0, 0);
+    aRectangle := wp_graphics.Rect(0, 0, 0, 0);
 
     iOffset := DrawText(aCanvas.Handle, PChar(sCaption), Length(sCaption), aRectangle, DT_CALCRECT Or DT_EXTERNALLEADING Or DT_TOP);
 
@@ -8962,18 +8963,18 @@ Begin
         aRectangle := ARect;
         aRectangle.Bottom := aRectangle.Top + iOffset + EXTENDED_MARG_Y * 2;
 
-        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
+        ColourGradientVertical(aCanvas.Handle, wp_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
 
         //Second gradient - description
         aRectangle.Top := aRectangle.Bottom;
         aRectangle.Bottom := ARect.Bottom;
-        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart2, ExtendedGradientEnd2);
+        ColourGradientVertical(aCanvas.Handle, wp_graphics.TRect(aRectangle), ExtendedGradientStart2, ExtendedGradientEnd2);
       End
       Else
       Begin
         //Only one gradient under caption
         aRectangle := ARect;
-        ColourGradientVertical(aCanvas.Handle, fsl_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
+        ColourGradientVertical(aCanvas.Handle, wp_graphics.TRect(aRectangle), ExtendedGradientStart1, ExtendedGradientEnd1);
       End;
 
       //Release clipregion
@@ -9446,7 +9447,7 @@ Begin
 
     Canvas.Brush.Color := ReadColor(Items[Index], clGray);
 
-    aTarget := fsl_graphics.Rect(aRect.Left - ColorRectWidth, aRect.Top + 1, aRect.Left - 2, aRect.Bottom - 1);
+    aTarget := wp_graphics.Rect(aRect.Left - ColorRectWidth, aRect.Top + 1, aRect.Left - 2, aRect.Bottom - 1);
 
     Canvas.Rectangle(aTarget.Left, aTarget.Top, aTarget.Right, aTarget.Bottom);
 
@@ -9635,9 +9636,9 @@ Begin
     Canvas.Font.Style := [fsBold];
 
     If Not UseRightToLeftAlignment Then
-      aRect := fsl_graphics.Rect(8, 0, 0, Canvas.TextHeight('0'))
+      aRect := wp_graphics.Rect(8, 0, 0, Canvas.TextHeight('0'))
     Else
-      aRect := fsl_graphics.Rect(aRect.Right - Canvas.TextWidth(Text) - 8, 0, 0, Canvas.TextHeight('0'));
+      aRect := wp_graphics.Rect(aRect.Right - Canvas.TextWidth(Text) - 8, 0, 0, Canvas.TextHeight('0'));
 
     DrawText(Canvas.Handle, PChar(Text), Length(Text), aRect, DrawTextBiDiModeFlags(DT_SINGLELINE) Or DT_CALCRECT);
     Canvas.Brush.Color := Color;
@@ -9699,9 +9700,9 @@ Begin
   Canvas.Font.Style := [fsBold];
 
   If Not UseRightToLeftAlignment Then
-    Result := fsl_graphics.Rect(8, 0, 0, 0)
+    Result := wp_graphics.Rect(8, 0, 0, 0)
   Else
-    Result := fsl_graphics.Rect(Result.Right - Canvas.TextWidth(Text) - 8, 0, 0, 0);
+    Result := wp_graphics.Rect(Result.Right - Canvas.TextWidth(Text) - 8, 0, 0, 0);
 
   DrawText(Canvas.Handle, PChar(Text), Length(Text), Result, DrawTextBiDiModeFlags(DT_SINGLELINE) Or DT_CALCRECT);
 End;

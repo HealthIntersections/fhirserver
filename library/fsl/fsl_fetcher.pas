@@ -136,16 +136,13 @@ begin
             oHTTP.OnWork := HTTPWork;
             oHTTP.OnWorkBegin := HTTPWorkBegin;
             oHTTP.OnWorkEnd := HTTPWorkEnd;
-            oSSL.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+//            oSSL.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
             oSSL.Options.VerifyServerCertificate := false;
             oHTTP.HandleRedirects := true;
             oHTTP.Request.Accept := FAccept;
             if (UserAgent <> '') then
               oHTTP.Request.UserAgent := UserAgent;
             oHTTP.URL.URI := url;
-            oHTTP.OnWork := HTTPWork;
-            oHTTP.OnWorkBegin := HTTPWorkBegin;
-            oHTTP.OnWorkEnd := HTTPWorkEnd;
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then

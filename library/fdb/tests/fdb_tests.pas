@@ -89,14 +89,14 @@ end;
 procedure TFslDBTests.test(manager: TFslDBManager);
 var
   conn: TFslDBConnection;
-  d, od: TFslDateTime;
+  d, od, dn: TFslDateTime;
   b: TBytes;
   i64: Int64;
   md: TFslDBMetaData;
   fn : string;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
-  fn := TestSettings.serverTestFile(['library', 'database', 'FHIR.Database.Tests.pas']);
+  fn := TestSettings.serverTestFile(['library', 'fdb', 'tests', 'fdb_tests.pas']);
   b := FileToBytes(fn);
   i64 := MaxInt;
   i64 := i64 + 2;
@@ -146,6 +146,8 @@ begin
       assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1, 'dbt.1');
       assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0, 'dbt.2');
 
+      dn := TFslDateTime.makeLocal;
+
       conn.sql := 'Select * from TestTable';
       conn.Prepare;
       conn.Execute;
@@ -156,9 +158,8 @@ begin
       assertTrue(conn.ColIntegerByName['Number'] = 2, 'dbt.6');
       assertTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.7');
       assertTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2), 'dbt.8');
-      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < now, 'dbt.9');
-      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > now - DATETIME_MINUTE_ONE,
-        'dbt.10: '+TSToString(conn.ColTimestampByName['Instant'])+' vs '+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss.zzz', now - DATETIME_MINUTE_ONE));
+      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < dn.DateTime, 'dbt.9');
+      assertTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > dn.DateTime - DATETIME_MINUTE_ONE,  'dbt.10: '+TSToString(conn.ColTimestampByName['Instant'])+' vs '+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss.zzz', now - DATETIME_MINUTE_ONE));
       od := conn.ColDateTimeExByName['Instant'];
       assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.11');
       assertTrue(conn.ColNullByName['Content'], 'dbt.12');

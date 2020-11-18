@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Forms;
+Unit fui_vclx_forms;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -35,7 +35,7 @@ Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Contnrs, ExtCtrls, StdCtrls, ComCtrls, Consts,
   fsl_base, fsl_utilities, fsl_collections,
-  FHIR.Uix.Base, FHIR.Uix.Controls;
+  fui_vclx_base, fui_vclx_controls;
 
 
 Type

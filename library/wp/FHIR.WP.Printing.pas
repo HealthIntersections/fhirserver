@@ -33,8 +33,9 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics,
-  fsl_printing_win, fsl_threads, fsl_utilities, fsl_graphics,
-  FHIR.WP.Engine, FHIR.WP.Working, FHIR.WP.Renderer, FHIR.WP.Types, FHIR.WP.Settings;
+  fsl_threads, fsl_utilities,
+  wp_graphics, wp_printing_win,
+  FHIR.WP.Engine, wp_working, FHIR.WP.Renderer, wp_types, FHIR.WP.Settings;
 
 Type
   TWPPrintCanvas = Class (TWPCanvas)

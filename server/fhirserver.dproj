@@ -369,7 +369,7 @@
         <DCCReference Include="..\library\ftx\ftx_ucum_base.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_expressions.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_handlers.pas"/>
-        <DCCReference Include="..\library\fhir\fhir_ucum.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_ucum.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_search.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_services.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_validators.pas"/>

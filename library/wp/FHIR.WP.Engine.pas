@@ -34,10 +34,11 @@ Uses
   Windows, SysUtils, Classes, Graphics, StdCtrls,
   IdUri,
 
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_graphics, fsl_shell, fsl_wininet, fsl_xml,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell, fsl_wininet, fsl_xml,
 
-  FHIR.Uix.Base,
-  FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.v2Ft, FHIR.WP.Format,
+  fui_vclx_base,
+  wp_graphics, wp_clipboard,
+  wp_definers, wp_types, wp_document, wp_working, FHIR.WP.v2Ft, wp_format, wp_factory,
   FHIR.WP.Settings, FHIR.WP.Spelling;
 
  Type
@@ -1207,7 +1208,7 @@ type
 Implementation
 
 Uses
-  FHIR.WP.Imaging, FHIR.WP.Rtf, FHIR.WP.Html, FHIR.WP.Native, FHIR.WP.Odt, FHIR.WP.Text,
+  wp_imaging, wp_rtf, wp_html, wp_native, wp_odt, wp_text,
   FHIR.WP.Control, FHIR.WP.Dialogs;
 
 { TWPRange }

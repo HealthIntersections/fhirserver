@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Graphics,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream,
-  FHIR.WP.Document, FHIR.WP.Builder, FHIR.WP.Types, FHIR.WP.Format,
+  wp_document, FHIR.WP.Builder, wp_types, wp_format, wp_factory,
   v2_base, v2_dictionary, v2_objects;
 
 Type
@@ -69,6 +69,7 @@ Type
 
   THL7V2HTMLPublisher = Class (TFslObject)
   Private
+    FDict : THL7V2Dictionary;
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
 
     Procedure ViewTable(oModel : THL7V2Model; oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
@@ -107,14 +108,18 @@ Type
 
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
     Procedure PublishDictHomeInternal(Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+    procedure SetDict(const Value: THL7V2Dictionary);
 
   Public
+    destructor Destroy; override;
+
     Function PublishDict(oMap : TFslStringMatch; sPrefix : String; Var sTitle : String): String; Overload; Virtual;
     Function PublishDict(Const sPath : String; sPrefix : String; Var sTitle : String): String; Overload; Virtual;
     Procedure PublishDict(Const sPath : String; sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
 
     Function PublishMsg(oMsg : THL7V2Message; bHtml, bFullView, b3 : Boolean) : String;
+    property dict : THL7V2Dictionary read FDict write SetDict;
   End;
 
 implementation
@@ -319,6 +324,12 @@ Begin
   End;
 End;
 
+destructor THL7V2HTMLPublisher.Destroy;
+begin
+  FDict.Free;
+  inherited;
+end;
+
 Function THL7V2HTMLPublisher.DocToHTML(oDocument : TWPDocument; Const sTitle: String): String;
 Var
   oStream : TFslStringStream;
@@ -382,7 +393,7 @@ Var
   iLoop : Integer;
   aVer : THL7V2Version;
 Begin
-  oModel := GHL7Dict[FromVersionCode(oMap.GetValueByKey('version'))];
+  oModel := FDict[FromVersionCode(oMap.GetValueByKey('version'))];
   sURL := sPrefix +'&version='+NAMES_HL7V2_VERSION[oModel.Version]+'&';
   sView := oMap.GetValueByKey('view');
 
@@ -402,7 +413,7 @@ Begin
     oBuilder.AddText('  ', false, false);
     If aVer = oModel.Version Then
       oBuilder.AddText(NAMES_HL7V2_VERSION[aVer], true, false)
-    Else If (aVer In GHL7Dict.Versions) Then
+    Else If (aVer In FDict.Versions) Then
       oBuilder.URL(NAMES_HL7V2_VERSION[aVer], sPrefix+'&version=' + NAMES_HL7V2_VERSION[aVer] + sURL2)
     Else
       oBuilder.AddText(NAMES_HL7V2_VERSION[aVer], false, false).Font.Foreground := clGray;
@@ -955,11 +966,11 @@ Begin
     Begin
     If oModel.Version <= hv23 Then
       // sXmlError := 'XML Encoding not defined for this version'
-    Else If GHL7Dict.SchemaStore = Nil Then
+    Else If FDict.SchemaStore = Nil Then
       sXmlError := 'No XML Schema support'
     Else
       Try
-        oStruc.XMLMap := GHL7Dict.SchemaStore.ProduceSchemaMap(oModel.Version, oStruc.Name);
+        oStruc.XMLMap := FDict.SchemaStore.ProduceSchemaMap(oModel.Version, oStruc.Name);
         If Not Assigned(oStruc.XMLMap) Then
           sXMLError := '&lt;No Map&gt;'
       Except
@@ -1170,6 +1181,12 @@ Begin
   Result := StringReplace(EncodeXML(sValue), '&#x0D;&#x0A;', '<br>');
 End;
 
+procedure THL7V2HTMLPublisher.SetDict(const Value: THL7V2Dictionary);
+begin
+  FDict.Free;
+  FDict := Value;
+end;
+
 function THL7V2HTMLPublisher.ShowContent(oCell: THL7V2Cell;  bHtml: Boolean): String;
 begin
   result := oCell.GetRawContentForScripting;
@@ -1185,7 +1202,7 @@ Begin
   oBuilder.AddTitle('Knowledge Base: HL7v2');
 
   For aVer := Low(THL7V2Version) To High(THL7V2Version) Do
-  If aVer In GHL7Dict.Versions Then
+  If aVer In FDict.Versions Then
   Begin
     oBuilder.StartParagraph.Format.LeftIndent := 2;
     oBuilder.URL(NAMES_HL7V2_VERSION[aVer], sPrefix +'&version=' + NAMES_HL7V2_VERSION[aVer]);

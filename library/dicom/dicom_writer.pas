@@ -34,7 +34,7 @@ Interface
 Uses
   SysUtils,
   fsl_base, fsl_stream, fsl_utilities,
-  dicom_Objects, dicom_Dictionary;
+  dicom_objects, dicom_dictionary;
 
 Const
   MAX_WORD = 65535;

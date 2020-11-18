@@ -705,7 +705,7 @@ begin
   else if (s.contains('.')) then
     result := FHIR_SD_NS+s.substring(0, s.indexof('.'))+'#'+s
   else
-    result := FHIR_SD_NS+StringTitleCase(s);
+    result := FHIR_SD_NS+s;
 end;
 
 { TFHIRTypeDetails }

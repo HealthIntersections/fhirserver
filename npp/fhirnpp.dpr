@@ -100,7 +100,7 @@ uses
   FHIR.CdsHooks.Client in '..\library\cdshooks\FHIR.CdsHooks.Client.pas',
   fhir_client_registry in '..\library\client\fhir_client_registry.pas',
   FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
-  fhir_ucum in '..\library\ucum\fhir_ucum.pas',
+  fsl_ucum in '..\library\ucum\fsl_ucum.pas',
   fhir3_pathnode in '..\library\r3\fhir3_pathnode.pas',
   fhir3_parserBase in '..\library\r3\fhir3_parserBase.pas',
   fhir3_base in '..\library\r3\fhir3_base.pas',

@@ -1,4 +1,4 @@
-unit fhir4_tests_PathEngine;
+unit fhir4_tests_pathengine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -123,12 +123,16 @@ begin
   end;
 end;
 
+type
+  TestResultType = (TESTOK, SYNTAX, SEMANTICS, EXECUTION);
+
 procedure TFHIRPathTest4.TestCase(Name: String);
 var
   test : TMXmlElement;
   input, expression, s, tn : String;
-  fail, ok : boolean;
+  fail : TestResultType;
   res : TFHIRResource;
+  ok : boolean;
   outcome : TFHIRSelectionList;
   node : TFHIRPathExpressionNode;
   p : TFHIRXmlParser;
@@ -140,13 +144,30 @@ begin
   test := findTest(name);
   input := test.attribute['inputfile'];
   expression := test.element('expression').text;
-  fail :=  test.element('expression').HasAttribute['invalid']; // test.element('expression').attribute['invalid'] = 'true';
+  s := test.element('expression').attribute['invalid'];
+  if (s = 'syntax') then
+    fail := SYNTAX
+  else if (s = 'semantic') then
+    fail := SEMANTICS
+  else if (s = 'execution') then
+    fail := EXECUTION
+  else
+    fail := TESTOK;
   res := nil;
 
   outcome := nil;
+  node := nil;
   try
-    node := engine.parse(expression);
     try
+      node := engine.parse(expression);
+      assertTrue(fail <> SYNTAX, format('Expected exception didn''t occur parsing %s', [expression]));
+    except
+       on e : Exception do
+         assertTrue(fail = SYNTAX, format('Unexpected exception parsing %s: ' + e.Message, [expression]));
+    end;
+
+    if (node <> nil) then
+    begin
       try
         if (input = '') then
           engine.check(nil, '', '', '', node, false)
@@ -174,27 +195,42 @@ begin
 
           engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false).free;
         end;
-        outcome := engine.evaluate(nil, res, res, node);
-        ok := true;
+        assertTrue(fail <> SEMANTICS, format('Expected exception didn''t occur checking %s', [expression]));
       except
-        on e:Exception do
+         on e : Exception do
+         begin
+           assertTrue(fail = SEMANTICS, format('Unexpected exception checking %s: ' + e.Message, [expression]));
+           node := nil;
+         end;
+      end;
+    end;
+
+    if (node <> nil) then
+    begin
+      try
+        outcome := engine.evaluate(nil, res, res, node);
+        assertTrue(fail = TESTOK, format('Expected exception didn''t occur executing %s', [expression]));
+      except
+        on e : exception do
         begin
-          ok := false;
-          assertTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
-          outcome := TFHIRSelectionList.create;
+          assertTrue(fail = EXECUTION, String.format('Unexpected exception executing %s: ' + e.Message, [expression]));
+          node := nil;
         end;
       end;
-      if ok then
-        assertTrue(not fail, StringFormat('Expected exception parsing %s', [expression]));
+    end;
+
+    s := engine.UseLog;
+    if (s <> '') then
+      writeln(s);
+
+    if (node <> nil) then
+    begin
       if (test.attribute['predicate'] = 'true') then
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
         outcome.add(TFHIRBoolean.create(ok));
       end;
-      s := engine.UseLog;
-      if (s <> '') then
-        writeln(s);
 
       expected := TFslList<TMXmlElement>.Create;
       try
@@ -214,7 +250,7 @@ begin
               if outcome[i].value is TFhirQuantity then
                 assertTrue(s = engine.convertToString(outcome[i].value), StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]))
               else
-                assertTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]));
+                assertTrue(s = TFHIRPrimitiveType(outcome[i].value).fpValue, StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.fpValue(), expression]));
             end;
           end;
         end
@@ -240,10 +276,9 @@ begin
       finally
         expected.Free;
       end;
-    finally
-      node.Free;
     end;
   finally
+    node.Free;
     res.free;
     outcome.free;
   end;
@@ -271,12 +306,15 @@ begin
     while test <> nil do
     begin
       inc(t);
-      s := test.attribute['name'];
-      if (s = '') then
-        s := gn+' '+inttostr(t);
+      if test.name = 'test' then
+      begin
+        s := test.attribute['name'];
+        if (s = '') then
+          s := gn+' '+inttostr(t);
 
-      s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
-      AddTest(TFHIRPathTest4.Create(s));
+        s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
+        AddTest(TFHIRPathTest4.Create(s));
+      end;
       test := test.Next;
     end;
     group := group.Next;

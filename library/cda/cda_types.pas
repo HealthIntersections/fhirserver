@@ -36,7 +36,7 @@ interface
 Uses
   SysUtils,
   fsl_utilities, fsl_stream, fsl_collections, fsl_xml,
-  fhir_ucum,
+  fsl_ucum,
   cda_base;
 
  Const

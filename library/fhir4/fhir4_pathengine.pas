@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
-  fhir_ucum,
+  fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, 
   fhir4_pathnode, fhir4_types, fhir4_resources, fhir4_utilities, fhir4_context, fhir4_constants;
 
@@ -140,6 +140,8 @@ type
     FUcum : TUcumServiceInterface;
 
     procedure log(name, value : String);
+
+    function dateAdd(d : TFslDateTime; qty : TFhirQuantity; negate : boolean) : TFslDateTime;
 
     function execute(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
     function execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
@@ -1069,6 +1071,42 @@ begin
   end;
 end;
 
+function TFHIRPathEngine.dateAdd(d: TFslDateTime; qty: TFhirQuantity; negate: boolean): TFslDateTime;
+var
+  v : integer;
+  c : String;
+begin
+   if negate then
+     v := 0 - TFslDecimal.Create(qty.value).Trunc.AsInteger
+   else
+     v := TFslDecimal.Create(qty.value).Trunc.AsInteger;
+   c := qty.code;
+   if (c = '') then
+     c := qty.unit_;
+   if (c = 'years') or (c = 'year') then
+     result := d.add(v, dtuYear)
+   else if (c = 'a') then
+     raise EFHIRPath(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+   else if (c = 'months') or (c = 'month') then
+     result := d.add(v, dtuMonth)
+   else if (c = 'mo') then
+     raise EFHIRPath(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+   else if (c = 'weeks') or (c = 'week') or (c = 'wk') then
+     result := d.add(v * 7, dtuDay)
+   else if (c = 'days') or (c = 'day') or (c = 'd') then
+     result := d.add(v, dtuDay)
+   else if (c = 'hours') or (c = 'hour') or (c = 'h') then
+     result := d.add(v, dtuHour)
+   else if (c = 'minutes') or (c = 'minute') or (c = 'min') then
+     result := d.add(v, dtuMinute)
+   else if (c = 'seconds') or (c = 'second') or (c = 's') then
+     result := d.add(v, dtuSecond)
+   else if (c = 'millisecond') or (c = 'millisecond') or (c = 'ms') then
+     result := d.add(v, dtuMillisecond)
+   else
+     raise EFHIRPath(format('Error in date arithmetic: unrecognized time unit %s', [c]));
+end;
+
 procedure TFHIRPathEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRPathExpressionNode; op : boolean; input1, input2, outcome: TFHIRSelectionList);
 var
   pack : TFHIRPathDebugPackage;
@@ -1551,6 +1589,8 @@ begin
       enkUnary :
         begin
           result.addType('integer');
+          result.addType('decimal');
+          result.addType('Quantity');
         end;
       enkFunction:
         begin
@@ -3493,7 +3533,7 @@ begin
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_decimal)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
-        result.addType(FP_decimal);
+        result.addType(FP_decimal)
     end;
     popPlus:  begin
       result := TFHIRTypeDetails.create(csSINGLETON, []);
@@ -3510,7 +3550,16 @@ begin
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_integer)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
-        result.addType(FP_decimal);
+        result.addType(FP_decimal)
+      else if (left.hasType(context, ['Quantity'])) and (right.hasType(context, ['Quantity'])) then
+        result.addType(FP_Quantity)
+      else if (left.hasType(context, ['date' ,'dateTime', 'instant'])) then
+      begin
+        if (right.hasType(context, ['Quantity'])) then
+          result.addType(left.type_)
+        else
+          raise EFHIRPath.create(format('Error in date arithmetic: Unable to subtract type {0} from {1}', [right.type_, left.type_]));
+      end;
     end;
     popDiv, popMod:  begin
       result := TFHIRTypeDetails.create(csSINGLETON, []);
@@ -3961,9 +4010,7 @@ var
 begin
   result := TFHIRSelectionList.Create;
   try
-    if (left.count = 0) or (left.count > 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions)
-    else
+    if not ((left.count = 0) or (left.count > 1)) then
     begin
       tn := convertToString(right);
       if not (left[0].value is TFHIRElement) or (left[0].value as TFHIRElement).DisallowExtensions then
@@ -4113,23 +4160,25 @@ function TFHIRPathEngine.opMinus(left, right: TFHIRSelectionList): TFHIRSelectio
 var
   l, r : TFHIRObject;
   d1,d2,d3 : TFslDecimal;
+  s : String;
+  qty, qty2 : TFHIRQuantity;
+  d : TFHIRObject;
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
   if (left.count > 1) then
     raise EFHIRPath.create('Error performing -: left operand has more than one value');
-  if (not left[0].value.isPrimitive()) then
+  if (not left[0].value.isPrimitive() and not left[0].hasType('Quantity')) then
     raise EFHIRPath.create(StringFormat('Error performing -: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count > 1) then
     raise EFHIRPath.create('Error performing -: right operand has more than one value');
-  if (not right[0].value.isPrimitive()) then
+  if (not right[0].value.isPrimitive() and not ((left[0].value.isDateTime() or ('0' = left[0].value.primitiveValue) or left[0].value.hasType('Quantity')) and right[0].value.hasType('Quantity'))) then
     raise EFHIRPath.create(StringFormat('Error performing -: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
     l := left[0].value;
     r := right[0].value;
-
 
     if (l.hasType('integer')) and (r.hasType('integer')) then
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) - strToInt(r.primitiveValue()))).noExtensions)
@@ -4139,6 +4188,31 @@ begin
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Subtract(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+    end
+    else if (l.hasType(['decimal', 'integer', 'Quantity']) and r.hasType('Quantity')) then
+    begin
+      s := l.primitiveValue();
+      if ('0' = s) then
+      begin
+        qty := r as TFHIRQuantity;
+        qty2 := qty.clone;
+        try
+          qty2.value := TFslDecimal.Create(qty.value).Abs.AsString;
+          result.add(qty2.link);
+        finally
+          qty2.free;
+        end;
+      end;
+    end
+    else if (l.isDateTime() and r.hasType('Quantity')) then
+    begin
+      d := l.Clone;
+      try
+        d.dateValue := dateAdd(l.dateValue, r as TFhirQuantity, true);
+        result.add(d.link);
+      finally
+        d.Free;
+      end;
     end
     else
       raise EFHIRPath.create(StringFormat('Error performing -: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
@@ -4942,8 +5016,10 @@ function TFHIRPathEngine.asBool(items: TFHIRSelectionList): TEqualityTriState;
 begin
   if items.Count = 0 then
     result := eqNull
-  else if items.Count = 1 then
+  else if (items.Count = 1) and (items[0].value.isBooleanPrimitive) then
     result := asBool(items[0].value)
+  else if items.Count = 1 then
+    result := eqTrue
   else
     raise EFHIRPath.Create('Unable to evaluate as a boolean: '+convertToString(items));
 end;

@@ -42,7 +42,7 @@ Uses
   {$IFDEF FPC}
   base64,
   {$ELSE}
-  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions,
+  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions, ZLib,
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
@@ -211,6 +211,7 @@ Const
 // NOTE: declared in the initialization.
 Var
   UnicodeWhitespaceArray : TCharArray;
+
 
 function clength(S : String) : cardinal; overload;
 function clength(b : TBytes) : cardinal; overload;
@@ -1074,6 +1075,7 @@ type
     second: Word;
     fraction: Cardinal;
   end;
+  TDateTimeUnit = (dtuYear, dtuMonth, dtuDay, dtuHour, dtuMinute, dtuSecond, dtuMillisecond);
 
   {
     TFslDateTime defines an enhanced date time type that is timezone and precision aware.
@@ -1170,7 +1172,8 @@ type
     function IncrementYear: TFslDateTime; // add one year to the time
     function IncrementWeek: TFslDateTime; // add a week to the time
     function IncrementDay: TFslDateTime; // add one day to the time
-    function add(length : TDuration) : TFslDateTime; // add arbitrary time (in TDateTime)
+    function add(value : integer; unit_ : TDateTimeUnit) : TFslDateTime; overload; // value can be negative
+    function add(length : TDuration) : TFslDateTime; overload; // add arbitrary time (in TDateTime)
     function subtract(length : TDuration) : TFslDateTime; // subtract arbitrary time (in TDateTime)
     function difference(other : TFslDateTime) : TDuration; // get time between, assuming arbitarily high precision)
 
@@ -2013,6 +2016,10 @@ type
     class function matches(v1, v2 : String) : boolean;
     class function getMajMin(v : String) : String; overload;
   end;
+
+function ZCompressBytes(const s: TBytes): TBytes;
+function ZDecompressBytes(const s: TBytes): TBytes;
+function TryZDecompressBytes(const s: TBytes): TBytes;
 
 Implementation
 
@@ -8180,6 +8187,13 @@ begin
   inc(result.year);
 end;
 
+Function sv(i, w : integer):String;
+begin
+  result := StringPadLeft(inttostr(abs(i)), '0', w);
+  if i < 0 then
+    result := '-'+result;
+end;
+
 function vsv(value : String; start, len, min, max : Integer; name : String):Integer;
 var
   v : String;
@@ -8191,6 +8205,19 @@ begin
   if (result < min) or (result > max) then
     exit(-1);
 end;
+
+function vs(value : String; start, len, min, max : Integer; name : String):Integer;
+var
+  v : String;
+begin
+  v := copy(value, start, len);
+  if not StringIsInteger16(v) then
+    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
+  result := StrToInt(v);
+  if (result < min) or (result > max) then
+    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
+end;
+
 
 class function TFslDateTime.isValidXmlDate(value: String): Boolean;
 var
@@ -8318,6 +8345,24 @@ begin
 end;
 
 function TFslDateTime.ToString(format: String): String;
+  function tz(sep : String) : String;
+  begin
+    case TimezoneType of
+      dttzUTC : result := result + 'Z';
+      dttzSpecified :
+        if TimezoneHours < 0 then
+          result := result + sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2)
+        else
+          result := result + '+'+sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2);
+      dttzLocal :
+        if TimeZoneBias > 0 then
+          result := result + '+'+FormatDateTime('hh'+sep+'nn', TimeZoneBias, FormatSettings)
+        else
+          result := result + '-'+FormatDateTime('hh'+sep+'nn', -TimeZoneBias, FormatSettings);
+    else
+      result := '';
+    end;
+  end;
 begin
   if Source = '' then
     exit('');
@@ -8342,20 +8387,11 @@ begin
     ReplaceSubString(Result, 'AMPM', 'AM')
   else
     ReplaceSubString(Result, 'AMPM', 'PM');
+  if result.Contains('Z') then
+    ReplaceSubString(Result, 'Z', tz(':'));
+  if result.Contains('z') then
+    ReplaceSubString(Result, 'z', tz(''));
 end;
-
-function vs(value : String; start, len, min, max : Integer; name : String):Integer;
-var
-  v : String;
-begin
-  v := copy(value, start, len);
-  if not StringIsInteger16(v) then
-    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
-  result := StrToInt(v);
-  if (result < min) or (result > max) then
-    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
-end;
-
 
 class function TFslDateTime.fromHL7(value: String) : TFslDateTime;
 var
@@ -8516,13 +8552,6 @@ end;
 class operator TFslDateTime.GreaterThanOrEqual(a, b: TFslDateTime): Boolean;
 begin
   result := a.after(b, true);
-end;
-
-Function sv(i, w : integer):String;
-begin
-  result := StringPadLeft(inttostr(abs(i)), '0', w);
-  if i < 0 then
-    result := '-'+result;
 end;
 
 function TFslDateTime.toDB: String;
@@ -9177,6 +9206,59 @@ end;
 class operator TFslDateTime.add(a: TFslDateTime; b: TDateTime): TFslDateTime;
 begin
   result := a.add(b);
+end;
+
+function TFslDateTime.add(value: integer; unit_: TDateTimeUnit): TFslDateTime;
+var
+  v : integer;
+begin
+  result := self;
+  case unit_ of
+    dtuYear :
+      begin
+      inc(result.year, value);
+      end;
+    dtuMonth :
+      begin
+      v := result.month + value;
+      inc(result.year, v div 12);
+      result.month := v mod 12;
+      if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] then
+        result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+      end;
+    dtuDay :
+      begin
+      v := result.day + value;
+      while v > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] do
+      begin
+        v := v - MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+        if result.month = 12 then
+        begin
+          inc(result.year);
+          result.month := 1;
+        end
+        else
+          inc(result.month);
+      end;
+      result.day := v;
+      end;
+    dtuHour :
+      begin
+      result := add(value * DATETIME_HOUR_ONE);
+      end;
+    dtuMinute :
+      begin
+      result := add(value * DATETIME_MINUTE_ONE);
+      end;
+    dtuSecond :
+      begin
+      result := add(value * DATETIME_SECOND_ONE);
+      end;
+    dtuMillisecond :
+      begin
+      result := add(value * DATETIME_MILLISECOND_ONE);
+      end;
+  end;
 end;
 
 function TFslDateTime.after(other : TFslDateTime; inclusive : boolean) : boolean;
@@ -14304,13 +14386,18 @@ End;
 
 function StreamToBytes(AStream: TStream): TBytes;
 begin
-  SetLength(Result, AStream.Size);
-  if AStream.Size > 0 then
-    begin
-    AStream.Position := 0;
-    AStream.Read(Result[0], AStream.Size);
-    AStream.Position := 0;
-    end;
+  if AStream = nil then
+   SetLength(result, 0)
+  else
+  begin
+    SetLength(Result, AStream.Size);
+    if AStream.Size > 0 then
+      begin
+      AStream.Position := 0;
+      AStream.Read(Result[0], AStream.Size);
+      AStream.Position := 0;
+      end;
+  end;
 end;
 
 procedure BytesToFile(bytes : TBytes; filename : string);
@@ -16727,6 +16814,47 @@ begin
   result := v1 = v2;
 end;
 
+function ZCompressBytes(const s: TBytes): TBytes;
+begin
+  {$IFDEF FPC}
+  raise ETodo.create('Not done yet');
+  {$ELSE}
+  ZCompress(s, result);
+  {$ENDIF}
+end;
+
+function TryZDecompressBytes(const s: TBytes): TBytes;
+begin
+  try
+    result := ZDecompressBytes(s);
+  except
+    result := s;
+  end;
+end;
+
+function ZDecompressBytes(const s: TBytes): TBytes;
+{$IFDEF FPC}
+begin
+  raise ETodo.create('Not done yet');
+end;
+
+{$ELSE}
+{$IFNDEF WIN64}
+var
+  buffer: Pointer;
+  size  : Integer;
+{$ENDIF}
+begin
+  {$IFDEF WIN64}
+  ZDecompress(s, result);
+  {$ELSE}
+  ZDecompress(@s[0],Length(s),buffer,size);
+  SetLength(result,size);
+  Move(buffer^,result[0],size);
+  FreeMem(buffer);
+  {$ENDIF}
+end;
+{$ENDIF}
 
 
 Initialization

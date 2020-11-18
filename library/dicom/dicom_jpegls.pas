@@ -3,6 +3,8 @@ Unit dicom_jpegls;
 //
 // A simplified interface to CharLS JPEG-lossless library in C
 //
+// https://github.com/team-charls/charls
+//
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -30,6 +32,8 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$i fhir.inc}
 
 Interface
 

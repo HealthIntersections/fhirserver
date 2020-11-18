@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fsl_base, fsl_utilities,  
+  fsl_base, fsl_utilities,
   fdb_dialects, fdb_manager,
   fdb_odbc_objects;
 
@@ -53,6 +53,7 @@ type
     function FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFslDBTable;
     function DatabaseSizeMSSQL : int64;
     function TableSizeMSSQL(sName : String) : int64;
+    procedure initMySQL;
   Protected
     procedure StartTransactV; Override;
     procedure CommitV; Override;
@@ -97,6 +98,7 @@ type
   Public
     constructor Create(AOwner : TFslDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
     destructor Destroy; override;
+    procedure Initialise; override;
   end;
 
   TFslDBOdbcManager = class (TFslDBManager)
@@ -304,6 +306,22 @@ end;
 function TFslDBOdbcConnection.GetRowsAffectedV: Integer;
 begin
   Result := FStmt.RowsAffected;
+end;
+
+procedure TFslDBOdbcConnection.Initialise;
+begin
+  case Owner.Platform of
+    kdbMySQL : initMySQL;
+  end;
+
+end;
+
+procedure TFslDBOdbcConnection.initMySQL;
+var
+  tz : String;
+begin
+  tz := TFslDateTime.makeLocal.toString('Z');
+  ExecSQL('SET time_zone = '''+tz+'''');
 end;
 
 procedure TFslDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
@@ -908,6 +926,7 @@ begin
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
     result := TFslDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
+    result.Initialise;
   except
     on e:exception do
       begin

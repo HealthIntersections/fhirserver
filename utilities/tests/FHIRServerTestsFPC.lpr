@@ -269,7 +269,7 @@ uses
   ftx_ucum_base in '..\..\library\Ucum\ftx_ucum_base.pas',
   ftx_ucum_expressions in '..\..\library\Ucum\ftx_ucum_expressions.pas',
   ftx_ucum_handlers in '..\..\library\Ucum\ftx_ucum_handlers.pas',
-  fhir_ucum in '..\..\library\ucum\fhir_ucum.pas',
+  fsl_ucum in '..\..\library\ucum\fsl_ucum.pas',
   ftx_ucum_search in '..\..\library\Ucum\ftx_ucum_search.pas',
   ftx_ucum_services in '..\..\library\Ucum\ftx_ucum_services.pas',
   ftx_ucum_tests in '..\..\library\Ucum\ftx_ucum_tests.pas',

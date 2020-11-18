@@ -30,11 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Interface
 
-{$I dicom.inc}
-
 Uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
   dicom_dictionary, dicom_objects, dicom_writer;
 
   
@@ -195,9 +193,6 @@ CONST
     ('Unprocessed', 'Error', 'Tag', 'Known Tag', 'VR Code', 'Length', 'Dead Bytes', 'Value', 'Repeat Character', 'Sequence Start', 'Sequence Break', 'Sequence End', 'Status Marker', 'Presentation Context ID', 'Result', 'Status Flag', 'PDU Content', 'Fragment Marker');
 
 Implementation
-
-uses
-  Zlib;
 
 Function clength(const s : TMap):Cardinal; Overload;
 Begin
@@ -1436,7 +1431,7 @@ var
   oObj : TDicomParser;
   oPDU : TDicomPDUDecoder;
   oInput : TFslAccessStream;
-  sComp : AnsiString;
+  sComp : TBytes;
   sDecomp : TBytes;
 begin
   if not (FContext.FInput is TFslAccessStream) Then
@@ -1549,7 +1544,7 @@ begin
       SetLength(sComp, oInput.Size);
       oInput.Position := 0;
       oInput.Read(sComp[1], oInput.Size);
-      sDecomp := ZcompressStr(sComp);
+      sDecomp := ZcompressBytes(sComp);
       oInput.Position := 0;
 
       oPDU := TDicomPDUDecoder.Create(oInput.Size);

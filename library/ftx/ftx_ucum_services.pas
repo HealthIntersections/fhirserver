@@ -34,15 +34,15 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum,
   fsl_http,
-  ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base, fhir_ucum,
+  ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common,
   fhir_cdshooks,
   ftx_service;
 
 Type
-  TUcumPair = fhir_ucum.TUcumPair;
+  TUcumPair = fsl_ucum.TUcumPair;
 
   TUCUMContext = class (TCodeSystemProviderContext)
   private

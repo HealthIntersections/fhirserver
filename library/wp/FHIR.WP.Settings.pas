@@ -35,7 +35,7 @@ Uses
   SysUtils, Graphics,
   fsl_utilities, fsl_base,
   dicom_Dictionary,
-  FHIR.WP.Types, FHIR.WP.Definers;
+  wp_types, wp_definers;
 
 
 Type

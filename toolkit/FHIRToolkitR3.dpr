@@ -68,7 +68,7 @@ uses
   fhir_narrative in '..\library\base\fhir_narrative.pas',
   fhir_utilities in '..\library\base\fhir_utilities.pas',
   fhir_client in '..\library\client\fhir_client.pas',
-  fhir_ucum in '..\library\ucum\fhir_ucum.pas',
+  fsl_ucum in '..\library\ucum\fsl_ucum.pas',
   fhir3_xml in '..\library\r3\fhir3_xml.pas',
   fhir3_utilities in '..\library\r3\fhir3_utilities.pas',
   fhir3_context in '..\library\r3\fhir3_context.pas',

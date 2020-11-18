@@ -260,7 +260,7 @@ uses
   ftx_ucum_base in '..\library\ftx\ftx_ucum_base.pas',
   ftx_ucum_expressions in '..\library\ftx\ftx_ucum_expressions.pas',
   ftx_ucum_handlers in '..\library\ftx\ftx_ucum_handlers.pas',
-  fhir_ucum in '..\library\fhir\fhir_ucum.pas',
+  fsl_ucum in '..\library\fsl\fsl_ucum.pas',
   ftx_ucum_search in '..\library\ftx\ftx_ucum_search.pas',
   ftx_ucum_services in '..\library\ftx\ftx_ucum_services.pas',
   ftx_ucum_validators in '..\library\ftx\ftx_ucum_validators.pas',

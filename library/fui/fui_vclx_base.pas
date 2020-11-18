@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Base;
+Unit fui_vclx_base;
 
 {
 Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -32,12 +32,13 @@ Interface
 
 Uses
   Windows, Graphics, Math, StdCtrls, ExtCtrls, Dialogs, SysUtils, Controls, Forms, Classes, Menus,
-  fsl_graphics, fsl_utilities, fsl_collections;
+  fsl_utilities, fsl_collections,
+  wp_graphics;
 
 
 Type
-  TRect = fsl_graphics.TRect;
-  TPoint = fsl_graphics.TPoint;
+  TRect = wp_graphics.TRect;
+  TPoint = wp_graphics.TPoint;
   TColour = fsl_utilities.TColour;
   TUixIdentifier = Integer;
   TUixEvent = Procedure (oSender : TObject) Of Object;
@@ -1999,7 +2000,7 @@ Begin
 
   For iLoop := Low(aButtons) To High(aButtons) Do
   Begin
-    aTextRect := fsl_graphics.Rect(0, 0, 0, 0);
+    aTextRect := wp_graphics.Rect(0, 0, 0, 0);
     Windows.DrawText(oDialog.Canvas.Handle, PChar(aButtons[iLoop]), -1, aTextRect, DT_CALCRECT Or DT_LEFT Or DT_SINGLELINE Or oDialog.DrawTextBiDiModeFlagsReadingOnly);
     aButtonWidths[iLoop] := aTextRect.Right - aTextRect.Left + 8;
 

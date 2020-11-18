@@ -32,7 +32,7 @@ Interface
 
 Uses
    fsl_collections,
-  FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
+  FHIR.WP.Settings, wp_types, wp_working;
 
 Type
   EWordIsBanned = Class (EWPException);

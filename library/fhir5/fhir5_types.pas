@@ -493,7 +493,9 @@ type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TFslDateTime; override;
+    function isDateTime : boolean; override;
+    function getDateValue : TFslDateTime; override;
+    procedure setDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}published{$ENDIF}
     // The actual value of the date
     property value : TFslDateTime read FValue write SetValue;
@@ -588,7 +590,9 @@ type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TFslDateTime; override;
+    function isDateTime : boolean; override;
+    function getDateValue : TFslDateTime; override;
+    procedure setDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}published{$ENDIF}
     // The actual value of the dateTime
     property value : TFslDateTime read FValue write SetValue;
@@ -965,7 +969,9 @@ type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    function dateValue : TFslDateTime; override;
+    function isDateTime : boolean; override;
+    function getDateValue : TFslDateTime; override;
+    procedure setDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}published{$ENDIF}
     // The actual value of the instant
     property value : TFslDateTime read FValue write SetValue;
@@ -10570,7 +10576,7 @@ begin
   result := 'date';
 end;
 
-function TFhirDate.dateValue : TFslDateTime;
+function TFhirDate.getdateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -10588,6 +10594,11 @@ begin
   if (bPrimitiveValues) then
     if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'date', false, nil, FValue.ToString));
+end;
+
+procedure TFhirDate.setDateValue(value: TFslDateTime);
+begin
+  FValue := value;
 end;
 
 procedure TFhirDate.Assign(oSource : TFslObject);
@@ -10625,6 +10636,11 @@ begin
     o := TFhirDate(other);
     result := o.value.equal(value);
   end;
+end;
+
+function TFhirDate.isDateTime: boolean;
+begin
+  result := true;
 end;
 
 function TFhirDate.isEmpty : boolean;
@@ -10796,7 +10812,7 @@ begin
   result := 'dateTime';
 end;
 
-function TFhirDateTime.dateValue : TFslDateTime;
+function TFhirDateTime.getdateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -10814,6 +10830,11 @@ begin
   if (bPrimitiveValues) then
     if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.ToString));
+end;
+
+procedure TFhirDateTime.setDateValue(value: TFslDateTime);
+begin
+  FValue := value;
 end;
 
 procedure TFhirDateTime.Assign(oSource : TFslObject);
@@ -10851,6 +10872,11 @@ begin
     o := TFhirDateTime(other);
     result := o.value.equal(value);
   end;
+end;
+
+function TFhirDateTime.isDateTime: boolean;
+begin
+  result := true;
 end;
 
 function TFhirDateTime.isEmpty : boolean;
@@ -11664,7 +11690,7 @@ begin
   result := 'instant';
 end;
 
-function TFhirInstant.dateValue : TFslDateTime;
+function TFhirInstant.getdateValue : TFslDateTime;
 begin
   result := FValue;
 end;
@@ -11682,6 +11708,11 @@ begin
   if (bPrimitiveValues) then
     if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'instant', false, nil, FValue.ToString));
+end;
+
+procedure TFhirInstant.setDateValue(value: TFslDateTime);
+begin
+  FValue := value;
 end;
 
 procedure TFhirInstant.Assign(oSource : TFslObject);
@@ -11719,6 +11750,11 @@ begin
     o := TFhirInstant(other);
     result := o.value.equal(value);
   end;
+end;
+
+function TFhirInstant.isDateTime: boolean;
+begin
+  result := true;
 end;
 
 function TFhirInstant.isEmpty : boolean;

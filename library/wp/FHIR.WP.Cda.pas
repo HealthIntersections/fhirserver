@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils,
   fsl_stream, fsl_xml, fsl_utilities,
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format;
+  wp_types, wp_document, wp_working, wp_format;
 
 Const
   TAG_CDA_ROOT = 'ClinicalDocument';

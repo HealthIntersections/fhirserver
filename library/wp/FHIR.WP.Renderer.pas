@@ -35,9 +35,10 @@ Interface
 Uses
   Windows, SysUtils, Classes, Vcl.Graphics, Vcl.Imaging.PNGImage,
 
-  fsl_base, fsl_utilities, fsl_graphics, fsl_threads, fsl_collections, fsl_printing_win,
+  fsl_base, fsl_utilities, fsl_threads, fsl_collections,
 
-  FHIR.WP.Types, FHIR.WP.Working, FHIR.WP.Icons, FHIR.WP.Engine, FHIR.WP.Settings, FHIR.WP.Definers;
+  wp_graphics, wp_printing_win,
+  wp_types, wp_working, FHIR.WP.Icons, FHIR.WP.Engine, FHIR.WP.Settings, wp_definers;
 
 Const
   CHAR_BULLETS : Array [TWPSParagraphBulletType] Of Char = ('l', 'l', #161, 'n');

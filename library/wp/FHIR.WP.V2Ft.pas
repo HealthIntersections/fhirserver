@@ -158,8 +158,8 @@ Interface
 Uses
   SysUtils,
   fsl_utilities, fsl_stream,
-  FHIR.WP.Format, FHIR.WP.Text,
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working;
+  wp_format, wp_text,
+  wp_types, wp_document, wp_working;
 
 Type
   TWPHL7FTReader = Class (TWPReader)

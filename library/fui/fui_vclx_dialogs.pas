@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Dialogs;
+Unit fui_vclx_Dialogs;
 
 {
 Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)

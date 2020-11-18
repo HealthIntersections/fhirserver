@@ -46,7 +46,7 @@ uses
   fhir_htmlgen in '..\..\..\..\Support\fhir_htmlgen.pas',
   FHIR.Client.ClientDialogFMX in '..\..\..\..\client\FHIR.Client.ClientDialogFMX.pas' {RegisterClientForm},
   FHIR.Support.Signatures in '..\..\..\..\support\FHIR.Support.Signatures.pas',
-  fhir_ucum in '..\..\..\..\support\fhir_ucum.pas',
+  fsl_ucum in '..\..\..\..\support\fsl_ucum.pas',
   fhir4_pathnode in '..\..\..\..\r4\fhir4_pathnode.pas',
   fsl_logging in '..\..\..\..\support\fsl_logging.pas',
   fhir4_questionnaire2 in '..\..\..\..\r4\fhir4_questionnaire2.pas',

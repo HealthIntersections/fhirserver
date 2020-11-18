@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Images;
+Unit fui_vclx_images;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -35,7 +35,8 @@ Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, ImgList,
-  fsl_utilities, fsl_graphics;
+  fsl_utilities,
+  wp_graphics;
 
 
 Type
@@ -258,7 +259,7 @@ Begin
             oIndividualBitmap.Width := Width;
             oIndividualBitmap.Height := Height;
 
-            aTargetRect := fsl_graphics.Rect(0, 0, oIndividualBitmap.Width, oIndividualBitmap.Height);
+            aTargetRect := wp_graphics.Rect(0, 0, oIndividualBitmap.Width, oIndividualBitmap.Height);
             aSourceRect := aTargetRect;
 
             For iIndex := 0 To (oMasterBitmap.Width Div Width) - 1 Do

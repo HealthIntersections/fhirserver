@@ -245,6 +245,9 @@ type
 
     function link : TFslDBConnection; overload;
 
+    { internal use only  - platform specific initialization }
+    procedure Initialise; virtual;
+
     {
       After setting the SQL content, prepare the statement so Parameter
       Binding and execution can be done. You must call prepare before
@@ -1068,6 +1071,11 @@ begin
   result := FTables;
 end;
 
+
+procedure TFslDBConnection.Initialise;
+begin
+  //nothing
+end;
 
 procedure TFslDBConnection.BindDouble(AParamName: String; AParamValue: Double);
 begin

@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes, Controls,
   Ad3SpellBase, ad3Spell, ad3ParserBase, ad3CustomDictionary, ad3Configuration, ad3ConfigurationDialogCtrl,
   fsl_base, fsl_utilities, fsl_collections,
-  FHIR.WP.Spelling, FHIR.WP.Working, FHIR.WP.Control;
+  FHIR.WP.Spelling, wp_working, FHIR.WP.Control;
 
 Type
   TLoadCustomDictionaryEvent = Procedure (oWords : TFslStringList; Var bLoaded : Boolean) Of Object;
@@ -107,7 +107,7 @@ Type
   End;
 
 Type
-  TWPWorkingDocumentSpellCheckingState = FHIR.WP.Working.TWPWorkingDocumentSpellCheckingState;
+  TWPWorkingDocumentSpellCheckingState = wp_working.TWPWorkingDocumentSpellCheckingState;
 
   TWPAddictSpeller = Class (TWPSpeller)
   Private
@@ -160,8 +160,8 @@ Implementation
 
 Uses
   IOUtils,
-  FHIR.Uix.Base,
-  FHIR.WP.Types;
+  fui_vclx_Base,
+  wp_types;
 
 { TWPAddictSpeller }
 

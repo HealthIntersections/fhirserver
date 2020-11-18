@@ -1,4 +1,4 @@
-Unit FHIR.Uix.Advanced;
+Unit fui_vclx_Advanced;
 
 {
 Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -36,8 +36,8 @@ Uses
   SysUtils, Classes, Controls, ExtCtrls, Forms, Graphics, Messages, StdCtrls, Windows, Dialogs, MultiMon,
   GdipApi, GdipObj,
   fsl_utilities, fsl_base, fsl_collections,
-  FHIR.Uix.Base, FHIR.Uix.Controls,
-  fsl_gdiplus;
+  fui_vclx_Base, fui_vclx_Controls,
+  wp_gdiplus;
 
 
 Type

@@ -31,9 +31,10 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  fsl_base, fsl_utilities, fsl_stream, fsl_graphics, fsl_collections,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections,
   dicom_Dictionary,
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Format, FHIR.WP.Working, FHIR.WP.Definers;
+  wp_graphics,
+  wp_types, wp_document, wp_format, wp_working, wp_definers;
  
 Type
   TWPDocumentBuilderScopeAllowedItem = (aisSection, aisParaStart, aisTableStart, aisRowStart, aisCellStart, aisImage, aisFieldStart,
@@ -335,7 +336,7 @@ Implementation
 
 
 Uses
-  FHIR.WP.Imaging, FHIR.WP.Text, FHIR.WP.Native;
+  wp_imaging, wp_text, wp_native;
 
 
 

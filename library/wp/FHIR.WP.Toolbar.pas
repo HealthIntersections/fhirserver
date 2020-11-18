@@ -33,8 +33,8 @@ Interface
 Uses
   SysUtils, Classes, Graphics, Controls, StdCtrls, ExtCtrls, Dialogs, Buttons,
   fsl_utilities,
-  FHIR.Uix.Base, FHIR.Uix.Images, FHIR.Uix.Controls, FHIR.Uix.Advanced,
-  FHIR.WP.Types, FHIR.WP.Widgets, FHIR.WP.Definers,
+  fui_vclx_Base, fui_vclx_Images, fui_vclx_Controls, fui_vclx_Advanced,
+  wp_types, FHIR.WP.Widgets, wp_definers, wp_clipboard,
   FHIR.WP.Icons, FHIR.WP.Control;
 
 Type

@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fhir;..\library\cda"/>
+        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
@@ -119,10 +119,6 @@
         <UnitName Value="fhir_pathengine"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir\fhir_ucum.pas"/>
-        <UnitName Value="fhir_ucum"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir\fhir_utilities.pas"/>
         <UnitName Value="fhir_utilities"/>
       </Item>
@@ -165,6 +161,222 @@
       <Item>
         <Filename Value="..\library\cda\cda_writer.pas"/>
         <UnitName Value="cda_writer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_dialects.pas"/>
+        <UnitName Value="fdb_dialects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_logging.pas"/>
+        <UnitName Value="fdb_logging"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_manager.pas"/>
+        <UnitName Value="fdb_manager"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_odbc.pas"/>
+        <UnitName Value="fdb_odbc"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_odbc_fpc.pas"/>
+        <UnitName Value="fdb_odbc_fpc"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_odbc_objects.pas"/>
+        <UnitName Value="fdb_odbc_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_settings.pas"/>
+        <UnitName Value="fdb_settings"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_sqlite3.pas"/>
+        <UnitName Value="fdb_sqlite3"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_sqlite3_objects.pas"/>
+        <UnitName Value="fdb_sqlite3_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_sqlite3_utilities.pas"/>
+        <UnitName Value="fdb_sqlite3_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fdb\fdb_sqlite3_wrapper.pas"/>
+        <UnitName Value="fdb_sqlite3_wrapper"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\fhir_codesystem_service.pas"/>
+        <UnitName Value="fhir_codesystem_service"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\fhir_valuesets.pas"/>
+        <UnitName Value="fhir_valuesets"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_loinc_importer.pas"/>
+        <UnitName Value="ftx_loinc_importer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_loinc_publisher.pas"/>
+        <UnitName Value="ftx_loinc_publisher"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_loinc_services.pas"/>
+        <UnitName Value="ftx_loinc_services"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ndc.pas"/>
+        <UnitName Value="ftx_ndc"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_analysis.pas"/>
+        <UnitName Value="ftx_sct_analysis"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_combiner.pas"/>
+        <UnitName Value="ftx_sct_combiner"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_expressions.pas"/>
+        <UnitName Value="ftx_sct_expressions"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_importer.pas"/>
+        <UnitName Value="ftx_sct_importer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_publisher.pas"/>
+        <UnitName Value="ftx_sct_publisher"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_sct_services.pas"/>
+        <UnitName Value="ftx_sct_services"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_service.pas"/>
+        <UnitName Value="ftx_service"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_base.pas"/>
+        <UnitName Value="ftx_ucum_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_expressions.pas"/>
+        <UnitName Value="ftx_ucum_expressions"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_handlers.pas"/>
+        <UnitName Value="ftx_ucum_handlers"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_search.pas"/>
+        <UnitName Value="ftx_ucum_search"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_services.pas"/>
+        <UnitName Value="ftx_ucum_services"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_ucum_validators.pas"/>
+        <UnitName Value="ftx_ucum_validators"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_base.pas"/>
+        <UnitName Value="v2_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_conformance.pas"/>
+        <UnitName Value="v2_conformance"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary.pas"/>
+        <UnitName Value="v2_dictionary"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_compiled.pas"/>
+        <UnitName Value="v2_dictionary_Compiled"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_database.pas"/>
+        <UnitName Value="v2_dictionary_Database"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v21.pas"/>
+        <UnitName Value="v2_dictionary_v21"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v22.pas"/>
+        <UnitName Value="v2_dictionary_v22"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v23.pas"/>
+        <UnitName Value="v2_dictionary_v23"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v24.pas"/>
+        <UnitName Value="v2_dictionary_v24"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v25.pas"/>
+        <UnitName Value="v2_dictionary_v25"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v26.pas"/>
+        <UnitName Value="v2_dictionary_v26"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v27.pas"/>
+        <UnitName Value="v2_dictionary_v27"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v231.pas"/>
+        <UnitName Value="v2_dictionary_v231"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_v251.pas"/>
+        <UnitName Value="v2_dictionary_v251"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_dictionary_versions.pas"/>
+        <UnitName Value="v2_dictionary_Versions"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_javascript.pas"/>
+        <UnitName Value="v2_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_message.pas"/>
+        <UnitName Value="v2_message"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_objects.pas"/>
+        <UnitName Value="v2_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\v2\v2_protocol.pas"/>
+        <UnitName Value="v2_protocol"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\dicom\dicom_dictionary.pas"/>
+        <UnitName Value="dicom_dictionary"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\dicom\dicom_jpegls.pas"/>
+        <UnitName Value="dicom_jpegls"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\dicom\dicom_objects.pas"/>
+        <UnitName Value="dicom_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\dicom\dicom_parser.pas"/>
+        <UnitName Value="dicom_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\dicom\dicom_writer.pas"/>
+        <UnitName Value="dicom_Writer"/>
       </Item>
     </Files>
     <RequiredPkgs>

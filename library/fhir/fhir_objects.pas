@@ -413,6 +413,9 @@ type
     function isMatchingName(given, expected : String; types : Array of String) : boolean;
     function GetFhirObjectVersion: TFHIRVersion; virtual;
     procedure listFieldsInOrder(fields : TStringList); virtual;
+
+    function GetDateValue: TFslDateTime; virtual;
+    procedure SetDateValue(Value: TFslDateTime); virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -486,12 +489,15 @@ type
     function getId : String; virtual; abstract;
     procedure setIdValue(id : String); virtual; abstract;
     function isPrimitive : boolean; virtual;
+    function isBooleanPrimitive : boolean; virtual;
     function isResource : boolean; virtual;
     function isEnum : boolean; virtual;
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
-    function dateValue : TFslDateTime; virtual;
+    function fpValue : String; virtual;
+    function isDateTime : boolean; virtual;
+    property dateValue : TFslDateTime read GetDateValue write SetDateValue;
     function isMetaDataBased : boolean; virtual;
 //    Function PerformQuery(path : String) : TFHIRObjectList;
     function hasType(t : String) : boolean; overload;
@@ -1023,6 +1029,14 @@ begin
   end;
 end;
 
+function TFHIRObject.fpValue: String;
+begin
+  if isDateTime then
+    result := '@'+primitiveValue
+  else
+    result := primitiveValue;
+end;
+
 procedure TFHIRObject.updateLocationData(start : TSourceLocation; removed, added: TSourceRange; focus : TFHIRObject);
 var
   nc : TFHIRNamedValue;
@@ -1114,7 +1128,7 @@ begin
   FTags.AddOrSetValue(name, value);
 end;
 
-function TFHIRObject.dateValue: TFslDateTime;
+function TFHIRObject.getDateValue: TFslDateTime;
 begin
   result := TFslDateTime.makeNull;
 end;
@@ -1199,6 +1213,16 @@ end;
 procedure TFHIRObject.insertProperty(propName: string; propValue: TFHIRObject; index: integer);
 begin
   raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
+end;
+
+function TFHIRObject.isBooleanPrimitive: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRObject.isDateTime: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRObject.isEmpty: boolean;
@@ -1807,6 +1831,11 @@ end;
 function TFHIRObject.SerialiseUsingProperties: boolean;
 begin
   result := false;
+end;
+
+procedure TFHIRObject.SetDateValue(Value: TFslDateTime);
+begin
+  raise Exception.Create('This object of type '+className+' does not support date value');
 end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;

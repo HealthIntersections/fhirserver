@@ -50,9 +50,6 @@ function CustomResourceNameIsOk(name : String) : boolean;
 function Path(const parts : array of String) : String;
 function UrlPath(const parts : array of String) : String;
 
-function ZCompressBytes(const s: TBytes): TBytes;
-function ZDecompressBytes(const s: TBytes): TBytes;
-function TryZDecompressBytes(const s: TBytes): TBytes;
 function fullResourceUri(base: String; aType : string; id : String) : String; overload;
 function fullResourceUri(base: String; url : String) : String; overload;
 
@@ -300,48 +297,6 @@ begin
   for i := 1 to high(parts) do
     result := IncludeTrailingURLSlash(result) + RemoveLeadingURLSlash(parts[i]);
 end;
-
-function ZCompressBytes(const s: TBytes): TBytes;
-begin
-  {$IFDEF FPC}
-  raise ETodo.create('Not done yet');
-  {$ELSE}
-  ZCompress(s, result);
-  {$ENDIF}
-end;
-
-function TryZDecompressBytes(const s: TBytes): TBytes;
-begin
-  try
-    result := ZDecompressBytes(s);
-  except
-    result := s;
-  end;
-end;
-
-function ZDecompressBytes(const s: TBytes): TBytes;
-{$IFDEF FPC}
-begin
-  raise ETodo.create('Not done yet');
-end;
-
-{$ELSE}
-{$IFNDEF WIN64}
-var
-  buffer: Pointer;
-  size  : Integer;
-{$ENDIF}
-begin
-  {$IFDEF WIN64}
-  ZDecompress(s, result);
-  {$ELSE}
-  ZDecompress(@s[0],Length(s),buffer,size);
-  SetLength(result,size);
-  Move(buffer^,result[0],size);
-  FreeMem(buffer);
-  {$ENDIF}
-end;
-{$ENDIF}
 
 
 function isVersionUrl(url, t : String) : boolean;

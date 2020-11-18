@@ -961,7 +961,7 @@ begin
     lexer.SourceName := sourceName;
     if (lexer.done()) then
       raise EFHIRException.create('Map Input cannot be empty');
-    lexer.skipComments();
+    lexer.skipWhitespaceAndComments();
     lexer.token('map');
     result := TFHIRStructureMap.Create;
     try
@@ -970,7 +970,7 @@ begin
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
       result.Name := lexer.readConstant('name');
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       result.status := PublicationStatusDraft;
 
       while (lexer.hasToken('conceptmap')) do
@@ -1017,7 +1017,7 @@ begin
     raise lexer.error('Concept Map identifier ('+id+') must not start with #');
   map.Id := id;
   lexer.token('{');
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   //    lexer.token('source');
   //    map.Source := new UriType(lexer.readConstant('source')));
   //    lexer.token('target');
@@ -1175,7 +1175,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -1185,7 +1185,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     lexer.next();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -1260,7 +1260,7 @@ begin
     end;
     lexer.token('{');
   end;
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   if (newFmt) then
   begin
     while (not lexer.hasToken('}')) do
@@ -1284,7 +1284,7 @@ begin
   lexer.next();
   if (newFmt and lexer.hasToken(';')) then
     lexer.next();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   group.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
@@ -1310,7 +1310,7 @@ begin
     if (lexer.hasComment()) then
       input.Documentation := lexer.take().substring(2).trim();
     lexer.skipToken(';');
-    lexer.skipComments();
+    lexer.skipWhitespaceAndComments();
   end;
 end;
 
@@ -1358,7 +1358,7 @@ begin
       lexer.token('{');
       if (lexer.hasComment()) then
         rule.Documentation := lexer.take().substring(2).trim();
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       while (not lexer.hasToken('}')) do
       begin
         if (lexer.done()) then
@@ -1412,7 +1412,7 @@ begin
   end;
   if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   rule.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
