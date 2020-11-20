@@ -1,4 +1,4 @@
-unit FHIR.Tests.SearchSyntax;
+unit tests_search_syntax;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,33 +34,30 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  fsl_base,
-  FHIR.Server.SearchSyntax;
+  fsl_base, fsl_testing,
+  search_syntax;
 
-{$IFNDEF FPC}
 type
-  [TextFixture]
-  TFSFilterParserTests = class (TObject)
+  TFSFilterParserTests = class (TFslTestCase)
   private
     procedure test(expression: String);
-  public
-    [TestCase] procedure testString;
-    [TestCase] procedure testToken;
-    [TestCase] procedure testURL;
-    [TestCase] procedure testDate;
-    [TestCase] procedure testSubsumes;
-    [TestCase] procedure testSubsumesId;
-    [TestCase] procedure testFilter;
-    [TestCase] procedure testFilter2;
-    [TestCase] procedure testParentheses;
-    [TestCase] procedure testPrecedence;
+  published
+    procedure testString;
+    procedure testToken;
+    procedure testURL;
+    procedure testDate;
+    procedure testSubsumes;
+    procedure testSubsumesId;
+    procedure testFilter;
+    procedure testFilter2;
+    procedure testParentheses;
+    procedure testPrecedence;
   end;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 { TFSFilterParserTests }
 
 procedure TFSFilterParserTests.test(expression: String);
@@ -68,10 +65,13 @@ var
   filter : TFSFilter;
 begin
   filter := TFSFilterParser.parse(expression);
-  Assert.IsNotNull(filter, 'parsing failed - returned nil');
-  if (filter <> nil) then
-    Assert.IsTrue(filter.ToString = expression, 'Expression mismatch: found "'+filter.ToString+'" expecting "'+expression+'"');
-  filter.Free;
+  try
+    assertTrue(filter <> nil, 'parsing failed - returned nil');
+    if (filter <> nil) then
+      assertTrue(filter.ToString = expression, 'Expression mismatch: found "'+filter.ToString+'" expecting "'+expression+'"');
+  finally
+    filter.Free;
+  end;
 end;
 
 procedure TFSFilterParserTests.testDate;
@@ -124,7 +124,9 @@ begin
   test('name in http://loinc.org/vs/LP234');
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFSFilterParserTests);
-{$ENDIF}
+procedure registerTests;
+begin
+  RegisterTest('Server.Search.Syntax', TFSFilterParserTests.Suite);
+end;
+
 end.

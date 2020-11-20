@@ -29,7 +29,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
@@ -81,7 +81,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRServer"/>
+            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\library"/>
@@ -133,7 +133,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\FHIRServerFPC"/>
+            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
@@ -222,7 +222,7 @@
     </RequiredPackages>
     <Units Count="77">
       <Unit0>
-        <Filename Value="FHIRServerFPC.lpr"/>
+        <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
@@ -538,7 +538,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="C:\work\fhirserver\exec\32\FHIRServerFPC.exe"/>
+      <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>

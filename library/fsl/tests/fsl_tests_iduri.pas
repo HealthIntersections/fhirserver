@@ -1,4 +1,4 @@
-unit FHIR.Tests.IdUriParser;
+unit fsl_tests_iduri;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,26 +28,25 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$i fhir.inc}
 
 interface
 
 uses
   Sysutils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF} fsl_testing,
+  fsl_testing,
   IdUri;
 
 
 type
-  {$IFNDEF FPC}[TextFixture]{$ENDIF}
   TIdUriParserTests = Class (TFslTestCase)
   private
     procedure ok(uri : String);
   published
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestOK;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestFail;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestUnicode1;
-    {$IFNDEF FPC}[TestCase]{$ENDIF} Procedure TestUnicode2;
+    Procedure TestOK;
+    Procedure TestFail;
+    Procedure TestUnicode1;
+    Procedure TestUnicode2;
   end;
 
 procedure registerTests;
@@ -91,11 +90,7 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-{$IFDEF FPC}
-  RegisterTest('Library.IdUri Test', TIdUriParserTests);
-{$ELSE}
-  TDUnitX.RegisterTestFixture(TIdUriParserTests);
-{$ENDIF}
+  RegisterTest('IdUri Tests', TIdUriParserTests.Suite);
 end;
 
 end.

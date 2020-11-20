@@ -28,166 +28,132 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$i fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes, Variants,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
-  fsl_utilities, fsl_stream, fsl_base, fsl_xml, fsl_http,
-  fsl_graphql, fhir_objects, fhir_common, fhir4_types, fhir4_resources, FHIR.Version.Parser, fhir_graphql, fhir4_factory,
-  fhir4_tests_worker, fsl_tests, fsl_comparisons;
+  fsl_base, fsl_testing, fsl_utilities, fsl_stream, fsl_xml, fsl_http, fsl_graphql, fsl_comparisons,
+  fhir_objects, fhir_common, fhir_graphql,
+  fhir4_types, fhir4_resources, fhir4_parser, fhir4_factory,
+  fhir4_tests_worker;
 
-{$IFNDEF FPC}
 type
-  GraphQLParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  TFHIRGraphQLParserTests = class (TObject)
-  public
-    [GraphQLParserTestCase]
-    procedure TestCase(body : String);
-  end;
-
-
-  GraphQLTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  TFHIRGraphQLTests = class (TObject)
+  TFHIRGraphQLParserTest = class (TFslTestSuiteCase)
   private
+    FBody : String;
+  public
+    constructor Create(name, body : string); overload;
+
+    procedure TestCase(name : String); override;
+  end;
+
+  TFHIRGraphQLParserTests = class (TFslTestSuite)
+  public
+    constructor Create; overload; override;
+  end;
+
+
+  TFHIRGraphQLTest = class (TFslTestSuiteCase)
+  private
+    source, output, context, resource, opName: String;
+
     function ResolveReference(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean;
 //    procedure ResolveReverseReference(appInfo : TFslObject; focusType, focusId, requestType, requestParam : String; params : TFslList<TGraphQLArgument>; start, limit : integer; list : TFslList<TFhirResource>);
     function LookupResource(appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean;
     procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResourceV>);
     function Search(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundleW;
   public
-    [GraphQLTestCase]
-    procedure TestCase(source,output,context,resource,opName: String);
+    constructor Create(name, source, output, context, resource, opName : string); overload;
+
+    procedure TestCase(name : String); override;
   end;
-{$ENDIF}
+
+  TFHIRGraphQLTests = class (TFslTestSuite)
+  public
+    constructor Create; overload; override;
+  end;
+
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
+{ TFHIRGraphQLParserTest }
 
-{ GraphQLParserTestCaseAttribute }
-
-function GraphQLParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : String;
-  test : String;
-  i: integer;
-  name,body : String;
+constructor TFHIRGraphQLParserTest.Create(name, body: string);
 begin
-  tests := FileToString(FHIR_TESTING_FILE(4, 'graphql', 'parser-tests.gql'), TEncoding.UTF8);
-  i := 0;
-  while (tests <> '') do
-  begin
-    StringSplit(tests, '####', test, tests);
-    if (test.Trim <> '') then
-      inc(i);
+  inherited Create(name);
+  FBody := body;
+end;
+
+procedure TFHIRGraphQLParserTest.TestCase(name: String);
+var
+  doc : TGraphQLPackage;
+begin
+  doc := TGraphQLParser.parse(FBody);
+  try
+    assertTrue(doc <> nil);
+  finally
+    doc.Free;
   end;
-  setLength(result, i);
-  i := 0;
-  tests := FileToString(FHIR_TESTING_FILE(4, 'graphql', 'parser-tests.gql'), TEncoding.UTF8);
+end;
+
+{ TFHIRGraphQLParserTests }
+
+constructor TFHIRGraphQLParserTests.Create;
+var
+  tests, test, name, body : String;
+begin
+  inherited Create;
+
+  tests := FileToString(TestSettings.fhirTestFile(['r4', 'graphql', 'parser-tests.gql']), TEncoding.UTF8);
   while (tests <> '') do
   begin
     StringSplit(tests, '####', test, tests);
     if (test.Trim <> '') then
     begin
       StringSplit(test, #13#10, name, body);
-
-      result[i].Name := name;
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := body;
-      inc(i);
+      AddTest(TFHIRGraphQLParserTest.create(name, body));
     end;
   end;
 end;
 
-{ TFHIRGraphQLParserTests }
 
-procedure TFHIRGraphQLParserTests.TestCase(body: String);
-var
-  doc : TGraphQLPackage;
+{ TFHIRGraphQLTest }
+
+constructor TFHIRGraphQLTest.Create(name, source, output, context, resource, opName: string);
 begin
-  doc := TGraphQLParser.parse(body);
-  try
-    Assert.IsNotNull(doc);
-  finally
-    doc.Free;
-  end;
+  inherited create(name);
+  self.source := source;
+  self.output := output;
+  self.context := context;
+  self.resource := resource;
+  self.opName := opName;
 end;
 
-
-{ GraphQLTestCaseAttribute }
-
-function GraphQLTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  tests : TMXmlElement;
-  test : TMXmlElement;
-  i: integer;
-begin
-  tests := TMXmlParser.ParseFile(FHIR_TESTING_FILE(4, 'graphql', 'manifest.xml'), [xpDropWhitespace]);
-  try
-    test := tests.document.first;
-    i := 0;
-    while (test <> nil) and (test.Name = 'test') do
-    begin
-      inc(i);
-      test := test.Next;
-    end;
-    setLength(result, i);
-    i := 0;
-    test := tests.document.first;
-    while (test <> nil) and (test.Name = 'test') do
-    begin
-      result[i].Name := test.attribute['name'];
-      SetLength(result[i].Values, 5);
-      result[i].Values[0] := test.attribute['source'];
-      result[i].Values[1] := test.attribute['output'];
-      result[i].Values[2] := test.attribute['context'];
-      result[i].Values[3] := test.attribute['resource'];
-      result[i].Values[4] := test.attribute['operation'];
-      inc(i);
-      test := test.Next;
-    end;
-  finally
-    tests.Free;
-  end;
-end;
-
-{ TFHIRGraphQLTests }
-
-procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
+procedure TFHIRGraphQLTest.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
+    list.add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'condition-example.xml'])))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
+    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml'])));
+    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml'])));
   end;
 end;
 
-function TFHIRGraphQLTests.LookupResource(appInfo: TFslObject; requestType, id: String; var res: TFHIRResourceV): boolean;
+function TFHIRGraphQLTest.LookupResource(appInfo: TFslObject; requestType, id: String; var res: TFHIRResourceV): boolean;
 var
   filename : String;
 begin
-  filename := FHIR_TESTING_FILE(4, 'examples', requestType+'-'+id+'.xml');
+  filename := TestSettings.fhirTestFile(['r4', 'examples', requestType+'-'+id+'.xml']);
   result := FileExists(filename);
   if result then
-    res := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+    res := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
 end;
 
-function TFHIRGraphQLTests.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
+function TFHIRGraphQLTest.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
 var
   parts : TArray<String>;
   res : TFHIRResource;
@@ -211,14 +177,14 @@ begin
   else
   begin
     parts := (reference as TFHIRReference).reference.Split(['/']);
-    filename := FHIR_TESTING_FILE(4, 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
+    filename := TestSettings.fhirTestFile(['r4', 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml']);
     result := FileExists(filename);
     if result then
-      target := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+      target := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
   end;
 end;
 
-function TFHIRGraphQLTests.Search(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>): TFHIRBundleW;
+function TFHIRGraphQLTest.Search(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>): TFHIRBundleW;
 var
   bnd : TFhirBundle;
   f : TFHIRFactoryX;
@@ -238,12 +204,12 @@ begin
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml'));
+      resource := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml']));
     end;
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml'));
+      resource := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml']));
       search := TFhirBundleEntrySearch.Create;
       search.score := '0.5';
       search.mode := SearchEntryModeMatch;
@@ -260,7 +226,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLTests.TestCase(source, output, context, resource, opName: String);
+procedure TFHIRGraphQLTest.TestCase(name : String);
 var
   parts : TArray<String>;
   gql : TFHIRGraphQLEngine;
@@ -276,9 +242,9 @@ begin
     if length(parts) <> 3 then
       raise ETestCase.create('not done yet '+source+' '+output+' '+context);
     if resource <> '' then
-      filename := FHIR_TESTING_FILE(4, 'examples', resource+'.xml')
+      filename := TestSettings.fhirTestFile(['r4', 'examples', resource+'.xml'])
     else
-      filename := FHIR_TESTING_FILE(4, 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml')
+      filename := TestSettings.fhirTestFile(['r4', 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml'])
   end;
 
   gql := TFHIRGraphQLEngine.Create(TFHIRFactoryX.create);
@@ -288,8 +254,8 @@ begin
     gql.OnListResources := ListResources;
     gql.OnSearch := Search;
     if (filename <> '') then
-      gql.Focus := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
-    gql.GraphQL := TGraphQLParser.parseFile(FHIR_TESTING_FILE(4, 'graphql', source));
+      gql.Focus := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+    gql.GraphQL := TGraphQLParser.parseFile(TestSettings.fhirTestFile(['r4', 'graphql', source]));
     gql.GraphQL.OperationName := opName;
     gql.GraphQL.variables.Add(TGraphQLArgument.Create('var', TGraphQLNameValue.Create('true')));
     try
@@ -304,28 +270,52 @@ begin
     end;
     if ok then
     begin
-      Assert.IsTrue(output <> '$error', 'Expected to fail, but didn''t');
+      assertTrue(output <> '$error', 'Expected to fail, but didn''t');
       str := TStringBuilder.create;
       try
         gql.output.write(str, 0);
-        StringToFile(str.ToString, FHIR_TESTING_FILE(4, 'graphql', output+'.out'), TEncoding.UTF8);
-        ok := CheckJsonIsSame(     FHIR_TESTING_FILE(4, 'graphql', output),
-                                   FHIR_TESTING_FILE(4, 'graphql', output+'.out'), msg);
-        assert.IsTrue(ok, msg);
+        StringToFile(str.ToString, TestSettings.fhirTestFile(['r4', 'graphql', output+'.out']), TEncoding.UTF8);
+        ok := CheckJsonIsSame(     TestSettings.fhirTestFile(['r4', 'graphql', output]),
+                                   TestSettings.fhirTestFile(['r4', 'graphql', output+'.out']), msg);
+        assertTrue(ok, msg);
       finally
         str.free;
       end;
     end
     else
-      Assert.IsTrue(output = '$error', 'Error, but proper output was expected ('+msg+')');
+      assertTrue(output = '$error', 'Error, but proper output was expected ('+msg+')');
   finally
     gql.Free;
   end;
 end;
 
+{ TFHIRGraphQLTests }
 
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRGraphQLParserTests);
-  TDUnitX.RegisterTestFixture(TFHIRGraphQLTests);
-{$ENDIF}
+constructor TFHIRGraphQLTests.Create;
+var
+  tests : TMXmlElement;
+  test : TMXmlElement;
+begin
+  inherited Create;
+
+  tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'graphql', 'manifest.xml']), [xpDropWhitespace]);
+  try
+    test := tests.document.first;
+
+    while (test <> nil) and (test.Name = 'test') do
+    begin
+      AddTest(TFHIRGraphQLTest.create(test.attribute['name'], test.attribute['source'], test.attribute['output'], test.attribute['context'], test.attribute['resource'], test.attribute['operation']));
+      test := test.Next;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+
+procedure registerTests;
+begin
+  registerTest('GraphQL.Tests.Parser', TFHIRGraphQLParserTests.create);
+  registerTest('GraphQL.Tests.Engine', TFHIRGraphQLTests.create);
+end;
+
 end.

@@ -1,4 +1,4 @@
-unit FHIR.Tests.IETFLang;
+unit ftx_lang_tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,35 +28,35 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$I fhir.inc}
 
 interface
 
 uses
-  Windows, Sysutils,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  Sysutils, Classes,
+  fsl_testing,
   fsl_stream,
-  FHIR.Tx.Lang;
+  tx_lang;
 
-{$IFNDEF FPC}
+
 type
-  [TextFixture]
-  TIETFLangTests = Class (TObject)
+  TIETFLangTests = Class (TFslTestCase)
   private
     FDefinitions : TIETFLanguageDefinitions;
     procedure pass(code : String);
     procedure fail(code : String);
   public
-    [Setup] Procedure SetUp;
-    [TearDown] procedure TearDown;
-    [TestCase] Procedure TestSimple;
-    [TestCase] Procedure TestWrong;
+    Procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    Procedure TestSimple;
+    Procedure TestWrong;
   end;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 { TIETFLangTests }
 
 procedure TIETFLangTests.fail(code : String);
@@ -66,8 +66,8 @@ var
 begin
   o := FDefinitions.parse(code, msg);
   try
-    Assert.IsNull(o);
-    Assert.IsNotEmpty(msg);
+    assertTrue(o = nil);
+    assertTrue(msg <> '');
   finally
     o.Free;
   end;
@@ -80,8 +80,8 @@ var
 begin
   o := FDefinitions.parse(code, msg);
   try
-    Assert.IsNotNull(o, msg);
-    Assert.IsEmpty(msg);
+    assertTrue(o <> nil, msg);
+    assertTrue(msg = '');
   finally
     o.Free;
   end;
@@ -89,7 +89,7 @@ end;
 
 procedure TIETFLangTests.Setup;
 begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString('C:\work\fhirserver\resources\lang.txt', TEncoding.ASCII));
+  FDefinitions := TIETFLanguageDefinitions.create(FileToString(TestSettings.serverTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
 end;
 
 procedure TIETFLangTests.TearDown;
@@ -111,7 +111,10 @@ begin
   fail('en-AUA');
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TIETFLangTests);
-{$ENDIF}
+procedure registerTests;
+// don't use initialization - give other code time to set up directories etc
+begin
+  RegisterTest('Terminology.Lang Tests', TIETFLangTests.Suite);
+end;
+
 end.

@@ -583,6 +583,7 @@ begin
   FPath := path;
   FCursor := offset;
   FCurrentLocation := TSourceLocation.Create;
+  FComments := TStringList.create;
   next;
 end;
 

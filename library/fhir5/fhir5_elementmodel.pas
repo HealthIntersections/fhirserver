@@ -171,6 +171,7 @@ type
     property special : TFHIRMMSpecialElement read FSpecial;
     property xhtml : TFhirXHtmlNode read FXhtml write SetXhtml;
     property profiles : TProfileUsages read GetProfiles;
+    function isBooleanPrimitive : boolean; override;
 
 
     procedure markValidation(profile : TFHIRStructureDefinition; element : TFhirElementDefinition);
@@ -1001,6 +1002,11 @@ begin
         list.add(child.link);
     end;
   end;
+end;
+
+function TFHIRMMElement.isBooleanPrimitive: boolean;
+begin
+  result := fhirType = 'boolean';
 end;
 
 function TFHIRMMElement.isEmpty: boolean;

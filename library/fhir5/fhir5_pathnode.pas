@@ -51,11 +51,13 @@ type
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfHasExtension, pfAllFalse, pfAnyFalse, pfAllTrue, pfAnyTrue,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
-    pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToTime,
+    pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToDate, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
+    pfAbs, pfCeiling, pfExp, pfFloor, pfLn, pfLog, pfPower, pfTruncate, pfRound, pfSqrt,
+    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin,
     pfCustom);
 
-  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir5_pathengine, but is in CQL
+  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir4_pathengine, but is in CQL
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
 
 const
@@ -70,8 +72,10 @@ const
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'hasExtension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
-    'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToTime',
+    'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToDate', 'convertsToTime',
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
+    'abs', 'ceiling', 'exp', 'floor', 'ln', 'log', 'power', 'truncate', 'round', 'sqrt',
+    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
@@ -972,7 +976,7 @@ var
 begin
   result := TFHIRTypeDetails.create(csNULL, []);
   try
-    if (right.FcollectionStatus in [csUNORDERED, csSingleton]) then
+    if (right.FcollectionStatus = csUNORDERED) or (FCollectionStatus = csUNORDERED) then
       result.FcollectionStatus := csUNORDERED
     else
       result.FcollectionStatus := csORDERED;

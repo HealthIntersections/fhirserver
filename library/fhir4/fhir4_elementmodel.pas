@@ -174,6 +174,7 @@ type
 
 
     procedure markValidation(profile : TFHIRStructureDefinition; element : TFhirElementDefinition);
+    function isBooleanPrimitive : boolean; override;
     function hasChildren : boolean;
     function hasComments : boolean;
     function hasValue : boolean;
@@ -1001,6 +1002,11 @@ begin
         list.add(child.link);
     end;
   end;
+end;
+
+function TFHIRMMElement.isBooleanPrimitive: boolean;
+begin
+  result := fhirType = 'boolean';
 end;
 
 function TFHIRMMElement.isEmpty: boolean;

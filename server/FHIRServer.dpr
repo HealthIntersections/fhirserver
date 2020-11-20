@@ -444,7 +444,7 @@ uses
   MarkdownCommonMarkTests in '..\..\markdown\tests\MarkdownCommonMarkTests.pas',
   MarkdownDaringFireballTests in '..\..\markdown\tests\MarkdownDaringFireballTests.pas',
   CommonTestBase in '..\..\markdown\tests\CommonTestBase.pas',
-  FHIR.Tx.IETFLang.Tests in 'tests\FHIR.Tx.IETFLang.Tests.pas',
+  ftx_lang_tests in '..\library\ftx\tests\ftx_lang_tests.pas',
   ftx_ucum_tests in '..\library\ftx\tests\ftx_ucum_tests.pas',
   dicom_Objects in '..\library\dicom\dicom_Objects.pas',
   dicom_Dictionary in '..\library\dicom\dicom_Dictionary.pas',
@@ -505,7 +505,11 @@ uses
   fhir4_tests_Utilities in '..\library\fhir4\tests\fhir4_tests_Utilities.pas',
   fhir4_tests_Client in '..\library\fhir4\tests\fhir4_tests_Client.pas',
   fhir4_tests_Liquid in '..\library\fhir4\tests\fhir4_tests_Liquid.pas',
-  fhir4_tests_pathengine in '..\library\fhir4\tests\fhir4_tests_PathEngine.pas';
+  fhir4_tests_PathEngine in '..\library\fhir4\tests\fhir4_tests_PathEngine.pas',
+  fxver_tests in '..\library\fxver\tests\fxver_tests.pas',
+  fsl_tests_iduri in '..\library\fsl\tests\fsl_tests_iduri.pas',
+  tests_search_syntax in 'tests\tests_search_syntax.pas',
+  fhir4_tests_graphql in '..\library\fhir4\tests\fhir4_tests_graphql.pas';
 
 begin
   ExecuteFhirServer;

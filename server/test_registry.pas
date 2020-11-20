@@ -33,30 +33,28 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 (*
+Tests Still to restore:
 
-
-fhir4_tests_Maps
-
-
-
-
-fhir_graphql.Tests
-FHIR.Tests.FullServer
-FHIR.Tests.GraphDefinition
-FHIR.Tests.RestFulServer
-FHIR.Tests.search_syntax
-FHIR.Tests.SmartLogin
-FHIR.XVersion.Tests
+* fui_tests_graph
+* fhir_tests_smart
+* fhir4_tests_graphdefinition
+* fhir4_tests_Maps
+* tests_java_bridge
+* tests_server_restful
+* tests_server_full
 *)
 
 uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, FHIR.Tx.IETFLang.Tests, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
-  fsl_tests_npm,
+  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, ftx_lang_tests, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
+  fsl_tests_npm, fsl_tests_iduri,
   {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
-  fhir4_tests_parser, fhir4_tests_Context, fhir4_tests_Utilities, fhir4_tests_Client, fhir4_tests_Liquid, fhir4_tests_PathEngine;
+  fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_pathengine, fhir4_tests_graphql,
+  fxver_tests,
+
+  tests_search_syntax;
 
 procedure registerTests;
 
@@ -133,10 +131,11 @@ begin
   MarkdownDaringFireballTests.registerTests;
   MarkdownCommonMarkTests.registerTests;
   fsl_tests.registerTests;
+  fsl_tests_iduri.registerTests;
   fsl_tests_scrypt.registerTests;
   fsl_tests_web.registerTests;
   cda_tests.registerTests;
-  FHIR.Tx.IETFLang.Tests.registerTests;
+  ftx_lang_tests.registerTests;
   fdb_tests.registerTests;
   ftx_ucum_tests.registerTests;
   ftx_sct_tests.registerTests;
@@ -146,11 +145,14 @@ begin
   {$ENDIF}
   fsl_tests_npm.registerTests;
   fhir4_tests_Parser.registerTests;
-  fhir4_tests_Context.registerTests;
-  fhir4_tests_Utilities.registerTests;
-  fhir4_tests_Client.registerTests;
-  fhir4_tests_Liquid.registerTests;
-  fhir4_tests_PathEngine.registerTests;
+  fhir4_tests_context.registerTests;
+  fhir4_tests_utilities.registerTests;
+  fhir4_tests_client.registerTests;
+  fhir4_tests_liquid.registerTests;
+  fhir4_tests_pathengine.registerTests;
+  fhir4_tests_graphql.registerTests;
+  fxver_tests.registerTests;
+  tests_search_syntax.registerTests;
 end;
 
 end.

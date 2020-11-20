@@ -678,8 +678,9 @@ Type
   public
     constructor Create; override;
     destructor Destroy; override;
-
     function link : TFslStringMap;
+
+    procedure clear;
     property Items[const Key: String]: String read GetItem write SetItem; default;
   end;
 
@@ -3112,6 +3113,11 @@ begin
 end;
 
 { TFslStringMap }
+
+procedure TFslStringMap.clear;
+begin
+  FDict.Clear;
+end;
 
 constructor TFslStringMap.Create;
 begin

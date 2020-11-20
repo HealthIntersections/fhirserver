@@ -2,15 +2,15 @@
 <CONFIG>
   <ProjectGroup FileVersion="2">
     <Targets>
-      <Target FileName="server\FHIRServerFPC.lpi">
+      <Target FileName="server\fhirserver.lpi">
         <BuildModes>
-          <Mode Name="Win32"/>
+          <Mode Name="Win32" Compile="True"/>
           <Mode Name="Win64"/>
           <Mode Name="Linux"/>
           <Mode Name="OSX"/>
         </BuildModes>
       </Target>
-      <Target FileName="server\FHIRConsole.lpi">
+      <Target FileName="server\fhirconsole.lpi">
         <BuildModes>
           <Mode Name="win32" Compile="True"/>
           <Mode Name="win64"/>
@@ -20,7 +20,7 @@
           <Mode Name="win64-release"/>
         </BuildModes>
       </Target>
-      <Target FileName="toolkit2\FHIRToolkit.lpi">
+      <Target FileName="toolkit2\fhirtoolkit.lpi">
         <BuildModes>
           <Mode Name="Default"/>
         </BuildModes>

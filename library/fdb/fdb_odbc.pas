@@ -314,7 +314,6 @@ begin
   case Owner.Platform of
     kdbMySQL : initMySQL;
   end;
-
 end;
 
 procedure TFslDBOdbcConnection.initMySQL;

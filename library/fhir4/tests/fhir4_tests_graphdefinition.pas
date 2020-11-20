@@ -1,4 +1,4 @@
-unit FHIR.Tests.GraphDefinition;
+unit fhir4_tests_graphdefinition;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

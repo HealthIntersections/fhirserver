@@ -177,7 +177,7 @@ begin
           begin
             p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
             try
-              f := TFileStream.Create(TestSettings.fhirTestFile(['r5', 'examples', input]), fmOpenRead);
+              f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead);
               try
                 p.source := f;
                 p.parse;
@@ -219,9 +219,7 @@ begin
       end;
     end;
 
-    s := engine.UseLog;
-    if (s <> '') then
-      writeln(s);
+    engine.UseLog;
 
     if (node <> nil) then
     begin
@@ -302,20 +300,23 @@ begin
     inc(g);
     test := group.first;
     gn := group.attribute['name'];
-    t := 0;
-    while test <> nil do
+    if (gn <> 'testConformsTo') then
     begin
-      inc(t);
-      if test.name = 'test' then
+      t := 0;
+      while test <> nil do
       begin
-        s := test.attribute['name'];
-        if (s = '') then
-          s := gn+' '+inttostr(t);
+        inc(t);
+        if test.name = 'test' then
+        begin
+          s := test.attribute['name'];
+          if (s = '') then
+            s := gn+' '+inttostr(t);
 
-        s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
-        AddTest(TFHIRPathTest4.Create(s));
+          s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
+          AddTest(TFHIRPathTest4.Create(s));
+        end;
+        test := test.Next;
       end;
-      test := test.Next;
     end;
     group := group.Next;
   end;

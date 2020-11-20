@@ -208,12 +208,23 @@ Type
     (**
      * multiply two value/units pairs together and return the result in canonical units
      *
-     * Note: since the units returned are canonical,
+     * Note: the units returned are canonical
      * @param o1
      * @param o2
      * @return
      *)
     Function multiply(o1, o2 : TUcumPair) : TUcumPair;
+
+    (**
+     * divide two value/units pairs together and return the result in canonical units
+     *
+     * Note: the units returned are canonical
+     * @param o1
+     * @param o2
+     * @return
+     *)
+    Function divideBy(o1, o2 : TUcumPair) : TUcumPair;
+
 
     // load from ucum-essence.xml
     Procedure Import(sFilename : String);
@@ -279,6 +290,7 @@ Type
     constructor Create(svc : TUcumServices);
     destructor Destroy; override;
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
+    Function divideBy(o1, o2 : TUcumPair) : TUcumPair; override;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
     Function isConfigured : boolean; override;
   end;
@@ -841,6 +853,29 @@ begin
   list.Add(Code(context).Trim);
 end;
 
+function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
+var
+  res : TUcumPair;
+  s : String;
+begin
+  res := TUcumPair.Create(TFslDecimal.makeOne, '');
+  Try
+    res.value := o1.value / o2.Value;
+    if o1.UnitCode.Contains('/') or o1.UnitCode.contains('*') then
+      s := '('+ o1.UnitCode +')'
+    else
+      s := o1.UnitCode;
+    if (o2.UnitCode.contains('/') or o2.UnitCode.contains('*')) then
+      s := s + '/' + '('+ o2.UnitCode+')'
+    else
+      s := s + '/' + o2.UnitCode;
+    res.UnitCode := s;
+    result := getCanonicalForm(res);
+  Finally
+    res.Free;
+  End;
+end;
+
 procedure TUcumServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(getDisplay(code, lang));
@@ -1171,6 +1206,11 @@ destructor TUcumServiceImplementation.Destroy;
 begin
   FSvc.Free;
   inherited;
+end;
+
+function TUcumServiceImplementation.divideBy(o1, o2: TUcumPair): TUcumPair;
+begin
+  result := FSvc.divideBy(o1, o2);
 end;
 
 function TUcumServiceImplementation.getCanonicalForm(value: TUcumPair): TUcumPair;

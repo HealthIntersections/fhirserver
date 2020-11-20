@@ -4112,6 +4112,7 @@ Type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function isBooleanPrimitive : boolean; override;
   {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the boolean
     property value : Boolean read FValue write SetValue;
@@ -14430,7 +14431,7 @@ end;
 Constructor TFhirDate.Create(value : TFslDateTime);
 begin
   Create;
-  FValue := value.fixPrecision(dtpDay);
+  FValue := value;
 end;
 
 destructor TFhirDate.Destroy;
@@ -16137,6 +16138,11 @@ begin
     o := TFhirBoolean(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirBoolean.isBooleanPrimitive: boolean;
+begin
+  result := true;
 end;
 
 function TFhirBoolean.isEmpty : boolean;

@@ -110,6 +110,7 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function hasExtensions : boolean; override;
+    function isBooleanPrimitive : boolean; override;
     function isMetaDataBased : boolean; override;
 
     property name : String read FName;
@@ -532,6 +533,11 @@ end;
 function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
 begin
   raise EFHIRTodo.create('TFHIRMMElement.createPropertyValue');
+end;
+
+function TFHIRMMElement.isBooleanPrimitive: boolean;
+begin
+  result := fhirType = 'boolean';
 end;
 
 function TFHIRMMElement.isMetadataBased: boolean;

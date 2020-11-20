@@ -44,6 +44,8 @@ Type
   Public
     constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
+    function link : TUcumPair; overload;
+
     Property Value : TFslDecimal read FValue write FValue;
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
@@ -51,6 +53,7 @@ Type
   TUcumServiceInterface = class (TFslObject)
   public
     function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
+    function divideBy(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual; abstract;
     function isConfigured : boolean; virtual; abstract;
   end;
@@ -66,6 +69,11 @@ begin
   UnitCode := sUnitCode;
 end;
 
+
+function TUcumPair.link: TUcumPair;
+begin
+  result := TUcumPair(inherited link);
+end;
 
 function TUcumPair.sizeInBytesV : cardinal;
 begin

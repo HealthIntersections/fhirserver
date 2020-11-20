@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\FMMAVX"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <IncludeAssertionCode Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
     </CompilerOptions>
     <Files>
       <Item>

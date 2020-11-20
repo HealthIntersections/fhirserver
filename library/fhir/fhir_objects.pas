@@ -633,6 +633,8 @@ type
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
     function hasExtensions : boolean; override;
+    function isPrimitive : boolean; override;
+    function primitiveValue : String; override;
 
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
@@ -773,7 +775,8 @@ function compareDeep(e1, e2 : TFHIRObject; allowNull : boolean) : boolean; overl
 function isPrimitiveType(name : String):boolean;
 function isEmptyProp(v : TFHIRObject) : boolean; overload;
 function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
-
+function objectsEqual(o1, o2 : TFHIRObject) : boolean; // true if all properties are equal, recursively
+function objectsEquivalent(o1, o2 : TFHIRObject) : boolean; // true if all properties that exist on both objects are equivalent, recursively
 
 function GetFhirMessage(id : String; const lang : THTTPLanguages) : String; overload;
 function GetFhirMessage(id : String; const lang : THTTPLanguages; def : String) : String; overload;
@@ -1406,7 +1409,7 @@ end;
 
 function TFHIRObjectText.fhirType: String;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  result := 'string';
 end;
 
 function TFHIRObjectText.getId: String;
@@ -1429,6 +1432,11 @@ begin
   result := inherited isEmpty and (FValue = '');
 end;
 
+function TFHIRObjectText.isPrimitive: boolean;
+begin
+  result := true;
+end;
+
 procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   if (bInheritedProperties) Then
@@ -1449,6 +1457,11 @@ end;
 function TFHIRObjectText.makeStringValue(v: String): TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.primitiveValue: String;
+begin
+  result := FValue;
 end;
 
 procedure TFHIRObjectText.setIdValue(id: String);
@@ -1844,6 +1857,47 @@ end;
 function noList(e : TFHIRObjectList) : boolean;
 begin
   result := (e = nil) or (e.Count = 0);
+end;
+
+function objectsEqual(o1, o2 : TFHIRObject) : boolean; // true if all properties are equal, recursively
+begin
+  result := compareDeep(o1, o2, false);
+end;
+
+function objectsEquivalent(o1, o2 : TFHIRObject) : boolean; // true if all properties that exist on both objects are equivalent, recursively
+var
+  pl1, pl2 : TFHIRPropertyList;
+  p1, p2 : TFHIRProperty;
+  i : integer;
+begin
+  if o1.isPrimitive and o2.isPrimitive then
+    exit(sameText(o1.primitiveValue, o2.primitiveValue));
+
+  result := true;
+  pl1 := TFHIRPropertyList.Create;
+  pl2 := TFHIRPropertyList.Create;
+  try
+    o1.ListProperties(pl1, true, true);
+    o2.ListProperties(pl2, true, true);
+    for p1 in pl1 do
+    begin
+      if p1.hasValue then
+      begin
+        p2 := pl2.GetPropertyByName(p1.Name);
+        if (p2 <> nil) and (p2.hasValue) then
+        begin
+          if p1.Values.Count <> p2.Values.Count then
+            exit(false);
+          for i := 0 to p1.Values.Count - 1 do
+            if not objectsEquivalent(p1.Values[i], p2.Values[i]) then
+              exit(false);
+        end;
+      end;
+    end;
+  finally
+    pl2.free;
+    pl1.free;
+  end;
 end;
 
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;

@@ -159,6 +159,7 @@ type
     function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
     function hasExtensions : boolean; override;
     function isMetaDataBased : boolean; override;
+    function isBooleanPrimitive : boolean; override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -948,6 +949,11 @@ begin
         list.add(child.link);
     end;
   end;
+end;
+
+function TFHIRMMElement.isBooleanPrimitive: boolean;
+begin
+  result := fhirType = 'boolean';
 end;
 
 function TFHIRMMElement.isEmpty: boolean;

@@ -1,4 +1,4 @@
-unit v2_dictionary_Database;
+unit v2_dictionary_database;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -1378,8 +1378,10 @@ begin
   FStmt.prepare;
   try
     FStmt.Execute;
-    assert(FStmt.FetchNext, 'DBVersion is empty');
-    FDBVersion := FStmt.ColStringByName['db_name'];
+    if FStmt.FetchNext then
+      FDBVersion := FStmt.ColStringByName['db_name']
+    else
+      RaiseError('LookupDBVersion', 'DBVersion is empty');
   finally
     FStmt.Terminate;
   end;
