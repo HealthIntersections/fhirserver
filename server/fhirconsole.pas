@@ -1,4 +1,4 @@
-program FHIRConsole;
+program fhirconsole;
 
 {$mode objfpc}{$H+}
 

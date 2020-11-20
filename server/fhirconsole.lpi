@@ -11,7 +11,7 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="FHIRConsole"/>
+      <Title Value="fhirconsole"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
@@ -29,7 +29,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRConsole.exe"/>
+            <Filename Value="..\exec\64\fhirconsole.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\Core;..\dependencies\Indy10\System"/>
@@ -74,7 +74,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRConsole.exe"/>
+            <Filename Value="..\exec\64\fhirconsole"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
@@ -105,7 +105,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRConsole"/>
+            <Filename Value="..\exec\64\fhirconsole"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
@@ -128,7 +128,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
+            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
@@ -159,7 +159,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
+            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
@@ -220,7 +220,7 @@
     </RequiredPackages>
     <Units Count="3">
       <Unit0>
-        <Filename Value="FHIRConsole.pas"/>
+        <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
@@ -242,7 +242,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
+      <Filename Value="..\..\exec\64\fhirconsole.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
