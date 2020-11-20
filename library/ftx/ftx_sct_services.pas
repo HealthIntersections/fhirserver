@@ -5306,6 +5306,8 @@ begin
     result := 3
   else if (s = 'es') then
     result := 4
+  else if (s = 'sv') then
+    result := 5
   else
     raise ETerminologyError.create('Unknown SCT Lang "'+s+'"');
 end;
@@ -5317,6 +5319,7 @@ begin
     2 : result := 'fr';
     3 : result := 'nl';
     4 : result := 'es';
+    5 : result := 'sv';
   else
     result := '??';
   end;

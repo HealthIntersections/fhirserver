@@ -36,7 +36,7 @@ uses
   Sysutils, Classes,
   fsl_testing,
   fsl_stream,
-  tx_lang;
+  fsl_lang;
 
 
 type

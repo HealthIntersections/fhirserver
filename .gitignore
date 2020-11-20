@@ -258,3 +258,7 @@ toolkit2/lib/x86_64-linux/
 /library/fdb/backup
 /library/fui/backup
 /packages/lib/x86_64-win64
+
+packages/lib/x86_64-linux/
+
+packages/lib/x86_64-darwin/

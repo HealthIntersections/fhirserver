@@ -169,6 +169,9 @@
     </Files>
     <RequiredPkgs>
       <Item>
+        <PackageName Value="fhir_ftx"/>
+      </Item>
+      <Item>
         <PackageName Value="fhir"/>
       </Item>
       <Item>
