@@ -102,23 +102,21 @@ Name: envPath;   Description: "Add FHIR Server to the system path"
 ; 1. 64bit Application executables & Dlls
 Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\64\FHIRConsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-;Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";       DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";        DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\pack\w64\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\exec\pack\w32\libcrypto-1_1-x64.dll";             DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\exec\pack\w32\libssl-1_1-x64.dll";                DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 
 ; 2. 32 Application executables & Dlls
 Source: "..\exec\32\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\32\FHIRConsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-;Source: "..\exec\pack\w32\FastMM_FullDebugMode.dll";         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode 
+Source: "..\exec\pack\w32\FastMM_FullDebugMode.dll";          DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode 
 Source: "..\exec\pack\w32\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w32\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\exec\pack\w32\libcrypto-1_1.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\exec\pack\w32\libssl-1_1.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w32\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 
 ; 3. Data Files

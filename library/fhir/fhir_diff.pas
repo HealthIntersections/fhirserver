@@ -54,6 +54,8 @@ type
     FValue : TFHIRObject;
     FIndex : integer;
     FIndex2 : integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -78,6 +80,8 @@ type
   private
     FSourceIndex : integer;
     FTargetIndex : integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(sourceIndex, targetIndex : integer);
   end;
@@ -93,6 +97,8 @@ type
   private
     FInserted : boolean;
     FIndex: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     property index : integer read FIndex;
   end;
@@ -131,6 +137,8 @@ type
 
     function applyOperation(res : TFHIRObject; op : TFhirParametersParameterW) : boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -146,6 +154,14 @@ destructor TDifference.Destroy;
 begin
   FValue.Free;
   inherited;
+end;
+
+function TDifference.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FValue.sizeInBytes);
 end;
 
 { TDifferenceList }
@@ -215,6 +231,11 @@ begin
   inherited Create;
   FSourceIndex := sourceIndex;
   FTargetIndex := targetIndex;
+end;
+
+function TDifferenceMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TDifferenceMatchList }
@@ -917,6 +938,14 @@ begin
   end;
 end;
 
+function TDifferenceEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+  inc(result, fpe.sizeInBytes);
+end;
+
 { TOffSetList }
 
 function TOffSetList.adjust(index: integer): integer;
@@ -969,6 +998,11 @@ begin
   add(o);
   o.FIndex := index;
   o.FInserted := false;
+end;
+
+function TOffset.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 end.

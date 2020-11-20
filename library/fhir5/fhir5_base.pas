@@ -64,6 +64,8 @@ type
   TFHIRTuple5 = class (TFHIRObject5)
   private
     FProperties : TFslMap<TFHIRSelectionList>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -198,6 +200,12 @@ end;
 function TFHIRTuple5.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.Create('Operation not supported on Tuple');
+end;
+
+function TFHIRTuple5.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProperties.sizeInBytes);
 end;
 
 end.

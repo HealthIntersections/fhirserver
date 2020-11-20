@@ -90,6 +90,8 @@ type
     procedure SetAppInfo(const Value: TFslObject);
     procedure processVariables(op : TGraphQLOperation);
     function isResourceName(name, suffix: string): boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -120,6 +122,8 @@ type
     procedure SetBundle(const Value: TFHIRBundleW);
     function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
     destructor Destroy; override;
@@ -143,6 +147,8 @@ type
     FFactory : TFHIRFactory;
     FEntry: TFHIRBundleEntryW;
     procedure SetEntry(const Value: TFHIRBundleEntryW);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory; entry : TFHIRBundleEntryW);
     destructor Destroy; override;
@@ -992,6 +998,19 @@ begin
   end;
 end;
 
+function TFHIRGraphQLEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FOutput.sizeInBytes);
+  inc(result, FGraphQL.sizeInBytes);
+  inc(result, FAppinfo.sizeInBytes);
+  inc(result, FWorkingVariables.sizeInBytes);
+  inc(result, FPathEngine.sizeInBytes);
+  inc(result, FMagicExpression.sizeInBytes);
+end;
+
 { TFHIRGraphQLSearchWrapper }
 
 constructor TFHIRGraphQLSearchWrapper.Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
@@ -1137,6 +1156,14 @@ begin
   result := nil;
 end;
 
+function TFHIRGraphQLSearchWrapper.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FBundle.sizeInBytes);
+  inc(result, FParseMap.sizeInBytes);
+end;
+
 { TFHIRGraphQLSearchEdge }
 
 constructor TFHIRGraphQLSearchEdge.Create(factory : TFHIRFactory; entry: TFHIRBundleEntryW);
@@ -1223,6 +1250,13 @@ end;
 function TFHIRGraphQLSearchEdge.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   result := nil;
+end;
+
+function TFHIRGraphQLSearchEdge.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FEntry.sizeInBytes);
 end;
 
 function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;

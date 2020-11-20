@@ -63,6 +63,8 @@ Type
 
     [FluentPathTestCase]
     procedure FluentPathTest(Name : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   End;
 
 implementation
@@ -291,4 +293,10 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TFluentPathTest);
   TDUnitX.RegisterTestFixture(TFluentPathTests);
+function TFluentPathTest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, engine.sizeInBytes);
+end;
+
 end.

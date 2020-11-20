@@ -164,6 +164,8 @@ Type
     procedure SetAnswers(const Value: TFhirQuestionnaireResponse);
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
     procedure SetContext(const Value: TFslObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(const lang : THTTPLanguages);
     destructor Destroy; override;
@@ -1661,6 +1663,22 @@ begin
     else
       raise EFHIRTodo.create('TQuestionnaireBuilder.addExtensionQuestions');
   end;
+end;
+
+function TQuestionnaireBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProfiles.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+  inc(result, FQuestionnaire.sizeInBytes);
+  inc(result, FAnswers.sizeInBytes);
+  inc(result, (FQuestionnaireId.length * sizeof(char)) + 12);
+  inc(result, FFactory.sizeInBytes);
+  inc(result, vsCache.sizeInBytes);
+  inc(result, FPrebuiltQuestionnaire.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+  inc(result, FLang.sizeInBytes);
 end;
 
 end.

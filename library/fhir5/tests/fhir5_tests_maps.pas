@@ -69,6 +69,8 @@ type
     utils : TFHIRStructureMapUtilities;
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -92,6 +94,8 @@ type
 
     [MapParserTest2Case]
     procedure Test(filename : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   End;
 
 implementation
@@ -204,6 +208,13 @@ begin
   end;
 end;
 
+function TMapTransformTests.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ctxt.sizeInBytes);
+  inc(result, utils.sizeInBytes);
+end;
+
 { TTestTransformerServices }
 
 procedure TTestTransformerServices.createResource(appInfo: TFslObject; res: TFHIRObject; atRootofTransform: boolean);
@@ -298,4 +309,11 @@ initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
   TDUnitX.RegisterTestFixture(TMapParserTests2);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests);
+function TMapParserTests2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ctxt.sizeInBytes);
+  inc(result, utils.sizeInBytes);
+end;
+
 end.

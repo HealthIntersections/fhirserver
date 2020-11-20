@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache,
-  fhir_ucum, fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml, fhir_elementmodel, fhir_client;
+  fsl_ucum, fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml, fhir_elementmodel, fhir_client;
 
 type
   TFhirReferenceValidationPolicy = (rvpIGNORE, rvpCHECK_VALID);
@@ -64,6 +64,8 @@ type
     Fowned : TFslList<TFslObject>;
     FOperationDescription : String;
     procedure SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -242,6 +244,8 @@ type
   private
     FFactory : TFHIRFactory;
     FLoadInfo : TPackageLoadingInformation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory); overload; virtual;
     destructor Destroy; override;
@@ -454,6 +458,13 @@ begin
   end;
 end;
 
+function TFHIRWorkerContextWithFactory.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFactory.sizeInBytes);
+  inc(result, FLoadInfo.sizeInBytes);
+end;
+
 { TFHIRValidatorContext }
 
 constructor TFHIRValidatorContext.create;
@@ -476,6 +487,14 @@ begin
   FIssues := Value;
 end;
 
+
+function TFHIRValidatorContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FIssues.sizeInBytes);
+  inc(result, Fowned.sizeInBytes);
+  inc(result, (FOperationDescription.length * sizeof(char)) + 12);
+end;
 
 { TFHIRValidatorV }
 

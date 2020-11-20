@@ -71,6 +71,8 @@ Type
     function find(s : String) : boolean;
 
     procedure process;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(filter : String);  overload;
     destructor Destroy; override;
@@ -376,6 +378,14 @@ begin
       inc(i);
   End;
   FStems.Sort;
+end;
+
+function TSearchFilterText.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilter.length * sizeof(char)) + 12);
+  inc(result, FStems.sizeInBytes);
+  inc(result, FStemmer.sizeInBytes);
 end;
 
 { TCodeSystemProviderContext }

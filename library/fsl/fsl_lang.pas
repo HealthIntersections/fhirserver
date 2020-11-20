@@ -43,6 +43,8 @@ type
     FCode: String;
     FDecimals: integer;
     FSymbol: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     function link : TIso4217Currency; overload;
 
@@ -58,6 +60,8 @@ type
     FMap : TFslMap<TIso4217Currency>;
 
     procedure load;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -92,6 +96,14 @@ end;
 function TIso4217Currency.link: TIso4217Currency;
 begin
   result := TIso4217Currency(inherited link);
+end;
+
+function TIso4217Currency.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDisplay.length * sizeof(char)) + 12);
+  inc(result, (FCode.length * sizeof(char)) + 12);
+  inc(result, (FSymbol.length * sizeof(char)) + 12);
 end;
 
 { TIso4217CurrencySet }
@@ -316,6 +328,13 @@ begin
   doLoad('ZAR', 2, 'R', 'South African rand', 'South Africa');
   doLoad('ZMW', 2, '', 'Zambian kwacha', 'Zambia');
   doLoad('ZWL', 2, 'Z$', 'Zimbabwean dollar A/10', 'Zimbabwe');
+end;
+
+function TIso4217CurrencySet.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCodes.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
 end;
 
 end.

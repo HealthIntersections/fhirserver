@@ -212,6 +212,8 @@ Type
     Procedure WriteSubjectPerson(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSubjectPerson; bOptional : Boolean);
     Procedure WriteSubstanceAdministration(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSubstanceAdministration; bOptional : Boolean);
     Procedure WriteSupply(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSupply; bOptional : Boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure WriteCDA(oXml : TXmlBuilder; oDoc : TcdaClinicalDocument);
     Procedure WritePiece(oXml: TXmlBuilder; oPart : Tv3Base);
@@ -5058,6 +5060,11 @@ begin
   Else
     raise ECDAException.create('Unknown type '+oPart.ClassName);
 
+end;
+
+function TCDAWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 End.

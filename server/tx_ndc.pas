@@ -541,15 +541,13 @@ end;
 
 function TNDCServices.ChildCount(context: TCodeSystemProviderContext): integer;
 var
-  count : integer;
-  code : TNDCProviderContext;
   conn : TFslDBConnection;
 begin
   if (context = nil) then
   begin
     conn := FDB.getconnection('ChildCount');
     try
-      count := conn.CountSQL('select count(*) from NDCProducts');
+      result := conn.CountSQL('select count(*) from NDCProducts') + conn.CountSQL('select count(*) from NDCPackages');
       conn.release;
     except
       on e : Exception do
@@ -558,25 +556,9 @@ begin
         raise;
       end;
     end;
-
-    exit(count);
-  end;
-
-  code := context as TNDCProviderContext;
-  if code.package then
-    exit(0);
-  conn := FDB.getconnection('ChildCount');
-  try
-    count := conn.CountSQL('select count(*) from NDCPackages where ProductKey = '+inttostr(code.key));
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
-  end;
-  result := count;
+  end
+  else
+    result := 0;
 end;
 
 function TNDCServices.Definition(context: TCodeSystemProviderContext): string;

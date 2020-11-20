@@ -275,6 +275,8 @@ type
     FIndex : integer;
     FList : TFhirResourceList;
     function GetCurrent : TFhirResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFhirResourceList);
     destructor Destroy; override;
@@ -710,6 +712,12 @@ end;
 function TFhirResourceListEnumerator.GetCurrent : TFhirResource;
 begin
   Result := FList[FIndex];
+end;
+
+function TFhirResourceListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 { TFhirResourceList }

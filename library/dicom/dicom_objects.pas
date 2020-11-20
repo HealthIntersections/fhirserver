@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 Interface
 
 Uses
@@ -122,7 +124,6 @@ Type
     Function GetAsString: String;
     Procedure SetAsString(const s: String);
     Procedure SetAsWords(const s: String);
-  Protected
   Public
     constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes; aBytes : TBytes = nil); overload;
     destructor Destroy; Override;
@@ -331,6 +332,7 @@ Type
     Procedure SetDictionary(const Value: TDicomDictionary);
   Protected
     Function ItemClass : TFslObjectClass; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
     destructor Destroy; Override;
@@ -556,6 +558,8 @@ type
     FOffsetStart: Cardinal;
     procedure SetElementDefinition(const Value: TDicomDictionaryElement);
     procedure SetDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
     constructor CreateComplex(oDictionary : TDicomDictionary);
@@ -640,6 +644,7 @@ type
 
     Function FindByTags(Const group, element: Word; Out iIndex: Integer): Boolean; Overload;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oDictionary: TDicomDictionary); Overload;
     destructor Destroy; Override;
@@ -751,6 +756,8 @@ type
     Function MakeElement(sTag : String; sValue : String) : TDicomDataElement; Overload;
     Function MakeElement(sTag : String) : TDicomDataElement; Overload;
     Procedure ExecuteQuery(contexts : TDicomObjectList; results : TDicomDataElementList; path : String; Cursor : Integer; bDescendents : Boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(oDictionary: TDicomDictionary); Overload;
@@ -912,6 +919,7 @@ type
   Protected
     Function ItemClass : TFslObjectClass; Override;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oDictionary: TDicomDictionary); Overload;
     destructor Destroy; Override;
@@ -994,6 +1002,8 @@ type
     FOffsetStart: Cardinal;
     FDictionary: TDicomDictionary;
     procedure SetDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1041,6 +1051,8 @@ type
     FOffsetEnd: Cardinal;
     FOffsetStart: Cardinal;
     procedure SetAbstractSyntax(const Value: TDicomString);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1151,6 +1163,8 @@ type
     FOffsetStart: Cardinal;
     FResult: TPresentationAcceptResult;
     procedure SetTransferSyntax(const Value: TDicomString);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
     Function Link : TDicomPresentationAcceptContextInfo; Overload;
@@ -1344,6 +1358,8 @@ type
     Procedure SetCalledEntity(Const Value: TDicomString);
     Procedure SetCallingEntity(Const Value: TDicomString);
   
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1425,6 +1441,8 @@ type
     procedure SetApplicationContext(const Value: TDicomString);
     procedure SetCalledEntity(const Value: TDicomString);
     procedure SetCallingEntity(const Value: TDicomString);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1523,6 +1541,8 @@ type
     FReason: TDicomAssociateRejectReason;
     FResult: TDicomAssociateRejectResult;
     FSource: TDicomAssociateRejectSource;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     Function Link : TDicomAssociateRejectPDU; Overload;
@@ -1671,6 +1691,8 @@ type
   private
     FContextId: Byte;
     FDataValues : TDicomPresentationDataValueList;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1790,6 +1812,8 @@ type
     procedure SetContent(const Value: TDicomObject);
     procedure SetHeader(const Value: TDicomObject);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1903,6 +1927,8 @@ type
     FTransferSyntax : String;
     procedure SetCommand(const Value: TDicomObject);
     procedure SetData(const Value: TDicomObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -2080,6 +2106,8 @@ type
     procedure SetReleaseResponse(const Value: TDicomReleaseResponsePDU);
     function GetInstanceType: TDicomInstanceType;
     procedure SetMessage(const Value: TDicomMessage);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -2301,6 +2329,15 @@ begin
   result := (FValues <> nil) and (FValues.Count > 0);
 end;
 
+function TDicomDataElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FElementDefinition.sizeInBytes);
+  inc(result, FObjects.sizeInBytes);
+  inc(result, FValues.sizeInBytes);
+  inc(result, FDictionary.sizeInBytes);
+end;
+
 { TDicomDataElementList }
 
 Procedure TDicomDataElementList.AddItem(value: TDicomDataElement);
@@ -2488,6 +2525,12 @@ begin
   Finally
     oBuilder.Free;
   End;
+end;
+
+function TDicomDataElementList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
 end;
 
 { TDicomObject }
@@ -2727,6 +2770,13 @@ begin
   FElements := TDicomDataElementList.Create(FDictionary.Link);
 end;
 
+function TDicomObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
+  inc(result, FElements.sizeInBytes);
+end;
+
 { TDicomObjectList }
 
 Constructor TDicomObjectList.Create(oDictionary: TDicomDictionary);
@@ -2822,6 +2872,12 @@ Procedure TDicomObjectList.SetItemByIndex(iIndex: Integer; value: TDicomObject);
 Begin
   ObjectByIndex[iIndex] := value;
 End;
+
+function TDicomObjectList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
+end;
 
 { TDicomInstance }
 
@@ -2967,6 +3023,21 @@ Begin
   FSimpleObject := Value;
 End;
 
+function TDicomInstance.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSimpleObject.sizeInBytes);
+  inc(result, FFileObject.sizeInBytes);
+  inc(result, FAssociateRequest.sizeInBytes);
+  inc(result, FAssociateAccept.sizeInBytes);
+  inc(result, FAssociateReject.sizeInBytes);
+  inc(result, FData.sizeInBytes);
+  inc(result, FAbort.sizeInBytes);
+  inc(result, FReleaseRequest.sizeInBytes);
+  inc(result, FReleaseResponse.sizeInBytes);
+  inc(result, FMessage.sizeInBytes);
+end;
+
 { TDicomPDU }
 
 Procedure TDicomPDU.Assign(oSource: TFslObject);
@@ -3003,6 +3074,12 @@ Begin
   FDictionary.Free;
   FDictionary := Value;
 End;
+
+function TDicomPDU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
+end;
 
 { TDicomPresentationContextInfo }
 
@@ -3044,6 +3121,13 @@ Begin
   FAbstractSyntax := Value;
 End;
 
+function TDicomPresentationContextInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAbstractSyntax.sizeInBytes);
+  inc(result, FTransferSyntaxes.sizeInBytes);
+end;
+
 { TDicomPresentationAcceptContextInfo }
 
 Procedure TDicomPresentationAcceptContextInfo.Assign(oSource: TFslObject);
@@ -3075,6 +3159,12 @@ Begin
   FTransferSyntax.Free;
   FTransferSyntax := Value;
 End;
+
+function TDicomPresentationAcceptContextInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTransferSyntax.sizeInBytes);
+end;
 
 { TDicomAssociateRequestPDU }
 
@@ -3134,6 +3224,16 @@ Begin
   FCallingEntity.Free;
   FCallingEntity := Value;
 End;
+
+function TDicomAssociateRequestPDU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCalledEntity.sizeInBytes);
+  inc(result, FCallingEntity.sizeInBytes);
+  inc(result, FApplicationContext.sizeInBytes);
+  inc(result, FPresentationContexts.sizeInBytes);
+  inc(result, FUserData.sizeInBytes);
+end;
 
 { TDicomPresentationContextInfoList }
 
@@ -3338,6 +3438,16 @@ Begin
   FCallingEntity := Value;
 End;
 
+function TDicomAssociateAcceptPDU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCalledEntity.sizeInBytes);
+  inc(result, FCallingEntity.sizeInBytes);
+  inc(result, FApplicationContext.sizeInBytes);
+  inc(result, FPresentationContexts.sizeInBytes);
+  inc(result, FUserData.sizeInBytes);
+end;
+
 { TDicomAssociateRejectPDU }
 
 Procedure TDicomAssociateRejectPDU.Assign(oSource: TFslObject);
@@ -3363,6 +3473,11 @@ Function TDicomAssociateRejectPDU.Link: TDicomAssociateRejectPDU;
 Begin
   result := TDicomAssociateRejectPDU(inherited Link);
 End;
+
+function TDicomAssociateRejectPDU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
 
 { TDicomDataPDU }
 
@@ -3395,6 +3510,12 @@ Begin
   result := TDicomDataPDU(Inherited Link);
 End;
 
+
+function TDicomDataPDU.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDataValues.sizeInBytes);
+end;
 
 { TDicomAbortPDU }
 
@@ -3753,6 +3874,14 @@ Begin
   result := FHeader.FElements.GetByTags(group, element).SingleValue;
 End;
 
+function TDicomFile.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FContent.sizeInBytes);
+  inc(result, FHeader.sizeInBytes);
+end;
+
 { TDicomString }
 
 Function TDicomString.AsCardinal: Cardinal;
@@ -3970,6 +4099,15 @@ end;
 function TDicomMessage.ReadStatus: Integer;
 begin
   result := FCommand.Elements.GetByTag('0000,0900').SingleValue.AsUS;
+end;
+
+function TDicomMessage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FData.sizeInBytes);
+  inc(result, FCommand.sizeInBytes);
+  inc(result, (FAbstractSyntax.length * sizeof(char)) + 12);
+  inc(result, (FTransferSyntax.length * sizeof(char)) + 12);
 end;
 
 { TDicomMessageList }
@@ -4195,6 +4333,12 @@ Procedure TDicomValueList.SetItemByIndex(iIndex: Integer; value: TDicomValue);
 Begin
   ObjectByIndex[iIndex] := value;
 End;
+
+function TDicomValueList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
+end;
 
 { TDicomValue }
 

@@ -63,6 +63,8 @@ Type
     procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -136,16 +138,13 @@ begin
             oHTTP.OnWork := HTTPWork;
             oHTTP.OnWorkBegin := HTTPWorkBegin;
             oHTTP.OnWorkEnd := HTTPWorkEnd;
-            oSSL.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
+//            oSSL.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
             oSSL.Options.VerifyServerCertificate := false;
             oHTTP.HandleRedirects := true;
             oHTTP.Request.Accept := FAccept;
             if (UserAgent <> '') then
               oHTTP.Request.UserAgent := UserAgent;
             oHTTP.URL.URI := url;
-            oHTTP.OnWork := HTTPWork;
-            oHTTP.OnWorkBegin := HTTPWorkBegin;
-            oHTTP.OnWorkEnd := HTTPWorkEnd;
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then
@@ -198,6 +197,18 @@ begin
       oUri.Free;
     End;
   End;
+end;
+
+function TInternetFetcher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FURL.length * sizeof(char)) + 12);
+  inc(result, FBuffer.sizeInBytes);
+  inc(result, (FUsername.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, (FContentType.length * sizeof(char)) + 12);
+  inc(result, (FUserAgent.length * sizeof(char)) + 12);
+  inc(result, (FAccept.length * sizeof(char)) + 12);
 end;
 
 class function TInternetFetcher.fetchUrl(url : String) : TBytes;

@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Vcl.Graphics, RegularExpressions,
   fsl_utilities, fsl_collections,
-  FHIR.WP.Definers, FHIR.WP.Control, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Icons, FHIR.WP.Dialogs;
+  wp_definers, FHIR.WP.Control, wp_types, wp_document, FHIR.WP.Icons, FHIR.WP.Dialogs;
 
 type
   TWPFieldLinkedDefinitionProvider = Class (TWPFieldDefinitionProvider)
@@ -881,7 +881,7 @@ End;
 
 Function TWPInputFieldDefinitionProvider.GetTouchIconIndex: Integer;
 Begin
-  Result := FHIR.WP.Types.TOUCH_ICON_FIELD;
+  Result := wp_types.TOUCH_ICON_FIELD;
 End;
 
 

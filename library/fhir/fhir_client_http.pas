@@ -92,6 +92,8 @@ type
     procedure HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
     procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(url : String); overload;
     destructor Destroy; override;
@@ -1132,5 +1134,17 @@ end;
 
 
 
+
+function TFHIRHTTPCommunicator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, (FProxy.length * sizeof(char)) + 12);
+  inc(result, (FCertFile.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, (FUsername.length * sizeof(char)) + 12);
+  inc(result, (FCertKey.length * sizeof(char)) + 12);
+  inc(result, (FCertPWord.length * sizeof(char)) + 12);
+end;
 
 end.

@@ -202,5 +202,4 @@ begin
   FConnection.IOHandler.Close;
 end;
 
-
 end.

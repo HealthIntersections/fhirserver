@@ -39,6 +39,8 @@ type
   TFHIRNarrativeGeneratorBase = class (TFslObject)
   private
     FDescription: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextV); virtual;
     procedure generate(res : TFHIRResourceV); overload; virtual; abstract;
@@ -53,6 +55,12 @@ implementation
 constructor TFHIRNarrativeGeneratorBase.create(context: TFHIRWorkerContextV);
 begin
   inherited Create;
+end;
+
+function TFHIRNarrativeGeneratorBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
 end.

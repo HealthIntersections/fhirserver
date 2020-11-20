@@ -120,6 +120,8 @@ type
     Fname: String;
     FpreFetch: TStringList;
     FHook : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -160,6 +162,8 @@ type
     FSSLPrivateKey: String;
     FId: integer;
     FThisHost: string;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -275,6 +279,8 @@ type
     function template(title, body, redirect: String): String;
     function loginOAuthClient: boolean;
     function loginBackendClient : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -592,6 +598,27 @@ begin
   end;
 end;
 
+function TRegisteredFHIRServer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, (FfhirEndpoint.length * sizeof(char)) + 12);
+  inc(result, (Fclientid.length * sizeof(char)) + 12);
+  inc(result, (Fclientsecret.length * sizeof(char)) + 12);
+  inc(result, Fcdshooks.sizeInBytes);
+  inc(result, (FtokenEndpoint.length * sizeof(char)) + 12);
+  inc(result, (FauthorizeEndpoint.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, (FUserName.length * sizeof(char)) + 12);
+  inc(result, (FissuerUrl.length * sizeof(char)) + 12);
+  inc(result, (Fpassphrase.length * sizeof(char)) + 12);
+  inc(result, (Fprivatekey.length * sizeof(char)) + 12);
+  inc(result, (FSSLPassphrase.length * sizeof(char)) + 12);
+  inc(result, (FSSLPublicCert.length * sizeof(char)) + 12);
+  inc(result, (FSSLPrivateKey.length * sizeof(char)) + 12);
+  inc(result, (FThisHost.length * sizeof(char)) + 12);
+end;
+
 { TRegisteredCDSHook }
 
 constructor TRegisteredCDSHook.Create;
@@ -615,6 +642,14 @@ end;
 function doSmartAppLaunchLogin(server : TRegisteredFHIRServer; authorizeURL, tokenURL : String; idle : TIdleEvent; token : TClientAccessToken) : boolean;
 begin
   result := false;
+end;
+
+function TRegisteredCDSHook.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, FpreFetch.sizeInBytes);
+  inc(result, (FHook.length * sizeof(char)) + 12);
 end;
 
 { TSmartAppLaunchLogin }
@@ -925,6 +960,20 @@ procedure TSmartAppLaunchLogin.Settoken(const Value: TClientAccessToken);
 begin
   Ftoken.Free;
   Ftoken := Value;
+end;
+
+function TSmartAppLaunchLogin.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Ftoken.sizeInBytes);
+  inc(result, Fserver.sizeInBytes);
+  inc(result, (FFinalState.length * sizeof(char)) + 12);
+  inc(result, (FAuthCode.length * sizeof(char)) + 12);
+  inc(result, (FInitialState.length * sizeof(char)) + 12);
+  inc(result, (FLogoPath.length * sizeof(char)) + 12);
+  inc(result, (Fversion.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FErrorMessage.length * sizeof(char)) + 12);
 end;
 
 end.

@@ -54,6 +54,8 @@ type
     procedure SetTelecom(const Value: TFHIRContactPoint);
     procedure SetAddress(const Value: TFHIRAddress);
     procedure SetPhoto(const Value: TFhirAttachment);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -69,6 +71,8 @@ type
   private
     FMale : TFslList<TPseudoData>;
     FFemale : TFslList<TPseudoData>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -98,6 +102,8 @@ type
     procedure processPractitionerRole(res : TFhirPractitionerRole);
     procedure processRelatedPerson(res : TFhirRelatedPerson);
     procedure SetDatabase(const Value: TFslDBManager);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -444,6 +450,14 @@ begin
   FDatabase := Value;
 end;
 
+function TFHIRDeIdentifier.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDatabase.sizeInBytes);
+  inc(result, FDataCache.sizeInBytes);
+  inc(result, FLock.sizeInBytes);
+end;
+
 { TPseudoData }
 
 constructor TPseudoData.Create;
@@ -491,6 +505,15 @@ procedure TPseudoData.SetTelecom(const Value: TFHIRContactPoint);
 begin
   FTelecom.Free;
   FTelecom := Value;
+end;
+
+function TPseudoData.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FName.sizeInBytes);
+  inc(result, FTelecom.sizeInBytes);
+  inc(result, FAddress.sizeInBytes);
+  inc(result, FPhoto.sizeInBytes);
 end;
 
 { TFakeDataRepository }
@@ -567,6 +590,13 @@ begin
       result := FMale[i].link;
     end;
   end;
+end;
+
+function TFakeDataRepository.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMale.sizeInBytes);
+  inc(result, FFemale.sizeInBytes);
 end;
 
 end.

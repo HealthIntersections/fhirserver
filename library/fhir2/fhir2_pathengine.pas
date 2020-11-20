@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Math, {$IFDEF DELPHI} RegularExpressions, {$ENDIF} Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
-  fhir_ucum,
+  fsl_ucum,
   fhir_objects, fhir_factory, fhir_pathengine, 
   fhir2_pathnode, fhir2_types, fhir2_utilities, fhir2_context, fhir2_constants,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
@@ -49,6 +49,8 @@ type
     FAppInfo : TFslObject;
     FResourceType : String;
     FContext : TFHIRTypeDetails;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
@@ -209,6 +211,7 @@ type
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
@@ -3507,6 +3510,15 @@ begin
   result := nil;
 end;
 
+function TFHIRPathEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, worker.sizeInBytes);
+  inc(result, primitiveTypes.sizeInBytes);
+  inc(result,  allTypes.sizeInBytes);
+  inc(result, Fucum.sizeInBytes);
+end;
+
 { TFHIRPathExecutionTypeContext }
 
 constructor TFHIRPathExecutionTypeContext.Create(appInfo: TFslObject; resourceType : String; context : TFHIRTypeDetails);
@@ -3529,6 +3541,14 @@ begin
   result := TFHIRPathExecutionTypeContext(inherited link);
 end;
 
+
+function TFHIRPathExecutionTypeContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAppInfo.sizeInBytes);
+  inc(result, (FResourceType.length * sizeof(char)) + 12);
+  inc(result, FContext.sizeInBytes);
+end;
 
 { TFHIRPathParser }
 

@@ -30,11 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Interface
 
-{$I dicom.inc}
-
 Uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
   dicom_dictionary, dicom_objects, dicom_writer;
 
   
@@ -104,6 +102,8 @@ Type
     Procedure SetContext(oValue : TDicomParserContext);
     Function MakeError(iBack : cardinal; sMessage : AnsiString) : Exception;
 //    Function BufferFactory(iSize : Integer): TFslBuffer;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(iMaxLength : Integer);
     destructor Destroy; Override;
@@ -178,6 +178,8 @@ Type
     Function ParseReleaseRequest : TDicomReleaseRequestPDU;
     Function ParseReleaseResponse : TDicomReleaseResponsePDU;
     Function ParseAbort : TDicomAbortPDU;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Function Execute : TDicomPDU;
     Function ExecuteInstance : TDicomInstance;
@@ -195,9 +197,6 @@ CONST
     ('Unprocessed', 'Error', 'Tag', 'Known Tag', 'VR Code', 'Length', 'Dead Bytes', 'Value', 'Repeat Character', 'Sequence Start', 'Sequence Break', 'Sequence End', 'Status Marker', 'Presentation Context ID', 'Result', 'Status Flag', 'PDU Content', 'Fragment Marker');
 
 Implementation
-
-uses
-  Zlib;
 
 Function clength(const s : TMap):Cardinal; Overload;
 Begin
@@ -307,6 +306,18 @@ End;
 
 
 (*
+function TDicomParserContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FInput.sizeInBytes);
+  inc(result, FDictionary.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FMapBig.sizeInBytes);
+  inc(result, FMapOffset.sizeInBytes);
+  inc(result, (FErrorMessage.length * sizeof(char)) + 12);
+  inc(result, FVRRepresentation.sizeInBytes);
+end;
+
       function TDicomParser.IsPDU: Boolean;
 var
   iPos, iLength : int64;
@@ -336,7 +347,6 @@ begin
   End;
 end;
 *)
-
 
 function TDicomParserContext.Link: TDicomParserContext;
 begin
@@ -399,6 +409,12 @@ begin
   FOffset := FContext.FMapOffset;
 end;
 
+
+function TDicomParserBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContext.sizeInBytes);
+end;
 
 { TDicomParser }
 
@@ -1290,6 +1306,11 @@ Begin
   FContext.Mark(aRole, 2);
 end;
 
+function TDicomPDUDecoder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TDicomFileDecoder }
 
 function TDicomFileDecoder.ExecuteFile(bParseContent : Boolean): TDicomFile;
@@ -1436,7 +1457,7 @@ var
   oObj : TDicomParser;
   oPDU : TDicomPDUDecoder;
   oInput : TFslAccessStream;
-  sComp : AnsiString;
+  sComp : TBytes;
   sDecomp : TBytes;
 begin
   if not (FContext.FInput is TFslAccessStream) Then
@@ -1549,7 +1570,7 @@ begin
       SetLength(sComp, oInput.Size);
       oInput.Position := 0;
       oInput.Read(sComp[1], oInput.Size);
-      sDecomp := ZcompressStr(sComp);
+      sDecomp := ZcompressBytes(sComp);
       oInput.Position := 0;
 
       oPDU := TDicomPDUDecoder.Create(oInput.Size);

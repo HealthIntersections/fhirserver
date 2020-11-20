@@ -34,7 +34,7 @@ Interface
 Uses
   SysUtils,
   fsl_base, fsl_stream, fsl_utilities,
-  dicom_Objects, dicom_Dictionary;
+  dicom_objects, dicom_dictionary;
 
 Const
   MAX_WORD = 65535;
@@ -98,6 +98,8 @@ Type
     Procedure EncodeAbort(sPath : string; oAbort : TDicomAbortPDU);
     Procedure EncodeReleaseRequest(sPath : string; oReleaseRequest : TDicomReleaseRequestPDU);
     Procedure EncodeReleaseResponse(sPath : string; oReleaseResponse : TDicomReleaseResponsePDU);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -851,6 +853,14 @@ end;
 procedure TDicomWriter.Execute(sPath : string; oMessage: TDicomMessage);
 begin
   EncodeMessage(sPath, oMessage);
+end;
+
+function TDicomWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOutput.sizeInBytes);
+  inc(result, FDictionary.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes);
 end;
 
 End.

@@ -42,12 +42,15 @@ Uses
   {$IFDEF FPC}
   base64,
   {$ELSE}
-  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions,
+  System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, RegularExpressions, ZLib,
   {$ENDIF}
   SysUtils, Types,
   Classes, Generics.Collections, Math, TypInfo, Character, SysConst,
   fsl_fpc, fsl_base;
 
+type
+  TEqualityTriState = (equalNull, equalFalse, equalTrue);
+  TComparisonQuadState = (compNull, compLess, compEqual, compGreater);
 
 Function IntegerCompare(Const iA, iB : Byte) : Integer; Overload;
 Function IntegerCompare(Const iA, iB : Word) : Integer; Overload;
@@ -211,6 +214,7 @@ Const
 // NOTE: declared in the initialization.
 Var
   UnicodeWhitespaceArray : TCharArray;
+
 
 function clength(S : String) : cardinal; overload;
 function clength(b : TBytes) : cardinal; overload;
@@ -449,70 +453,9 @@ type
 Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCharSet; Var sLeft, sRight: AnsiString) : Boolean;
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
-{$IFDEF FPC}
-  {$DEFINE NO_BUILDER}
-{$ENDIF}
-
-{$IFDEF VER130}
-  {$DEFINE NO_BUILDER}
-{$ENDIF}
 
 
 Type
-  {$IFDEF NO_BUILDER}
-  TFslStringBuilder = Class(TFslObject)
-  Private
-    FContent : String;
-    FLength : Integer;
-    FBufferSize : integer;
-
-    Procedure Append(Const bytes : TBytes); Overload;
-    Procedure Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer); Overload;
-  Public
-    constructor Create; Override;
-    destructor Destroy; Override;
-
-    Function AsString : String;
-    Function ToString : String; override;
-
-    Procedure Clear;
-
-    Procedure Append(ch : Char); Overload;
-    Procedure Append(Const sStr : String); Overload;
-    Procedure AppendLine(Const sStr : String); Overload;
-    Procedure Append(Const iInt : Integer); Overload;
-    Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-    Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-    Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
-    Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
-    Procedure AppendEOL;
-
-    Procedure CommaAdd(Const sStr : String); Overload;
-
-    Procedure AddByteAsBytes(iVal : Byte);
-    Procedure AddWordAsBytes(iVal : word);
-    Procedure AddCardinalAsBytes(iVal : Cardinal);
-    Procedure AddInt64AsBytes(iVal : Int64);
-
-    // index is zero based. zero means insert before first character
-    Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
-    Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
-
-    Procedure Delete(iIndex, iLength : Integer);
-
-    Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
-
-    Property BufferSize : integer read FBufferSize write FBufferSize;
-    Function IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-    Function LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-
-    Property Length : Integer Read FLength;
-    Procedure Read(index : integer; var buffer; ilength : integer);
-    Procedure Overwrite(index : integer; content : String);
-  End;
-
-  {$ELSE}
-
   TFslStringBuilder = Class (TFslObject)
   Private
     FBuilder : TStringBuilder;
@@ -528,13 +471,16 @@ Type
 
     Procedure Append(ch : Char); Overload;
     Procedure Append(Const sStr : String); Overload;
+    {$IFNDEF FPC}
     Procedure Append(Const sStr : AnsiString); Overload;
+    {$ENDIF}
     Procedure AppendLine(Const sStr : String); Overload;
     Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
     Procedure AppendEOL;
 
+    procedure seperator(sep : String);
     Procedure CommaAdd(Const sStr : String); Overload;
     procedure CommaAddIfNotNull(const sStr: String);
 
@@ -554,7 +500,6 @@ Type
     Property Length : Integer Read GetLength;
     function ToString : String; override;
   End;
-  {$ENDIF}
 
 type
   TCommaBuilder = class (TFslObject)
@@ -1074,6 +1019,7 @@ type
     second: Word;
     fraction: Cardinal;
   end;
+  TDateTimeUnit = (dtuYear, dtuMonth, dtuDay, dtuHour, dtuMinute, dtuSecond, dtuMillisecond);
 
   {
     TFslDateTime defines an enhanced date time type that is timezone and precision aware.
@@ -1088,8 +1034,8 @@ type
 
      null: an uninitialised date time - one with no value - has no source. All constructors of valid date time must set the source (piggy back on string init/final routines)
   }
-  TFslDateTime = record {$IFNDEF FPC}
-  private {$ENDIF}
+  TFslDateTime = record
+  private
     Source : String; // for debugging convenience, and also used to mark whether the record has any content
     year: Smallint;
     month: Word;
@@ -1115,9 +1061,8 @@ type
     function checkNoException : boolean;
     procedure RollUp;
     function privToString: String;
-{$IFNDEF FPC}
+    function tz(sep: String): String;
   public
-{$ENDIF}
 
     // various kind of constructors
     class function makeNull : TFslDateTime; static; // because this is record, not a class, it can't be nil. use makeNull / null instead
@@ -1170,7 +1115,8 @@ type
     function IncrementYear: TFslDateTime; // add one year to the time
     function IncrementWeek: TFslDateTime; // add a week to the time
     function IncrementDay: TFslDateTime; // add one day to the time
-    function add(length : TDuration) : TFslDateTime; // add arbitrary time (in TDateTime)
+    function add(value : integer; unit_ : TDateTimeUnit) : TFslDateTime; overload; // value can be negative
+    function add(length : TDuration) : TFslDateTime; overload; // add arbitrary time (in TDateTime)
     function subtract(length : TDuration) : TFslDateTime; // subtract arbitrary time (in TDateTime)
     function difference(other : TFslDateTime) : TDuration; // get time between, assuming arbitarily high precision)
 
@@ -1185,6 +1131,7 @@ type
     function canCompare(other : TFslDateTime) : boolean; // true if the precision is the same time, and timezone info allows for comparison
     function precisionMatches(other: TFslDateTime): boolean; // if precisions match (after ignoring trailing zeroes on fraction
 
+    function hasTimezone : boolean;
     {
     Valid formatting strings are
 
@@ -1213,6 +1160,11 @@ type
     function clone : TFslDateTime;
     function link : TFslDateTime;
 
+    function sameTimezone(other : TFslDateTime) : boolean;
+    function compareTimes(other : TFslDateTime; def : TComparisonQuadState) : TComparisonQuadState;
+    function couldBeTheSameTime(other: TFslDateTime): boolean;
+    function equalsUsingFhirPathRules(other : TFslDateTime) :  TEqualityTriState;
+    function compareUsingFhirPathRules(other : TFslDateTime; equivalenceTest : boolean) :  TComparisonQuadState;
     {$IFNDEF FPC}
     class operator Trunc(a : TFslDateTime) : TFslDateTime;
     {$ENDIF}
@@ -1225,6 +1177,8 @@ type
     class operator Add(a: TFslDateTime; b: TDateTime) : TFslDateTime; // date time is duration here
     class operator Subtract(a: TFslDateTime; b: TDateTime) : TFslDateTime; // date time is duration here
     class operator Subtract(a: TFslDateTime; b: TFslDateTime) : TDateTime; // date time is duration here
+
+    class function compareTimeStrings(left, right : String) : TComparisonQuadState; static;
   end;
 
 {$IFDEF WINDOWS}
@@ -1683,6 +1637,7 @@ Type
   // data members - never use these - use the helper methods instead
   private
     FStatus : TFslDecimalStatus;
+    FSource : String;
     FNegative : Boolean;
     FDigits : String;
     FDecimal : integer;
@@ -1763,6 +1718,8 @@ Type
     class function CheckValueDecimal(sValue : String) : boolean; static; inline;
     class function CheckValueScientific(sValue : String) : boolean; static; inline;
 
+    function equivalent(other : TFslDecimal) : Boolean;
+
     // accessors
     property value : String read GetValue write SetValue;
     property precision : integer read GetPrecision write SetPrecision;
@@ -1796,6 +1753,9 @@ Type
 
     // operators
     Function Trunc(digits : integer = 0) : TFslDecimal;
+    Function Round(digits : integer = 0) : TFslDecimal;
+    Function Ceiling(digits : integer = 0) : TFslDecimal;
+    Function Floor(digits : integer = 0) : TFslDecimal;
     Function Multiply(oOther : TFslDecimal) : TFslDecimal; Overload;
     Function Multiply(iOther : Integer) : TFslDecimal; Overload;
     Function Divide(oOther : TFslDecimal) : TFslDecimal; Overload;
@@ -1817,7 +1777,11 @@ Type
     function Negated: TFslDecimal; overload;
     Function Equals(oOther : TFslDecimal) : Boolean; overload;
     Function Compares(oOther : TFslDecimal) : Integer; overload;
-
+    Function Ln : TFslDecimal; overload;
+    Function Sqrt : TFslDecimal; overload;
+    Function Log(base : integer = 10) : TFslDecimal; overload;
+    Function Exp : TFslDecimal; overload;
+    Function Power(exp : TFslDecimal) : TFslDecimal; overload;
 end;
 
 
@@ -1895,11 +1859,13 @@ procedure BytesToFile(bytes : TBytes; filename : string);
 Function BytePos(find : Byte; source : TBytes ) : integer; Overload;
 Function BytePos(find : TBytes; source : TBytes ) : integer; Overload;
 
+function EncodeBase64Url(const value : TBytes): AnsiString;
 function EncodeBase64(const value : TBytes) : AnsiString; overload;
 {$IFNDEF FPC}
 Function DecodeBase64(Const value : AnsiString) : TBytes; Overload;
 {$ENDIF}
 Function DecodeBase64(Const value : String) : TBytes; Overload;
+Function DecodeBase64Url(Const value : String) : TBytes; Overload;
 
 type
   TXmlEncodingMode = (xmlText, xmlAttribute, xmlCanonical);
@@ -2008,11 +1974,21 @@ function commandLineAsString : String;
 
 
 type
+  TStringListHelper = class helper for TStringList
+  public
+    function sizeInBytes : cardinal;
+  end;
+
+type
   TSemVer = class (TFslObject)
   public
     class function matches(v1, v2 : String) : boolean;
     class function getMajMin(v : String) : String; overload;
   end;
+
+function ZCompressBytes(const s: TBytes): TBytes;
+function ZDecompressBytes(const s: TBytes): TBytes;
+function TryZDecompressBytes(const s: TBytes): TBytes;
 
 Implementation
 
@@ -6882,11 +6858,12 @@ Begin
   Append(oBuilder.AsString);
 End;
 
-
+{$IFNDEF FPC}
 procedure TFslStringBuilder.Append(const sStr: AnsiString);
 begin
 
 end;
+{$ENDIF}
 
 Procedure TFslStringBuilder.AppendEOL;
 Begin
@@ -6904,6 +6881,12 @@ Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : 
 Begin
   Insert(oBuilder.AsString, iIndex);
 End;
+
+procedure TFslStringBuilder.seperator(sep: String);
+begin
+  if Length > 0 Then
+    Append(sep);
+end;
 
 function TFslStringBuilder.toString: String;
 begin
@@ -7004,7 +6987,6 @@ Begin
   if System.length(a) > 0 then
     aStream.Write(a[0], System.length(a));
 End;
-
 
 { TCommaBuilder }
 
@@ -7896,6 +7878,137 @@ begin
     result := 0;
 end;
 
+function ssInt(s : String; start, length : integer) : Integer;
+begin
+  if s.Length >= start + length then
+    result := StrToIntDef(copy(s, start, length), 0)
+  else
+    result := -1;
+end;
+
+function ssDbl(s : String; start : integer) : Double;
+begin
+  if s.Length > start then
+    result := StrToFloat(s.Substring(start))
+  else
+    result := -1;
+end;
+
+class function TFslDateTime.compareTimeStrings(left, right: String): TComparisonQuadState;
+var
+  hl, hr, ml, mr : Integer;
+  sl, sr : Double;
+begin
+  hl := ssInt(left, 1,2);
+  hr := ssInt(right, 1,2);
+  ml := ssInt(left, 4,2);
+  mr := ssInt(right, 4,2);
+  sl := ssDbl(left, 7);
+  sr := ssDbl(right, 7);
+  if hl < hr then
+    result := compLess
+  else if hl > hr then
+    result := compGreater
+  else if (ml = -1) and (mr = -1) then
+    result := compEqual
+  else if (ml = -1) or (mr = -1) then
+    result := compNull
+  else if ml < mr then
+    result := compLess
+  else if ml > mr then
+    result := compGreater
+  else if (sl = -1) and (sr = -1) then
+    result := compEqual
+  else if (sl = -1) or (sr = -1) then
+    result := compNull
+  else if sl < sr then
+    result := compLess
+  else if sl > sr then
+    result := compGreater
+  else
+    result := compEqual;
+end;
+
+function TFslDateTime.compareTimes(other: TFslDateTime; def: TComparisonQuadState): TComparisonQuadState;
+begin
+  if (self.year < other.year) then
+    exit(compLess)
+  else if (self.year > other.year) then
+    exit(compGreater)
+  else if (self.FPrecision = dtpYear) and (other.FPrecision = dtpYear) then
+    exit(compEqual)
+  else if (self.FPrecision = dtpYear) or (other.FPrecision = dtpYear) then
+    exit(def);
+
+  if (self.month < other.month) then
+    exit(compLess)
+  else if (self.month > other.month) then
+    exit(compGreater)
+  else if (self.FPrecision = dtpMonth) and (other.FPrecision = dtpMonth) then
+    exit(compEqual)
+  else if (self.FPrecision = dtpMonth) or (other.FPrecision = dtpMonth) then
+    exit(def);
+
+  if (self.day < other.day) then
+    exit(compLess)
+  else if (self.day > other.day) then
+    exit(compGreater)
+  else if (self.FPrecision = dtpDay) and (other.FPrecision = dtpDay) then
+    exit(compEqual)
+  else if (self.FPrecision = dtpDay) or (other.FPrecision = dtpDay) then
+    exit(def);
+
+  if (self.hour < other.hour) then
+    exit(compLess)
+  else if (self.hour > other.hour) then
+    exit(compGreater);
+// hour is not a valid precision
+//   else if (self.FPrecision = dtpHour) and (other.FPrecision = dtpHour) then
+//     exit(compEqual)
+//   else if (self.FPrecision = dtpHour) or (other.FPrecision = dtpHour) then
+//     exit(def);
+
+  if (self.minute < other.minute) then
+    exit(compLess)
+  else if (self.minute > other.minute) then
+    exit(compGreater)
+  else if (self.FPrecision = dtpMin) and (other.FPrecision = dtpMin) then
+    exit(compEqual)
+  else if (self.FPrecision = dtpMin) or (other.FPrecision = dtpMin) then
+    exit(def);
+
+  if (self.second < other.second) then
+    exit(compLess)
+  else if (self.second > other.second) then
+    exit(compGreater)
+  else if (self.FPrecision = dtpSec) and (other.FPrecision = dtpSec) then
+    exit(compEqual);
+
+  if (self.fraction < other.fraction) then
+    exit(compLess)
+  else if (self.fraction > other.fraction) then
+    exit(compGreater)
+  else
+    exit(compEqual);
+end;
+
+function TFslDateTime.compareUsingFhirPathRules(other: TFslDateTime; equivalenceTest : boolean): TComparisonQuadState;
+begin
+  if (equivalenceTest) then
+  begin
+    case self.equalsUsingFhirPathRules(other) of
+      equalNull: exit(compNull);
+      equalFalse: exit(compGreater);
+      equalTrue: exit(compEqual);
+    end;
+  end;
+
+  if self.sameTimezone(other) then
+    result := self.compareTimes(other, compNull)
+  else
+    result := self.UTC.compareTimes(other.UTC, compNull);
+end;
+
 function TFslDateTime.clone: TFslDateTime;
 begin
   result.Source := Source;
@@ -8180,6 +8293,13 @@ begin
   inc(result.year);
 end;
 
+Function sv(i, w : integer):String;
+begin
+  result := StringPadLeft(inttostr(abs(i)), '0', w);
+  if i < 0 then
+    result := '-'+result;
+end;
+
 function vsv(value : String; start, len, min, max : Integer; name : String):Integer;
 var
   v : String;
@@ -8191,6 +8311,19 @@ begin
   if (result < min) or (result > max) then
     exit(-1);
 end;
+
+function vs(value : String; start, len, min, max : Integer; name : String):Integer;
+var
+  v : String;
+begin
+  v := copy(value, start, len);
+  if not StringIsInteger16(v) then
+    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
+  result := StrToInt(v);
+  if (result < min) or (result > max) then
+    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
+end;
+
 
 class function TFslDateTime.isValidXmlDate(value: String): Boolean;
 var
@@ -8317,6 +8450,26 @@ begin
   aStr := sStr;
 end;
 
+function TFslDateTime.tz(sep : String) : String;
+begin
+  result := '';
+  case TimezoneType of
+    dttzUTC : result := result + 'Z';
+    dttzSpecified :
+      if TimezoneHours < 0 then
+        result := result + sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2)
+      else
+        result := result + '+'+sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2);
+    dttzLocal :
+      if TimeZoneBias > 0 then
+        result := result + '+'+FormatDateTime('hh'+sep+'nn', TimeZoneBias, FormatSettings)
+      else
+        result := result + '-'+FormatDateTime('hh'+sep+'nn', -TimeZoneBias, FormatSettings);
+  else
+    result := '';
+  end;
+end;
+
 function TFslDateTime.ToString(format: String): String;
 begin
   if Source = '' then
@@ -8342,20 +8495,11 @@ begin
     ReplaceSubString(Result, 'AMPM', 'AM')
   else
     ReplaceSubString(Result, 'AMPM', 'PM');
+  if result.Contains('Z') then
+    ReplaceSubString(Result, 'Z', tz(':'));
+  if result.Contains('z') then
+    ReplaceSubString(Result, 'z', tz(''));
 end;
-
-function vs(value : String; start, len, min, max : Integer; name : String):Integer;
-var
-  v : String;
-begin
-  v := copy(value, start, len);
-  if not StringIsInteger16(v) then
-    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
-  result := StrToInt(v);
-  if (result < min) or (result > max) then
-    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
-end;
-
 
 class function TFslDateTime.fromHL7(value: String) : TFslDateTime;
 var
@@ -8516,13 +8660,6 @@ end;
 class operator TFslDateTime.GreaterThanOrEqual(a, b: TFslDateTime): Boolean;
 begin
   result := a.after(b, true);
-end;
-
-Function sv(i, w : integer):String;
-begin
-  result := StringPadLeft(inttostr(abs(i)), '0', w);
-  if i < 0 then
-    result := '-'+result;
 end;
 
 function TFslDateTime.toDB: String;
@@ -8888,13 +9025,19 @@ end;
 
 function TFslDateTime.overlaps(other: TFslDateTime): boolean;
 var
-  x1, x2, y1, y2 : TFslDateTime;
+  sMax, sMin, oMax, oMin : TFslDateTime;
 begin
-  x1 := self.MinUTC;
-  x2 := self.MaxUTC;
-  y1 := other.MinUTC;
-  y2 := other.MaxUTC;
-  result := (x1 <= y2) and (y1 <= x2);
+  sMin := self.Min;
+  sMax := self.MaxUTC;
+  oMin := other.MinUTC;
+  oMax := other.MaxUTC;
+
+  if (oMax < sMin) then
+    result := false
+  else if (sMax < oMin) then
+    result := false
+  else
+    result := true;
 end;
 
 function TFslDateTime.privToString: String;
@@ -8972,6 +9115,7 @@ begin
         end;
     else
     end;
+  result.Fraction := Fraction; // fix for issue representing fractions digitally.
   result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := dttzUTC;
@@ -9060,6 +9204,20 @@ begin
       result := false // unknown, really
   else
     result := sameInstant(UTC.DateTime, other.UTC.DateTime);
+end;
+
+function TFslDateTime.sameTimezone(other: TFslDateTime): boolean;
+begin
+  case TimezoneType of
+    dttzUnknown: result := other.TimezoneType = dttzUnknown;
+    dttzUTC: result := (other.TimezoneType = dttzUTC) or
+         ((other.TimezoneType = dttzLocal) and (TimeZoneBias = 0)) or
+         ((other.TimezoneType = dttzSpecified) and (other.TimeZoneHours = 0) and (other.TimezoneMins = 0));
+    dttzLocal: result := (other.TimezoneType = dttzLocal) or
+         ((other.TimezoneType = dttzUTC) and (TimeZoneBias = 0));
+    dttzSpecified: result := (other.TimezoneType = dttzSpecified) and
+         ((TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins));
+  end;
 end;
 
 class operator TFslDateTime.subtract(a, b: TFslDateTime): TDateTime;
@@ -9177,6 +9335,59 @@ end;
 class operator TFslDateTime.add(a: TFslDateTime; b: TDateTime): TFslDateTime;
 begin
   result := a.add(b);
+end;
+
+function TFslDateTime.add(value: integer; unit_: TDateTimeUnit): TFslDateTime;
+var
+  v : integer;
+begin
+  result := self;
+  case unit_ of
+    dtuYear :
+      begin
+      inc(result.year, value);
+      end;
+    dtuMonth :
+      begin
+      v := result.month + value;
+      inc(result.year, v div 12);
+      result.month := v mod 12;
+      if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] then
+        result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+      end;
+    dtuDay :
+      begin
+      v := result.day + value;
+      while v > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] do
+      begin
+        v := v - MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+        if result.month = 12 then
+        begin
+          inc(result.year);
+          result.month := 1;
+        end
+        else
+          inc(result.month);
+      end;
+      result.day := v;
+      end;
+    dtuHour :
+      begin
+      result := add(value * DATETIME_HOUR_ONE);
+      end;
+    dtuMinute :
+      begin
+      result := add(value * DATETIME_MINUTE_ONE);
+      end;
+    dtuSecond :
+      begin
+      result := add(value * DATETIME_SECOND_ONE);
+      end;
+    dtuMillisecond :
+      begin
+      result := add(value * DATETIME_MILLISECOND_ONE);
+      end;
+  end;
 end;
 
 function TFslDateTime.after(other : TFslDateTime; inclusive : boolean) : boolean;
@@ -11986,6 +12197,63 @@ begin
   result := a.equal(b);
 end;
 
+function TFslDateTime.hasTimezone : boolean;
+begin
+  result := TimezoneType <> dttzUnknown;
+end;
+
+function TFslDateTime.couldBeTheSameTime(other: TFslDateTime): boolean;
+var
+  lowleft, highleft, lowRight, highRight : TDateTime;
+begin
+  lowLeft := self.Min.UTC.DateTime;
+  highLeft := self.Max.UTC.DateTime;
+  if not self.hasTimezone then
+  begin
+    lowLeft := lowLeft - (14 / 24);
+    highLeft := highLeft + (14 / 24);
+  end;
+
+  lowRight := self.Min.UTC.DateTime;
+  highRight := self.Max.UTC.DateTime;
+  if not self.hasTimezone then
+  begin
+    lowRight := lowRight - (14 / 24);
+    highRight := highRight + (14 / 24);
+  end;
+
+  if (highRight < lowLeft) then
+    result := false
+  else if (highLeft < lowRight) then
+    result := false
+  else
+    result := true;
+end;
+
+function TFslDateTime.equalsUsingFhirPathRules(other: TFslDateTime): TEqualityTriState;
+var
+  left, right : TFslDateTime;
+begin
+  if (hasTimezone() <> other.hasTimezone()) then
+  begin
+    if (not self.couldBeTheSameTime(other)) then
+      result := equalFalse
+    else
+      result := equalNull
+  end
+  else
+  begin
+    left := self.UTC;
+    right := other.UTC;
+    case left.compareTimes(right, compNull) of
+      compNull: result := equalNull;
+      compLess: result := equalFalse;
+      compEqual: result := equalTrue;
+      compGreater : result := equalFalse;
+    end;
+  end;
+end;
+
 function StringIsDecimal(s : String) : Boolean;
 var
   l, r : String;
@@ -12004,6 +12272,24 @@ begin
     result := SimpleStringIsDecimal(s, true);
 end;
 
+
+function TFslDecimalHelper.Ceiling(digits: integer): TFslDecimal;
+begin
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if (FDecimal < 1) and (digits = 0) then
+    result := makeZero
+  Else
+  begin
+    result := self;
+    if Length(result.FDigits) >= FDecimal + digits then
+    begin
+      if not FNegative and (result.FDigits.Substring(FDecimal + digits-1).Replace('0', '').Length > 0) then
+        result.FDigits[FDecimal + digits - 1] := char(ord(result.FDigits[FDecimal + digits-1])+1);
+      SetLength(result.FDigits, FDecimal + digits-1);
+    end;
+  end;
+end;
 
 class function TFslDecimalHelper.CheckValue(sValue: String): boolean;
 begin
@@ -12088,6 +12374,7 @@ end;
 Procedure TFslDecimalHelper.SetValue(sValue : String);
 Begin
   FStatus := sdsUnknown;
+  FSource := sValue;
   FPrecision := 0;
   FScientific := false;
   FNegative := false;
@@ -12173,6 +12460,7 @@ var
   i : integer;
 Begin
   FStatus := sdsNumber;
+  FSource := sValue;
   FScientific := false;
   iDecimal := 0;
   FNegative := (sValue[1] = '-');
@@ -12487,7 +12775,7 @@ Begin
         assert(false, 'not implemented yet?');
 //        s[i-1] := s[i-1] + cdig(t mod 10);
  //       c := t div 10;
-      end;
+end;
 
     iDec := Length(res) + 1 - ((length(s1)-iMax)*2);
 
@@ -12787,11 +13075,51 @@ Begin
 end;
 
 
+function TFslDecimalHelper.equivalent(other: TFslDecimal): Boolean;
+var
+  d1, d2 : TFslDecimal;
+  l : integer;
+begin
+  if FDecimal <> other.FDecimal then
+    result := isZero and other.isZero
+  else
+  begin
+    l := Math.Min(FPrecision, other.FPrecision);
+    d1 := self.Round(l);
+    d2 := other.Round(l);
+    result := d1 = d2;
+  end;
+end;
+
+function TFslDecimalHelper.Exp: TFslDecimal;
+begin
+  result := TFslDecimal.Create(Math.Power(2.718281828459045235360287471352662497757247093, AsDouble));
+end;
+
+function TFslDecimalHelper.Floor(digits: integer): TFslDecimal;
+begin
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if (FDecimal < 1) and (digits = 0) then
+    result := makeZero
+  Else
+  begin
+    result := self;
+    if Length(result.FDigits) >= FDecimal + digits then
+    begin
+      if FNegative and (result.FDigits.Substring(FDecimal + digits-1).Replace('0', '').Length > 0) then
+        result.FDigits[FDecimal + digits - 1] := char(ord(result.FDigits[FDecimal + digits-1])+1);
+      SetLength(result.FDigits, FDecimal + digits-1);
+    end;
+  end;
+end;
+
 Procedure TFslDecimalHelper.SetValueScientific(sValue: String);
 var
   i : integer;
   s, e : String;
 begin
+  FSource := sValue;
   StringSplit(sValue, 'e', s, e);
 
   if (s= '') or (s = '-') or not StringIsDecimal(s) then
@@ -12816,6 +13144,14 @@ begin
   end;
   i := StrToInt(e);
   FDecimal := FDecimal + i;
+end;
+
+function TFslDecimalHelper.Sqrt: TFslDecimal;
+begin
+  if IsNegative then
+    result := makeUndefined
+  else
+    result := TFslDecimal.Create(System.Sqrt(AsDouble));
 end;
 
 function TFslDecimalHelper.GetPrecision: integer;
@@ -13011,6 +13347,16 @@ begin
   result.FNegative := FNegative;
   result.FDigits := FDigits;
   result.FDecimal := FDecimal;
+end;
+
+function TFslDecimalHelper.Ln: TFslDecimal;
+begin
+  result := TFslDecimal.Create(System.Ln(AsDouble));
+end;
+
+function TFslDecimalHelper.Log(base : integer = 10): TFslDecimal;
+begin
+  result := TFslDecimal.Create(Math.LogN(base, AsDouble));
 end;
 
 class function TFslDecimalHelper.makeInfinity: TFslDecimal;
@@ -13235,6 +13581,37 @@ begin
     result := '0'+result;
 end;
 
+function TFslDecimalHelper.Power(exp: TFslDecimal): TFslDecimal;
+begin
+  if IsNegative then
+    result := makeUndefined
+  else
+    result := TFslDecimal.Create(Math.Power(AsDouble, exp.AsDouble));
+end;
+
+function TFslDecimalHelper.Round(digits: integer): TFslDecimal;
+begin
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if (FDecimal < 1) and (digits = 0) then
+    result := makeZero
+  Else
+  begin
+    result := self;
+    if Length(result.FDigits) >= FDecimal + digits then
+    begin
+      if (result.FDigits[FDecimal + digits] >= '5') then
+        result.FDigits[FDecimal + digits - 1] := char(ord(result.FDigits[FDecimal + digits-1])+1);
+      SetLength(result.FDigits, FDecimal + digits-1);
+    end;
+    if result.FDigits = '' then
+    begin
+      result.FDigits := '0';
+      result.FDecimal := 2;
+    end;
+  end;
+end;
+
 function TFslDecimalHelper.AsDouble: Double;
 begin
   if not isANumber then
@@ -13313,7 +13690,7 @@ begin
 end;
 
 
-function round(prefix, s : String; i : integer) : String;
+function doRound(prefix, s : String; i : integer) : String;
 begin
   result := s;
   if s.Length > i then
@@ -13356,8 +13733,8 @@ Begin
   else
   begin
     iMax := IntegerMax(oOne.FDecimal, oTwo.FDecimal);
-    s1 := round('0'+StringMultiply('0', iMax - oOne.FDecimal+1), oOne.FDigits, oOne.FPrecision);
-    s2 := round('0'+StringMultiply('0', iMax - oTwo.FDecimal+1), oTwo.FDigits, oTwo.FPrecision);
+    s1 := doRound('0'+StringMultiply('0', iMax - oOne.FDecimal+1), oOne.FDigits, oOne.FPrecision);
+    s2 := doRound('0'+StringMultiply('0', iMax - oTwo.FDecimal+1), oTwo.FDigits, oTwo.FPrecision);
     if Length(s1) < length(s2) then
       s1 := s1 + StringMultiply('0', length(s2) - length(s1))
     else if Length(s2) < length(s1) then
@@ -14304,13 +14681,18 @@ End;
 
 function StreamToBytes(AStream: TStream): TBytes;
 begin
-  SetLength(Result, AStream.Size);
-  if AStream.Size > 0 then
-    begin
-    AStream.Position := 0;
-    AStream.Read(Result[0], AStream.Size);
-    AStream.Position := 0;
-    end;
+  if AStream = nil then
+   SetLength(result, 0)
+  else
+  begin
+    SetLength(Result, AStream.Size);
+    if AStream.Size > 0 then
+      begin
+      AStream.Position := 0;
+      AStream.Read(Result[0], AStream.Size);
+      AStream.Position := 0;
+      end;
+  end;
 end;
 
 procedure BytesToFile(bytes : TBytes; filename : string);
@@ -14364,6 +14746,16 @@ begin
     end;
 end;
 
+function EncodeBase64Url(const value : TBytes): AnsiString;
+var
+  b64 : String;
+begin
+  b64 := EncodeBase64(value); // todo
+  b64 := StringReplace(b64, #13#10, '');
+  b64 := StringReplace(b64, '+', '-', [rfReplaceAll]);
+  b64 := StringReplace(b64, '/', '_', [rfReplaceAll]);
+  result := b64;
+end;
 
 function EncodeBase64(const value : TBytes): AnsiString;
 {$IFDEF FPC}
@@ -14398,6 +14790,16 @@ begin
   result := EncdDecd.DecodeBase64(value);
 end;
 {$ENDIF}
+
+Function DecodeBase64Url(Const value : String) : TBytes;
+var
+  s : String;
+begin
+  s := value + StringOfChar ('=', (4 - Length (value) mod 4) mod 4);
+  s := StringReplace (s, '-', '+', [rfReplaceAll]);
+  s := StringReplace (s, '_', '/', [rfReplaceAll]);
+  result := DecodeBase64(s);
+end;
 
 Function DecodeBase64(Const value : String) : TBytes; Overload;
 {$IFDEF FPC}
@@ -15305,7 +15707,7 @@ begin
   b := TStringBuilder.create;
   try
     for c in sValue do
-    begin
+begin
       if CharInSet(c, ['a'..'z', 'A'..'Z', '0'..'9']) then
         b.append(c)
       else
@@ -16727,7 +17129,66 @@ begin
   result := v1 = v2;
 end;
 
+function ZCompressBytes(const s: TBytes): TBytes;
+begin
+  {$IFDEF FPC}
+  raise ETodo.create('Not done yet');
+  {$ELSE}
+  ZCompress(s, result);
+  {$ENDIF}
+end;
 
+function TryZDecompressBytes(const s: TBytes): TBytes;
+begin
+  try
+    result := ZDecompressBytes(s);
+  except
+    result := s;
+  end;
+end;
+
+function ZDecompressBytes(const s: TBytes): TBytes;
+{$IFDEF FPC}
+begin
+  raise ETodo.create('Not done yet');
+end;
+
+{$ELSE}
+{$IFNDEF WIN64}
+var
+  buffer: Pointer;
+  size  : Integer;
+{$ENDIF}
+begin
+  {$IFDEF WIN64}
+  ZDecompress(s, result);
+  {$ELSE}
+  ZDecompress(@s[0],Length(s),buffer,size);
+  SetLength(result,size);
+  Move(buffer^,result[0],size);
+  FreeMem(buffer);
+  {$ENDIF}
+end;
+{$ENDIF}
+
+
+{ TStringListHelper }
+
+function TStringListHelper.sizeInBytes: cardinal;
+var
+  s : String;
+begin
+  if (self = nil) then
+    result := 0
+  else
+  begin
+    result := sizeof(TStringList)+ (Count * 2 * sizeof(pointer));
+    for s in self do
+      inc(result, (s.Length * sizeOf(Char))+12);
+  end;
+
+
+end;
 
 Initialization
   init;

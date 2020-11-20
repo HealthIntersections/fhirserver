@@ -42,6 +42,8 @@ Type
   TLOINCCode = class (TFslName)
   private
     FDisplayName: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Procedure Define(oFiler : TFslFiler); Override;
     Procedure Assign(oSource : TFslObject); Override;
@@ -86,6 +88,12 @@ end;
 function TLOINCCode.Link: TLOINCCode;
 begin
   result := TLOINCCode(Inherited Link);
+end;
+
+function TLOINCCode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDisplayName.length * sizeof(char)) + 12);
 end;
 
 { TLOINCList }

@@ -29,13 +29,15 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{.$.DEFINE SSL_100_TESTS} // adds tests on older SSL version. deprecated.
 
 interface
 
 uses
   Sysutils,
   fsl_testing,
-  IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer,
+  IdGlobal, IdUri, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, IdHTTPServer, IdSchedulerOfThreadPool, IdContext, IdCustomHTTPServer, IdSSLOpenSSL, IdHTTP, IdTcpClient,
+  IdLogDebug, IdServerInterceptLogFile,
   IdOpenSSLVersion, IdOpenSSLIOHandlerClient, IdOpenSSLIOHandlerServer,
   fsl_json, fsl_utilities,
   fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto;
@@ -72,15 +74,22 @@ type
   private
     FServer : TIdHTTPServer;
     FIOHandler : TIdOpenSSLIOHandlerServer;
+    {$IFDEF SSL_100_TESTS}
+    FIOHandlerOld : TIdServerIOHandlerSSLOpenSSL;
     procedure startServer100;
+    {$ENDIF}
     procedure startServer110;
     procedure stopServer;
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
+    procedure SSLPassword100(var Password: string);
     Procedure DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
   published
     procedure testWebFetcher;
     procedure testSendEmail;
+    {$IFDEF SSL_100_TESTS}
     procedure testWebServer_100;  // openssl 1.0.2
+    {$ENDIF}
     procedure testWebServer_110;  // openssl 1.1.0
   End;
 
@@ -358,6 +367,11 @@ begin
   end;
 end;
 
+procedure TOpenSSLTests.DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
+begin
+  VUseSSL := true;
+end;
+
 procedure TOpenSSLTests.DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
   response.ContentText := 'Response';
@@ -368,12 +382,17 @@ begin
   Password := TestSettings.SSLPassword;
 end;
 
+procedure TOpenSSLTests.SSLPassword100(var Password: string);
+begin
+  Password := TestSettings.SSLPassword;
+end;
+
 procedure TOpenSSLTests.startServer110;
 begin
   FServer := TIdHTTPServer.Create(Nil);
   FServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
   TIdSchedulerOfThreadPool(FServer.Scheduler).PoolSize := 20;
-  FServer.DefaultPort := 17456;
+  FServer.DefaultPort := 17423;
   FServer.KeepAlive := false;
   FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
   FServer.IOHandler := FIOHandler;
@@ -384,51 +403,64 @@ begin
   FIOHandler.Options.VerifyCertificate := TestSettings.SSLCAFile;
 
   FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.UseServerCipherPreferences := true;
-//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
-//    FIOHandler.Options.UseLegacyServerConnect := true;
-//
-//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
-//   FIOHandler.Options.CipherSuites := '';
-//    FIOHandler.Options.RequestCertificate := true;
-//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
-//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
-//    FIOHandler.Options.OnVerify := DoVerifyPeer;
+  FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
+  FIOHandler.Options.UseServerCipherPreferences := true;
+  FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
+  FIOHandler.Options.UseLegacyServerConnect := true;
+
   FServer.OnCommandGet := DoServe;
+  FServer.OnQuerySSLPort := DoQuerySSLPort;
   FServer.active := true;
 end;
 
+{$IFDEF SSL_100_TESTS}
 procedure TOpenSSLTests.startServer100;
 begin
   FServer := TIdHTTPServer.Create(Nil);
   FServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
   TIdSchedulerOfThreadPool(FServer.Scheduler).PoolSize := 20;
-  FServer.DefaultPort := 17456;
+  FServer.ServerSoftware := 'Health Intersections FHIR Server';
+  FServer.ParseParams := false;
+  FServer.DefaultPort := 17423;
   FServer.KeepAlive := false;
-  FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
-  FServer.IOHandler := FIOHandler;
-
-  FIOHandler.Options.CertFile := TestSettings.SSLCertFile;
-  FIOHandler.Options.OnGetPassword := SSLPassword;
-  FIOHandler.Options.CertKey := TestSettings.SSLKeyFile;
-  FIOHandler.Options.VerifyCertificate := TestSettings.SSLCAFile;
-
-  FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.UseServerCipherPreferences := true;
-//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
-//    FIOHandler.Options.UseLegacyServerConnect := true;
-//
-//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
-//   FIOHandler.Options.CipherSuites := '';
-//    FIOHandler.Options.RequestCertificate := true;
-//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
-//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
-//    FIOHandler.Options.OnVerify := DoVerifyPeer;
+  FIOHandlerOld := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
+  FServer.IOHandler := FIOHandlerOld;
+  FIOHandlerOld.SSLOptions.Method := sslvTLSv1_2;
+  FIOHandlerOld.SSLOptions.Mode := sslmServer;
+  FIOHandlerOld.SSLOptions.SSLVersions := [sslvTLSv1_2];
+  FIOHandlerOld.SSLOptions.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
+  FIOHandlerOld.SSLOptions.CertFile := TestSettings.SSLCertFile;
+  FIOHandlerOld.SSLOptions.KeyFile := TestSettings.SSLKeyFile;
+  FIOHandlerOld.SSLOptions.RootCertFile := TestSettings.SSLCAFile;
+  FIOHandlerOld.SSLOptions.VerifyMode := [];
+  FIOHandlerOld.OnGetPassword := SSLPassword100;
   FServer.OnCommandGet := DoServe;
+  FServer.OnQuerySSLPort := DoQuerySSLPort;
   FServer.active := true;
 end;
+procedure TOpenSSLTests.testWebServer_100;
+var
+  cnt : TBytes;
+begin
+  assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
+  assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
+  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
+  assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
+
+  startServer100;
+  try
+    cnt := TInternetFetcher.fetchUrl('https://localhost:17423/test');
+    assertTrue(length(cnt) = 8);
+  finally
+    try
+      stopServer;
+    except
+      // nothing
+    end;
+  end;
+end;
+
+{$ENDIF}
 
 procedure TOpenSSLTests.stopServer;
 begin
@@ -439,6 +471,9 @@ begin
   end;
   FServer.IOHandler := nil;
   FIOHandler.Free;
+  {$IFDEF SSL_100_TESTS}
+  FIOHandlerOld.Free;
+  {$ENDIF}
   FServer.Scheduler.Free;
   FServer.Free;
 end;
@@ -452,7 +487,7 @@ begin
 
   startServer110;
   try
-    assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17456/test')) = 8);
+    assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17423/test')) = 8);
   finally
     try
       stopServer;
@@ -462,23 +497,6 @@ begin
   end;
 end;
 
-procedure TOpenSSLTests.testWebServer_100;
-begin
-  assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
-  assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
-  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
-  assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
 
-  startServer100;
-  try
-    assertTrue(length(TInternetFetcher.fetchUrl('https://localhost:17456/test')) = 8);
-  finally
-    try
-      stopServer;
-    except
-      // nothing
-    end;
-  end;
-end;
 
 end.

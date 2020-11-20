@@ -115,7 +115,7 @@ uses
   FHIR.Support.Signatures in '..\library\support\FHIR.Support.Signatures.pas',
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
   LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
-  fhir_ucum in '..\library\ucum\fhir_ucum.pas',
+  fsl_ucum in '..\library\ucum\fsl_ucum.pas',
   fhir4_pathnode in '..\library\r4\fhir4_pathnode.pas',
   fsl_logging in '..\library\support\fsl_logging.pas',
   fhir4_questionnaire2 in '..\library\r4\fhir4_questionnaire2.pas',

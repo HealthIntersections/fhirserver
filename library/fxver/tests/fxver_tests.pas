@@ -1,4 +1,4 @@
-unit FHIR.XVersion.Tests;
+unit fxver_tests;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,98 +34,96 @@ interface
 
 uses
   SysUtils, Classes,
-  {$IFDEF FPC} FPCUnit, TestRegistry, {$ELSE} DUnitX.TestFramework, {$ENDIF}
+  fsl_testing,
   fsl_stream, fsl_tests, fsl_http,
   fhir_objects, fhir_parser,
   fhir3_parser, fhir4_parser,
-  FHIR.XVersion.Convertors;
+  fxver_convertors;
 
-{$IFNDEF FPC}
 type
-  [TextFixture]
-  TVersionConversionTests = Class (TObject)
+  TVersionConversionTests = Class (TFslTestCase)
   private
     procedure test4to3to4(res : TBytes);
   public
-    [Setup] Procedure SetUp;
-    [TearDown] procedure TearDown;
-
-    [TestCase] Procedure TestPatient_34_simple;
-    [TestCase] Procedure TestParameters_34;
-    [TestCase] Procedure TestAllergyIntolerance_34;
-    [TestCase] Procedure TestAppointment_34;
-    [TestCase] Procedure TestAppointmentResponse_34;
-    [TestCase] Procedure TestAuditEvent_34;
-    [TestCase] Procedure TestBasic_34;
-    [TestCase] Procedure TestBinary_34;
-    [TestCase] Procedure TestBodyStructure_34;
-    [TestCase] Procedure TestBundle_34;
-    [TestCase] Procedure TestCapabilityStatement_34;
-    [TestCase] Procedure TestCareTeam_34;
-    [TestCase] Procedure TestClinicalImpression_34;
-    [TestCase] Procedure TestCodeSystem_34;
-    [TestCase] Procedure TestCommunication_34;
-    [TestCase] Procedure TestCompartmentDefinition_34;
-    [TestCase] Procedure TestComposition_34;
-    [TestCase] Procedure TestConceptMap_34;
-    [TestCase] Procedure TestCondition_34;
-    [TestCase] Procedure TestConsent_34;
-    [TestCase] Procedure TestDetectedIssue_34;
-    [TestCase] Procedure TestDevice_34;
-    [TestCase] Procedure TestDeviceMetric_34;
-    [TestCase] Procedure TestDeviceUseStatement_34;
-    [TestCase] Procedure TestDiagnosticReport_34;
-    [TestCase] Procedure TestDocumentReference_34;
-    [TestCase] Procedure TestEncounter_34;
-    [TestCase] Procedure Testendpoint_34;
-    [TestCase] Procedure TestEpisodeOfCare_34;
-    [TestCase] Procedure TestFamilyMemberHistory_34;
-    [TestCase] Procedure TestFlag_34;
-    [TestCase] Procedure TestGoal_34;
-    [TestCase] Procedure TestGraphDefinition_34;
-    [TestCase] Procedure TestGroup_34;
-    [TestCase] Procedure TestHealthcareService_34;
-    [TestCase] Procedure TestImmunization_34;
-    [TestCase] Procedure TestImplementationGuide_34;
-    [TestCase] Procedure TestLinkage_34;
-    [TestCase] Procedure TestList_34;
-    [TestCase] Procedure TestLocation_34;
-    [TestCase] Procedure TestMedicationAdministration_34;
-    [TestCase] Procedure TestMedicationDispense_34;
-    [TestCase] Procedure TestMedicationRequest_34;
-    [TestCase] Procedure TestMedicationStatement_34;
-    [TestCase] Procedure TestMessageDefinition_34;
-    [TestCase] Procedure TestMessageHeader_34;
-    [TestCase] Procedure TestNamingSystem_34;
-    [TestCase] Procedure TestObservation_34;
-    [TestCase] Procedure TestOperationDefinition_34;
-    [TestCase] Procedure TestOperationOutcome_34;
-    [TestCase] Procedure TestOrganization_34;
-    [TestCase] Procedure TestPatient_34;
-    [TestCase] Procedure TestPaymentNotice_34;
-    [TestCase] Procedure TestPerson_34;
-    [TestCase] Procedure TestPractitioner_34;
-    [TestCase] Procedure TestPractitionerRole_34;
-    [TestCase] Procedure TestQuestionnaire_34;
-    [TestCase] Procedure TestQuestionnaireResponse_34;
-    [TestCase] Procedure TestRiskAssessment_34;
-    [TestCase] Procedure TestSchedule_34;
-    [TestCase] Procedure TestSearchParameter_34;
-    [TestCase] Procedure TestSequence_34;
-    [TestCase] Procedure TestSlot_34;
-    [TestCase] Procedure TestSpecimen_34;
-    [TestCase] Procedure TestStructureDefinition_34;
-    [TestCase] Procedure TestStructureMap_34;
-    [TestCase] Procedure TestSubscription_34;
-    [TestCase] Procedure TestSubstance_34;
-    [TestCase] Procedure TestSupplyDelivery_34;
-    [TestCase] Procedure TestValueSet_34;
+    Procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    Procedure TestPatient_34_simple;
+    Procedure TestParameters_34;
+    Procedure TestAllergyIntolerance_34;
+    Procedure TestAppointment_34;
+    Procedure TestAppointmentResponse_34;
+    Procedure TestAuditEvent_34;
+    Procedure TestBasic_34;
+    Procedure TestBinary_34;
+    Procedure TestBodyStructure_34;
+    Procedure TestBundle_34;
+    Procedure TestCapabilityStatement_34;
+    Procedure TestCareTeam_34;
+    Procedure TestClinicalImpression_34;
+    Procedure TestCodeSystem_34;
+    Procedure TestCommunication_34;
+    Procedure TestCompartmentDefinition_34;
+    Procedure TestComposition_34;
+    Procedure TestConceptMap_34;
+    Procedure TestCondition_34;
+    Procedure TestConsent_34;
+    Procedure TestDetectedIssue_34;
+    Procedure TestDevice_34;
+    Procedure TestDeviceMetric_34;
+    Procedure TestDeviceUseStatement_34;
+    Procedure TestDiagnosticReport_34;
+    Procedure TestDocumentReference_34;
+    Procedure TestEncounter_34;
+    Procedure Testendpoint_34;
+    Procedure TestEpisodeOfCare_34;
+    Procedure TestFamilyMemberHistory_34;
+    Procedure TestFlag_34;
+    Procedure TestGoal_34;
+    Procedure TestGraphDefinition_34;
+    Procedure TestGroup_34;
+    Procedure TestHealthcareService_34;
+    Procedure TestImmunization_34;
+    Procedure TestImplementationGuide_34;
+    Procedure TestLinkage_34;
+    Procedure TestList_34;
+    Procedure TestLocation_34;
+    Procedure TestMedicationAdministration_34;
+    Procedure TestMedicationDispense_34;
+    Procedure TestMedicationRequest_34;
+    Procedure TestMedicationStatement_34;
+    Procedure TestMessageDefinition_34;
+    Procedure TestMessageHeader_34;
+    Procedure TestNamingSystem_34;
+    Procedure TestObservation_34;
+    Procedure TestOperationDefinition_34;
+    Procedure TestOperationOutcome_34;
+    Procedure TestOrganization_34;
+    Procedure TestPatient_34;
+    Procedure TestPaymentNotice_34;
+    Procedure TestPerson_34;
+    Procedure TestPractitioner_34;
+    Procedure TestPractitionerRole_34;
+    Procedure TestQuestionnaire_34;
+    Procedure TestQuestionnaireResponse_34;
+    Procedure TestRiskAssessment_34;
+    Procedure TestSchedule_34;
+    Procedure TestSearchParameter_34;
+    Procedure TestSequence_34;
+    Procedure TestSlot_34;
+    Procedure TestSpecimen_34;
+    Procedure TestStructureDefinition_34;
+    Procedure TestStructureMap_34;
+    Procedure TestSubscription_34;
+    Procedure TestSubstance_34;
+    Procedure TestSupplyDelivery_34;
+    Procedure TestValueSet_34;
   End;
-{$ENDIF}
+
+procedure registerTests;
 
 implementation
 
-{$IFNDEF FPC}
 { TVersionConversionTests }
 
 procedure TVersionConversionTests.Setup;
@@ -144,7 +142,7 @@ var
 begin
   b := TFhirVersionConvertors.convertResource(res, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease4, fhirVersionRelease3);
   b := TFhirVersionConvertors.convertResource(b, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease3, fhirVersionRelease4);
-  Assert.isTrue(length(b) > 0);
+  assertTrue(length(b) > 0);
 end;
 
 procedure TVersionConversionTests.TestPatient_34_simple;
@@ -154,350 +152,352 @@ end;
 
 procedure TVersionConversionTests.TestParameters_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'parameters-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'parameters-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestAllergyIntolerance_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'allergyintolerance-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'allergyintolerance-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestAppointment_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'appointment-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'appointment-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestAppointmentResponse_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'appointmentresponse-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'appointmentresponse-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestAuditEvent_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'auditevent-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'auditevent-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestBasic_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'basic-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'basic-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestBinary_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'binary-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'binary-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestBodyStructure_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'bodystructure-example-fetus.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'bodystructure-example-fetus.json'])));
 end;
 
 procedure TVersionConversionTests.TestBundle_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'bundle-questionnaire.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'bundle-questionnaire.json'])));
 end;
 
 procedure TVersionConversionTests.TestCapabilityStatement_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'capabilitystatement-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'capabilitystatement-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestCareTeam_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'careteam-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'careteam-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestClinicalImpression_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'clinicalimpression-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'clinicalimpression-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestCodeSystem_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'codesystem-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'codesystem-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestCommunication_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'communication-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'communication-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestCompartmentDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'compartmentdefinition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'compartmentdefinition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestComposition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'composition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'composition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestConceptMap_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'conceptmap-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'conceptmap-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestCondition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'condition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'condition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestConsent_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'consent-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'consent-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDetectedIssue_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'detectedissue-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'detectedissue-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDevice_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'device-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'device-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDeviceMetric_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'devicemetric-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'devicemetric-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDeviceUseStatement_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'deviceusestatement-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'deviceusestatement-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDiagnosticReport_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'diagnosticreport-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'diagnosticreport-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestDocumentReference_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'documentreference-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'documentreference-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestEncounter_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'encounter-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'encounter-example.json'])));
 end;
 
 procedure TVersionConversionTests.Testendpoint_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'endpoint-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'endpoint-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestEpisodeOfCare_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'episodeofcare-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'episodeofcare-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestFamilyMemberHistory_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'familymemberhistory-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'familymemberhistory-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestFlag_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'flag-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'flag-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestGoal_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'goal-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'goal-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestGraphDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'graphdefinition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'graphdefinition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestGroup_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'group-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'group-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestHealthcareService_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'healthcareservice-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'healthcareservice-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestImmunization_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'immunization-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'immunization-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestImplementationGuide_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'implementationguide-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'implementationguide-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestLinkage_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'linkage-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'linkage-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestList_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'list-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'list-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestLocation_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'location-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'location-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestMedicationAdministration_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'medicationadministration0301.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'medicationadministration0301.json'])));
 end;
 
 procedure TVersionConversionTests.TestMedicationDispense_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'medicationdispense0301.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'medicationdispense0301.json'])));
 end;
 
 procedure TVersionConversionTests.TestMedicationRequest_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'medicationrequest0301.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'medicationrequest0301.json'])));
 end;
 
 procedure TVersionConversionTests.TestMedicationStatement_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'medicationstatementexample1.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'medicationstatementexample1.json'])));
 end;
 
 procedure TVersionConversionTests.TestMessageDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'messagedefinition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'messagedefinition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestMessageHeader_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'messageheader-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'messageheader-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestNamingSystem_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'namingsystem-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'namingsystem-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestObservation_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'observation-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'observation-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestOperationDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'operationdefinition-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'operationdefinition-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestOperationOutcome_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'operationoutcome-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'operationoutcome-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestOrganization_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'organization-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'organization-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestPatient_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'patient-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestPaymentNotice_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'paymentnotice-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'paymentnotice-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestPerson_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'person-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'person-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestPractitioner_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'practitioner-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'practitioner-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestPractitionerRole_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'practitionerrole-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'practitionerrole-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestQuestionnaire_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'questionnaire-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'questionnaire-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestQuestionnaireResponse_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'questionnaireresponse-example-bluebook.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'questionnaireresponse-example-bluebook.json'])));
 end;
 
 procedure TVersionConversionTests.TestRiskAssessment_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'riskassessment-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'riskassessment-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSchedule_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'schedule-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'schedule-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSearchParameter_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'searchparameter-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'searchparameter-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSequence_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'molecularsequence-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'molecularsequence-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSlot_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'slot-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'slot-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSpecimen_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'specimen-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'specimen-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestStructureDefinition_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'structuredefinition-example-composition.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'structuredefinition-example-composition.json'])));
 end;
 
 procedure TVersionConversionTests.TestStructureMap_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'structuremap-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'structuremap-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSubscription_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'subscription-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'subscription-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSubstance_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'substance-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'substance-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestSupplyDelivery_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'supplydelivery-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'supplydelivery-example.json'])));
 end;
 
 procedure TVersionConversionTests.TestValueSet_34;
 begin
-  test4to3to4(FileToBytes(FHIR_TESTING_FILE(4, 'examples', 'valueset-example.json')));
+  test4to3to4(FileToBytes(TestSettings.fhirTestFile(['r4', 'examples', 'valueset-example.json'])));
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TVersionConversionTests);
-{$ENDIF}
+procedure registerTests;
+begin
+  RegisterTest('ConversionTests', TVersionConversionTests.Suite);
+end;
+
 end.

@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fsl_base, fsl_utilities,  
+  fsl_base, fsl_utilities,
   fdb_dialects, fdb_manager,
   fdb_odbc_objects;
 
@@ -53,6 +53,7 @@ type
     function FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFslDBTable;
     function DatabaseSizeMSSQL : int64;
     function TableSizeMSSQL(sName : String) : int64;
+    procedure initMySQL;
   Protected
     procedure StartTransactV; Override;
     procedure CommitV; Override;
@@ -97,6 +98,7 @@ type
   Public
     constructor Create(AOwner : TFslDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
     destructor Destroy; override;
+    procedure Initialise; override;
   end;
 
   TFslDBOdbcManager = class (TFslDBManager)
@@ -117,6 +119,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
@@ -306,6 +309,21 @@ begin
   Result := FStmt.RowsAffected;
 end;
 
+procedure TFslDBOdbcConnection.Initialise;
+begin
+  case Owner.Platform of
+    kdbMySQL : initMySQL;
+  end;
+end;
+
+procedure TFslDBOdbcConnection.initMySQL;
+var
+  tz : String;
+begin
+  tz := TFslDateTime.makeLocal.toString('Z');
+  ExecSQL('SET time_zone = '''+tz+'''');
+end;
+
 procedure TFslDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
   if Owner.Platform = kdbASA then
@@ -456,16 +474,22 @@ type
   TOdbcBoundString = class (TFslDBBoundParam)
   private
     FString: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundInt = class (TFslDBBoundParam)
   private
     FInt: Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundInt64 = class (TFslDBBoundParam)
   private
     FInt64: Int64;
+  protected
+    function sizeInBytesV : cardinal; override;
   end;
 
   TOdbcBoundDate = class (TFslDBBoundParam)
@@ -481,6 +505,8 @@ type
   TOdbcBoundBytes  = class (TFslDBBoundParam)
   private
     FBytes: TManagedMemoryStream;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
   end;
@@ -908,6 +934,7 @@ begin
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
     result := TFslDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
+    result.Initialise;
   except
     on e:exception do
       begin
@@ -928,6 +955,17 @@ end;
 function TFslDBOdbcManager.GetDBDetails: String;
 begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
+end;
+
+function TFslDBOdbcManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDriver.length * sizeof(char)) + 12);
+  inc(result, (FServer.length * sizeof(char)) + 12);
+  inc(result, (FDatabase.length * sizeof(char)) + 12);
+  inc(result, (FUsername.length * sizeof(char)) + 12);
+  inc(result, (FPassword.length * sizeof(char)) + 12);
+  inc(result, FAttributes.sizeInBytes);
 end;
 
 class function TFslDBOdbcManager.IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean;
@@ -1003,6 +1041,29 @@ destructor TOdbcBoundBytes.Destroy;
 begin
   FBytes.Free;
   inherited;
+end;
+
+function TOdbcBoundBytes.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBytes.Size);
+end;
+
+function TOdbcBoundString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FString.length * sizeof(char)) + 12);
+end;
+
+function TOdbcBoundInt.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
+function TOdbcBoundInt64.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, sizeof(FInt64));
 end;
 
 end.

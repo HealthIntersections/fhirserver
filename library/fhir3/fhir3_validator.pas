@@ -54,6 +54,8 @@ Type
     // extension : TFHIRElementDefinition;
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
@@ -73,6 +75,8 @@ Type
 
     function locStart: TSourceLocation;
     function locEnd: TSourceLocation;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
   end;
@@ -83,6 +87,8 @@ Type
     basePath: String;
     cursor, lastCount: integer;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(path: String; element: TFHIRMMElement);
     destructor Destroy; override;
@@ -97,6 +103,8 @@ Type
   private
     FCanonical : TStringList;
     FDefinitions : TFHIRStructureDefinitionList;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
@@ -203,6 +211,8 @@ Type
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
@@ -314,6 +324,16 @@ begin
   result := false;
 end;
 
+function TElementInfo.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (name.length * sizeof(char)) + 12);
+  inc(result, element.sizeInBytes);
+  inc(result, (path.length * sizeof(char)) + 12);
+  inc(result, definition.sizeInBytes);
+  inc(result, slice.sizeInBytes);
+end;
+
 { TNodeStack }
 
 constructor TNodeStack.Create();
@@ -419,6 +439,17 @@ begin
   finally
     b.Free;
   end;
+end;
+
+function TNodeStack.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, parent.sizeInBytes);
+  inc(result, (literalPath.length * sizeof(char)) + 12);
+  inc(result, logicalPaths.sizeInBytes);
+  inc(result, element.sizeInBytes);
+  inc(result, definition.sizeInBytes);
+  inc(result, type_.sizeInBytes);
 end;
 
 { TFHIRValidator3 }
@@ -3557,6 +3588,14 @@ begin
   end;
 end;
 
+function TFHIRValidator3.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExtensionDomains.sizeInBytes);
+  inc(result, FPathEngine.sizeInBytes);
+  inc(result, FEntryElement.sizeInBytes);
+end;
+
 function TFHIRValidator.GetContext : TFHIRWorkerContext;
 begin
   result := (inherited Context) as TFHIRWorkerContext;
@@ -3640,6 +3679,13 @@ begin
   result := basePath + '.' + name + sfx;
 end;
 
+function TChildIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, parent.sizeInBytes);
+  inc(result, (basePath.length * sizeof(char)) + 12);
+end;
+
 { TValidationProfileSet }
 
 constructor TValidationProfileSet.create;
@@ -3669,5 +3715,12 @@ begin
   inherited;
 end;
 
+
+function TValidationProfileSet.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCanonical.sizeInBytes);
+  inc(result, FDefinitions.sizeInBytes);
+end;
 
 end.

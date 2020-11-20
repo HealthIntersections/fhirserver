@@ -62,6 +62,7 @@ type
     FSource: String;
     function getItemCount: Integer;
     function VarName(index: Integer): String;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -98,6 +99,8 @@ type
     function GetSub: String;
     procedure SetMain(const Value: String);
     procedure SetSub(const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -134,6 +137,7 @@ type
 
     function matches(code: String): boolean;
     function prefLang : String;
+    function sizeInBytes : cardinal;
   end;
 
   //end;
@@ -504,6 +508,13 @@ end;
 
 {-----------------------------------------------------------------------------}
 
+function TMultiValList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, fItemList.sizeInBytes);
+  inc(result, (FSource.length * sizeof(char)) + 12);
+end;
+
 procedure THTTPParameters.add(sname: String; const svalue: String);
 begin
   addItem(sname, svalue);
@@ -691,6 +702,14 @@ begin
     FBase := 'application/'+Value;
 end;
 
+function TMimeContentType.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSource.length * sizeof(char)) + 12);
+  inc(result, FParams.sizeInBytes);
+  inc(result, (FBase.length * sizeof(char)) + 12);
+end;
+
 class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType>;
 var
   e : String;
@@ -745,6 +764,8 @@ type
   private
     FCode : String;
     FValue : Double;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor create(code : String; value : Double);
   end;
@@ -763,6 +784,12 @@ type
   public
     function Compare(const l, r: TLanguageSpec): Integer; override;
   end;
+
+function TLanguageSpec.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
+end;
 
 function TLanguageSpecComparer.Compare(const l, r : TLanguageSpec) : integer;
 begin
@@ -858,6 +885,16 @@ begin
     result := 'en'
   else
     result := FCodes[0];
+end;
+
+function THTTPLanguages.sizeInBytes: cardinal;
+var
+  s : String;
+begin
+  result := sizeof(self);
+  inc(result, (FSource.Length * SizeOf(char)) + 12);
+  for s in FCodes do
+    inc(result, (s.Length * SizeOf(char)) + 12);
 end;
 
 end.

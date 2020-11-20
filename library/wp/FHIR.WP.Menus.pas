@@ -33,8 +33,8 @@ Interface
 Uses
   SysUtils, Classes, Menus, Dialogs,
   fsl_utilities,
-  FHIR.Uix.Base, FHIR.Uix.Controls,
-  FHIR.Wp.Types;
+  fui_vclx_base, fui_vclx_controls,
+  wp_types, wp_clipboard;
 
 {
 The menu is broken into columns
@@ -227,7 +227,7 @@ Implementation
 Uses
   fsl_collections,
 
-  FHIR.WP.Icons, FHIR.WP.Control, FHIR.WP.Definers, FHIR.WP.Engine, FHIR.WP.Working;
+  FHIR.WP.Icons, FHIR.WP.Control, wp_definers, FHIR.WP.Engine, wp_working;
 
 
 Procedure TWPPopupMenu.Initialise;

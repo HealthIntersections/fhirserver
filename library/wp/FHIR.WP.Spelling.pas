@@ -32,7 +32,7 @@ Interface
 
 Uses
    fsl_collections,
-  FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
+  FHIR.WP.Settings, wp_types, wp_working;
 
 Type
   EWordIsBanned = Class (EWPException);
@@ -44,6 +44,8 @@ Type
   Private
     FAllowedWords : TFslStringList;
     procedure SetAllowedWords(const Value: TFslStringList);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -119,6 +121,12 @@ procedure TWPSpeller.SetAllowedWords(const Value: TFslStringList);
 begin
   FAllowedWords.Free;
   FAllowedWords := Value;
+end;
+
+function TWPSpeller.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAllowedWords.sizeInBytes);
 end;
 
 End.

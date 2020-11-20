@@ -75,6 +75,8 @@ Type
   TMXmlBoolean = class (TMXmlPrimitive)
   private
     FValue: boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : boolean);
     property value : boolean read FValue write FValue;
@@ -84,6 +86,8 @@ Type
   TMXmlNumber = class (TMXmlPrimitive)
   private
     FValue: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : integer);
     property value : integer read FValue write FValue;
@@ -93,6 +97,8 @@ Type
   TMXmlString = class (TMXmlPrimitive)
   private
     FValue: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     property value : String read FValue write FValue;
@@ -112,6 +118,8 @@ Type
     FStart : TSourceLocation;
     FStop : TSourceLocation;
     function containsLocation(loc : TSourceLocation) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType); overload;
     Property Name : String read FName write FName;
@@ -126,6 +134,8 @@ Type
   TMXmlAttribute = class (TMXmlNamedNode)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(); override;
     constructor Create(name, value : String); overload;
@@ -163,6 +173,8 @@ Type
     function GetHasAttribute(name: String): boolean;
     function GetAllChildrenAreText: boolean;
     function findLocation(loc : TSourceLocation; path : TFslList<TMXmlNamedNode>) : boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
     constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
@@ -224,6 +236,8 @@ Type
     function GetParams: TFslList<TMXPathExpressionNode>;
     function GetFilters: TFslList<TMXPathExpressionNode>;
     function buildConstant : TMXmlNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     Function Link : TMXPathExpressionNode; overload;
@@ -246,6 +260,8 @@ Type
   TXPathVariables = class (TFslObject)
   private
     FMap : TFslMap<TMXmlNode>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(name : String; value : TMXmlNode); overload;
@@ -307,6 +323,8 @@ Type
     function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode) : TFslList<TMXmlNode>; overload;
     function evaluateString(nodes : TFslList<TMXmlNode>): String;
     function GetDocElement: TMXmlElement;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
@@ -362,6 +380,8 @@ Type
     function readXpathExpression(node : TMXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : string;
     function parseXPath : TMXPathExpressionNode; overload;
     function newGroup(next: TMXPathExpressionNode): TMXPathExpressionNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -393,6 +413,8 @@ type
     FNew: TStringList;
     FDefaultSet: boolean;
     procedure SetDefaultNS(const Value: String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -471,6 +493,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslXMLAttribute;
       Function Clone : TFslXMLAttribute;
@@ -558,6 +581,8 @@ Type
 
       Function GetValue: String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -592,6 +617,8 @@ Type
     Private
       FEntryList : TFslXMLNamespaceEntryList;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -618,6 +645,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -652,6 +680,7 @@ Type
       Function UseAttributes : String;
 
       Procedure ProducePretty(sValue : String);
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -693,6 +722,8 @@ Type
     FCanonicalEntities: boolean;
     function getNSRep(uri, name : String):String;
     procedure SetCanonicalEntities(const Value: boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -747,6 +778,8 @@ Type
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; override;
@@ -772,6 +805,95 @@ Type
     procedure DocType(sText : String); override;
 
     procedure inject(const bytes : TBytes); override;
+  End;
+
+Type
+  TFslXMLKnownType = (TFslXMLKnownHeaderType, TFslXMLKnownCommentType, TFslXMLKnownElementType, TFslXMLKnownTextType);
+  TFslXMLKnownTypes = Set Of TFslXMLKnownType;
+
+
+Const
+  ALL_XML_KNOWN_TYPE = [TFslXMLKnownHeaderType..TFslXMLKnownTextType];
+
+Type
+  TFslXMLExtractor = Class(TFslTextExtractor)
+    Private
+      FElement : String;
+      FAttributes : TFslXMLAttributeMatch;
+      FNamespaceManager : TFslXMLNamespaceManager;
+      FNodeName : String;
+
+    Protected
+      Procedure Expected(Const sMethod, sExpected : String);
+
+      Function SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
+
+    function sizeInBytesV : cardinal; override;
+    Public
+      constructor Create; Override;
+      destructor Destroy; Override;
+
+      Function Link : TFslXMLExtractor;
+
+      Procedure ConsumeAttributes(Const setTerminal : TCharSet);
+
+      Function ConsumeIdentifier(Const sValue : String; Const setTerminal : TCharSet) : String; Overload;
+      Function ConsumeIdentifier(Const setTerminal : TCharSet) : String; Overload;
+
+      Function ConsumeWhitespace : String;
+
+      Function ConsumeComment : String; Overload;
+      Procedure ConsumeComment(Const sComment : String); Overload;
+
+      Function ConsumeHeader : String; Overload;
+      Procedure ConsumeHeader(Const sHeader : String); Overload;
+
+      Procedure ConsumeDocumentType;
+
+      Procedure ConsumeOpen(Const sTag : String); Overload;
+      Procedure ConsumeOpen(Const sTag, sNamespace : String); Overload;
+      Function ConsumeOpen : String; Overload;
+
+      Function ConsumeBody : String;
+      Function ConsumeTextBody : String; Overload;
+
+      Procedure ConsumeClose(Const sTag : String); Overload;
+      Procedure ConsumeClose(Const sTag, sNamespace : String); Overload;
+      Function ConsumeClose : String; Overload;
+
+      Function ConsumeText(Const sTag : String) : String; Overload;
+      Function ConsumeText(Const sTag, sNamespace : String) : String; Overload;
+
+      Function ConsumeElement : String;
+
+      Function PeekString : String;
+      Function PeekXml : String;
+      Function PeekIsOpenTag(Const sElement : String) : Boolean;
+      Function PeekIsOpen : Boolean;
+      Function PeekIsClose : Boolean;
+      Function PeekIsHeader : Boolean;
+      Function PeekIsComment : Boolean;
+      Function PeekIsText: Boolean;
+      Function PeekIsEmptyNode: Boolean;
+
+      Procedure SkipNext; Overload;
+      Procedure Skip(oSkipTypes: TFslXMLKnownTypes); Overload;
+
+      Property Attributes : TFslXMLAttributeMatch Read FAttributes;
+
+      // Namespaces
+      Function NodeLocalName: String;
+      Function NodeNamespace: String;
+      Function IsNode(Const sNamespace, sLocalName: String): Boolean;
+
+      Function GetAttribute(Const sNamespace, sLocalName: String): String; Overload;
+      Function GetAttribute(Const sNamespace, sLocalName, sDefault: String): String; Overload;
+
+      Function DefaultNamespace: String;
+      Function PrefixOf(Const sNodeName: String): String;
+      Function NamespaceOf(Const sNodeName: String): String; Overload;
+
+      Procedure ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
   End;
 
 implementation
@@ -811,6 +933,12 @@ begin
   result := FValue;
 end;
 
+function TMXmlAttribute.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+end;
+
 { TMXmlNamedNode }
 
 function TMXmlNamedNode.containsLocation(loc : TSourceLocation): boolean;
@@ -829,6 +957,14 @@ begin
   result := ((other is TMXmlNamedNode) and (FNamespaceURI = TMXmlNamedNode(other).FNamespaceURI) and (FLocalName = TMXmlNamedNode(other).FLocalName));
 end;
 
+function TMXmlNamedNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FNamespaceURI.length * sizeof(char)) + 12);
+  inc(result, (FLocalName.length * sizeof(char)) + 12);
+end;
+
 { TMXmlElement }
 
 constructor TMXmlElement.Create(nodeType: TMXmlElementType; name: String);
@@ -842,6 +978,15 @@ begin
   Create(nodeType);
   FNamespaceURI := ns;
   FLocalName := local;
+end;
+
+function TMXmlElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FChildren.sizeInBytes);
+  inc(result, (FText.length * sizeof(char)) + 12);
+  inc(result, FNext.sizeInBytes);
 end;
 
 class function TMXmlElement.createComment(text: String): TMXmlElement;
@@ -1394,6 +1539,12 @@ begin
 end;
 
 { TMXmlParser }
+
+function TMXmlParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, reader.sizeInBytes);
+end;
 
 class function TMXmlParser.parse(content: TStream; options : TMXmlParserOptions): TMXmlDocument;
 var
@@ -2466,6 +2617,17 @@ begin
   finally
     b.Free;
   end;
+end;
+
+function TMXPathExpressionNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, FFilters.sizeInBytes);
+  inc(result, FNext.sizeInBytes);
+  inc(result, FNextOp.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, FParams.sizeInBytes);
 end;
 
 { TMXmlDocument }
@@ -3710,6 +3872,12 @@ begin
   addElementNS(ns, local);
 end;
 
+function TMXmlDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FNamespaceAbbreviations.sizeInBytes);
+end;
+
 { TMXmlNode }
 
 function TMXmlNode.equal(other: TMXmlNode): boolean;
@@ -3735,6 +3903,11 @@ begin
   result := BooleanToString(value);
 end;
 
+function TMXmlBoolean.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TMXmlNumber }
 
 constructor TMXmlNumber.Create(value: integer);
@@ -3746,6 +3919,11 @@ end;
 function TMXmlNumber.ToString: String;
 begin
   result := IntToStr(value);
+end;
+
+function TMXmlNumber.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TXPathVariables }
@@ -3793,6 +3971,12 @@ begin
   end;
 end;
 
+function TXPathVariables.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+end;
+
 { TMXmlString }
 
 constructor TMXmlString.Create(value: String);
@@ -3804,6 +3988,12 @@ end;
 function TMXmlString.ToString: String;
 begin
   result := FValue;
+end;
+
+function TMXmlString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TMXmlPrimitive }
@@ -4060,6 +4250,14 @@ begin
   result := xml.FLocation;
 end;
 
+function TFslXmlBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, mem.sizeInBytes);
+  inc(result, buf.sizeInBytes);
+  inc(result, xml.sizeInBytes);
+end;
+
 { TXmlBuilderNamespaceList }
 
 procedure TXmlBuilderNamespaceList.Assign(oObject: TFslObject);
@@ -4097,6 +4295,13 @@ begin
   if FDefaultNS <> Value then
     FDefaultSet := true;
   FDefaultNS := Value;
+end;
+
+function TXmlBuilderNamespaceList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDefaultNS.length * sizeof(char)) + 12);
+  inc(result, FNew.sizeInBytes);
 end;
 
 { TXmlBuilder }
@@ -4657,6 +4862,14 @@ begin
 end;
 
 
+function TFslXMLFormatter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes);
+  inc(result, (FPending.length * sizeof(char)) + 12);
+end;
+
 Function TFslXMLAttribute.Link : TFslXMLAttribute;
 Begin
   Result := TFslXMLAttribute(Inherited Link);
@@ -4685,6 +4898,15 @@ Begin
   Result := EFslXMLObject;
 End;
 
+
+function TFslXMLAttribute.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, (FSortKey.length * sizeof(char)) + 12);
+end;
 
 Function TFslXMLAttributeList.Link : TFslXMLAttributeList;
 Begin
@@ -5037,6 +5259,13 @@ Begin
 End;
 
 
+function TFslXMLNamespaceEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FKey.length * sizeof(char)) + 12);
+  inc(result, FValues.sizeInBytes);
+end;
+
 Function TFslXMLNamespaceEntryList.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompare(TFslXMLNamespaceEntry(pA).Key, TFslXMLNamespaceEntry(pB).Key);
@@ -5092,6 +5321,12 @@ Begin
   Inherited;
 End;
 
+
+function TFslXMLNamespaceLevel.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEntryList.sizeInBytes);
+end;
 
 Function TFslXMLNamespaceLevelList.ItemClass: TFslObjectClass;
 Begin
@@ -5296,6 +5531,13 @@ Begin
     oLevel.Free;
   End;
 End;
+
+function TFslXMLNamespaceManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FEntryList.sizeInBytes);
+  inc(result, FLevelList.sizeInBytes);
+end;
 
 { TMXmlBuilder }
 
@@ -5570,5 +5812,558 @@ begin
   Start(nil);
 end;
 
+function TMXmlBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStack.sizeInBytes);
+  inc(result, FDoc.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes);
+end;
+
+{ TFslXMLExtractor }
+
+Constructor TFslXMLExtractor.Create;
+Begin
+  Inherited;
+
+  FElement := '';
+  FAttributes := TFslXMLAttributeMatch.Create;
+  FNamespaceManager := TFslXMLNamespaceManager.Create;
+End;
+
+
+Destructor TFslXMLExtractor.Destroy;
+Begin
+  FNamespaceManager.Free;
+  FAttributes.Free;
+
+  Inherited;
+End;
+
+
+Function TFslXMLExtractor.Link: TFslXMLExtractor;
+Begin
+  Result := TFslXMLExtractor(Inherited Link);
+End;
+
+
+Procedure TFslXMLExtractor.Expected(Const sMethod, sExpected : String);
+Begin
+  RaiseError(sMethod, StringFormat('Expected %s but found ''%s''', [sExpected, FElement]));
+End;
+
+
+Function TFslXMLExtractor.ConsumeIdentifier(Const sValue: String; Const setTerminal : TCharSet) : String;
+Begin
+  Result := ConsumeIdentifier(setTerminal);
+
+  If Not StringEquals(sValue, Result) Then
+    RaiseError('ConsumeIdentifier', StringFormat('Expected ''%s'' but found ''%s''', [sValue, Result]));
+End;
+
+
+Function TFslXMLExtractor.ConsumeIdentifier(Const setTerminal : TCharSet) : String;
+Begin
+  Result := ConsumeUntilCharacterSet(setTerminal);
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeAttributes(Const setTerminal : TCharSet);
+Var
+  sKey   : String;
+  sValue : String;
+  cQuote : Char;
+Begin
+  FAttributes.Clear;
+
+  While Not CharInSet(NextCharacter, setTerminal) Do
+  Begin
+    sKey := ConsumeIdentifier(['=', '>'] + setWhitespace);
+
+    ConsumeWhitespace;
+
+    ConsumeCharacter('=');
+
+    ConsumeWhitespace;
+
+    If NextCharacter = '''' Then
+      cQuote := ''''
+    Else
+      cQuote := '"';
+
+    ConsumeCharacter(cQuote);
+
+    sValue := ConsumeIdentifier([cQuote]);
+
+    ConsumeCharacter(cQuote);
+
+    If cQuote = '''' Then
+      sValue := StringReplace(sValue, '&apos;', '''')
+    Else
+      sValue := StringReplace(sValue, '&quot;', '"');
+
+    FAttributes.Add(sKey, sValue);
+
+    ConsumeWhitespace;
+  End;
+End;
+
+
+Function TFslXMLExtractor.PeekXML : String;
+Const
+  setTag = ['<', '>'] + setWhitespace;
+Begin
+  // Assume valid xml
+  // All elements must have names. Element names are case-sensitive and must start with
+  // a letter or underscore.
+  // An element name can contain letters, digits, hyphens, underscores, and periods.
+
+  FNodeName := '';
+
+  If FElement = '' Then
+  Begin
+    ConsumeWhitespace;
+
+    If Not More Then
+    Begin
+      //Nothing left to read
+      FElement := '';
+    End
+    Else
+    Begin
+      ConsumeCharacter('<');
+
+      If NextCharacter = '!' Then
+      Begin
+        // Comment
+        ConsumeString('!--');
+
+        If More Then
+          FElement := '!' + ConsumeUntilString('-->')
+        Else
+          FElement := '!';
+
+        If More Then
+          ConsumeString('--');
+
+        FAttributes.Clear;
+      End
+      Else If NextCharacter = '/' Then
+      Begin
+        // Close tag
+
+        FElement := ConsumeIdentifier(setTag);
+        ConsumeWhitespace;
+        FAttributes.Clear;
+        FNamespaceManager.Pop;
+      End
+      Else
+      Begin
+        // Open tag or header
+
+        FElement := ConsumeIdentifier(setTag);
+        FNodeName := FElement;
+
+        ConsumeWhitespace;
+
+        ConsumeAttributes(['/', '>', '?']);
+
+        FNamespaceManager.Push(Attributes);
+
+        If NextCharacter <> '>' Then
+          FElement := FElement + ConsumeCharacter;
+      End;
+
+      ConsumeCharacter('>');
+    End;
+  End
+  Else
+    FNodeName := FElement;
+
+  Result := FElement;
+End;
+
+
+Function TFslXMLExtractor.PeekIsClose : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '/';
+End;
+
+
+Function TFslXMLExtractor.PeekIsOpen : Boolean;
+Begin
+  PeekXML;
+
+  Result := (FElement <> '') And Not CharInSet(StringGet(FElement, 1), ['/', '?', '!']);
+End;
+
+
+Function TFslXMLExtractor.PeekIsEmptyNode: Boolean;
+Begin
+  Result := PeekIsOpen And (StringGet(FElement, Length(FElement)) = '/');
+End;
+
+
+Function TFslXMLExtractor.PeekIsHeader : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '?';
+End;
+
+
+Function TFslXMLExtractor.PeekIsComment : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '!';
+End;
+
+
+Function TFslXMLExtractor.PeekIsText: Boolean;
+Begin
+  Result := NextCharacter <> '<';
+  If Not Result Then
+    PeekXML;
+End;
+
+
+Function TFslXMLExtractor.ConsumeOpen : String;
+Begin
+  Result := PeekXML;
+
+  If StringEquals(Result, '/', 1) Then
+    Expected('ConsumeComment', 'open');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeOpen(Const sTag: String);
+Begin
+  PeekXML;
+
+  if StringEquals(sTag+'/', FElement) then
+  begin
+    FElement := '/'+sTag;
+  end
+  else
+  begin
+  If (sTag <> '') And Not StringEquals(sTag, FElement) Then
+    Expected('ConsumeOpen', '''' + sTag + '''');
+
+  FElement := '';
+End;
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeOpen(Const sTag, sNamespace : String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And Not SameLocalAndNamespace(FElement, sNamespace, sTag) Then
+    Expected('ConsumeOpen', '''' + sTag + ''' in namespace '''+sNamespace+'''');
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeClose : String;
+Begin
+  Result := PeekXML;
+
+  If Not StringEquals(FElement, '/', 1) Then
+    Expected('ConsumeComment', 'close (/)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeClose(Const sTag: String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And Not StringEquals('/' + sTag, FElement) Then
+    Expected('ConsumeClose', '''/' + sTag + '''');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeClose(Const sTag, sNamespace: String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And (sTag[1] = '/') And
+    Not SameLocalAndNamespace(Copy(FElement, 2, MaxInt), sNamespace, sTag) Then
+    Expected('ConsumeClose', '''/' + sTag + ''' in namespace '''+sNamespace+'''');
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeBody : String;
+Begin
+  Result := DecodeXML(ConsumeUntilCharacterSet(['<', '>']));
+End;
+
+
+Function TFslXMLExtractor.ConsumeTextBody : String;
+Begin
+  Result := DecodeXML(ConsumeUntilCharacterSet(['<']));
+End;
+
+
+Function TFslXMLExtractor.ConsumeText(Const sTag: String): String;
+Begin
+  ConsumeOpen(sTag);
+
+  Result := ConsumeTextBody;
+
+  ConsumeClose(sTag);
+End;
+
+
+Function TFslXMLExtractor.ConsumeText(Const sTag, sNamespace: String): String;
+Begin
+  ConsumeOpen(sTag, sNamespace);
+
+  Result := ConsumeTextBody;
+
+  ConsumeClose(sTag, sNamespace);
+End;
+
+
+Function TFslXMLExtractor.ConsumeComment : String;
+Begin
+  Result := StringTrimSet(PeekXML, ['!']);
+
+  If Not StringEquals(FElement, '!', 1) Then
+    Expected('ConsumeComment', 'comment (!)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeComment(Const sComment: String);
+Begin
+  PeekXML;
+
+  If Not StringEquals(sComment, StringTrimSet(FElement, ['!'])) Then
+    Expected('ConsumeComment', sComment);
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeHeader : String;
+Begin
+  Result := StringTrimSet(PeekXML, ['?']);
+
+  If Not StringEquals(FElement, '?', 1) Then
+    Expected('ConsumeHeader', 'header (?)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeHeader(Const sHeader: String);
+Begin
+  PeekXML;
+
+  If Not StringEquals(sHeader, StringTrimSet(FElement, ['?'])) Then
+    Expected('ConsumeHeader', sHeader);
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeWhitespace : String;
+Begin
+  Result := ConsumeWhileCharacterSet(setWhitespace);
+End;
+
+
+Function TFslXMLExtractor.ConsumeElement : String;
+Begin
+  Result := PeekXML;
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeDocumentType;
+Var
+  sName : String;
+Begin
+  PeekXML;
+
+  If StringGet(FElement, 1) <> '!' Then
+    RaiseError('ConsumeDocumentType', 'Document Type not found.');
+
+  sName := ConsumeOpen;
+
+  ConsumeBody;
+
+  ConsumeClose(sName);
+End;
+
+
+Function TFslXMLExtractor.NamespaceOf(Const sNodeName: String): String;
+Begin
+  Result := FNamespaceManager.NamespaceOf(sNodeName);
+End;
+
+
+Function TFslXMLExtractor.PrefixOf(Const sNodeName: String): String;
+Begin
+  Result := FNamespaceManager.PrefixOf(sNodeName);
+End;
+
+
+Function TFslXMLExtractor.DefaultNamespace: String;
+Begin
+  Result := FNamespaceManager.DefaultNamespace;
+End;
+
+
+Function TFslXMLExtractor.NodeNamespace: String;
+Begin
+  Result := FNamespaceManager.NamespaceOf(FNodeName);
+End;
+
+
+Function TFslXMLExtractor.NodeLocalName: String;
+Begin
+  Result := FNamespaceManager.LocalNameOf(FNodeName);
+End;
+
+
+Function TFslXMLExtractor.SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
+Var
+  sPrefix : String;
+Begin
+  // Result := (FNamespaceManager.NamespaceOf(sTag) = sNamespace) And (FNamespaceManager.LocalNameOf(sTag) = sLocal);
+  // We want a more finer check, as prefix may not exist (cause error in namespace manager)
+  // However, when a prefix is missing, default namespace should be tested instead
+  sPrefix := FNamespaceManager.PrefixOf(sTag);
+  If sPrefix = '' Then
+    Result := (FNamespaceManager.DefaultNamespace = sNamespace) And (sTag = sLocal)
+  Else
+    Result := (FNamespaceManager.NamespaceOfPrefix(sPrefix) = sNamespace) And (FNamespaceManager.LocalNameOf(sTag) = sLocal);
+End;
+
+
+Procedure TFslXMLExtractor.ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
+Begin
+  FNamespaceManager.ListPrefixes(oPrefixNamespaces);
+End;
+
+
+Function TFslXMLExtractor.IsNode(Const sNamespace, sLocalName: String): Boolean;
+Begin
+  Result  := SameLocalAndNamespace(FNodeName, sNamespace, sLocalName);
+End;
+
+
+Function TFslXMLExtractor.GetAttribute(Const sNamespace, sLocalName: String): String;
+Begin
+  Result := GetAttribute(sNamespace, sLocalName, '');
+End;
+
+
+Function TFslXMLExtractor.GetAttribute(Const sNamespace, sLocalName, sDefault: String): String;
+Var
+  iCount : Integer;
+  sAttrName : String;
+Begin
+  // default result
+  Result := sDefault;
+
+  For iCount := 0 To FAttributes.Count - 1 Do
+  Begin
+    sAttrName := FAttributes.KeyByIndex[iCount];
+    If SameLocalAndNamespace(sAttrName, sNamespace, sLocalName) Then
+    Begin
+      Result := FAttributes.ValueByIndex[iCount];
+      Break;
+    End;
+  End;
+End;
+
+
+Function TFslXMLExtractor.PeekIsOpenTag(Const sElement: String): Boolean;
+Begin
+  Result := PeekIsOpen And StringEquals(PeekXML, sElement);
+End;
+
+
+Procedure TFslXMLExtractor.Skip(oSkipTypes: TFslXMLKnownTypes);
+Var
+  bContinue: Boolean;
+Begin
+  // we assume well-formed XML node
+  bContinue := True;
+  While bContinue Do
+  Begin
+    If Self.PeekIsText And (TFslXMLKnownTextType In oSkipTypes) Then
+      Self.ConsumeBody
+    Else If Self.PeekIsHeader And (TFslXMLKnownHeaderType In oSkipTypes) Then
+      Self.ConsumeHeader
+    Else If Self.PeekIsComment And (TFslXMLKnownCommentType In oSkipTypes) Then
+      Self.ConsumeComment
+    Else If Self.PeekIsOpen And (TFslXMLKnownElementType In oSkipTypes) Then
+    Begin
+      If FElement[Length(FElement)] = '/' Then
+        Self.ConsumeElement     // element with no body
+      Else
+      Begin
+        Self.ConsumeOpen;
+        Skip(ALL_XML_KNOWN_TYPE);
+        Self.ConsumeClose;
+      End;
+    End
+    Else
+      bContinue := False;    // Reach non-skip node, or end of element's body
+  End;
+End;
+
+
+Procedure TFslXMLExtractor.SkipNext;
+Begin
+  // Simply skip the next 'consumable'
+  If Self.PeekIsHeader Then
+    Self.ConsumeHeader
+  Else If Self.PeekIsComment Then
+    Self.ConsumeComment
+  Else If Self.PeekIsOpen Then
+  Begin
+    If FElement[Length(FElement)] = '/' Then
+      Self.ConsumeElement     // element with no body
+    Else
+    Begin
+      Self.ConsumeOpen;
+      Skip(ALL_XML_KNOWN_TYPE);
+      Self.ConsumeClose;
+    End;
+  End
+  Else If Self.PeekIsClose Then
+    Self.ConsumeClose
+End;
+
+function TFslXMLExtractor.PeekString: String;
+begin
+  result := PeekXml;
+end;
+
+function TFslXMLExtractor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FElement.length * sizeof(char)) + 12);
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FNamespaceManager.sizeInBytes);
+  inc(result, (FNodeName.length * sizeof(char)) + 12);
+end;
 
 end.

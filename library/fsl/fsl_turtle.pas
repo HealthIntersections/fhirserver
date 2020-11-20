@@ -49,6 +49,7 @@ Type
     FStart : TSourceLocation;
     FStop : TSourceLocation;
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     function Link : TTurtleObject; overload;
@@ -65,6 +66,7 @@ Type
     Ftype : String;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(value : String); overload;
@@ -83,6 +85,7 @@ Type
     procedure setUri(value : String);
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(uri : String); overload;
@@ -98,6 +101,7 @@ Type
     Flist : TFslList<TTurtleObject>;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     constructor Create(start : TSourceLocation; obj : TTurtleObject); overload;
@@ -115,6 +119,7 @@ Type
     FNames : TStringList;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
     destructor Destroy; override;
@@ -144,6 +149,7 @@ Type
     FValue : TTurtleComplex;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(url : TTurtleURL; value : TTurtleComplex);
     destructor Destroy; override;
@@ -156,6 +162,8 @@ Type
     FPrefixes : TFslStringDictionary;
     FObjects : TFslList<TTurtlePredicate>;
     FBase : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -191,6 +199,8 @@ type
     function grab : char;
     procedure readNext(postColon : boolean);
     function unescape(s : String; isUri : boolean) : string;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(source : String);
     function done : boolean;
@@ -270,6 +280,11 @@ begin
   result := TTurtleObject(inherited Link);
 end;
 
+function TTurtleObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TTurtleLiteral }
 
 constructor TTurtleLiteral.Create(start: TSourceLocation);
@@ -338,6 +353,13 @@ begin
   result := false;
 end;
 
+function TTurtleLiteral.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fvalue.length * sizeof(char)) + 12);
+  inc(result, (Ftype.length * sizeof(char)) + 12);
+end;
+
 { TTurtleURL }
 
 constructor TTurtleURL.Create(start: TSourceLocation);
@@ -391,6 +413,12 @@ begin
     b.Append('>');
   end;
   result := false;
+end;
+
+function TTurtleURL.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Furi.length * sizeof(char)) + 12);
 end;
 
 { TTurtleList }
@@ -468,6 +496,12 @@ begin
       result := obj.write(b, doc, indent) or result;
     end;
   end;
+end;
+
+function TTurtleList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Flist.sizeInBytes);
 end;
 
 { TTurtleComplex }
@@ -693,6 +727,13 @@ begin
       result[0] := obj as TTurtleComplex;
     end;
   end;
+end;
+
+function TTurtleComplex.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPredicates.sizeInBytes);
+  inc(result, FNames.sizeInBytes);
 end;
 
 { TTurtleLexer }
@@ -974,6 +1015,13 @@ end;
 procedure TTurtleLexer.error(message : String);
 begin
   raise pos.exception('Syntax Error parsing Turtle : '+message);
+end;
+
+function TTurtleLexer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FSource.length * sizeof(char)) + 12);
+  inc(result, (Ftoken.length * sizeof(char)) + 12);
 end;
 
 { TTurtleParser }
@@ -1355,6 +1403,13 @@ begin
   b.append(#13#10);
 end;
 
+function TTurtlePredicate.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FURL.sizeInBytes);
+  inc(result, FValue.sizeInBytes);
+end;
+
 { TTurtleDocument }
 
 procedure TTurtleDocument.addObject(uri: String; obj: TTurtleComplex);
@@ -1422,6 +1477,14 @@ begin
       exit(true);
     end;
   end;
+end;
+
+function TTurtleDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPrefixes.sizeInBytes);
+  inc(result, FObjects.sizeInBytes);
+  inc(result, (FBase.length * sizeof(char)) + 12);
 end;
 
 { TTurtleComposer }

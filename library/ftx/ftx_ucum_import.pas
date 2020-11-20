@@ -70,6 +70,8 @@ Type
     Function ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
     Function GetPropertyIndex(const sName : String):Integer;
     Procedure LoadCommonUnits(oIni : TIniFile);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     procedure Go;                                                          Override;
     function  PreTitle:string;                                             Override;
@@ -396,6 +398,19 @@ begin
   result :=  FUcum.Properties.IndexByName(sName);
   if result = -1 then
     result := FUcum.Properties.AddByName(sName);
+end;
+
+function TUcumImportAction.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
+  inc(result, FUcum.sizeInBytes);
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, FDb.sizeInBytes);
+  inc(result, FConn.sizeInBytes);
+  inc(result, (FOldSource.length * sizeof(char)) + 12);
+  inc(result, FContext.sizeInBytes);
 end;
 
 End.

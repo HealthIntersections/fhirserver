@@ -94,6 +94,8 @@ type
     function lookupCode(system, version, code : String) : String;
     function describeSystem(system : String) : String; overload;
     function describeSystem(system : TFHIRContactPointSystemEnum) : String;  overload;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
     destructor Destroy; Override;
@@ -1197,6 +1199,14 @@ begin
 end;
 
 
+
+function TNarrativeGenerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fprefix.length * sizeof(char)) + 12);
+  inc(result, FProfiles.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+end;
 
 end.
 

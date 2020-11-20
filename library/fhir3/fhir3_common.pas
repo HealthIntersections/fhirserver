@@ -670,6 +670,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -3857,6 +3858,12 @@ begin
   if Element <> nil then
     for i in m.tagList do
       result.Add(TFHIRCoding3.create(i.Link));
+end;
+
+function TFHIRMeta3.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResource.sizeInBytes);
 end;
 
 { TFhirBinary3 }

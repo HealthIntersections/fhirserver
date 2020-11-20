@@ -71,6 +71,8 @@ type
     utils : TFHIRStructureMapUtilities;
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -188,6 +190,13 @@ begin
   finally
     x.Free;
   end;
+end;
+
+function TMapTransformTests.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, ctxt.sizeInBytes);
+  inc(result, utils.sizeInBytes);
 end;
 
 { TTestTransformerServices }

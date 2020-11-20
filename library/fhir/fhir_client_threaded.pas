@@ -63,6 +63,8 @@ type
     procedure SetResult(const Value: TFhirResourceV);
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetBuffer(const Value: TFslBuffer);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TFhirThreadedClientPackage; overload;
@@ -177,6 +179,23 @@ procedure TFhirThreadedClientPackage.SetResult(const Value: TFhirResourceV);
 begin
   FResult.Free;
   FResult := Value;
+end;
+
+function TFhirThreadedClientPackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FError.length * sizeof(char)) + 12);
+  inc(result, FResult.sizeInBytes);
+  inc(result, Fparams.sizeInBytes);
+  inc(result, (FparamString.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
+  inc(result, (FId.length * sizeof(char)) + 12);
+  inc(result, FResource.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FLastURL.length * sizeof(char)) + 12);
+  inc(result, FHeaders.sizeInBytes);
+  inc(result, FBuffer.sizeInBytes);
+  inc(result, (FVId.length * sizeof(char)) + 12);
 end;
 
 { TFhirThreadedClientThread }

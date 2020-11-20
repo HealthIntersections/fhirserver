@@ -58,6 +58,8 @@ type
 
     [LiquidTestCase]
     procedure FHIRPathTest(Name : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   End;
 
 implementation
@@ -170,5 +172,12 @@ initialization
 finalization
   gTestDoc.Free;
   gResources.Free;
+function TLiquidEngineTest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, engine.sizeInBytes);
+  inc(result, test.sizeInBytes);
+end;
+
 end.
 

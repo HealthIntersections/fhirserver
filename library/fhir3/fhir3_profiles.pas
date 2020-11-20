@@ -55,6 +55,8 @@ Type
     function GetProfileByUrl(url: String): TFHirStructureDefinition;
     function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -90,6 +92,8 @@ Type
     function GetPath: String;
     function GetName: String;
     Property Types : TFhirElementDefinitionTypeList read GetTypes;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(profiles : TProfileManager; profile : TFHirStructureDefinition); overload;
     destructor Destroy; override;
@@ -183,6 +187,8 @@ Type
     function getFirstCode(ed: TFHIRElementDefinition): TFhirCoding;
     function overWriteWithCurrent(profile,
       usage: TFHIRElementDefinition): TFHIRElementDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
     destructor Destroy; override;
@@ -1482,6 +1488,14 @@ end;
 //  inherited;
 //end;
 
+function TProfileUtilities.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, factory.sizeInBytes);
+  inc(result, context.sizeInBytes);
+  inc(result, messages.sizeInBytes);
+end;
+
 { TBaseWorkerContextR3 }
 
 function TBaseWorkerContextR3.allResourceNames: TArray<String>;
@@ -2070,6 +2084,13 @@ begin
   end;
 end;
 
+function TProfileManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProfilesById.sizeInBytes);
+  inc(result, FProfilesByURL.sizeInBytes);
+end;
+
 { TProfileDefinition }
 
 constructor TProfileDefinition.Create(profiles: TProfileManager; profile: TFHirStructureDefinition);
@@ -2184,6 +2205,16 @@ begin
     result := Types[0]
   else
     raise EDefinitionException.create('Shouldn''t get here');
+end;
+
+function TProfileDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FProfiles.sizeInBytes);
+  inc(result, FProfile.sizeInBytes);
+  inc(result, FElement.sizeInBytes);
+  inc(result, (statedPath.length * sizeof(char)) + 12);
+  inc(result, FType.sizeInBytes);
 end;
 
 end.

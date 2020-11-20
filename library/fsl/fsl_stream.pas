@@ -68,6 +68,7 @@ type
 
     procedure incCol;
     procedure incLine;
+    function checkChar(ch : char; last13 : boolean) : boolean;
 
     function nonZero : boolean;
     function isNull : boolean;
@@ -164,6 +165,7 @@ type
     {$ENDIF}
       Procedure SetStream(oStream : TFslStream); Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -215,6 +217,7 @@ type
       Function GetStream: TFslAccessStream; Virtual;
       Procedure SetStream(oStream : TFslAccessStream); Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -246,6 +249,7 @@ type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const iValue : Int64); Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Read(Var aBuffer; iCount : Integer); Override;
       Procedure Write(Const aBuffer; iCount : Integer); Override;
@@ -272,6 +276,7 @@ type
 
     Function ErrorClass : EFslExceptionClass; Override;
 
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
     destructor Destroy; override;
@@ -291,88 +296,87 @@ type
   }
 
   TFslBuffer = Class(TFslObject)
-    Private
-      FData : Pointer;
-      FCapacity : Integer;
-      FOwned : Boolean;
-      {$IFNDEF VER130}
-      FEncoding: TEncoding;
+  Private
+    FData : Pointer;
+    FCapacity : Integer;
+    FOwned : Boolean;
+    FEncoding: TEncoding;
     FFormat: String;
-      function GetAsUnicode: String;
-      procedure SetAsUnicode(const Value: String);
-      Function ExtractUnicode(Const iLength : Integer) : String;
+    function GetAsUnicode: String;
+    procedure SetAsUnicode(const Value: String);
+    Function ExtractUnicode(Const iLength : Integer) : String;
 
-      {$ENDIF}
+    Procedure SetCapacity(Const Value : Integer);
+    Procedure SetData(Const Value : Pointer);
+    Procedure SetOwned(Const Value : Boolean);
 
-      Procedure SetCapacity(Const Value : Integer);
-      Procedure SetData(Const Value : Pointer);
-      Procedure SetOwned(Const Value : Boolean);
+    Function GetAsText: AnsiString;
+    Procedure SetAsText(Const Value: AnsiString);
 
-      Function GetAsText: AnsiString;
-      Procedure SetAsText(Const Value: AnsiString);
-
-      Function ExtractAscii(Const iLength : Integer) : AnsiString;
-      function GetAsBytes: TBytes;
-      procedure SetAsBytes(const Value: TBytes);
+    Function ExtractAscii(Const iLength : Integer) : AnsiString;
+    function GetAsBytes: TBytes;
+    procedure SetAsBytes(const Value: TBytes);
     function GetHasFormat: boolean;
-    Public
-      constructor Create; Override;
-      constructor Create(bytes : TBytes); Overload;
+  protected
+    function sizeInBytesV : cardinal; override;
+  Public
+    constructor Create; Override;
+    constructor Create(bytes : TBytes); Overload;
 {$IFNDEF UT}
-      constructor Create(sText : String); Overload;
+    constructor Create(sText : String); Overload;
 {$ENDIF}
-      destructor Destroy; Override;
+    destructor Destroy; Override;
 
-      Function Link : TFslBuffer;
-      Function Clone : TFslBuffer;
+    Function Link : TFslBuffer;
+    Function Clone : TFslBuffer;
 
-      Procedure Assign(oObject : TFslObject); Override;
+    Procedure Assign(oObject : TFslObject); Override;
 
 
-      {
-        Make the buffer empty.
+    {
+      Make the buffer empty.
 
-        note that valid buffers must have content
-      }
-      Procedure Clear;
+      note that valid buffers must have content
+    }
+    Procedure Clear;
 
-      {
-        Fill the buffer with contents from the named file
-      }
-      Procedure LoadFromFileName(Const sFilename : String);
+    {
+      Fill the buffer with contents from the named file
+    }
+    Procedure LoadFromFileName(Const sFilename : String);
 
-      {
-        Save the buffer contents to the named file
-      }
-      Procedure SaveToFileName(Const sFilename : String);
+    {
+      Save the buffer contents to the named file
+    }
+    Procedure SaveToFileName(Const sFilename : String);
 
-      Function Equal(oBuffer : TFslBuffer) : Boolean;
-      Procedure Copy(oBuffer : TFslBuffer);
-      Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : Integer);
-      Function Compare(oBuffer : TFslBuffer) : Integer;
+    Function Equal(oBuffer : TFslBuffer) : Boolean;
+    Procedure Copy(oBuffer : TFslBuffer);
+    Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : Integer);
+    Function Compare(oBuffer : TFslBuffer) : Integer;
 
-      Procedure Move(Const iSource, iTarget, iLength : Integer);
+    Procedure Move(Const iSource, iTarget, iLength : Integer);
 
-      Function Offset(iIndex : Integer) : Pointer;
-      Function StartsWith(Const sValue : String) : Boolean;
+    Function Offset(iIndex : Integer) : Pointer;
+    Function StartsWith(Const sValue : String) : Boolean;
 
-      Procedure LoadFromFile(oFile : TFslFile);
-      Procedure SaveToFile(oFile : TFslFile);
-      Procedure LoadFromStream(oStream : TFslStream); overload;
-      Procedure SaveToStream(oStream : TFslStream); overload;
-      Procedure LoadFromStream(oStream : TStream); overload;
-      Procedure SaveToStream(oStream : TStream); overload;
+    Procedure LoadFromFile(oFile : TFslFile);
+    Procedure SaveToFile(oFile : TFslFile);
+    Procedure LoadFromStream(oStream : TFslStream); overload;
+    Procedure SaveToStream(oStream : TFslStream); overload;
+    Procedure LoadFromStream(oStream : TStream); overload;
+    Procedure SaveToStream(oStream : TStream); overload;
 
-      Property Data : Pointer Read FData Write SetData;
-      Property Capacity : Integer Read FCapacity Write SetCapacity;
-      Property Owned : Boolean Read FOwned Write SetOwned;
-      Property AsText : String Read GetAsUnicode Write SetAsUnicode;
-      Property Encoding : TEncoding read FEncoding write FEncoding;
-      Property AsBytes : TBytes read GetAsBytes write SetAsBytes;
-      Property AsAscii : AnsiString Read GetAsText Write SetAsText;
-      Property Size : Integer Read FCapacity Write SetCapacity;
-      Property Format : String read FFormat write FFormat;
-      property HasFormat : boolean read GetHasFormat;
+    Property Data : Pointer Read FData Write SetData;
+    Property Capacity : Integer Read FCapacity Write SetCapacity;
+    Property Owned : Boolean Read FOwned Write SetOwned;
+    Property AsText : String Read GetAsUnicode Write SetAsUnicode;
+    Property Encoding : TEncoding read FEncoding write FEncoding;
+    Property AsBytes : TBytes read GetAsBytes write SetAsBytes;
+    Property AsAscii : AnsiString Read GetAsText Write SetAsText;
+    Property Size : Integer Read FCapacity Write SetCapacity;
+    Property Format : String read FFormat write FFormat;
+    property HasFormat : boolean read GetHasFormat;
 
   End;
 
@@ -382,84 +386,85 @@ type
   PByte = ^Byte;
 
   TFslMemoryStream = Class(TFslAccessStream)
-    Private
-      FBuffer : TFslBuffer;
-      FCurrentPointer : PByte;
-      FSize : Int64;
-      FPosition : Int64;
-      FExpand : Boolean;
+  Private
+    FBuffer : TFslBuffer;
+    FCurrentPointer : PByte;
+    FSize : Int64;
+    FPosition : Int64;
+    FExpand : Boolean;
 
-      Function GetCapacity: Int64;
-      Procedure SetCapacity(Const Value: Int64);
+    Function GetCapacity: Int64;
+    Procedure SetCapacity(Const Value: Int64);
 
-      Function GetDataPointer : Pointer;
-      Procedure SetDataPointer(Const Value : Pointer);
+    Function GetDataPointer : Pointer;
+    Procedure SetDataPointer(Const Value : Pointer);
 
-      Procedure SetBuffer(Const Value: TFslBuffer);
+    Procedure SetBuffer(Const Value: TFslBuffer);
 
-      Function GetAsText: String;
-      Procedure SetAsText(Const Value: String);
+    Function GetAsText: String;
+    Procedure SetAsText(Const Value: String);
 
-    Protected
-      Function ErrorClass : EFslExceptionClass; Override;
+  Protected
+    Function ErrorClass : EFslExceptionClass; Override;
 
-      Function GetSize : Int64; Override;
-      Procedure SetSize(Const Value : Int64); Override;
+    Function GetSize : Int64; Override;
+    Procedure SetSize(Const Value : Int64); Override;
 
-      Function GetPosition : Int64; Override;
-      Procedure SetPosition(Const Value : Int64); Override;
+    Function GetPosition : Int64; Override;
+    Procedure SetPosition(Const Value : Int64); Override;
 
-      Function ValidPosition(Const iValue : Int64) : Boolean; 
+    Function ValidPosition(Const iValue : Int64) : Boolean;
 
-      Procedure UpdateCurrentPointer;
+    Procedure UpdateCurrentPointer;
 
-    Public
-      constructor Create; Override;
-      constructor Create(cnt : TBytes); Overload;
+  function sizeInBytesV : cardinal; override;
+  Public
+    constructor Create; Override;
+    constructor Create(cnt : TBytes); Overload;
 
-      destructor Destroy; Override;
+    destructor Destroy; Override;
 
-      Function Clone : TFslMemoryStream;
-      Function Link : TFslMemoryStream;
+    Function Clone : TFslMemoryStream;
+    Function Link : TFslMemoryStream;
 
-      Procedure Assign(oObject : TFslObject); Override;
+    Procedure Assign(oObject : TFslObject); Override;
 
-      Procedure Read(Var aBuffer; iSize : Integer); Override;
-      Procedure Write(Const aBuffer; iSize : Integer); Override;
+    Procedure Read(Var aBuffer; iSize : Integer); Override;
+    Procedure Write(Const aBuffer; iSize : Integer); Override;
 
-      Procedure DeleteRange(Const iFromPosition, iToPosition : Integer);
+    Procedure DeleteRange(Const iFromPosition, iToPosition : Integer);
 
-      Function Readable : Int64; Override;
-      Function Writeable : Int64; Override;
+    Function Readable : Int64; Override;
+    Function Writeable : Int64; Override;
 
-      Function Assignable : Boolean; Override;
+    Function Assignable : Boolean; Override;
 
-      Function Equal(oMemory : TFslMemoryStream) : Boolean;
+    Function Equal(oMemory : TFslMemoryStream) : Boolean;
 
-      Property Buffer : TFslBuffer Read FBuffer Write SetBuffer;
-      Property DataPointer : Pointer Read GetDataPointer Write SetDataPointer;
-      Property CurrentPointer : PByte Read FCurrentPointer;
-      Property Capacity : Int64 Read GetCapacity Write SetCapacity;
-      Property Size; // declared in TFslAccessStream.
-      Property Expand : Boolean Read FExpand Write FExpand;
-      Property AsText : String Read GetAsText Write SetAsText;
+    Property Buffer : TFslBuffer Read FBuffer Write SetBuffer;
+    Property DataPointer : Pointer Read GetDataPointer Write SetDataPointer;
+    Property CurrentPointer : PByte Read FCurrentPointer;
+    Property Capacity : Int64 Read GetCapacity Write SetCapacity;
+    Property Size; // declared in TFslAccessStream.
+    Property Expand : Boolean Read FExpand Write FExpand;
+    Property AsText : String Read GetAsText Write SetAsText;
   End;
 
   TFslVCLStream = Class(TFslStream)
-    Private
-      FStream : TStream;
+  Private
+    FStream : TStream;
 
-      Function GetStream: TStream;
-      Procedure SetStream(Const Value: TStream);
+    Function GetStream: TStream;
+    Procedure SetStream(Const Value: TStream);
 
-    Public
-      Procedure Read(Var aBuffer; iCount : Integer); Override;
-      Procedure Write(Const aBuffer; iCount : Integer); Override;
+  Public
+    Procedure Read(Var aBuffer; iCount : Integer); Override;
+    Procedure Write(Const aBuffer; iCount : Integer); Override;
 
-      Function Readable : Int64; Override;
-      Function Writeable : Int64; Override;
+    Function Readable : Int64; Override;
+    Function Writeable : Int64; Override;
 
-      Property Stream : TStream Read GetStream Write SetStream;
+    Property Stream : TStream Read GetStream Write SetStream;
   End;
 
   TVCLStream = Class(TStream)
@@ -507,6 +512,8 @@ Type
     Private
       FName : String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslNameBuffer;
       Function Clone : TFslNameBuffer;
@@ -811,6 +818,8 @@ Type
   private
     FContent : String;
     FCursor : integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(content : String);
     function Peek: Integer; override;
@@ -842,6 +851,7 @@ Type
     function GetEndOfStream: Boolean;
   protected
     Property Stream : TFslStream read FStream;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aStream: TFslStream); overload;
     constructor Create(aStream: TFslStream; DetectBOM: Boolean); overload;
@@ -956,6 +966,7 @@ Type
 
       Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -998,49 +1009,48 @@ Type
 
 
   TFslCSVExtractor = Class(TFslTextExtractor)
-    Private
-      FSeparator : Char;
-      FQuote : Char;
-      FHasQuote : Boolean;
+  Private
+    FSeparator : Char;
+    FQuote : Char;
+    FHasQuote : Boolean;
     FIgnoreWhitespace: boolean;
+  Public
+    constructor Create; Override;
 
-    Public
-      constructor Create; Override;
+    Procedure ConsumeEntries(oEntries : TFslStringList); Overload;
+    Procedure ConsumeEntries; Overload;
+    Function ConsumeEntry : String;
+    Function MoreEntries : Boolean;
 
-      Procedure ConsumeEntries(oEntries : TFslStringList); Overload;
-      Procedure ConsumeEntries; Overload;
-      Function ConsumeEntry : String;
-      Function MoreEntries : Boolean;
-
-      Property Separator : Char Read FSeparator Write FSeparator;
-      Property Quote : Char Read FQuote Write FQuote;
-      Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
-      Property IgnoreWhitespace : boolean read FIgnoreWhitespace write FIgnoreWhitespace;
+    Property Separator : Char Read FSeparator Write FSeparator;
+    Property Quote : Char Read FQuote Write FQuote;
+    Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
+    Property IgnoreWhitespace : boolean read FIgnoreWhitespace write FIgnoreWhitespace;
   End;
 
   TFslCSVFormatter = Class(TFslTextFormatter)
-    Private
-      FSeparator : Char;
-      FQuote : Char;
-      FHasQuote : Boolean;
-      FEmptyLine : Boolean;
+  Private
+    FSeparator : Char;
+    FQuote : Char;
+    FHasQuote : Boolean;
+    FEmptyLine : Boolean;
 
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
 
-      Procedure Clear; Override;
+    Procedure Clear; Override;
 
-      Procedure ProduceEntryStringArray(Const aEntryStringArray : Array Of String);
-      Procedure ProduceEntryStringList(oEntryStringList : TFslStringList);
-      Procedure ProduceEntry(Const sEntry : String);
-      Procedure ProduceSeparator;
+    Procedure ProduceEntryStringArray(Const aEntryStringArray : Array Of String);
+    Procedure ProduceEntryStringList(oEntryStringList : TFslStringList);
+    Procedure ProduceEntry(Const sEntry : String);
+    Procedure ProduceSeparator;
 
-      Procedure ProduceNewLine; Override;
+    Procedure ProduceNewLine; Override;
 
-      Property Separator : Char Read FSeparator Write FSeparator;
-      Property Quote : Char Read FQuote Write FQuote;
-      Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
+    Property Separator : Char Read FSeparator Write FSeparator;
+    Property Quote : Char Read FQuote Write FQuote;
+    Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
   End;
 
   TCSVWriter = class (TFslCSVFormatter)
@@ -1150,6 +1160,8 @@ type
       FTimestamp: TDateTime;
       FComment : String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Function Link : TFslZipPart;
       Function Clone : TFslZipPart;
@@ -1188,6 +1200,8 @@ type
       Procedure SetStream(oValue : TFslStream);
       Procedure SetParts(oValue : TFslZipPartList);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1222,34 +1236,34 @@ type
 
   Type
   TFslZippedData = Class (TFslObject)
-    Private
-      FOffset : Integer;
-      FCrc : LongWord;
-      FCompressedSized : LongWord;
-      FDate : Word;
-      FTime : Word;
+  Private
+    FOffset : Integer;
+    FCrc : LongWord;
+    FCompressedSized : LongWord;
+    FDate : Word;
+    FTime : Word;
   End;
 
   TFslZipWriter = Class (TFslZipWorker)
-    Private
-      FPartInfo : TFslObjectMatch;
-      FOffset : Integer;
-      FDirOffset : Integer;
-      Procedure WriteLongWord(iValue : LongWord);
-      Procedure WriteWord(iValue : Word);
-      Procedure WriteString(Const sValue : AnsiString);
+  Private
+    FPartInfo : TFslObjectMatch;
+    FOffset : Integer;
+    FDirOffset : Integer;
+    Procedure WriteLongWord(iValue : LongWord);
+    Procedure WriteWord(iValue : Word);
+    Procedure WriteString(Const sValue : AnsiString);
 
-      Procedure Compress(oSource, oDestination : TFslBuffer);
+    Procedure Compress(oSource, oDestination : TFslBuffer);
 
-      Procedure WritePart(oPart : TFslZipPart);
-      Procedure WriteDirectory(oPart : TFslZipPart);
-      Procedure WriteEnd(iCount : Integer);
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
-      Procedure WriteZip;
+    Procedure WritePart(oPart : TFslZipPart);
+    Procedure WriteDirectory(oPart : TFslZipPart);
+    Procedure WriteEnd(iCount : Integer);
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
+    Procedure WriteZip;
 
-      procedure addFile(name, actual : String);
+    procedure addFile(name, actual : String);
   End;
 
 (*
@@ -1686,6 +1700,12 @@ Begin
 End;  
 
 
+function TFslStreamAdapter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStream.sizeInBytes);
+end;
+
 Function TFslAccessStream.Link : TFslAccessStream;
 Begin 
   Result := TFslAccessStream(Inherited Link);
@@ -1801,6 +1821,12 @@ Begin
 End;
 
 
+function TFslAccessStreamAdapter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStream.sizeInBytes);
+end;
+
 Procedure TFslStringStream.Read(Var aBuffer; iCount : Integer);
 Begin
   If FIndex + iCount > Size Then
@@ -1879,6 +1905,12 @@ Begin
 End;
 
 
+
+function TFslStringStream.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FData) + 12);
+end;
 
 Procedure TFslVCLStream.Read(Var aBuffer; iCount : Integer);
 Begin
@@ -2007,6 +2039,12 @@ Begin
 End;
 
 (*
+function TVCLStream.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStream.sizeInBytes);
+end;
+
 Procedure TFslStreamFilerReferenceHashEntry.Assign(oSource: TFslObject);
 Begin
   Inherited;
@@ -2378,6 +2416,14 @@ Begin
 End;  
 
 
+function TFslBuffer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCapacity);
+  inc(result, sizeof(FEncoding));
+  inc(result, (FFormat.length * sizeof(char)) + 12);
+end;
+
 Function TFslBufferList.GetBuffer(iIndex: Integer): TFslBuffer;
 Begin 
   Result := TFslBuffer(ObjectByIndex[iIndex]);
@@ -2461,6 +2507,12 @@ Begin
   Result := TFslNameBuffer(Inherited Clone);
 End;
 
+
+function TFslNameBuffer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
 
 Function TFslNameBufferList.Clone : TFslNameBufferList;
 Begin
@@ -2804,6 +2856,12 @@ Begin
 End;
 
 
+function TFslMemoryStream.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBuffer.sizeInBytes);
+end;
+
 { TFslFile }
 
 constructor TFslFile.Create(const AFileName: string; Mode: Word);
@@ -2881,6 +2939,12 @@ begin
 end;
 
 {$IFDEF WINDOWS}
+
+function TFslFile.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, sizeof(FStream));
+end;
 
 Procedure TAfsObject.RaiseError(Const sMethod, sException : String);
 
@@ -3643,7 +3707,6 @@ Begin { Procedure TAfsResourceFile.SetName }
   Assert(CheckCondition((FName <> ''), 'SetName', 'Resource name must be of form <Name>,#<Type>'));
 End;  { Procedure TAfsResourceFile.SetName }
 
-
 Function TAfsResourceIterator.GetCurrent : TAfsEntity;
 Begin { Function TAfsResourceIterator.GetCurrent }
   If FItems.ExistsByIndex(FIndex) Then
@@ -3836,8 +3899,6 @@ Function TFslCSVExtractor.MoreEntries : Boolean;
 Begin
   Result := More And Not CharInSet(NextCharacter, setVertical);
 End;
-
-
 
 Constructor TFslCSVFormatter.Create;
 Begin
@@ -4053,7 +4114,6 @@ Procedure TFslTextFormatter.ProduceInline(Const sValue: String);
 Begin
   Produce(sValue);
 End;
-
 
 Constructor TFslTextExtractor.Create;
 Begin
@@ -4316,6 +4376,13 @@ Function TFslTextExtractor.More : Boolean;
 Begin
   Result := Not Inherited EndOfStream Or (Length(FCache) > 0);
 End;
+
+function TFslTextExtractor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCache.length * sizeof(char)) + 12);
+  inc(result, FBuilder.sizeInBytes);
+end;
 
 Function TFslExtractor.ErrorClass : EFslExceptionClass;
 Begin
@@ -4726,6 +4793,14 @@ begin
 end;
 
 
+function TFslStreamReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, length(FBufferedData));
+  inc(result, FStream.sizeInBytes);
+  inc(result, sizeof(FEncoding));
+end;
+
 { TFslTextReader }
 
 function TFslTextReader.ReadString(var s: String; iLength: Integer): Integer;
@@ -4809,6 +4884,12 @@ begin
   end;
 end;
 {$ENDIF}
+
+function TFslStringReader.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FContent.length * sizeof(char)) + 12);
+end;
 
 { TCSVWriter }
 
@@ -5057,6 +5138,13 @@ Begin
 End;
 
 
+function TFslZipWorker.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FStream.sizeInBytes);
+  inc(result, FParts.sizeInBytes);
+end;
+
 Procedure TFslZipPart.Assign(oObject : TFslObject);
 Begin
   Inherited;
@@ -5077,6 +5165,12 @@ Begin
   Result := TFslZipPart(Inherited Clone);
 End;
 
+
+function TFslZipPart.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FComment.length * sizeof(char)) + 12);
+end;
 
 procedure TFslZipPartList.add(name: String; bytes: TBytes);
 var
@@ -6212,7 +6306,6 @@ TTarWriter
 ===============================================================================================
 *)
 
-
 constructor TTarWriter.CreateEmpty;
 var
   TP : TTarPermission;
@@ -6779,6 +6872,13 @@ end;
 
 (*{ TMimePartList }
 
+function TMimePart.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContent.sizeInBytes);
+  inc(result, (FId.length * sizeof(char)) + 12);
+end;
+
 function TMimePartList.GetPartByIndex(i: integer): TMimePart;
 begin
   result := Items[i] as TMimePart;
@@ -7013,8 +7113,6 @@ begin
     end;
   WriteString(AStream, '--'+FBoundary+'--');
 end;
-
-
 
 Constructor TFslByteExtractor.Create;
 Begin
@@ -7282,6 +7380,26 @@ end;
 function TSourceLocation.lineForHuman : integer;
 begin
   result := line + 1;
+end;
+
+function TSourceLocation.checkChar(ch: char; last13: boolean): boolean;
+begin
+  if (ch = #13) then
+  begin
+    incLine();
+    exit(true);
+  end
+  else if (ch = #10) then
+  begin
+    if (not last13) then
+      incLine();
+    exit(false);
+  end
+  else
+  begin
+    incCol;
+    exit(false);
+  end;
 end;
 
 function TSourceLocation.colForHuman : integer;

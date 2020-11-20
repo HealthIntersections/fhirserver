@@ -574,7 +574,7 @@ Type
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure StopAsyncTasks;
     function endpointList: String;
-
+    procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
   Public
     constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
@@ -4474,6 +4474,11 @@ begin
   SetThreadStatus('Disconnected');
 end;
 
+procedure TFhirWebServer.DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
+begin
+  VUseSSL := true;
+end;
+
 procedure TFhirWebServer.DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
 var
   i: integer;
@@ -4670,6 +4675,7 @@ Begin
     FSSLServer.OnCreatePostStream := CreatePostStream;
     FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
+    FSSLServer.OnQuerySSLPort := DoQuerySSLPort;
 
     FIOHandler.Options.CertFile := FCertFile;
     FIOHandler.Options.CertKey := ChangeFileExt(FCertFile, '.key');

@@ -34,8 +34,8 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics, Forms,
-  fsl_base, fsl_graphics, fsl_utilities,
-  FHIR.Uix.Images, FHIR.WP.Widgets;
+  fsl_base, fsl_utilities,
+  wp_graphics, fui_vclx_images, FHIR.WP.Widgets;
 
 
 Type
@@ -779,9 +779,6 @@ function TWPIconModule.CURSOR_CIRCLE: Integer;
 begin
   result := FCURSOR_CIRCLE;
 end;
-
-
-
 
 Initialization
 Finalization

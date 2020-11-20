@@ -4530,6 +4530,7 @@ begin
 end;
 {$ENDIF}
 
+
 function SQLAllocConnect; external odbcdll name {$IFDEF OSX}'_SQLAllocConnect'{$ELSE}'SQLAllocConnect'{$ENDIF};
 function SQLAllocEnv; external odbcdll name {$IFDEF OSX}'_SQLAllocEnv'{$ELSE}'SQLAllocEnv'{$ENDIF};
 function SQLAllocHandle; external odbcdll name {$IFDEF OSX}'_SQLAllocHandle'{$ELSE}'SQLAllocHandle'{$ENDIF};

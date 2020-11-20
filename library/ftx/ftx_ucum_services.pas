@@ -34,20 +34,22 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum,
   fsl_http,
-  ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base, fhir_ucum,
+  ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common,
   fhir_cdshooks,
   ftx_service;
 
 Type
-  TUcumPair = fhir_ucum.TUcumPair;
+  TUcumPair = fsl_ucum.TUcumPair;
 
   TUCUMContext = class (TCodeSystemProviderContext)
   private
     FConcept: TFhirValueSetComposeIncludeConceptW;
     procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     constructor Create(code : String); overload;
@@ -59,6 +61,8 @@ Type
   private
     FCursor : integer; // used on the first
     FCanonical: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(canonical : String);
     property canonical : String read FCanonical write FCanonical;
@@ -80,6 +84,8 @@ Type
     Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -202,12 +208,23 @@ Type
     (**
      * multiply two value/units pairs together and return the result in canonical units
      *
-     * Note: since the units returned are canonical,
+     * Note: the units returned are canonical
      * @param o1
      * @param o2
      * @return
      *)
     Function multiply(o1, o2 : TUcumPair) : TUcumPair;
+
+    (**
+     * divide two value/units pairs together and return the result in canonical units
+     *
+     * Note: the units returned are canonical
+     * @param o1
+     * @param o2
+     * @return
+     *)
+    Function divideBy(o1, o2 : TUcumPair) : TUcumPair;
+
 
     // load from ucum-essence.xml
     Procedure Import(sFilename : String);
@@ -253,6 +270,7 @@ Type
     procedure SetDefinition(Value: TUcumServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -266,10 +284,13 @@ Type
   TUcumServiceImplementation = class (TUcumServiceInterface)
   private
     FSvc : TUcumServices;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(svc : TUcumServices);
     destructor Destroy; override;
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
+    Function divideBy(o1, o2 : TUcumPair) : TUcumPair; override;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
     Function isConfigured : boolean; override;
   end;
@@ -289,6 +310,7 @@ type
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
+    function sizeInBytesV : cardinal; override;
   end;
 
 { TFhirValueSetComposeIncludeConceptLocal }
@@ -315,6 +337,12 @@ end;
 
 procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
 { TUcumServices }
@@ -711,6 +739,17 @@ end;
 
 
 
+function TUcumServices.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FModel.sizeInBytes);
+  inc(result, FHandlers.sizeInBytes);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, FCommonUnits.sizeInBytes);
+  inc(result, FCommonUnitList.sizeInBytes);
+end;
+
 { TUcumServiceList }
 
 destructor TUcumServiceList.Destroy;
@@ -772,6 +811,12 @@ begin
 end;
 
 
+function TUcumServiceList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDefinition.sizeInBytes);
+end;
+
 function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
 begin
   result := 0;
@@ -806,6 +851,29 @@ end;
 procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
 begin
   list.Add(Code(context).Trim);
+end;
+
+function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
+var
+  res : TUcumPair;
+  s : String;
+begin
+  res := TUcumPair.Create(TFslDecimal.makeOne, '');
+  Try
+    res.value := o1.value / o2.Value;
+    if o1.UnitCode.Contains('/') or o1.UnitCode.contains('*') then
+      s := '('+ o1.UnitCode +')'
+    else
+      s := o1.UnitCode;
+    if (o2.UnitCode.contains('/') or o2.UnitCode.contains('*')) then
+      s := s + '/' + '('+ o2.UnitCode+')'
+    else
+      s := s + '/' + o2.UnitCode;
+    res.UnitCode := s;
+    result := getCanonicalForm(res);
+  Finally
+    res.Free;
+  End;
 end;
 
 procedure TUcumServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
@@ -1087,6 +1155,12 @@ begin
   FCanonical := canonical;
 end;
 
+function TUcumFilterContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCanonical.length * sizeof(char)) + 12);
+end;
+
 { TUCUMContext }
 
 constructor TUCUMContext.Create(concept: TFhirValueSetComposeIncludeConceptW);
@@ -1114,6 +1188,12 @@ begin
   FConcept := Value;
 end;
 
+function TUCUMContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FConcept.sizeInBytes);
+end;
+
 { TUcumServiceImplementation }
 
 constructor TUcumServiceImplementation.Create(svc: TUcumServices);
@@ -1126,6 +1206,11 @@ destructor TUcumServiceImplementation.Destroy;
 begin
   FSvc.Free;
   inherited;
+end;
+
+function TUcumServiceImplementation.divideBy(o1, o2: TUcumPair): TUcumPair;
+begin
+  result := FSvc.divideBy(o1, o2);
 end;
 
 function TUcumServiceImplementation.getCanonicalForm(value: TUcumPair): TUcumPair;
@@ -1141,6 +1226,12 @@ end;
 function TUcumServiceImplementation.multiply(o1, o2: TUcumPair): TUcumPair;
 begin
   result := FSvc.multiply(o1, o2);
+end;
+
+function TUcumServiceImplementation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSvc.sizeInBytes);
 end;
 
 End.

@@ -55,6 +55,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -129,6 +130,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -206,6 +208,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -286,6 +289,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -384,6 +388,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -482,6 +487,8 @@ Type
       Procedure SetRefStructure(Const Value: THL7V2ModelStructure);
       function getLengthDesc: String;
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -592,8 +599,6 @@ Type
       FRefDataElement: THL7V2ModelDataElement;
       Procedure SetRefDataElement(Const Value: THL7V2ModelDataElement);
 
-    Protected
-
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -675,6 +680,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -751,6 +757,7 @@ Type
 
     Protected
 
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Constructor Create(Const sCode : String; bOptional, bRepeating : Boolean; aType : THL7V2ModelSegmentGroupType); Overload;
@@ -824,6 +831,8 @@ Type
       Procedure SetSegmentMap(Const Value: THL7V2ModelSegmentGroup);
       Procedure SetXMLMap(Const Value: THL7V2ModelSegmentGroup);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -928,6 +937,8 @@ Type
       Procedure SetRefReplyStructure(Const Value: THL7V2ModelMessageStructure);
       Procedure SetRefStructure(Const Value: THL7V2ModelMessageStructure);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1014,6 +1025,8 @@ Type
       FMessages: THL7V2ModelEventMessages;
       Procedure SetMessages(Const Value: THL7V2ModelEventMessages);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1106,6 +1119,8 @@ type
     procedure SetEvents(const Value: THL7V2ModelEvents);
     procedure SetMessageStructures(const Value: THL7V2ModelMessageStructures);
     Function isVariableTypeName(Const sName : String) : Boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1135,6 +1150,8 @@ Type
     FDate : TDateTime;
     FMap : THL7V2ModelSegmentGroup;
     procedure SetMap(const Value: THL7V2ModelSegmentGroup);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Destructor Destroy; override;
 
@@ -1184,6 +1201,8 @@ Type
     Procedure WriteSegmentGroup(oWriter : TWriter; oGroup : THL7V2ModelSegmentGroup);
     Function SaveSegmentMap(oMap : THL7V2ModelSegmentGroup) : String;
     Procedure SaveSchemaMap(oWriter : TWriter; aVersion : THL7V2Version; sName : String; oMap : THL7V2ModelSegmentGroup);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Constructor Create; Override;
     Constructor Create(Const sFileName, sFolder : String); Overload;
@@ -1253,6 +1272,7 @@ type
     procedure AddEventMessages(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents); Overload; Virtual;
     procedure AddMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures); Overload; Virtual;
     procedure AddSegmentMaps(aVersion : THL7V2Version; oStructures : THL7V2ModelMessageStructures); Overload; Virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; override;
@@ -1348,6 +1368,7 @@ type
     procedure DoneLoading(aTransferEvent: TOnDictTransferProgress); Override;
 
     function GetContents(bForWriting : Boolean) : TFslAccessStream; overload; virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; overload; override;
     destructor Destroy; Override;
@@ -1361,6 +1382,7 @@ type
     FErrorsOk : Boolean;
   protected
     function GetContents(bForWriting : Boolean) : TFslAccessStream; override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(const sFilename : String; bSuppressException: Boolean = False); overload;
 
@@ -1374,6 +1396,8 @@ type
   Private
     FDictionary : THL7V2Dictionary;
     Procedure SetDictionary(Const Value: THL7V2Dictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     Constructor Create(oDictionary : THL7V2Dictionary); Overload;
     Constructor Create(oProvider : THL7V2DictionaryProvider); Overload; // copy providers setup regarding dictionary
@@ -1412,6 +1436,13 @@ Begin
   Description := THL7V2ModelDataType(oObject).Description;
   Length := THL7V2ModelDataType(oObject).Length;
 End;
+
+function THL7V2ModelDataType.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+end;
 
 Function THL7V2ModelDataTypes.Link : THL7V2ModelDataTypes;
 Begin
@@ -1583,6 +1614,13 @@ Begin
   Code := THL7V2ModelTableItem(oObject).Code;
   Description := THL7V2ModelTableItem(oObject).Description;
 End;
+
+function THL7V2ModelTableItem.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+end;
 
 Function THL7V2ModelTableItems.Link : THL7V2ModelTableItems;
 Begin
@@ -1789,6 +1827,13 @@ Begin
   Items.Assign(THL7V2ModelTable(oObject).Items);
 End;
 
+function THL7V2ModelTable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, FItems.sizeInBytes);
+end;
+
 Function THL7V2ModelTables.Link : THL7V2ModelTables;
 Begin
   Result := THL7V2ModelTables(Inherited Link);
@@ -1978,6 +2023,16 @@ Begin
   Table := THL7V2ModelComponent(oObject).Table;
   Number := THL7V2ModelComponent(oObject).Number;
 End;
+
+function THL7V2ModelComponent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeOf(char)) + 12);
+  inc(result, (FDataType.length * sizeOf(char)) + 12);
+  inc(result, FRefTable.sizeInBytes);
+  inc(result, FRefDataType.sizeInBytes);
+  inc(result, FRefStructure.sizeInBytes);
+end;
 
 Function THL7V2ModelComponents.Link : THL7V2ModelComponents;
 Begin
@@ -2241,6 +2296,16 @@ Begin
   ID := THL7V2ModelStructure(oObject).ID;
   Components.Assign(THL7V2ModelStructure(oObject).Components);
 End;
+
+function THL7V2ModelStructure.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, (FDataType.length * sizeOf(char)) + 12);
+  inc(result, FRefDataType.sizeInBytes);
+  inc(result, FComponents.sizeInBytes);
+end;
 
 Function THL7V2ModelStructures.Link : THL7V2ModelStructures;
 Begin
@@ -2508,6 +2573,16 @@ Begin
   Length_Conf := THL7V2ModelDataElement(oObject).Length_Conf;
   Table := THL7V2ModelDataElement(oObject).Table;
 End;
+
+function THL7V2ModelDataElement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, (FStructure.length * sizeOf(char)) + 12);
+  inc(result, (FLength_Conf.length * sizeof(char)) + 12);
+  inc(result, FRefTable.sizeInBytes);
+  inc(result, FRefStructure.sizeInBytes);
+end;
 
 Function THL7V2ModelDataElements.Link : THL7V2ModelDataElements;
 Begin
@@ -3037,6 +3112,14 @@ Begin
   Fields.Assign(THL7V2ModelSegment(oObject).FFields);
 End;
 
+function THL7V2ModelSegment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, FFields.sizeInBytes);
+end;
+
 Function THL7V2ModelSegments.Link : THL7V2ModelSegments;
 Begin
   Result := THL7V2ModelSegments(Inherited Link);
@@ -3216,6 +3299,13 @@ Begin
   Children := THL7V2ModelSegmentGroup(oObject).Children.Clone;
 End;
 
+function THL7V2ModelSegmentGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FCode.length * sizeOf(char)) + 12);
+  inc(result, FChildren.sizeInBytes);
+end;
+
 Function THL7V2ModelSegmentGroups.Link : THL7V2ModelSegmentGroups;
 Begin
   Result := THL7V2ModelSegmentGroups(Inherited Link);
@@ -3371,6 +3461,18 @@ Begin
   SegmentMap := THL7V2ModelMessageStructure(oObject).SegmentMap.Clone;
   XMLMap :=  THL7V2ModelMessageStructure(oObject).XMLMap.Clone;
 End;
+
+function THL7V2ModelMessageStructure.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, (FExampleEvent.length * sizeOf(char)) + 12);
+  inc(result, (FExampleMsgType.length * sizeOf(char)) + 12);
+  inc(result, (FAction.length * sizeOf(char)) + 12);
+  inc(result, FSegmentMap.sizeInBytes);
+  inc(result, FXMLMap.sizeInBytes);
+end;
 
 Function THL7V2ModelMessageStructures.Link : THL7V2ModelMessageStructures;
 Begin
@@ -3681,6 +3783,17 @@ Begin
   ReplyStructure := THL7V2ModelEventMessage(oObject).ReplyStructure;
 End;
 
+function THL7V2ModelEventMessage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FMessage.length * sizeOf(char)) + 12);
+  inc(result, (FStructure.length * sizeOf(char)) + 12);
+  inc(result, (FReply.length * sizeOf(char)) + 12);
+  inc(result, (FReplyStructure.length * sizeOf(char)) + 12);
+  inc(result, FRefReplyStructure.sizeInBytes);
+  inc(result, FRefStructure.sizeInBytes);
+end;
+
 Function THL7V2ModelEventMessages.Link : THL7V2ModelEventMessages;
 Begin
   Result := THL7V2ModelEventMessages(Inherited Link);
@@ -3941,6 +4054,14 @@ Begin
   Description := THL7V2ModelEvent(oObject).Description;
   Messages.Assign(THL7V2ModelEvent(oObject).Messages)
 End;
+
+function THL7V2ModelEvent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeOf(char)) + 12);
+  inc(result, (FDescription.length * sizeOf(char)) + 12);
+  inc(result, FMessages.sizeInBytes);
+end;
 
 Function THL7V2ModelEvents.Link : THL7V2ModelEvents;
 Begin
@@ -4259,6 +4380,19 @@ begin
       end;
 end;
 
+function THL7V2Model.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTables.sizeInBytes);
+  inc(result, FComponents.sizeInBytes);
+  inc(result, FDataElements.sizeInBytes);
+  inc(result, FSegments.sizeInBytes);
+  inc(result, FDataTypes.sizeInBytes);
+  inc(result, FStructures.sizeInBytes);
+  inc(result, FEvents.sizeInBytes);
+  inc(result, FMessageStructures.sizeInBytes);
+end;
+
 { THL7V2SchemaStoreCacheEntries }
 
 function THL7V2SchemaStoreCacheEntries.CompareByVersionAndStructure(pA, pB: Pointer): Integer;
@@ -4325,6 +4459,12 @@ procedure THL7V2SchemaStoreCacheEntry.SetMap(const Value: THL7V2ModelSegmentGrou
 begin
   FMap.Free;
   FMap := Value;
+end;
+
+function THL7V2SchemaStoreCacheEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
 end;
 
 Constructor THL7V2SchemaStore.Create;
@@ -4720,6 +4860,14 @@ Begin
     End;
 End;
 
+function THL7V2SchemaStore.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
+  inc(result, (FFolder.length * sizeof(char)) + 12);
+  inc(result, FCache.sizeInBytes);
+end;
+
 constructor THL7V2Dictionary.Create;
 begin
   inherited;
@@ -5109,6 +5257,12 @@ procedure THL7V2Dictionary.SetSchemaStore(const Value: THL7V2SchemaStore);
 begin
   FSchemaStore.Free;
   FSchemaStore := Value;
+end;
+
+function THL7V2Dictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FSchemaStore.sizeInBytes);
 end;
 
 { THL7V2BinaryDictionaryContext }
@@ -5994,6 +6148,13 @@ begin
   LoadDictionary;
 end;
 
+function THL7V2BinaryDictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBuffers.sizeInBytes);
+  inc(result, FContexts.sizeInBytes);
+end;
+
 { THL7V2FileDictionary }
 
 constructor THL7V2FileDictionary.Create(const sFilename : String; bSuppressException: Boolean = False);
@@ -6026,6 +6187,12 @@ begin
     Result := 'File';
 end;
 
+function THL7V2FileDictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFileName.length * sizeof(char)) + 12);
+end;
+
 { THL7V2DictionaryProvider }
 
 constructor THL7V2DictionaryProvider.Create(oDictionary: THL7V2Dictionary);
@@ -6050,6 +6217,12 @@ procedure THL7V2DictionaryProvider.SetDictionary(const Value: THL7V2Dictionary);
 begin
   FDictionary.Free;
   FDictionary := Value;
+end;
+
+function THL7V2DictionaryProvider.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDictionary.sizeInBytes);
 end;
 
 end.

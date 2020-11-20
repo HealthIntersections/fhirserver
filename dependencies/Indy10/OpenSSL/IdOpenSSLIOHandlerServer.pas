@@ -81,6 +81,7 @@ var
 begin
   LIOHandler := MakeClientIOHandler() as TIdOpenSSLIOHandlerClientForServer;
   try
+    LIOHandler.PassThrough := True;
     LIOHandler.Open;
     if not LIOHandler.Binding.Accept(ASocket.Handle) then
       FreeAndNil(LIOHandler);

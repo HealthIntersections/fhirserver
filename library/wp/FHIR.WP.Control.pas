@@ -35,14 +35,14 @@ uses
 
   DropBMPTarget, DropSource, DropTarget,
 
-  fsl_base, fsl_utilities, fsl_graphics, fsl_collections, fsl_stream, fsl_printing_win, fsl_shell,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_shell,
   fsl_mapi,
 
-  FHIR.Uix.Base, FHIR.Uix.Controls,
-
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Format, FHIR.WP.Working, FHIR.WP.Settings,
+  fUi_vclx_Base, fUi_vclx_controls,
+  wp_graphics, wp_printing_win,
+  wp_types, wp_document, wp_format, wp_working, FHIR.WP.Settings,
   FHIR.WP.Unicode,
-  FHIR.WP.Printing, FHIR.WP.Engine, FHIR.WP.Definers, FHIR.WP.Handler, FHIR.WP.Native,
+  FHIR.WP.Printing, FHIR.WP.Engine, wp_definers, FHIR.WP.Handler, wp_native,
   FHIR.WP.Renderer, FHIR.WP.Menus, FHIR.WP.Spelling, FHIR.WP.Icons, FHIR.WP.Builder,
   FHIR.WP.Dragon;
 
@@ -701,8 +701,8 @@ Type
   TRect = Windows.TRect;
   TMouseButton = Controls.TMouseButton;
 
-  TWPCompletionItem = FHIR.WP.Types.TWPCompletionItem;
-  TWPCompletionItems = FHIR.WP.Types.TWPCompletionItems;
+  TWPCompletionItem = wp_types.TWPCompletionItem;
+  TWPCompletionItems = wp_types.TWPCompletionItems;
   TWPDocumentEvent = FHIR.WP.Handler.TWPDocumentEvent;
   TWPSaveImageEvent = FHIR.WP.Handler.TWPSaveImageEvent;
   TWPLoadImageEvent = FHIR.WP.Handler.TWPLoadImageEvent;
@@ -740,6 +740,17 @@ Type
       Procedure Finalise; Override;
   End;
 
+  TWPSystemSnapshotWriter = class (TWPSnapshotWriter)
+  private
+    Procedure ProduceSelection(oSelection : TWPSelection);
+    Procedure ProduceOperation(oOperation : TWPOperation);
+    Procedure ProduceRange(oRange : TWPRange);
+  public
+    Procedure ProduceOperator(oOperator : TWPOperator);
+    Procedure ProduceRenderer(oRenderer : TWPScreenRenderer);
+    Procedure ProduceRanges(oRanges : TWPRangeManager; oPrimary : TWPVisualRange);
+    Procedure ProduceSettings(oSettings : TWPSettings);
+  end;
 
 Const
   mbLeft = Controls.mbLeft;
@@ -5784,7 +5795,7 @@ End;
 
 Procedure TWordProcessor.ProduceSnapShot(Const sFilename, sCause: String);
 Var
-  oWriter : TWPSnapshotWriter;
+  oWriter : TWPSystemSnapshotWriter;
   oFile : TFslFile;
 Begin
   Try
@@ -5796,7 +5807,7 @@ Begin
   Try
     oFile := TFslFile.Create(sFilename+'.xml', fmCreate);
     Try
-      oWriter := TWPSnapshotWriter.Create;
+      oWriter := TWPSystemSnapshotWriter.Create;
       Try
         oWriter.Filename := sFilename+'.xml';
         oWriter.Stream := oFile.Link;
@@ -5805,8 +5816,8 @@ Begin
         oWriter.ProduceOperator(FOperator);
         oWriter.ProduceStyles('Configured', ConfiguredStyles);
         oWriter.ProduceStyles('Working', WorkingStyles);
-        oWriter.ProduceRanges(FRangeManager, PrimaryRange);
         oWriter.ProduceSettings(FSettings);
+        oWriter.ProduceRanges(FRangeManager, PrimaryRange);
         oWriter.ProduceRenderer(Renderer);
         DoSnapShot(oWriter);
         oWriter.Stop;
@@ -6843,6 +6854,264 @@ begin
     FOwner.Settings.Scale := Min(Max(FZoomBase *(EventInfo.Distance / FZoomStart), 0.5), 10);
 end;
 
+
+{ TWPSystemSnapshotWriter }
+
+Procedure TWPSystemSnapshotWriter.ProduceRenderer(oRenderer : TWPScreenRenderer);
+Var
+  sText : String;
+  iLoop : Integer;
+Begin
+  Attributes.Match['LastVersion'] := IntegerToString(oRenderer.LastVersion);
+  Attributes.Match['SomeSelected'] := BooleanToString(oRenderer.SomeSelected);
+  Attributes.Match['Width'] := IntegerToString(oRenderer.Width);
+  Attributes.Match['SectionHeaderHeight'] := IntegerToString(oRenderer.SectionHeaderHeight);
+  Attributes.Match['SectionFieldCharWidth'] := IntegerToString(oRenderer.SectionFieldCharWidth);
+  Attributes.Match['SectionFieldCharHeight'] := IntegerToString(oRenderer.SectionFieldCharHeight);
+  Attributes.Match['FieldFontSize'] := IntegerToString(oRenderer.FieldFontSize.cx)+':'+IntegerToString(oRenderer.FieldFontSize.cy);
+  Attributes.Match['FieldDescent'] := IntegerToString(oRenderer.FieldDescent);
+  Attributes.Match['MeasureAll'] := BooleanToString(oRenderer.MeasureAll);
+  Attributes.Match['PaintAll'] := BooleanToString(oRenderer.PaintAll);
+  Attributes.Match['Valid'] := BooleanToString(oRenderer.Valid);
+  Attributes.Match['Working'] := BooleanToString(oRenderer.Working);
+  Attributes.Match['AdjustTop'] := IntegerToString(oRenderer.AdjustTop);
+  Attributes.Match['AdjustOffset'] := IntegerToString(oRenderer.AdjustOffset);
+  Attributes.Match['CurrentHotspot'] := GetId(oRenderer.CurrentHotspot);
+  Attributes.Match['CurrentButton'] := GetId(oRenderer.CurrentButton);
+
+  Attributes.Match['canvas-StatedWidth'] := IntegerToString(oRenderer.Canvas.StatedWidth);
+  Attributes.Match['canvas-StatedHeight'] := IntegerToString(oRenderer.Canvas.StatedHeight);
+  Attributes.Match['canvas-InternalTop'] := IntegerToString(oRenderer.Canvas.InternalTop);
+  Attributes.Match['canvas-InternalBottom'] := IntegerToString(oRenderer.Canvas.InternalBottom);
+  Attributes.Match['canvas-HorizontalMargin'] := IntegerToString(oRenderer.Canvas.HorizontalMargin);
+  Attributes.Match['canvas-VerticalMargin'] := IntegerToString(oRenderer.Canvas.VerticalMargin);
+  Attributes.Match['canvas-Background'] := ColourToString(oRenderer.Canvas.Background);
+  Attributes.Match['canvas-Contrast'] := RealToString(oRenderer.Canvas.Contrast);
+
+  ProduceOpen('renderer');
+  ProduceBorder('defaultBorder', oRenderer.DefaultTableBorder);
+  ProduceContainer(oRenderer.Map);
+  sText := '';
+  For iLoop := Low(oRenderer.PageOffsets) To High(oRenderer.PageOffsets) Do
+    sText := sText + IntegerToString(oRenderer.PageOffsets[iLoop])+ ' ';
+  ProduceText('PageOffsets', sText);
+  sText := '';
+  For iLoop := Low(oRenderer.PagePositions) To High(oRenderer.PagePositions) Do
+    sText := sText + IntegerToString(oRenderer.PagePositions[iLoop])+ ' ';
+  ProduceText('PagePositions', sText);
+
+  ProduceClose('renderer');
+End;
+
+Procedure TWPSystemSnapshotWriter.ProduceRanges(oRanges: TWPRangeManager; oPrimary: TWPVisualRange);
+Var
+  iLoop : Integer;
+Begin
+  ProduceOpen('Ranges');
+  For iLoop := 0 To oRanges.List.Count - 1 Do
+  Begin
+    If oRanges.List[iLoop] = oPrimary Then
+    Begin
+      Attributes.Match['PageHeight'] := IntegerToString(oPrimary.PageHeight);
+      Attributes.Match['Primary'] := 'True';
+    End;
+    ProduceRange(oRanges.List[iLoop]);
+  End;
+  ProduceClose('Ranges');
+  ProduceOpen('Log');
+  for iLoop := 0 to oPrimary.Log.Count - 1 do
+  begin
+    Attributes.Match['Time'] := oPrimary.Log[iLoop].Time;
+    Attributes.Match['Action'] := oPrimary.Log[iLoop].Action;
+    Attributes.Match['Selection'] := oPrimary.Log[iLoop].Selection;
+    Attributes.Match['Details'] := oPrimary.Log[iLoop].Details;
+    Attributes.Match['Outcome'] := oPrimary.Log[iLoop].outcome;
+    ProduceTag('Action');
+  end;
+  ProduceClose('Log');
+End;
+
+
+Procedure TWPSystemSnapshotWriter.ProduceRange(oRange: TWPRange);
+Var
+  aLoop : TWPCapability;
+  iLoop : Integer;
+  sText : String;
+Begin
+  Attributes.Match['rangeId'] := IntegerToString(oRange.Id);
+  Attributes.Match['Style'] := oRange.Style;
+
+  ProduceOpen('Range');
+
+  sText := '';
+  For aLoop := Low(TWPCapability) To High(TWPCapability) Do
+    sText := sText + WPCAPABILITY_NAMES[aLoop]+' ';
+  ProduceText('Capabilities', sText);
+
+  ProduceFormat(oRange.Font);
+  ProduceParaFormat(oRange.Paragraph);
+  ProduceSelection(oRange.Selection);
+
+  If oRange.HasCurrentParagraph Then
+    Attributes.Match['CurrentParagraph'] := GetId(oRange.CurrentParagraph);
+  If oRange.HasCurrentImage Then
+    Attributes.Match['CurrentImage'] := GetId(oRange.CurrentImage);
+  If oRange.HasCurrentLine Then
+    Attributes.Match['CurrentLine'] := GetId(oRange.CurrentLine);
+  If oRange.HasCurrentSectionStart Then
+    Attributes.Match['CurrentSectionStart'] := GetId(oRange.CurrentSectionStart);
+  If oRange.HasCurrentSectionStop Then
+    Attributes.Match['CurrentSectionStop'] := GetId(oRange.CurrentSectionStop);
+  If oRange.HasCurrentFieldStart Then
+    Attributes.Match['CurrentFieldStart'] := GetId(oRange.CurrentFieldStart);
+  If oRange.HasCurrentFieldStop Then
+    Attributes.Match['CurrentFieldStop'] := GetId(oRange.CurrentFieldStop);
+  If oRange.HasCurrentTableStart Then
+    Attributes.Match['CurrentTableStart'] := GetId(oRange.CurrentTableStart);
+  If oRange.HasCurrentTableStop Then
+    Attributes.Match['CurrentTableStop'] := GetId(oRange.CurrentTableStop);
+  If oRange.HasCurrentTableRowStart Then
+    Attributes.Match['CurrentTableRowStart'] := GetId(oRange.CurrentTableRowStart);
+  If oRange.HasCurrentTableRowStop Then
+    Attributes.Match['CurrentTableRowStop'] := GetId(oRange.CurrentTableRowStop);
+  If oRange.HasCurrentTableCellStart Then
+    Attributes.Match['CurrentTableCellStart'] := GetId(oRange.CurrentTableCellStart);
+  If oRange.HasCurrentTableCellStop Then
+    Attributes.Match['CurrentTableCellStop'] := GetId(oRange.CurrentTableCellStop);
+  If oRange.HasSelectedTable Then
+    Attributes.Match['SelectedTable'] := GetId(oRange.SelectedTable);
+
+  sText := '';
+  For iLoop := 0 To oRange.SelectedRows.Count - 1 Do
+    sText := sText + GetId(oRange.SelectedRows[iLoop])+' ';
+  Attributes.Match['SelectedRows'] := sText;
+
+  sText := '';
+  For iLoop := 0 To oRange.SelectedCells.Count - 1 Do
+    sText := sText + GetId(oRange.SelectedCells[iLoop])+' ';
+  Attributes.Match['SelectedCells'] := sText;
+  ProduceTag('Current');
+  ProduceClose('Range');
+End;
+
+
+Procedure TWPSystemSnapshotWriter.ProduceSelection(oSelection: TWPSelection);
+Begin
+  Attributes.Match['SelStart'] := IntegerToString(oSelection.SelStart);
+  Attributes.Match['Cursor'] := IntegerToString(oSelection.Cursor);
+  Attributes.Match['SelEnd'] := IntegerToString(oSelection.SelEnd);
+  Attributes.Match['Desired'] := IntegerToString(oSelection.Desired);
+  ProduceTag('Selection');
+End;
+
+Procedure TWPSystemSnapshotWriter.ProduceOperator(oOperator: TWPOperator);
+Var
+  iLoop : Integer;
+Begin
+  Attributes.Match['MasterRangeId'] := IntegerToString(oOperator.MasterRangeId);
+  Attributes.Match['Version'] := IntegerToString(oOperator.Version);
+  Attributes.Match['CurrentOp'] := BooleanToString(oOperator.CurrentOp <> Nil);
+  Attributes.Match['Status'] := NAMES_WPOPERATIONSTATUS[oOperator.Status];
+  Attributes.Match['RendererRange.Valid'] := BooleanToString(oOperator.RendererRange.Valid);
+  Attributes.Match['RendererRange.Start'] := IntegerToString(oOperator.RendererRange.Start);
+  Attributes.Match['RendererRange.Stop'] := IntegerToString(oOperator.RendererRange.Stop);
+  Attributes.Match['MaxUndoDepth'] := IntegerToString(oOperator.MaxUndoDepth);
+  Attributes.Match['DirectCount'] := IntegerToString(oOperator.DirectCount);
+  Attributes.Match['DirectText'] := oOperator.DirectText;
+  Attributes.Match['LastAction'] := IntegerToString(oOperator.LastAction);
+  ProduceOpen('operator');
+
+  ProduceOpen('Undo');
+  For iLoop := 0 To oOperator.UndoStack.Count - 1 Do
+    ProduceOperation(oOperator.UndoStack[iLoop]);
+  ProduceClose('Undo');
+
+  ProduceOpen('Redo');
+  For iLoop := 0 To oOperator.RedoStack.Count - 1 Do
+    ProduceOperation(oOperator.RedoStack[iLoop]);
+  ProduceClose('Redo');
+
+  ProduceClose('operator');
+End;
+
+Procedure TWPSystemSnapshotWriter.ProduceOperation(oOperation: TWPOperation);
+Var
+  iLoop : Integer;
+Begin
+  Attributes.Match['RangeId'] := IntegerToString(oOperation.RangeId);
+  Attributes.Match['Closed'] := BooleanToString(oOperation.Closed);
+  Attributes.Match['OpType'] := NAMES_WPOPERATIONTYPE[oOperation.OpType];
+  Attributes.Match['Start'] := IntegerToString(oOperation.Start);
+  Attributes.Match['CommencementFinish'] := IntegerToString(oOperation.CommencementFinish);
+  Attributes.Match['TerminationFinish'] := IntegerToString(oOperation.TerminationFinish);
+  Attributes.Match['MoveDestination'] := IntegerToString(oOperation.MoveDestination);
+  Attributes.Match['UndoCursor'] := oOperation.UndoCursor;
+  Attributes.Match['RedoCursor'] := oOperation.RedoCursor;
+  Attributes.Match['AddedAmount'] := IntegerToString(oOperation.AddedAmount);
+  Attributes.Match['AddedAmountThisIteration'] := IntegerToString(oOperation.AddedAmountThisIteration);
+  Attributes.Match['DeletedAmount'] := IntegerToString(oOperation.DeletedAmount);
+  Attributes.Match['Reiterating'] := BooleanToString(oOperation.Reiterating);
+  Attributes.Match['AddedText'] := oOperation.AddedText;
+  Attributes.Match['AddedTextThisIteration'] := oOperation.AddedTextThisIteration;
+  ProduceOpen('Operation');
+
+  ProduceOpen('OriginalPieces');
+  For iLoop := 0 To oOperation.OriginalPieces.Count - 1 Do
+    ProducePiece(oOperation.OriginalPieces[iLoop]);
+  ProduceClose('OriginalPieces');
+
+  ProduceOpen('ModifiedPieces');
+  For iLoop := 0 To oOperation.ModifiedPieces.Count - 1 Do
+    ProducePiece(oOperation.ModifiedPieces[iLoop]);
+  ProduceClose('ModifiedPieces');
+
+  ProduceOpen('UndoCursors');
+  For iLoop := 0 To oOperation.UndoCursors.Count - 1 Do
+    ProduceText(oOperation.UndoCursors.KeyByIndex[iLoop], IntegerToString(oOperation.UndoCursors.ValueByIndex[iLoop]));
+  ProduceClose('UndoCursors');
+  ProduceClose('Operation');
+End;
+
+Procedure TWPSystemSnapshotWriter.ProduceSettings(oSettings : TWPSettings);
+Begin
+  ProduceOpen('settings');
+  ProduceText('Background', ColourToString(oSettings.Background));
+  ProduceText('LowLight', BooleanToString(oSettings.LowLight));
+  ProduceText('Margin', IntegerToString(oSettings.Margin));
+  ProduceText('HorizontalMargin', IntegerToString(oSettings.HorizontalMargin));
+  ProduceText('VerticalMargin', IntegerToString(oSettings.VerticalMargin));
+  ProduceText('Scale', RealToString(oSettings.Scale));
+  ProduceText('TableBorders', BooleanToString(oSettings.TableBorders));
+  ProduceText('NestingIndent', IntegerToString(oSettings.NestingIndent));
+  ProduceText('Pagination', BooleanToString(oSettings.Pagination));
+  ProduceText('LinkColour', ColourToString(oSettings.LinkColour));
+  ProduceText('HoverColour', ColourToString(oSettings.HoverColour));
+  ProduceText('Hotspots', NAMES_WPHotspotMode[oSettings.Hotspots]);
+  ProduceText('EditHints', BooleanToString(oSettings.EditHints));
+  ProduceText('SpellingErrors', BooleanToString(oSettings.SpellingErrors));
+  ProduceText('FieldWrappers', NAMES_WPFieldPresentation[oSettings.FieldWrappers]);
+  ProduceText('Interactive', BooleanToString(oSettings.Interactive));
+  ProduceText('ReadOnly', BooleanToString(oSettings.ReadOnly));
+  ProduceText('Images', BooleanToString(oSettings.Images));
+  ProduceText('ImageMapEditing', BooleanToString(oSettings.ImageMapEditing));
+  ProduceText('Format', BooleanToString(oSettings.Format));
+  ProduceText('Selecting', BooleanToString(oSettings.Selecting));
+  ProduceText('Blinking', BooleanToString(oSettings.Blinking));
+  ProduceText('ShowVerticalScrollbar', BooleanToString(oSettings.ShowVerticalScrollbar));
+  ProduceText('Search', BooleanToString(oSettings.Search));
+  ProduceText('AllowPopup', BooleanToString(oSettings.AllowPopup));
+  ProduceText('SnapshotEmail', oSettings.SnapshotEmail);
+  ProduceText('ShowDocumentInspector', BooleanToString(oSettings.ShowDocumentInspector));
+  ProduceText('NoSelectReadOnly', BooleanToString(oSettings.NoSelectReadOnly));
+  ProduceText('InsertTemplates', BooleanToString(oSettings.InsertTemplates));
+  ProduceText('AutosavePath', oSettings.AutosavePath);
+  ProduceText('AutosaveFrequency', IntegerToString(oSettings.AutosaveFrequency));
+  ProduceText('AutosaveId', oSettings.AutosaveId);
+  ProduceClose('settings');
+End;
+
+
 End.
+
 
 

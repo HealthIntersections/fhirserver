@@ -33,8 +33,9 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics,
-  fsl_printing_win, fsl_threads, fsl_utilities, fsl_graphics,
-  FHIR.WP.Engine, FHIR.WP.Working, FHIR.WP.Renderer, FHIR.WP.Types, FHIR.WP.Settings;
+  fsl_threads, fsl_utilities,
+  wp_graphics, wp_printing_win,
+  FHIR.WP.Engine, wp_working, FHIR.WP.Renderer, wp_types, FHIR.WP.Settings;
 
 Type
   TWPPrintCanvas = Class (TWPCanvas)
@@ -43,6 +44,8 @@ Type
       Procedure ApplyFont;
       Function GetCanvas : TFslPrinterCanvas;
       Procedure SetCanvas(Const Value : TFslPrinterCanvas);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(oCanvas : TFslPrinterCanvas); Overload; Virtual;
       destructor Destroy; Override;
@@ -133,6 +136,7 @@ Type
       Function ApplyOutputColourRules(bIsBackground : Boolean; aColour : TColour) : TColour; Override;
 
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Override;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -175,6 +179,7 @@ Type
 //      Procedure DoTest;
     Protected
       Procedure Execute; Override;
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -333,6 +338,16 @@ Begin
 End;
 }
 
+
+function TWPPaginator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOperator.sizeInBytes);
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FPrinter.sizeInBytes);
+  inc(result, FPageLayoutController.sizeInBytes);
+  inc(result, FStyles.sizeInBytes);
+end;
 
 Constructor TWPPrintRenderer.Create;
 Begin
@@ -967,6 +982,15 @@ begin
 end;
 
 
+function TWPPrintRenderer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPrinterCanvas.sizeInBytes);
+  inc(result, FPages.sizeInBytes);
+  inc(result, FPageLayoutController.sizeInBytes);
+  inc(result, (FDescription.length * sizeof(char)) + 12);
+end;
+
 Constructor TWPPrintCanvas.Create(oCanvas : TFslPrinterCanvas);
 Begin
   Create;
@@ -1245,5 +1269,11 @@ begin
   FCanvas.Brush.Style := absNull;
 end;
 
+
+function TWPPrintCanvas.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FCanvas.sizeInBytes);
+end;
 
 End.

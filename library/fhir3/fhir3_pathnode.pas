@@ -16,7 +16,7 @@ unit fhir3_pathnode;
      endorse or promote products derived from this software without specific
      prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -50,13 +50,15 @@ type
     pfRepeat, pfAggregate, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfUnion, pfCombine, pfIntersect, pfExclude,
     pfIif, pfUpper, pfLower, pfToChars,
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
-    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse,
+    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfHasExtension, pfAllFalse, pfAnyFalse, pfAllTrue, pfAnyTrue,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
-    pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToTime,
+    pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToDate, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
+    pfAbs, pfCeiling, pfExp, pfFloor, pfLn, pfLog, pfPower, pfTruncate, pfRound, pfSqrt,
+    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin,
     pfCustom);
 
-  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure); // structure is not used in fhir3_pathengine, but is in CQL
+  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir4_pathengine, but is in CQL
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
 
 const
@@ -69,10 +71,12 @@ const
     'repeat', 'aggregate', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'union', 'combine', 'intersect', 'exclude',
     'iif', 'upper', 'lower', 'toChars',
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
-    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse',
+    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'hasExtension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
-    'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToTime',
+    'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToDate', 'convertsToTime',
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
+    'abs', 'ceiling', 'exp', 'floor', 'ln', 'log', 'power', 'truncate', 'round', 'sqrt',
+    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
@@ -94,6 +98,8 @@ type
     Furi : String;
     FProfiles : TStringList; // or, not and
     FBindings : TFslList<TFHIRElementDefinitionBinding>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(s : string);
     destructor Destroy; override;
@@ -121,6 +127,8 @@ type
     FCollectionStatus : TFHIRCollectionStatus;
     function typesContains(t : String) : boolean;
     function getSystemType(url : string) : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
     constructor CreateList(status : TFHIRCollectionStatus; types : TFslList<TFHIRProfiledType>); overload;
@@ -176,6 +184,8 @@ type
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
     procedure SetConstant(const Value: TFHIRObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -229,6 +239,8 @@ type
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
 
@@ -276,6 +288,8 @@ begin
             break;
       end;
     enkConstant:
+      ; // nothing
+    enkUnary:
       ; // nothing
     enkGroup:
       if FGroup = nil then
@@ -467,6 +481,8 @@ var
 begin
   if s = '' then
     exit(false);
+  if s = '$this' then
+    exit(true);
   if not CharInSet(s[1], ['a'..'z', 'A'..'Z', '_']) then
     exit(false);
   for i := 2 to length(s) do
@@ -518,10 +534,15 @@ begin
       b.append(presentConstant);
     enkGroup:
       begin
+        if group.ToString.Trim = '- 1' then // hack special case becuse of how negation works
+          b.Append('-1')
+        else
+        begin
         b.append('(');
         b.append(group.toString());
         b.append(')');
       end;
+    end;
     end;
 
     if (inner <> nil) then
@@ -625,6 +646,19 @@ begin
   FGroup := Value;
 end;
 
+function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FConstant.sizeInBytes);
+  inc(result, FParameters.sizeInBytes);
+  inc(result, FInner.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, FOpNext.sizeInBytes);
+  inc(result, FTypes.sizeInBytes);
+  inc(result, FOpTypes.sizeInBytes);
+end;
+
 { TFHIRProfiledType }
 
 constructor TFHIRProfiledType.Create(s: string);
@@ -685,6 +719,14 @@ end;
 function TFHIRProfiledType.isSystemType : boolean;
 begin
   result := Furi.startsWith(FP_NS);
+end;
+
+function TFHIRProfiledType.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Furi.length * sizeof(char)) + 12);
+  inc(result, FProfiles.sizeInBytes);
+  inc(result, FBindings.sizeInBytes);
 end;
 
 class function TFHIRProfiledType.ns(s: String): String;
@@ -935,7 +977,7 @@ var
 begin
   result := TFHIRTypeDetails.create(csNULL, []);
   try
-    if (right.FcollectionStatus in [csUNORDERED, csSINGLETON]) then
+    if (right.FcollectionStatus = csUNORDERED) or (FCollectionStatus = csUNORDERED) then
       result.FcollectionStatus := csUNORDERED
     else
       result.FcollectionStatus := csORDERED;
@@ -1011,6 +1053,12 @@ begin
    result := '';
    for pt in Types do
      CommaAdd(result, pt.uri);
+end;
+
+function TFHIRTypeDetails.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTypes.sizeInBytes);
 end;
 
 { TFHIRExpressionNodeComposer }
@@ -1239,5 +1287,11 @@ begin
     json.value('op-types', expr.optypes.ToString);
 end;
 
+
+function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLang.sizeInBytes);
+end;
 
 end.

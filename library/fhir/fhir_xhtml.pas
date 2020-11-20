@@ -48,6 +48,7 @@ Type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(Name : String; Value : String); Overload;
 
@@ -77,6 +78,8 @@ Type
     FIndex : integer;
     FList : TFHIRAttributeList;
     function GetCurrent : TFHIRAttribute;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFHIRAttributeList);
     destructor Destroy; override;
@@ -121,6 +124,7 @@ Type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     constructor Create(nodeType : TFHIRHtmlNodeType); Overload;
@@ -232,6 +236,8 @@ Type
     FIndex : integer;
     FList : TFHIRXhtmlNodeList;
     function GetCurrent : TFHIRXhtmlNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(list : TFHIRXhtmlNodeList);
     destructor Destroy; override;
@@ -538,6 +544,13 @@ end;
 function TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFHIRAttribute.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TFhirAttributeListEnumerator }
@@ -1021,6 +1034,15 @@ end;
 function TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFhirXHtmlNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FAttributes.sizeInBytes);
+  inc(result, FChildNodes.sizeInBytes);
+  inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
 { TFhirXhtmlNodeListEnumerator }
@@ -1860,6 +1882,18 @@ begin
   xml.open('text');
   processChildren(xml, node);
   xml.close('text');
+end;
+
+function TFHIRAttributeListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
+end;
+
+function TFHIRXhtmlNodeListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
 end;
 
 end.

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes, Character,
   fsl_base, fsl_utilities, fsl_stream,
   fhir_objects;
 
@@ -60,6 +60,7 @@ type
     FTag : integer;
   protected
     FUniqueId : integer;
+    function sizeInBytesV : cardinal; override;
   public
     function link : TFHIRPathExpressionNodeV;
     property tag : integer read FTag write FTag;
@@ -91,6 +92,7 @@ type
     FPath : String;
     FSourceName : String;
     flast13 : boolean;
+    FComments : TStringList;
 
     FMarkedCursor : integer;
     FMarkedCurrentLocation : TSourceLocation;
@@ -120,7 +122,7 @@ type
     procedure revert;
 
     function hasComment: boolean;
-    procedure skipComments;
+    procedure skipWhitespaceAndComments;
     procedure checkArithmeticPrefixes;
 
     function nextId : integer;
@@ -164,6 +166,8 @@ type
     FTotal : TFHIRSelectionList;
      FThis : TFHIRObject;
     procedure SetTotal(const Value: TFHIRSelectionList);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
     destructor Destroy; override;
@@ -191,6 +195,8 @@ type
     procedure Setinput1(const Value: TFHIRSelectionList);
     procedure Setinput2(const Value: TFHIRSelectionList);
     procedure Setoutcome(const Value: TFHIRSelectionList);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TFHIRPathDebugPackage; overload;
@@ -223,12 +229,14 @@ type
   TFHIRPathEngineV = class (TFslObject)
   private
     FOndebug : TFHIRPathDebugEvent;
+    FAllowPolymorphicNames: boolean;
     function findPath(path : String; loc : TSourceLocation; context : TArray<TFHIRObject>; base : TFHIRObject; var focus : TArray<TFHIRObject>) : String;
   protected
     FExtensions : TFslList<TFHIRPathEngineExtension>;
     FOnResolveReference: TFHIRResolveReferenceEvent;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -251,6 +259,8 @@ type
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject) : String; overload;
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject; var pathObjects : TArray<TFHIRObject>) : String; overload;
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
+
+    property allowPolymorphicNames : boolean read FAllowPolymorphicNames write FAllowPolymorphicNames;
   end;
 
 const
@@ -348,11 +358,22 @@ begin
   FExtensions.Add(extension);
 end;
 
+function TFHIRPathEngineV.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FExtensions.sizeInBytes);
+end;
+
 { TFHIRPathExpressionNodeV }
 
 function TFHIRPathExpressionNodeV.link: TFHIRPathExpressionNodeV;
 begin
   result := TFHIRPathExpressionNodeV(inherited link);
+end;
+
+function TFHIRPathExpressionNodeV.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TFHIRPathExecutionContext }
@@ -394,6 +415,16 @@ procedure TFHIRPathExecutionContext.SetTotal(const Value: TFHIRSelectionList);
 begin
   FTotal.free;
   FTotal := Value;
+end;
+
+function TFHIRPathExecutionContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FAppInfo.sizeInBytes);
+  inc(result, FResource.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+  inc(result, FTotal.sizeInBytes);
+  inc(result, FThis.sizeInBytes);
 end;
 
 { TFHIRPathDebugPackage }
@@ -443,6 +474,16 @@ begin
   Foutcome := Value;
 end;
 
+
+function TFHIRPathDebugPackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcontext.sizeInBytes);
+  inc(result, Finput2.sizeInBytes);
+  inc(result, Finput1.sizeInBytes);
+  inc(result, FExpression.sizeInBytes);
+  inc(result, Foutcome.sizeInBytes);
+end;
 
 { TFHIRTypeDetailsV }
 
@@ -542,6 +583,7 @@ begin
   FPath := path;
   FCursor := offset;
   FCurrentLocation := TSourceLocation.Create;
+  FComments := TStringList.create;
   next;
 end;
 
@@ -552,12 +594,13 @@ begin
   FPath := path;
   FCursor := 1;
   FCurrentLocation := TSourceLocation.Create;
+  FComments := TStringList.create;
   next;
 end;
 
 destructor TFHIRPathLexer.Destroy;
 begin
-
+  FComments.Free;
   inherited;
 end;
 
@@ -605,8 +648,7 @@ var
   escape, dotted : boolean;
 begin
   FCurrent := '';
-  while (FCursor <= FPath.Length) and isWhitespace(FPath[FCursor]) do
-    nextChar;
+  skipWhitespaceAndComments;
   FCurrentStart := FCursor;
   FCurrentStartLocation := FCurrentLocation;
   if (FCursor <= FPath.Length) then
@@ -780,10 +822,54 @@ begin
       exit(true);
 end;
 
-procedure TFHIRPathLexer.skipComments;
+procedure TFHIRPathLexer.skipWhitespaceAndComments;
+var
+  last13 : boolean;
+  done : boolean;
+  start : integer;
+  s : String;
 begin
-  while (not done and hasComment()) do
-    next();
+  FComments.clear();
+  last13 := false;
+  done := false;
+  while (FCursor <= FPath.length) and not done do
+  begin
+    if (FCursor < FPath.length) and ('//' = FPath.substring(FCursor-1, 2)) then
+    begin
+      start := FCursor + 2;
+      while (FCursor <= FPath.length) and not CharInSet(FPath[cursor], [#13, #10]) do
+        inc(FCursor);
+      s := FPath.Substring(start, FCursor-start).trim();
+      FComments.add(s);
+    end
+    else if (FCursor < FPath.length) and ('/*' = FPath.substring(cursor-1, 2)) then
+    begin
+      start := FCursor + 2;
+      while (FCursor <= FPath.length) and ('*/' <> FPath.substring(cursor-1, 2)) do
+      begin
+        last13 := FCurrentLocation.checkChar(FPath[cursor], last13);
+        inc(fCursor);
+      end;
+      if (FCursor > FPath.length) then
+      begin
+        raise EFHIRPath.create('Unfinished comment');
+      end
+      else
+      begin
+        FComments.add(FPath.substring(start, FCursor).trim());
+        FCursor := FCursor + 2;
+      end
+    end
+    else if (Character.isWhitespace(FPath[FCursor])) then
+    begin
+      last13 := FCurrentLocation.checkChar(FPath[cursor], last13);
+      inc(fCursor);
+    end
+    else
+    begin
+      done := true;
+    end;
+  end;
 end;
 
 procedure TFHIRPathLexer.skiptoken(kw: String);

@@ -52,6 +52,8 @@ type
     function FHIRClientSearchJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientTransactionJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientUpdateJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(worker : TFHIRWorkerContextWithFactory);
     destructor Destroy; override;
@@ -284,6 +286,12 @@ begin
   finally
     res.Free;
   end;
+end;
+
+function TFHIRClientJSHelper.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWorker.sizeInBytes);
 end;
 
 class procedure TFHIRClientJSHelper.registerFHIRClient(js : TJavascript; worker : TFHIRWorkerContextWithFactory);

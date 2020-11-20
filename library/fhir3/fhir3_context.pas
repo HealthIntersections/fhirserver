@@ -45,6 +45,8 @@ type
     FName: String;
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(definition : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -60,6 +62,8 @@ type
     FList : TFslList<T>;
     procedure updateList(url, version: String);
     function sort(sender : TObject; const L, R: T): Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -416,6 +420,21 @@ procedure TFHIRMetadataResourceManager<T>.clear();
 begin
   FList.clear();
   FMap.clear();
+end;
+
+function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FSearchParameters.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+end;
+
+function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FList.sizeInBytes);
 end;
 
 end.

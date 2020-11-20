@@ -75,6 +75,8 @@ type
     id : integer;
     FTypes : TStringList;
     FCollectionStatus : TFHIRCollectionStatus;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
     constructor CreateList(status : TFHIRCollectionStatus; types : TStringList);
@@ -122,6 +124,8 @@ type
     procedure SetTypes(const Value: TFHIRTypeDetails);
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -176,6 +180,8 @@ type
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
 
@@ -541,6 +547,19 @@ begin
 end;
 
 
+function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FConstant.length * sizeof(char)) + 12);
+  inc(result, FParameters.sizeInBytes);
+  inc(result, FInner.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, FOpNext.sizeInBytes);
+  inc(result, FTypes.sizeInBytes);
+  inc(result, FOpTypes.sizeInBytes);
+end;
+
 { TFHIRTypeDetails }
 
 var
@@ -640,6 +659,12 @@ end;
 function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
 begin
   result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
+end;
+
+function TFHIRTypeDetails.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTypes.sizeInBytes);
 end;
 
 function TfhirTypeDetails.type_: String;
@@ -896,5 +921,11 @@ begin
     json.value('op-types', expr.optypes.ToString);
 end;
 
+
+function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLang.sizeInBytes);
+end;
 
 end.

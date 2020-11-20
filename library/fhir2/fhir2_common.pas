@@ -560,6 +560,8 @@ type
   TFhirConceptMapGroup2 = class (TFhirConceptMapGroupW)
   private
     Fsource, Ftarget : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(res : TFhirResource; source, target : String);
     function elements : TFslList<TFhirConceptMapGroupElementW>; override;
@@ -604,6 +606,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -3294,6 +3297,13 @@ begin
   result := Ftarget;
 end;
 
+function TFhirConceptMapGroup2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fsource.length * sizeof(char)) + 12);
+  inc(result, ( Ftarget.length * sizeof(char)) + 12);
+end;
+
 { TFHIRMeta2 }
 
 procedure TFHIRMeta2.addLabel(system, code, display: String);
@@ -3484,6 +3494,12 @@ begin
       result.Add(TFHIRCoding2.create(i.Link));
 end;
 
+
+function TFHIRMeta2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResource.sizeInBytes);
+end;
 
 { TFHIRAuditEvent2 }
 

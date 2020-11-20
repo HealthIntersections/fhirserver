@@ -54,6 +54,7 @@ type
   protected
     function getElementDefinition(sd : TFhirStructureDefinitionW; path : String) : TFhirElementDefinitionW;
     function enumify(code : String) : String;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -73,6 +74,8 @@ type
     procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -94,6 +97,8 @@ type
     procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -273,6 +278,15 @@ end;
 procedure TFHIRCodeGenerator.line(indent : integer; s: String);
 begin
   lines.Add(StringPadLeft('', ' ', indent)+ s);
+end;
+
+function TFHIRCodeGenerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResource.sizeInBytes);
+  inc(result, FContext.sizeInBytes);
+  inc(result, lines.sizeInBytes);
+  inc(result, vars.sizeInBytes);
 end;
 
 { TFHIRCodeGeneratorJavaRI }
@@ -544,6 +558,12 @@ begin
     fhirVersionRelease3: result := 'dstu3';
     fhirVersionRelease4: result := 'r4';
   end;
+end;
+
+function TFHIRCodeGeneratorJavaRI.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, imports.sizeInBytes);
 end;
 
 { TFHIRCodeGeneratorJavaHapi }
@@ -822,6 +842,12 @@ end;
 
 procedure TFHIRCodeGeneratorPascal.test;
 begin
+end;
+
+function TFHIRCodeGeneratorPascal.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, units.sizeInBytes);
 end;
 
 { TFHIRCodeGeneratorDotNet }

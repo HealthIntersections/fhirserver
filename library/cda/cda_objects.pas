@@ -189,6 +189,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -226,6 +227,7 @@ Type
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Virtual;
     function MoodCodeIsFixed : Boolean; Virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -282,6 +284,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -415,6 +418,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -455,6 +459,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -488,6 +493,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -521,6 +527,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -558,6 +565,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -596,6 +604,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -641,6 +650,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -670,6 +680,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -701,6 +712,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -736,6 +748,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -771,6 +784,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -854,6 +868,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1038,6 +1053,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1094,6 +1110,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1143,6 +1160,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1212,6 +1230,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1322,6 +1341,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1352,6 +1372,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1387,6 +1408,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1417,6 +1439,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1454,6 +1477,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1488,6 +1512,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1525,6 +1550,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1556,6 +1582,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1632,6 +1659,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1719,6 +1747,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1823,6 +1852,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1856,6 +1886,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1918,6 +1949,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2054,6 +2086,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2193,6 +2226,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function ClassCodeIsFixed : Boolean; Virtual;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2240,6 +2274,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2304,6 +2339,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2357,6 +2393,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2418,6 +2455,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2471,6 +2509,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2506,6 +2545,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2550,6 +2590,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2591,6 +2632,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2625,6 +2667,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2653,6 +2696,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2704,6 +2748,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2750,6 +2795,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2783,6 +2829,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2817,6 +2864,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2860,6 +2908,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2900,6 +2949,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2974,6 +3024,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3130,6 +3181,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3245,6 +3297,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3286,6 +3339,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3327,6 +3381,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3373,6 +3428,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3430,6 +3486,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3535,6 +3592,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3572,6 +3630,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3607,6 +3666,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3649,6 +3709,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3710,6 +3771,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3758,6 +3820,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3797,6 +3860,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3833,6 +3897,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3862,6 +3927,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3891,6 +3957,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3927,6 +3994,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3960,6 +4028,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4031,6 +4100,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4157,6 +4227,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4190,6 +4261,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4236,6 +4308,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4299,6 +4372,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4330,6 +4404,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     function Link : TcdaRegionOfInterest_value; Overload;
     Function Clone(parent : Tv3Base) : TcdaRegionOfInterest_value; Overload;
@@ -4403,6 +4478,7 @@ Type
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
     function MoodCodeIsFixed : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4510,6 +4586,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4548,6 +4625,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4580,6 +4658,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4624,6 +4703,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4682,6 +4762,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4788,6 +4869,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4830,6 +4912,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4872,6 +4955,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4907,6 +4991,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4950,6 +5035,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4984,6 +5070,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5069,6 +5156,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5261,6 +5349,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -7150,6 +7239,14 @@ begin
   Fid := Value;
 end;
 
+function TcdaClinicalStatement.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fid.sizeInBytes);
+end;
+
 { TcdaAct }
 
 Function TcdaAct.CDAClassNameV : String;
@@ -7326,6 +7423,26 @@ begin
 end;
 
 
+function TcdaAct.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
+
 { TcdaCustodian }
 
 Function TcdaCustodian.CDAClassNameV : String;
@@ -7396,6 +7513,13 @@ begin
     FtypeCode := aValue.AsString
   Else
     inherited;
+end;
+
+function TcdaCustodian.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedCustodian.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaCustodianOrganization }
@@ -7517,6 +7641,17 @@ begin
 
 end;
 
+function TcdaCustodianOrganization.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Faddr.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaDataEnterer }
 
 Function TcdaDataEnterer.CDAClassNameV : String;
@@ -7607,6 +7742,15 @@ begin
 
 end;
 
+
+function TcdaDataEnterer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, Ftime.sizeInBytes);
+end;
 
 procedure TcdaAct.SetnegationInd(const Value: boolean);
 begin
@@ -7897,6 +8041,19 @@ begin
     result := FassignedAuthoringDevice;
 end;
 
+function TcdaAssignedAuthor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedAuthoringDevice.sizeInBytes);
+  inc(result, FrepresentedOrganization.sizeInBytes);
+  inc(result, FassignedPerson.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaAssignedCustodian }
 
 Function TcdaAssignedCustodian.CDAClassNameV : String;
@@ -7967,6 +8124,13 @@ begin
   FrepresentedCustodianOrganization := Value;
   if FrepresentedCustodianOrganization <> nil then  representedCustodianOrganization.parent := self;
 
+end;
+
+function TcdaAssignedCustodian.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FrepresentedCustodianOrganization.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaInformantChoice }
@@ -8085,6 +8249,15 @@ begin
     FclassCode := sValue;
 end;
 
+function TcdaInformantChoice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaAssignedEntity }
 
 Function TcdaAssignedEntity.CDAClassNameV : String;
@@ -8186,6 +8359,14 @@ end;
 function TcdaAssignedEntity.ClassCodeIsFixed: Boolean;
 begin
   result := true;
+end;
+
+function TcdaAssignedEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FrepresentedOrganization.sizeInBytes);
+  inc(result, FassignedPerson.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
 end;
 
 { TcdaAssociatedEntity }
@@ -8334,6 +8515,18 @@ begin
 
 end;
 
+function TcdaAssociatedEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FscopingOrganization.sizeInBytes);
+  inc(result, FassociatedPerson.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaAuthenticator }
 
 Function TcdaAuthenticator.CDAClassNameV : String;
@@ -8432,6 +8625,15 @@ begin
   Ftime := Value;
   if Ftime <> nil then  time.parent := self;
 
+end;
+
+function TcdaAuthenticator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FsignatureCode.sizeInBytes);
+  inc(result, Ftime.sizeInBytes);
 end;
 
 { TcdaAuthor }
@@ -8538,6 +8740,16 @@ begin
 
 end;
 
+function TcdaAuthor.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedAuthor.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FfunctionCode.sizeInBytes);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, Ftime.sizeInBytes);
+end;
+
 { TcdaAuthorChoice }
 
 Function TcdaAuthorChoice.CDAClassNameV : String;
@@ -8604,6 +8816,13 @@ end;
 function TcdaAuthorChoice.GetClassCode: String;
 begin
   raise ECDAException.create('AuthorChoice is an abstract class and should never be create');
+end;
+
+function TcdaAuthorChoice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaAuthoringDevice }
@@ -8723,6 +8942,15 @@ begin
   result := 'DEV';
 end;
 
+function TcdaAuthoringDevice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FasMaintainedEntity.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FmanufacturerModelName.sizeInBytes);
+  inc(result, FsoftwareName.sizeInBytes);
+end;
+
 { TcdaAuthorization }
 
 Function TcdaAuthorization.CDAClassNameV : String;
@@ -8795,6 +9023,13 @@ begin
     inherited;
 end;
 
+function TcdaAuthorization.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fconsent.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaBirthplace }
 
 Function TcdaBirthplace.CDAClassNameV : String;
@@ -8865,6 +9100,13 @@ begin
     FclassCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaBirthplace.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fplace.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaClinicalDocument }
@@ -9278,6 +9520,37 @@ begin
 end;
 
 
+function TcdaClinicalDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthenticator.sizeInBytes);
+  inc(result, Fauthorization.sizeInBytes);
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FcomponentOf.sizeInBytes);
+  inc(result, Fcomponent.sizeInBytes);
+  inc(result, Fcustodian.sizeInBytes);
+  inc(result, FdataEnterer.sizeInBytes);
+  inc(result, FdocumentationOf.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, FinformationRecipient.sizeInBytes);
+  inc(result, FinFulfillmentOf.sizeInBytes);
+  inc(result, FlegalAuthenticator.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, FrecordTarget.sizeInBytes);
+  inc(result, FrelatedDocument.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FconfidentialityCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, FsetId.sizeInBytes);
+  inc(result, FversionNumber.sizeInBytes);
+  inc(result, Ftitle.sizeInBytes);
+  inc(result, FcopyTime.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
+
 { TcdaComponent1 }
 
 Function TcdaComponent1.CDAClassNameV : String;
@@ -9348,6 +9621,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaComponent1.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FencompassingEncounter.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaComponent2 }
@@ -9446,6 +9726,14 @@ begin
 
 end;
 
+function TcdaComponent2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FnonXMLBody.sizeInBytes);
+  inc(result, FstructuredBody.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaComponentSect }
 
 Function TcdaComponentSect.CDAClassNameV : String;
@@ -9526,6 +9814,13 @@ begin
   Fsection := Value;
   if Fsection <> nil then  section.parent := self;
 
+end;
+
+function TcdaComponentSect.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fsection.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaComponent4 }
@@ -9773,6 +10068,23 @@ begin
 end;
 
 
+function TcdaComponent4.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fact.sizeInBytes);
+  inc(result, Fencounter.sizeInBytes);
+  inc(result, Fobservation.sizeInBytes);
+  inc(result, FobservationMedia.sizeInBytes);
+  inc(result, Forganizer.sizeInBytes);
+  inc(result, Fprocedure.sizeInBytes);
+  inc(result, FregionOfInterest.sizeInBytes);
+  inc(result, FsubstanceAdministration.sizeInBytes);
+  inc(result, Fsupply.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FseperatableInd.sizeInBytes);
+  inc(result, FsequenceNumber.sizeInBytes);
+end;
+
 { TcdaConsent }
 
 Function TcdaConsent.CDAClassNameV : String;
@@ -9878,6 +10190,16 @@ begin
 
 end;
 
+function TcdaConsent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+end;
+
 { TcdaConsumable }
 
 Function TcdaConsumable.CDAClassNameV : String;
@@ -9949,6 +10271,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaConsumable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FmanufacturedProduct.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaCriterion }
@@ -10058,6 +10387,16 @@ begin
     inherited;
 end;
 
+function TcdaCriterion.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+end;
+
 { TcdaDevice }
 
 Function TcdaDevice.CDAClassNameV : String;
@@ -10165,6 +10504,16 @@ begin
 
 end;
 
+function TcdaDevice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, FmanufacturerModelName.sizeInBytes);
+  inc(result, FsoftwareName.sizeInBytes);
+end;
+
 { TcdaDocumentationOf }
 
 Function TcdaDocumentationOf.CDAClassNameV : String;
@@ -10236,6 +10585,13 @@ begin
   FserviceEvent := Value;
   if FserviceEvent <> nil then  serviceEvent.parent := self;
 
+end;
+
+function TcdaDocumentationOf.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FserviceEvent.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaEncompassingEncounter }
@@ -10398,6 +10754,20 @@ begin
   FresponsibleParty := Value;
   if FresponsibleParty <> nil then  responsibleParty.parent := self;
 
+end;
+
+function TcdaEncompassingEncounter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FencounterParticipant.sizeInBytes);
+  inc(result, Flocation.sizeInBytes);
+  inc(result, FresponsibleParty.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FdischargeDispositionCode.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
 end;
 
 { TcdaEncounter }
@@ -10664,6 +11034,25 @@ begin
 
 end;
 
+function TcdaEncounter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
+
 { TcdaEncounterParticipant }
 
 Function TcdaEncounterParticipant.CDAClassNameV : String;
@@ -10749,6 +11138,14 @@ begin
   Ftime := Value;
   if Ftime <> nil then
     time.parent := self;
+end;
+
+function TcdaEncounterParticipant.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, Ftime.sizeInBytes);
 end;
 
 { TcdaEntity }
@@ -10856,6 +11253,16 @@ begin
     id := Tv3ListII(aValue.AsType(Tv3ListII)).Clone(self)
   else
     inherited;
+end;
+
+function TcdaEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fdesc.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Fid.sizeInBytes);
 end;
 
 { TcdaEntry }
@@ -11074,6 +11481,21 @@ begin
     result := FsubstanceAdministration
   else
     result := Fsupply;
+end;
+
+function TcdaEntry.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fact.sizeInBytes);
+  inc(result, Fencounter.sizeInBytes);
+  inc(result, Fobservation.sizeInBytes);
+  inc(result, FobservationMedia.sizeInBytes);
+  inc(result, Forganizer.sizeInBytes);
+  inc(result, Fprocedure.sizeInBytes);
+  inc(result, FregionOfInterest.sizeInBytes);
+  inc(result, FsubstanceAdministration.sizeInBytes);
+  inc(result, Fsupply.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaEntryRelationship }
@@ -11343,6 +11765,23 @@ begin
     result := Fsupply;
 end;
 
+function TcdaEntryRelationship.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fact.sizeInBytes);
+  inc(result, Fencounter.sizeInBytes);
+  inc(result, Fobservation.sizeInBytes);
+  inc(result, FobservationMedia.sizeInBytes);
+  inc(result, Forganizer.sizeInBytes);
+  inc(result, Fprocedure.sizeInBytes);
+  inc(result, FregionOfInterest.sizeInBytes);
+  inc(result, FsubstanceAdministration.sizeInBytes);
+  inc(result, Fsupply.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FseperatableInd.sizeInBytes);
+  inc(result, FsequenceNumber.sizeInBytes);
+end;
+
 { TcdaExternalActChoice }
 
 Function TcdaExternalActChoice.CDAClassNameV : String;
@@ -11463,6 +11902,16 @@ begin
     FclassCode := sValue;
 end;
 
+function TcdaExternalActChoice.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+end;
+
 { TcdaExternalAct }
 
 Function TcdaExternalAct.CDAClassNameV : String;
@@ -11573,6 +12022,13 @@ begin
     versionNumber := Tv3INT(aValue.AsType(Tv3INT)).Clone(self)
   else
     inherited;
+end;
+
+function TcdaExternalDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FsetId.sizeInBytes);
+  inc(result, FversionNumber.sizeInBytes);
 end;
 
 { TcdaExternalObservation }
@@ -11782,6 +12238,18 @@ begin
 
 end;
 
+function TcdaGuardian.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FguardianOrganization.sizeInBytes);
+  inc(result, FguardianPerson.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaHealthCareFacility }
 
 Function TcdaHealthCareFacility.CDAClassNameV : String;
@@ -11899,6 +12367,16 @@ begin
 
 end;
 
+function TcdaHealthCareFacility.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FserviceProviderOrganization.sizeInBytes);
+  inc(result, Flocation.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaInformant12 }
 
 Function TcdaInformant12.CDAClassNameV : String;
@@ -11997,6 +12475,15 @@ begin
     result := FrelatedEntity;
 end;
 
+function TcdaInformant12.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, FrelatedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaInformationRecipient }
 
 Function TcdaInformationRecipient.CDAClassNameV : String;
@@ -12071,6 +12558,13 @@ begin
     inherited;
 end;
 
+function TcdaInformationRecipient.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FintendedRecipient.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaInFulfillmentOf }
 
 Function TcdaInFulfillmentOf.CDAClassNameV : String;
@@ -12141,6 +12635,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaInFulfillmentOf.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Forder.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaIntendedRecipient }
@@ -12277,6 +12778,17 @@ begin
 
 end;
 
+function TcdaIntendedRecipient.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FreceivedOrganization.sizeInBytes);
+  inc(result, FinformationRecipient.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaLabeledDrug }
 
 Function TcdaLabeledDrug.CDAClassNameV : String;
@@ -12365,6 +12877,15 @@ begin
     FdeterminerCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaLabeledDrug.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaLanguageCommunication }
@@ -12477,6 +12998,15 @@ begin
     inherited;
 end;
 
+function TcdaLanguageCommunication.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FpreferenceInd.sizeInBytes);
+  inc(result, FmodeCode.sizeInBytes);
+  inc(result, FproficiencyLevelCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+end;
+
 { TcdaEntityIdentifier }
 
 Function TcdaEntityIdentifier.CDAClassNameV : String;
@@ -12557,6 +13087,13 @@ begin
     code := Tv3CD(aValue.AsType(Tv3CD)).Clone(self)
   else
     inherited;
+end;
+
+function TcdaEntityIdentifier.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FId.sizeInBytes);
+  inc(result, FCode.sizeInBytes);
 end;
 
 { TcdaLegalAuthenticator }
@@ -12662,6 +13199,16 @@ begin
 
 end;
 
+function TcdaLegalAuthenticator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, FsignatureCode.sizeInBytes);
+  inc(result, Ftime.sizeInBytes);
+end;
+
 { TcdaLocation }
 
 Function TcdaLocation.CDAClassNameV : String;
@@ -12732,6 +13279,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaLocation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FhealthCareFacility.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaMaintainedEntity }
@@ -12818,6 +13372,14 @@ begin
     FclassCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaMaintainedEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FmaintainingPerson.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaManufacturedProduct }
@@ -12935,6 +13497,16 @@ begin
     inherited;
 end;
 
+function TcdaManufacturedProduct.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FmanufacturedLabeledDrug.sizeInBytes);
+  inc(result, FmanufacturedMaterial.sizeInBytes);
+  inc(result, FmanufacturerOrganization.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaMaterial }
 
 Function TcdaMaterial.CDAClassNameV : String;
@@ -13039,6 +13611,16 @@ begin
     inherited;
 end;
 
+function TcdaMaterial.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, FlotNumberText.sizeInBytes);
+end;
+
 { TcdaNonXMLBody }
 
 Function TcdaNonXMLBody.CDAClassNameV : String;
@@ -13141,6 +13723,16 @@ begin
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
+end;
+
+function TcdaNonXMLBody.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, FconfidentialityCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
 end;
 
 { TcdaObservation }
@@ -13535,6 +14127,33 @@ begin
     value.parent := self;
 end;
 
+function TcdaObservation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, FreferenceRange.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, FrepeatNumber.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, FtargetSiteCode.sizeInBytes);
+  inc(result, FmethodCode.sizeInBytes);
+  inc(result, FinterpretationCode.sizeInBytes);
+  inc(result, FderivationExpr.sizeInBytes);
+end;
+
 { TcdaObservationMedia }
 
 Function TcdaObservationMedia.CDAClassNameV : String;
@@ -13765,6 +14384,23 @@ begin
     Fvalue.parent := self;
 end;
 
+function TcdaObservationMedia.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, (FID_.length * sizeof(char)) + 12);
+end;
+
 { TcdaObservationRange }
 
 Function TcdaObservationRange.CDAClassNameV : String;
@@ -13885,6 +14521,17 @@ begin
     Fvalue.parent := self;
 end;
 
+function TcdaObservationRange.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, FinterpretationCode.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+end;
+
 { TcdaOrder }
 
 Function TcdaOrder.CDAClassNameV : String;
@@ -13990,6 +14637,16 @@ begin
     id := Tv3ListII(aValue.AsType(Tv3ListII)).Clone(self)
   else
     inherited;
+end;
+
+function TcdaOrder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
 end;
 
 { TcdaOrganization }
@@ -14143,6 +14800,19 @@ begin
     telecom.parent := self;
 end;
 
+function TcdaOrganization.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FasOrganizationPartOf.sizeInBytes);
+  inc(result, FstandardIndustryClassCode.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaOrganizationPartOf }
 
 Function TcdaOrganizationPartOf.CDAClassNameV : String;
@@ -14271,6 +14941,17 @@ begin
   FwholeOrganization := Value;
   if FwholeOrganization <> nil then
     FwholeOrganization.Parent := self;
+end;
+
+function TcdaOrganizationPartOf.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FwholeOrganization.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaOrganizer }
@@ -14512,6 +15193,23 @@ begin
     Fsubject.Parent := self;
 end;
 
+function TcdaOrganizer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, Fcomponent.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
+
 { TcdaParentDocument }
 
 Function TcdaParentDocument.CDAClassNameV : String;
@@ -14646,6 +15344,18 @@ begin
     inherited;
 end;
 
+function TcdaParentDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FsetId.sizeInBytes);
+  inc(result, FversionNumber.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+end;
+
 { TcdaParticipant1 }
 
 Function TcdaParticipant1.CDAClassNameV : String;
@@ -14751,6 +15461,16 @@ begin
     Ftime.Parent := self;
 end;
 
+function TcdaParticipant1.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassociatedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FfunctionCode.sizeInBytes);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, Ftime.sizeInBytes);
+end;
+
 { TcdaParticipant2 }
 
 Function TcdaParticipant2.CDAClassNameV : String;
@@ -14854,6 +15574,16 @@ begin
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
+end;
+
+function TcdaParticipant2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FparticipantRole.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FawarenessCode.sizeInBytes);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, Ftime.sizeInBytes);
 end;
 
 { TcdaParticipantRole }
@@ -15015,6 +15745,19 @@ begin
   Ftelecom := Value;
   if Ftelecom <> nil then
     Ftelecom.Parent := self;
+end;
+
+function TcdaParticipantRole.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FplayingDevice.sizeInBytes);
+  inc(result, FscopingEntity.sizeInBytes);
+  inc(result, FplayingEntity.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaPatient }
@@ -15273,6 +16016,25 @@ begin
     FreligiousAffiliationCode.Parent := self;
 end;
 
+function TcdaPatient.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fbirthplace.sizeInBytes);
+  inc(result, Fguardian.sizeInBytes);
+  inc(result, FlanguageCommunication.sizeInBytes);
+  inc(result, FadministrativeGenderCode.sizeInBytes);
+  inc(result, FraceCode.sizeInBytes);
+  inc(result, FmaritalStatusCode.sizeInBytes);
+  inc(result, FreligiousAffiliationCode.sizeInBytes);
+  inc(result, FethnicGroupCode.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, FbirthTime.sizeInBytes);
+  inc(result, FEntityIdentifier.sizeInBytes);
+end;
+
 { TcdaPatientRole }
 
 Function TcdaPatientRole.CDAClassNameV : String;
@@ -15405,6 +16167,17 @@ begin
     Ftelecom.Parent := self;
 end;
 
+function TcdaPatientRole.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FproviderOrganization.sizeInBytes);
+  inc(result, Fpatient.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaPerformer1 }
 
 Function TcdaPerformer1.CDAClassNameV : String;
@@ -15504,6 +16277,15 @@ begin
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
+end;
+
+function TcdaPerformer1.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FfunctionCode.sizeInBytes);
+  inc(result, Ftime.sizeInBytes);
 end;
 
 { TcdaPerformer2 }
@@ -15606,6 +16388,15 @@ begin
     Ftime.Parent := self;
 end;
 
+function TcdaPerformer2.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, FmodeCode.sizeInBytes);
+  inc(result, Ftime.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+end;
+
 { TcdaPerson }
 
 Function TcdaPerson.CDAClassNameV : String;
@@ -15679,6 +16470,12 @@ end;
 function TcdaPerson.GetClassCode: String;
 begin
   result := 'PSN';
+end;
+
+function TcdaPerson.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fname.sizeInBytes);
 end;
 
 { TcdaPlace }
@@ -15769,6 +16566,15 @@ begin
     FdeterminerCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaPlace.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Fname.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaPlayingEntity }
@@ -15894,6 +16700,17 @@ begin
     Fquantity.Parent := self;
 end;
 
+function TcdaPlayingEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Fdesc.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Fname.sizeInBytes);
+  inc(result, Fquantity.sizeInBytes);
+end;
+
 { TcdaPrecondition }
 
 Function TcdaPrecondition.CDAClassNameV : String;
@@ -15964,6 +16781,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaPrecondition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcriterion.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaProcedure }
@@ -16361,6 +17185,29 @@ begin
     Ftext.Parent := self;
 end;
 
+function TcdaProcedure.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, FmethodCode.sizeInBytes);
+  inc(result, FapproachSiteCode.sizeInBytes);
+  inc(result, FtargetSiteCode.sizeInBytes);
+end;
+
 { TcdaProduct }
 
 Function TcdaProduct.CDAClassNameV : String;
@@ -16431,6 +17278,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaProduct.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FmanufacturedProduct.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaRecordTarget }
@@ -16507,6 +17361,14 @@ begin
     FcontextControlCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaRecordTarget.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FpatientRole.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaReference }
@@ -16650,6 +17512,17 @@ begin
     result := FexternalProcedure;
 end;
 
+function TcdaReference.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FexternalAct.sizeInBytes);
+  inc(result, FexternalDocument.sizeInBytes);
+  inc(result, FexternalObservation.sizeInBytes);
+  inc(result, FexternalProcedure.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
+  inc(result, FseperatableInd.sizeInBytes);
+end;
+
 { TcdaReferenceRange }
 
 Function TcdaReferenceRange.CDAClassNameV : String;
@@ -16720,6 +17593,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaReferenceRange.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FobservationRange.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaRegionOfInterest }
@@ -17028,6 +17908,23 @@ begin
   result := true;
 end;
 
+function TcdaRegionOfInterest.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, (FID_.length * sizeof(char)) + 12);
+end;
+
 { TcdaRelatedDocument }
 
 Function TcdaRelatedDocument.CDAClassNameV : String;
@@ -17099,6 +17996,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaRelatedDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FparentDocument.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaRelatedEntity }
@@ -17186,6 +18090,13 @@ begin
     FrelatedPerson.Parent := self;
 end;
 
+
+function TcdaRelatedEntity.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FrelatedPerson.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
 
 { TcdaRelatedSubject }
 
@@ -17306,6 +18217,16 @@ begin
     Ftelecom.Parent := self;
 end;
 
+function TcdaRelatedSubject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, Faddr.sizeInBytes);
+  inc(result, Ftelecom.sizeInBytes);
+end;
+
 { TcdaResponsibleParty }
 
 Function TcdaResponsibleParty.CDAClassNameV : String;
@@ -17376,6 +18297,13 @@ begin
     FtypeCode := aValue.AsString
   else
     inherited;
+end;
+
+function TcdaResponsibleParty.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FassignedEntity.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaSection }
@@ -17631,6 +18559,25 @@ begin
     Ftitle.Parent := self;
 end;
 
+function TcdaSection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, Fcomponent.sizeInBytes);
+  inc(result, Fentry.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FconfidentialityCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, Ftitle.sizeInBytes);
+  inc(result, (FID_.length * sizeof(char)) + 12);
+  inc(result, Ftext.sizeInBytes);
+end;
+
 { TcdaServiceEvent }
 
 Function TcdaServiceEvent.CDAClassNameV : String;
@@ -17762,6 +18709,17 @@ begin
     inherited;
 end;
 
+function TcdaServiceEvent.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+end;
+
 { TcdaSpecimen }
 
 Function TcdaSpecimen.CDAClassNameV : String;
@@ -17832,6 +18790,13 @@ begin
   FspecimenRole := Value;
   if FspecimenRole <> nil then
     FspecimenRole.Parent := self;
+end;
+
+function TcdaSpecimen.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FspecimenRole.sizeInBytes);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaSpecimenRole }
@@ -17920,6 +18885,14 @@ begin
   FspecimenPlayingEntity := Value;
   if FspecimenPlayingEntity <> nil then
     FspecimenPlayingEntity.Parent := self;
+end;
+
+function TcdaSpecimenRole.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FspecimenPlayingEntity.sizeInBytes);
+  inc(result, Fid.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaStructuredBody }
@@ -18035,6 +19008,16 @@ begin
     inherited;
 end;
 
+function TcdaStructuredBody.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcomponent.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FmoodCode.length * sizeof(char)) + 12);
+  inc(result, FconfidentialityCode.sizeInBytes);
+  inc(result, FlanguageCode.sizeInBytes);
+end;
+
 { TcdaSubject }
 
 Function TcdaSubject.CDAClassNameV : String;
@@ -18123,6 +19106,15 @@ begin
   FrelatedSubject := Value;
   if FrelatedSubject <> nil then
     FrelatedSubject.Parent := self;
+end;
+
+function TcdaSubject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FrelatedSubject.sizeInBytes);
+  inc(result, FawarenessCode.sizeInBytes);
+  inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
+  inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
 { TcdaSubjectPerson }
@@ -18229,6 +19221,16 @@ begin
     birthTime := Tv3TS(aValue.AsType(Tv3TS)).Clone(self)
   else
     inherited;
+end;
+
+function TcdaSubjectPerson.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FadministrativeGenderCode.sizeInBytes);
+  inc(result, (FclassCode.length * sizeof(char)) + 12);
+  inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
+  inc(result, Fname.sizeInBytes);
+  inc(result, FbirthTime.sizeInBytes);
 end;
 
 { TcdaSubstanceAdministration }
@@ -18684,6 +19686,33 @@ begin
   result := true;
 end;
 
+function TcdaSubstanceAdministration.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, Fconsumable.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, FrouteCode.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FadministrationUnitCode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FrepeatNumber.sizeInBytes);
+  inc(result, FdoseQuantity.sizeInBytes);
+  inc(result, FrateQuantity.sizeInBytes);
+  inc(result, FapproachSiteCode.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, FmaxDoseQuantity.sizeInBytes);
+end;
+
 { TcdaSupply }
 
 Function TcdaSupply.CDAClassNameV : String;
@@ -19081,6 +20110,30 @@ begin
     Ftext.Parent := self;
 end;
 
+function TcdaSupply.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fauthor.sizeInBytes);
+  inc(result, FentryRelationship.sizeInBytes);
+  inc(result, Finformant.sizeInBytes);
+  inc(result, Fparticipant.sizeInBytes);
+  inc(result, Fperformer.sizeInBytes);
+  inc(result, Fprecondition.sizeInBytes);
+  inc(result, Fproduct.sizeInBytes);
+  inc(result, Freference.sizeInBytes);
+  inc(result, Fspecimen.sizeInBytes);
+  inc(result, Fsubject.sizeInBytes);
+  inc(result, FindependentInd.sizeInBytes);
+  inc(result, Fcode.sizeInBytes);
+  inc(result, FstatusCode.sizeInBytes);
+  inc(result, Ftext.sizeInBytes);
+  inc(result, FexpectedUseTime.sizeInBytes);
+  inc(result, FrepeatNumber.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes);
+  inc(result, Fquantity.sizeInBytes);
+  inc(result, FeffectiveTime.sizeInBytes);
+end;
+
 { TcdaBase }
 
 Function TcdaBase.RIMClassNameV : String;
@@ -19187,6 +20240,15 @@ begin
   FtypeId := Value;
   if FtypeId <> nil then
     FtypeId.Parent := self;
+end;
+
+function TcdaBase.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FxmlId.length * sizeof(char)) + 12);
+  inc(result, FtypeId.sizeInBytes);
+  inc(result, FrealmCode.sizeInBytes);
+  inc(result, FtemplateId.sizeInBytes);
 end;
 
 { TcdaAuthorList }
@@ -21489,6 +22551,11 @@ procedure TcdaRegionOfInterest_value.Setunsorted(const Value: Boolean);
 begin
   FHasUnsorted := true;
   Funsorted := value;
+end;
+
+function TcdaRegionOfInterest_value.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
 end;
 
 { TcdaRegionOfInterest_valueList }

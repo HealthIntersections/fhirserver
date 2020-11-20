@@ -60,7 +60,7 @@ uses
   fsl_npm_cache, FHIR.Npm.Client, fsl_npm,
 
   // UCUM
-  ftx_ucum_search, ftx_ucum_services, ftx_ucum_validators, ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, fhir_ucum,
+  ftx_ucum_search, ftx_ucum_services, ftx_ucum_validators, ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, fsl_ucum,
 
   // LOINC
   ftx_loinc_publisher, ftx_loinc_services, ftx_loinc_importer,

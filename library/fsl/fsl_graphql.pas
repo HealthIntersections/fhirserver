@@ -51,6 +51,8 @@ Type
   TGraphQLVariableValue = class (TGraphQLValue)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     Function Link : TGraphQLVariableValue; overload;
@@ -62,6 +64,8 @@ Type
   TGraphQLNumberValue = class (TGraphQLValue)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     Function Link : TGraphQLNumberValue; overload;
@@ -74,6 +78,8 @@ Type
   TGraphQLNameValue = class (TGraphQLValue)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     Function Link : TGraphQLValue; overload;
@@ -86,6 +92,8 @@ Type
   TGraphQLStringValue = class (TGraphQLValue)
   private
     FValue : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(value : String);
     Function Link : TGraphQLStringValue; overload;
@@ -100,6 +108,8 @@ Type
   TGraphQLObjectValue = class (TGraphQLValue)
   private
     FFields : TFslList<TGraphQLArgument>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(json : TJsonObject); overload;
@@ -117,6 +127,8 @@ Type
     FListStatus: TGraphQLArgumentListStatus;
     procedure write(str : TStringBuilder; indent : integer);
     procedure valuesFromNode(json : TJsonNode);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(name : String; value : TGraphQLValue); overload;
@@ -137,6 +149,8 @@ Type
   private
     FName: String;
     FArguments: TFslList<TGraphQLArgument>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -152,6 +166,8 @@ Type
     FAlias: String;
     FArguments: TFslList<TGraphQLArgument>;
     FDirectives: TFslList<TGraphQLDirective>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -170,6 +186,8 @@ Type
   private
     FName: String;
     FDirectives: TFslList<TGraphQLDirective>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -187,6 +205,8 @@ Type
     procedure SetField(const Value: TGraphQLField);
     procedure SetFragmentSpread(const Value: TGraphQLFragmentSpread);
     procedure SetInlineFragment(const Value: TGraphQLFragment);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -202,6 +222,8 @@ Type
     FDefaultValue: TGraphQLValue;
     FTypeName: String;
     procedure SetDefaultValue(const Value: TGraphQLValue);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     Function Link : TGraphQLVariable; overload;
@@ -218,6 +240,8 @@ Type
     FSelectionSet: TFslList<TGraphQLSelection>;
     FVariables: TFslList<TGraphQLVariable>;
     FDirectives: TFslList<TGraphQLDirective>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -236,6 +260,8 @@ Type
     FTypeCondition: String;
     FSelectionSet: TFslList<TGraphQLSelection>;
     FDirectives: TFslList<TGraphQLDirective>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -251,6 +277,8 @@ Type
   private
     FFragments: TFslList<TGraphQLFragment>;
     FOperations: TFslList<TGraphQLOperation>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -267,6 +295,8 @@ Type
     FOperationName: String;
     FVariables: TFslList<TGraphQLArgument>;
     procedure SetDocument(const Value: TGraphQLDocument);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(document : TGraphQLDocument); overload;
@@ -319,6 +349,8 @@ type
     function parseOperation(name : String) : TGraphQLOperation;
     function parseFragment: TGraphQLFragment;
     procedure parseDocument(doc : TGraphQLDocument);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -441,6 +473,13 @@ Begin
   end;
 end;
 
+function TGraphQLArgument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FValues.sizeInBytes);
+end;
+
 { TGraphQLDirective }
 
 constructor TGraphQLDirective.Create;
@@ -458,6 +497,13 @@ end;
 function TGraphQLDirective.Link: TGraphQLDirective;
 begin
   result := TGraphQLDirective(inherited Link);
+end;
+
+function TGraphQLDirective.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FArguments.sizeInBytes);
 end;
 
 { TGraphQLField }
@@ -513,6 +559,16 @@ begin
   result := TGraphQLField(inherited Link);
 end;
 
+function TGraphQLField.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FSelectionSet.sizeInBytes);
+  inc(result, (FAlias.length * sizeof(char)) + 12);
+  inc(result, FArguments.sizeInBytes);
+  inc(result, FDirectives.sizeInBytes);
+end;
+
 { TGraphQLFragmentSpread }
 
 constructor TGraphQLFragmentSpread.Create;
@@ -540,6 +596,13 @@ end;
 function TGraphQLFragmentSpread.Link: TGraphQLFragmentSpread;
 begin
   result := TGraphQLFragmentSpread(inherited Link);
+end;
+
+function TGraphQLFragmentSpread.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FDirectives.sizeInBytes);
 end;
 
 { TGraphQLSelection }
@@ -580,6 +643,14 @@ begin
   FInlineFragment := Value;
 end;
 
+function TGraphQLSelection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FField.sizeInBytes);
+  inc(result, FInlineFragment.sizeInBytes);
+  inc(result, FFragmentSpread.sizeInBytes);
+end;
+
 { TGraphQLVariable }
 
 destructor TGraphQLVariable.Destroy;
@@ -597,6 +668,14 @@ procedure TGraphQLVariable.SetDefaultValue(const Value: TGraphQLValue);
 begin
   FDefaultValue.Free;
   FDefaultValue := Value;
+end;
+
+function TGraphQLVariable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FDefaultValue.sizeInBytes);
+  inc(result, (FTypeName.length * sizeof(char)) + 12);
 end;
 
 { TGraphQLOperation }
@@ -633,6 +712,15 @@ begin
 end;
 
 
+function TGraphQLOperation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FSelectionSet.sizeInBytes);
+  inc(result, FVariables.sizeInBytes);
+  inc(result, FDirectives.sizeInBytes);
+end;
+
 { TGraphQLFragment }
 
 constructor TGraphQLFragment.Create;
@@ -662,6 +750,15 @@ end;
 function TGraphQLFragment.Link: TGraphQLFragment;
 begin
   result := TGraphQLFragment(inherited Link);
+end;
+
+function TGraphQLFragment.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FTypeCondition.length * sizeof(char)) + 12);
+  inc(result, FSelectionSet.sizeInBytes);
+  inc(result, FDirectives.sizeInBytes);
 end;
 
 { TGraphQLDocument }
@@ -703,6 +800,13 @@ begin
   for o in Operations do
     if o.Name = name then
       exit(o);
+end;
+
+function TGraphQLDocument.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFragments.sizeInBytes);
+  inc(result, FOperations.sizeInBytes);
 end;
 
 { TGraphQLParser }
@@ -837,6 +941,12 @@ begin
     else
       raise EJsonException.Create('Unexpected character "'+ch+'"');
   end;
+end;
+
+function TGraphQLParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPeek.length * sizeof(char)) + 12);
 end;
 
 class function TGraphQLParser.parse(source: String): TGraphQLPackage;
@@ -1321,6 +1431,12 @@ begin
   str.append(FValue);
 end;
 
+function TGraphQLNumberValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+end;
+
 { TGraphQLVariableValue }
 
 constructor TGraphQLVariableValue.Create(value: String);
@@ -1342,6 +1458,12 @@ end;
 procedure TGraphQLVariableValue.write(str : TStringBuilder; indent : integer);
 begin
   raise ELibraryException.create('Cannot write a variable to JSON');
+end;
+
+function TGraphQLVariableValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TGraphQLNameValue }
@@ -1370,6 +1492,12 @@ end;
 procedure TGraphQLNameValue.write(str: TStringBuilder; indent : integer);
 begin
   str.append(FValue);
+end;
+
+function TGraphQLNameValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TGraphQLStringValue }
@@ -1413,6 +1541,12 @@ Begin
       str.Append(value[i]);
     End;
   str.Append('"');
+end;
+
+function TGraphQLStringValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TGraphQLObjectValue }
@@ -1494,6 +1628,12 @@ begin
   str.Append('}');
 end;
 
+function TGraphQLObjectValue.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFields.sizeInBytes);
+end;
+
 { TGraphQLPackage }
 
 constructor TGraphQLPackage.Create;
@@ -1524,6 +1664,14 @@ procedure TGraphQLPackage.SetDocument(const Value: TGraphQLDocument);
 begin
   FDocument.Free;
   FDocument := Value;
+end;
+
+function TGraphQLPackage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, (FOperationName.length * sizeof(char)) + 12);
+  inc(result, FVariables.sizeInBytes);
 end;
 
 end.

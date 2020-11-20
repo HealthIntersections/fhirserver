@@ -76,6 +76,8 @@ type
     FLength: Integer;
     FDataType: TFslDBColumnType;
     FNullable: Boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(name : String); overload;
     function Link : TFslDBColumn; overload;
@@ -91,6 +93,8 @@ type
     FUnique: Boolean;
     FName: String;
     FColumns: TFslList<TFslDBColumn>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -105,6 +109,8 @@ type
     FColumn: String;
     FDestTable : String;
     FDestColumn : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     Property Column : String read FColumn write FColumn;
     Property DestTable : String read FDestTable write FDestTable;
@@ -123,6 +129,8 @@ type
     FDescription: String;
     FOrderMatters : Boolean;
 
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -144,6 +152,8 @@ type
     FTables: TFslList<TFslDBTable>;
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -174,7 +184,7 @@ type
     FBoundItems : TFslMap<TFslDBBoundParam>;
     FUsage : String;
     FUsed : TDateTime;
-    FTables : TStrings;
+    FTables : TStringList;
     FRowCount : integer;
     FPrepareCount : integer;
     FInTransaction : Boolean;
@@ -239,11 +249,15 @@ type
     function SupportsSizingV : Boolean; virtual; abstract;
 
     procedure CheckRelease;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(AOwner: TFslDBManager);
     destructor Destroy; Override;
 
     function link : TFslDBConnection; overload;
+
+    { internal use only  - platform specific initialization }
+    procedure Initialise; virtual;
 
     {
       After setting the SQL content, prepare the statement so Parameter
@@ -665,6 +679,7 @@ type
     function GetDBDetails: String; Virtual; Abstract;
     function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     destructor Destroy; Override;
@@ -706,6 +721,8 @@ type
   private
     FHook : TFslDBManagerEvent;
     FName : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(Name : String; Hook : TFslDBManagerEvent);
   end;
@@ -719,6 +736,8 @@ type
     procedure RemoveConnMan(AConnMan : TFslDBManager);
     function GetConnMan(i : Integer):TFslDBManager;
     function GetConnManByName(s : String):TFslDBManager;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -1069,6 +1088,11 @@ begin
 end;
 
 
+procedure TFslDBConnection.Initialise;
+begin
+  //nothing
+end;
+
 procedure TFslDBConnection.BindDouble(AParamName: String; AParamValue: Double);
 begin
   BindDoubleV(AParamName, AParamValue);
@@ -1271,6 +1295,17 @@ Begin
   result := SupportsSizingV;
 End;
 
+
+function TFslDBConnection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FOwner.sizeInBytes);
+  inc(result, FBoundItems.sizeInBytes);
+  inc(result, (FUsage.length * sizeof(char)) + 12);
+  inc(result, FTables.sizeInBytes);
+  inc(result, (FSQL.length * sizeof(char)) + 12);
+  inc(result, (FTransactionId.length * sizeof(char)) + 12);
+end;
 
 { TFslDBManager }
 
@@ -1672,6 +1707,17 @@ begin
   end;
 end;
 
+function TFslDBManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FConnections.sizeInBytes);
+  inc(result, FAvail.sizeInBytes);
+  inc(result, FInUse.sizeInBytes);
+  inc(result, FDBLogger.sizeInBytes);
+  inc(result, (FLastServerError.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
+
 { TFslDBManagerList }
 
 constructor TFslDBManagerList.create;
@@ -1774,6 +1820,12 @@ begin
       FHooks.Delete(i);
 end;
 
+function TFslDBManagerList.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHooks.sizeInBytes);
+end;
+
 { TFslDBHook }
 
 constructor TFslDBHook.create(Name : String; Hook : TFslDBManagerEvent);
@@ -1781,6 +1833,12 @@ begin
   inherited create;
   FName := name;
   FHook := Hook;
+end;
+
+function TFslDBHook.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
 { TFslDBColumn }
@@ -1839,6 +1897,12 @@ begin
   end;
 end;
 
+function TFslDBColumn.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+end;
+
 { TFslDBIndex }
 
 constructor TFslDBIndex.create;
@@ -1868,10 +1932,25 @@ begin
   Result := Result + 'INDEX ' + FName + ' ON (' + CommaText(FColumns) + ')';
 end;
 
+function TFslDBIndex.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FColumns.sizeInBytes);
+end;
+
 function TFslDBRelationship.Describe : String;
 Begin
   result := FColumn + ' -> '+FDestTable+'.'+FDestColumn;
 End;
+
+function TFslDBRelationship.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FColumn.length * sizeof(char)) + 12);
+  inc(result, (FDestTable.length * sizeof(char)) + 12);
+  inc(result, (FDestColumn.length * sizeof(char)) + 12);
+end;
 
 { TFslDBTable }
 
@@ -1903,6 +1982,17 @@ end;
 function TFslDBTable.Link: TFslDBTable;
 begin
   result := TFslDBTable(inherited link);
+end;
+
+function TFslDBTable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FColumns.sizeInBytes);
+  inc(result, FIndexes.sizeInBytes);
+  inc(result, FRelationships.sizeInBytes);
+  inc(result, (FOwner.length * sizeof(char)) + 12);
+  inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
 { TFslDBMetaData }
@@ -1942,6 +2032,13 @@ begin
       result := true;
 end;
 
+
+function TFslDBMetaData.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTables.sizeInBytes);
+  inc(result, FProcedures.sizeInBytes);
+end;
 
 Function TFslDBManager.ServerErrorStatus : String;
 Begin

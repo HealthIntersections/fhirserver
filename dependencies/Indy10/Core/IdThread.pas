@@ -389,8 +389,6 @@ begin
 end;
 
 procedure TIdThread.Execute;
-var
-  s : AnsiString;
 begin
   // FHIR Server Modification:
   if assigned(fsThreadName) then

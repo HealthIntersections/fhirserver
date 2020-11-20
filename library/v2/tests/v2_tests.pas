@@ -551,6 +551,7 @@ begin
 end;
 
 {$IFDEF WINDOWS}
+
 { THL7v2ParserTests }
 
 function THL7v2ParserTests.parse(msg: String; fmt: THL7V2Format): THL7v2Message;

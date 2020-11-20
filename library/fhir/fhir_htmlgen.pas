@@ -52,6 +52,8 @@ Type
     FLogId: String;
     function Footer(base : String; const lang : THTTPLanguages; logId: String; tail: boolean = true): string;
     function HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; Override;
@@ -570,6 +572,17 @@ end;
 procedure THtmlPublisher.TextInput(name, value, text: String; length: integer);
 begin
   FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
+end;
+
+function THtmlPublisher.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBuilder.sizeInBytes);
+  inc(result, FFactory.sizeInBytes);
+  inc(result, (FBaseURL.length * sizeof(char)) + 12);
+  inc(result, FLang.sizeInBytes);
+  inc(result, (FVersion.length * sizeof(char)) + 12);
+  inc(result, (FLogId.length * sizeof(char)) + 12);
 end;
 
 end.

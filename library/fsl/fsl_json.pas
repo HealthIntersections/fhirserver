@@ -80,6 +80,8 @@ Type
     FArray : TJsonArray;
     cursor : integer;
     function GetCurrent: TJsonNode;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; Override;
     function MoveNext() : boolean;
@@ -103,6 +105,7 @@ Type
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -140,6 +143,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(path : String; value : boolean); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
@@ -154,6 +158,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -168,6 +173,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -204,6 +210,7 @@ Type
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -243,6 +250,8 @@ Type
     FName: String;
     FNode: TJsonNode;
     procedure SetNode(const Value: TJsonNode);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(name : String; node : TJsonNode);
     destructor Destroy; Override;
@@ -259,6 +268,8 @@ Type
     function GetSecondLast: TJsonNode;
 
     function unescape(s : String) : String;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -280,6 +291,7 @@ Type
     function GetSourceLocation: TSourceLocation; virtual; abstract;
 
     Function JSONString(const value : String) : String;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -343,6 +355,7 @@ Type
     procedure DoName(const name : String);
   protected
     procedure doValue(name, value : String); override;
+    function sizeInBytesV : cardinal; override;
   Public
     Function Link: TJsonWriterDirect; overload;
     function canInject : boolean; override;
@@ -369,6 +382,8 @@ Type
     FName : String;
     FValue : String;
     FChildren : TFslList<TCanonicalJsonNode>;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(aType : TCanonicalJsonNodeType);
     destructor Destroy; override;
@@ -384,6 +399,7 @@ Type
     procedure commitArray(node : TCanonicalJsonNode);
   protected
     procedure doValue(name, value : String); override;
+    function sizeInBytesV : cardinal; override;
   public
     Function Link: TJsonWriterCanonical; overload;
     function GetSourceLocation : TSourceLocation; override;
@@ -418,6 +434,8 @@ Type
     Procedure JsonError(sMsg : String);
     Function Path : String;
     function GetValue: String;
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oStream : TFslStream; loose : boolean = false); Overload;
     destructor Destroy; Override;
@@ -447,6 +465,8 @@ Type
     function GetItemNull: boolean;
     procedure readObject(obj : TJsonObject; root : boolean);
     procedure readArray(arr : TJsonArray; root : boolean);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oStream : TStream; loose : boolean); Overload;
     constructor Create(oStream : TFslStream; loose : boolean);  Overload;
@@ -488,6 +508,8 @@ Type
     procedure applyTest(patchOp : TJsonObject; path : String);
 
     class procedure runtest(test : TJsonObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -582,6 +604,8 @@ type
     procedure SettimeZone(Value: string);
     Procedure SetUpdatedAt(Value: TDateTime);
     procedure Setwebsite(Value: string);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     constructor Create(header, payload : TJsonObject); overload;
@@ -808,6 +832,12 @@ begin
     doValue(name, inttostr(avalue));
 end;
 
+
+function TJSONWriter.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FBuilder.sizeInBytes);
+end;
 
 class procedure TJSONWriter.writeObject(stream: TFslStream; obj: TJsonObject; pretty : boolean = false);
 var
@@ -1217,6 +1247,13 @@ begin
   FCache := '';
 end;
 
+function TJsonWriterDirect.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FCache.length * sizeof(char)) + 12);
+end;
+
 { TJSONLexer }
 
 procedure TJSONLexer.Start;
@@ -1425,6 +1462,13 @@ begin
   end;
 end;
 
+function TJSONLexer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FPeek.length * sizeof(char)) + 12);
+  inc(result, FStates.sizeInBytes);
+end;
+
 { TJSONParser }
 
 constructor TJSONParser.Create(oStream: TStream; loose : boolean);
@@ -1535,6 +1579,14 @@ begin
   else
     FLex.JsonError('error (a): '+Codes_TJsonParserItemType[ItemType]);
   End;
+end;
+
+function TJSONParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLex.sizeInBytes);
+  inc(result, (FItemName.length * sizeof(char)) + 12);
+  inc(result, (FItemValue.length * sizeof(char)) + 12);
 end;
 
 class function TJSONParser.Parse(stream: TFslStream; timeToAbort : cardinal = 0; loose : boolean = false): TJsonObject;
@@ -2151,6 +2203,12 @@ begin
   FItems[i] := TJsonString.Create(Path+'['+inttostr(i)+']', Value);
 end;
 
+function TJsonArray.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FItems.sizeInBytes);
+end;
+
 { TJsonString }
 
 constructor TJsonString.Create(path, value: string);
@@ -2190,6 +2248,12 @@ begin
   result := 'string';
 end;
 
+function TJsonString.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
+end;
+
 { TJsonNumber }
 
 constructor TJsonNumber.Create(path, value: string);
@@ -2227,6 +2291,12 @@ end;
 function TJsonNumber.nodeType: String;
 begin
   result := 'number';
+end;
+
+function TJsonNumber.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { TJsonObject }
@@ -2553,6 +2623,13 @@ begin
   end;
 end;
 
+function TJsonObject.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FProperties.sizeInBytes);
+end;
+
 { TJsonBoolean }
 
 constructor TJsonBoolean.Create(path: String; value: boolean);
@@ -2617,6 +2694,11 @@ begin
     result := def;
 end;
 
+function TJsonBoolean.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+end;
+
 { TJsonArrayEnumerator }
 
 function TJsonArrayEnumerator.GetCurrent: TJsonNode;
@@ -2637,7 +2719,20 @@ begin
 end;
 
 
+function TJsonArrayEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FArray.sizeInBytes);
+end;
+
 { TJsonPatchEngine }
+
+function TJsonPatchEngine.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FPatch.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+end;
 
 class function TJsonPatchEngine.applyPatch(target: TJsonObject; patch: TJsonArray) : TJsonObject;
 var
@@ -2939,6 +3034,13 @@ begin
   FNode := Value;
 end;
 
+function TJsonPointerMatch.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FNode.sizeInBytes);
+end;
+
 { TJsonNull }
 
 function TJsonNull.compare(other: TJsonNode): boolean;
@@ -3038,6 +3140,12 @@ end;
 function TJsonPointerQuery.unescape(s: String): String;
 begin
   result := s.Replace('~1', '/').Replace('~0', '~');
+end;
+
+function TJsonPointerQuery.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMatches.sizeInBytes);
 end;
 
 { TJsonWriterCanonical }
@@ -3226,6 +3334,13 @@ begin
   end;
 end;
 
+function TJsonWriterCanonical.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FObject.sizeInBytes);
+  inc(result, FStack.sizeInBytes);
+end;
+
 { TCanonicalJsonNode }
 
 constructor TCanonicalJsonNode.Create(aType : TCanonicalJsonNodeType);
@@ -3246,6 +3361,14 @@ begin
   result := TCanonicalJsonNode(inherited Link);
 end;
 
+
+function TCanonicalJsonNode.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FValue.length * sizeof(char)) + 12);
+  inc(result, FChildren.sizeInBytes);
+end;
 
 { TJWT }
 
@@ -3622,6 +3745,14 @@ end;
 procedure TJWT.SetaddressCountry(value : string);
 begin
   payload.forceObj['address']['country'] := value;
+end;
+
+function TJWT.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FHeader.sizeInBytes);
+  inc(result, FPayLoad.sizeInBytes);
+  inc(result, (FOriginalSource.length * sizeof(char)) + 12);
 end;
 
 End.

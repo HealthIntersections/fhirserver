@@ -128,6 +128,8 @@ Type
     FProperties : Tv3PropertyDefinitionList;
     FCursor : Integer;
     Function GetCurrent : Tv3PropertyDefinition;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(oFocus : Tv3Base; bInheritedProperties : Boolean);
     destructor Destroy; Override;
@@ -178,6 +180,7 @@ Type
     Function RIMClassNameV: String; Virtual;
     Function CDAClassNameV: String; Virtual;
     Function CDAClassTypeV: TCDAClassType; Virtual;
+    function sizeInBytesV : cardinal; override;
   public
 
     sourcelocation : TSourceLocation;
@@ -331,6 +334,7 @@ Type
     Function RIMClassNameV: String; Override;
     Function CDAClassNameV: String; Override;
     Function CDAClassTypeV : TCDAClassType; Override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -520,6 +524,13 @@ begin
   FCursor := 0;
 end;
 
+function Tv3DataTypePropertyIterator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FProperties.sizeInBytes);
+end;
+
 { Tv3Base }
 
 function Tv3Base.createIterator(bInheritedProperties : Boolean): Tv3DataTypePropertyIterator;
@@ -663,6 +674,17 @@ begin
   if FExtensions = nil Then
     FExtensions := Tv3ExtensionList.Create(self);
   Result := FExtensions;
+end;
+
+function Tv3Base.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, Fcomments.sizeInBytes);
+  inc(result, FElement.sizeInBytes);
+  inc(result, (FPath.length * sizeof(char)) + 12);
+  inc(result, FExtensions.sizeInBytes);
+  inc(result, FTag.sizeInBytes);
+  inc(result, (FTagId.length * sizeof(char)) + 12);
 end;
 
 { Tv3PropertyDefinition }
@@ -905,6 +927,21 @@ begin
 end;
 
 (*
+function Tv3PropertyDefinition.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, FOwner.sizeInBytes);
+  inc(result, FValueType.sizeInBytes);
+  inc(result, FCollectionState.sizeInBytes);
+  inc(result, FPossibles.sizeInBytes);
+  inc(result, (FClassName.length * sizeof(char)) + 12);
+  inc(result, FValueBase.sizeInBytes);
+  inc(result, FValueCollection.sizeInBytes);
+  inc(result, FValueString.sizeInBytes);
+  inc(result, FValueStrings.sizeInBytes);
+end;
+
 function Tv3Base.CheckType(aValue: Tv3BaseCollection; aType: Tv3BaseCollectionType): Tv3BaseCollection;
 begin
   if Not (aValue is aType) then
@@ -1283,6 +1320,14 @@ end;
 procedure Tv3Extension.SetPropertyValue(const aValue: Tv3PropertyDefinition);
 begin
   inherited;
+end;
+
+function Tv3Extension.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FNamespace.length * sizeof(char)) + 12);
+  inc(result, (FName.length * sizeof(char)) + 12);
+  inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
 { Tv3ExtensionList }

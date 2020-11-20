@@ -78,7 +78,7 @@ uses
   FHIR.Transformer.IDE in 'FHIR.Transformer.IDE.pas' {TransformerForm},
   FHIR.Transformer.Utilities in 'FHIR.Transformer.Utilities.pas',
   FHIR.Transformer.Workspace in 'FHIR.Transformer.Workspace.pas',
-  fhir_ucum in '..\library\ucum\fhir_ucum.pas',
+  fsl_ucum in '..\library\ucum\fsl_ucum.pas',
   fsl_gdiplus in '..\library\ui\fsl_gdiplus.pas',
   FHIR.Ui.ListSelector in '..\library\ui\FHIR.Ui.ListSelector.pas' {ListSelectorForm},
   fsl_fetcher in '..\library\web\fsl_fetcher.pas',

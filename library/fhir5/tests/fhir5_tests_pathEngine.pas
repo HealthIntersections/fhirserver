@@ -64,6 +64,8 @@ Type
 
     [FHIRPathTestCase]
     procedure FHIRPathTest(Name : String);
+  protected
+    function sizeInBytesV : cardinal; override;
   End;
 
 implementation
@@ -302,4 +304,12 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRPathTests);
 finalization
   gTests.Free;
+function TFHIRPathTests.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, engine.sizeInBytes);
+  inc(result, resources.sizeInBytes);
+  inc(result, ucum.sizeInBytes);
+end;
+
 end.

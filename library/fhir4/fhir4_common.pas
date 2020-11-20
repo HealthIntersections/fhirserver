@@ -632,6 +632,7 @@ type
     function m : TFhirMeta;
   protected
     function NoElementOk : boolean; override;
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
@@ -3592,6 +3593,12 @@ begin
       result.Add(TFHIRCoding4.create(i.Link));
 end;
 
+
+function TFHIRMeta4.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FResource.sizeInBytes);
+end;
 
 { TFHIRAuditEvent4 }
 

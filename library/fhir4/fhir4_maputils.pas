@@ -52,6 +52,8 @@ type
     Fname: String;
     Fmode: TVariableMode;
     Fobj: TFHIRObject;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -70,6 +72,8 @@ type
     function GetSummary: string;
     function GetCount: Integer;
     function GetVariable(index: integer): TVariable;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -100,6 +104,8 @@ type
   private
     FMap: TFhirStructureMap;
     FGroup: TFhirStructureMapGroup;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(map : TFhirStructureMap; group : TFhirStructureMapGroup);
     destructor Destroy; override;
@@ -124,6 +130,8 @@ type
     function GetFocus: TFHIRObject;
     function GetName: String;
     function GetLine: integer;
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor create(parent : TFHIRStructureMapDebugContext; appInfo : TFslObject;
        map : TFHIRStructureMap; group : TFhirStructureMapGroup; rule: TFhirStructureMapGroupRule; target : TFhirStructureMapGroupRuleTarget;
@@ -211,6 +219,8 @@ type
     function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
     function checkisSimple(rule: TFhirStructureMapGroupRule): boolean;
     procedure SetServices(const Value: TTransformerServices);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices; factory : TFHIRFactoryR4);
     destructor Destroy; override;
@@ -753,12 +763,25 @@ type
     FMode: TPrefixMode;
     FAbbrev: String;
     FUrl: String;
+  protected
+    function sizeInBytesV : cardinal; override;
    public
      constructor create(mode : TPrefixMode; abbrev, url : String);
      property mode : TPrefixMode read FMode write FMode;
      property abbrev : String read FAbbrev write FAbbrev;
      property url : String read FUrl write FUrl;
    end;
+
+function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FWorker.sizeInBytes);
+  inc(result, fpp.sizeInBytes);
+  inc(result, fpe.sizeInBytes);
+  inc(result, FLib.sizeInBytes);
+  inc(result, FServices.sizeInBytes);
+  inc(result, FFactory.sizeInBytes);
+end;
 
 { TPrefixInformation }
 
@@ -777,6 +800,13 @@ begin
     result := ''
   else
     result := inttostr(i);
+end;
+
+function TPrefixInformation.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FAbbrev.length * sizeof(char)) + 12);
+  inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
@@ -961,7 +991,7 @@ begin
     lexer.SourceName := sourceName;
     if (lexer.done()) then
       raise EFHIRException.create('Map Input cannot be empty');
-    lexer.skipComments();
+    lexer.skipWhitespaceAndComments();
     lexer.token('map');
     result := TFHIRStructureMap.Create;
     try
@@ -970,7 +1000,7 @@ begin
       result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
       result.Name := lexer.readConstant('name');
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       result.status := PublicationStatusDraft;
 
       while (lexer.hasToken('conceptmap')) do
@@ -1017,7 +1047,7 @@ begin
     raise lexer.error('Concept Map identifier ('+id+') must not start with #');
   map.Id := id;
   lexer.token('{');
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   //    lexer.token('source');
   //    map.Source := new UriType(lexer.readConstant('source')));
   //    lexer.token('target');
@@ -1175,7 +1205,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     st.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseImports(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -1185,7 +1215,7 @@ begin
   lexer.skiptoken(';');
   if (lexer.hasComment()) then
     lexer.next();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
 end;
 
 procedure TFHIRStructureMapUtilities.parseGroup(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -1260,7 +1290,7 @@ begin
     end;
     lexer.token('{');
   end;
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   if (newFmt) then
   begin
     while (not lexer.hasToken('}')) do
@@ -1284,7 +1314,7 @@ begin
   lexer.next();
   if (newFmt and lexer.hasToken(';')) then
     lexer.next();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   group.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
@@ -1310,7 +1340,7 @@ begin
     if (lexer.hasComment()) then
       input.Documentation := lexer.take().substring(2).trim();
     lexer.skipToken(';');
-    lexer.skipComments();
+    lexer.skipWhitespaceAndComments();
   end;
 end;
 
@@ -1358,7 +1388,7 @@ begin
       lexer.token('{');
       if (lexer.hasComment()) then
         rule.Documentation := lexer.take().substring(2).trim();
-      lexer.skipComments();
+      lexer.skipWhitespaceAndComments();
       while (not lexer.hasToken('}')) do
       begin
         if (lexer.done()) then
@@ -1412,7 +1442,7 @@ begin
   end;
   if (lexer.hasComment()) then
     rule.Documentation := lexer.take().substring(2).trim();
-  lexer.skipComments();
+  lexer.skipWhitespaceAndComments();
   rule.LocationData.ParseFinish := lexer.CurrentLocation;
 end;
 
@@ -2647,6 +2677,13 @@ begin
     result := CODES_TVariableMode[Fmode]+': ' +result;
 end;
 
+function TVariable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (Fname.length * sizeof(char)) + 12);
+  inc(result, Fobj.sizeInBytes);
+end;
+
 { TVariables }
 
 constructor TVariables.create;
@@ -2739,6 +2776,12 @@ begin
   result := TVariables(inherited Link);
 end;
 
+function TVariables.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FList.sizeInBytes);
+end;
+
 { TTransformerServices }
 
 function TTransformerServices.link: TTransformerServices;
@@ -2760,6 +2803,13 @@ begin
   FMap.Free;
   FGroup.Free;
   inherited;
+end;
+
+function TResolvedGroup.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FMap.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
 end;
 
 { TFHIRStructureMapDebugContext }
@@ -2845,6 +2895,18 @@ end;
 function TFHIRStructureMapDebugContext.link: TFHIRStructureMapDebugContext;
 begin
   result := TFHIRStructureMapDebugContext(inherited link);
+end;
+
+function TFHIRStructureMapDebugContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FRule.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FAppInfo.sizeInBytes);
+  inc(result, FTarget.sizeInBytes);
+  inc(result, FVariables.sizeInBytes);
+  inc(result, FGroup.sizeInBytes);
+  inc(result, map.sizeInBytes);
 end;
 
 end.

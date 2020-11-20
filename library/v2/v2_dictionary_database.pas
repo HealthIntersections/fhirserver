@@ -1,4 +1,4 @@
-unit v2_dictionary_Database;
+unit v2_dictionary_database;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -168,6 +168,7 @@ type
     function GetConnection(usage: String): TFslDBConnection; Override;
     procedure YieldConnection(stmt: TFslDBConnection); Override;
     function NamePrefix: String; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; overload; override;
     constructor Create(sHL7Dict: String); overload;
@@ -1377,8 +1378,10 @@ begin
   FStmt.prepare;
   try
     FStmt.Execute;
-    assert(FStmt.FetchNext, 'DBVersion is empty');
-    FDBVersion := FStmt.ColStringByName['db_name'];
+    if FStmt.FetchNext then
+      FDBVersion := FStmt.ColStringByName['db_name']
+    else
+      RaiseError('LookupDBVersion', 'DBVersion is empty');
   finally
     FStmt.Terminate;
   end;
@@ -1429,6 +1432,13 @@ begin
     end;
   if assigned(FManager) then
     FManager.Free;
+end;
+
+function THL7V2AccessDictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FManager.sizeInBytes);
+  inc(result, FStmt.sizeInBytes);
 end;
 
 end.

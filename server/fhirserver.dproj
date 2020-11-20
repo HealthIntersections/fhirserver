@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FHIRServer.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Test</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -191,6 +191,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64\</DCC_ExeOutput>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -369,7 +370,7 @@
         <DCCReference Include="..\library\ftx\ftx_ucum_base.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_expressions.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_handlers.pas"/>
-        <DCCReference Include="..\library\fhir\fhir_ucum.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_ucum.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_search.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_services.pas"/>
         <DCCReference Include="..\library\ftx\ftx_ucum_validators.pas"/>
@@ -555,7 +556,7 @@
         <DCCReference Include="..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\CommonTestBase.pas"/>
-        <DCCReference Include="tests\FHIR.Tx.IETFLang.Tests.pas"/>
+        <DCCReference Include="..\library\ftx\tests\ftx_lang_tests.pas"/>
         <DCCReference Include="..\library\ftx\tests\ftx_ucum_tests.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Objects.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Dictionary.pas"/>
@@ -615,6 +616,10 @@
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_Client.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_Liquid.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_PathEngine.pas"/>
+        <DCCReference Include="..\library\fxver\tests\fxver_tests.pas"/>
+        <DCCReference Include="..\library\fsl\tests\fsl_tests_iduri.pas"/>
+        <DCCReference Include="tests\tests_search_syntax.pas"/>
+        <DCCReference Include="..\library\fhir4\tests\fhir4_tests_graphql.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

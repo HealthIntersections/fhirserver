@@ -54,6 +54,8 @@ type
     procedure header(html : THtmlPublisher);
     procedure footer(html : THtmlPublisher);
     procedure generate(html : THtmlPublisher);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -179,6 +181,13 @@ procedure TQuestionnaireRenderer.SetTerminologyServer(const Value: TFHIRClient);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
+end;
+
+function TQuestionnaireRenderer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FTerminologyServer.sizeInBytes);
+  inc(result, FQuestionnaire.sizeInBytes);
 end;
 
 end.

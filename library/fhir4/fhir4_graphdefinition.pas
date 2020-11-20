@@ -61,6 +61,8 @@ type
     procedure writeLinklist(b : TStringBuilder; list : TFhirGraphDefinitionLinkList; indent : integer);
     procedure writeHeader(b : TStringBuilder; definition : TFhirGraphDefinition);
     procedure writeDefinition(b : TStringBuilder; definition : TFhirGraphDefinition);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -97,6 +99,8 @@ type
     procedure parseParams(params : TFslList<TGraphQLArgument>; value : String; res : TFHIRResource);
 
     procedure SetAppInfo(const Value: TFslObject);
+  protected
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextWithFactory); virtual;
     destructor Destroy; override;
@@ -474,6 +478,12 @@ begin
 end;
 
 
+function TFHIRGraphDefinitionParser4.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FLexer.sizeInBytes);
+end;
+
 { TFHIRGraphDefinitionEngine4 }
 
 constructor TFHIRGraphDefinitionEngine4.Create(context : TFHIRWorkerContextWithFactory);
@@ -696,6 +706,18 @@ begin
   finally
     list.Free;
   end;
+end;
+
+function TFHIRGraphDefinitionEngine4.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FContext.sizeInBytes);
+  inc(result, FPathEngine.sizeInBytes);
+  inc(result, FBundle.sizeInBytes);
+  inc(result, FStart.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes);
+  inc(result, (FBaseUrl.length * sizeof(char)) + 12);
+  inc(result, FAppinfo.sizeInBytes);
 end;
 
 end.

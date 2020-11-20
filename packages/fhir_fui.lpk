@@ -10,7 +10,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fui"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>
@@ -41,10 +41,10 @@
     </Files>
     <RequiredPkgs>
       <Item>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="fhir"/>
       </Item>
       <Item>
-        <PackageName Value="fhir_v2"/>
+        <PackageName Value="SynEdit"/>
       </Item>
       <Item>
         <PackageName Value="FCL"/>

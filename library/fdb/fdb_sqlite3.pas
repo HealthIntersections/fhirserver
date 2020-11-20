@@ -87,6 +87,7 @@ type
     function DatabaseSizeV : int64; Override;
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(AOwner : TFslDBManager; Filename : String; autoCreate : boolean);
     destructor Destroy; override;
@@ -103,6 +104,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
+    function sizeInBytesV : cardinal; override;
   public
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
@@ -157,6 +159,12 @@ begin
   if not FAutoCreate then
     if not FileExists(FFIlename) then
       raise EDBException.create('SQLite Database '+FFIlename+' not found');
+end;
+
+function TFslDBSQLiteManager.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 
 class function TFslDBSQLiteManager.IsSupportAvailable(APlatform: TFslDBPlatform; var VMsg: String): Boolean;
@@ -470,6 +478,12 @@ procedure TFslDBSQLiteConnection.TerminateV;
 begin
   FreeAndNil(FStatement);
   FreeAndNil(FColNames);
+end;
+
+function TFslDBSQLiteConnection.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytes;
+  inc(result, FColNames.sizeInBytes);
 end;
 
 end.
