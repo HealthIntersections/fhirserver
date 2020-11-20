@@ -41,7 +41,7 @@ uses
   {$ENDIF}
   Classes, SysUtils,
   Interfaces,
-  kernel;
+  kernel, tests_search_syntax;
 
 {$R *.res}
 

@@ -1,4 +1,4 @@
-unit fsl_tests_lang;
+unit ftx_tests_lang;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,7 +36,7 @@ uses
   Sysutils, Classes,
   fsl_testing,
   fsl_stream,
-  fsl_lang;
+  ftx_lang;
 
 
 type

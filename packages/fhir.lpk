@@ -300,7 +300,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_database.pas"/>
-        <UnitName Value="v2_dictionary_Database"/>
+        <UnitName Value="v2_dictionary_database"/>
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_v21.pas"/>
@@ -377,6 +377,10 @@
       <Item>
         <Filename Value="..\library\dicom\dicom_writer.pas"/>
         <UnitName Value="dicom_Writer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\ftx\ftx_lang.pas"/>
+        <UnitName Value="ftx_lang"/>
       </Item>
     </Files>
     <RequiredPkgs>

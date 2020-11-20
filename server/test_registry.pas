@@ -48,8 +48,9 @@ uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
-  fsl_tests, fsl_tests_web, fdb_tests, ftx_ucum_tests, fsl_tests_lang, ftx_sct_tests, v2_tests, cda_tests, fsl_tests_scrypt,
-  fsl_tests_npm, fsl_tests_iduri,
+  fsl_tests, fsl_tests_web, fsl_tests_scrypt, fsl_tests_npm, fsl_tests_iduri,
+  v2_tests, cda_tests, fdb_tests,
+  ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
   {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_pathengine, fhir4_tests_graphql,
   fxver_tests,
@@ -135,10 +136,10 @@ begin
   fsl_tests_scrypt.registerTests;
   fsl_tests_web.registerTests;
   cda_tests.registerTests;
-  fsl_tests_lang.registerTests;
+  ftx_tests_lang.registerTests;
   fdb_tests.registerTests;
-  ftx_ucum_tests.registerTests;
-  ftx_sct_tests.registerTests;
+  ftx_tests_ucum.registerTests;
+  ftx_tests_sct.registerTests;
   v2_tests.registerTests;
   {$IFNDEF NO_JS}
   fhir_tests_javascript.registerTests;

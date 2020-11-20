@@ -1,4 +1,4 @@
-unit ftx_ucum_tests;
+unit ftx_tests_ucum;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

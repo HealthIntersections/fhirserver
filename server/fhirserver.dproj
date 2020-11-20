@@ -356,7 +356,7 @@
         <DCCReference Include="tx_acir.pas"/>
         <DCCReference Include="tx_countrycode.pas"/>
         <DCCReference Include="tx_iso_4217.pas"/>
-        <DCCReference Include="tx_lang.pas"/>
+        <DCCReference Include="..\library\ftx\ftx_lang.pas"/>
         <DCCReference Include="tx_manager.pas"/>
         <DCCReference Include="tx_mimetypes.pas"/>
         <DCCReference Include="tx_operations.pas"/>
@@ -556,14 +556,14 @@
         <DCCReference Include="..\..\markdown\tests\MarkdownCommonMarkTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\MarkdownDaringFireballTests.pas"/>
         <DCCReference Include="..\..\markdown\tests\CommonTestBase.pas"/>
-        <DCCReference Include="..\library\ftx\tests\ftx_lang_tests.pas"/>
-        <DCCReference Include="..\library\ftx\tests\ftx_ucum_tests.pas"/>
+        <DCCReference Include="..\library\ftx\tests\ftx_tests_lang.pas"/>
+        <DCCReference Include="..\library\ftx\tests\ftx_tests_ucum.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Objects.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Dictionary.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Writer.pas"/>
         <DCCReference Include="..\library\dicom\dicom_Parser.pas"/>
         <DCCReference Include="..\library\dicom\dicom_JpegLS.pas"/>
-        <DCCReference Include="..\library\ftx\tests\ftx_sct_tests.pas"/>
+        <DCCReference Include="..\library\ftx\tests\ftx_tests_sct.pas"/>
         <DCCReference Include="..\library\v2\tests\v2_tests.pas"/>
         <DCCReference Include="..\library\v2\v2_base.pas"/>
         <DCCReference Include="..\library\v2\v2_dictionary.pas"/>

@@ -1,4 +1,4 @@
-unit ftx_sct_tests;
+unit ftx_tests_sct;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
