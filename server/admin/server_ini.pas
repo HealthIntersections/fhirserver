@@ -37,16 +37,27 @@ uses
   fsl_base, fsl_utilities;
 
 type
+
+  { TFHIRServerIniComplex }
+
   TFHIRServerIniComplex = class (TFslObject)
   private
     FDetails : TFslStringDictionary;
+    FName : String;
     function getValue(name: String): String;
     procedure SetValue(name: String; const Value: String);
     function save : String;
   public
-    constructor Create(value : String);
+    constructor Create; override;
+    constructor Create(name, value : String);
     destructor Destroy; override;
+    function link : TFHIRServerIniComplex;
+    function clone : TFHIRServerIniComplex;
+
+    procedure assign(source : TFslObject); override;
+
     property value[name : String] : String read getValue write SetValue; default;
+    property name : String read FName write FName;
   end;
 
   TFHIRServerIniFile = class (TFslObject)
@@ -170,11 +181,11 @@ begin
   try
     FIni.ReadSection(name, ts);
     for s in ts do
-      map.Add(s, TFHIRServerIniComplex.create(FIni.ReadString(name, s, '')));
+      map.Add(s, TFHIRServerIniComplex.create(s, FIni.ReadString(name, s, '')));
   finally
     ts.free;
   end;
-  map.defaultValue := TFHIRServerIniComplex.create('');
+  map.defaultValue := TFHIRServerIniComplex.create('', '');
 end;
 
 procedure TFHIRServerIniFile.save;
@@ -242,13 +253,19 @@ end;
 
 { TFHIRServerIniComplex }
 
-constructor TFHIRServerIniComplex.create(value: String);
+constructor TFHIRServerIniComplex.Create;
+begin
+  inherited Create;
+  FDetails := TFslStringDictionary.Create;
+end;
+
+constructor TFHIRServerIniComplex.Create(name, value: String);
 var
   sl : TArray<String>;
   s, l, r : String;
 begin
-  inherited Create;
-  FDetails := TFslStringDictionary.Create;
+  Create;
+  FName := name;
   sl := value.Split([';']);
   for s in sl do
   begin
@@ -259,12 +276,30 @@ begin
       r := r.Substring(1, r.Length-2);
     FDetails.Add(l, r);
   end;
+  FDetails.AddorSetValue('id', FName);
 end;
 
 destructor TFHIRServerIniComplex.Destroy;
 begin
   FDetails.Free;
   inherited;
+end;
+
+function TFHIRServerIniComplex.link: TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex(inherited link);
+end;
+
+function TFHIRServerIniComplex.clone: TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex(inherited clone);
+end;
+
+procedure TFHIRServerIniComplex.assign(source: TFslObject);
+begin
+  inherited;
+  FName := (source as TFHIRServerIniComplex).FName;
+  FDetails.assign((source as TFHIRServerIniComplex).FDetails);
 end;
 
 function TFHIRServerIniComplex.getValue(name: String): String;
@@ -281,7 +316,7 @@ begin
   for s in FDetails.Keys do
   begin
     v := FDetails[s];
-    if v <> '' then
+    if (v <> '') and (v <> 'id') and not v.startsWith('#') then
     begin
       if v.Contains(' ') then
         result := result + '; '+s+': "'+v+'"'
@@ -292,7 +327,6 @@ begin
   if result.Length > 0 then
     result := result.Substring(1);
 end;
-
 procedure TFHIRServerIniComplex.SetValue(name: String; const Value: String);
 begin
   FDetails.AddOrSetValue(name, value);

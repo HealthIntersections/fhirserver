@@ -40,7 +40,10 @@ uses
   IdTelnet, IdGlobal,
   fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging,
   fdb_manager, fdb_odbc, fdb_dialects,
-  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm;
+  ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
+  fui_lcl_managers,
+  server_ini,
+  console_managers;
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
@@ -84,9 +87,19 @@ type
     function report : String;
   end;
 
+
   { TMainConsoleForm }
 
   TMainConsoleForm = class(TForm)
+    BitBtn1: TBitBtn;
+    btnDBAdd: TBitBtn;
+    btnIDAdd: TBitBtn;
+    btnIDDelete: TBitBtn;
+    btnTxAdd: TBitBtn;
+    btnDBDelete: TBitBtn;
+    btnEPAdd: TBitBtn;
+    btnTxDelete: TBitBtn;
+    btnDBTest: TBitBtn;
     btnAddEdition: TSpeedButton;
     btnBase: TSpeedButton;
     btnCombinedDestination: TSpeedButton;
@@ -107,27 +120,44 @@ type
     btnSnomedImportStop: TBitBtn;
     btnSource: TSpeedButton;
     btnStopCombine: TBitBtn;
+    btnEPDelete: TBitBtn;
+    btnEPInstall: TBitBtn;
     btnUMLSStop: TBitBtn;
     btnFetchThreads: TButton;
     btnClearCache: TButton;
     cbUMLSDriver: TComboBox;
     cbUMLSType: TComboBox;
     cbxEdition: TComboBox;
+    chkWebMode: TCheckBox;
+    edtCACert: TEdit;
+    edtConfigFile: TEdit;
     edtBase: TEdit;
     edtCombinedDestination: TEdit;
     edtCombinedStore: TEdit;
     edtDate: TDateTimePicker;
     edtDestination: TEdit;
+    edtAdmitUsername: TEdit;
+    edtAdminSCIMSalt: TEdit;
     edtInternational: TEdit;
     edtLoincDate: TEdit;
     edtLoincDest: TEdit;
     edtLoincSource: TEdit;
     edtLoincVersion: TEdit;
+    edtPrivateKey: TEdit;
     edtSource: TEdit;
+    edtSSLCert: TEdit;
+    edtSSLPassword: TEdit;
+    edtSSLPort: TEdit;
+    edtHostName: TEdit;
+    edtWebPort: TEdit;
+    edtGoogleId: TEdit;
     edtUMLSDatabase: TEdit;
     edtUMLSPassword: TEdit;
     edtUMLSServer: TEdit;
     edtUMLSUsername: TEdit;
+    edtAdminEmail: TEdit;
+    edtAdminOrganization: TEdit;
+    edtAdminSMS: TEdit;
     FileNewAction: TAction;
     ActionList1: TActionList;
     EditCopy1: TEditCopy;
@@ -140,6 +170,11 @@ type
     FileExit1: TFileExit;
     FileOpenAction: TFileOpen;
     FileSaveAs1: TFileSaveAs;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
+    GroupBox4: TGroupBox;
+    GroupBox6: TGroupBox;
     HelpContents1: THelpContents;
     Image2: TImage;
     Image3: TImage;
@@ -166,8 +201,23 @@ type
     Label25: TLabel;
     Label26: TLabel;
     Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
     Label3: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label35: TLabel;
+    Label36: TLabel;
+    Label37: TLabel;
+    Label38: TLabel;
+    Label39: TLabel;
     Label4: TLabel;
+    Label40: TLabel;
+    Label41: TLabel;
+    lblSomething: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
@@ -182,6 +232,10 @@ type
     lblSCTAmount: TLabel;
     lblUMLSAction: TLabel;
     lblUMLSAmount: TLabel;
+    lvID: TListView;
+    lvDB: TListView;
+    lvTx: TListView;
+    lvEP: TListView;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
     MenuItem10: TMenuItem;
@@ -203,8 +257,19 @@ type
     N4: TMenuItem;
     N8: TMenuItem;
     dlgOpen: TOpenDialog;
+    dlgConfig: TOpenDialog;
     PageControl1: TPageControl;
+    PageControl2: TPageControl;
+    Panel1: TPanel;
     Panel29: TPanel;
+    Panel30: TPanel;
+    Panel31: TPanel;
+    Panel32: TPanel;
+    Panel33: TPanel;
+    Panel34: TPanel;
+    Panel35: TPanel;
+    Panel36: TPanel;
+    Panel37: TPanel;
     pgTerminologies: TPageControl;
     Panel10: TPanel;
     Panel11: TPanel;
@@ -244,9 +309,17 @@ type
     dlgFolder: TSelectDirectoryDialog;
     dlgSave: TSaveDialog;
     sBar: TStatusBar;
+    btnCert: TSpeedButton;
+    btnCACert: TSpeedButton;
+    btnCertKey: TSpeedButton;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
+    tbWebSettings: TTabSheet;
+    tbUserAdmin: TTabSheet;
+    tbEndPoints: TTabSheet;
+    tbTermload: TTabSheet;
+    tbDatabases: TTabSheet;
     tbConsole: TTabSheet;
     tbStatistics: TTabSheet;
     tbManage: TTabSheet;
@@ -260,8 +333,12 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
+    procedure BitBtn1Click(Sender: TObject);
     procedure btnAddEditionClick(Sender: TObject);
     procedure btnBaseClick(Sender: TObject);
+    procedure btnCACertClick(Sender: TObject);
+    procedure btnCertClick(Sender: TObject);
+    procedure btnCertKeyClick(Sender: TObject);
     procedure btnClearCacheClick(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
@@ -285,7 +362,22 @@ type
     procedure btnFetchThreadsClick(Sender: TObject);
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
+    procedure chkWebModeChange(Sender: TObject);
+    procedure edtAdminEmailChange(Sender: TObject);
+    procedure edtAdminOrganizationChange(Sender: TObject);
+    procedure edtAdminSCIMSaltChange(Sender: TObject);
+    procedure edtAdminSMSChange(Sender: TObject);
+    procedure edtAdmitUsernameChange(Sender: TObject);
+    procedure edtCACertChange(Sender: TObject);
+    procedure edtConfigFileChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
+    procedure edtGoogleIdChange(Sender: TObject);
+    procedure edtHostNameChange(Sender: TObject);
+    procedure edtPrivateKeyChange(Sender: TObject);
+    procedure edtSSLCertChange(Sender: TObject);
+    procedure edtSSLPasswordChange(Sender: TObject);
+    procedure edtSSLPortChange(Sender: TObject);
+    procedure edtWebPortChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -321,8 +413,15 @@ type
     FPassword : String;
     FFilter : String;
     FIni : TIniFile;
+    FConfig : TFHIRServerIniFile;
     FWantStop : boolean;
     FRunning : boolean;
+    FLoading : boolean;
+
+    FDBManager : TDBManager;
+    FTxManager : TTxManager;
+    FEPManager : TEndPointManager;
+    FIDManager : TIdentityProviderManager;
     procedure recordSessionLength(start, length : int64);
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
     procedure DoConnected(Sender: TObject);
@@ -339,6 +438,8 @@ type
     function getSnomedModule: String;
     procedure connectToServer(server : String);
     procedure GetODBCDriversList(list : TStrings);
+    procedure SetConfigEditable;
+    procedure SetConfigReadonly;
   public
 
   end;
@@ -484,6 +585,31 @@ begin
   FLock := TFslLock.create('incoming');
   FThread := TConnectingThread.create;
   FThread.Open;
+
+  FDBManager := TDBManager.create;
+  FDBManager.List := lvDB;
+  FDBManager.registerControl(btnDBAdd, copAdd);
+  FDBManager.registerControl(btnDBDelete, copDelete);
+  FDBManager.registerControl(btnDBTest, copExecute);
+
+  FTxManager := TTxManager.create;
+  FTxManager.List := lvTx;
+  FTxManager.registerControl(btnTxAdd, copAdd);
+  FTxManager.registerControl(btnTxDelete, copDelete);
+
+  FEPManager := TEndPointManager.create;
+  FEPManager.List := lvEP;
+  FEPManager.registerControl(btnEPAdd, copAdd);
+  FEPManager.registerControl(btnEPDelete, copDelete);
+  FEPManager.registerControl(btnEPInstall, copExecute);
+
+  FIDManager := TIdentityProviderManager.create;
+  FIDManager.List := lvID;
+  FIDManager.registerControl(btnIDAdd, copAdd);
+  FIDManager.registerControl(btnIDDelete, copDelete);
+
+  edtConfigFile.text := FIni.ReadString('config', 'filename', '');
+  edtConfigFileChange(self);
 end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);
@@ -491,6 +617,10 @@ begin
   FThread.Stop;
   while assigned(FThread) do
     ;
+  FTxManager.Free;
+  FDBManager.Free;
+  FEPManager.Free;
+  FIDManager.Free;
   FTelnet.Free;
   FIncoming.Free;
   FThreads.Free;
@@ -629,6 +759,90 @@ Begin
   end;
 end;
 
+procedure TMainConsoleForm.SetConfigEditable;
+begin
+  FConfig := TFHIRServerIniFile.create(edtConfigFile.text);
+  FDBManager.ini := FConfig.link;
+  FTxManager.ini := FConfig.link;
+  FEPManager.ini := FConfig.link;
+  FIDManager.ini := FConfig.link;
+
+  FLoading := true;
+  try
+    edtHostName.Text := FConfig.web['host'];
+    edtHostName.Enabled := true;
+    edtWebPort.Text := FConfig.web['http'];
+    edtWebPort.Enabled := true;
+    chkWebMode.Checked := FConfig.web['plain-mode'] = 'redirect';
+    chkWebMode.Enabled := true;
+    edtSSLPort.Text := FConfig.web['https'];
+    edtSSLPort.Enabled := true;
+    edtSSLCert.Text := FConfig.web['certname'];
+    edtSSLCert.Enabled := true;
+    edtCACert.Text := FConfig.web['cacertname'];
+    edtCACert.Enabled := true;
+    edtPrivateKey.Text := FConfig.web['certkey'];
+    edtPrivateKey.Enabled := true;
+    edtSSLPassword.Text := FConfig.web['password'];
+    edtSSLPassword.Enabled := true;
+    edtGoogleId.Text := FConfig.web['googleid'];
+    edtGoogleId.Enabled := true;
+
+    edtAdminEmail.Text := FConfig.admin['email'];
+    edtAdminEmail.Enabled := true;
+    edtAdminOrganization.Text := FConfig.admin['ownername'];
+    edtAdminOrganization.Enabled := true;
+    edtAdminSMS.Text := FConfig.admin['owner-sms'];
+    edtAdminSMS.Enabled := true;
+    edtAdmitUsername.Text := FConfig.admin['username'];
+    edtAdmitUsername.Enabled := true;
+    edtAdminSCIMSalt.Text := FConfig.admin['scim-salt'];
+    edtAdminSCIMSalt.Enabled := true;
+
+  finally
+    FLoading := false;
+  end;
+end;
+
+procedure TMainConsoleForm.SetConfigReadonly;
+begin
+  FConfig.Free;
+  FConfig := nil;
+  FDBManager.ini := nil;
+  FTxManager.ini := nil;
+  FEPManager.ini := nil;
+  FIDManager.ini := nil;
+
+  edtAdminEmail.Text := '';
+  edtAdminEmail.Enabled := false;
+  edtAdminOrganization.Text := '';
+  edtAdminOrganization.Enabled := false;
+  edtAdminSMS.Text := '';
+  edtAdminSMS.Enabled := false;
+  edtAdmitUsername.Text := '';
+  edtAdmitUsername.Enabled := false;
+  edtAdminSCIMSalt.Text := '';
+  edtAdminSCIMSalt.Enabled := false;
+  edtHostName.Text := '';
+  edtHostName.Enabled := false;
+  edtWebPort.Text := '';
+  edtWebPort.Enabled := false;
+  chkWebMode.checked := false;
+  chkWebMode.Enabled := false;
+  edtSSLPort.Text := '';
+  edtSSLPort.Enabled := false;
+  edtSSLCert.Text := '';
+  edtSSLCert.Enabled := false;
+  edtCACert.Text := '';
+  edtCACert.Enabled := false;
+  edtPrivateKey.Text := '';
+  edtPrivateKey.Enabled := false;
+  edtSSLPassword.Text := '';
+  edtSSLPassword.Enabled := false;
+  edtGoogleId.Text := '';
+  edtGoogleId.Enabled := false;
+end;
+
 procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
 begin
   connectToServer((Sender as TMenuItem).Caption);
@@ -672,6 +886,69 @@ begin
     mConsole.Lines.EndUpdate;
   end;
   mConsole.SelStart := mConsole.Lines.Text.Length-1;
+end;
+
+procedure TMainConsoleForm.edtGoogleIdChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['googleid'] := edtGoogleId.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtHostNameChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['host'] := edtHostName.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtPrivateKeyChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['certkey'] := edtPrivateKey.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtSSLCertChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['certname'] := edtSSLCert.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtSSLPasswordChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['password'] := edtSSLPassword.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtSSLPortChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['https'] := edtSSLPort.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtWebPortChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http'] := edtWebPort.Text;
+    FConfig.Save;
+  end;
 end;
 
 procedure TMainConsoleForm.btnSourceClick(Sender: TObject);
@@ -720,6 +997,27 @@ begin
   dlgFolder.Title := 'Choose SNOMED CT RF2 International Snapshot Folder';
   if dlgFolder.Execute then
     edtBase.text := dlgFolder.filename;
+end;
+
+procedure TMainConsoleForm.btnCACertClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtCACert.text;
+  if dlgOpen.Execute then;
+    edtCACert.text := dlgOpen.filename;
+end;
+
+procedure TMainConsoleForm.btnCertClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtSSLCert.text;
+  if dlgOpen.Execute then;
+    edtSSLCert.text := dlgOpen.filename;
+end;
+
+procedure TMainConsoleForm.btnCertKeyClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtPrivateKey.text;
+  if dlgOpen.Execute then;
+    edtPrivateKey.text := dlgOpen.filename;
 end;
 
 procedure TMainConsoleForm.btnClearCacheClick(Sender: TObject);
@@ -847,6 +1145,16 @@ begin
     lbEditions.Items.Add(dlgOpen.filename);
     lbEditions.ItemIndex := lbEditions.Items.Count - 1;
     lbEditionsClick(nil);
+  end;
+end;
+
+procedure TMainConsoleForm.BitBtn1Click(Sender: TObject);
+begin
+  dlgConfig.FileName := edtConfigFile.text;
+  if dlgConfig.Execute then
+  begin
+    edtConfigFile.text := dlgConfig.filename;
+    FIni.WriteString('config', 'filename', edtConfigFile.text);
   end;
 end;
 
@@ -1124,7 +1432,6 @@ begin
     edtUMLSPassword.enabled := false;
     btnProcessUMLS.enabled := false;
     try
-
       db := TFslDBOdbcManager.create('umls', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
@@ -1156,6 +1463,86 @@ begin
   b := needsBaseForImport(module);
   edtBase.Enabled := b;
   btnBase.Enabled := b;
+end;
+
+procedure TMainConsoleForm.chkWebModeChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    if chkWebMode.Checked then
+      FConfig.web['plain-mode'] := 'redirect'
+    else
+      FConfig.web['plain-mode'] := 'serve';
+    FConfig.save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtAdminEmailChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.admin['email'] := edtAdminEmail.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtAdminOrganizationChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.admin['ownername'] := edtAdminOrganization.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtAdminSCIMSaltChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.admin['scim-salt'] := edtAdminSCIMSalt.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtAdminSMSChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.admin['owner-sms'] := edtAdminSMS.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtAdmitUsernameChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.admin['username'] := edtAdmitUsername.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtCACertChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['cacertname'] := edtCACert.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtConfigFileChange(Sender: TObject);
+begin
+  if (edtConfigFile.text <> '') and FileExists(edtConfigFile.text) then
+  begin
+    edtConfigFile.Color := clWhite;
+    SetConfigEditable;
+  end
+  else
+  begin
+    edtConfigFile.Color := HTML_COLOUR_VALUES[hcSalmon];
+    SetConfigReadOnly;
+  end;
 end;
 
 procedure TMainConsoleForm.Timer1Timer(Sender: TObject);
@@ -1458,7 +1845,7 @@ begin
     abort;
 end;
 
-procedure TMainConsoleForm.setupTerminologyPage;
+procedure TMainConsoleForm.SetUpTerminologyPage;
 begin
   edtSource.text := FIni.ReadString('snomed-import', 'source', '');
   edtBase.text := FIni.ReadString('snomed-import', 'base', '');
@@ -1547,6 +1934,7 @@ begin
   btnClearCache.enabled := false;
   btnFetchThreads.enabled := false;
 end;
+
 
 end.
 

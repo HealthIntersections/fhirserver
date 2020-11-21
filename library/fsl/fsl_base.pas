@@ -624,6 +624,7 @@ Type
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     Procedure Free; Overload;
     Function Link : TFslStringDictionary; Overload;
+    procedure assign(source : TFslStringDictionary);
     property Values[const Key: String]: String read GetValue write SetValue; default;
     function sizeInBytes : cardinal;
   end;
@@ -2877,6 +2878,15 @@ begin
     result := 0
   else
     result := sizeOf(self);
+end;
+
+procedure TFslStringDictionary.assign(source : TFslStringDictionary);
+var
+  s : String;
+begin
+  Clear;
+  for s in source.Keys do
+    Add(s, source[s]);
 end;
 
 { TArrayMoveManager<T> }

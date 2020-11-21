@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$i fhir.inc}
 
 {
 
@@ -96,19 +96,24 @@ type
     FList : TListView;
     FFilter : TEdit;
     FControls : TFslList<TControlEntry>;
+    FEnabled : boolean;
+    FCanEdit : boolean;
 
     procedure doFilter;
+    function GetHasFocus: boolean;
     procedure rebuild(focus : T);
     procedure doControl(sender : TObject);
     procedure FilterChange(sender : TObject);
     function Filtered : boolean;
     function GetFocus: T;
+    procedure SetEnabled(AValue: boolean);
     procedure SetFilter(AValue: TEdit);
     procedure SetList(AValue: TListView);
     procedure updateStatus;
     procedure updateControls(op : TControlOperation; allowed : boolean);
     procedure doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
     procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
+    procedure doListDoubleClick(Sender: TObject);
     procedure populateEntry(entry : TListItem; item : T);
   public
     constructor Create; override;
@@ -117,9 +122,11 @@ type
     // configuration
     property Data : TFslList<T> read FData;
     property Focus : T read GetFocus;
+    property hasFocus : boolean read GetHasFocus;
     property List : TListView read FList write SetList;
     property Filter : TEdit read FFilter write SetFilter;
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
+    Property Enabled : boolean read FEnabled write SetEnabled;
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
@@ -127,6 +134,7 @@ type
     procedure doDelete(mode : String);
     procedure doUp;
     procedure doDown;
+    procedure doExecute(mode : String);
     function doLoad : boolean;
 
     // to override:
@@ -141,6 +149,7 @@ type
     function filterItem(item : T; s : String) : boolean; virtual;
 
     function AddItem(mode : String) : T; virtual;
+    function EditItem(item : T; mode : String) : boolean; virtual;
     procedure DeleteItem(item : T); virtual;
     procedure ExecuteItem(item : T; mode : String); virtual;
   end;
@@ -453,6 +462,11 @@ begin
   end;
 end;
 
+function TListManager<T>.GetHasFocus: boolean;
+begin
+  result := GetFocus <> nil;
+end;
+
 procedure TListManager<T>.doControl(sender : TObject);
 var
   entry : TControlEntry;
@@ -466,6 +480,7 @@ begin
         copUp : doUp;
         copDown : doDown;
         copReload : doLoad;
+        copExecute : doExecute(entry.mode);
       end;
 end;
 
@@ -487,6 +502,20 @@ begin
     result := FFiltered[FList.itemIndex];
 end;
 
+procedure TListManager<T>.SetEnabled(AValue: boolean);
+var
+  ce : TControlEntry;
+begin
+  FEnabled := AValue;
+  FData.Clear;
+  FFiltered.Clear;
+  //if (FFilter <> nil) then
+  //  FFilter.ReadOnly := not Enabled;
+  for ce in FControls do
+    ce.control.Enabled := not Enabled;
+  doLoad;
+end;
+
 procedure TListManager<T>.SetFilter(AValue: TEdit);
 begin
   FFilter := AValue;
@@ -498,6 +527,8 @@ begin
   FList := AValue;
   List.OnCompare := doListCompare;
   List.OnSelectItem := doListChange;
+  List.OnDblClick := doListDoubleClick;
+  FList.ReadOnly := true;
   if canSort then
   begin
     List.AutoSort := true;
@@ -532,6 +563,8 @@ begin
   updateControls(copUp, (opOrder in ops) and (i > 0) and not Filtered);
   updateControls(copDown, (opOrder in ops) and (i > -1) and (i < FFiltered.count - 1) and not Filtered);
   updateControls(copReload, true);
+  updateControls(copExecute, opExecute in ops);
+  FCanEdit := opEdit in ops;
 end;
 
 procedure TListManager<T>.updateControls(op: TControlOperation; allowed: boolean);
@@ -557,6 +590,20 @@ end;
 procedure TListManager<T>.doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
 begin
   updateStatus;
+end;
+
+procedure TListManager<T>.doListDoubleClick(Sender: TObject);
+var
+  item : T;
+  entry : TListItem;
+begin
+  item := GetFocus;
+  if FCanEdit and hasFocus and EditItem(item, '') then
+  begin
+    entry := FList.items[FList.itemindex];
+    entry.SubItems.Clear;
+    populateEntry(entry, item);
+  end;
 end;
 
 procedure TListManager<T>.doAdd(mode : String);
@@ -655,6 +702,12 @@ begin
   raise Exception.create('not done yet');
 end;
 
+procedure TListManager<T>.doExecute(mode: String);
+begin
+  if HasFocus then
+    ExecuteItem(getFocus, mode);
+end;
+
 procedure TListManager<T>.rebuild(focus : T);
 var
   item : T;
@@ -721,6 +774,11 @@ end;
 function TListManager<T>.AddItem(mode : String): T;
 begin
   result := nil;
+end;
+
+function TListManager<T>.EditItem(item : T; mode: String): boolean;
+begin
+  result := false;
 end;
 
 procedure TListManager<T>.DeleteItem(item: T);

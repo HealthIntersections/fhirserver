@@ -281,7 +281,7 @@ type
     procedure Terminate;
 
 
-      property Usage: String Read FUsage Write FUsage;
+    property Usage: String Read FUsage Write FUsage;
     property UseStarted : TDateTime read FUsed;
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
@@ -645,6 +645,8 @@ type
   TFslDBConnectionProc = reference to Procedure (conn : TFslDBConnection);
   {$ENDIF}
 
+  { TFslDBManager }
+
   TFslDBManager = class(TFslObject)
   Private
     FSemaphore : TSemaphore;
@@ -692,6 +694,8 @@ type
     {$IFNDEF FPC}
     procedure connection(usage : String; proc : TFslDBConnectionProc);
     {$ENDIF}
+
+    procedure checkConnection;
 
     property MaxConnCount : Integer Read FMaxConnCount write SetMaxConnCount;
     property CurrConnCount: Integer Read GetCurrentCount;
@@ -1449,6 +1453,24 @@ begin
   end;
 end;
 
+procedure TFslDBManager.checkConnection;
+var
+  conn : TFslDBConnection;
+begin
+  conn := GetConnection('check');
+  try
+    conn.FetchMetaData.Free;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+
+end;
+
 procedure TFslDBManager.Release(AConn : TFslDBConnection);
 var
   LDispose : boolean;
@@ -2040,7 +2062,7 @@ begin
   inc(result, FProcedures.sizeInBytes);
 end;
 
-Function TFslDBManager.ServerErrorStatus : String;
+function TFslDBManager.ServerErrorStatus: String;
 Begin
   FLock.Enter;
   try
