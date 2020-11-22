@@ -44,19 +44,19 @@ uses
   SysUtils;
 
 type
-  TFslDBBackdoor = class (TBaseObject)
+  TFDBBackdoor = class (TBaseObject)
   private
-    function RunSQLQuery(AConnMan : TFslDBManager; ACommand, AURL : String):String;
+    function RunSQLQuery(AConnMan : TFDBManager; ACommand, AURL : String):String;
     procedure DbgDatabase(const ACommand, AURL: String; var VResult: String);
-    procedure ConnListChange(AConnMan : TFslDBManager; ABeingCreated : Boolean);
+    procedure ConnListChange(AConnMan : TFDBManager; ABeingCreated : Boolean);
   public
     constructor Create;
     destructor Destroy; override;
   end;
 
-{ TFslDBBackdoor }
+{ TFDBBackdoor }
 
-constructor TFslDBBackdoor.create;
+constructor TFDBBackdoor.create;
 var
   i : integer;
 begin
@@ -68,21 +68,21 @@ begin
     end;
 end;
 
-destructor TFslDBBackdoor.destroy;
+destructor TFDBBackdoor.destroy;
 begin
   KDBManagers.UnRegisterHook('fdb_debug');
   inherited;
 end;
 
-procedure TFslDBBackdoor.ConnListChange(AConnMan : TFslDBManager; ABeingCreated : Boolean);
+procedure TFDBBackdoor.ConnListChange(AConnMan : TFDBManager; ABeingCreated : Boolean);
 begin
   AConnMan.Tag := SysIDbg.RegisterCommand('fdb_manager', AConnMan.Name, 'fdb_manager: '+AConnMan.Name, DBG_SEC_ANONYMOUS, DbgDatabase);
 end;
 
-function TFslDBBackdoor.RunSQLQuery(AConnMan : TFslDBManager; ACommand, AURL : String):String;
+function TFDBBackdoor.RunSQLQuery(AConnMan : TFDBManager; ACommand, AURL : String):String;
 var
   LSql : String;
-  LConn : TFslDBConnection;
+  LConn : TFDBConnection;
 begin
   split(ACommand, '=', ACommand, LSQL);
   LSQL := MimeDecode(LSql);
@@ -107,9 +107,9 @@ begin
     end;
 end;
 
-procedure TFslDBBackdoor.DbgDatabase(const ACommand, AURL: String; var VResult: String);
+procedure TFDBBackdoor.DbgDatabase(const ACommand, AURL: String; var VResult: String);
 var
-  LConnMan : TFslDBManager;
+  LConnMan : TFDBManager;
   s, t : String;
 begin
   LConnMan := KDBManagers[GetStringCell(AURL, 2, '/')];
@@ -144,10 +144,10 @@ begin
 end;
 
 var
-  GKDBBackdoor : TFslDBBackdoor;
+  GKDBBackdoor : TFDBBackdoor;
 
 initialization
-  GKDBBackdoor := TFslDBBackdoor.create;
+  GKDBBackdoor := TFDBBackdoor.create;
 finalization
   FreeAndNil(GKDBBackdoor);
 end.

@@ -79,7 +79,7 @@ Type
   TObservationStatsEvaluator = class (TFslObject)
   private
     FFactory : TFHIRFactory;
-    FConn : TFslDBConnection;
+    FConn : TFDBConnection;
     FSubject: String;
     FConcepts : TFslList<TFHIRCodingW>;
     FFinish: TDateTime;
@@ -143,7 +143,7 @@ Type
     function genIntercept() : Double;
 
   public
-    constructor Create(factory : TFHIRFactory; conn : TFslDBConnection; resp : TFHIRStatsOpResponseW);
+    constructor Create(factory : TFHIRFactory; conn : TFDBConnection; resp : TFHIRStatsOpResponseW);
     destructor Destroy; override;
 
     property subject : String read FSubject write FSubject;
@@ -162,7 +162,7 @@ Type
 
   TObservationLastNEvaluator = class (TFslObject)
   private
-    FConn : TFslDBConnection;
+    FConn : TFDBConnection;
 
     FCount: integer;
     FObservations : TStringList;
@@ -176,7 +176,7 @@ Type
     procedure addMostRecentObservations(ck : integer);
     function lookupConcept(c : TFHIRCodingW) : integer;
   public
-    constructor Create(conn : TFslDBConnection);
+    constructor Create(conn : TFDBConnection);
     destructor Destroy; override;
 
     // in
@@ -210,7 +210,7 @@ end;
 
 { TObservationStatsEvaluator }
 
-constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TFslDBConnection; resp : TFHIRStatsOpResponseW);
+constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TFDBConnection; resp : TFHIRStatsOpResponseW);
 begin
   inherited create;
   FFactory := factory;
@@ -786,7 +786,7 @@ end;
 
 { TObservationLastNEvaluator }
 
-constructor TObservationLastNEvaluator.Create(conn: TFslDBConnection);
+constructor TObservationLastNEvaluator.Create(conn: TFDBConnection);
 begin
   inherited create;
   FConn := conn;

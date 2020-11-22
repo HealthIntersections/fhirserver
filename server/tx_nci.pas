@@ -53,7 +53,7 @@ type
   private
     sql : String;
     text : boolean;
-    qry : TFslDBConnection;
+    qry : TFDBConnection;
   public
     destructor Destroy; Override;
   end;
@@ -68,10 +68,10 @@ type
 
   TNciMetaServices = class (TCodeSystemProvider)
   private
-    db : TFslDBManager;
+    db : TFDBManager;
 
   public
-    constructor Create(db : TFslDBManager);
+    constructor Create(db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TNciMetaServices; overload;
 
@@ -106,7 +106,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
   end;
 
-procedure generateNciStems(db : TFslDBManager);
+procedure generateNciStems(db : TFDBManager);
 
 implementation
 
@@ -136,10 +136,10 @@ begin
   end;
 end;
 
-procedure generateNciStems(db : TFslDBManager);
+procedure generateNciStems(db : TFDBManager);
 var
   stems, list : TStringList;
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
   stemmer : TFslWordStemmer;
   i, j : integer;
 begin
@@ -201,7 +201,7 @@ end;
 
 { TNciMetaServices }
 
-Constructor TNciMetaServices.create(db : TFslDBManager);
+Constructor TNciMetaServices.create(db : TFDBManager);
 begin
   inherited Create;
 
@@ -214,7 +214,7 @@ end;
 
 function TNciMetaServices.TotalCount : integer;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
 begin
   qry := db.GetConnection('NciMeta.Count');
   try
@@ -247,7 +247,7 @@ end;
 
 function TNciMetaServices.getDisplay(code : String):String;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
 begin
   qry := db.GetConnection('NciMeta.display');
   try
@@ -287,7 +287,7 @@ end;
 
 function TNciMetaServices.locate(code : String) : TCodeSystemProviderContext;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
   res : TNciMetaConcept;
 begin
   qry := db.GetConnection('NciMeta.display');
@@ -516,7 +516,7 @@ end;
 
 function TNciMetaServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
   res : TNciMetaConcept;
 begin
   qry := db.GetConnection('NciMeta.display');

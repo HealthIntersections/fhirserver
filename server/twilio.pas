@@ -44,14 +44,14 @@ type
   TTwilioServer = class (TFslObject)
   private
     FLock : TFslLock;
-    FDb : TFslDBManager;
+    FDb : TFDBManager;
     FKey : Integer;
     FResponse : String;
 
     function processTwilioPost(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
     function processTwilioGet(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
   public
-    Constructor Create(Db : TFslDBManager; response : String);
+    Constructor Create(Db : TFDBManager; response : String);
     destructor Destroy; override;
 
     procedure sweep;
@@ -62,9 +62,9 @@ implementation
 
 { TTwilioServer }
 
-constructor TTwilioServer.Create(Db : TFslDBManager; response : String);
+constructor TTwilioServer.Create(Db : TFDBManager; response : String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   Inherited Create;
   FResponse := response;
@@ -96,7 +96,7 @@ var
   a : String;
   json, obj : TJsonObject;
   arr : TJsonArray;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   pm := THTTPParameters.Create(request.UnparsedParams);
   try
@@ -151,7 +151,7 @@ var
   pm : THTTPParameters;
   tk : integer;
   a, f, b : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   FLock.Lock;
   try
@@ -196,7 +196,7 @@ end;
 
 procedure TTwilioServer.sweep;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.getConnection('twilio');
   try

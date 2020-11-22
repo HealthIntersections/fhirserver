@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   Buttons,
-  fdb_odbc_objects, fdb_dialects, fdb_odbc,
+  fdb_manager, fdb_odbc, fdb_dialects, fdb_odbc_objects,
   server_ini;
 
 type
@@ -33,6 +33,7 @@ type
     Panel1: TPanel;
     rbMSSQL: TRadioButton;
     rbMySQL: TRadioButton;
+    procedure btnDBTestClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -69,6 +70,28 @@ begin
   end;
 end;
 
+procedure TEditDBForm.btnDBTestClick(Sender: TObject);
+var
+  db : TFDBManager;
+begin
+  update;
+  try
+    if (FDB['type'] = 'mssql') then
+      db := TFDBOdbcManager.create(FDB.name, kdbSQLServer, 2, 0, FDB['driver'], FDB['server'], FDB['database'], FDB['username'], FDB['password'])
+    else
+      db := TFDBOdbcManager.create(FDB.name, kdbMySQL, 2, 0, FDB['driver'], FDB['server'], FDB['database'], FDB['username'], FDB['password']);
+    try
+      db.checkConnection;
+    finally
+      db.free;
+    end;
+    MessageDlg('Database Connection Succeeded', mtInformation, [mbok], 0);
+  except
+    on e: Exception do
+      MessageDlg('Database Connection Failed: '+e.message, mtError, [mbok], 0);
+  end
+end;
+
 procedure TEditDBForm.FormResize(Sender: TObject);
 begin
   rbMySQL.left := edtIdentity.Left + edtIdentity.Width div 2;
@@ -94,7 +117,7 @@ end;
 
 procedure TEditDBForm.rbMSSQLClick(Sender: TObject);
 var
-  dialect : TFslDBPlatform;
+  dialect : TFDBPlatform;
   i : integer;
 begin
   if rbMySQL.Checked then

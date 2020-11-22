@@ -162,7 +162,7 @@ Type
     procedure seeMap(map : TFHIRStructureMapW);
     function getMaps : TFslMap<TFHIRStructureMapW>;
 
-    procedure DoneLoading(conn : TFslDBConnection);
+    procedure DoneLoading(conn : TFDBConnection);
 
     function cacheCount : integer;
     procedure clearCache;
@@ -425,7 +425,7 @@ begin
 end;
 
 
-procedure TFHIRServerContext.DoneLoading(conn : TFslDBConnection);
+procedure TFHIRServerContext.DoneLoading(conn : TFDBConnection);
 begin
   FSubscriptionManager.DoneLoading(conn);
 end;

@@ -620,6 +620,7 @@
         <DCCReference Include="..\library\fsl\tests\fsl_tests_iduri.pas"/>
         <DCCReference Include="tests\tests_search_syntax.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_graphql.pas"/>
+        <DCCReference Include="admin\server_ini.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

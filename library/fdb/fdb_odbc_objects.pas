@@ -312,7 +312,7 @@ Type
     FCursorLib: SQLUINTEGER;
     FCore: Boolean;
     FDrivers: TList;
-    FPlatform : TFslDBPlatform;
+    FPlatform : TFDBPlatform;
 
     { Published Events }
     FBeforeConnect, FAfterConnect: TNotifyEvent;

@@ -684,7 +684,7 @@ end;
 
 procedure TForm4.btnProcessUMLSClick(Sender: TObject);
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   start : TDateTime;
 begin
   if cbUMLSDriver.Text = '' then
@@ -716,7 +716,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TFslDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;

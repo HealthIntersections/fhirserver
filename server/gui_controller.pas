@@ -213,28 +213,28 @@ end;
 
 function makeUcum : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('ucum');
+  result := TFHIRServerIniComplex.Create('ucum', '');
   result.value['type'] := 'ucum';
   result.value['source'] := localFile('ucum-essence.xml');
 end;
 
 function makeLoinc : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('loinc');
+  result := TFHIRServerIniComplex.Create('loinc', '');
   result.value['type'] := 'loinc';
   result.value['source'] := localFile('loinc-2.65.cache');
 end;
 
 function makeLang : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('lang');
+  result := TFHIRServerIniComplex.Create('lang', '');
   result.value['type'] := 'lang';
   result.value['source'] := localFile('lang.txt');
 end;
 
 function makeR4 : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('r4');
+  result := TFHIRServerIniComplex.Create('r4', '');
   result.value['path'] := '/r4';
   result.value['version'] := 'r4';
   result.value['database'] := 'utg';
@@ -242,18 +242,18 @@ end;
 
 function makeUtgDB : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('sqlite');
+  result := TFHIRServerIniComplex.Create('sqlite', '');
   result.value['type'] := 'sqlite';
   result.value['database'] := localFile('fhir-server-gui.db');
 end;
 
 procedure TFHIRServerController.makeDB;
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   salt, un, pw, em, dr : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   details : TFHIRServerIniComplex;
 begin
   // check that user account details are provided
@@ -265,7 +265,7 @@ begin
   pw := 'xx';
   em := 'none@nowhere.org';
 
-  db := TFslDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
+  db := TFDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
   try
     Logging.log('Ínstall database');
     scim := TSCIMServer.Create(db.Link, salt, 'localhost', dr, true);

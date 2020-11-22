@@ -7,28 +7,103 @@ interface
 uses
   Classes, SysUtils, UITypes,
   Dialogs,
-  fsl_base,
-  fdb_manager, fdb_odbc, fdb_dialects,
+  fsl_base, fsl_threads, fsl_utilities,
+  fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
   fui_lcl_managers,
-  server_ini,
-  console_db_edit, console_tx_edit, console_ep_edit, console_id_edit;
+  server_ini, database_installer,
+  console_db_edit, console_tx_edit, console_ep_edit, console_id_edit, install_form;
 
 type
 
-  { TDBManager }
+  { TAdminManager }
 
-  TDBManager = class (TListManager<TFHIRServerIniComplex>)
+  TAdminManager = class abstract (TListManager<TFHIRServerIniComplex>)
   private
     FIni: TFHIRServerIniFile;
     procedure SetIni(AValue: TFHIRServerIniFile);
-    procedure DoTest(sender : TObject);
   public
-    destructor Destroy; override;
     property ini : TFHIRServerIniFile read FIni write SetIni;
+    destructor Destroy; override;
 
+    function makeDB(dbInfo : TFHIRServerIniComplex) :  TFDBManager;
+  end;
+
+  { TAdminThread }
+
+  TAdminThread = class (TFslThread)
+  private
+    FItem : TFHIRServerIniComplex;
+    FManager : TAdminManager;
+  public
+    constructor create(manager : TAdminManager; item : TFHIRServerIniComplex);
+  end;
+
+  { TDatabaseCheck }
+
+  TDatabaseCheck = class (TAdminThread)
+  public
+    procedure execute; override;
+  end;
+
+  { TDBManager }
+
+  TDBManager = class (TAdminManager)
+  private
+    function status(item : TFHIRServerIniComplex) : String;
+  public
     function canSort : boolean; override;
     function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
     function loadList : boolean; override;
+
+    function getCellText(item : TFHIRServerIniComplex; col : integer) : String; override;
+    function getSummaryText(item : TFHIRServerIniComplex) : String; override;
+    function compareItem(left, right : TFHIRServerIniComplex; col : integer) : integer; override;
+
+    procedure Timer; override;
+
+    function EditItem(item : TFHIRServerIniComplex; mode : String) : boolean; override;
+    function AddItem(mode : String) : TFHIRServerIniComplex; override;
+    procedure DeleteItem(item : TFHIRServerIniComplex); override;
+  end;
+
+  { TTXManager }
+
+  TTXManager = class (TAdminManager)
+  private
+    function source(item: TFHIRServerIniComplex): String;
+    function status(item: TFHIRServerIniComplex): String;
+  public
+    function canSort : boolean; override;
+    function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
+    function loadList : boolean; override;
+
+    function getCellText(item : TFHIRServerIniComplex; col : integer) : String; override;
+    function getSummaryText(item : TFHIRServerIniComplex) : String; override;
+    function compareItem(left, right : TFHIRServerIniComplex; col : integer) : integer; override;
+
+    function EditItem(item : TFHIRServerIniComplex; mode : String) : boolean; override;
+    function AddItem(mode : String) : TFHIRServerIniComplex; override;
+    procedure DeleteItem(item : TFHIRServerIniComplex); override;
+  end;
+
+  { TEndPointCheck }
+
+  TEndPointCheck = class (TAdminThread)
+  public
+    procedure execute; override;
+  end;
+
+  { TEndPointManager }
+
+  TEndPointManager = class (TAdminManager)
+  private
+    function status(item: TFHIRServerIniComplex): String;
+  public
+    function canSort : boolean; override;
+    function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
+    function loadList : boolean; override;
+
+    procedure Timer; override;
 
     function getCellText(item : TFHIRServerIniComplex; col : integer) : String; override;
     function getSummaryText(item : TFHIRServerIniComplex) : String; override;
@@ -40,65 +115,10 @@ type
     procedure ExecuteItem(item : TFHIRServerIniComplex; mode : String); override;
   end;
 
-  { TTXManager }
-
-  TTXManager = class (TListManager<TFHIRServerIniComplex>)
-  private
-    FIni: TFHIRServerIniFile;
-    procedure SetIni(AValue: TFHIRServerIniFile);
-    function source(item: TFHIRServerIniComplex): String;
-    function status(item: TFHIRServerIniComplex): String;
-  public
-    destructor Destroy; override;
-    property ini : TFHIRServerIniFile read FIni write SetIni;
-
-    function canSort : boolean; override;
-    function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
-    function loadList : boolean; override;
-
-    function getCellText(item : TFHIRServerIniComplex; col : integer) : String; override;
-    function getSummaryText(item : TFHIRServerIniComplex) : String; override;
-    function compareItem(left, right : TFHIRServerIniComplex; col : integer) : integer; override;
-
-    function EditItem(item : TFHIRServerIniComplex; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerIniComplex; override;
-    procedure DeleteItem(item : TFHIRServerIniComplex); override;
-  end;
-
-  { TEndPointManager }
-
-  TEndPointManager = class (TListManager<TFHIRServerIniComplex>)
-  private
-    FIni: TFHIRServerIniFile;
-    procedure SetIni(AValue: TFHIRServerIniFile);
-    function status(item: TFHIRServerIniComplex): String;
-  public
-    destructor Destroy; override;
-    property ini : TFHIRServerIniFile read FIni write SetIni;
-
-    function canSort : boolean; override;
-    function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
-    function loadList : boolean; override;
-
-    function getCellText(item : TFHIRServerIniComplex; col : integer) : String; override;
-    function getSummaryText(item : TFHIRServerIniComplex) : String; override;
-    function compareItem(left, right : TFHIRServerIniComplex; col : integer) : integer; override;
-
-    function EditItem(item : TFHIRServerIniComplex; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerIniComplex; override;
-    procedure DeleteItem(item : TFHIRServerIniComplex); override;
-  end;
-
   { TIdentityProviderManager }
 
-  TIdentityProviderManager = class (TListManager<TFHIRServerIniComplex>)
-  private
-    FIni: TFHIRServerIniFile;
-    procedure SetIni(AValue: TFHIRServerIniFile);
+  TIdentityProviderManager = class (TAdminManager)
   public
-    destructor Destroy; override;
-    property ini : TFHIRServerIniFile read FIni write SetIni;
-
     function canSort : boolean; override;
     function allowedOperations(item : TFHIRServerIniComplex) : TNodeOperationSet; override;
     function loadList : boolean; override;
@@ -115,20 +135,44 @@ type
 
 implementation
 
-{ TIdentityProviderManager }
+uses
+  console_form;
 
-destructor TIdentityProviderManager.Destroy;
+{ TAdminThread }
+
+constructor TAdminThread.create(manager: TAdminManager; item: TFHIRServerIniComplex);
+begin
+  inherited create;
+  FManager := manager;
+  FItem := item;
+end;
+
+{ TAdminManager }
+
+destructor TAdminManager.Destroy;
 begin
   FIni.Free;
   inherited Destroy;
 end;
 
-procedure TIdentityProviderManager.SetIni(AValue: TFHIRServerIniFile);
+function TAdminManager.makeDB(dbInfo: TFHIRServerIniComplex): TFDBManager;
+begin
+  if (dbInfo['type'] = 'mssql') then
+    result := TFDBOdbcManager.create(dbInfo.name, kdbSQLServer, 2, 0, dbInfo['driver'], dbInfo['server'], dbInfo['database'], dbInfo['username'], dbInfo['password'])
+  else if (dbInfo['type'] = 'sqlite3') then
+    result := TFDBSQLiteManager.create(dbInfo.name, dbInfo['database'], true)
+  else
+    result := TFDBOdbcManager.create(dbInfo.name, kdbMySQL, 2, 0, dbInfo['driver'], dbInfo['server'], dbInfo['database'], dbInfo['username'], dbInfo['password']);
+end;
+
+procedure TAdminManager.SetIni(AValue: TFHIRServerIniFile);
 begin
   FIni.Free;
   FIni := aValue;
   Enabled := FIni <> nil;
 end;
+
+{ TIdentityProviderManager }
 
 function TIdentityProviderManager.canSort: boolean;
 begin
@@ -190,7 +234,7 @@ begin
     if result then
     begin
       item.assign(frm.Id);
-      item['#status'] := '';
+      item.status := '';
       if (item.name <> item['id']) then
       begin
         ini.identityProviders.add(item['id'], item.link);
@@ -229,33 +273,80 @@ begin
   FIni.Save;
 end;
 
+
+{ TEndPointCheck }
+
+procedure TEndPointCheck.execute;
+var
+  db : TFDBManager;
+  conn : TFDBConnection;
+  meta : TFDBMetaData;
+  t, m, s : String;
+begin
+  try
+    db := FManager.makeDB(FManager.FIni.databases[FItem['database']]);
+    try
+      conn := db.GetConnection('check');
+      try
+        meta := conn.FetchMetaData;
+        try
+          if not meta.HasTable('Config') then
+            FItem.threadStatus := 'Not Installed'
+          else
+          begin
+            s := conn.Lookup('Config', 'ConfigKey', '100', 'Value', '');
+            if (s = '') then
+              FItem.threadStatus := 'Needs Reinstalling'
+            else
+            begin
+              StringSplit(s, '|', t, s);
+              StringSplit(s, '|', m, s);
+              if (t <> FItem['type']) then
+                FItem.threadStatus := 'Type Mismatch - Database is for '+t+': reinstall'
+              else if (m <> FItem['mode']) then
+                FItem.threadStatus := 'Mode Mismatch - Database is for '+m+': reinstall'
+              else
+                FItem.threadStatus := 'OK ('+s+')';
+            end;
+          end;
+        finally
+          meta.free;
+        end;
+        conn.release;
+      except
+        on e : Exception do
+        begin
+          conn.Error(e);
+          raise;
+        end;
+      end;
+    finally
+      db.free;
+    end;
+  except
+    on e: Exception do
+      FItem.threadStatus := 'Error: '+e.message;
+  end;
+  Stop;
+end;
+
+
 { TEndPointManager }
-
-destructor TEndPointManager.Destroy;
-begin
-  Fini.Free;
-  inherited Destroy;
-end;
-
-procedure TEndPointManager.SetIni(AValue: TFHIRServerIniFile);
-begin
-  Fini.Free;
-  FIni := AValue;
-  Enabled := FIni <> nil;
-end;
 
 function TEndPointManager.status(item: TFHIRServerIniComplex): String;
 begin
-  if (item.value['#status'] = '') then
+  if (item.status = '') then
   begin
-    item.value['#status'] := 'todo';
-
+    if not Fini.databases.ContainsKey(item['database']) then
+      item.status := 'Database not found'
+    else
+    begin
+      item.status := 'Checking...';
+      item.Data := TEndPointCheck.create(self, item);
+      TEndPointCheck(item.Data).Open;
+    end;
   end;
-  if item.value['#status'] = '-' then
-    result := ''
-  else
-    result := item.value['#status'];
-
+  result := item.status;
 end;
 
 function TEndPointManager.canSort: boolean;
@@ -280,6 +371,26 @@ begin
       Data.Add(ini.endpoints[s].link);
 end;
 
+procedure TEndPointManager.Timer;
+var
+  item : TFHIRServerIniComplex;
+  wantLoad : boolean;
+begin
+  wantLoad := false;
+  for item in FIni.endpoints.values do
+  begin
+    if item.threadStatus <> '' then
+    begin
+      item.data.free;
+      item.status := item.threadStatus;
+      item.threadStatus := '';
+      wantLoad := true;
+    end;
+  end;
+  if wantLoad then
+    doLoad;
+end;
+
 function TEndPointManager.getCellText(item: TFHIRServerIniComplex; col: integer): String;
 begin
   case col of
@@ -288,9 +399,7 @@ begin
     2: result := item.value['mode'];
     3: result := item.value['path'];
     4: result := item.value['database'];
-    5: result := item.value['security'];
-    6: result := item.value['validate'];
-    7: result := status(item);
+    5: result := status(item);
   end;
 end;
 
@@ -307,9 +416,7 @@ begin
     2: result := CompareStr(left.value['mode'], right.value['mode']);
     3: result := CompareStr(left.value['path'], right.value['path']);
     4: result := CompareStr(left.value['database'], right.value['database']);
-    5: result := CompareStr(left.value['security'], right.value['security']);
-    6: result := CompareStr(left.value['validate'], right.value['validate']);
-    7: result := CompareStr(status(left), status(right));
+    5: result := CompareStr(status(left), status(right));
   else
     result := inherited compareItem(left, right, col);
   end;
@@ -327,7 +434,7 @@ begin
     if result then
     begin
       item.assign(frm.EP);
-      item['#status'] := '';
+      item.status := '';
       if (item.name <> item['id']) then
       begin
         ini.endpoints.add(item['id'], item.link);
@@ -368,20 +475,56 @@ begin
   FIni.Save;
 end;
 
+procedure TEndPointManager.ExecuteItem(item: TFHIRServerIniComplex; mode : String);
+var
+  t : String;
+  db : TFDBManager;
+  conn : TFDBConnection;
+  dbi : TFHIRDatabaseInstaller;
+  form : TEndpointInstallForm;
+begin
+  db := makeDB(FIni.databases[item['database']]);
+  try
+    conn := db.GetConnection('install');
+    try
+      t := item['type'];
+      if (t = 'package') then
+      begin
+        if MessageDlg('Install Package Server', 'This operation will wipe any existing installation in the database. Proceed?', mtConfirmation, mbYesNo, 0) = mryes then
+        begin
+            dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
+            try
+              dbi.uninstall;
+              dbi.installPackageServer;
+            finally
+              dbi.free;
+            end;
+        end;
+      end
+      else
+      begin
+        form := TEndpointInstallForm.create(MainConsoleForm);
+        try
+          form.Packages := MainConsoleForm.Packages.link;
+          form.Connection := conn.link;
+          form.version := item['type'];
+          form.mode := item['mode'];
+          form.ShowModal;
+        finally
+          form.free;
+        end;
+      end;
+    finally
+      conn.release;
+    end;
+  finally
+    db.free;
+  end;
+  item.status := '';
+  doLoad;
+end;
+
 { TTXManager }
-
-destructor TTXManager.Destroy;
-begin
-  Fini.Free;
-  inherited Destroy;
-end;
-
-procedure TTXManager.SetIni(AValue: TFHIRServerIniFile);
-begin
-  Fini.Free;
-  FIni := AValue;
-  Enabled := FIni <> nil;
-end;
 
 function TTXManager.canSort: boolean;
 begin
@@ -415,27 +558,27 @@ end;
 
 function TTXManager.status(item: TFHIRServerIniComplex) : String;
 begin
-  if (item.value['#status'] = '') then
+  if (item.status = '') then
   begin
     if (item.value['source'] <> '') then
     begin
       if FileExists(item.value['source']) then
-        item.value['#status'] := '-'
+        item.status := '-'
       else
-        item.value['#status'] := 'File Not Found';
+        item.status := 'File Not Found';
     end
     else
     begin
       if ini.databases.ContainsKey(item.value['database']) then
-        item.value['#status'] := '-'
+        item.status := '-'
       else
-        item.value['#status'] := 'Database Not Found';
+        item.status := 'Database Not Found';
     end;
   end;
-  if item.value['#status'] = '-' then
+  if item.status = '-' then
     result := ''
   else
-    result := item.value['#status'];
+    result := item.status;
 end;
 
 function TTXManager.getCellText(item: TFHIRServerIniComplex; col: integer): String;
@@ -481,7 +624,7 @@ begin
     if result then
     begin
       item.assign(frm.Tx);
-      item['#status'] := '';
+      item.status := '';
       if (item.name <> item['id']) then
       begin
         ini.terminologies.add(item['id'], item.link);
@@ -521,28 +664,38 @@ begin
   FIni.Save;
 end;
 
+{ TDatabaseCheck }
+
+procedure TDatabaseCheck.execute;
+var
+  db : TFDBManager;
+begin
+  try
+    db := FManager.makeDB(FItem);
+    try
+      db.checkConnection;
+    finally
+      db.free;
+    end;
+    FItem.threadStatus := 'Connection OK';
+  except
+    on e: Exception do
+      FItem.threadStatus := 'Error: '+e.message;
+  end;
+  Stop;
+end;
+
 { TDBManager }
 
-destructor TDBManager.Destroy;
+function TDBManager.status(item : TFHIRServerIniComplex) : String;
 begin
-  Fini.Free;
-  inherited Destroy;
-end;
-
-procedure TDBManager.SetIni(AValue: TFHIRServerIniFile);
-begin
-  Fini.Free;
-  FIni := AValue;
-  Enabled := FIni <> nil;
-end;
-
-procedure TDBManager.DoTest(sender: TObject);
-var
-  frm : TEditDBForm;
-begin
-  frm := TComponent(sender).Owner as TEditDBForm;
-  frm.update;
-  ExecuteItem(frm.DB, '');
+  if (item.status = '') then
+  begin
+    item.status := 'Checking ...';
+    item.Data := TDatabaseCheck.create(self, item);
+    TDatabaseCheck(item.Data).Open;
+  end;
+  result := item.status;
 end;
 
 function TDBManager.canSort: boolean;
@@ -555,7 +708,7 @@ begin
   if (item = nil) then
     result := [opAdd]
   else
-    result := [opAdd, opEdit, opDelete, opExecute];
+    result := [opAdd, opEdit, opDelete];
 end;
 
 function TDBManager.loadList: boolean;
@@ -577,6 +730,7 @@ begin
     4: result := item.value['username'];
     5: result := item.value['password'];
     6: result := item.value['driver'];
+    7: result := status(item);
   end;
 end;
 
@@ -595,9 +749,30 @@ begin
     4: result := CompareStr(left.value['username'], right.value['username']);
     5: result := CompareStr(left.value['password'], right.value['password']);
     6: result := CompareStr(left.value['driver'], right.value['driver']);
+    7: result := CompareStr(status(left), status(right));
   else
     result := inherited compareItem(left, right, col);
   end;
+end;
+
+procedure TDBManager.Timer;
+var
+  item : TFHIRServerIniComplex;
+  wantLoad : boolean;
+begin
+  wantLoad := false;
+  for item in FIni.databases.values do
+  begin
+    if item.threadStatus <> '' then
+    begin
+      item.data.free;
+      item.status := item.threadStatus;
+      item.threadStatus := '';
+      wantLoad := true;
+    end;
+  end;
+  if wantLoad then
+    doLoad;
 end;
 
 function TDBManager.EditItem(item: TFHIRServerIniComplex; mode: String): boolean;
@@ -607,11 +782,11 @@ begin
   frm := TEditDBForm.create(List.Owner);
   try
     frm.DB := item.clone;
-    frm.btnDBTest.OnClick := DoTest;
     result := frm.ShowModal = mrOK;
     if result then
     begin
       item.assign(frm.DB);
+      item.status := '';
       if (item.name <> item['id']) then
       begin
         ini.databases.add(item['id'], item.link);
@@ -633,7 +808,6 @@ begin
   frm := TEditDBForm.create(List.Owner);
   try
     frm.DB := TFHIRServerIniComplex.create('DB'+inttostr(ini.databases.Count), '');
-    frm.btnDBTest.OnClick := DoTest;
     if frm.ShowModal = mrOK then
     begin
       result := frm.DB.link;
@@ -649,27 +823,6 @@ procedure TDBManager.DeleteItem(item: TFHIRServerIniComplex);
 begin
   Fini.databases.Remove(item.name);
   FIni.Save;
-end;
-
-procedure TDBManager.ExecuteItem(item: TFHIRServerIniComplex; mode: String);
-var
-  db : TFslDBManager;
-begin
-  try
-    if (item['type'] = 'mssql') then
-      db := TFslDBOdbcManager.create(item.name, kdbSQLServer, 2, 0, item['driver'], item['server'], item['database'], item['username'], item['password'])
-    else
-      db := TFslDBOdbcManager.create(item.name, kdbMySQL, 2, 0, item['driver'], item['server'], item['database'], item['username'], item['password']);
-    try
-      db.checkConnection;
-    finally
-      db.free;
-    end;
-    MessageDlg('Database Connection Succeeded', mtInformation, [mbok], 0);
-  except
-    on e: Exception do
-      MessageDlg('Database Connection Failed: '+e.message, mtError, [mbok], 0);
-  end
 end;
 
 end.

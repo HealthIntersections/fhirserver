@@ -63,13 +63,13 @@ Type
     function makeAnyValueSet: TFhirValueSetW;
 
     // database maintenance
-    procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TFslDBConnection);
-    procedure processConcept(ConceptKey : integer; URL, version, Code : String; conn2, conn3 : TFslDBConnection);
+    procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TFDBConnection);
+    procedure processConcept(ConceptKey : integer; URL, version, Code : String; conn2, conn3 : TFDBConnection);
     function isOkTarget(cm: TLoadedConceptMap; vs: TFhirValueSetW): boolean;
     function isOkSource(cm: TLoadedConceptMap; vs: TFhirValueSetW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
     function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
     procedure LoadClosures;
-    procedure BuildIndexesInternal(prog : boolean; conn1, conn2, conn3 : TFslDBConnection);
+    procedure BuildIndexesInternal(prog : boolean; conn1, conn2, conn3 : TFDBConnection);
 
     function workerGetDefinition(sender : TObject; url : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
@@ -77,7 +77,7 @@ Type
   protected
     procedure invalidateVS(id : String); override;
   public
-    constructor Create(db : TFslDBManager; factory : TFHIRFactory; common : TCommonTerminologies); override;
+    constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies); override;
     destructor Destroy; override;
     function Link: TTerminologyServer; overload;
     property webBase : String read FWebBase write FWebBase;
@@ -111,7 +111,7 @@ Type
     // closures
     function InitClosure(name : String) : String;
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
-    function enterIntoClosure(conn : TFslDBConnection; name, uri, code : String) : integer;
+    function enterIntoClosure(conn : TFDBConnection; name, uri, code : String) : integer;
 
     procedure getCodeView(const lang : THTTPLanguages; coding : TFHIRCodingW; response : TCDSHookResponse); overload;
     procedure getCodeView(const lang : THTTPLanguages; coding : TFhirCodeableConceptW; response : TCDSHookResponse); overload;
@@ -131,7 +131,7 @@ uses
 
 { TTerminologyServer }
 
-constructor TTerminologyServer.Create(db : TFslDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
+constructor TTerminologyServer.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
 begin
   inherited;
   FExpansions := TFslStringObjectMatch.create;
@@ -153,7 +153,7 @@ end;
 
 procedure TTerminologyServer.LoadClosures;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.GetConnection('LoadClosures');
   try
@@ -271,7 +271,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.enterIntoClosure(conn: TFslDBConnection; name, uri, code: String): integer;
+function TTerminologyServer.enterIntoClosure(conn: TFDBConnection; name, uri, code: String): integer;
 var
   exists : boolean;
   cm : TClosureManager;
@@ -809,7 +809,7 @@ end;
 
 function TTerminologyServer.InitClosure(name: String) : String;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   closure : TClosureManager;
 begin
   conn := FDB.GetConnection('InitClosure');
@@ -1075,7 +1075,7 @@ begin
 end;
 *)
 
-procedure TTerminologyServer.BuildIndexesInternal(prog: boolean; conn1, conn2, conn3: TFslDBConnection);
+procedure TTerminologyServer.BuildIndexesInternal(prog: boolean; conn1, conn2, conn3: TFDBConnection);
 var
   i : integer;
   finish : TDateTime;
@@ -1156,7 +1156,7 @@ end;
 
 procedure TTerminologyServer.BuildIndexes(prog : boolean);
 var
-  conn1, conn2, conn3 : TFslDBConnection;
+  conn1, conn2, conn3 : TFDBConnection;
 begin
   if DB = nil then
     exit;
@@ -1194,7 +1194,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, version, Code: String; conn2, conn3: TFslDBConnection);
+procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, version, Code: String; conn2, conn3: TFDBConnection);
 var
   vs : TFhirValueSetW;
   val : TValuesetChecker;
@@ -1240,7 +1240,7 @@ begin
   conn2.ExecSQL('Update Concepts set NeedsIndexing = 0 where ConceptKey = '+inttostr(ConceptKey));
 end;
 
-procedure TTerminologyServer.processValueSet(ValueSetKey: integer; URL: String; conn2, conn3: TFslDBConnection);
+procedure TTerminologyServer.processValueSet(ValueSetKey: integer; URL: String; conn2, conn3: TFDBConnection);
 var
   vs : TFhirValueSetW;
   val : TValuesetChecker;

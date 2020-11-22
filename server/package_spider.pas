@@ -58,7 +58,7 @@ Type
 
   TPackageUpdater = class (TFslObject)
   private
-    FDB : TFslDBConnection;
+    FDB : TFDBConnection;
     FErrors: String;
     FFeedErrors : String;
     FOnSendEmail : TSendEmailEvent;
@@ -75,21 +75,21 @@ Type
     procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
-    procedure update(DB : TFslDBConnection);
+    procedure update(DB : TFDBConnection);
 
     property errors : String read FErrors;
     property OnSendEmail : TSendEmailEvent read FOnSendEmail write FOnSendEmail;
 
-    class procedure test(db : TFslDBManager);
+    class procedure test(db : TFDBManager);
 
-    class procedure commit(conn : TFslDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; kind : TFHIRPackageKind);
+    class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; kind : TFHIRPackageKind);
   end;
 
 implementation
 
 { TPackageUpdater }
 
-class procedure TPackageUpdater.commit(conn: TFslDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
+class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
 var
   fver, dep : String;
   fhirVersions : String;
@@ -221,9 +221,9 @@ begin
   end;
 end;
 
-class procedure TPackageUpdater.test(db: TFslDBManager);
+class procedure TPackageUpdater.test(db: TFDBManager);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := db.GetConnection('test');
   try
@@ -233,7 +233,7 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.update(DB : TFslDBConnection);
+procedure TPackageUpdater.update(DB : TFDBConnection);
 var
   json : TJsonObject;
   arr : TJsonArray;

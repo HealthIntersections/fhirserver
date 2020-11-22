@@ -41,15 +41,15 @@ type
   TNdcImporter = class (TFslObject)
   private
     FSource: String;
-    FDatabase: TFslDBManager;
-    procedure SetDatabase(const Value: TFslDBManager);
+    FDatabase: TFDBManager;
+    procedure SetDatabase(const Value: TFDBManager);
   protected
     function sizeInBytesV : cardinal; override;
   public
     constructor Create(source : String);
     destructor Destroy; override;
 
-    property Database : TFslDBManager read FDatabase write SetDatabase;
+    property Database : TFDBManager read FDatabase write SetDatabase;
     property source : String read FSource write FSource;
   end;
 
@@ -69,7 +69,7 @@ begin
   inherited;
 end;
 
-procedure TNdcImporter.SetDatabase(const Value: TFslDBManager);
+procedure TNdcImporter.SetDatabase(const Value: TFDBManager);
 begin
   FDatabase := Value;
 end;

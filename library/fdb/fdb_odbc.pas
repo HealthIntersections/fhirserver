@@ -40,17 +40,17 @@ uses
   fdb_odbc_objects;
 
 type
-  TFslDBOdbcConnection = class (TFslDBConnection)
+  TFDBOdbcConnection = class (TFDBConnection)
   private
     FEnv : TOdbcEnv;
     FHdbc : TOdbcConnection;
     FStmt : TOdbcStatement;
     FASAMode : Integer;
     procedure SetASALevel(iLevel : Integer);
-    function FetchColumnMetaData(ASrc : TCatalogColumn) : TFslDBColumn;
-    function FetchIndexMetaData(ACat: TOdbcCatalog; AName : String) : TFslDBIndex;
-    Function FetchRelationshipMetaData(aCat : TOdbcCatalog; aDetails : String) : TFslDBRelationship;
-    function FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFslDBTable;
+    function FetchColumnMetaData(ASrc : TCatalogColumn) : TFDBColumn;
+    function FetchIndexMetaData(ACat: TOdbcCatalog; AName : String) : TFDBIndex;
+    Function FetchRelationshipMetaData(aCat : TOdbcCatalog; aDetails : String) : TFDBRelationship;
+    function FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFDBTable;
     function DatabaseSizeMSSQL : int64;
     function TableSizeMSSQL(sName : String) : int64;
     procedure initMySQL;
@@ -58,7 +58,7 @@ type
     procedure StartTransactV; Override;
     procedure CommitV; Override;
     procedure RollbackV; Override;
-    function FetchMetaDataV : TFslDBMetaData; Override;
+    function FetchMetaDataV : TFDBMetaData; Override;
     function GetColCountV: Integer; Override;
     function GetColStringV(ACol: Word): String; Override;
     function GetColIntegerV(ACol: Word): Integer; Override;
@@ -68,7 +68,7 @@ type
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
     function GetColDateTimeExV(ACol: Word): TFslDateTime; Override;
-    function GetColTypeV(ACol: Word): TFslDBColumnType; Override;
+    function GetColTypeV(ACol: Word): TFDBColumnType; Override;
     function GetColKeyV(ACol: Word): Integer; Override;
     function GetRowsAffectedV: Integer; Override;
     procedure RenameTableV(AOldTableName, ANewTableName: String); Override;
@@ -96,14 +96,14 @@ type
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
   Public
-    constructor Create(AOwner : TFslDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
+    constructor Create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
     destructor Destroy; override;
     procedure Initialise; override;
   end;
 
-  TFslDBOdbcManager = class (TFslDBManager)
+  TFDBOdbcManager = class (TFDBManager)
   private
-    FPlatform : TFslDBPlatform;
+    FPlatform : TFDBPlatform;
     FDriver : String;
     FServer : String;
     FDatabase : String;
@@ -113,18 +113,18 @@ type
     FAttributes : TStringList;
     FEnv : TOdbcEnv;
   Protected
-    function GetDBProvider: TFslDBProvider; Override;
-    function ConnectionFactory: TFslDBConnection; Override;
-    function GetDBPlatform: TFslDBPlatform; Override;
+    function GetDBProvider: TFDBProvider; Override;
+    function ConnectionFactory: TFDBConnection; Override;
+    function GetDBPlatform: TFDBPlatform; Override;
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
-    constructor Create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
+    constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
+    constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
     destructor Destroy; override;
-    class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
+    class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; override;
     property Driver : String read FDriver;
     property Server : String read FServer;
     property Database : String read FDatabase;
@@ -132,12 +132,12 @@ type
     property Password : String read FPassword;
   end;
 
-function StandardODBCDriverName(APlatform: TFslDBPlatform): String;
+function StandardODBCDriverName(APlatform: TFDBPlatform): String;
 
 implementation
 
 
-constructor TFslDBOdbcConnection.create(AOwner : TFslDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
+constructor TFDBOdbcConnection.create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
 begin
   inherited create(AOwner);
   FEnv := Env;
@@ -146,7 +146,7 @@ begin
   FASAMode := -1; // transaction isolation level unknown
 end;
 
-destructor TFslDBOdbcConnection.destroy;
+destructor TFDBOdbcConnection.destroy;
 begin
   FStmt.free;
   FStmt := Nil;
@@ -156,7 +156,7 @@ begin
   inherited;
 end;
 
-procedure TFslDBOdbcConnection.SetASALevel(iLevel : Integer);
+procedure TFDBOdbcConnection.SetASALevel(iLevel : Integer);
 begin
   if FASAMode <> iLevel then
     begin
@@ -168,7 +168,7 @@ begin
     end;
 end;
 
-function TFslDBOdbcConnection.GetColBlobV(ACol: Word): TBytes;
+function TFDBOdbcConnection.GetColBlobV(ACol: Word): TBytes;
 var
   mem : TMemoryStream;
 begin
@@ -183,47 +183,47 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.GetColCountV: Integer;
+function TFDBOdbcConnection.GetColCountV: Integer;
 begin
   Result := FStmt.ColCount;
 end;
 
-function TFslDBOdbcConnection.GetColStringV(ACol: Word): String;
+function TFDBOdbcConnection.GetColStringV(ACol: Word): String;
 begin
   Result := FStmt.ColString[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColIntegerV(ACol: Word): Integer;
+function TFDBOdbcConnection.GetColIntegerV(ACol: Word): Integer;
 begin
   Result := FStmt.ColInteger[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColInt64V(ACol: Word): Int64;
+function TFDBOdbcConnection.GetColInt64V(ACol: Word): Int64;
 begin
   Result := FStmt.ColInt64[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
+function TFDBOdbcConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
 begin
   result := TFslDateTime.fromTS(GetColTimestampV(ACol));
 end;
 
-function TFslDBOdbcConnection.GetColDoubleV(ACol: Word): Double;
+function TFDBOdbcConnection.GetColDoubleV(ACol: Word): Double;
 begin
   Result := FStmt.ColDouble[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColNullV(ACol: Word): Boolean;
+function TFDBOdbcConnection.GetColNullV(ACol: Word): Boolean;
 begin
   Result := FStmt.ColNull[ACol];
 end;
 
-function TFslDBOdbcConnection.GetColTimestampV(ACol: Word): fsl_utilities.TTimestamp;
+function TFDBOdbcConnection.GetColTimestampV(ACol: Word): fsl_utilities.TTimestamp;
 begin
   Result := FStmt.ColTimestamp[ACol];
 end;
 
-function ConvertColType(ct: SmallInt): TFslDBColumnType;
+function ConvertColType(ct: SmallInt): TFDBColumnType;
 begin
   case ct of
     SQL_C_GUID,
@@ -294,29 +294,29 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.GetColTypeV(ACol: Word): TFslDBColumnType;
+function TFDBOdbcConnection.GetColTypeV(ACol: Word): TFDBColumnType;
 begin
   Result := ConvertColType(FStmt.ColType[ACol])
 end;
 
-function TFslDBOdbcConnection.GetColKeyV(ACol: Word): Integer;
+function TFDBOdbcConnection.GetColKeyV(ACol: Word): Integer;
 begin
   Result := GetColInteger(ACol);
 end;
 
-function TFslDBOdbcConnection.GetRowsAffectedV: Integer;
+function TFDBOdbcConnection.GetRowsAffectedV: Integer;
 begin
   Result := FStmt.RowsAffected;
 end;
 
-procedure TFslDBOdbcConnection.Initialise;
+procedure TFDBOdbcConnection.Initialise;
 begin
   case Owner.Platform of
     kdbMySQL : initMySQL;
   end;
 end;
 
-procedure TFslDBOdbcConnection.initMySQL;
+procedure TFDBOdbcConnection.initMySQL;
 var
   tz : String;
 begin
@@ -324,7 +324,7 @@ begin
   ExecSQL('SET time_zone = '''+tz+'''');
 end;
 
-procedure TFslDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
+procedure TFDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + AOldTableName + ' RENAME ' + ANewTableName
@@ -337,7 +337,7 @@ begin
   FStmt.Terminate;
 end;
 
-procedure TFslDBOdbcConnection.DropTableV(ATableName : String);
+procedure TFDBOdbcConnection.DropTableV(ATableName : String);
 begin
   SQL := 'Drop Table ' + ATableName;
   Prepare;
@@ -345,7 +345,7 @@ begin
   terminate;
 end;
 
-procedure TFslDBOdbcConnection.DropColumnV(ATableName, aColumnName : String);
+procedure TFDBOdbcConnection.DropColumnV(ATableName, aColumnName : String);
 begin
   SQL := 'ALTER TABLE ' + ATableName+' DROP COLUMN  ' + aColumnName;
   Prepare;
@@ -353,7 +353,7 @@ begin
   terminate;
 end;
 
-procedure TFslDBOdbcConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
+procedure TFDBOdbcConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + ATableName + ' RENAME ' + AOldColumnName+' TO '+ANewColumnName
@@ -364,7 +364,7 @@ begin
   FStmt.Terminate;
 end;
 
-procedure TFslDBOdbcConnection.ListTablesV(AList : TStrings);
+procedure TFDBOdbcConnection.ListTablesV(AList : TStrings);
 var
   LCat: TOdbcCatalog;
 begin
@@ -378,7 +378,7 @@ begin
     end;
 end;
 
-procedure TFslDBOdbcConnection.ClearDatabaseV;
+procedure TFDBOdbcConnection.ClearDatabaseV;
 var
   LTables: TStringList;
   i: Integer;
@@ -414,7 +414,7 @@ begin
     end;
 end;
 
-procedure TFslDBOdbcConnection.PrepareV;
+procedure TFDBOdbcConnection.PrepareV;
 begin
   if Owner.Platform = kdbASA then
     begin
@@ -427,82 +427,82 @@ begin
   FStmt.Prepare;
 end;
 
-procedure TFslDBOdbcConnection.ExecuteV;
+procedure TFDBOdbcConnection.ExecuteV;
 begin
   FStmt.Execute;
 end;
 
-procedure TFslDBOdbcConnection.TerminateV;
+procedure TFDBOdbcConnection.TerminateV;
 begin
   FStmt.Terminate;
 end;
 
-procedure TFslDBOdbcConnection.StartTransactV;
+procedure TFDBOdbcConnection.StartTransactV;
 begin
   FHdbc.StartTransact;
 end;
 
-procedure TFslDBOdbcConnection.CommitV;
+procedure TFDBOdbcConnection.CommitV;
 begin
   FHdbc.Commit;
   FHdbc.EndTransact;
 end;
 
-procedure TFslDBOdbcConnection.RollbackV;
+procedure TFDBOdbcConnection.RollbackV;
 begin
   FHdbc.rollback;
   FHdbc.EndTransact;
 end;
 
-function TFslDBOdbcConnection.FetchNextV: Boolean;
+function TFDBOdbcConnection.FetchNextV: Boolean;
 begin
   Result := FStmt.FetchNext;
 end;
 
-function TFslDBOdbcConnection.ColByNameV(AColName: String): Integer;
+function TFDBOdbcConnection.ColByNameV(AColName: String): Integer;
 begin
   Result := FStmt.ColByName(AColName);
 end;
 
-function TFslDBOdbcConnection.ColNameV(ACol: Integer): String;
+function TFDBOdbcConnection.ColNameV(ACol: Integer): String;
 begin
   Result := FStmt.ColNames[ACol-1];
 end;
 
 type
 
-  TOdbcBoundString = class (TFslDBBoundParam)
+  TOdbcBoundString = class (TFDBBoundParam)
   private
     FString: String;
   protected
     function sizeInBytesV : cardinal; override;
   end;
 
-  TOdbcBoundInt = class (TFslDBBoundParam)
+  TOdbcBoundInt = class (TFDBBoundParam)
   private
     FInt: Integer;
   protected
     function sizeInBytesV : cardinal; override;
   end;
 
-  TOdbcBoundInt64 = class (TFslDBBoundParam)
+  TOdbcBoundInt64 = class (TFDBBoundParam)
   private
     FInt64: Int64;
   protected
     function sizeInBytesV : cardinal; override;
   end;
 
-  TOdbcBoundDate = class (TFslDBBoundParam)
+  TOdbcBoundDate = class (TFDBBoundParam)
   private
     FDate: fsl_utilities.TTimeStamp
   end;
 
-  TOdbcBoundDouble = class (TFslDBBoundParam)
+  TOdbcBoundDouble = class (TFDBBoundParam)
   private
     FDouble: Double
   end;
 
-  TOdbcBoundBytes  = class (TFslDBBoundParam)
+  TOdbcBoundBytes  = class (TFDBBoundParam)
   private
     FBytes: TManagedMemoryStream;
   protected
@@ -511,7 +511,7 @@ type
     destructor Destroy; override;
   end;
 
-procedure TFslDBOdbcConnection.BindInt64V(AParamName: String; AParamValue: Int64);
+procedure TFDBOdbcConnection.BindInt64V(AParamName: String; AParamValue: Int64);
 var
   LBind: TOdbcBoundInt64;
 begin
@@ -521,7 +521,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindIntegerV(AParamName: String; AParamValue: Integer);
+procedure TFDBOdbcConnection.BindIntegerV(AParamName: String; AParamValue: Integer);
 var
   LBind: TOdbcBoundInt;
 begin
@@ -531,12 +531,12 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindKeyV(AParamName: String; AParamValue: Integer);
+procedure TFDBOdbcConnection.BindKeyV(AParamName: String; AParamValue: Integer);
 begin
   BindInteger(AParamName, AParamValue);
 end;
 
-procedure TFslDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
+procedure TFDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
 begin
   if AParamValue.null then
     BindNull(AParamName)
@@ -544,7 +544,7 @@ begin
     BindTimeStampV(AParamName, AParamValue.TimeStamp);
 end;
 
-procedure TFslDBOdbcConnection.BindDoubleV(AParamName: String; AParamValue: Double);
+procedure TFDBOdbcConnection.BindDoubleV(AParamName: String; AParamValue: Double);
 var
   LBind: TOdbcBoundDouble;
 begin
@@ -554,7 +554,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindStringV(AParamName: String; AParamValue: String);
+procedure TFDBOdbcConnection.BindStringV(AParamName: String; AParamValue: String);
 var
   LBind: TOdbcBoundString;
 begin
@@ -564,7 +564,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: fsl_utilities.TTimeStamp);
+procedure TFDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: fsl_utilities.TTimeStamp);
 var
   LBind: TOdbcBoundDate;
 begin
@@ -578,7 +578,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindBlobV(AParamName: String; AParamValue: TBytes);
+procedure TFDBOdbcConnection.BindBlobV(AParamName: String; AParamValue: TBytes);
 var
   LBind: TOdbcBoundBytes;
 begin
@@ -593,7 +593,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TFslDBOdbcConnection.BindNullV(AParamName: String);
+procedure TFDBOdbcConnection.BindNullV(AParamName: String);
 begin
   FStmt.BindNullByName(AParamName);
 end;
@@ -614,7 +614,7 @@ End;
 
 
 
-function TFslDBOdbcConnection.DatabaseSizeMSSQL : int64;
+function TFDBOdbcConnection.DatabaseSizeMSSQL : int64;
 Begin
   try
   SQL := 'sp_spaceused';
@@ -639,7 +639,7 @@ Begin
   end;
 End;
 
-function TFslDBOdbcConnection.TableSizeMSSQL(sName : String) : int64;
+function TFDBOdbcConnection.TableSizeMSSQL(sName : String) : int64;
 Begin
   try
   SQL := 'sp_spaceused '+sName;
@@ -667,7 +667,7 @@ Begin
 End;
 
 
-function TFslDBOdbcConnection.DatabaseSizeV : int64;
+function TFDBOdbcConnection.DatabaseSizeV : int64;
 Begin
   case Owner.Platform of
     kdbSQLServer  :
@@ -678,7 +678,7 @@ Begin
 End;
 
 
-Function TFslDBOdbcConnection.TableSizeV(sName : String):int64;
+Function TFDBOdbcConnection.TableSizeV(sName : String):int64;
 Begin
   case Owner.Platform of
     kdbSQLServer  :
@@ -688,15 +688,15 @@ Begin
   End;
 End;
 
-function TFslDBOdbcConnection.SupportsSizingV : Boolean;
+function TFDBOdbcConnection.SupportsSizingV : Boolean;
 Begin
   result := Owner.Platform = kdbSQLServer;
 End;
 
 
-function TFslDBOdbcConnection.FetchColumnMetaData(ASrc : TCatalogColumn) : TFslDBColumn;
+function TFDBOdbcConnection.FetchColumnMetaData(ASrc : TCatalogColumn) : TFDBColumn;
 begin
-  result := TFslDBColumn.create;
+  result := TFDBColumn.create;
   try
     result.Name := ASrc.ColumnName;
     result.DataType := ConvertColType(ASrc.DataType);
@@ -712,14 +712,14 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.FetchIndexMetaData(ACat: TOdbcCatalog; AName : String) : TFslDBIndex;
+function TFDBOdbcConnection.FetchIndexMetaData(ACat: TOdbcCatalog; AName : String) : TFDBIndex;
 var
   LFields : TStringList;
   LName : String;
   LIndexUnique : Boolean;
   i : Integer;
 begin
-  result := TFslDBIndex.create;
+  result := TFDBIndex.create;
   try
     LFields := TStringList.create;
     try
@@ -728,7 +728,7 @@ begin
       result.Unique := LIndexUnique;
       for i := 0 to LFields.Count - 1 do
         begin
-        result.Columns.add(TFslDBColumn.Create(LFields[i]));
+        result.Columns.add(TFDBColumn.Create(LFields[i]));
         end;
     finally
       LFields.Free;
@@ -743,11 +743,11 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.FetchRelationshipMetaData(ACat: TOdbcCatalog; aDetails : String) : TFslDBRelationship;
+function TFDBOdbcConnection.FetchRelationshipMetaData(ACat: TOdbcCatalog; aDetails : String) : TFDBRelationship;
 var
   ColumnName, ForeignOwner, ForeignTable, ForeignColumn : String;
 begin
-  result := TFslDBRelationship.create;
+  result := TFDBRelationship.create;
   try
     ACat.ParseForeignKey(aDetails, ColumnName, ForeignOwner, ForeignTable, ForeignColumn);
     result.Column := columnName;
@@ -763,16 +763,16 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFslDBTable;
+function TFDBOdbcConnection.FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatalogTable) : TFDBTable;
 var
   i : integer;
 begin
-  result := TFslDBTable.create;
+  result := TFDBTable.create;
   try
     result.Name := ASrc.TableName;
     result.Owner := ASrc.TableOwner;
     result.Description := ASrc.Description;
-    result.TableType := TFslDBTableType(ASrc.TableType);
+    result.TableType := TFDBTableType(ASrc.TableType);
     for i := 0 to ASrc.Columns.itemcount - 1  do
       begin
       result.Columns.add(FetchColumnMetadata(ASrc.Columns[i]));
@@ -794,16 +794,16 @@ begin
   end;
 end;
 
-function TFslDBOdbcConnection.FetchMetaDataV : TFslDBMetaData;
+function TFDBOdbcConnection.FetchMetaDataV : TFDBMetaData;
 var
   LCat: TOdbcCatalog;
   i : integer;
-  LRes : TFslDBMetaData;
+  LRes : TFDBMetaData;
 begin
   LCat := TOdbcCatalog.Create(FEnv, FHdbc);
   try
     LCat.hDbc := FHdbc;
-    LRes := TFslDBMetaData.create;
+    LRes := TFDBMetaData.create;
     try
       for i := 0 to LCat.Tables.ItemCount - 1 do
         begin
@@ -828,9 +828,9 @@ begin
     end;
 end;
 
-{ TFslDBOdbcManager }
+{ TFDBOdbcManager }
 
-constructor TFslDBOdbcManager.create(AName : String; platform : TFslDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcManager.create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   {$IFDEF FPC}
   if @SQLAllocHandle = nil then
@@ -872,35 +872,35 @@ begin
     end;
 end;
 
-function TFslDBOdbcManager.GetDBProvider: TFslDBProvider;
+function TFDBOdbcManager.GetDBProvider: TFDBProvider;
 begin
   result := kdbpODBC;
 end;
 
 
-function TFslDBOdbcManager.GetDriver: String;
+function TFDBOdbcManager.GetDriver: String;
 begin
   result := FDriver;
 end;
 
-constructor TFslDBOdbcManager.Create(AName: String; platform: TFslDBPlatform; AMaxConnCount, ATimeout: Integer; settings: TFslStringMap);
+constructor TFDBOdbcManager.Create(AName: String; platform: TFDBPlatform; AMaxConnCount, ATimeout: Integer; settings: TFslStringMap);
 begin
   Create(AName, platform, AMaxConnCount, ATimeout, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
 end;
 
-destructor TFslDBOdbcManager.Destroy;
+destructor TFDBOdbcManager.Destroy;
 begin
   FAttributes.free;
   inherited;
   FEnv.Free;
 end;
 
-procedure TFslDBOdbcManager.init;
+procedure TFDBOdbcManager.init;
 begin
   FEnv := TOdbcEnv.create;
 end;
 
-function TFslDBOdbcManager.ConnectionFactory: TFslDBConnection;
+function TFDBOdbcManager.ConnectionFactory: TFDBConnection;
 var
   LHdbc : TOdbcConnection;
   LStmt : TOdbcStatement;
@@ -933,7 +933,7 @@ begin
     LStmt.CursorType := SQL_CURSOR_FORWARD_ONLY;
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
-    result := TFslDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
+    result := TFDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
     result.Initialise;
   except
     on e:exception do
@@ -947,17 +947,17 @@ begin
   end;
 end;
 
-function TFslDBOdbcManager.GetDBPlatform: TFslDBPlatform;
+function TFDBOdbcManager.GetDBPlatform: TFDBPlatform;
 begin
   result := FPlatform;
 end;
 
-function TFslDBOdbcManager.GetDBDetails: String;
+function TFDBOdbcManager.GetDBDetails: String;
 begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
 end;
 
-function TFslDBOdbcManager.sizeInBytesV : cardinal;
+function TFDBOdbcManager.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FDriver.length * sizeof(char)) + 12);
@@ -968,7 +968,7 @@ begin
   inc(result, FAttributes.sizeInBytes);
 end;
 
-class function TFslDBOdbcManager.IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean;
+class function TFDBOdbcManager.IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean;
 begin
   result := false;
   VMsg := 'develop this bit';
@@ -977,7 +977,7 @@ end;
 { ODBC Utils }
 
 
-function StandardODBCDriverName(APlatform: TFslDBPlatform): String;
+function StandardODBCDriverName(APlatform: TFDBPlatform): String;
 begin
   case APlatform of
     kdbSQLServer: Result := 'SQL Server Native Client 11.0';
@@ -995,9 +995,9 @@ begin
   end;
 end;
 
-{ TFslDBOdbcExpress }
+{ TFDBOdbcExpress }
                            {
-constructor TFslDBOdbcExpress.create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
+constructor TFDBOdbcExpress.create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
 begin
   Create(AName, AIniFile.ReadInteger(ASection, 'MaxConnections', 20), AIniFile.ReadString(ASection, 'DSN', ''),
       AIniFile.ReadString(ASection, 'ODBCDriver', ''), AIniFile.ReadString(ASection, 'Server', ''),
@@ -1005,7 +1005,7 @@ begin
       AIniFile.ReadString(ASection, 'Password', ''));
 end;
 
-constructor TFslDBOdbcExpress.create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcExpress.create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   inherited create(Aname, AMaxConnCount);
   FAttributes := TIdStringList.create;

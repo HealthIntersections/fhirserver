@@ -51,13 +51,13 @@ type
   // these are all the known providers. Just because the enumerations are defined doesn't
   // mean that the provider is supported by all 3 of compiler, application, and system
   // access is odbc but settings are done differently
-  TFslDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
+  TFDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
                   kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite);
 
-  TFslDBProviderSet = set of TFslDBProvider;
+  TFDBProviderSet = set of TFDBProvider;
 
 const
-  FSLDB_ALL_PROVIDERS = [Low(TFslDBProvider) .. High(TFslDBProvider)];
+  FSLDB_ALL_PROVIDERS = [Low(TFDBProvider) .. High(TFDBProvider)];
 
 type
 
@@ -65,34 +65,34 @@ type
   {
     Lists possible database Column types
   }
-  TFslDBColumnType = (ctUnknown, ctBoolean, ctInteger, ctNumeric, ctFloat, ctChar, ctDateTime, ctBlob, ctInt64, ctUnicode);
+  TFDBColumnType = (ctUnknown, ctBoolean, ctInteger, ctNumeric, ctFloat, ctChar, ctDateTime, ctBlob, ctInt64, ctUnicode);
 
   // Meta data
-  TFslDBTableType = (kdbUser, kdbView, kdbSystem);
+  TFDBTableType = (kdbUser, kdbView, kdbSystem);
 
-  TFslDBColumn = class (TFslObject)
+  TFDBColumn = class (TFslObject)
   private
     FName: String;
     FLength: Integer;
-    FDataType: TFslDBColumnType;
+    FDataType: TFDBColumnType;
     FNullable: Boolean;
   protected
     function sizeInBytesV : cardinal; override;
   public
     constructor Create(name : String); overload;
-    function Link : TFslDBColumn; overload;
+    function Link : TFDBColumn; overload;
     property Name : String read FName write FName;
-    property DataType : TFslDBColumnType read FDataType write FDataType;
+    property DataType : TFDBColumnType read FDataType write FDataType;
     property Length : Integer read FLength write FLength;
     property Nullable : Boolean read FNullable write FNullable;
     function Describe : String;
   end;
 
-  TFslDBIndex = class (TFslObject)
+  TFDBIndex = class (TFslObject)
   private
     FUnique: Boolean;
     FName: String;
-    FColumns: TFslList<TFslDBColumn>;
+    FColumns: TFslList<TFDBColumn>;
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -100,11 +100,11 @@ type
     destructor Destroy; override;
     property Name : String read FName write FName;
     property Unique : Boolean read FUnique write FUnique;
-    property Columns : TFslList<TFslDBColumn> read FColumns;
+    property Columns : TFslList<TFDBColumn> read FColumns;
     function Describe : String;
   end;
 
-  TFslDBRelationship = class (TFslObject)
+  TFDBRelationship = class (TFslObject)
   private
     FColumn: String;
     FDestTable : String;
@@ -118,13 +118,13 @@ type
     function Describe : String;
   end;
 
-  TFslDBTable = class (TFslObject)
+  TFDBTable = class (TFslObject)
   private
     FName: String;
-    FColumns: TFslList<TFslDBColumn>;
-    FIndexes: TFslList<TFslDBIndex>;
-    FRelationships : TFslList<TFslDBRelationship>;
-    FTableType: TFslDBTableType;
+    FColumns: TFslList<TFDBColumn>;
+    FIndexes: TFslList<TFDBIndex>;
+    FRelationships : TFslList<TFDBRelationship>;
+    FTableType: TFDBTableType;
     FOwner: String;
     FDescription: String;
     FOrderMatters : Boolean;
@@ -134,12 +134,12 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    function Link : TFslDBTable; overload;
-    property Columns : TFslList<TFslDBColumn> read FColumns;
-    property Indexes : TFslList<TFslDBIndex> read FIndexes;
-    Property Relationships : TFslList<TFslDBRelationship> read FRelationships;
+    function Link : TFDBTable; overload;
+    property Columns : TFslList<TFDBColumn> read FColumns;
+    property Indexes : TFslList<TFDBIndex> read FIndexes;
+    Property Relationships : TFslList<TFDBRelationship> read FRelationships;
     property Name : String read FName write FName;
-    property TableType : TFslDBTableType read FTableType write FTableType;
+    property TableType : TFDBTableType read FTableType write FTableType;
     property Owner : String read FOwner write FOwner;
     property Description : String read FDescription write FDescription;
     Property OrderMatters : Boolean read FOrderMatters write FOrderMatters;
@@ -147,9 +147,9 @@ type
     function hasColumn(name : String) : boolean;
   end;
 
-  TFslDBMetaData = class (TFslObject)
+  TFDBMetaData = class (TFslObject)
   private
-    FTables: TFslList<TFslDBTable>;
+    FTables: TFslList<TFDBTable>;
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   protected
@@ -158,17 +158,17 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
-    property Tables : TFslList<TFslDBTable> read FTables;
+    property Tables : TFslList<TFDBTable> read FTables;
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
 
     function HasTable(name : String; caseSensitive : boolean = false) : boolean;
-    function GetTable(name : String) : TFslDBTable;
+    function GetTable(name : String) : TFDBTable;
   end;
 
-  TFslDBManager = class;
-  TOnChangeConnectionCount = procedure (oSender : TFslDBManager) of Object;
-  TFslDBBoundParam = class (TFslObject);
+  TFDBManager = class;
+  TOnChangeConnectionCount = procedure (oSender : TFDBManager) of Object;
+  TFDBBoundParam = class (TFslObject);
 
 
   {
@@ -177,11 +177,11 @@ type
     to get a connection. The connection must always be returned using
     TDBConnPool.YieldConnection otherwise the connection will leak.
   }
-  TFslDBConnection = class (TFslObject)
+  TFDBConnection = class (TFslObject)
   Private
-    FOwner: TFslDBManager;
+    FOwner: TFDBManager;
     FNoFree : Boolean;
-    FBoundItems : TFslMap<TFslDBBoundParam>;
+    FBoundItems : TFslMap<TFDBBoundParam>;
     FUsage : String;
     FUsed : TDateTime;
     FTables : TStringList;
@@ -204,7 +204,7 @@ type
     function GetColBlobAsStringByName(AName: String): String;
   Protected
     // caching for blobs, for use by concrete implementations
-    procedure KeepBoundObj(sName : String; AObj : TFslDBBoundParam);
+    procedure KeepBoundObj(sName : String; AObj : TFDBBoundParam);
 
     // worker routines for descendants to override
     procedure StartTransactV; virtual; abstract;
@@ -239,10 +239,10 @@ type
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
     function GetColTimestampV(ACol: Word): fsl_utilities.TTimestamp; Virtual; Abstract;
     function GetColDateTimeExV(ACol: Word): TFslDateTime; Virtual; Abstract;
-    function GetColTypeV(ACol: Word): TFslDBColumnType; Virtual; Abstract;
+    function GetColTypeV(ACol: Word): TFDBColumnType; Virtual; Abstract;
     function GetColKeyV(ACol: Word): Integer; Virtual; Abstract;
     function GetRowsAffectedV: Integer; Virtual; Abstract;
-    function FetchMetaDataV : TFslDBMetaData; Virtual; Abstract;
+    function FetchMetaDataV : TFDBMetaData; Virtual; Abstract;
     procedure ListTablesV(AList : TStrings); virtual; abstract;
     function DatabaseSizeV : int64; virtual; abstract;
     Function TableSizeV(sName : String):int64; virtual; abstract;
@@ -251,10 +251,10 @@ type
     procedure CheckRelease;
     function sizeInBytesV : cardinal; override;
   Public
-    constructor Create(AOwner: TFslDBManager);
+    constructor Create(AOwner: TFDBManager);
     destructor Destroy; Override;
 
-    function link : TFslDBConnection; overload;
+    function link : TFDBConnection; overload;
 
     { internal use only  - platform specific initialization }
     procedure Initialise; virtual;
@@ -285,7 +285,7 @@ type
     property UseStarted : TDateTime read FUsed;
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
-    property Owner: TFslDBManager Read FOwner;
+    property Owner: TFDBManager Read FOwner;
     property Prepared : boolean read FPrepared;
 
     // when the application finishes with the connection, it should use one of these to free the connection
@@ -298,7 +298,7 @@ type
     // not supported in scripting
     procedure ExecSQLBatch(ASql: array of String);
 
-    function FetchMetaData : TFslDBMetaData;
+    function FetchMetaData : TFDBMetaData;
   
     // public for scripting engine - usually would be private
     function GetColCount: Integer;
@@ -310,7 +310,7 @@ type
     function GetColNull(ACol: Integer): Boolean;
     function GetColTimestamp(ACol: Integer): fsl_utilities.TTimestamp;
     function GetColDateTimeEx(ACol: Integer): TFslDateTime;
-    function GetColType(ACol: Integer): TFslDBColumnType;
+    function GetColType(ACol: Integer): TFDBColumnType;
     function GetRowsAffected: Integer;
 
     function GetColStringByName(AName: String): String;
@@ -320,7 +320,7 @@ type
     function GetColDoubleByName(AName: String): Double;
     function GetColTimeStampByName(AName: String): fsl_utilities.TTimestamp;
     function GetColDateTimeExByName(AName: String): TFslDateTime;
-    function GetColTypeByName(AName: String): TFslDBColumnType;
+    function GetColTypeByName(AName: String): TFDBColumnType;
     function GetColNullByName(AName: String): Boolean;
 
       function GetColKey(ACol: Integer): Integer;
@@ -555,7 +555,7 @@ type
     {
      Get Column Col Field Type
     }
-    property ColType      [ACol: Integer]: TFslDBColumnType Read GetColType;
+    property ColType      [ACol: Integer]: TFDBColumnType Read GetColType;
     {
      True if Column ACol(index) Value is Null
     }
@@ -596,7 +596,7 @@ type
   
     {
       Get Column "AName" Field Type}
-    property ColTypeByName      [AName: String]: TFslDBColumnType Read GetColTypeByName;
+    property ColTypeByName      [AName: String]: TFDBColumnType Read GetColTypeByName;
     {
       true if Column "AName" value is Null}
     property ColNullByName      [AName: String]: Boolean Read GetColNullByName;
@@ -642,19 +642,19 @@ type
   end;
 
   {$IFNDEF FPC}
-  TFslDBConnectionProc = reference to Procedure (conn : TFslDBConnection);
+  TFDBConnectionProc = reference to Procedure (conn : TFDBConnection);
   {$ENDIF}
 
-  { TFslDBManager }
+  { TFDBManager }
 
-  TFslDBManager = class(TFslObject)
+  TFDBManager = class(TFslObject)
   Private
     FSemaphore : TSemaphore;
     FWaitCreate : boolean;
-    FConnections : TFslList<TFslDBConnection>;
-    FAvail: TFslList<TFslDBConnection>;
-    FInUse : TFslList<TFslDBConnection>;
-    FDBLogger : TFslDBLogger;
+    FConnections : TFslList<TFDBConnection>;
+    FAvail: TFslList<TFDBConnection>;
+    FInUse : TFslList<TFDBConnection>;
+    FDBLogger : TFDBLogger;
     FClosing : boolean;
     FOnChangeConnectionCount : TOnChangeConnectionCount;
     FServerIsAvailable : Boolean;
@@ -665,19 +665,19 @@ type
     FMaxConnCount : Integer;
     FName : string;
     FTag : integer;
-    function PopAvail : TFslDBConnection;
+    function PopAvail : TFDBConnection;
     function GetCurrentCount: Integer;
-    procedure Release(AConn : TFslDBConnection);
-    procedure Error(AConn : TFslDBConnection; AException: Exception; AErrMsg : string);
+    procedure Release(AConn : TFDBConnection);
+    procedure Error(AConn : TFDBConnection; AException: Exception; AErrMsg : string);
     function GetCurrentUse: Integer;
     procedure SetMaxConnCount(const Value: Integer);
     procedure CheckWait;
   Protected
     FLock : TFslLock;
 
-    function ConnectionFactory: TFslDBConnection; Virtual; Abstract;
-    function GetDBPlatform: TFslDBPlatform; Virtual; Abstract;
-    function GetDBProvider: TFslDBProvider; Virtual; Abstract;
+    function ConnectionFactory: TFDBConnection; Virtual; Abstract;
+    function GetDBPlatform: TFDBPlatform; Virtual; Abstract;
+    function GetDBProvider: TFDBProvider; Virtual; Abstract;
     function GetDBDetails: String; Virtual; Abstract;
     function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
@@ -686,13 +686,13 @@ type
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     destructor Destroy; Override;
 
-    function Link : TFslDBManager; overload;
+    function Link : TFDBManager; overload;
 
     procedure ExecSQL(ASql, AName : String);
     function CountSQL(ASql, AName : String) : integer;
-    function GetConnection(const AUsage: String): TFslDBConnection;
+    function GetConnection(const AUsage: String): TFDBConnection;
     {$IFNDEF FPC}
-    procedure connection(usage : String; proc : TFslDBConnectionProc);
+    procedure connection(usage : String; proc : TFDBConnectionProc);
     {$ENDIF}
 
     procedure checkConnection;
@@ -701,9 +701,9 @@ type
     property CurrConnCount: Integer Read GetCurrentCount;
     property CurrUseCount : Integer read GetCurrentUse;
 
-    property Logger : TFslDBLogger read FDBLogger;
-    property Platform: TFslDBPlatform read GetDBPlatform;
-    property Provider : TFslDBProvider read GetDBProvider;
+    property Logger : TFDBLogger read FDBLogger;
+    property Platform: TFDBPlatform read GetDBPlatform;
+    property Provider : TFDBProvider read GetDBProvider;
     property DBDetails: String read GetDBDetails;
     Property Driver : String read GetDriver;
     function GetConnSummary : String;
@@ -714,32 +714,32 @@ type
     property Name : string read FName;
 
     property OnChangeConnectionCount : TOnChangeConnectionCount Read FOnChangeConnectionCount Write FOnChangeConnectionCount;
-    class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; virtual; abstract;
+    class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; virtual; abstract;
   end;
 
-  TFslDBManagerClass = class of TFslDBManager;
+  TFDBManagerClass = class of TFDBManager;
 
-  TFslDBManagerEvent = procedure (AConnMan : TFslDBManager; ABeingCreated : Boolean) of object;
+  TFDBManagerEvent = procedure (AConnMan : TFDBManager; ABeingCreated : Boolean) of object;
 
-  TFslDBHook = class (TFslObject)
+  TFDBHook = class (TFslObject)
   private
-    FHook : TFslDBManagerEvent;
+    FHook : TFDBManagerEvent;
     FName : String;
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create(Name : String; Hook : TFslDBManagerEvent);
+    constructor Create(Name : String; Hook : TFDBManagerEvent);
   end;
 
-  TFslDBManagerList = class (TFslObject)
+  TFDBManagerList = class (TFslObject)
   private
     FLock : TFslLock;
-    FHooks : TFslList<TFslDBHook>;
-    FList : TList<TFslDBManager>; // this can't own because then entries are never freed
-    procedure AddConnMan(AConnMan : TFslDBManager);
-    procedure RemoveConnMan(AConnMan : TFslDBManager);
-    function GetConnMan(i : Integer):TFslDBManager;
-    function GetConnManByName(s : String):TFslDBManager;
+    FHooks : TFslList<TFDBHook>;
+    FList : TList<TFDBManager>; // this can't own because then entries are never freed
+    procedure AddConnMan(AConnMan : TFDBManager);
+    procedure RemoveConnMan(AConnMan : TFDBManager);
+    function GetConnMan(i : Integer):TFDBManager;
+    function GetConnManByName(s : String):TFDBManager;
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -747,10 +747,10 @@ type
     destructor Destroy; override;
     procedure Lock;
     procedure UnLock;
-    property ConnMan[i : Integer]:TFslDBManager read GetConnMan;
-    property ConnManByName[s : String]:TFslDBManager read GetConnManByName; default;
+    property ConnMan[i : Integer]:TFDBManager read GetConnMan;
+    property ConnManByName[s : String]:TFDBManager read GetConnManByName; default;
     function HasConnManByName(s : String) : Boolean;
-    procedure RegisterHook(AName : String; AHook : TFslDBManagerEvent);
+    procedure RegisterHook(AName : String; AHook : TFDBManagerEvent);
     procedure UnRegisterHook(AName : String);
     function dump : String;
   end;
@@ -758,28 +758,28 @@ type
 {
    Get a string Description of a given column type
 }
-function DescribeType(AColType: TFslDBColumnType): String;
+function DescribeType(AColType: TFDBColumnType): String;
 
-function DBManagers : TFslDBManagerList;
+function DBManagers : TFDBManagerList;
 
 implementation
 
 const
   ASSERT_UNIT = 'fdb_manager';
 
-  KDB_COLUMN_TYPE_NAMES : Array [TFslDBColumnType] of String =
+  KDB_COLUMN_TYPE_NAMES : Array [TFDBColumnType] of String =
             ('ctUnknown', 'ctBoolean', 'ctInteger', 'ctNumeric', 'ctFloat', 'ctChar', 'ctDateTime', 'ctBlob', 'ctInt64', 'ctUnicode');
 
-  KDB_TABLE_TYPE_NAMES : Array [TFslDBTableType] of String =
+  KDB_TABLE_TYPE_NAMES : Array [TFDBTableType] of String =
             ('kdbUser', 'kdbView', 'kdbSystem');
 
 
 var
-  GManagers : TFslDBManagerList = nil;
+  GManagers : TFDBManagerList = nil;
 
-{ TFslDBConnection }
+{ TFDBConnection }
 
-constructor TFslDBConnection.Create(AOwner: TFslDBManager);
+constructor TFDBConnection.Create(AOwner: TFDBManager);
 begin
   inherited create;
   FNoFree := false;
@@ -790,18 +790,18 @@ begin
   FSQL := '';
   FTerminated := true;
   FInTransaction := false;
-  FBoundItems := TFslMap<TFslDBBoundParam>.create('KDB.Parameters');
+  FBoundItems := TFslMap<TFDBBoundParam>.create('KDB.Parameters');
   FTables := TStringList.create;
 end;
 
-destructor TFslDBConnection.Destroy;
+destructor TFDBConnection.Destroy;
 begin
   FBoundItems.free;
   FTables.free;
   inherited;
 end;
 
-procedure TFslDBConnection.BindBlob(AParamName: String; AParamValue: TBytes);
+procedure TFDBConnection.BindBlob(AParamName: String; AParamValue: TBytes);
 begin
   if (aParamValue = nil) then
     BindNullV(AParamName)
@@ -809,7 +809,7 @@ begin
     BindBlobV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindBlobFromString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindBlobFromString(AParamName, AParamValue: String);
 var
   b : TBytes;
 begin
@@ -817,7 +817,7 @@ begin
   BindBlob(AParamName, b);
 end;
 
-procedure TFslDBConnection.BindIntegerFromBoolean(AParamName: String; AParamValue: Boolean);
+procedure TFDBConnection.BindIntegerFromBoolean(AParamName: String; AParamValue: Boolean);
 begin
   if AParamValue then
     begin
@@ -829,7 +829,7 @@ begin
     end;
 end;
 
-function TFslDBConnection.CountSQL(ASql: String): Cardinal;
+function TFDBConnection.CountSQL(ASql: String): Cardinal;
 begin
 
   FSQL := ASql;
@@ -845,12 +845,12 @@ begin
     end;
 end;
 
-procedure TFslDBConnection.Error(AException: Exception; AErrMsg : string ='');
+procedure TFDBConnection.Error(AException: Exception; AErrMsg : string ='');
 begin
   FOwner.Error(self, AException, AErrMsg);
 end;
 
-function TFslDBConnection.ExecSQL(ASql: String; rows : integer) : integer;
+function TFDBConnection.ExecSQL(ASql: String; rows : integer) : integer;
 begin
 
   FSQL := ASql;
@@ -865,7 +865,7 @@ begin
     end;
 end;
 
-Function TFslDBConnection.ExecSQL(ASql: String) : integer;
+Function TFDBConnection.ExecSQL(ASql: String) : integer;
 begin
   if asql = '' then
     exit(0);
@@ -880,7 +880,7 @@ begin
     end;
 end;
 
-procedure TFslDBConnection.ExecSQLBatch(ASql: array of String);
+procedure TFDBConnection.ExecSQLBatch(ASql: array of String);
 var
   i: Integer;
 begin
@@ -908,69 +908,69 @@ begin
   end;
 end;
 
-function TFslDBConnection.GetColDoubleByName(AName: String): Double;
+function TFDBConnection.GetColDoubleByName(AName: String): Double;
 begin
   result := GetColDouble(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColInt64ByName(AName: String): Int64;
+function TFDBConnection.GetColInt64ByName(AName: String): Int64;
 begin
   result := GetColInt64(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColIntegerByName(AName: String): Integer;
+function TFDBConnection.GetColIntegerByName(AName: String): Integer;
 begin
   result := GetColInteger(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColKeyByName(AName: String): Integer;
+function TFDBConnection.GetColKeyByName(AName: String): Integer;
 begin
   result := GetColKey(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColNullByName(AName: String): Boolean;
+function TFDBConnection.GetColNullByName(AName: String): Boolean;
 begin
   result := GetColNull(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColStringByName(AName: String): String;
+function TFDBConnection.GetColStringByName(AName: String): String;
 begin
   result := GetColString(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColTimeStampByName(AName: String): fsl_utilities.TTimestamp;
+function TFDBConnection.GetColTimeStampByName(AName: String): fsl_utilities.TTimestamp;
 begin
   result := GetColTimestamp(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColDateTimeExByName(AName: String): TFslDateTime;
+function TFDBConnection.GetColDateTimeExByName(AName: String): TFslDateTime;
 begin
   result := TFslDateTime.fromTS(GetColTimestamp(ColByName(AName)));
 end;
 
-function TFslDBConnection.GetColTypeByName(AName: String): TFslDBColumnType;
+function TFDBConnection.GetColTypeByName(AName: String): TFDBColumnType;
 begin
   result := GetColType(ColByName(AName));
 end;
 
-procedure TFslDBConnection.Release;
+procedure TFDBConnection.Release;
 begin
   CheckRelease;
   FOwner.Release(self);
 end;
 
 
-function TFslDBConnection.Lookup(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
+function TFDBConnection.Lookup(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
 begin
   result := LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault, False);
 end;
 
-function TFslDBConnection.LookupString(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
+function TFDBConnection.LookupString(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
 begin
   result := LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault, True);
 end;
 
-function TFslDBConnection.LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString : Boolean): String;
+function TFDBConnection.LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString : Boolean): String;
 var
   FVal : Double;
 begin
@@ -1024,7 +1024,7 @@ begin
     end;
 end;
 
-procedure TFslDBConnection.Prepare;
+procedure TFDBConnection.Prepare;
 begin
   {$IFOPT C+}
   if FPrepared then
@@ -1037,13 +1037,13 @@ begin
   FPrepared := true;
 end;
 
-function TFslDBConnection.FetchNext: Boolean;
+function TFDBConnection.FetchNext: Boolean;
 begin
   inc(FRowCount);
   result := FetchNextV;
 end;
 
-procedure TFslDBConnection.Terminate;
+procedure TFDBConnection.Terminate;
 begin
   if not FTerminated then
   begin
@@ -1053,14 +1053,14 @@ begin
   end;
 end;
 
-procedure TFslDBConnection.StartTransact;
+procedure TFDBConnection.StartTransact;
 begin
   StartTransactV;
   FInTransaction := true;
   FTransactionId := NewGuidId;
 end;
 
-procedure TFslDBConnection.Commit;
+procedure TFDBConnection.Commit;
 begin
   // order here is important.
   // if the commit fails, then a rollback is required, so we are still in the transaction
@@ -1068,23 +1068,23 @@ begin
   FInTransaction := False;
 end;
 
-procedure TFslDBConnection.Rollback;
+procedure TFDBConnection.Rollback;
 begin
   FInTransaction := False;
   RollbackV;
 end;
 
-procedure TFslDBConnection.KeepBoundObj(sName : String; AObj : TFslDBBoundParam);
+procedure TFDBConnection.KeepBoundObj(sName : String; AObj : TFDBBoundParam);
 begin
   FBoundItems.AddOrSetValue(sName, aObj);
 end;
 
-function TFslDBConnection.link: TFslDBConnection;
+function TFDBConnection.link: TFDBConnection;
 begin
-  result := TFslDBConnection(inherited link);
+  result := TFDBConnection(inherited link);
 end;
 
-function TFslDBConnection.GetTables : TStrings;
+function TFDBConnection.GetTables : TStrings;
 begin
   FTables.Clear;
   ListTables(FTables);
@@ -1092,42 +1092,42 @@ begin
 end;
 
 
-procedure TFslDBConnection.Initialise;
+procedure TFDBConnection.Initialise;
 begin
   //nothing
 end;
 
-procedure TFslDBConnection.BindDouble(AParamName: String; AParamValue: Double);
+procedure TFDBConnection.BindDouble(AParamName: String; AParamValue: Double);
 begin
   BindDoubleV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindInt64(AParamName: String; AParamValue: Int64);
+procedure TFDBConnection.BindInt64(AParamName: String; AParamValue: Int64);
 begin
   BindInt64V(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindInteger(AParamName: String; AParamValue: Integer);
+procedure TFDBConnection.BindInteger(AParamName: String; AParamValue: Integer);
 begin
   BindIntegerV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindKey(AParamName: String; AParamValue: Integer);
+procedure TFDBConnection.BindKey(AParamName: String; AParamValue: Integer);
 begin
   BindKeyV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindNull(AParamName: String);
+procedure TFDBConnection.BindNull(AParamName: String);
 begin
   BindNullV(AParamName);
 end;
 
-procedure TFslDBConnection.BindString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindString(AParamName, AParamValue: String);
 begin
   BindStringV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindStringOrNull(AParamName, AParamValue: String);
+procedure TFDBConnection.BindStringOrNull(AParamName, AParamValue: String);
 begin
   if AParamValue = '' then
     BindNull(aParamName)
@@ -1135,12 +1135,12 @@ begin
     BindString(aParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
+procedure TFDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
 begin
   BindTimeStampV(AParamName, AParamValue);
 end;
 
-procedure TFslDBConnection.CheckRelease;
+procedure TFDBConnection.CheckRelease;
 begin
   {$IFOPT C+}
   if FPrepared then
@@ -1148,159 +1148,159 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslDBConnection.ClearDatabase;
+procedure TFDBConnection.ClearDatabase;
 begin
   ClearDatabaseV;
 end;
 
-function TFslDBConnection.ColByName(AColName: String): Integer;
+function TFDBConnection.ColByName(AColName: String): Integer;
 begin
   result := ColByNameV(AColName);
 end;
 
-function TFslDBConnection.ColName(ACol: Integer): String;
+function TFDBConnection.ColName(ACol: Integer): String;
 begin
   result := ColNameV(ACol);
 end;
 
-procedure TFslDBConnection.Execute;
+procedure TFDBConnection.Execute;
 begin
   ExecuteV;
 end;
 
-procedure TFslDBConnection.RenameColumn(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
+procedure TFDBConnection.RenameColumn(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
 begin
   RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails);
 end;
 
-procedure TFslDBConnection.RenameTable(AOldTableName, ANewTableName: String);
+procedure TFDBConnection.RenameTable(AOldTableName, ANewTableName: String);
 begin
   RenameTableV(AoldTableName, ANewTableName);
 end;
 
-function TFslDBConnection.FetchMetaData: TFslDBMetaData;
+function TFDBConnection.FetchMetaData: TFDBMetaData;
 begin
   result := FetchMetaDataV;
 end;
 
-function TFslDBConnection.GetColBlob(ACol: Integer): TBytes;
+function TFDBConnection.GetColBlob(ACol: Integer): TBytes;
 begin
   result := GetColBlobV(ACol);
 end;
 
-function TFslDBConnection.GetColBlobAsString(ACol: Integer): String;
+function TFDBConnection.GetColBlobAsString(ACol: Integer): String;
 begin
   result := TEncoding.UTF8.GetString(ColBlob[aCol]);
 end;
 
-function TFslDBConnection.GetColBlobAsStringByName(AName: String): String;
+function TFDBConnection.GetColBlobAsStringByName(AName: String): String;
 begin
   result := TEncoding.UTF8.GetString(ColBlobByName[AName]);
 end;
 
-function TFslDBConnection.GetColBlobByName(AName: String): TBytes;
+function TFDBConnection.GetColBlobByName(AName: String): TBytes;
 begin
   result := GetColBlob(ColByName(AName));
 end;
 
-function TFslDBConnection.GetColCount: Integer;
+function TFDBConnection.GetColCount: Integer;
 begin
   result := GetColCountV;
 end;
 
-function TFslDBConnection.GetColDouble(ACol: Integer): Double;
+function TFDBConnection.GetColDouble(ACol: Integer): Double;
 begin
   result := GetColDoubleV(ACol);
 end;
 
-function TFslDBConnection.GetColInt64(ACol: Integer): Int64;
+function TFDBConnection.GetColInt64(ACol: Integer): Int64;
 begin
   result := GetColInt64V(ACol);
 end;
 
-function TFslDBConnection.GetColInteger(ACol: Integer): Integer;
+function TFDBConnection.GetColInteger(ACol: Integer): Integer;
 begin
   result := GetColIntegerV(ACol);
 end;
 
-function TFslDBConnection.GetColKey(ACol: Integer): Integer;
+function TFDBConnection.GetColKey(ACol: Integer): Integer;
 begin
   result := GetColKeyV(ACol);
 end;
 
 
-function TFslDBConnection.GetColNull(ACol: Integer): Boolean;
+function TFDBConnection.GetColNull(ACol: Integer): Boolean;
 begin
   result := GetColNullV(ACol);
 end;
 
-function TFslDBConnection.GetColString(ACol: Integer): String;
+function TFDBConnection.GetColString(ACol: Integer): String;
 begin
   result := GetColStringV(ACol);
 end;
 
-function TFslDBConnection.GetColTimestamp(ACol: Integer): TTimestamp;
+function TFDBConnection.GetColTimestamp(ACol: Integer): TTimestamp;
 begin
   result := GetColTimestampV(ACol);
 end;
 
-function TFslDBConnection.GetColDateTimeEx(ACol: Integer): TFslDateTime;
+function TFDBConnection.GetColDateTimeEx(ACol: Integer): TFslDateTime;
 begin
   result := GetColDateTimeExV(ACol);
 end;
 
-function TFslDBConnection.GetColType(ACol: Integer): TFslDBColumnType;
+function TFDBConnection.GetColType(ACol: Integer): TFDBColumnType;
 begin
   result := GetColTypeV(ACol);
 end;
 
-function TFslDBConnection.GetRowsAffected: Integer;
+function TFDBConnection.GetRowsAffected: Integer;
 begin
   result := GetRowsAffectedV;
 end;
 
-procedure TFslDBConnection.ListTables(AList: TStrings);
+procedure TFDBConnection.ListTables(AList: TStrings);
 begin
   ListTablesV(AList);
 end;
 
-procedure TFslDBConnection.DropTable(ATableName: String);
+procedure TFDBConnection.DropTable(ATableName: String);
 begin
   DropTableV(ATableName);
 end;
 
-procedure TFslDBConnection.DropColumn(ATableName, AColumnName: String);
+procedure TFDBConnection.DropColumn(ATableName, AColumnName: String);
 begin
   DropColumnV(ATableName, AColumnName);
 end;
 
-function TFslDBConnection.ExistsByKey(const sTableName, sKeyField: String; ikey: Integer): Boolean;
+function TFDBConnection.ExistsByKey(const sTableName, sKeyField: String; ikey: Integer): Boolean;
 begin
   result := CountSQL('Select '+sKeyField+' from '+sTableName+' where '+sKeyField+' = '+inttostr(iKey)) > 0;
 end;
 
-procedure TFslDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TFslDateTime);
+procedure TFDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TFslDateTime);
 begin
   BindDateTimeExV(aParamName, AParamValue);
 end;
 
-function TFslDBConnection.DatabaseSize : int64;
+function TFDBConnection.DatabaseSize : int64;
 Begin
   result := DatabaseSizeV;
 End;
 
-Function TFslDBConnection.TableSize(sName : String):int64;
+Function TFDBConnection.TableSize(sName : String):int64;
 Begin
   result := TableSizeV(sName);
 End;
 
-function TFslDBConnection.SupportsSizing : Boolean;
+function TFDBConnection.SupportsSizing : Boolean;
 Begin
   result := SupportsSizingV;
 End;
 
 
-function TFslDBConnection.sizeInBytesV : cardinal;
+function TFDBConnection.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FOwner.sizeInBytes);
@@ -1311,9 +1311,9 @@ begin
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBManager }
+{ TFDBManager }
 
-constructor TFslDBManager.Create(AName : String; AMaxConnCount: Integer);
+constructor TFDBManager.Create(AName : String; AMaxConnCount: Integer);
 begin
   inherited create;
 
@@ -1321,24 +1321,24 @@ begin
   FMaxConnCount := AMaxConnCount;
 
   FLock := TFslLock.create;
-  FDBLogger := TFslDBLogger.create;
+  FDBLogger := TFDBLogger.create;
   FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
 
-  FConnections := TFslList<TFslDBConnection>.create;
-  FAvail := TFslList<TFslDBConnection>.create;
-  FInUse := TFslList<TFslDBConnection>.create;
+  FConnections := TFslList<TFDBConnection>.create;
+  FAvail := TFslList<TFDBConnection>.create;
+  FInUse := TFslList<TFDBConnection>.create;
 
   FClosing := false;
   GManagers.AddConnMan(self);
   init;
 end;
 
-procedure TFslDBManager.init;
+procedure TFDBManager.init;
 begin
 end;
 
-destructor TFslDBManager.Destroy;
+destructor TFDBManager.Destroy;
 begin
   FClosing := true;
   if GManagers <> nil then
@@ -1353,7 +1353,7 @@ begin
   inherited;
 end;
 
-function TFslDBManager.GetCurrentCount: Integer;
+function TFDBManager.GetCurrentCount: Integer;
 begin
   FLock.Enter;
   try
@@ -1363,7 +1363,7 @@ begin
   end;
 end;
 
-procedure TFslDBManager.CheckWait;
+procedure TFDBManager.CheckWait;
 begin
   if FWaitCreate then
   begin
@@ -1387,7 +1387,7 @@ begin
   end;
 end;
 
-function TFslDBManager.GetConnection(const AUsage: String): TFslDBConnection;
+function TFDBManager.GetConnection(const AUsage: String): TFDBConnection;
 var
   LCreateNew: Boolean;
 begin
@@ -1453,9 +1453,9 @@ begin
   end;
 end;
 
-procedure TFslDBManager.checkConnection;
+procedure TFDBManager.checkConnection;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := GetConnection('check');
   try
@@ -1471,7 +1471,7 @@ begin
 
 end;
 
-procedure TFslDBManager.Release(AConn : TFslDBConnection);
+procedure TFDBManager.Release(AConn : TFDBConnection);
 var
   LDispose : boolean;
   LIndex : integer;
@@ -1521,7 +1521,7 @@ begin
     end;
 end;
 
-procedure TFslDBManager.Error(AConn : TFslDBConnection; AException: Exception; AErrMsg : string);
+procedure TFDBManager.Error(AConn : TFDBConnection; AException: Exception; AErrMsg : string);
 var
   LIndex : integer;
 begin
@@ -1555,7 +1555,7 @@ begin
     FOnChangeConnectionCount(self);
 end;
 
-function TFslDBManager.GetConnSummary: String;
+function TFDBManager.GetConnSummary: String;
 var
   i : integer;
 begin
@@ -1564,7 +1564,7 @@ begin
   try
     for i := 0 to FInUse.Count - 1 do
       begin
-      StringAppend(result, (FInUse[i] as TFslDBConnection).FUsage+' '+DescribePeriod(now - (FInUse[i] as TFslDBConnection).FUsed)+' ('+(FInUse[i] as TFslDBConnection).SQL+')', #13#10);
+      StringAppend(result, (FInUse[i] as TFDBConnection).FUsage+' '+DescribePeriod(now - (FInUse[i] as TFDBConnection).FUsed)+' ('+(FInUse[i] as TFDBConnection).SQL+')', #13#10);
       end;
     if result <> '' then
       begin
@@ -1579,7 +1579,7 @@ begin
   end;
 end;
 
-function TFslDBManager.GetCurrentUse: Integer;
+function TFDBManager.GetCurrentUse: Integer;
 begin
   FLock.Enter;
   try
@@ -1589,12 +1589,12 @@ begin
   end;
 end;
 
-function TFslDBManager.Link: TFslDBManager;
+function TFDBManager.Link: TFDBManager;
 begin
-  result := TFslDBManager(inherited link);
+  result := TFDBManager(inherited link);
 end;
 
-function TFslDBManager.PopAvail: TFslDBConnection;
+function TFDBManager.PopAvail: TFDBConnection;
 begin
   FLock.Enter;
   try
@@ -1612,9 +1612,9 @@ begin
   end;
 end;
 
-procedure TFslDBManager.ExecSQL(ASql, AName : String);
+procedure TFDBManager.ExecSQL(ASql, AName : String);
 var
-  LConn : TFslDBConnection;
+  LConn : TFDBConnection;
 begin
   LConn := GetConnection(AName);
   try
@@ -1631,12 +1631,12 @@ begin
 end;
 
 
-function DBManagers : TFslDBManagerList;
+function DBManagers : TFDBManagerList;
 begin
   result := GManagers;
 end;
 
-function DescribeType(AColType: TFslDBColumnType): String;
+function DescribeType(AColType: TFDBColumnType): String;
 begin
   case AColType of
     ctUnknown:
@@ -1682,7 +1682,7 @@ begin
     end;
 end;
 
-procedure TFslDBManager.SetMaxConnCount(const Value: Integer);
+procedure TFDBManager.SetMaxConnCount(const Value: Integer);
 begin
   FLock.Enter;
   try
@@ -1693,9 +1693,9 @@ begin
 end;
 
 {$IFNDEF FPC}
-procedure TFslDBManager.connection(usage: String; proc: TFslDBConnectionProc);
+procedure TFDBManager.connection(usage: String; proc: TFDBConnectionProc);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := GetConnection(usage);
   try
@@ -1711,9 +1711,9 @@ begin
 end;
 {$ENDIF}
 
-function TFslDBManager.CountSQL(ASql, AName: String): integer;
+function TFDBManager.CountSQL(ASql, AName: String): integer;
 var
-  LConn : TFslDBConnection;
+  LConn : TFDBConnection;
 begin
   LConn := GetConnection(AName);
   try
@@ -1729,7 +1729,7 @@ begin
   end;
 end;
 
-function TFslDBManager.sizeInBytesV : cardinal;
+function TFDBManager.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FConnections.sizeInBytes);
@@ -1740,17 +1740,17 @@ begin
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBManagerList }
+{ TFDBManagerList }
 
-constructor TFslDBManagerList.create;
+constructor TFDBManagerList.create;
 begin
   inherited create;
   FLock := TFslLock.create;
-  FHooks := TFslList<TFslDBHook>.create;
-  FList := TList<TFslDBManager>.create;
+  FHooks := TFslList<TFDBHook>.create;
+  FList := TList<TFDBManager>.create;
 end;
 
-destructor TFslDBManagerList.destroy;
+destructor TFDBManagerList.destroy;
 begin
   FLock.free;
   FHooks.free;
@@ -1758,7 +1758,7 @@ begin
   inherited;
 end;
 
-function TFslDBManagerList.dump: String;
+function TFDBManagerList.dump: String;
 var
   i : integer;
 begin
@@ -1767,7 +1767,7 @@ begin
     result := result + FList[i].FName+' : '+ FList[i].GetConnSummary+#13#10;
 end;
 
-procedure TFslDBManagerList.AddConnMan(AConnMan : TFslDBManager);
+procedure TFDBManagerList.AddConnMan(AConnMan : TFDBManager);
 var
   i : integer;
 begin
@@ -1781,7 +1781,7 @@ begin
   end;
 end;
 
-procedure TFslDBManagerList.RemoveConnMan(AConnMan : TFslDBManager);
+procedure TFDBManagerList.RemoveConnMan(AConnMan : TFDBManager);
 var
   i : integer;
 begin
@@ -1795,19 +1795,19 @@ begin
   end;
 end;
 
-function TFslDBManagerList.GetConnMan(i : Integer):TFslDBManager;
+function TFDBManagerList.GetConnMan(i : Integer):TFDBManager;
 begin
   result := FList[i];
 end;
 
-function TFslDBManagerList.HasConnManByName(s : String) : Boolean;
+function TFDBManagerList.HasConnManByName(s : String) : Boolean;
 begin
   result := GetConnManByName(s) <> nil;
 End;
 
-function TFslDBManagerList.GetConnManByName(s : String):TFslDBManager;
+function TFDBManagerList.GetConnManByName(s : String):TFDBManager;
 var
-  k : TFslDBManager;
+  k : TFDBManager;
 begin
   result := nil;
   for k in FList do
@@ -1818,22 +1818,22 @@ begin
     end;
 end;
 
-procedure TFslDBManagerList.Lock;
+procedure TFDBManagerList.Lock;
 begin
   FLock.Enter;
 end;
 
-procedure TFslDBManagerList.UnLock;
+procedure TFDBManagerList.UnLock;
 begin
   FLock.Leave;
 end;
 
-procedure TFslDBManagerList.RegisterHook(AName : String; AHook : TFslDBManagerEvent);
+procedure TFDBManagerList.RegisterHook(AName : String; AHook : TFDBManagerEvent);
 begin
-  FHooks.Add(TFslDBHook.create(AName, AHook));
+  FHooks.Add(TFDBHook.create(AName, AHook));
 end;
 
-procedure TFslDBManagerList.UnRegisterHook(AName : String);
+procedure TFDBManagerList.UnRegisterHook(AName : String);
 var
   i : integer;
 begin
@@ -1842,36 +1842,36 @@ begin
       FHooks.Delete(i);
 end;
 
-function TFslDBManagerList.sizeInBytesV : cardinal;
+function TFDBManagerList.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FHooks.sizeInBytes);
 end;
 
-{ TFslDBHook }
+{ TFDBHook }
 
-constructor TFslDBHook.create(Name : String; Hook : TFslDBManagerEvent);
+constructor TFDBHook.create(Name : String; Hook : TFDBManagerEvent);
 begin
   inherited create;
   FName := name;
   FHook := Hook;
 end;
 
-function TFslDBHook.sizeInBytesV : cardinal;
+function TFDBHook.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBColumn }
+{ TFDBColumn }
 
-constructor TFslDBColumn.Create(name: String);
+constructor TFDBColumn.Create(name: String);
 begin
   inherited create;
   self.Name := name;
 end;
 
-function TFslDBColumn.Describe : String;
+function TFDBColumn.Describe : String;
 begin
   case FDataType of
     ctBoolean  : result := FName + ' : bool';
@@ -1892,16 +1892,16 @@ begin
     end;
 end;
 
-function TFslDBColumn.Link: TFslDBColumn;
+function TFDBColumn.Link: TFDBColumn;
 begin
-  result := TFslDBColumn(Inherited Link);
+  result := TFDBColumn(Inherited Link);
 end;
 
-function CommaText(list : TFslList<TFslDBColumn>) : String;
+function CommaText(list : TFslList<TFDBColumn>) : String;
 var
   s : TStringBuilder;
   b : boolean;
-  c : TFslDBColumn;
+  c : TFDBColumn;
 begin
   b := false;
   s := TStringBuilder.Create;
@@ -1919,27 +1919,27 @@ begin
   end;
 end;
 
-function TFslDBColumn.sizeInBytesV : cardinal;
+function TFDBColumn.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBIndex }
+{ TFDBIndex }
 
-constructor TFslDBIndex.create;
+constructor TFDBIndex.create;
 begin
   inherited;
-  FColumns := TFslList<TFslDBColumn>.create;
+  FColumns := TFslList<TFDBColumn>.create;
 end;
 
-destructor TFslDBIndex.destroy;
+destructor TFDBIndex.destroy;
 begin
   FColumns.Free;
   inherited;
 end;
 
-function TFslDBIndex.Describe : String;
+function TFDBIndex.Describe : String;
 begin
   if FUnique then
     begin
@@ -1954,19 +1954,19 @@ begin
   Result := Result + 'INDEX ' + FName + ' ON (' + CommaText(FColumns) + ')';
 end;
 
-function TFslDBIndex.sizeInBytesV : cardinal;
+function TFDBIndex.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FColumns.sizeInBytes);
 end;
 
-function TFslDBRelationship.Describe : String;
+function TFDBRelationship.Describe : String;
 Begin
   result := FColumn + ' -> '+FDestTable+'.'+FDestColumn;
 End;
 
-function TFslDBRelationship.sizeInBytesV : cardinal;
+function TFDBRelationship.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FColumn.length * sizeof(char)) + 12);
@@ -1974,17 +1974,17 @@ begin
   inc(result, (FDestColumn.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBTable }
+{ TFDBTable }
 
-constructor TFslDBTable.create;
+constructor TFDBTable.create;
 begin
   inherited;
-  FColumns := TFslList<TFslDBColumn>.CREATE;
-  FIndexes := TFslList<TFslDBIndex>.create;
-  FRelationships := TFslList<TFslDBRelationship>.create;
+  FColumns := TFslList<TFDBColumn>.CREATE;
+  FIndexes := TFslList<TFDBIndex>.create;
+  FRelationships := TFslList<TFDBRelationship>.create;
 end;
 
-destructor TFslDBTable.destroy;
+destructor TFDBTable.destroy;
 begin
   FRelationships.Free;
   FColumns.Free;
@@ -1992,21 +1992,21 @@ begin
   inherited;
 end;
 
-function TFslDBTable.hasColumn(name: String): boolean;
+function TFDBTable.hasColumn(name: String): boolean;
 var
-  c : TFslDBColumn;
+  c : TFDBColumn;
 begin
   result := false;
   for c in FColumns do
     result := result or (c.Name = name);
 end;
 
-function TFslDBTable.Link: TFslDBTable;
+function TFDBTable.Link: TFDBTable;
 begin
-  result := TFslDBTable(inherited link);
+  result := TFDBTable(inherited link);
 end;
 
-function TFslDBTable.sizeInBytesV : cardinal;
+function TFDBTable.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -2017,16 +2017,16 @@ begin
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
-{ TFslDBMetaData }
+{ TFDBMetaData }
 
-constructor TFslDBMetaData.create;
+constructor TFDBMetaData.create;
 begin
   inherited;
-  FTables := TFslList<TFslDBTable>.create;
+  FTables := TFslList<TFDBTable>.create;
   FProcedures := TStringList.create;
 end;
 
-destructor TFslDBMetaData.destroy;
+destructor TFDBMetaData.destroy;
 begin
   FTables.Free;
   FProcedures.Free;
@@ -2034,7 +2034,7 @@ begin
 end;
 
 
-function TFslDBMetaData.GetTable(name: String): TFslDBTable;
+function TFDBMetaData.GetTable(name: String): TFDBTable;
 var
   i : integer;
 begin
@@ -2044,7 +2044,7 @@ begin
       result := Tables[i];
 end;
 
-function TFslDBMetaData.HasTable(name: String; caseSensitive : boolean = false): boolean;
+function TFDBMetaData.HasTable(name: String; caseSensitive : boolean = false): boolean;
 var
   i : integer;
 begin
@@ -2055,14 +2055,14 @@ begin
 end;
 
 
-function TFslDBMetaData.sizeInBytesV : cardinal;
+function TFDBMetaData.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FTables.sizeInBytes);
   inc(result, FProcedures.sizeInBytes);
 end;
 
-function TFslDBManager.ServerErrorStatus: String;
+function TFDBManager.ServerErrorStatus: String;
 Begin
   FLock.Enter;
   try
@@ -2077,7 +2077,7 @@ End;
 
 procedure CloseUPGManagers;
 var
-  m : TFslDBManagerList;
+  m : TFDBManagerList;
 begin
   m := GManagers;
   GManagers := nil;
@@ -2085,7 +2085,7 @@ begin
 end;
 
 initialization
-  GManagers := TFslDBManagerList.create;
+  GManagers := TFDBManagerList.create;
 finalization
   CloseUPGManagers;
 end.

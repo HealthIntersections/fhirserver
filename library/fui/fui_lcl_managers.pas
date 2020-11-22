@@ -44,7 +44,7 @@ This unit contains a set of classes that orchestrate the UI interface
 Interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IniFiles,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs,
   SynEdit, SynEditTypes,
   fsl_base, fsl_stream, fsl_http,
@@ -98,6 +98,8 @@ type
     FControls : TFslList<TControlEntry>;
     FEnabled : boolean;
     FCanEdit : boolean;
+    FOnSetFocus: TNotifyEvent;
+    FSettings: TIniFile;
 
     procedure doFilter;
     function GetHasFocus: boolean;
@@ -127,6 +129,9 @@ type
     property Filter : TEdit read FFilter write SetFilter;
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
     Property Enabled : boolean read FEnabled write SetEnabled;
+    property Settings : TIniFile read FSettings write FSettings;
+
+    property OnSetFocus : TNotifyEvent read FOnSetFocus write FOnSetFocus;
 
     // control. These are not usually needed from outside
     procedure doAdd(mode : String);
@@ -137,6 +142,7 @@ type
     procedure doExecute(mode : String);
     function doLoad : boolean;
 
+    procedure Timer; virtual;
     // to override:
     function canSort : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
@@ -417,7 +423,13 @@ begin
 end;
 
 destructor TListManager<T>.Destroy;
+var
+  i : integer;
 begin
+  if FSettings <> nil then
+    for i := 0 to List.columns.count - 1 do
+      FSettings.WriteInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
+
   FControls.Free;
   FFiltered.free;
   FData.free;
@@ -523,11 +535,16 @@ begin
 end;
 
 procedure TListManager<T>.SetList(AValue: TListView);
+var
+  i : integer;
 begin
   FList := AValue;
   List.OnCompare := doListCompare;
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
+  if FSettings <> nil then
+    for i := 0 to List.columns.count - 1 do
+      list.columns[i].width := FSettings.ReadInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
   FList.ReadOnly := true;
   if canSort then
   begin
@@ -565,6 +582,9 @@ begin
   updateControls(copReload, true);
   updateControls(copExecute, opExecute in ops);
   FCanEdit := opEdit in ops;
+
+  if assigned(FOnSetFocus) then
+    FOnSetFocus(self);
 end;
 
 procedure TListManager<T>.updateControls(op: TControlOperation; allowed: boolean);
@@ -749,6 +769,11 @@ begin
   finally
     focus.free;
   end;
+end;
+
+procedure TListManager<T>.Timer;
+begin
+  // nothing
 end;
 
 function TListManager<T>.canSort: boolean;

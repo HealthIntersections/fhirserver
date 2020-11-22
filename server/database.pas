@@ -155,7 +155,7 @@ type
   private
     FIndexer : TFHIRIndexManager;
     FTestServer : Boolean;
-    FConnection : TFslDBConnection;
+    FConnection : TFDBConnection;
 
     procedure checkNotSubsetted(meta : TFHIRMetaW; msg : String);
 
@@ -222,11 +222,11 @@ type
     procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
   public
-    constructor Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFslDBConnection);
+    constructor Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
     destructor Destroy; Override;
     function Link : TFHIRNativeOperationEngine; overload;
 
-    Property Connection : TFslDBConnection read FConnection;
+    Property Connection : TFDBConnection read FConnection;
     function Repository : TFHIRNativeStorageService;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
@@ -264,7 +264,7 @@ type
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function  LookupReferenceS(context : TFslObject; id : String) : TResourceWithReference;
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
-    function FindResourceConn(conn : TFslDBConnection; aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
+    function FindResourceConn(conn : TFDBConnection; aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResourceV; override;
     function getResourcesByParam(aType : String; name, value : string; var needSecure : boolean): TFslList<TFHIRResourceV>; override;
     function ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; override;
@@ -289,7 +289,7 @@ type
 
   TFHIRNativeStorageService = class (TFHIRStorageService)
   private
-    FDB: TFslDBManager;
+    FDB: TFDBManager;
 
     FLastSearchKey: integer;
     FLastVersionKey: integer;
@@ -311,29 +311,29 @@ type
 
     FQueue: TFslList<TFHIRQueuedResource>;
 
-    procedure LoadExistingResources(conn: TFslDBConnection);
-    procedure LoadSpaces(conn: TFslDBConnection);
+    procedure LoadExistingResources(conn: TFDBConnection);
+    procedure LoadSpaces(conn: TFDBConnection);
     procedure ProcessLoadedResources;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
-    function DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
+    function DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFDBConnection): String;
     function getTypeForKey(key: integer): String;
-    procedure doRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
-    procedure checkRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
+    procedure doRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
+    procedure checkRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
     procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TFslBuffer; b : TStringBuilder);
 
 //    procedure loadCustomResources(guides : TFslStringSet);
-    procedure ProcessObservationContent(conn: TFslDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
-    procedure ProcessObservation(conn: TFslDBConnection; key : integer);
-    function loadResource(conn: TFslDBConnection; key : integer) : TFHIRResourceV;
-    function resolveReference(conn: TFslDBConnection; ref : string) : Integer;
-    function resolveConcept(conn: TFslDBConnection; c : TFHIRCodingW) : Integer; overload;
-    function resolveConcept(conn: TFslDBConnection; sys, code : String) : Integer; overload;
-    procedure ProcessObservationValue(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRXVersionElementWrapper);
-    procedure ProcessObservationValueQty(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantityW);
-    procedure ProcessObservationValueCode(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConceptW);
-    procedure storeObservationConcepts(conn: TFslDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
-//    function Authorize(conn :  TFslDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
+    procedure ProcessObservationContent(conn: TFDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
+    procedure ProcessObservation(conn: TFDBConnection; key : integer);
+    function loadResource(conn: TFDBConnection; key : integer) : TFHIRResourceV;
+    function resolveReference(conn: TFDBConnection; ref : string) : Integer;
+    function resolveConcept(conn: TFDBConnection; c : TFHIRCodingW) : Integer; overload;
+    function resolveConcept(conn: TFDBConnection; sys, code : String) : Integer; overload;
+    procedure ProcessObservationValue(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRXVersionElementWrapper);
+    procedure ProcessObservationValueQty(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantityW);
+    procedure ProcessObservationValueCode(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConceptW);
+    procedure storeObservationConcepts(conn: TFDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
+//    function Authorize(conn :  TFDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
   protected
     FLock: TFslLock;
     function GetTotalResourceCount: integer; override;
@@ -343,7 +343,7 @@ type
     function SupportsSearch : boolean; override;
     function SupportsHistory : boolean; override;
   public
-    constructor Create(DB: TFslDBManager; factory : TFHIRFactory); reintroduce;
+    constructor Create(DB: TFDBManager; factory : TFHIRFactory); reintroduce;
     destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
     function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
@@ -354,8 +354,8 @@ type
     function ProfilesAsOptionList: String; override;
     function NextVersionKey: integer;
     function NextSearchKey: integer;
-    function NextResourceKeySetId(connection : TFslDBConnection; aType: String; id: string) : integer;
-    function NextResourceKeyGetId(connection : TFslDBConnection; aType: String; var id: string): integer;
+    function NextResourceKeySetId(connection : TFDBConnection; aType: String; id: string) : integer;
+    function NextResourceKeyGetId(connection : TFDBConnection; aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
     function NextAsyncTaskKey: integer;
@@ -364,21 +364,21 @@ type
     function NextAuthorizationKey : integer;
     function NextConnectionKey : integer;
     function NextClientKey : integer;
-    Function GetNextKey(connection : TFslDBConnection; keytype: TKeyType; aType: String; var id: string): integer;
-    procedure RegisterTag(tag: TFHIRTag; conn: TFslDBConnection); overload;
+    Function GetNextKey(connection : TFDBConnection; keytype: TKeyType; aType: String; var id: string): integer;
+    procedure RegisterTag(tag: TFHIRTag; conn: TFDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); virtual; abstract;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFHIRResourceV; conn: TFDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); virtual; abstract;
     procedure checkDropResource(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList);
-    procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TFslDBConnection);
+    procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TFDBConnection);
     procedure Sweep; override;
     function ResourceTypeKeyForName(name: String): integer;
     procedure ProcessSubscriptions; override;
     procedure ProcessEmails; override;
     procedure ProcessObservations; override;
-    function TrackValueSet(id: String; conn: TFslDBConnection; loading : boolean): integer;
-    procedure StoreObservation(conn: TFslDBConnection; key : integer);
-    procedure UnStoreObservation(conn: TFslDBConnection; key : integer);
+    function TrackValueSet(id: String; conn: TFDBConnection; loading : boolean): integer;
+    procedure StoreObservation(conn: TFDBConnection; key : integer);
+    procedure UnStoreObservation(conn: TFDBConnection; key : integer);
 
     function ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; override;
     function LookupCode(system, version, code: String): String; override;
@@ -412,7 +412,7 @@ type
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
-    Property DB: TFslDBManager read FDB;
+    Property DB: TFDBManager read FDB;
 
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
@@ -460,7 +460,7 @@ end;
 
 { TFHIRNativeOperationEngine }
 
-constructor TFHIRNativeOperationEngine.Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFslDBConnection);
+constructor TFHIRNativeOperationEngine.Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
 begin
   inherited Create(repository, ServerContext, lang);
   FConnection := Connection;
@@ -2705,7 +2705,7 @@ begin
   result := FindResourceConn(FConnection, aType, sId, options, resourceKey, versionKey, request, response, sessionCompartments);
 end;
 
-function TFHIRNativeOperationEngine.FindResourceConn(conn : TFslDBConnection; aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
+function TFHIRNativeOperationEngine.FindResourceConn(conn : TFDBConnection; aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 var
   cmp : String;
 begin
@@ -5023,7 +5023,7 @@ var
   request : TFHIRRequest;
   bundle : TFHIRBundleW;
   be : TFhirBundleEntryW;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   request := appInfo as TFHIRRequest;
   if request.CommandType = fcmdTransaction then
@@ -5367,7 +5367,7 @@ end;
 
 { TFHIRRepository }
 
-constructor TFHIRNativeStorageService.Create(DB: TFslDBManager; factory : TFHIRFactory);
+constructor TFHIRNativeStorageService.Create(DB: TFDBManager; factory : TFHIRFactory);
 begin
   inherited Create(factory);
   LoadMessages; // load while thread safe
@@ -5382,7 +5382,7 @@ End;
 function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 var
   key : integer;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   key := NextAsyncTaskKey;
   conn := DB.getConnection('async');
@@ -5405,7 +5405,7 @@ end;
 
 procedure TFHIRNativeStorageService.Initialise();
 var
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
   rn : String;
   implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
@@ -5608,7 +5608,7 @@ end;
 
 procedure TFHIRNativeStorageService.RecordFhirSession(session: TFhirSession);
 var
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
 begin
   conn := FDB.GetConnection('fhir');
   try
@@ -5640,7 +5640,7 @@ end;
 
 procedure TFHIRNativeStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -5669,7 +5669,7 @@ end;
 
 procedure TFHIRNativeStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch: String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -5696,7 +5696,7 @@ end;
 
 procedure TFHIRNativeStorageService.recordPackageLoaded(id, ver: String; count: integer; blob: TBytes);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   k : integer;
 begin
   conn := DB.getConnection('packages.list');
@@ -5770,7 +5770,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFslDBConnection): String;
+function TFHIRNativeStorageService.DoExecuteSearch(typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: THTTPParameters; conn: TFDBConnection): String;
 var
   sp: TSearchProcessor;
 begin
@@ -5830,7 +5830,7 @@ end;
 
 function TFHIRNativeStorageService.FetchAuthorization(uuid: String; var PatientId : String; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('FetchAuthorization');
   try
@@ -5862,7 +5862,7 @@ end;
 procedure TFHIRNativeStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 var
   client : TRegisteredClientInformation;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.getConnection('clients');
   try
@@ -5904,7 +5904,7 @@ end;
 
 procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   task : TAsyncTaskInformation;
 begin
   conn := DB.getConnection('async');
@@ -5940,7 +5940,7 @@ end;
 function TFHIRNativeStorageService.fetchLoadedPackage(id: String): TBytes;
 var
   b : TBytes;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   SetLength(b, 0);
   conn := DB.getConnection('packages.list');
@@ -5968,7 +5968,7 @@ end;
 
 function TFHIRNativeStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -6000,7 +6000,7 @@ end;
 
 function TFHIRNativeStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -6033,7 +6033,7 @@ function TFHIRNativeStorageService.FetchResource(key: integer): TFHIRResourceV;
 var
   parser: TFHIRParser;
   mem: TBytes;
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
 begin
   conn := FDB.GetConnection('FetchResource');
   try
@@ -6068,7 +6068,7 @@ end;
 
 procedure TFHIRNativeStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts: TStringList);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   j : integer;
   cmp : String;
 begin
@@ -6102,7 +6102,7 @@ end;
 
 function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.GetConnection('async');
   try
@@ -6136,7 +6136,7 @@ end;
 
 procedure TFHIRNativeStorageService.CloseFhirSession(key: integer);
 var
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
 begin
   conn := FDB.GetConnection('fhir');
   try
@@ -6183,7 +6183,7 @@ end;
 
 function TFHIRNativeStorageService.hasOauthSession(id: String; status : integer): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -6201,7 +6201,7 @@ end;
 
 function TFHIRNativeStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -6228,7 +6228,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.RegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.RegisterTag(tag: TFHIRTag; conn: TFDBConnection);
 var
   C: TFHIRTag;
 begin
@@ -6253,7 +6253,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.doRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.doRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
 begin
   conn.SQL :=
     'insert into Tags (Tagkey, Kind, Uri, Code, Display) values (:k, :tk, :s, :c, :d)';
@@ -6268,7 +6268,7 @@ begin
   tag.TransactionId := conn.transactionId;
 end;
 
-//function TFHIRNativeStorageService.Authorize(conn :  TFslDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : String;
+//function TFHIRNativeStorageService.Authorize(conn :  TFDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : String;
 //begin
 //  conn.SQL := 'Insert into Authorizations (AuthorizationKey, PatientKey, PatientId, ConsentKey, SessionKey, Status, Expiry, Uuid, JWT) values (:k, :pk, :pid, :ck, :sk, 1, :e, :u, :j)';
 //  conn.Prepare;
@@ -6290,7 +6290,7 @@ begin
   // nothing at this time
 end;
 
-procedure TFHIRNativeStorageService.checkRegisterTag(tag: TFHIRTag; conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.checkRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
 begin
   if tag.ConfirmedStored then
     exit;
@@ -6303,7 +6303,7 @@ end;
 
 procedure TFHIRNativeStorageService.RegisterTag(tag: TFHIRTag);
 var
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
 begin
   conn := FDB.GetConnection('fhir');
   try
@@ -6319,7 +6319,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.resolveConcept(conn: TFslDBConnection; c: TFHIRCodingW): Integer;
+function TFHIRNativeStorageService.resolveConcept(conn: TFDBConnection; c: TFHIRCodingW): Integer;
 begin
   if (c.systemUri <> '') and (c.code <> '') then
     result := resolveConcept(conn, c.systemUri, c.code)
@@ -6327,7 +6327,7 @@ begin
     result := 0;
 end;
 
-function TFHIRNativeStorageService.resolveConcept(conn: TFslDBConnection; sys, code : String): Integer;
+function TFHIRNativeStorageService.resolveConcept(conn: TFDBConnection; sys, code : String): Integer;
 begin
   result := 0;
   conn.SQL := 'Select ConceptKey from Concepts where URL = '''+sqlWrapString(sys)+''' and Code = '''+sqlWrapString(code)+'''';
@@ -6343,7 +6343,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.resolveReference(conn: TFslDBConnection; ref: string): Integer;
+function TFHIRNativeStorageService.resolveReference(conn: TFDBConnection; ref: string): Integer;
 var
   parts : TArray<String>;
 begin
@@ -6372,7 +6372,7 @@ end;
 
 function TFHIRNativeStorageService.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('RetrieveSession');
   try
@@ -6436,7 +6436,7 @@ end;
 
 procedure TFHIRNativeStorageService.RunValidation;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   bufJ, bufX : TFslBuffer;
   b : TStringBuilder;
   i : integer;
@@ -6509,7 +6509,7 @@ var
   k : Integer;
   list: TFslList<TFHIRQueuedResource>;
   storage: TFHIRNativeOperationEngine;
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
 begin
   list := nil;
   d := TFslDateTime.makeUTC.DateTime;
@@ -6583,7 +6583,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.UnStoreObservation(conn: TFslDBConnection; key: integer);
+procedure TFHIRNativeStorageService.UnStoreObservation(conn: TFDBConnection; key: integer);
 begin
   inc(FLastObservationQueueKey);
   conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 0)');
@@ -6591,7 +6591,7 @@ end;
 
 procedure TFHIRNativeStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.getConnection('async');
   try
@@ -6612,7 +6612,7 @@ end;
 
 procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
@@ -6637,7 +6637,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TFslDBConnection; loading : boolean): integer;
+function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TFDBConnection; loading : boolean): integer;
 var
   s : String;
 begin
@@ -6663,7 +6663,7 @@ end;
 
 procedure TFHIRNativeStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.getConnection('async');
   try
@@ -6686,7 +6686,7 @@ end;
 
 function TFHIRNativeStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   key : integer;
 begin
   conn := FDB.getconnection('clients');
@@ -6729,13 +6729,13 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.StoreObservation(conn: TFslDBConnection; key: integer);
+procedure TFHIRNativeStorageService.StoreObservation(conn: TFDBConnection; key: integer);
 begin
   inc(FLastObservationQueueKey);
   conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 1)');
 end;
 
-procedure TFHIRNativeStorageService.storeObservationConcepts(conn: TFslDBConnection; ok: integer; isComp : boolean; categories, concepts, compConcepts: TArray<Integer>);
+procedure TFHIRNativeStorageService.storeObservationConcepts(conn: TFDBConnection; ok: integer; isComp : boolean; categories, concepts, compConcepts: TArray<Integer>);
   procedure iterate(arr : TArray<Integer>; src : integer);
   var
     i : integer;
@@ -6771,7 +6771,7 @@ begin
     conn.execsql('Update Observations set CodeList = '''+s+''' where ObservationKey = '+inttostr(ok));
 end;
 
-procedure TFHIRNativeStorageService.DropResource(key, vkey, pvkey: integer; id: string; resource: String; indexer: TFhirIndexManager; conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.DropResource(key, vkey, pvkey: integer; id: string; resource: String; indexer: TFhirIndexManager; conn: TFDBConnection);
 begin
   FLock.Lock('DropResource');
   try
@@ -6824,7 +6824,7 @@ begin
  // nothing
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationContent(conn: TFslDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
+procedure TFHIRNativeStorageService.ProcessObservationContent(conn: TFDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
 var
   cmp : TFhirObservationComponentW;
   cl : TFslList<TFHIRCodingW>;
@@ -6886,7 +6886,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservation(conn: TFslDBConnection; key: integer);
+procedure TFHIRNativeStorageService.ProcessObservation(conn: TFDBConnection; key: integer);
 var
   rk : integer;
   deleted : boolean;
@@ -6934,7 +6934,7 @@ end;
 
 procedure TFHIRNativeStorageService.ProcessObservations;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   key : integer;
   cutoff : TDateTime;
 begin
@@ -6966,7 +6966,7 @@ begin
   until (key = 0) or (now > cutoff);
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValue(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRXVersionElementWrapper);
+procedure TFHIRNativeStorageService.ProcessObservationValue(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRXVersionElementWrapper);
 begin
   if value is TFHIRQuantityW then
     ProcessObservationValueQty(conn, key, subj, isComp, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirQuantityW)
@@ -6974,7 +6974,7 @@ begin
     ProcessObservationValueCode(conn, key, subj, isComp, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirCodeableConceptW)
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValueCode(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRCodeableConceptW);
+procedure TFHIRNativeStorageService.ProcessObservationValueCode(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRCodeableConceptW);
 var
   c : TFHIRCodingW;
   ok, ck : Integer;
@@ -7006,7 +7006,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TFslDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantityW);
+procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TFDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantityW);
 var
   val, cval : TFslDecimal;
   upS, upC : TUcumPair;
@@ -7141,7 +7141,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.NextResourceKeyGetId(connection : TFslDBConnection; aType: String; var id: string): integer;
+function TFHIRNativeStorageService.NextResourceKeyGetId(connection : TFDBConnection; aType: String; var id: string): integer;
 var
   upd : boolean;
   key : integer;
@@ -7168,7 +7168,7 @@ begin
     connection.ExecSQL('Update Types set LastId = '+inttostr(key)+' where ResourceTypeKey = '+inttostr(cfg.key));
 end;
 
-function TFHIRNativeStorageService.NextResourceKeySetId(connection : TFslDBConnection; aType: String; id: string): integer;
+function TFHIRNativeStorageService.NextResourceKeySetId(connection : TFDBConnection; aType: String; id: string): integer;
 var
   i: integer;
 begin
@@ -7286,7 +7286,7 @@ end;
 function TFHIRNativeStorageService.getClientInfo(id: String): TRegisteredClientInformation;
 var
   client : TRegisteredClientInformation;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   client := TRegisteredClientInformation.Create;
   try
@@ -7328,7 +7328,7 @@ end;
 function TFHIRNativeStorageService.getClientName(id: String): string;
 var
   s : string;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := DB.getConnection('clients');
   try
@@ -7351,7 +7351,7 @@ begin
   result := s;
 end;
 
-function TFHIRNativeStorageService.GetNextKey(connection : TFslDBConnection; keytype: TKeyType; aType: string; var id: string): integer;
+function TFHIRNativeStorageService.GetNextKey(connection : TFDBConnection; keytype: TKeyType; aType: string; var id: string): integer;
 begin
   case keytype of
     ktResource:
@@ -7402,12 +7402,12 @@ end;
 ////  raise EFslException.Create('not currently supported');
 //end;
 //
-procedure TFHIRNativeStorageService.LoadExistingResources(conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.LoadExistingResources(conn: TFDBConnection);
 var
   parser: TFHIRParser;
   mem: TBytes;
   i: integer;
-  cback: TFslDBConnection;
+  cback: TFDBConnection;
   p : TFHIRResourceV;
 begin
   conn.SQL :=
@@ -7468,7 +7468,7 @@ end;
 function TFHIRNativeStorageService.loadPackages: TFslMap<TLoadedPackageInformation>;
 var
   map : TFslMap<TLoadedPackageInformation>;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   o : TLoadedPackageInformation;
 begin
   map := TFslMap<TLoadedPackageInformation>.create('loaded.packages');
@@ -7507,7 +7507,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.loadResource(conn: TFslDBConnection; key: integer): TFHIRResourceV;
+function TFHIRNativeStorageService.loadResource(conn: TFDBConnection; key: integer): TFHIRResourceV;
 var
   parser: TFHIRParser;
   mem: TBytes;
@@ -7530,7 +7530,7 @@ begin
   conn.terminate;
 end;
 
-procedure TFHIRNativeStorageService.LoadSpaces(conn: TFslDBConnection);
+procedure TFHIRNativeStorageService.LoadSpaces(conn: TFDBConnection);
 begin
   conn.SQL := 'select * from Spaces';
   conn.prepare;
@@ -7566,7 +7566,7 @@ end;
 procedure TFHIRNativeStorageService.MarkTaskForDownload(key: integer; names : TStringList);
 var
   exp : TFslDateTime;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   exp := TFslDateTime.makeLocal.add(1/24);
   conn := DB.getConnection('async');

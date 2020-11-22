@@ -103,16 +103,16 @@ type
   THL7V2OdbcDictionary = class(THL7V2Dictionary)
   Private
     function GetVersionSelect(aVersion : THL7V2Version):String;
-    procedure FindSegment(oStructure : THL7V2ModelMessageStructure; oStack : THL7V2ModelSegmentGroups; oConn : TFslDBConnection);
-    procedure SaveSegmentGroup(oConn: TFslDBConnection; var iNum : integer; oGroup : THL7V2ModelSegmentGroup);
+    procedure FindSegment(oStructure : THL7V2ModelMessageStructure; oStack : THL7V2ModelSegmentGroups; oConn : TFDBConnection);
+    procedure SaveSegmentGroup(oConn: TFDBConnection; var iNum : integer; oGroup : THL7V2ModelSegmentGroup);
   Protected
     function FieldNum:String;
     function GetCompNumName : String;
     function GetSortNumName : String;
 
     function GetDBVersion : String; Virtual;
-    function GetConnection(usage: String): TFslDBConnection; Virtual;
-    procedure YieldConnection(oConn: TFslDBConnection); Virtual;
+    function GetConnection(usage: String): TFDBConnection; Virtual;
+    procedure YieldConnection(oConn: TFDBConnection); Virtual;
     function NamePrefix: String; Virtual;
 
     function  VersionDefined(aVersion : THL7V2Version; var sDesc: String): Boolean; Override;
@@ -148,15 +148,15 @@ type
     procedure DoneLoading(aTransferEvent: TOnDictTransferProgress); Override;
   end;
 
-function FixActionFieldName(platform: TFslDBPlatform): String;
+function FixActionFieldName(platform: TFDBPlatform): String;
 
 type
   // you need this driver: https://www.microsoft.com/en-us/download/details.aspx?id=13255
   THL7V2AccessDictionary = class(THL7V2OdbcDictionary)
   Private
-    FManager: TFslDBManager;
+    FManager: TFDBManager;
     FFilename: String;
-    FStmt: TFslDBConnection;
+    FStmt: TFDBConnection;
     FStmtInUse: Boolean;
     FDBVersion : String;
     procedure LookupDBVersion;
@@ -165,8 +165,8 @@ type
   Protected
     function GetDBVersion : String; override;
     procedure PrepareForLoad(wipe: Boolean); Override;
-    function GetConnection(usage: String): TFslDBConnection; Override;
-    procedure YieldConnection(stmt: TFslDBConnection); Override;
+    function GetConnection(usage: String): TFDBConnection; Override;
+    procedure YieldConnection(stmt: TFDBConnection); Override;
     function NamePrefix: String; Override;
     function sizeInBytesV : cardinal; override;
   Public
@@ -181,7 +181,7 @@ implementation
 
   { utils }
 
-function FixActionFieldName(platform: TFslDBPlatform): String;
+function FixActionFieldName(platform: TFDBPlatform): String;
 begin
   if platform = kdbInterbase then
     Result := 'Item' + FN_ACTION
@@ -205,7 +205,7 @@ end;
 
 function THL7V2OdbcDictionary.VersionDefined(aVersion : THL7V2Version; var sDesc: String): Boolean;
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
 begin
   oConn := GetConnection('VersionDefined');
   try
@@ -226,7 +226,7 @@ end;
 
 Function THL7V2OdbcDictionary.ListVersions : THL7V2Versions;
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
 begin
   result := [];
   oConn := GetConnection('ListVersions');
@@ -247,7 +247,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddVersion(aVersion : THL7V2Version; const sDescription: String);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   sErrDesc: String;
 begin
   oConn := GetConnection('AddVersion');
@@ -276,7 +276,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadSegmentFields(aVersion : THL7V2Version; oSegment : THL7V2ModelSegment);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oField : THL7V2ModelField;
 begin
   oConn := GetConnection('LoadFields');
@@ -311,7 +311,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddSegmentFields(aVersion : THL7V2Version; oSegments : THL7V2ModelSegments);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oSegment : THL7V2ModelSegment;
   iSegment : Integer;
   oField : THL7V2ModelField;
@@ -355,7 +355,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadComponents(aVersion : THL7V2Version; oComponents : THL7V2ModelComponents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oComponent : THL7V2ModelComponent;
 begin
   oConn := GetConnection('LoadComponents');
@@ -387,7 +387,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddComponents(aVersion : THL7V2Version; oComponents : THL7V2ModelComponents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iComponent : Integer;
   oComponent : THL7V2ModelComponent;
 begin
@@ -417,7 +417,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadDataElements(aVersion : THL7V2Version; oDataElements : THL7V2ModelDataElements);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oDataElement : THL7V2ModelDataElement;
 begin
   oConn := GetConnection('LoadDataElements');
@@ -460,7 +460,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddDataElements(aVersion : THL7V2Version; oDataElements : THL7V2ModelDataElements);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iDataElement : Integer;
   oDataElement : THL7V2ModelDataElement;
 begin
@@ -502,7 +502,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadDataTypes(aVersion : THL7V2Version; oDataTypes : THL7V2ModelDataTypes);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oDataType : THL7V2ModelDataType;
 begin
   oConn := GetConnection('LoadDataTypes');
@@ -533,7 +533,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddDataTypes(aVersion : THL7V2Version; oDataTypes : THL7V2ModelDataTypes);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iDataType : Integer;
   oDataType : THL7V2ModelDataType;
 begin
@@ -562,7 +562,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadSegments(aVersion : THL7V2Version; oSegments : THL7V2ModelSegments);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oSegment : THL7V2ModelSegment;
 begin
   oConn := GetConnection('LoadSegments');
@@ -593,7 +593,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddSegments(aVersion : THL7V2Version; oSegments : THL7V2ModelSegments);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iSegment : Integer;
   oSegment : THL7V2ModelSegment;
 begin
@@ -620,7 +620,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadStructures(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oStructure : THL7V2ModelStructure;
 begin
   oConn := GetConnection('LoadStructures');
@@ -652,7 +652,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddStructures(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iStructure : Integer;
   oStructure : THL7V2ModelStructure;
 begin
@@ -682,7 +682,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadStructureComponents(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures; oComponents : THL7V2ModelComponents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oStructure : THL7V2ModelStructure;
   oComp : THL7V2ModelComponent;
   sLast : String;
@@ -715,7 +715,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddStructureComponents(aVersion : THL7V2Version; oStructures : THL7V2ModelStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iStructure : Integer;
   iComp : Integer;
   iNum : integer;
@@ -751,7 +751,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadTables(aVersion : THL7V2Version; oTables : THL7V2ModelTables);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oTable : THL7V2ModelTable;
   oTableItem : THL7V2ModelTableItem;
 begin
@@ -801,7 +801,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddTables(aVersion : THL7V2Version; oTables : THL7V2ModelTables);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iTable : Integer;
   iItem : Integer;
   oTable : THL7V2ModelTable;
@@ -851,7 +851,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadEvents(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oEvent : THL7V2ModelEvent;
 begin
   oConn := GetConnection('LoadEvents');
@@ -881,7 +881,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddEvents(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iEvent : Integer;
   oEvent : THL7V2ModelEvent;
 begin
@@ -909,7 +909,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadEventMessages(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oEvent : THL7V2ModelEvent;
   oMessage : THL7V2ModelEventMessage;
 begin
@@ -943,7 +943,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddEventMessages(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iEvent : Integer;
   oEvent : THL7V2ModelEvent;
   iMessage : Integer;
@@ -985,7 +985,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oMessageStructure : THL7V2ModelMessageStructure;
 begin
   oConn := GetConnection('LoadMessageStructures');
@@ -1018,7 +1018,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   iMessageStructure : Integer;
   oMessageStructure : THL7V2ModelMessageStructure;
 begin
@@ -1049,7 +1049,7 @@ begin
   end;
 end;
 
-procedure THL7V2OdbcDictionary.FindSegment(oStructure : THL7V2ModelMessageStructure; oStack : THL7V2ModelSegmentGroups; oConn : TFslDBConnection);
+procedure THL7V2OdbcDictionary.FindSegment(oStructure : THL7V2ModelMessageStructure; oStack : THL7V2ModelSegmentGroups; oConn : TFDBConnection);
 var
   oFocus : THL7V2ModelSegmentGroup;
   oGroup : THL7V2ModelSegmentGroup;
@@ -1092,7 +1092,7 @@ end;
 
 procedure THL7V2OdbcDictionary.LoadSegmentMaps(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   sLastName : String;
   oStructure : THL7V2ModelMessageStructure;
   oStack : THL7V2ModelSegmentGroups;
@@ -1169,7 +1169,7 @@ begin
   end;
 end;
 
-procedure THL7V2OdbcDictionary.SaveSegmentGroup(oConn: TFslDBConnection; var iNum : integer; oGroup : THL7V2ModelSegmentGroup);
+procedure THL7V2OdbcDictionary.SaveSegmentGroup(oConn: TFDBConnection; var iNum : integer; oGroup : THL7V2ModelSegmentGroup);
 var
   sCode : String;
   iLoop : integer;
@@ -1252,7 +1252,7 @@ end;
 
 procedure THL7V2OdbcDictionary.AddSegmentMaps(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures);
 var
-  oConn: TFslDBConnection;
+  oConn: TFDBConnection;
   oStructure : THL7V2ModelMessageStructure;
   iLoop : integer;
   iNum : integer;
@@ -1317,7 +1317,7 @@ begin
   // not interested
 end;
 
-function THL7V2OdbcDictionary.GetConnection(usage: String): TFslDBConnection;
+function THL7V2OdbcDictionary.GetConnection(usage: String): TFDBConnection;
 begin
   result := nil;
   RaiseError('GetConnection', 'Need to override GetConnection in '+ClassName);
@@ -1335,7 +1335,7 @@ begin
   RaiseError('NamePrefix', 'Need to override NamePrefix in '+ClassName);
 end;
 
-procedure THL7V2OdbcDictionary.YieldConnection(oConn: TFslDBConnection);
+procedure THL7V2OdbcDictionary.YieldConnection(oConn: TFDBConnection);
 begin
   RaiseError('YieldConnection', 'Need to override YieldConnection in '+ClassName);
 end;
@@ -1359,7 +1359,7 @@ begin
   inherited;
 end;
 
-function THL7V2AccessDictionary.GetConnection(usage: String): TFslDBConnection;
+function THL7V2AccessDictionary.GetConnection(usage: String): TFDBConnection;
 begin
   if FStmtInUse then
     RaiseError('GetConnection', 'Attempt to reuse stmt');
@@ -1412,7 +1412,7 @@ procedure THL7V2AccessDictionary.SetFileName(const Value: String);
 begin
   Close;
   FFileName := Value;
-  FManager := TFslDBOdbcManager.Create('HL7dict', kdbAccess, 1, 0, 'Microsoft Access Driver (*.mdb, *.accdb)', '', FFileName, '', '');
+  FManager := TFDBOdbcManager.Create('HL7dict', kdbAccess, 1, 0, 'Microsoft Access Driver (*.mdb, *.accdb)', '', FFileName, '', '');
   FStmt := Fmanager.GetConnection('HL7 Dictionary');
   LookupDBVersion;
   FStmtInUse := False;

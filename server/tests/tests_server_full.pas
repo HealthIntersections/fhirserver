@@ -74,7 +74,7 @@ Type
   private
     FIni : TFHIRServerIniFile;
     FSettings : TFHIRServerSettings;
-    FDatabases : TFslMap<TFslDBManager>;
+    FDatabases : TFslMap<TFDBManager>;
     FTerminologies : TCommonTerminologies;
     FWebServer : TFhirWebServer;
     FEndPoint : TFhirWebServerEndpoint;
@@ -82,8 +82,8 @@ Type
 
     function parseJson(s : String) : TFHIRResource;
     procedure ConnectToDatabases();
-    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
-    Procedure checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
+    Procedure checkDatabase(db : TFDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
     procedure registerJs(sender: TObject; js: TJsHost);
@@ -166,12 +166,12 @@ begin
   js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
 end;
 
-procedure TFullServerTests.checkDatabase(db: TFslDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);
+procedure TFullServerTests.checkDatabase(db: TFDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);
 var
   ver : integer;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
-  meta : TFslDBMetaData;
+  meta : TFDBMetaData;
 begin
   conn := Db.GetConnection('check version');
   try
@@ -204,7 +204,7 @@ begin
   end;
 end;
 
-function TFullServerTests.connectToDatabase(s: String; details: TFHIRServerIniComplex): TFslDBManager;
+function TFullServerTests.connectToDatabase(s: String; details: TFHIRServerIniComplex): TFDBManager;
 var
   dbn, ddr : String;
 begin
@@ -214,15 +214,15 @@ begin
   begin
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
-    result := TFslDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin
-    result := TFslDBSQLiteManager.create(s, dbn, false);
+    result := TFDBSQLiteManager.create(s, dbn, false);
   end
   else
     raise ELibraryException.Create('Unknown database type '+s);
@@ -323,7 +323,7 @@ begin
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not FindCmdLineSwitch('noload');
   FSettings.load(FIni);
-  FDatabases := TFslMap<TFslDBManager>.create('databases');
+  FDatabases := TFslMap<TFDBManager>.create('databases');
 
   ConnectToDatabases;
   LoadTerminologies;

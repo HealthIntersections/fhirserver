@@ -324,7 +324,7 @@ type
     procedure RegisterConsentRecord(session: TFhirSession); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; res : TFHIRResourceV; tags : TFHIRTagList); override;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); override;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; res: TFHIRResourceV; conn: TFDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); override;
 
     function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; override;
     function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
@@ -1284,7 +1284,7 @@ var
   needsObject : boolean;
   sId, type_ : String;
   first : boolean;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   patIds : TPatientIdTracker;
 begin
   result := 'Everything';
@@ -3053,7 +3053,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageServiceR2.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFslDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src: TBytes);
+procedure TFHIRNativeStorageServiceR2.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created: boolean; res: TFHIRResourceV; conn: TFDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src: TBytes);
 var
   vs : TFHIRValueSet;
   resource : TFHIRResource;

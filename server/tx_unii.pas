@@ -64,9 +64,9 @@ type
 
   TUniiServices = class (TCodeSystemProvider)
   public
-    db : TFslDBManager;
+    db : TFDBManager;
 
-    constructor Create(db : TFslDBManager);
+    constructor Create(db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
 
@@ -103,7 +103,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
   end;
 
-Procedure ImportUnii(filename : String; dbm : TFslDBManager);
+Procedure ImportUnii(filename : String; dbm : TFDBManager);
 
 implementation
 
@@ -112,7 +112,7 @@ uses
 
 { TUniiServices }
 
-Constructor TUniiServices.create(db : TFslDBManager);
+Constructor TUniiServices.create(db : TFDBManager);
 begin
   inherited Create;
 
@@ -122,7 +122,7 @@ end;
 
 function TUniiServices.TotalCount : integer;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
 begin
   if db = nil then
     exit(0);
@@ -164,7 +164,7 @@ end;
 
 function TUniiServices.getDisplay(code : String; const lang : THTTPLanguages):String;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
 begin
   qry := db.GetConnection('Unii.display');
   try
@@ -196,7 +196,7 @@ begin
   list.Add(getDisplay(code, lang));
 end;
 
-Procedure ImportUnii(filename : String; dbm : TFslDBManager);
+Procedure ImportUnii(filename : String; dbm : TFDBManager);
 var
   tab : TFslTextExtractor;
   f : TFslFile;
@@ -204,7 +204,7 @@ var
   cols : TArray<String>;
   map : TFslStringIntegerMatch;
   key, last, lastDesc : integer;
-  db : TFslDBConnection;
+  db : TFDBConnection;
 begin
   Logging.log('Inport UNII from '+filename);
   db := dbm.GetConnection('unii');
@@ -260,7 +260,7 @@ end;
 
 function TUniiServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 var
-  qry : TFslDBConnection;
+  qry : TFDBConnection;
   res : TUniiConcept;
   key : integer;
   s : String;

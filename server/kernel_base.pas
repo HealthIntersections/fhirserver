@@ -96,7 +96,7 @@ type
 
   TFHIRServiceDataStore = class (TFHIRServiceBase)
   private
-    FDatabases : TFslMap<TFslDBManager>;
+    FDatabases : TFslMap<TFDBManager>;
     FTerminologies : TCommonTerminologies;
     procedure ConnectToDatabases;
     procedure CloseDatabases;
@@ -108,7 +108,7 @@ type
     procedure closeDown; override;
   public
     destructor Destroy; override;
-    property Databases : TFslMap<TFslDBManager> read FDatabases;
+    property Databases : TFslMap<TFDBManager> read FDatabases;
     property Terminologies : TCommonTerminologies read FTerminologies;
   end;
 
@@ -312,7 +312,7 @@ end;
 
 function TFHIRServiceDataStore.initialise: boolean;
 begin
-  FDatabases := TFslMap<TFslDBManager>.create('fhir.svc');
+  FDatabases := TFslMap<TFDBManager>.create('fhir.svc');
   ConnectToDatabases;
   result := true;
 end;

@@ -45,19 +45,19 @@ Type
   private
     fpp : TFHIRPathParser;
     fpe : TFHIRPathEngine;
-    function MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+    function MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
   protected
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function preparePackage(userkey : integer; created : boolean; sub : TFHIRSubscriptionW; res : TFHIRResourceV) : TFHIRResourceV; override;
-    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFslDBConnection) : boolean; override;
+    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFDBConnection) : boolean; override;
     function checkSubscription(sub: TFHIRResourceV) : TFHIRSubscriptionW; override;
     function checkSubscriptionTopic(sub: TFHIRResourceV) : TFHIRSubscriptionTopicW; override;
     function loadSubscriptionTopic(res : TFHIRResourceV) : TSubscriptionTopic; override;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; override;
     function processUrlTemplate(url : String; res : TFhirResourceV) : String; override;
-    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>; override;
+    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFDBConnection): TArray<integer>; override;
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
@@ -80,7 +80,7 @@ begin
   inherited;
 end;
 
-function TSubscriptionManagerR5.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>;
+function TSubscriptionManagerR5.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFDBConnection): TArray<integer>;
 begin
   SetLength(result, 0);
 end;
@@ -91,7 +91,7 @@ begin
 //    result := getSubscriptionTopic(subscription.topic.reference);
 end;
 
-function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
 var
   old : TFhirResource;
   new : TFhirResource;
@@ -414,7 +414,7 @@ begin
   result := url;
 end;
 
-function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFDBConnection): boolean;
 var
   subscription : TFhirSubscription;
   evd : TFHIRSubscriptionTopic;

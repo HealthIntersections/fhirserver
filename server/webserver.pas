@@ -154,14 +154,14 @@ Type
   {$IFNDEF FHIR3}
   TPackageUpdaterThread  = class(TFHIRServerThread)
   private
-    FDB : TFslDBManager;
+    FDB : TFDBManager;
     FNextRun : TDateTime;
     FLastEmail : TDateTime;
     procedure RunUpdater;
   protected
     procedure Execute; override;
   public
-    constructor Create(server: TFhirWebServer; db : TFslDBManager);
+    constructor Create(server: TFhirWebServer; db : TFDBManager);
     destructor Destroy; override;
   end;
   {$ENDIF}
@@ -4525,7 +4525,7 @@ Procedure TFhirWebServer.Start(active, threads: boolean);
 Begin
   {$IFDEF WINDOWS}
   if FTwilioDB <> '' then
-    FTwilioServer := TTwilioServer.Create(TFslDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
+    FTwilioServer := TTwilioServer.Create(TFDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
   {$ENDIF}
 
   Logging.log('Start Web Server:');
@@ -5965,7 +5965,7 @@ end;
 {$IFNDEF FHIR3}
 { TPackageUpdaterThread }
 
-constructor TPackageUpdaterThread.Create(server: TFhirWebServer; db: TFslDBManager);
+constructor TPackageUpdaterThread.Create(server: TFhirWebServer; db: TFDBManager);
 begin
   inherited create(server, false);
   FDB := db;
@@ -5998,7 +5998,7 @@ end;
 
 procedure TPackageUpdaterThread.RunUpdater;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   upd : TPackageUpdater;
 begin
   conn := FDB.getConnection('server.packages.update');

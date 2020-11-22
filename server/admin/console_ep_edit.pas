@@ -16,21 +16,15 @@ type
     btnDBTest1: TBitBtn;
     btnDBTest3: TBitBtn;
     cbxDatabase: TComboBox;
-    cbxSecurity: TComboBox;
     cbxType: TComboBox;
     cbxMode: TComboBox;
-    chkValidate: TCheckBox;
     edtIdentity: TEdit;
     edtPath: TEdit;
-    edtPath1: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label6: TLabel;
     Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
     Panel1: TPanel;
     procedure cbxTypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -100,10 +94,8 @@ begin
     edtIdentity.text := EP['id'];
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type']);
     cbxMode.itemIndex := cbxMode.Items.IndexOf(EP['mode']);
-    cbxSecurity.itemIndex := cbxSecurity.Items.IndexOf(EP['security']);
     edtPath.text := EP['path'];
     cbxDatabase.itemIndex := cbxDatabase.Items.IndexOf(EP['database']);
-    chkValidate.Checked := EP['validate'] = 'true';
     cbxTypeChange(self);
   end;
 end;
@@ -114,21 +106,18 @@ begin
   if cbxType.ItemIndex = -1 then
   begin
     cbxMode.Enabled := false;
-    chkValidate.Enabled := false;
   end
   else
   if cbxType.items[cbxType.ItemIndex] = 'package' then
   begin
     cbxMode.Enabled := false;
     cbxMode.itemIndex := -1;
-    chkValidate.Enabled := false;
   end
   else
   begin
     cbxMode.Enabled := true;
     if cbxMode.itemIndex = -1 then
       cbxMode.itemIndex := cbxMode.Items.IndexOf(EP['mode']);
-    chkValidate.Enabled := EP['mode'] <> 'terminology';
   end;
 end;
 
@@ -148,17 +137,6 @@ begin
     EP['database'] := cbxDatabase.Items[cbxDatabase.itemIndex]
   else
     EP['database'] := '';
-  if cbxSecurity.itemIndex > -1 then
-    EP['security'] := cbxSecurity.Items[cbxSecurity.itemIndex]
-  else
-    EP['security'] := '';
-
-  if not chkValidate.Enabled then
-    EP['validate'] := ''
-  else if chkValidate.Checked then
-    EP['validate'] := 'true'
-  else
-    EP['validate'] := 'false';
 end;
 
 end.

@@ -44,15 +44,15 @@ type
   TNdcImporter = class (TFslObject)
   private
     FSource: String;
-    FDatabase: TFslDBManager;
-    FConn : TFslDBConnection;
+    FDatabase: TFDBManager;
+    FConn : TFDBConnection;
     FCodes : TDictionary<String, integer>;
     FTypes : TDictionary<String, integer>;
     FOrgs : TDictionary<String, integer>;
     FRoutes : TDictionary<String, integer>;
     FDoseforms : TDictionary<String, integer>;
     FKey : integer;
-    procedure SetDatabase(const Value: TFslDBManager);
+    procedure SetDatabase(const Value: TFDBManager);
     procedure importProducts(callback: TInstallerCallback);
     procedure importPackages(callback: TInstallerCallback);
     procedure processProduct(fields: TFslStringList);
@@ -63,7 +63,7 @@ type
     constructor Create(source : String);
     destructor Destroy; override;
 
-    property Database : TFslDBManager read FDatabase write SetDatabase;
+    property Database : TFDBManager read FDatabase write SetDatabase;
     property source : String read FSource write FSource;
 
     procedure process(callback : TInstallerCallback);
@@ -81,7 +81,7 @@ type
 
   TNDCServices = class (TCodeSystemProvider)
   private
-    FDb : TFslDBManager;
+    FDb : TFDBManager;
     FVersion : string;
     FPackageCount : integer;
     FProductCount : integer;
@@ -91,9 +91,9 @@ type
     FRoutes : TDictionary<integer, String>;
     FDoseforms : TDictionary<integer, String>;
     procedure load;
-    procedure loadDict(conn: TFslDBConnection; dict: TDictionary<integer, String>; sql: String);
+    procedure loadDict(conn: TFDBConnection; dict: TDictionary<integer, String>; sql: String);
   public
-    constructor Create(db : TFslDBManager; version : String);
+    constructor Create(db : TFDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
 
@@ -238,7 +238,7 @@ end;
 
 procedure TNdcImporter.prepareDatabase;
 var
-  md : TFslDBMetaData;
+  md : TFDBMetaData;
 begin
   md := FConn.FetchMetaData;
   try
@@ -433,14 +433,14 @@ begin
   FConn.Terminate;
 end;
 
-procedure TNdcImporter.SetDatabase(const Value: TFslDBManager);
+procedure TNdcImporter.SetDatabase(const Value: TFDBManager);
 begin
   FDatabase := Value;
 end;
 
 { TNDCServices }
 
-constructor TNDCServices.Create(db: TFslDBManager; version : String);
+constructor TNDCServices.Create(db: TFDBManager; version : String);
 begin
   inherited Create;
 
@@ -483,7 +483,7 @@ begin
   ctxt.Free;
 end;
 
-procedure TNDCServices.loadDict(conn : TFslDBConnection; dict : TDictionary<integer, String>; sql : String);
+procedure TNDCServices.loadDict(conn : TFDBConnection; dict : TDictionary<integer, String>; sql : String);
 begin
   conn.SQL := sql;
   conn.Prepare;
@@ -495,7 +495,7 @@ end;
 
 procedure TNDCServices.load;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.getConnection('load');
   try
@@ -519,7 +519,7 @@ function TNDCServices.Code(context: TCodeSystemProviderContext): string;
 var
   c : string;
   code : TNDCProviderContext;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   code := context as TNDCProviderContext;
   conn := FDB.getConnection('Code');
@@ -541,7 +541,7 @@ end;
 
 function TNDCServices.ChildCount(context: TCodeSystemProviderContext): integer;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   if (context = nil) then
   begin
@@ -570,7 +570,7 @@ function TNDCServices.Display(context: TCodeSystemProviderContext; const lang : 
 var
   c : string;
   code : TNDCProviderContext;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   code := context as TNDCProviderContext;
   c := '';
@@ -609,7 +609,7 @@ procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TStri
 var
   c : string;
   code : TNDCProviderContext;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   code := context as TNDCProviderContext;
   conn := FDB.getconnection('Displays');
@@ -632,7 +632,7 @@ end;
 procedure TNDCServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
 var
   c : string;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.getconnection('Displays');
   try
@@ -653,7 +653,7 @@ end;
 procedure TNDCServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   code : TNDCProviderContext;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   code := ctxt as TNDCProviderContext;
   conn := FDB.getconnection('Display');
@@ -731,7 +731,7 @@ end;
 function TNDCServices.getDisplay(code : String; const lang : THTTPLanguages): String;
 var
   c : string;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   c := '';
   conn := FDB.getconnection('getDisplay');
@@ -786,7 +786,7 @@ function TNDCServices.locate(code: String; var message: String): TCodeSystemProv
 var
   c : TCodeSystemProviderContext;
   k : integer;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   c := nil;
   conn := FDB.getconnection('getDisplay');

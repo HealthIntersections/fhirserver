@@ -101,7 +101,7 @@ Type
     FNotServing : boolean;
 
     function doGetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
-    Procedure checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    Procedure checkDatabase(db : TFDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 
     // commands
     function InstallDatabase(name : String) : String;
@@ -312,7 +312,7 @@ var
   store : TFHIRNativeStorageService;
   s : String;
   details : TFHIRServerIniComplex;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   store := nil;
 
@@ -481,12 +481,12 @@ begin
   end
 end;
 
-Procedure TFHIRServiceGeneral.checkDatabase(db : TFslDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+Procedure TFHIRServiceGeneral.checkDatabase(db : TFDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 var
   ver : integer;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
-  meta : TFslDBMetaData;
+  meta : TFDBMetaData;
 begin
   conn := Db.GetConnection('check version');
   try
@@ -522,11 +522,11 @@ end;
 
 function TFHIRServiceGeneral.InstallDatabase(name : String) : String;
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   salt, un, pw, em, sql, dr : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
 begin
@@ -616,9 +616,9 @@ end;
 
 procedure TFHIRServiceGeneral.UnInstallDatabase;
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   dbi : TFHIRDatabaseInstaller;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   n : String;
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
@@ -682,7 +682,7 @@ var
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
   dbn : String;
-  db : TFslDBManager;
+  db : TFDBManager;
   loadList : TArray<String>;
 begin
 
@@ -767,10 +767,10 @@ end;
 
 procedure TFHIRServiceGeneral.updateAdminPassword(name: String);
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   scim : TSCIMServer;
   salt, un, pw, em, result : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   details : TFHIRServerIniComplex;
 begin
   // check that user account details are provided

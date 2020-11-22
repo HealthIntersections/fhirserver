@@ -198,7 +198,7 @@ type
     FStores : TFslMap<TTerminologyFhirServerStorage>;
 
     procedure configureResource(cfg : TFHIRResourceConfig);
-    procedure registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
+    procedure registerEndPoint(code, path : String; db : TFDBManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
   protected
     function setup : boolean; override;
     procedure closeDown; override;
@@ -1250,7 +1250,7 @@ begin
   result := inherited setup;
 end;
 
-procedure TFHIRServiceTxServer.registerEndPoint(code, path : String; db : TFslDbManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
+procedure TFHIRServiceTxServer.registerEndPoint(code, path : String; db : TFDBManager; factory : TFHIRFactory; listF, listP : TStringList; UTGFolder : String);
 var
   s : String;
   store : TTerminologyFhirServerStorage;

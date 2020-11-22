@@ -57,8 +57,8 @@ Type
     Fname: String;
     FPath: String;
 
-    FDb : TFslDBManager;
-    FConn : TFslDBConnection;
+    FDb : TFDBManager;
+    FConn : TFDBConnection;
     FStatus: Integer;
     FKey: Integer;
     FOldSource: String;

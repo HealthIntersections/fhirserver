@@ -41,11 +41,11 @@ Uses
   fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 Type
-  TFslDBTests = Class (TFslTestCase)
+  TFDBTests = Class (TFslTestCase)
   private
-    conn4: TFslDBConnection;
+    conn4: TFDBConnection;
     procedure TestThread;
-    procedure test(manager: TFslDBManager);
+    procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
     procedure TestMSSQL;
@@ -84,15 +84,15 @@ begin
   result := d < 0.00001;
 end;
 
-{ TFslDBTests }
+{ TFDBTests }
 
-procedure TFslDBTests.test(manager: TFslDBManager);
+procedure TFDBTests.test(manager: TFDBManager);
 var
-  conn: TFslDBConnection;
+  conn: TFDBConnection;
   d, od, dn: TFslDateTime;
   b: TBytes;
   i64: Int64;
-  md: TFslDBMetaData;
+  md: TFDBMetaData;
   fn : string;
 begin
   d := TFslDateTime.makeLocal(dtpSec);
@@ -245,9 +245,9 @@ begin
   end;
 end;
 
-procedure TFslDBTests.TestMSSQL;
+procedure TFDBTests.TestMSSQL;
 var
-  db: TFslDBManager;
+  db: TFDBManager;
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mssql') then
@@ -256,7 +256,7 @@ begin
   begin
     settings := TestSettings.section('mssql');
     try
-      db := TFslDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
+      db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
       finally
@@ -268,9 +268,9 @@ begin
   end;
 end;
 
-procedure TFslDBTests.TestMySQL;
+procedure TFDBTests.TestMySQL;
 var
-  db: TFslDBManager;
+  db: TFDBManager;
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mysql') then
@@ -279,7 +279,7 @@ begin
   begin
     settings := TestSettings.section('mysql');
     try
-      db := TFslDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
       try
         test(db);
       finally
@@ -291,7 +291,7 @@ begin
   end;
 end;
 
-// procedure TFslDBTests.testSQLite;
+// procedure TFDBTests.testSQLite;
 // var
 // DB: TSQLite3Database;
 // Stmt: TSQLite3Statement;
@@ -436,22 +436,22 @@ end;
 // end;
 //
 
-procedure TFslDBTests.TestThread;
+procedure TFDBTests.TestThread;
 begin
   sleep(500);
   conn4.Release;
 end;
 
-procedure TFslDBTests.TestSemaphore;
+procedure TFDBTests.TestSemaphore;
 var
-  db: TFslDBManager;
-  conn1: TFslDBConnection;
-  conn2: TFslDBConnection;
-  conn3: TFslDBConnection;
-  conn5: TFslDBConnection;
+  db: TFDBManager;
+  conn1: TFDBConnection;
+  conn2: TFDBConnection;
+  conn3: TFDBConnection;
+  conn5: TFDBConnection;
 begin
   DeleteFile('c:\temp\sql.db');
-  db := TFslDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -524,12 +524,12 @@ begin
   end;
 end;
 
-procedure TFslDBTests.TestSQLite;
+procedure TFDBTests.TestSQLite;
 var
-  db: TFslDBManager;
+  db: TFDBManager;
 begin
   DeleteFile('c:\temp\sql.db');
-  db := TFslDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
   try
     test(db);
   finally
@@ -537,11 +537,11 @@ begin
   end;
 end;
 
-// procedure TFslDBTests.TestMySQLMaria;
+// procedure TFDBTests.TestMySQLMaria;
 // var
-// db : TFslDBManager;
+// db : TFDBManager;
 // begin
-// db := TFslDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+// db := TFDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
 // try
 // test(db);
 // finally
@@ -553,7 +553,7 @@ end;
 procedure registerTests;
 // don't use initialization - give other code time to set up directories etc
 begin
-  RegisterTest('Database.Manager', TFslDBTests.Suite);
+  RegisterTest('Database.Manager', TFDBTests.Suite);
 end;
 
 end.

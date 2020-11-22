@@ -38,7 +38,7 @@ uses
   ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
   IniFiles, Math,
   IdTelnet, IdGlobal,
-  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging,
+  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client,
   fdb_manager, fdb_odbc, fdb_dialects,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   fui_lcl_managers,
@@ -54,6 +54,13 @@ type
   { TConnectingThread }
 
   TConnectingThread = class (TFslThread)
+  protected
+    procedure execute; override;
+  end;
+
+  { TPackageClientThread }
+
+  TPackageClientThread = class (TFslThread)
   protected
     procedure execute; override;
   end;
@@ -99,7 +106,6 @@ type
     btnDBDelete: TBitBtn;
     btnEPAdd: TBitBtn;
     btnTxDelete: TBitBtn;
-    btnDBTest: TBitBtn;
     btnAddEdition: TSpeedButton;
     btnBase: TSpeedButton;
     btnCombinedDestination: TSpeedButton;
@@ -232,6 +238,7 @@ type
     lblSCTAmount: TLabel;
     lblUMLSAction: TLabel;
     lblUMLSAmount: TLabel;
+    lvPackages: TListView;
     lvID: TListView;
     lvDB: TListView;
     lvTx: TListView;
@@ -270,6 +277,8 @@ type
     Panel35: TPanel;
     Panel36: TPanel;
     Panel37: TPanel;
+    Panel38: TPanel;
+    Panel39: TPanel;
     pgTerminologies: TPageControl;
     Panel10: TPanel;
     Panel11: TPanel;
@@ -312,6 +321,7 @@ type
     btnCert: TSpeedButton;
     btnCACert: TSpeedButton;
     btnCertKey: TSpeedButton;
+    Splitter1: TSplitter;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
@@ -386,14 +396,13 @@ type
     procedure Image4Click(Sender: TObject);
     procedure Image5Click(Sender: TObject);
     procedure lbEditionsClick(Sender: TObject);
+    procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
-    procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
-    procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
+    procedure tbConsoleContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure tbTerminologiesContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton3Click(Sender: TObject);
@@ -409,6 +418,7 @@ type
     FLastIncoming : TDateTime;
     FStatus : TConnectionStatus;
     FThread : TConnectingThread;
+    FPackageThread : TPackageClientThread;
     FAddress : String;
     FPassword : String;
     FFilter : String;
@@ -422,6 +432,9 @@ type
     FTxManager : TTxManager;
     FEPManager : TEndPointManager;
     FIDManager : TIdentityProviderManager;
+    FPackages : TFslList<TFHIRPackageInfo>;
+    FThreadPackages : TFslList<TFHIRPackageInfo>;
+
     procedure recordSessionLength(start, length : int64);
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
     procedure DoConnected(Sender: TObject);
@@ -440,8 +453,9 @@ type
     procedure GetODBCDriversList(list : TStrings);
     procedure SetConfigEditable;
     procedure SetConfigReadonly;
+    procedure EPFocusChange(sender : TObject);
   public
-
+    property Packages : TFslList<TFHIRPackageInfo> read FPackages;
   end;
 
 var
@@ -453,6 +467,27 @@ implementation
 
 uses
   console_server_form;
+
+{ TPackageClientThread }
+
+procedure TPackageClientThread.execute;
+var
+  client : TFHIRPackageClient;
+  list : TFslList<TFHIRPackageInfo>;
+begin
+  client := TFHIRPackageClient.create(PACKAGE_SERVER_BACKUP);
+  try
+    list := client.search('', '', '', false);
+    MainConsoleForm.Flock.Lock;
+    try
+      MainConsoleForm.FThreadPackages := list;
+    finally
+      MainConsoleForm.Flock.UnLock;
+    end;
+  finally
+    client.Free;
+  end;
+end;
 
 { TServerSessionStatistics }
 
@@ -586,24 +621,32 @@ begin
   FThread := TConnectingThread.create;
   FThread.Open;
 
+  FPackages := TFslList<TFHIRPackageInfo>.create;
+  FPackageThread := TPackageClientThread.create;
+  FPackageThread.Open;
+
   FDBManager := TDBManager.create;
+  FDBManager.Settings := FIni;
   FDBManager.List := lvDB;
   FDBManager.registerControl(btnDBAdd, copAdd);
   FDBManager.registerControl(btnDBDelete, copDelete);
-  FDBManager.registerControl(btnDBTest, copExecute);
 
   FTxManager := TTxManager.create;
+  FTxManager.Settings := FIni;
   FTxManager.List := lvTx;
   FTxManager.registerControl(btnTxAdd, copAdd);
   FTxManager.registerControl(btnTxDelete, copDelete);
 
   FEPManager := TEndPointManager.create;
+  FEPManager.Settings := FIni;
   FEPManager.List := lvEP;
   FEPManager.registerControl(btnEPAdd, copAdd);
   FEPManager.registerControl(btnEPDelete, copDelete);
   FEPManager.registerControl(btnEPInstall, copExecute);
+  FEPManager.OnSetFocus := EPFocusChange;
 
   FIDManager := TIdentityProviderManager.create;
+  FIDManager.Settings := FIni;
   FIDManager.List := lvID;
   FIDManager.registerControl(btnIDAdd, copAdd);
   FIDManager.registerControl(btnIDDelete, copDelete);
@@ -617,10 +660,12 @@ begin
   FThread.Stop;
   while assigned(FThread) do
     ;
+  FPackageThread.Stop;
   FTxManager.Free;
   FDBManager.Free;
   FEPManager.Free;
   FIDManager.Free;
+  FPackages.free;
   FTelnet.Free;
   FIncoming.Free;
   FThreads.Free;
@@ -682,6 +727,33 @@ end;
 procedure TMainConsoleForm.lbEditionsClick(Sender: TObject);
 begin
   btnDeleteEdition.Enabled := lbEditions.ItemIndex <> -1;
+end;
+
+procedure TMainConsoleForm.lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+var
+  ts : TStringList;
+  i : integer;
+begin
+  if FEPManager.Focus <> nil then
+  begin
+    ts := TStringlist.create;
+    try
+      ts.CommaText := FEPManager.Focus['packages'];
+      i := ts.IndexOf(item.Caption);
+      if item.Checked then
+      begin
+        if i = -1 then
+          ts.add(item.caption);
+      end
+      else if (i > -1) then
+        ts.Delete(i);
+      FEPManager.Focus['packages'] := ts.CommaText;
+      FConfig.save;
+    finally
+      ts.free;
+    end;
+  end;
+
 end;
 
 procedure TMainConsoleForm.MenuItem4Click(Sender: TObject);
@@ -799,6 +871,7 @@ begin
     edtAdminSCIMSalt.Text := FConfig.admin['scim-salt'];
     edtAdminSCIMSalt.Enabled := true;
 
+    lvPackages.Enabled := true;
   finally
     FLoading := false;
   end;
@@ -841,6 +914,64 @@ begin
   edtSSLPassword.Enabled := false;
   edtGoogleId.Text := '';
   edtGoogleId.Enabled := false;
+  lvPackages.Enabled := true;
+end;
+
+function matchesVersion(ep, pi, piv : String):boolean;
+begin
+  if ep = 'r2' then
+    result := SameText(pi, 'DSTU2') or SameText(pi, 'STU2') or pi.StartsWith('1.0') or piv.StartsWith('1.0')
+  else if ep = 'r3' then
+    result := SameText(pi, 'STU3') or pi.StartsWith('3.0') or piv.StartsWith('3.0')
+  else if ep = 'r4' then
+    result := SameText(pi, 'R4') or pi.StartsWith('4.0') or piv.StartsWith('4.0')
+  else if ep = 'r5' then
+    result := SameText(pi, 'R5') or pi.StartsWith('4.5') or piv.StartsWith('4.5')
+  else
+    result := false;
+end;
+
+function isAutomatic(ep : String; pi : TFHIRPackageInfo):boolean;
+begin
+  if pi.id = 'hl7.fhir.core' then
+    result := true
+  else if pi.id = 'hl7.fhir.'+ep+'.core' then
+    result := true
+  else if pi.id = 'hl7.terminology' then
+    result := true
+  else
+    result := false;
+end;
+
+procedure TMainConsoleForm.EPFocusChange(sender : TObject);
+var
+  ep : TFHIRServerIniComplex;
+  pi : TFHIRPackageInfo;
+  li : TListItem;
+  ts : TStringList;
+begin
+  lvPackages.Items.clear;
+  ep := FEPManager.Focus;
+  if (ep <> nil) then
+  begin
+    ts := TStringList.create;
+    try
+      ts.CommaText := ep['packages'];
+      for pi in FPackages do
+      begin
+        if matchesversion(ep['type'], pi.fhirVersion, pi.version) and not isAutomatic(ep['type'], pi) then
+        begin
+          li := lvPackages.items.Add;
+          li.Caption := pi.id+'#'+pi.version;
+          li.Checked := ts.IndexOf(pi.id+'#'+pi.version) > -1;
+        end;
+      end;
+    finally
+      ts.free;
+    end;
+  end;
+  lvPackages.ViewStyle := vsIcon;
+  lvPackages.ViewStyle := vsList;
 end;
 
 procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
@@ -1328,7 +1459,7 @@ begin
 end;
 
 
-function dbtype(i : integer) : TFslDBPlatform;
+function dbtype(i : integer) : TFDBPlatform;
 begin
   if (i = 1) then
     result := kdbMySQL
@@ -1366,7 +1497,7 @@ begin
 
       ndc := TNDCImporter.create(dlgFolder.FileName);
       try
-        ndc.Database := TFslDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+        ndc.Database := TFDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
         FWantStop := false;
         btnUMLSStop.Visible := true;
         cursor := crHourGlass;
@@ -1401,7 +1532,7 @@ end;
 
 procedure TMainConsoleForm.btnProcessUMLSClick(Sender: TObject);
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   start : TDateTime;
 begin
   start := now;
@@ -1432,7 +1563,7 @@ begin
     edtUMLSPassword.enabled := false;
     btnProcessUMLS.enabled := false;
     try
-      db := TFslDBOdbcManager.create('umls', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFDBOdbcManager.create('umls', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;
@@ -1569,6 +1700,13 @@ begin
       FIncoming.clear;
       tsth.assign(FThreads);
       FThreads.clear;
+      if FThreadPackages <> nil then
+      begin
+        FPackages.Clear;
+        FPackages.AddAll(FThreadPackages);
+        FThreadPackages.Free;
+        FThreadPackages := nil;
+      end;
       rs := FStatistics.report;
     finally
       FLock.Unlock;
@@ -1631,6 +1769,8 @@ begin
     tsl.free;
     tsd.free;
   end;
+  FDBManager.timer;
+  FEPManager.timer;
   if st = csDiconnected then
   begin
     sBar.Panels[1].Text := 'n/a';
@@ -1646,6 +1786,7 @@ begin
   end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
   sBar.Panels[3].Text := Logging.MemoryStatus;
+
 end;
 
 procedure TMainConsoleForm.ToolButton1Click(Sender: TObject);

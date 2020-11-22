@@ -42,14 +42,17 @@ type
 
   TFHIRServerIniComplex = class (TFslObject)
   private
+    FData: TFslObject;
     FDetails : TFslStringDictionary;
     FName : String;
+    FStatus: String;
+    FThreadStatus: String;
     function getValue(name: String): String;
     procedure SetValue(name: String; const Value: String);
     function save : String;
   public
-    constructor Create; override;
-    constructor Create(name, value : String);
+    constructor Create; overload; override;
+    constructor Create(name, value : String); overload;
     destructor Destroy; override;
     function link : TFHIRServerIniComplex;
     function clone : TFHIRServerIniComplex;
@@ -58,6 +61,9 @@ type
 
     property value[name : String] : String read getValue write SetValue; default;
     property name : String read FName write FName;
+    property status : String read FStatus write FStatus;
+    property threadStatus : String read FThreadStatus write FThreadStatus;
+    property data : TFslObject read FData write FData;
   end;
 
   TFHIRServerIniFile = class (TFslObject)

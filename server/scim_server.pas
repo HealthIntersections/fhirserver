@@ -54,7 +54,7 @@ Type
 
   TSCIMServer = class (TFHIRUserProvider)
   private
-    db : TFslDBManager;
+    db : TFDBManager;
     lock : TFslLock;
     lastUserKey : integer;
     lastUserIndexKey : integer;
@@ -72,7 +72,7 @@ Type
     function BuildUserFilterValuePath(filter : TSCIMSearchFilterValuePath; prefix : String; parent : char; issuer : TSCIMCharIssuer) : String;
 
     function RecogniseUserAttribute(path : String) : String;
-    procedure IndexUser(conn : TFslDBConnection; user : TSCIMUser; userKey : integer);
+    procedure IndexUser(conn : TFDBConnection; user : TSCIMUser; userKey : integer);
 
     function LoadIncoming(request: TIdHTTPRequestInfo) : TJsonObject;
     procedure WriteOutgoing(response: TIdHTTPResponseInfo; json : TJsonObject);
@@ -91,7 +91,7 @@ Type
     procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
   public
-    constructor Create(db : TFslDBManager; salt, host, defaultRights : String; forInstall : boolean);
+    constructor Create(db : TFDBManager; salt, host, defaultRights : String; forInstall : boolean);
     destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
@@ -103,10 +103,10 @@ Type
     function CheckId(id : String; var username, hash : String) : boolean; override;
 
     // install
-    Procedure DefineSystem(conn : TFslDBConnection);
-    Procedure DefineAdminUser(conn : TFslDBConnection; un, pw, em : String);
-    Procedure UpdateAdminUser(conn : TFslDBConnection; un, pw, em : String);
-    Procedure DefineAnonymousUser(conn : TFslDBConnection);
+    Procedure DefineSystem(conn : TFDBConnection);
+    Procedure DefineAdminUser(conn : TFDBConnection; un, pw, em : String);
+    Procedure UpdateAdminUser(conn : TFDBConnection; un, pw, em : String);
+    Procedure DefineAnonymousUser(conn : TFDBConnection);
 
     property AnonymousRights : TStringList read FAnonymousRights;
   end;
@@ -121,7 +121,7 @@ uses
 
 function TSCIMServer.CheckId(id: String; var username, hash: String): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := db.GetConnection('scim.checkid');
   try
@@ -151,7 +151,7 @@ end;
 
 function TSCIMServer.CheckLogin(username, password: String; var key : integer): boolean;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := db.GetConnection('scim.checkpassword');
   try
@@ -184,9 +184,9 @@ begin
   result := TSCrypt.CheckPassword(inttostr(uk)+':'+pw, hash, dummy);
 end;
 
-constructor TSCIMServer.Create(db: TFslDBManager; salt, host, defaultRights : String; forInstall : boolean);
+constructor TSCIMServer.Create(db: TFDBManager; salt, host, defaultRights : String; forInstall : boolean);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   s : String;
 begin
   Inherited Create;
@@ -216,7 +216,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.DefineAdminUser(conn : TFslDBConnection; un, pw, em: String);
+procedure TSCIMServer.DefineAdminUser(conn : TFDBConnection; un, pw, em: String);
 var
   now : TFslDateTime;
   user : TSCIMUser;
@@ -268,7 +268,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.DefineSystem(conn : TFslDBConnection);
+procedure TSCIMServer.DefineSystem(conn : TFDBConnection);
 var
   now : TFslDateTime;
   user : TSCIMUser;
@@ -315,7 +315,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.DefineAnonymousUser(conn : TFslDBConnection);
+procedure TSCIMServer.DefineAnonymousUser(conn : TFDBConnection);
 var
   now : TFslDateTime;
   user : TSCIMUser;
@@ -423,7 +423,7 @@ end;
 
 function TSCIMServer.loadOrCreateUser(id, name, email: String; var key : integer): TSCIMUser;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   new, upd : boolean;
   now : TFslDateTime;
   s : String;
@@ -544,7 +544,7 @@ end;
 
 function TSCIMServer.loadUser(key: integer): TSCIMUser;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := db.GetConnection('scim.loadUser');
   try
@@ -572,7 +572,7 @@ end;
 
 function TSCIMServer.loadUser(id: String; var key : integer): TSCIMUser;
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := db.GetConnection('scim.loadUser');
   try
@@ -626,7 +626,7 @@ end;
 procedure TSCIMServer.processUserDelete(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   id : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   id := request.Document.Substring(12);
   conn := db.GetConnection('scim.user.delete');
@@ -651,7 +651,7 @@ end;
 procedure TSCIMServer.processUserGet(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   id : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   b : TBytes;
 begin
   id := request.Document.Substring(12);
@@ -691,7 +691,7 @@ var
   user : TSCIMUser;
   password : String;
   username : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   key : integer;
   now : TFslDateTime;
 begin
@@ -774,7 +774,7 @@ procedure TSCIMServer.processUserPut(context: TIdContext; request: TIdHTTPReques
 var
   nUser, eUser : TSCIMUser;
   password : String;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   now : TFslDateTime;
   id : String;
   b : TBytes;
@@ -866,7 +866,7 @@ end;
 procedure TSCIMServer.processUserQuery(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   params : THTTPParameters;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   json : TJsonObject;
   list : TJsonArray;
   c, t, l, s : integer;
@@ -1007,7 +1007,7 @@ end;
 procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslMap<TFHIRObject>;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   user : TSCIMUser;
   bnew : boolean;
   bDone : boolean;
@@ -1143,7 +1143,7 @@ end;
 procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
 var
   variables : TFslMap<TFHIRObject>;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   b : TStringBuilder;
   user : TSCIMUser;
   i : integer;
@@ -1222,7 +1222,7 @@ begin
   end;
 end;
 
-procedure TSCIMServer.IndexUser(conn: TFslDBConnection; user: TSCIMUser; userKey: integer);
+procedure TSCIMServer.IndexUser(conn: TFDBConnection; user: TSCIMUser; userKey: integer);
   function ndxStruc(parent : integer; name : String) : integer;
   begin
     result := GetNextUserIndexKey;
@@ -1438,7 +1438,7 @@ begin
     result := '';
 end;
 
-procedure TSCIMServer.UpdateAdminUser(conn: TFslDBConnection; un, pw, em: String);
+procedure TSCIMServer.UpdateAdminUser(conn: TFDBConnection; un, pw, em: String);
 var
   key : integer;
 begin

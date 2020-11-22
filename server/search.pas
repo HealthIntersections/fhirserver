@@ -63,7 +63,7 @@ type
     FcountAllowed: boolean;
     FReverse: boolean;
     FStrict : boolean;
-    FConnection: TFslDBConnection;
+    FConnection: TFDBConnection;
     FWarnings : TFslList<TFhirOperationOutcomeIssueW>;
     FResConfig : TFslMap<TFHIRResourceConfig>;
 
@@ -98,7 +98,7 @@ type
     procedure ProcessReferenceParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
-    procedure SetConnection(const Value: TFslDBConnection);
+    procedure SetConnection(const Value: TFDBConnection);
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
@@ -120,7 +120,7 @@ type
     property indexes : TFhirIndexInformation read FIndexes write SetIndexes;
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
-    property Connection : TFslDBConnection read FConnection write SetConnection;
+    property Connection : TFDBConnection read FConnection write SetConnection;
 
     // outbound
     property link_ : String read FLink write FLink;
@@ -1219,7 +1219,7 @@ begin
   FCompartment := Value;
 end;
 
-procedure TSearchProcessor.SetConnection(const Value: TFslDBConnection);
+procedure TSearchProcessor.SetConnection(const Value: TFDBConnection);
 begin
   FConnection.Free;
   FConnection := Value;

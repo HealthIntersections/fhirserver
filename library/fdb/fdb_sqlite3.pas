@@ -39,18 +39,18 @@ uses
   fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 type
-  TFslDBSQLiteConnection = class (TFslDBConnection)
+  TFDBSQLiteConnection = class (TFDBConnection)
   private
     FConnection : TSQLite3Database;
     FStatement : TSQLite3Statement;
     FColNames : TStringList;
     function ColNames : TStringList;
-    function readColumn(field: String): TFslDBColumn;
+    function readColumn(field: String): TFDBColumn;
   Protected
     procedure StartTransactV; Override;
     procedure CommitV; Override;
     procedure RollbackV; Override;
-    function FetchMetaDataV : TFslDBMetaData; Override;
+    function FetchMetaDataV : TFDBMetaData; Override;
     function GetColCountV: Integer; Override;
     function GetColStringV(ACol: Word): String; Override;
     function GetColIntegerV(ACol: Word): Integer; Override;
@@ -60,7 +60,7 @@ type
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
     function GetColDateTimeExV(ACol: Word): TFslDateTime; Override;
-    function GetColTypeV(ACol: Word): TFslDBColumnType; Override;
+    function GetColTypeV(ACol: Word): TFDBColumnType; Override;
     function GetColKeyV(ACol: Word): Integer; Override;
     function GetRowsAffectedV: Integer; Override;
     procedure RenameTableV(AOldTableName, ANewTableName: String); Override;
@@ -89,18 +89,18 @@ type
     function SupportsSizingV : Boolean; Override;
     function sizeInBytesV : cardinal; override;
   Public
-    constructor Create(AOwner : TFslDBManager; Filename : String; autoCreate : boolean);
+    constructor Create(AOwner : TFDBManager; Filename : String; autoCreate : boolean);
     destructor Destroy; override;
   end;
 
-  TFslDBSQLiteManager = class (TFslDBManager)
+  TFDBSQLiteManager = class (TFDBManager)
   private
     FFilename : String;
     FAutoCreate : boolean;
   Protected
-    function GetDBProvider: TFslDBProvider; Override;
-    function ConnectionFactory: TFslDBConnection; Override;
-    function GetDBPlatform: TFslDBPlatform; Override;
+    function GetDBProvider: TFDBProvider; Override;
+    function ConnectionFactory: TFDBConnection; Override;
+    function GetDBPlatform: TFDBPlatform; Override;
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
@@ -108,51 +108,51 @@ type
   public
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
-    class function IsSupportAvailable(APlatform : TFslDBPlatform; Var VMsg : String):Boolean; override;
+    class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; override;
   end;
 
 implementation
 
-{ TFslDBSQLiteManager }
+{ TFDBSQLiteManager }
 
-constructor TFslDBSQLiteManager.create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
+constructor TFDBSQLiteManager.create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
 begin
   FFilename := filename;
   FAutoCreate := autoCreate;
   Inherited Create(aName, maxConn);
 end;
 
-function TFslDBSQLiteManager.ConnectionFactory: TFslDBConnection;
+function TFDBSQLiteManager.ConnectionFactory: TFDBConnection;
 begin
-  result := TFslDBSQLiteConnection.Create(self, FFilename, FAutoCreate);
+  result := TFDBSQLiteConnection.Create(self, FFilename, FAutoCreate);
 end;
 
-destructor TFslDBSQLiteManager.Destroy;
+destructor TFDBSQLiteManager.Destroy;
 begin
   inherited;
 end;
 
-function TFslDBSQLiteManager.GetDBDetails: String;
+function TFDBSQLiteManager.GetDBDetails: String;
 begin
   result := 'SQLite: '+FFIlename;
 end;
 
-function TFslDBSQLiteManager.GetDBPlatform: TFslDBPlatform;
+function TFDBSQLiteManager.GetDBPlatform: TFDBPlatform;
 begin
-  result := TFslDBPlatform.kdbSQLite;
+  result := TFDBPlatform.kdbSQLite;
 end;
 
-function TFslDBSQLiteManager.GetDBProvider: TFslDBProvider;
+function TFDBSQLiteManager.GetDBProvider: TFDBProvider;
 begin
   result := kdbpSQLite;
 end;
 
-function TFslDBSQLiteManager.GetDriver: String;
+function TFDBSQLiteManager.GetDriver: String;
 begin
   result := 'SQLite';
 end;
 
-procedure TFslDBSQLiteManager.init;
+procedure TFDBSQLiteManager.init;
 begin
   loadSQLite;
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
@@ -161,21 +161,21 @@ begin
       raise EDBException.create('SQLite Database '+FFIlename+' not found');
 end;
 
-function TFslDBSQLiteManager.sizeInBytesV : cardinal;
+function TFDBSQLiteManager.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 
-class function TFslDBSQLiteManager.IsSupportAvailable(APlatform: TFslDBPlatform; var VMsg: String): Boolean;
+class function TFDBSQLiteManager.IsSupportAvailable(APlatform: TFDBPlatform; var VMsg: String): Boolean;
 begin
   result := false;
   VMsg := 'develop this bit';
 end;
 
-{ TFslDBSQLiteConnection }
+{ TFDBSQLiteConnection }
 
-constructor TFslDBSQLiteConnection.create(AOwner: TFslDBManager; Filename : String; autoCreate : boolean);
+constructor TFDBSQLiteConnection.create(AOwner: TFDBManager; Filename : String; autoCreate : boolean);
 begin
   inherited create(AOwner);
   FConnection := TSQLite3Database.Create;
@@ -186,7 +186,7 @@ begin
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE);
 end;
 
-destructor TFslDBSQLiteConnection.Destroy;
+destructor TFDBSQLiteConnection.Destroy;
 begin
   FConnection.Free;
   FStatement.Free;
@@ -194,62 +194,62 @@ begin
   inherited;
 end;
 
-procedure TFslDBSQLiteConnection.BindBlobV(AParamName: String; AParamValue: TBytes);
+procedure TFDBSQLiteConnection.BindBlobV(AParamName: String; AParamValue: TBytes);
 begin
   FStatement.BindBlob(':'+AParamName, @AParamValue[0], length(AParamValue));
 end;
 
-procedure TFslDBSQLiteConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
+procedure TFDBSQLiteConnection.BindDateTimeExV(AParamName: String; AParamValue: TFslDateTime);
 begin
   FStatement.BindText(':'+AParamName, AParamValue.UTC.toDB);
 end;
 
-procedure TFslDBSQLiteConnection.BindDoubleV(AParamName: String; AParamValue: Double);
+procedure TFDBSQLiteConnection.BindDoubleV(AParamName: String; AParamValue: Double);
 begin
   FStatement.BindDouble(':'+AParamName, AParamValue);
 end;
 
-procedure TFslDBSQLiteConnection.BindInt64V(AParamName: String; AParamValue: Int64);
+procedure TFDBSQLiteConnection.BindInt64V(AParamName: String; AParamValue: Int64);
 begin
   FStatement.BindInt64(':'+AParamName, AParamValue);
 end;
 
-procedure TFslDBSQLiteConnection.BindIntegerV(AParamName: String; AParamValue: Integer);
+procedure TFDBSQLiteConnection.BindIntegerV(AParamName: String; AParamValue: Integer);
 begin
   FStatement.BindInt(':'+AParamName, AParamValue);
 end;
 
-procedure TFslDBSQLiteConnection.BindKeyV(AParamName: String; AParamValue: Integer);
+procedure TFDBSQLiteConnection.BindKeyV(AParamName: String; AParamValue: Integer);
 begin
   FStatement.BindInt(':'+AParamName, AParamValue);
 end;
 
-procedure TFslDBSQLiteConnection.BindNullV(AParamName: String);
+procedure TFDBSQLiteConnection.BindNullV(AParamName: String);
 begin
   FStatement.BindNull(':'+AParamName);
 end;
 
-procedure TFslDBSQLiteConnection.BindStringV(AParamName, AParamValue: String);
+procedure TFDBSQLiteConnection.BindStringV(AParamName, AParamValue: String);
 begin
   FStatement.BindText(':'+AParamName, AParamValue);
 end;
 
-procedure TFslDBSQLiteConnection.BindTimeStampV(AParamName: String; AParamValue: TTimeStamp);
+procedure TFDBSQLiteConnection.BindTimeStampV(AParamName: String; AParamValue: TTimeStamp);
 begin
   BindDateTimeExV(AParamName, TFslDateTime.fromTS(aParamValue, dttzUnknown));
 end;
 
-procedure TFslDBSQLiteConnection.ClearDatabaseV;
+procedure TFDBSQLiteConnection.ClearDatabaseV;
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.ClearDatabaseV');
+  raise EDBTodo.create('TFDBSQLiteConnection.ClearDatabaseV');
 end;
 
-function TFslDBSQLiteConnection.ColByNameV(AColName: String): Integer;
+function TFDBSQLiteConnection.ColByNameV(AColName: String): Integer;
 begin
   result := ColNames.indexOf(aColName)+1;
 end;
 
-function TFslDBSQLiteConnection.ColNames: TStringList;
+function TFDBSQLiteConnection.ColNames: TStringList;
 var
   i : integer;
 begin
@@ -262,43 +262,43 @@ begin
   result := FColNames;
 end;
 
-function TFslDBSQLiteConnection.ColNameV(ACol: Integer): String;
+function TFDBSQLiteConnection.ColNameV(ACol: Integer): String;
 begin
   result := ColNames[aCol];
 end;
 
-procedure TFslDBSQLiteConnection.CommitV;
+procedure TFDBSQLiteConnection.CommitV;
 begin
   FConnection.Commit;
 end;
 
-function TFslDBSQLiteConnection.DatabaseSizeV: int64;
+function TFDBSQLiteConnection.DatabaseSizeV: int64;
 begin
-  result := FileSize(TFslDBSQLiteManager(Owner).FFilename);
+  result := FileSize(TFDBSQLiteManager(Owner).FFilename);
 end;
 
-procedure TFslDBSQLiteConnection.DropColumnV(ATableName, AColumnName: String);
+procedure TFDBSQLiteConnection.DropColumnV(ATableName, AColumnName: String);
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.DropColumnV');
+  raise EDBTodo.create('TFDBSQLiteConnection.DropColumnV');
 end;
 
-procedure TFslDBSQLiteConnection.DropTableV(ATableName: String);
+procedure TFDBSQLiteConnection.DropTableV(ATableName: String);
 begin
   ExecSQL('Drop table '+ATableName);
 end;
 
-procedure TFslDBSQLiteConnection.ExecuteV;
+procedure TFDBSQLiteConnection.ExecuteV;
 begin
   if not SQL.StartsWith('Select') then
     FStatement.StepAndReset;
 end;
 
-function TFslDBSQLiteConnection.readColumn(field : String): TFslDBColumn;
+function TFDBSQLiteConnection.readColumn(field : String): TFDBColumn;
 var
   s : String;
 begin
   StringSplit(field, ' ', s, field);
-  result := TFslDBColumn.Create(s);
+  result := TFDBColumn.Create(s);
   try
     StringSplit(field, ' ', s, field);
     s := s.ToUpper;
@@ -330,20 +330,20 @@ begin
   end;
 end;
 
-function TFslDBSQLiteConnection.FetchMetaDataV: TFslDBMetaData;
+function TFDBSQLiteConnection.FetchMetaDataV: TFDBMetaData;
 var
-  tbl : TFslDBTable;
+  tbl : TFDBTable;
   s : String;
   a : TArray<String>;
 begin
-  result := TFslDBMetaData.Create;
+  result := TFDBMetaData.Create;
   try
     sql := 'SELECT name, sql FROM sqlite_master WHERE type=''table''';
     prepare;
     execute;
     while fetchnext do
     begin
-      tbl := TFslDBTable.Create;
+      tbl := TFDBTable.Create;
       try
         tbl.Name := ColStringByName['name'];
         s := ColStringByName['sql'];
@@ -367,120 +367,120 @@ begin
   end;
 end;
 
-function TFslDBSQLiteConnection.FetchNextV: Boolean;
+function TFDBSQLiteConnection.FetchNextV: Boolean;
 begin
   result := FStatement.Step = SQLITE_ROW;
 end;
 
-function TFslDBSQLiteConnection.GetColBlobV(ACol: Word): TBytes;
+function TFDBSQLiteConnection.GetColBlobV(ACol: Word): TBytes;
 begin
   SetLength(result, FStatement.ColumnBytes(ACol-1));
   if length(result) > 0 then
     move(FStatement.ColumnBlob(aCol-1)^, result[0], length(result));
 end;
 
-function TFslDBSQLiteConnection.GetColCountV: Integer;
+function TFDBSQLiteConnection.GetColCountV: Integer;
 begin
   result := FStatement.ColumnCount;
 end;
 
-function TFslDBSQLiteConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
+function TFDBSQLiteConnection.GetColDateTimeExV(ACol: Word): TFslDateTime;
 begin
   result := TFslDateTime.fromDB(getColStringV(ACol), dttzUTC);
 end;
 
-function TFslDBSQLiteConnection.GetColDoubleV(ACol: Word): Double;
+function TFDBSQLiteConnection.GetColDoubleV(ACol: Word): Double;
 begin
   result := FStatement.ColumnDouble(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColInt64V(ACol: Word): Int64;
+function TFDBSQLiteConnection.GetColInt64V(ACol: Word): Int64;
 begin
   result := FStatement.ColumnInt64(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColIntegerV(ACol: Word): Integer;
+function TFDBSQLiteConnection.GetColIntegerV(ACol: Word): Integer;
 begin
   result := FStatement.ColumnInt(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColKeyV(ACol: Word): Integer;
+function TFDBSQLiteConnection.GetColKeyV(ACol: Word): Integer;
 begin
   result := FStatement.ColumnInt(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColNullV(ACol: Word): Boolean;
+function TFDBSQLiteConnection.GetColNullV(ACol: Word): Boolean;
 begin
   result := FStatement.ColumnNull(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColStringV(ACol: Word): String;
+function TFDBSQLiteConnection.GetColStringV(ACol: Word): String;
 begin
   result := FStatement.ColumnText(ACol-1);
 end;
 
-function TFslDBSQLiteConnection.GetColTimestampV(ACol: Word): TTimestamp;
+function TFDBSQLiteConnection.GetColTimestampV(ACol: Word): TTimestamp;
 begin
   result := GetColDateTimeExV(ACol).Local.TimeStamp;
 end;
 
-function TFslDBSQLiteConnection.GetColTypeV(ACol: Word): TFslDBColumnType;
+function TFDBSQLiteConnection.GetColTypeV(ACol: Word): TFDBColumnType;
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.GetColTypeV');
+  raise EDBTodo.create('TFDBSQLiteConnection.GetColTypeV');
 end;
 
-function TFslDBSQLiteConnection.GetRowsAffectedV: Integer;
+function TFDBSQLiteConnection.GetRowsAffectedV: Integer;
 begin
   result := FConnection.RowsAffected;
 end;
 
-procedure TFslDBSQLiteConnection.ListTablesV(AList: TStrings);
+procedure TFDBSQLiteConnection.ListTablesV(AList: TStrings);
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.ListTablesV');
+  raise EDBTodo.create('TFDBSQLiteConnection.ListTablesV');
 end;
 
-procedure TFslDBSQLiteConnection.PrepareV;
+procedure TFDBSQLiteConnection.PrepareV;
 begin
   FStatement := FConnection.Prepare(SQL);
 end;
 
-procedure TFslDBSQLiteConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
+procedure TFDBSQLiteConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.RenameColumnV');
+  raise EDBTodo.create('TFDBSQLiteConnection.RenameColumnV');
 end;
 
-procedure TFslDBSQLiteConnection.RenameTableV(AOldTableName, ANewTableName: String);
+procedure TFDBSQLiteConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.RenameTableV');
+  raise EDBTodo.create('TFDBSQLiteConnection.RenameTableV');
 end;
 
-procedure TFslDBSQLiteConnection.RollbackV;
+procedure TFDBSQLiteConnection.RollbackV;
 begin
   FConnection.Rollback;
 end;
 
-procedure TFslDBSQLiteConnection.StartTransactV;
+procedure TFDBSQLiteConnection.StartTransactV;
 begin
   FConnection.BeginTransaction;
 end;
 
-function TFslDBSQLiteConnection.SupportsSizingV: Boolean;
+function TFDBSQLiteConnection.SupportsSizingV: Boolean;
 begin
   result := true;
 end;
 
-function TFslDBSQLiteConnection.TableSizeV(sName: String): int64;
+function TFDBSQLiteConnection.TableSizeV(sName: String): int64;
 begin
-  raise EDBTodo.create('TFslDBSQLiteConnection.TableSizeV');
+  raise EDBTodo.create('TFDBSQLiteConnection.TableSizeV');
 end;
 
-procedure TFslDBSQLiteConnection.TerminateV;
+procedure TFDBSQLiteConnection.TerminateV;
 begin
   FreeAndNil(FStatement);
   FreeAndNil(FColNames);
 end;
 
-function TFslDBSQLiteConnection.sizeInBytesV : cardinal;
+function TFDBSQLiteConnection.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FColNames.sizeInBytes);

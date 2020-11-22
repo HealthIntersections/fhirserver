@@ -158,7 +158,7 @@ type
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
-function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
 
 implementation
 
@@ -364,7 +364,7 @@ begin
   end;
 end;
 
-function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFslDBManager;
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
 var
   dbn, ddr : String;
 begin
@@ -375,17 +375,17 @@ begin
     Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFslDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if sameText(details['type'], 'mysql') then
   begin
     Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    result := TFslDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if sameText(details['type'], 'SQLite') then
   begin
     Logging.log('Connect to '+s+' ('+details['type']+':'+dbn+')');
-    result := TFslDBSQLiteManager.create(s, dbn, details['auto-create'] = 'true');
+    result := TFDBSQLiteManager.create(s, dbn, details['auto-create'] = 'true');
   end
   else
     raise ELibraryException.Create('Unknown database type '+details['type']);

@@ -76,20 +76,20 @@ Type
     function MeetsTopicFhirPathCriteria(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String; newRes, oldRes : TFHIRResource): boolean;
     function meetsQueryCriteria(query, resourceType : String; resource : TFHIRResource) : boolean;
     function meetsQueryCriteriaParameter(name, value, resourceType : String; resource : TFHIRResource) : boolean;
-    function MeetsCriteriaTopic(topic : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResource; conn: TFslDBConnection): boolean;
+    function MeetsCriteriaTopic(topic : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResource; conn: TFDBConnection): boolean;
     function inList(v : String; list : TFHIRSelectionList) : boolean;
   protected
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function preparePackage(userkey : integer; created : boolean; sub : TFHIRSubscriptionW; res : TFHIRResourceV) : TFHIRResourceV; override;
-    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFslDBConnection) : boolean; override;
+    function MeetsCriteria(sub : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; newRes, oldRes : TFHIRResourceV; conn : TFDBConnection) : boolean; override;
     function checkSubscription(sub: TFHIRResourceV) : TFHIRSubscriptionW; override;
     function checkSubscriptionTopic(sub: TFHIRResourceV) : TFHIRSubscriptionTopicW; override;
     function loadSubscriptionTopic(res : TFHIRResourceV) : TSubscriptionTopic; override;
     function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; override;
     function bundleIsTransaction(res : TFHIRResourceV) : boolean; override;
     function processUrlTemplate(url : String; res : TFhirResourceV) : String; override;
-    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>; override;
+    function determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFDBConnection): TArray<integer>; override;
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
@@ -203,7 +203,7 @@ begin
   end;
 end;
 
-function TSubscriptionManagerR4.MeetsCriteriaTopic(topic : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResource; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR4.MeetsCriteriaTopic(topic : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey : Integer; key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResource; conn: TFDBConnection): boolean;
 var
   rt : String;
 begin
@@ -564,7 +564,7 @@ begin
   result := url;
 end;
 
-function TSubscriptionManagerR4.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFslDBConnection): boolean;
+function TSubscriptionManagerR4.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFDBConnection): boolean;
 var
   subscription : TFhirSubscription;
   t : TSubscriptionTopic;
@@ -595,7 +595,7 @@ begin
     result := MeetsCriteriaSearch(subscription.criteria, newRes, typekey, key, conn);
 end;
 
-function TSubscriptionManagerR4.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFslDBConnection): TArray<integer>;
+function TSubscriptionManagerR4.determineResourceTypeKeys(topic: TSubscriptionTopic; conn: TFDBConnection): TArray<integer>;
 var
   st : TFHIRSubscriptionTopic;
   i : integer;

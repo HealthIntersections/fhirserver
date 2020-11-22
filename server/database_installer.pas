@@ -60,10 +60,13 @@ type
 function readInstallerSecurityMode(s : String) : TFHIRInstallerSecurityMode;
 
 Type
+
+  { TFHIRDatabaseInstaller }
+
   TFHIRDatabaseInstaller = class (TFslObject)
   private
     Fcallback : TInstallerCallback;
-    FConn : TFslDBConnection;
+    FConn : TFDBConnection;
     FDoAudit: boolean;
     FTransactions: boolean;
     FBases: TStringList;
@@ -72,7 +75,7 @@ Type
     FServerFactory : TFHIRServerFactory;
 
     procedure CreateResourceCompartments;
-    procedure CreateResourceConfig;
+    procedure CreateResourceConfig(res : boolean);
     procedure CreateResourceIndexEntries;
     procedure CreateResourceIndexes;
     procedure CreateResources;
@@ -115,21 +118,24 @@ Type
     procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
-    constructor Create(conn : TFslDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    constructor Create(conn : TFDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;
     Property  Bases : TStringList read FBases;
+
+    procedure installPackageServer;
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
+
     Procedure Upgrade(version : integer);
     property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
 implementation
 
-Function ForeignKeySql(Conn: TFslDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
+Function ForeignKeySql(Conn: TFDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
 Begin
   if conn.Owner.Platform = kdbSQLite then
     result := ''
@@ -137,7 +143,7 @@ Begin
     Result := 'ALTER TABLE '+sSlaveTable+' ADD CONSTRAINT '+sIndexName+' '+ 'FOREIGN KEY ( '+sSlaveField+' ) REFERENCES '+sMasterTable+' ( '+sMasterField+' )';
 End;
 
-Function InlineForeignKeySql(Conn: TFslDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
+Function InlineForeignKeySql(Conn: TFDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
 Begin
   if conn.Owner.Platform <> kdbSQLite then
     result := ''
@@ -146,7 +152,8 @@ Begin
 End;
 
 
-constructor TFHIRDatabaseInstaller.create(conn: TFslDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+constructor TFHIRDatabaseInstaller.Create(conn: TFDBConnection;
+  factory: TFHIRFactory; serverFactory: TFHIRServerFactory);
 begin
   inherited Create;
   FFactory := factory;
@@ -256,7 +263,7 @@ begin
     result := '0';
 end;
 
-procedure TFHIRDatabaseInstaller.CreateResourceConfig;
+procedure TFHIRDatabaseInstaller.CreateResourceConfig(res : boolean);
 var
   i : integer;
 Begin
@@ -270,13 +277,16 @@ Begin
   else for i := 0 to FBases.Count - 1 do
     FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (2, '''+FBases[i]+''')');
 
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerDBVersion)+''')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FFactory.versionString+''')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (9, '''+BooleanToInt(true)+''')');
+  if (res) then
+  begin
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+BooleanToInt(FSupportSystemHistory)+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (4, '''+BooleanToInt(FDoAudit)+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FFactory.versionString+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (9, '''+BooleanToInt(true)+''')');
+  end;
 End;
 
 procedure TFHIRDatabaseInstaller.CreateAuthorizations;
@@ -941,6 +951,29 @@ begin
   inherited;
 end;
 
+procedure TFHIRDatabaseInstaller.installPackageServer;
+begin
+  FConn.StartTransact;
+  try
+    if assigned(CallBack) then Callback(1, 'Create Config');
+    CreateResourceConfig(false);
+    if assigned(CallBack) then Callback(1, 'Create Package Tables');
+    CreatePackagesTables;
+    if assigned(CallBack) then Callback(2, 'Create Package Permissions Table');
+    CreatePackagePermissionsTable;
+    if assigned(CallBack) then Callback(4, 'Commit');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (100, ''package||Installed '+TFslDateTime.makeLocal.toString+''')');
+    FConn.Commit;
+  except
+    on e:exception do
+    begin
+      FConn.Rollback;
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
 procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
   try
@@ -1058,7 +1091,7 @@ begin
     if assigned(CallBack) then Callback(51, 'Create ResourceTypes');
     CreateResourceTypes;
     if assigned(CallBack) then Callback(52, 'Create ResourceConfig');
-    CreateResourceConfig;
+    CreateResourceConfig(true);
     if assigned(CallBack) then Callback(53, 'Create Resources');
     CreateResources;
     if assigned(CallBack) then Callback(54, 'Create ResourceCompartments');
@@ -1155,7 +1188,7 @@ end;
 
 procedure TFHIRDatabaseInstaller.Uninstall;
 var
-  meta : TFslDBMetaData;
+  meta : TFDBMetaData;
   step : integer;
   procedure drop(name : String);
   begin

@@ -50,14 +50,14 @@ type
   private
     FPathAbsolute : String;
     FPathRelative : String;
-    FDB : TFSLDBManager;
+    FDB : TFDBManager;
     FLastUpdate : TDateTime;
     FNextScan : TDateTIme;
     FReturnProcessFileEvent : TReturnProcessFileEvent;
     FScanning: boolean;
 
 
-    procedure setDB(value : TFSLDBManager);
+    procedure setDB(value : TFDBManager);
     function status : String;
 
     function getVersion(v : String) : String;
@@ -80,7 +80,7 @@ type
     property pathRelative : String read FPathRelative write FPathRelative;  // includes http://host/path
     property OnReturnProcessFileEvent : TReturnProcessFileEvent read FReturnProcessFileEvent write FReturnProcessFileEvent;
 
-    property DB : TFSLDBManager read FDB write SetDB;
+    property DB : TFDBManager read FDB write SetDB;
     property NextScan : TDateTIme read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
     function serve(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
@@ -115,7 +115,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRPackageServer.setDB(value : TFSLDBManager);
+procedure TFHIRPackageServer.setDB(value : TFDBManager);
 begin
   FDB := nil;
   FDB := value;
@@ -288,7 +288,7 @@ end;
 
 procedure TFHIRPackageServer.serveDownload(id, version : String; response : TIdHTTPResponseInfo);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
 begin
   conn := FDB.getConnection('Package.server.download');
   try
@@ -350,7 +350,7 @@ end;
 
 procedure TFHIRPackageServer.serveVersions(id, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   json, v: TJsonObject;
   src : String;
   vars : TFslMap<TFHIRObject>;
@@ -436,7 +436,7 @@ end;
 
 procedure TFHIRPackageServer.serveSearch(name, canonical, FHIRVersion, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   json : TJsonArray;
     v : TJsonObject;
     filter, src : String;
@@ -525,7 +525,7 @@ end;
 
 procedure TFHIRPackageServer.serveUpdates(date : TFslDateTime; response : TIdHTTPResponseInfo);
 var
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   json : TJsonArray;
   v : TJsonObject;
   src : String;
@@ -575,7 +575,7 @@ end;
 function TFHIRPackageServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   blob : TBytes;
-  conn : TFslDBConnection;
+  conn : TFDBConnection;
   canonical, mask, token, id, version : String;
   i : integer;
   npm : TNpmPackage;
