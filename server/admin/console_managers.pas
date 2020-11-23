@@ -376,6 +376,9 @@ var
   item : TFHIRServerIniComplex;
   wantLoad : boolean;
 begin
+  if FIni = nil then
+    exit;
+
   wantLoad := false;
   for item in FIni.endpoints.values do
   begin
@@ -760,6 +763,8 @@ var
   item : TFHIRServerIniComplex;
   wantLoad : boolean;
 begin
+  if FIni = nil then
+    exit;
   wantLoad := false;
   for item in FIni.databases.values do
   begin

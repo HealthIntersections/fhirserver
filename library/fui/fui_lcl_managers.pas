@@ -524,8 +524,9 @@ begin
   //if (FFilter <> nil) then
   //  FFilter.ReadOnly := not Enabled;
   for ce in FControls do
-    ce.control.Enabled := not Enabled;
-  doLoad;
+    ce.control.Enabled := Enabled;
+  if enabled then
+    doLoad;
 end;
 
 procedure TListManager<T>.SetFilter(AValue: TEdit);

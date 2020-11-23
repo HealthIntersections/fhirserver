@@ -886,35 +886,40 @@ begin
   FEPManager.ini := nil;
   FIDManager.ini := nil;
 
-  edtAdminEmail.Text := '';
-  edtAdminEmail.Enabled := false;
-  edtAdminOrganization.Text := '';
-  edtAdminOrganization.Enabled := false;
-  edtAdminSMS.Text := '';
-  edtAdminSMS.Enabled := false;
-  edtAdmitUsername.Text := '';
-  edtAdmitUsername.Enabled := false;
-  edtAdminSCIMSalt.Text := '';
-  edtAdminSCIMSalt.Enabled := false;
-  edtHostName.Text := '';
-  edtHostName.Enabled := false;
-  edtWebPort.Text := '';
-  edtWebPort.Enabled := false;
-  chkWebMode.checked := false;
-  chkWebMode.Enabled := false;
-  edtSSLPort.Text := '';
-  edtSSLPort.Enabled := false;
-  edtSSLCert.Text := '';
-  edtSSLCert.Enabled := false;
-  edtCACert.Text := '';
-  edtCACert.Enabled := false;
-  edtPrivateKey.Text := '';
-  edtPrivateKey.Enabled := false;
-  edtSSLPassword.Text := '';
-  edtSSLPassword.Enabled := false;
-  edtGoogleId.Text := '';
-  edtGoogleId.Enabled := false;
-  lvPackages.Enabled := true;
+  FLoading := true;
+  try
+    edtAdminEmail.Text := '';
+    edtAdminEmail.Enabled := false;
+    edtAdminOrganization.Text := '';
+    edtAdminOrganization.Enabled := false;
+    edtAdminSMS.Text := '';
+    edtAdminSMS.Enabled := false;
+    edtAdmitUsername.Text := '';
+    edtAdmitUsername.Enabled := false;
+    edtAdminSCIMSalt.Text := '';
+    edtAdminSCIMSalt.Enabled := false;
+    edtHostName.Text := '';
+    edtHostName.Enabled := false;
+    edtWebPort.Text := '';
+    edtWebPort.Enabled := false;
+    chkWebMode.checked := false;
+    chkWebMode.Enabled := false;
+    edtSSLPort.Text := '';
+    edtSSLPort.Enabled := false;
+    edtSSLCert.Text := '';
+    edtSSLCert.Enabled := false;
+    edtCACert.Text := '';
+    edtCACert.Enabled := false;
+    edtPrivateKey.Text := '';
+    edtPrivateKey.Enabled := false;
+    edtSSLPassword.Text := '';
+    edtSSLPassword.Enabled := false;
+    edtGoogleId.Text := '';
+    edtGoogleId.Enabled := false;
+    lvPackages.Enabled := true;
+  finally
+    FLoading := false;
+  end;
 end;
 
 function matchesVersion(ep, pi, piv : String):boolean;
@@ -1610,7 +1615,7 @@ end;
 
 procedure TMainConsoleForm.edtAdminEmailChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.admin['email'] := edtAdminEmail.Text;
     FConfig.Save;
@@ -1619,7 +1624,7 @@ end;
 
 procedure TMainConsoleForm.edtAdminOrganizationChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.admin['ownername'] := edtAdminOrganization.Text;
     FConfig.Save;
@@ -1628,7 +1633,7 @@ end;
 
 procedure TMainConsoleForm.edtAdminSCIMSaltChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.admin['scim-salt'] := edtAdminSCIMSalt.Text;
     FConfig.Save;
@@ -1637,7 +1642,7 @@ end;
 
 procedure TMainConsoleForm.edtAdminSMSChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.admin['owner-sms'] := edtAdminSMS.Text;
     FConfig.Save;
@@ -1646,7 +1651,7 @@ end;
 
 procedure TMainConsoleForm.edtAdmitUsernameChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.admin['username'] := edtAdmitUsername.Text;
     FConfig.Save;
@@ -1655,7 +1660,7 @@ end;
 
 procedure TMainConsoleForm.edtCACertChange(Sender: TObject);
 begin
-  if not FLoading then
+  if not FLoading and (FConfig <> nil) then
   begin
     FConfig.web['cacertname'] := edtCACert.Text;
     FConfig.Save;
