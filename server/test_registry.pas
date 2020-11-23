@@ -55,7 +55,7 @@ uses
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_pathengine, fhir4_tests_graphql,
   fxver_tests,
 
-  tests_search_syntax;
+  tests_search_syntax, test_server_ini;
 
 procedure registerTests;
 
@@ -154,6 +154,7 @@ begin
   fhir4_tests_graphql.registerTests;
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
+  test_server_ini.registerTests;
 end;
 
 end.

@@ -138,7 +138,7 @@ begin
 
   if FTx <> nil then
   begin
-    edtIdentity.text := Tx['id'];
+    edtIdentity.text := Tx.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(Tx['type']);
     cbxTypeChange(self);
     edtVersion.text := Tx['version'];
@@ -148,7 +148,7 @@ end;
 
 procedure TEditTxForm.update;
 begin
-  Tx['id'] := edtIdentity.text;
+  Tx.name := edtIdentity.text;
   if cbxSource.itemIndex > -1 then
     Tx['database'] := cbxSource.Items[cbxSource.itemIndex]
   else

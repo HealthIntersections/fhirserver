@@ -109,7 +109,7 @@ begin
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;
   FServer.Initialise;
-  edtFolder.Text := FIni.kernel['utg-folder'];
+  edtFolder.Text := FIni.service['utg-folder'];
   edtPort.Text := Fini.web['http'];
   FWantStop := false;
 end;
@@ -136,17 +136,17 @@ procedure TServerGUI.btnFolderClick(Sender: TObject);
 var
   s : String;
 begin
-  s := FIni.kernel['utg-folder'];
+  s := FIni.service['utg-folder'];
   if SelectDirectory('Select UTG Folder', '', s, [sdNewFolder, sdShowEdit, sdNewUI], self) then
   begin
-    FIni.kernel['utg-folder'] := s;
+    FIni.service['utg-folder'] := s;
     edtFolder.Text := s;
   end;
 end;
 
 procedure TServerGUI.edtFolderChange(Sender: TObject);
 begin
-  FIni.kernel['utg-folder'] := edtFolder.Text;
+  FIni.service['utg-folder'] := edtFolder.Text;
 end;
 
 procedure TServerGUI.edtPortChange(Sender: TObject);

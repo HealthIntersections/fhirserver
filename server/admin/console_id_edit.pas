@@ -64,7 +64,7 @@ begin
 
   if FId <> nil then
   begin
-    edtIdentity.text := Id['id'];
+    edtIdentity.text := Id.name;
     edtAppid.text := Id['app-id'];
     edtAppSecret.text := Id['app-secret'];
     edtAPIKey.text := Id['api-key'];
@@ -73,7 +73,7 @@ end;
 
 procedure TEditIDForm.update;
 begin
-  Id['id'] := edtIdentity.text;
+  Id.name := edtIdentity.text;
   Id['app-id'] := edtAppid.Text;
   Id['app-secret'] := edtAppSecret.Text;
   Id['api-key'] := edtAPIKey.Text;

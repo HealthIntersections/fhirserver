@@ -1,7 +1,7 @@
 object EndpointInstallForm: TEndpointInstallForm
-  Left = 3545
+  Left = 906
   Height = 545
-  Top = -59
+  Top = -823
   Width = 865
   Caption = 'Install Endpoint'
   ClientHeight = 545
@@ -19,7 +19,7 @@ object EndpointInstallForm: TEndpointInstallForm
     ClientHeight = 49
     ClientWidth = 865
     TabOrder = 0
-    object btnDBTest1: TBitBtn
+    object btnInstall: TBitBtn
       Left = 698
       Height = 26
       Top = 8
@@ -27,6 +27,7 @@ object EndpointInstallForm: TEndpointInstallForm
       Anchors = [akTop, akRight]
       Caption = 'Install'
       Default = True
+      Enabled = False
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
         2000000000000004000064000000640000000000000000000000000000000000
@@ -63,7 +64,7 @@ object EndpointInstallForm: TEndpointInstallForm
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000
       }
-      ModalResult = 1
+      OnClick = btnInstallClick
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
@@ -147,6 +148,7 @@ object EndpointInstallForm: TEndpointInstallForm
       Height = 23
       Top = 2
       Width = 714
+      OnChange = edtUserNameChange
       TabOrder = 0
       Text = 'edtUserName'
     end
@@ -171,6 +173,7 @@ object EndpointInstallForm: TEndpointInstallForm
       Height = 23
       Top = 32
       Width = 714
+      OnChange = edtUserNameChange
       TabOrder = 1
       Text = 'edtPassword'
     end
@@ -187,6 +190,7 @@ object EndpointInstallForm: TEndpointInstallForm
       Height = 23
       Top = 92
       Width = 713
+      OnChange = edtUserNameChange
       TabOrder = 2
       Text = 'edtAnonymousRights'
     end
@@ -221,7 +225,7 @@ object EndpointInstallForm: TEndpointInstallForm
     Top = 188
     Width = 865
     Align = alClient
-    Caption = '  Packages  '
+    Caption = '  Packages to load into Database  '
     ClientHeight = 288
     ClientWidth = 861
     TabOrder = 3

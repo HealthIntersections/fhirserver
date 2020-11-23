@@ -731,27 +731,21 @@ end;
 
 procedure TMainConsoleForm.lvPackagesItemChecked(Sender: TObject; Item: TListItem);
 var
-  ts : TStringList;
   i : integer;
+  ts : TStringList;
 begin
   if FEPManager.Focus <> nil then
   begin
-    ts := TStringlist.create;
-    try
-      ts.CommaText := FEPManager.Focus['packages'];
-      i := ts.IndexOf(item.Caption);
-      if item.Checked then
-      begin
-        if i = -1 then
-          ts.add(item.caption);
-      end
-      else if (i > -1) then
-        ts.Delete(i);
-      FEPManager.Focus['packages'] := ts.CommaText;
-      FConfig.save;
-    finally
-      ts.free;
-    end;
+    ts := FEPManager.Focus.section.prop['packages'].values;
+    i := ts.IndexOf(item.Caption);
+    if item.Checked then
+    begin
+      if i = -1 then
+        ts.add(item.caption);
+    end
+    else if (i > -1) then
+      ts.Delete(i);
+    FConfig.save;
   end;
 
 end;
@@ -959,20 +953,15 @@ begin
   ep := FEPManager.Focus;
   if (ep <> nil) then
   begin
-    ts := TStringList.create;
-    try
-      ts.CommaText := ep['packages'];
-      for pi in FPackages do
+    ts := ep.section.prop['packages'].values;
+    for pi in FPackages do
+    begin
+      if matchesversion(ep['type'], pi.fhirVersion, pi.version) and not isAutomatic(ep['type'], pi) then
       begin
-        if matchesversion(ep['type'], pi.fhirVersion, pi.version) and not isAutomatic(ep['type'], pi) then
-        begin
-          li := lvPackages.items.Add;
-          li.Caption := pi.id+'#'+pi.version;
-          li.Checked := ts.IndexOf(pi.id+'#'+pi.version) > -1;
-        end;
+        li := lvPackages.items.Add;
+        li.Caption := pi.id+'#'+pi.version;
+        li.Checked := ts.IndexOf(pi.id+'#'+pi.version) > -1;
       end;
-    finally
-      ts.free;
     end;
   end;
   lvPackages.ViewStyle := vsIcon;

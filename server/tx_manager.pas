@@ -86,7 +86,7 @@ Type
     procedure sweepSnomed;
 
     // load external terminology resources (snomed, Loinc, etc)
-    procedure load(ini : TFHIRConfigFile; databases : TFslMap<TFDBManager>; testing : boolean);
+    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TFDBManager>; testing : boolean);
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -2042,3 +2042,4 @@ begin
 end;
 
 end.
+

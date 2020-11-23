@@ -73,7 +73,7 @@ function makeKernel(const ASystemName, ADisplayName, Welcome : String; ini : TFH
 var
   mode : String;
 begin
-  mode := ini.kernel['mode'];
+  mode := ini.service['mode'];
   if mode = 'bridge' then
   begin
     Logging.log('Mode: Bridge Server');

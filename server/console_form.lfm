@@ -1,7 +1,7 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 2772
+  Left = 696
   Height = 693
-  Top = -222
+  Top = -898
   Width = 899
   Caption = 'FHIRServer Console'
   ClientHeight = 673
@@ -1256,13 +1256,6 @@ object MainConsoleForm: TMainConsoleForm
                   Align = alClient
                   Checkboxes = True
                   Columns = <>
-                  Items.LazData = {
-                    8600000004000000FFFFFFFFFFFFFFFFFFFFFFFF000000001F0000004974656D
-                    306161736461736461736461736461736461736461736461736461FFFFFFFFFF
-                    FFFFFFFFFFFFFF00000000050000004974656D31FFFFFFFFFFFFFFFFFFFFFFFF
-                    00000000050000004974656D32FFFFFFFFFFFFFFFFFFFFFFFF00000000050000
-                    004974656D33
-                  }
                   TabOrder = 0
                   OnItemChecked = lvPackagesItemChecked
                 end

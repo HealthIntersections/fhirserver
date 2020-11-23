@@ -224,8 +224,9 @@
     </RequiredPackages>
     <Units Count="12">
       <Unit0>
-        <Filename Value="fhirconsole.pas"/>
+        <Filename Value="FHIRConsole.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="fhirconsole"/>
       </Unit0>
       <Unit1>
         <Filename Value="console_form.pas"/>
@@ -289,6 +290,7 @@
         <Filename Value="admin\install_log.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="InstallProgressForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit11>
     </Units>

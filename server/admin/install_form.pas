@@ -7,15 +7,16 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ExtCtrls,
   StdCtrls, ComCtrls,
-  fsl_base, fsl_npm_client,
-  fdb_manager;
+  fsl_base, fsl_utilities, fsl_npm_client,
+  fdb_manager,
+  install_log;
 
 type
 
   { TEndpointInstallForm }
 
   TEndpointInstallForm = class(TForm)
-    btnDBTest1: TBitBtn;
+    btnInstall: TBitBtn;
     btnDBTest3: TBitBtn;
     cbxSecurity: TComboBox;
     edtUserName: TEdit;
@@ -32,10 +33,14 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    procedure btnInstallClick(Sender: TObject);
+    procedure edtUserNameChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FConnection: TFDBConnection;
+    FEndPoint: String;
+    FFilename: String;
     FMode: String;
     FPackages : TFslList<TFHIRPackageInfo>;
     FVersion: String;
@@ -44,11 +49,14 @@ type
     procedure SetConnection(AValue: TFDBConnection);
     procedure SetPackages(AValue: TFslList<TFHIRPackageInfo>);
     procedure loadPackages;
+    function command : String;
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages write SetPackages;
     property Connection : TFDBConnection read FConnection write SetConnection;
     property version : String read FVersion write FVersion;
     property mode : String read FMode write FMode;
+    property Filename : String read FFilename write FFilename;
+    property endpoint : String read FEndPoint write FEndPoint;
   end;
 
 var
@@ -64,6 +72,25 @@ procedure TEndpointInstallForm.FormDestroy(Sender: TObject);
 begin
   FPackages.Free;
   FConnection.Free;
+end;
+
+procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
+begin
+  btnInstall.enabled := (edtUserName.text <> '') and IsValidIdent(edtUserName.text) and (edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0) and (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));
+end;
+
+procedure TEndpointInstallForm.btnInstallClick(Sender: TObject);
+var
+  form : TInstallProgressForm;
+begin
+  form := TInstallProgressForm.create(self);
+  try
+    form.command := command;
+    if form.ShowModal = mrOk then
+      ModalResult := mrClose;
+  finally
+    form.free;
+  end;
 end;
 
 function TEndpointInstallForm.matchesVersion(pi, piv : String):boolean;
@@ -161,6 +188,29 @@ begin
   end;
   lvPackages.ViewStyle := vsIcon;
   lvPackages.ViewStyle := vsList;
+end;
+
+function TEndpointInstallForm.command: String;
+var
+  s : String;
+  i : TListItem;
+begin
+  result := '-cmd installdb -config '+filename+' -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
+  case cbxSecurity.ItemIndex of
+    0: result := result + ' -security open';
+    1: result := result + ' -security oauth?';
+    2: result := result + ' -security oauth';
+    3: result := result + ' -security cert';
+  end;
+  s := '';
+  for i in lvPackages.items do
+    if i.Checked then
+      if s = '' then
+        s := i.Caption
+      else
+        s := s+','+i.Caption;
+  if s <> '' then
+    result := result + ' -packages '+s;
 end;
 
 procedure TEndpointInstallForm.SetConnection(AValue: TFDBConnection);

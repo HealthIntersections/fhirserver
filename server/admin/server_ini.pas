@@ -34,13 +34,13 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_stream;
 
 type
 
-  { TFHIRConfigFileProperty }
+  { TFHIRServerConfigFileProperty }
 
-  TFHIRConfigFileProperty = class (TFslObject)
+  TFHIRServerConfigFileProperty = class (TFslObject)
   private
     FComment: String;
     FComments: TStringList;
@@ -54,6 +54,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
+    procedure assign(source : TFslObject); override;
 
     property name : String read FName write FName;
     property comments : TStringList read FComments;
@@ -63,43 +64,47 @@ type
     function readAsInt(def : integer) : Integer;
     function readAsBool(def : boolean) : boolean;
 
-    class function fromLine(line : String; comments : TStringList) : TFHIRConfigFileProperty;
+    class function fromLine(line : String; comments : TStringList) : TFHIRServerConfigFileProperty;
   end;
 
-  { TFHIRConfigFileSection }
+  { TFHIRServerConfigFileSection }
 
-  TFHIRConfigFileSection = class (TFslObject)
+  TFHIRServerConfigFileSection = class (TFslObject)
   private
     FComment: String;
     FComments: TStringList;
     FName: String;
-    FProperties: TFslList<TFHIRConfigFileProperty>;
-    FSections: TFslList<TFHIRConfigFileSection>;
-    function GetProperty(name : String): TFHIRConfigFileProperty;
-    function GetSection(name : String): TFHIRConfigFileSection;
+    FProperties: TFslList<TFHIRServerConfigFileProperty>;
+    FSections: TFslList<TFHIRServerConfigFileSection>;
+    function GetProperty(name : String): TFHIRServerConfigFileProperty;
+    function GetSection(name : String): TFHIRServerConfigFileSection;
 
     procedure save(indent : String; ts : TStringList);
   public
-    constructor Create; override;
+    constructor Create(name : String);
     destructor Destroy; override;
+    function link : TFHIRServerConfigFileSection;
+
+    procedure assign(source : TFslObject); override;
+
     property name : String read FName write FName;
     property comments : TStringList read FComments;
     property comment : String read FComment write FComment;
-    property properties : TFslList<TFHIRConfigFileProperty> read FProperties;
-    property sections : TFslList<TFHIRConfigFileSection> read FSections;
+    property properties : TFslList<TFHIRServerConfigFileProperty> read FProperties;
+    property sections : TFslList<TFHIRServerConfigFileSection> read FSections;
 
-    property section[name : String] : TFHIRConfigFileSection read GetSection;
-    property prop[name : String] : TFHIRConfigFileProperty read GetProperty; default;
+    property section[name : String] : TFHIRServerConfigFileSection read GetSection;
+    property prop[name : String] : TFHIRServerConfigFileProperty read GetProperty; default;
 
-    class function fromLine(line : String; comments : TStringList) : TFHIRConfigFileSection;
+    class function fromLine(line : String; comments : TStringList) : TFHIRServerConfigFileSection;
   end;
 
-  TFHIRConfigFile = class (TFslObject)
+  TFHIRServerConfigFile = class (TFslObject)
   private
     FComments: TStringList;
     FFilename: String;
-    FSections: TFslList<TFHIRConfigFileSection>;
-    function GetSection(name : String): TFHIRConfigFileSection;
+    FSections: TFslList<TFHIRServerConfigFileSection>;
+    function GetSection(name : String): TFHIRServerConfigFileSection;
   public
     constructor Create(filename : String);
     destructor Destroy; override;
@@ -107,87 +112,95 @@ type
     procedure Save;
 
     property FileName : String read FFilename;
-    property section[name : String] : TFHIRConfigFileSection read GetSection;
-    property sections : TFslList<TFHIRConfigFileSection> read FSections;
+    property section[name : String] : TFHIRServerConfigFileSection read GetSection;
+    property sections : TFslList<TFHIRServerConfigFileSection> read FSections;
     property comments : TStringList read FComments; // at the end
   end;
 
 
-  //{ TFHIRServerIniComplex }
-  //
-  //TFHIRServerIniComplex = class (TFslObject)
-  //private
-  //  FData: TFslObject;
-  //  FDetails : TFslStringDictionary;
-  //  FName : String;
-  //  FStatus: String;
-  //  FThreadStatus: String;
-  //  function getValue(name: String): String;
-  //  procedure SetValue(name: String; const Value: String);
-  //  function save : String;
-  //public
-  //  constructor Create; overload; override;
-  //  constructor Create(name, value : String); overload;
-  //  destructor Destroy; override;
-  //  function link : TFHIRServerIniComplex;
-  //  function clone : TFHIRServerIniComplex;
-  //
-  //  procedure assign(source : TFslObject); override;
-  //
-  //  property value[name : String] : String read getValue write SetValue; default;
-  //  property name : String read FName write FName;
-  //  property status : String read FStatus write FStatus;
-  //  property threadStatus : String read FThreadStatus write FThreadStatus;
-  //  property data : TFslObject read FData write FData;
-  //end;
+  { TFHIRServerIniComplex }
 
-  //{ TFHIRServerIniFile }
-  //
-  //TFHIRServerIniFile = class (TFslObject)
-  //private
-  //  FFile : TFHIRConfigFile;
-  //  FTerminologies: TFslMap<TFHIRServerIniComplex>;
-  //  FIdentityProviders: TFslMap<TFHIRServerIniComplex>;
-  //  FDatabases: TFslMap<TFHIRServerIniComplex>;
-  //  FEndPoints: TFslMap<TFHIRServerIniComplex>;
-  //  FDestinations: TFslMap<TFHIRServerIniComplex>;
-  //
-  //  function GetFileName : String;
-  //  function getAdminValue(name: String): String;
-  //  function getWebValue(name: String): String;
-  //  function getServiceValue(name: String): String;
-  //  function getKernelValue(name: String): String;
-  //  function GetRunNumber: integer;
-  //  procedure SetRunNumber(const Value: integer);
-  //  procedure readSection(name : String; map : TFslMap<TFHIRServerIniComplex>);
-  //  procedure SetAdminValue(name: String; const Value: String);
-  //  procedure SetWebValue(name: String; const Value: String);
-  //  procedure SetServiceValue(name: String; const Value: String);
-  //  procedure SetKernelValue(name: String; const Value: String);
-  //public
-  //  constructor Create(const FileName: string);
-  //  destructor Destroy; override;
-  //  Function Link : TFHIRServerIniFile; overload;
-  //  property FileName: string read GetFileName;
-  //
-  //  procedure importFromIni(filename : String);
-  //  procedure save; // used by the installer
-  //
-  //  property web[name : String] : String read getWebValue write SetWebValue;
-  //  property admin[name : String] : String  read getAdminValue write SetAdminValue;
-  //  property service[name : String] : String  read getServiceValue write SetServiceValue;
-  //  property kernel[name : String] : String  read getKernelValue write SetKernelValue;
-  //  property terminologies : TFslMap<TFHIRServerIniComplex> read FTerminologies;
-  //  property databases : TFslMap<TFHIRServerIniComplex> read FDatabases;
-  //  property endpoints : TFslMap<TFHIRServerIniComplex> read FEndPoints;
-  //  property identityProviders : TFslMap<TFHIRServerIniComplex> read FIdentityProviders;
-  //  property destinations : TFslMap<TFHIRServerIniComplex> read FDestinations;
-  //
-  //  property runNumber : integer read GetRunNumber write SetRunNumber;
-  //
-  //  // internal support
-  //  procedure writeString(section, name, value : String);
-  //end;
+  TFHIRServerIniComplex = class (TFslObject)
+  private
+    FSection : TFHIRServerConfigFileSection;
+    FData: TFslObject;
+    FStatus: String;
+    FThreadStatus: String;
+    function GetName: String;
+    function getValue(name: String): String;
+    procedure SetName(AValue: String);
+    procedure SetValue(name: String; const Value: String);
+  public
+    constructor Create; override;
+    constructor Create(section : TFHIRServerConfigFileSection); overload;
+    destructor Destroy; override;
+    function link : TFHIRServerIniComplex;
+    function clone : TFHIRServerIniComplex;
+
+    procedure assign(source : TFslObject); override;
+
+    property section : TFHIRServerConfigFileSection read FSection;
+
+    property value[name : String] : String read getValue write SetValue; default;
+    property name : String read GetName write SetName;
+    property status : String read FStatus write FStatus;
+    property threadStatus : String read FThreadStatus write FThreadStatus;
+    property data : TFslObject read FData write FData;
+  end;
+
+  { TFHIRServerIniFile }
+
+  TFHIRServerIniFile = class (TFslObject)
+  private
+    FFile : TFHIRServerConfigFile;
+    FTerminologies: TFslMap<TFHIRServerIniComplex>;
+    FIdentityProviders: TFslMap<TFHIRServerIniComplex>;
+    FDatabases: TFslMap<TFHIRServerIniComplex>;
+    FEndPoints: TFslMap<TFHIRServerIniComplex>;
+    FDestinations: TFslMap<TFHIRServerIniComplex>;
+
+    function GetFileName : String;
+    function getAdminValue(name: String): String;
+    function getWebValue(name: String): String;
+    function getServiceValue(name: String): String;
+    function GetRunNumber: integer;
+    procedure SetRunNumber(const Value: integer);
+    procedure readSection(section : TFHIRServerConfigFileSection; map : TFslMap<TFHIRServerIniComplex>);
+    procedure SetAdminValue(name: String; const Value: String);
+    procedure SetWebValue(name: String; const Value: String);
+    procedure SetServiceValue(name: String; const Value: String);
+
+    procedure readSectionFromIni(ini : TIniFile; name : String; map : TFslMap<TFHIRServerIniComplex>; section: TFHIRServerConfigFileSection); overload;
+    procedure readSectionFromIni(ini : TIniFile; name : String; section : TFHIRServerConfigFileSection); overload;
+    procedure importFromIni(filename : String);
+  public
+    constructor Create(const FileName: string);
+    destructor Destroy; override;
+    Function Link : TFHIRServerIniFile; overload;
+    property FileName: string read GetFileName;
+
+    procedure save; // used by the installer
+
+    property web[name : String] : String read getWebValue write SetWebValue;
+    property admin[name : String] : String  read getAdminValue write SetAdminValue;
+    property service[name : String] : String  read getServiceValue write SetServiceValue;
+    property terminologies : TFslMap<TFHIRServerIniComplex> read FTerminologies;
+    property databases : TFslMap<TFHIRServerIniComplex> read FDatabases;
+    property endpoints : TFslMap<TFHIRServerIniComplex> read FEndPoints;
+    property identityProviders : TFslMap<TFHIRServerIniComplex> read FIdentityProviders;
+    property destinations : TFslMap<TFHIRServerIniComplex> read FDestinations;
+
+    function addTerminology(name : String) : TFHIRServerIniComplex;
+    function addDatabase(name : String) : TFHIRServerIniComplex;
+    function addEndpoint(name : String) : TFHIRServerIniComplex;
+    function addIdentityProvider(name : String) : TFHIRServerIniComplex;
+    function addDestination(name : String) : TFHIRServerIniComplex;
+
+    property runNumber : integer read GetRunNumber write SetRunNumber;
+
+    // internal support
+    //procedure writeString(section, name, value : String);
+  end;
 
 implementation
 
@@ -201,29 +214,46 @@ begin
   result := i div 2;
 end;
 
-function isComment(s : String) : boolean;
+function isComment(s : String; var c : String) : boolean;
 begin
-  result := s.startsWith('//') or s.startsWith('#');
+  result := true;
+  if s.startsWith('//') then
+    c := s.Substring(2).trim
+  else if s.startsWith('#') then
+  c := s.Substring(1).trim
+  else
+    result := false;
 end;
 
+{ TFHIRServerConfigFileProperty }
 
-{ TFHIRConfigFileProperty }
-
-constructor TFHIRConfigFileProperty.Create;
+constructor TFHIRServerConfigFileProperty.Create;
 begin
   inherited Create;
   FComments := TStringList.create;
   FValues := TStringList.create;
 end;
 
-destructor TFHIRConfigFileProperty.Destroy;
+destructor TFHIRServerConfigFileProperty.Destroy;
 begin
   FValues.Free;
   FComments.Free;
   inherited Destroy;
 end;
 
-function TFHIRConfigFileProperty.GetValue: String;
+procedure TFHIRServerConfigFileProperty.assign(source: TFslObject);
+var
+  src : TFHIRServerConfigFileProperty;
+begin
+  inherited assign(source);
+  src := source as TFHIRServerConfigFileProperty;
+  FComment := src.FComment;
+  FName := src.FName;
+  FComments.assign(src.FComments);
+  FValues.assign(src.FValues);
+end;
+
+function TFHIRServerConfigFileProperty.GetValue: String;
 begin
   if FValues.count = 1 then
     result := FValues[0]
@@ -231,53 +261,54 @@ begin
     result := '';
 end;
 
-procedure TFHIRConfigFileProperty.SetValue(AValue: String);
+procedure TFHIRServerConfigFileProperty.SetValue(AValue: String);
 begin
   FValues.clear;
-  FValues.add(aValue);
+  if aValue <> '' then
+    FValues.add(aValue);
 end;
 
-procedure TFHIRConfigFileProperty.save(indent: String; ts: TStringList);
+procedure TFHIRServerConfigFileProperty.save(indent: String; ts: TStringList);
 var
   s, c : String;
 begin
   for s in FComments do
-    ts.add(indent+'# '+s);
+    ts.add(indent+'  # '+s);
 
   if FComment = '' then
     c := ''
   else
     c := ' # '+FComment;
   if FValues.count = 0 then
-    ts.add(indent+name+': '+c)
-  else if FValues.count = 0 then
-    ts.add(indent+name+': '+value+c)
+    ts.add(indent+'  '+name+': '+c)
+  else if FValues.count = 1 then
+    ts.add(indent+'  '+name+': '+value+c)
   else
   begin
-    ts.add(indent+name+': '+c);
-    for s in FComments do
-      ts.add(indent+' - '+s);
+    ts.add(indent+'  '+name+': '+c);
+    for s in FValues do
+      ts.add(indent+'   - '+s);
   end;
 end;
 
-function TFHIRConfigFileProperty.readAsInt(def: integer): Integer;
+function TFHIRServerConfigFileProperty.readAsInt(def: integer): Integer;
 begin
   result := StrToIntDef(Value, def);
 end;
 
-function TFHIRConfigFileProperty.readAsBool(def: boolean): boolean;
+function TFHIRServerConfigFileProperty.readAsBool(def: boolean): boolean;
 begin
   result := StrToBool(Value);
 end;
 
-class function TFHIRConfigFileProperty.fromLine(line: String; comments: TStringList): TFHIRConfigFileProperty;
+class function TFHIRServerConfigFileProperty.fromLine(line: String; comments: TStringList): TFHIRServerConfigFileProperty;
 var
   n, v, c : String;
 begin
-  result := TFHIRConfigFileProperty.create;
+  result := TFHIRServerConfigFileProperty.create;
   try
     stringSplit(line, ':', n, line);
-    stringSplit(line, '#', v, c);
+    stringSplit(line, '# ', v, c);
     result.name := n.trim();
     result.value := v.trim();
     result.comment := c.trim();
@@ -289,17 +320,18 @@ begin
   end;
 end;
 
-{ TFHIRConfigFileSection }
+{ TFHIRServerConfigFileSection }
 
-constructor TFHIRConfigFileSection.Create;
+constructor TFHIRServerConfigFileSection.Create(name : String);
 begin
   inherited Create;
+  FName := name;
   FComments := TStringList.create;
-  FProperties := TFslList<TFHIRConfigFileProperty>.create;
-  FSections := TFslList<TFHIRConfigFileSection>.create;
+  FProperties := TFslList<TFHIRServerConfigFileProperty>.create;
+  FSections := TFslList<TFHIRServerConfigFileSection>.create;
 end;
 
-destructor TFHIRConfigFileSection.Destroy;
+destructor TFHIRServerConfigFileSection.Destroy;
 begin
   FSections.Free;
   FProperties.Free;
@@ -307,14 +339,33 @@ begin
   inherited Destroy;
 end;
 
-class function TFHIRConfigFileSection.fromLine(line: String; comments: TStringList): TFHIRConfigFileSection;
+function TFHIRServerConfigFileSection.link: TFHIRServerConfigFileSection;
+begin
+  result := TFHIRServerConfigFileSection(inherited link);
+end;
+
+procedure TFHIRServerConfigFileSection.assign(source: TFslObject);
+var
+  src : TFHIRServerConfigFileSection;
+begin
+  inherited assign(source);
+  src := source as TFHIRServerConfigFileSection;
+  FComment := src.FComment;
+  FComments.assign(src.FComments);
+  FName := src.Fname;
+  FProperties.Clear;
+  FProperties.addAll(src.FProperties);
+  FSections.Clear;
+  FSections.addAll(src.FSections);
+end;
+
+class function TFHIRServerConfigFileSection.fromLine(line: String; comments: TStringList): TFHIRServerConfigFileSection;
 var
   n, c : String;
 begin
-  result := TFHIRConfigFileSection.create;
+  stringSplit(line, '#', n, c);
+  result := TFHIRServerConfigFileSection.create(n.trim);
   try
-    stringSplit(line, '#', n, c);
-    result.name := n.trim();
     result.comment := c.trim();
     result.comments.assign(comments);
     comments.clear;
@@ -324,72 +375,72 @@ begin
   end;
 end;
 
-function TFHIRConfigFileSection.GetProperty(name : String): TFHIRConfigFileProperty;
+function TFHIRServerConfigFileSection.GetProperty(name : String): TFHIRServerConfigFileProperty;
 var
-  p : TFHIRConfigFileProperty;
+  p : TFHIRServerConfigFileProperty;
 begin
   for p in FProperties do
     if p.name = name then
       exit(p);
-  result := TFHIRConfigFileProperty.create;
+  result := TFHIRServerConfigFileProperty.create;
   result.name := name;
   FProperties.add(result);
 end;
 
-function TFHIRConfigFileSection.GetSection(name : String): TFHIRConfigFileSection;
+function TFHIRServerConfigFileSection.GetSection(name : String): TFHIRServerConfigFileSection;
 var
-  p : TFHIRConfigFileSection;
+  p : TFHIRServerConfigFileSection;
 begin
   for p in FSections do
     if p.name = name then
       exit(p);
-  result := TFHIRConfigFileSection.create;
-  result.name := name;
+  result := TFHIRServerConfigFileSection.create(name);
   FSections.add(result);
 end;
 
-procedure TFHIRConfigFileSection.save(indent: String; ts: TStringList);
+procedure TFHIRServerConfigFileSection.save(indent: String; ts: TStringList);
 var
   s : String;
-  prop : TFHIRConfigFileProperty;
-  sect : TFHIRConfigFileSection;
+  prop : TFHIRServerConfigFileProperty;
+  sect : TFHIRServerConfigFileSection;
 begin
   for s in FComments do
-    ts.add(indent+'# '+s);
+    if s <> '# FHIRServer Config File' then
+      ts.add(indent+'# '+s);
   if FComment = '' then
     ts.add(indent+name)
   else
     ts.add(indent+name+' # '+FComment);
   for prop in FProperties do
     prop.save(indent, ts);
-  if FSections.Empty then
-    ts.add(indent)
-  else
+  if not FSections.Empty then
   begin
     for sect in FSections do
       sect.save(indent+'  ', ts);
+    ts.add(indent)
   end;
 end;
 
-{ TFHIRConfigFile }
+{ TFHIRServerConfigFile }
 
-constructor TFHIRConfigFile.Create(filename : String);
+constructor TFHIRServerConfigFile.Create(filename : String);
 var
   ts : TStringList;
   comments : TStringList;
-  l, s : String;
-  indent : integer;
-  sections : TFslList<TFHIRConfigFileSection>;
-  prop : TFHIRConfigFileProperty;
-  section : TFHIRConfigFileSection;
+  l, s, c : String;
+  indent, propIndent : integer;
+  sections : TFslList<TFHIRServerConfigFileSection>;
+  prop : TFHIRServerConfigFileProperty;
+  section : TFHIRServerConfigFileSection;
 begin
   inherited Create;
   FComments := TStringList.create;
-  FSections := TFslList<TFHIRConfigFileSection>.create;
+  FSections := TFslList<TFHIRServerConfigFileSection>.create;
   FFilename := filename;
-  if FileExists(filename) then
+
+  if FileExists(filename) and not FileToString(filename, TEncoding.UTF8).startsWith('[') then
   begin
-    sections := TFslList<TFHIRConfigFileSection>.create;
+    sections := TFslList<TFHIRServerConfigFileSection>.create;
     comments := TStringList.create;
     ts := TStringList.create;
     try
@@ -398,25 +449,36 @@ begin
       begin
         indent := countIndent(l);
         s := l.trim;
-        if (s= '') or isComment(s) then
-          comments.add(s)
-        else if s.contains(':') then
+        if (s <> '') then
         begin
-          assert(sections.count > 0);
-          sections[0].properties.Add(TFHIRConfigFileProperty.fromLine(s, comments));
-        end
-        else
-        begin
-          while sections.count > indent do
-            sections.Delete(0);
-          section := TFHIRConfigFileSection.fromLine(s, comments);
-          if sections.count = 0 then
-            FSections.add(section)
+          if isComment(s, c) then
+            comments.add(c)
+          else if s.StartsWith('- ') then
+          begin
+            if propIndent = indent - 1 then
+              prop.values.add(s.Substring(1).trim);
+          end
+          else if s.contains(':') then
+          begin
+            assert(sections.count > 0);
+            prop := TFHIRServerConfigFileProperty.fromLine(s, comments);
+            propIndent := indent;
+            sections[0].properties.Add(prop);
+          end
           else
-            sections[0].FSections.add(section);
-          sections.insert(0, section);
+          begin
+            while sections.count > indent do
+              sections.Delete(0);
+            section := TFHIRServerConfigFileSection.fromLine(s, comments);
+            if sections.count = 0 then
+              FSections.add(section)
+            else
+              sections[0].FSections.add(section);
+            sections.insert(0, section.link);
+          end;
         end;
       end;
+      FComments.assign(comments);
     finally
       ts.free;
       comments.free;
@@ -425,17 +487,17 @@ begin
   end;
 end;
 
-destructor TFHIRConfigFile.Destroy;
+destructor TFHIRServerConfigFile.Destroy;
 begin
   FSections.Free;
   FComments.Free;
   inherited Destroy;
 end;
 
-procedure TFHIRConfigFile.Save;
+procedure TFHIRServerConfigFile.Save;
 var
   ts : TStringList;
-  section : TFHIRConfigFileSection;
+  section : TFHIRServerConfigFileSection;
 begin
   ts := TStringList.create;
   try
@@ -449,259 +511,269 @@ begin
   end;
 end;
 
-function TFHIRConfigFile.GetSection(name : String): TFHIRConfigFileSection;
+function TFHIRServerConfigFile.GetSection(name : String): TFHIRServerConfigFileSection;
 var
-  p : TFHIRConfigFileSection;
+  p : TFHIRServerConfigFileSection;
 begin
   for p in FSections do
     if p.name = name then
       exit(p);
-  result := TFHIRConfigFileSection.create;
-  result.name := name;
+  result := TFHIRServerConfigFileSection.create(name);
   FSections.add(result);
 end;
 
 
-//{ TFHIRServerIniFile }
-//
-//constructor TFHIRServerIniFile.Create(const FileName: string);
-//begin
-//  inherited create;
-//  FTerminologies := TFslMap<TFHIRServerIniComplex>.create('Ini.Terminologies');
-//  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create('Ini.IDProviders');
-//  FDatabases := TFslMap<TFHIRServerIniComplex>.create('Ini.Databases');
-//  FEndPoints := TFslMap<TFHIRServerIniComplex>.create('Ini.EndPoints');
-//  FDestinations := TFslMap<TFHIRServerIniComplex>.create('Ini.Destinations');
-//
-//  if FileExists(filename) then
-//    FFile := TFHIRConfigFile.fromFile(filename)
-//  else
-//    FFile := TFHIRConfigFile.create;
-//
-//  readSection(FFile.section['terminologies'], FTerminologies);
-//  readSection(FFile.section['identity-providers'], FIdentityProviders);
-//  readSection(FFile.section['endpoints'], FEndPoints);
-//  readSection(FFile.section['databases'], FDatabases);
-//  readSection(FFile.section['destinations'], FDestinations);
-//end;
-//
-//destructor TFHIRServerIniFile.Destroy;
-//begin
-//  FTerminologies.Free;
-//  FIdentityProviders.Free;
-//  FDatabases.Free;
-//  FEndPoints.Free;
-//  FDestinations.Free;
-//  FFile.Free;
-//  inherited;
-//end;
-//
-//function TFHIRServerIniFile.getAdminValue(name: String): String;
-//begin
-//  result := FFile.section['admin'].prop[name].value;
-//end;
-//
-//function TFHIRServerIniFile.GetFileName: String;
-//begin
-//  result := FFile.FileName;
-//end;
-//
-//function TFHIRServerIniFile.getKernelValue(name: String): String;
-//begin
-//  result := FIni.ReadString('kernel', name, '');
-//end;
-//
-//function TFHIRServerIniFile.GetRunNumber: integer;
-//begin
-//  result := FIni.ReadInteger('server', 'run-number', 0);
-//end;
-//
-//function TFHIRServerIniFile.getServiceValue(name: String): String;
-//begin
-//  result := FIni.ReadString('service', name, '');
-//end;
-//
-//function TFHIRServerIniFile.getWebValue(name: String): String;
-//begin
-//  result := FIni.ReadString('web', name, '');
-//end;
-//
-//function TFHIRServerIniFile.Link: TFHIRServerIniFile;
-//begin
-//  result := TFHIRServerIniFile(inherited Link);
-//end;
-//
-//procedure TFHIRServerIniFile.importFromIni(filename: String);
-//begin
-////      FIni : TIniFile;
-//  FIni := TIniFile.Create(filename);
-//
-//  readSection('terminologies', FTerminologies);
-//  readSection('identity-providers', FIdentityProviders);
-//  readSection('endpoints', FEndPoints);
-//  readSection('databases', FDatabases);
-//  readSection('destinations', FDestinations);
-//end;
-//
-//procedure TFHIRServerIniFile.readSection(name: String; map: TFslMap<TFHIRServerIniComplex>);
-//var
-//  ts : TStringList;
-//  s : String;
-//begin
-//  ts := TStringList.Create;
-//  try
-//    FIni.ReadSection(name, ts);
-//    for s in ts do
-//      map.Add(s, TFHIRServerIniComplex.create(s, FIni.ReadString(name, s, '')));
-//  finally
-//    ts.free;
-//  end;
-//  map.defaultValue := TFHIRServerIniComplex.create('', '');
-//end;
-//
-//procedure TFHIRServerIniFile.save;
-//var
-//  s : String;
-//  ts : TStringList;
-//begin
-//  ts := TStringList.Create;
-//  try
-//    FIni.ReadSection('databases', ts);
-//    for s in ts do
-//      FIni.DeleteKey('databases', s);
-//    for s in databases.Keys do
-//      if (s <> '') then
-//        FIni.WriteString('databases', s, databases[s].save);
-//    ts.Clear;
-//    FIni.ReadSection('endpoints', ts);
-//    for s in ts do
-//      FIni.DeleteKey('endpoints', s);
-//    for s in endpoints.Keys do
-//      if (s <> '') then
-//        FIni.WriteString('endpoints', s, endpoints[s].save);
-//    ts.Clear;
-//    FIni.ReadSection('terminologies', ts);
-//    for s in ts do
-//      FIni.DeleteKey('terminologies', s);
-//    for s in terminologies.Keys do
-//      if (s <> '') then
-//        FIni.WriteString('terminologies', s, terminologies[s].save);
-//  finally
-//    ts.Free;
-//  end;
-//end;
-//
-//procedure TFHIRServerIniFile.SetAdminValue(name: String; const Value: String);
-//begin
-//  FIni.writeString('admin', name, value);
-//end;
-//
-//procedure TFHIRServerIniFile.SetKernelValue(name: String; const Value: String);
-//begin
-//  FIni.writeString('kernel', name, value);
-//end;
-//
-//procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
-//begin
-//  FIni.writeInteger('server', 'run-number', value);
-//end;
-//
-//procedure TFHIRServerIniFile.SetServiceValue(name: String; const Value: String);
-//begin
-//  FIni.writeString('service', name, value);
-//end;
-//
-//procedure TFHIRServerIniFile.SetWebValue(name: String; const Value: String);
-//begin
-//  FIni.writeString('web',name, value);
-//end;
-//
-//
-//procedure TFHIRServerIniFile.writeString(section, name, value: String);
-//begin
-//  FIni.WriteString(section, name, value);
-//end;
-//
-//{ TFHIRServerIniComplex }
-//
-//constructor TFHIRServerIniComplex.Create;
-//begin
-//  inherited Create;
-//  FDetails := TFslStringDictionary.Create;
-//end;
-//
-//constructor TFHIRServerIniComplex.Create(name, value: String);
-//var
-//  sl : TArray<String>;
-//  s, l, r : String;
-//begin
-//  Create;
-//  FName := name;
-//  sl := value.Split([';']);
-//  for s in sl do
-//  begin
-//    StringSplit(s, ':', l, r);
-//    l := l.Trim;
-//    r := r.Trim;
-//    if r.StartsWith('"') and r.EndsWith('"') then
-//      r := r.Substring(1, r.Length-2);
-//    FDetails.Add(l, r);
-//  end;
-//  FDetails.AddorSetValue('id', FName);
-//end;
-//
-//destructor TFHIRServerIniComplex.Destroy;
-//begin
-//  FDetails.Free;
-//  inherited;
-//end;
-//
-//function TFHIRServerIniComplex.link: TFHIRServerIniComplex;
-//begin
-//  result := TFHIRServerIniComplex(inherited link);
-//end;
-//
-//function TFHIRServerIniComplex.clone: TFHIRServerIniComplex;
-//begin
-//  result := TFHIRServerIniComplex(inherited clone);
-//end;
-//
-//procedure TFHIRServerIniComplex.assign(source: TFslObject);
-//begin
-//  inherited;
-//  FName := (source as TFHIRServerIniComplex).FName;
-//  FDetails.assign((source as TFHIRServerIniComplex).FDetails);
-//end;
-//
-//function TFHIRServerIniComplex.getValue(name: String): String;
-//begin
-//  if not FDetails.TryGetValue(name, result) then
-//    result := '';
-//end;
-//
-//function TFHIRServerIniComplex.save: String;
-//var
-//  s, v : String;
-//begin
-//  result := '';
-//  for s in FDetails.Keys do
-//  begin
-//    v := FDetails[s];
-//    if (v <> '') and (v <> 'id') and not v.startsWith('#') then
-//    begin
-//      if v.Contains(' ') then
-//        result := result + '; '+s+': "'+v+'"'
-//      else
-//        result := result + '; '+s+': '+v;
-//    end;
-//  end;
-//  if result.Length > 0 then
-//    result := result.Substring(1);
-//end;
-//procedure TFHIRServerIniComplex.SetValue(name: String; const Value: String);
-//begin
-//  FDetails.AddOrSetValue(name, value);
-//end;
+{ TFHIRServerIniComplex }
+
+constructor TFHIRServerIniComplex.Create(section : TFHIRServerConfigFileSection);
+begin
+  inherited Create;
+  FSection := section;
+end;
+
+constructor TFHIRServerIniComplex.Create;
+begin
+  inherited Create;
+  FSection := TFHIRServerConfigFileSection.create('');
+end;
+
+destructor TFHIRServerIniComplex.Destroy;
+begin
+  FSection.Free;
+  inherited;
+end;
+
+function TFHIRServerIniComplex.link: TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex(inherited link);
+end;
+
+function TFHIRServerIniComplex.clone: TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex(inherited clone);
+end;
+
+procedure TFHIRServerIniComplex.assign(source: TFslObject);
+var
+  src : TFHIRServerIniComplex;
+begin
+  inherited;
+  src := source as TFHIRServerIniComplex;
+  FSection.assign(src.FSection);
+end;
+
+function TFHIRServerIniComplex.GetName: String;
+begin
+  result := FSection.Name;
+end;
+
+function TFHIRServerIniComplex.getValue(name: String): String;
+begin
+  result := FSection.prop[name].value;
+end;
+
+procedure TFHIRServerIniComplex.SetName(AValue: String);
+begin
+  FSection.name := aValue;
+end;
+
+procedure TFHIRServerIniComplex.SetValue(name: String; const Value: String);
+begin
+  FSection.prop[name].value := value;
+end;
+
+{ TFHIRServerIniFile }
+
+constructor TFHIRServerIniFile.Create(const FileName: string);
+begin
+  inherited create;
+  FTerminologies := TFslMap<TFHIRServerIniComplex>.create('Ini.Terminologies');
+  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create('Ini.IDProviders');
+  FDatabases := TFslMap<TFHIRServerIniComplex>.create('Ini.Databases');
+  FEndPoints := TFslMap<TFHIRServerIniComplex>.create('Ini.EndPoints');
+  FDestinations := TFslMap<TFHIRServerIniComplex>.create('Ini.Destinations');
+
+  FFile := TFHIRServerConfigFile.create(filename);
+  if FileExists(filename) and FileToString(filename, TEncoding.UTF8).startsWith('[') then
+    importFromIni(filename)
+  else
+  begin
+    readSection(FFile.section['terminologies'], FTerminologies);
+    readSection(FFile.section['identity-providers'], FIdentityProviders);
+    readSection(FFile.section['endpoints'], FEndPoints);
+    readSection(FFile.section['databases'], FDatabases);
+    readSection(FFile.section['destinations'], FDestinations);
+  end;
+end;
+
+destructor TFHIRServerIniFile.Destroy;
+begin
+  FTerminologies.Free;
+  FIdentityProviders.Free;
+  FDatabases.Free;
+  FEndPoints.Free;
+  FDestinations.Free;
+  FFile.Free;
+  inherited;
+end;
+
+function TFHIRServerIniFile.Link: TFHIRServerIniFile;
+begin
+  result := TFHIRServerIniFile(inherited Link);
+end;
+
+function TFHIRServerIniFile.getAdminValue(name: String): String;
+begin
+  result := FFile.section['admin'].prop[name].value;
+end;
+
+function TFHIRServerIniFile.GetFileName: String;
+begin
+  result := FFile.FileName;
+end;
+
+
+function TFHIRServerIniFile.GetRunNumber: integer;
+begin
+  result := FFile.section['service'].prop['run-number'].readAsInt(0);
+end;
+
+function TFHIRServerIniFile.getServiceValue(name: String): String;
+begin
+  result := FFile.section['service'].prop[name].value;
+end;
+
+function TFHIRServerIniFile.getWebValue(name: String): String;
+begin
+  result := FFile.section['web'].prop[name].value;
+end;
+
+procedure TFHIRServerIniFile.readSection(section : TFHIRServerConfigFileSection; map: TFslMap<TFHIRServerIniComplex>);
+var
+  sect : TFHIRServerConfigFileSection;
+begin
+  for sect in section.sections do
+    map.Add(sect.name, TFHIRServerIniComplex.create(sect.link));
+end;
+
+procedure TFHIRServerIniFile.save;
+begin
+  FFile.Save;
+end;
+
+function TFHIRServerIniFile.addTerminology(name: String): TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex.create(FFile.section['terminologies'].section[name].link);
+  terminologies.add(name, result);
+end;
+
+function TFHIRServerIniFile.addDatabase(name: String): TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex.create(FFile.section['databases'].section[name].link);
+  databases.add(name, result);
+end;
+
+function TFHIRServerIniFile.addEndpoint(name: String): TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex.create(FFile.section['endpoints'].section[name].link);
+  endpoints.add(name, result);
+end;
+
+function TFHIRServerIniFile.addIdentityProvider(name: String): TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex.create(FFile.section['identity-providers'].section[name].link);
+  identityProviders.add(name, result);
+end;
+
+function TFHIRServerIniFile.addDestination(name: String): TFHIRServerIniComplex;
+begin
+  result := TFHIRServerIniComplex.create(FFile.section['destinations'].section[name].link);
+  destinations.add(name, result);
+end;
+
+procedure TFHIRServerIniFile.SetAdminValue(name: String; const Value: String);
+begin
+  FFile.section['admin'].prop[name].value := value;
+end;
+
+procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
+begin
+  FFile.section['service'].prop['run-number'].value := inttostr(value);
+end;
+
+procedure TFHIRServerIniFile.SetServiceValue(name: String; const Value: String);
+begin
+  FFile.section['service'].prop[name].value := value;
+end;
+
+procedure TFHIRServerIniFile.SetWebValue(name: String; const Value: String);
+begin
+  FFile.section['web'].prop[name].value := value;
+end;
+
+procedure TFHIRServerIniFile.importFromIni(filename: String);
+var
+  ini : TIniFile;
+begin
+  ini := TIniFile.create(filename);
+  try
+    readSectionFromIni(ini, 'databases', FDatabases, FFile.section['databases']);
+    readSectionFromIni(ini, 'terminologies', FTerminologies, FFile.section['terminologies']);
+    readSectionFromIni(ini, 'endpoints', FEndPoints, FFile.section['endpoints']);
+    readSectionFromIni(ini, 'destinations', FDestinations, FFile.section['destinations']);
+    readSectionFromIni(ini, 'identity-providers', FIdentityProviders, FFile.section['identity-providers']);
+
+    readSectionFromIni(ini, 'web', FFile.section['web']);
+    readSectionFromIni(ini, 'admin', FFile.section['admin']);
+    readSectionFromIni(ini, 'server', FFile.section['service']);
+  finally
+    ini.free;
+  end;
+  FFile.save;
+end;
+
+procedure TFHIRServerIniFile.readSectionFromIni(ini: TIniFile; name: String; section: TFHIRServerConfigFileSection);
+var
+  ts : TStringList;
+  s : String;
+begin
+  ts := TStringList.create;
+  try
+    ini.ReadSection(name, ts);
+    for s in ts do
+      section.prop[s].value := ini.ReadString(name, s, '');
+  finally
+    ts.free;
+  end;
+end;
+
+procedure TFHIRServerIniFile.readSectionFromIni(ini: TIniFile; name: String; map: TFslMap<TFHIRServerIniComplex>; section: TFHIRServerConfigFileSection);
+var
+  ts : TStringList;
+  s, v, l, r : String;
+  sect : TFHIRServerConfigFileSection;
+begin
+  ts := TStringList.Create;
+  try
+    ini.ReadSection(name, ts);
+    for s in ts do
+    begin
+      sect := section.section[s];
+      map.Add(s, TFHIRServerIniComplex.create(sect.link));
+      for v in ini.ReadString(name, s, '').split([';']) do
+      begin
+        StringSplit(v, ':', l, r);
+        l := l.Trim;
+        r := r.Trim;
+        if r.StartsWith('"') and r.EndsWith('"') then
+          r := r.Substring(1, r.Length-2);
+        sect.prop[l].value := r;
+      end;
+    end;
+  finally
+    ts.free;
+  end;
+end;
 
 end.
 

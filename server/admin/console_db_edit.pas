@@ -147,7 +147,7 @@ begin
 
   if FDb <> nil then
   begin
-    edtIdentity.text := DB['id'];
+    edtIdentity.text := DB.name;
     if DB['type'] = 'mysql' then
       rbMySQL.Checked := true
     else
@@ -163,7 +163,7 @@ end;
 
 procedure TEditDBForm.update;
 begin
-  DB['id'] := edtIdentity.text;
+  DB.name := edtIdentity.text;
   DB['driver'] := cbxDriver.text;
   DB['server'] := edtServer.text;
   DB['database'] := edtDBName.text;

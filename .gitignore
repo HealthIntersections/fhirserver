@@ -263,3 +263,4 @@ packages/lib/x86_64-linux/
 
 packages/lib/x86_64-darwin/
 /server/admin/backup
+/Exec/fhir.dev.local.cfg

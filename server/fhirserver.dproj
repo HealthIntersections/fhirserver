@@ -621,6 +621,7 @@
         <DCCReference Include="tests\tests_search_syntax.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_graphql.pas"/>
         <DCCReference Include="admin\server_ini.pas"/>
+        <DCCReference Include="tests\test_server_ini.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1564,7 +1565,6 @@
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
-                <Platform value="OSX64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

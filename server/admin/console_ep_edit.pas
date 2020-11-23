@@ -91,7 +91,7 @@ begin
 
   if FEp <> nil then
   begin
-    edtIdentity.text := EP['id'];
+    edtIdentity.text := EP.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type']);
     cbxMode.itemIndex := cbxMode.Items.IndexOf(EP['mode']);
     edtPath.text := EP['path'];
@@ -123,7 +123,7 @@ end;
 
 procedure TEditEPForm.update;
 begin
-  EP['id'] := edtIdentity.text;
+  EP.name := edtIdentity.text;
   if cbxType.ItemIndex > -1 then
     EP['type'] := cbxType.items[cbxType.ItemIndex]
   else

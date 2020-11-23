@@ -1326,9 +1326,9 @@ begin
       listF := TStringList.create;
       listP := TStringList.create;
       try
-        listF.CommaText := ini.kernel[details['version']+'-files'];
-        listP.CommaText := ini.kernel[details['version']+'-packages'];
-        registerEndPoint(s, details['path'], Databases[details['database']], factory, listF, listP, ini.kernel['utg-folder']);
+//        listF.CommaText := ini.kernel[details['version']+'-files'];
+//        listP.CommaText := ini.kernel[details['version']+'-packages'];
+//        registerEndPoint(s, details['path'], Databases[details['database']], factory, listF, listP, ini.kernel['utg-folder']);
       finally
         listF.Free;
         listP.Free;

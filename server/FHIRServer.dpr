@@ -510,7 +510,8 @@ uses
   fsl_tests_iduri in '..\library\fsl\tests\fsl_tests_iduri.pas',
   tests_search_syntax in 'tests\tests_search_syntax.pas',
   fhir4_tests_graphql in '..\library\fhir4\tests\fhir4_tests_graphql.pas',
-  server_ini in 'admin\server_ini.pas';
+  server_ini in 'admin\server_ini.pas',
+  test_server_ini in 'tests\test_server_ini.pas';
 
 begin
   ExecuteFhirServer;

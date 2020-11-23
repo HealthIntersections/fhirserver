@@ -235,12 +235,6 @@ begin
     begin
       item.assign(frm.Id);
       item.status := '';
-      if (item.name <> item['id']) then
-      begin
-        ini.identityProviders.add(item['id'], item.link);
-        ini.identityProviders.Remove(item.Name);
-        item.Name := item['id'];
-      end;
     end;
     ini.save;
   finally
@@ -255,11 +249,11 @@ begin
   Result := nil;
   frm := TEditIdForm.create(List.Owner);
   try
-    frm.Id := TFHIRServerIniComplex.create('id'+inttostr(ini.databases.Count), '');
+    frm.Id := TFHIRServerIniComplex.create(TFHIRServerConfigFileSection.create('id'+inttostr(ini.databases.Count)));
     if frm.ShowModal = mrOK then
     begin
-      result := frm.Id.link;
-      ini.identityProviders.add(result['id'], result.link);
+      result := ini.addIdentityProvider(frm.Id.name);
+      result.assign(frm.Id);
       ini.save;
     end;
   finally
@@ -438,12 +432,6 @@ begin
     begin
       item.assign(frm.EP);
       item.status := '';
-      if (item.name <> item['id']) then
-      begin
-        ini.endpoints.add(item['id'], item.link);
-        ini.endpoints.Remove(item.Name);
-        item.Name := item['id'];
-      end;
     end;
     ini.save;
   finally
@@ -459,12 +447,12 @@ begin
   frm := TEditEPForm.create(List.Owner);
   try
     frm.Ini := ini.link;
-    frm.EP := TFHIRServerIniComplex.create('EP'+inttostr(ini.databases.Count), '');
+    frm.EP := TFHIRServerIniComplex.create(TFHIRServerConfigFileSection.create('EP'+inttostr(ini.databases.Count)));
     frm.EP['path'] := '/path';
     if frm.ShowModal = mrOK then
     begin
-      result := frm.EP.link;
-      ini.endpoints.add(result['id'], result.link);
+      result := ini.addEndpoint(frm.EP.name);
+      result.assign(frm.EP);
       ini.save;
     end;
   finally
@@ -510,6 +498,8 @@ begin
         try
           form.Packages := MainConsoleForm.Packages.link;
           form.Connection := conn.link;
+          form.endpoint := item.name;
+          form.Filename := ini.filename;
           form.version := item['type'];
           form.mode := item['mode'];
           form.ShowModal;
@@ -628,12 +618,6 @@ begin
     begin
       item.assign(frm.Tx);
       item.status := '';
-      if (item.name <> item['id']) then
-      begin
-        ini.terminologies.add(item['id'], item.link);
-        ini.terminologies.Remove(item.Name);
-        item.Name := item['id'];
-      end;
     end;
     ini.save;
   finally
@@ -649,11 +633,11 @@ begin
   frm := TEditTxForm.create(List.Owner);
   try
     frm.Ini := ini.link;
-    frm.Tx := TFHIRServerIniComplex.create('Tx'+inttostr(ini.databases.Count), '');
+    frm.Tx := TFHIRServerIniComplex.create(TFHIRServerConfigFileSection.create('Tx'+inttostr(ini.databases.Count)));
     if frm.ShowModal = mrOK then
     begin
-      result := frm.Tx.link;
-      ini.terminologies.add(result['id'], result.link);
+      result := ini.addTerminology(frm.Tx.name);
+      result.assign(frm.Tx);
       ini.save;
     end;
   finally
@@ -792,12 +776,6 @@ begin
     begin
       item.assign(frm.DB);
       item.status := '';
-      if (item.name <> item['id']) then
-      begin
-        ini.databases.add(item['id'], item.link);
-        ini.databases.Remove(item.Name);
-        item.Name := item['id'];
-      end;
     end;
     ini.save;
   finally
@@ -812,11 +790,11 @@ begin
   Result := nil;
   frm := TEditDBForm.create(List.Owner);
   try
-    frm.DB := TFHIRServerIniComplex.create('DB'+inttostr(ini.databases.Count), '');
+    frm.DB := TFHIRServerIniComplex.create(TFHIRServerConfigFileSection.create('DB'+inttostr(ini.databases.Count)));
     if frm.ShowModal = mrOK then
     begin
-      result := frm.DB.link;
-      ini.databases.add(result['id'], result.link);
+      result := ini.addDatabase(frm.DB.name);
+      result.assign(frm.DB);
       ini.save;
     end;
   finally

@@ -1,7 +1,7 @@
 object InstallProgressForm: TInstallProgressForm
-  Left = 3731
+  Left = 1250
   Height = 370
-  Top = 115
+  Top = -570
   Width = 540
   BorderIcons = []
   BorderStyle = bsDialog
@@ -109,6 +109,15 @@ object InstallProgressForm: TInstallProgressForm
         0000000000000000000000000000000000000000000000000000
       }
       TabOrder = 1
+    end
+    object Button1: TButton
+      Left = 209
+      Height = 25
+      Top = 18
+      Width = 75
+      Caption = 'Button1'
+      OnClick = Button1Click
+      TabOrder = 2
     end
   end
   object Panel2: TPanel

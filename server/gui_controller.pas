@@ -213,38 +213,38 @@ end;
 
 function makeUcum : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('ucum', '');
-  result.value['type'] := 'ucum';
-  result.value['source'] := localFile('ucum-essence.xml');
+//  result := TFHIRServerIniComplex.Create('ucum');
+//  result.value['type'] := 'ucum';
+//  result.value['source'] := localFile('ucum-essence.xml');
 end;
 
 function makeLoinc : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('loinc', '');
-  result.value['type'] := 'loinc';
-  result.value['source'] := localFile('loinc-2.65.cache');
+//  result := TFHIRServerIniComplex.Create('loinc');
+//  result.value['type'] := 'loinc';
+//  result.value['source'] := localFile('loinc-2.65.cache');
 end;
 
 function makeLang : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('lang', '');
-  result.value['type'] := 'lang';
-  result.value['source'] := localFile('lang.txt');
+//  result := TFHIRServerIniComplex.Create('lang');
+//  result.value['type'] := 'lang';
+//  result.value['source'] := localFile('lang.txt');
 end;
 
 function makeR4 : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('r4', '');
-  result.value['path'] := '/r4';
-  result.value['version'] := 'r4';
-  result.value['database'] := 'utg';
+//  result := TFHIRServerIniComplex.Create('r4');
+//  result.value['path'] := '/r4';
+//  result.value['version'] := 'r4';
+//  result.value['database'] := 'utg';
 end;
 
 function makeUtgDB : TFHIRServerIniComplex;
 begin
-  result := TFHIRServerIniComplex.Create('sqlite', '');
-  result.value['type'] := 'sqlite';
-  result.value['database'] := localFile('fhir-server-gui.db');
+//  result := TFHIRServerIniComplex.Create('sqlite');
+//  result.value['type'] := 'sqlite';
+//  result.value['database'] := localFile('fhir-server-gui.db');
 end;
 
 procedure TFHIRServerController.makeDB;
@@ -304,14 +304,14 @@ procedure TFHIRServerController.checkOk;
 begin
   if not StringIsInteger16(FIni.web['http']) then
     raise EFslException.create('Port must be a Positive Integer between 0 and 65535');
-  if not folderExists(FIni.kernel['utg-folder']) then
-    raise EFslException.create('UTG Folder "'+FIni.kernel['utg-folder']+'" not found');
+//  if not folderExists(FIni.kernel['utg-folder']) then
+//    raise EFslException.create('UTG Folder "'+FIni.kernel['utg-folder']+'" not found');
 
   // we're going to run r4, on /r4, on the nominated port
   // we're going to trample all over the ini file to make sure it's set up correct
-  FIni.kernel['mode'] := 'tx';
-  FIni.kernel['tx-versions'] := 'r4';
-  FIni.kernel['packages-r4'] := '';
+//  FIni.kernel['mode'] := 'tx';
+//  FIni.kernel['tx-versions'] := 'r4';
+//  FIni.kernel['packages-r4'] := '';
   FIni.databases.Clear;
   FIni.databases.Add('utg', makeUtgDB);
   FIni.terminologies.clear;
@@ -360,7 +360,7 @@ begin
   FController.setStatus(ssStarting);
   try
     try
-      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.kernel['utg-folder'], FController.FIni.Link);
+      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.service['utg-folder'], FController.FIni.Link);
       try
         svc.DebugMode := true;
         if svc.CanStart then

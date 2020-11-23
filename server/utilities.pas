@@ -126,7 +126,7 @@ type
     destructor Destroy; override;
     Function Link : TFHIRServerSettings; overload;
 
-    procedure load(ini : TFHIRConfigFile);
+    procedure load(ini : TFHIRServerIniFile);
 
     Property Bases: TStringList read FBases;
     Property OwnerName: String read FOwnerName;// write FOwnerName;
@@ -158,7 +158,7 @@ type
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
-function connectToDatabase(s : String; details : TFHIRConfigFileSection) : TFDBManager;
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
 
 implementation
 
@@ -261,39 +261,38 @@ begin
   result := TFHIRServerSettings(inherited Link);
 end;
 
-procedure TFHIRServerSettings.load(ini: TFHIRConfigFile);
+procedure TFHIRServerSettings.load(ini: TFHIRServerIniFile);
 begin
    // FBases - set in kernel
    // FForLoad - set in kernel
-  FRunNumber := ini.section['kernel'].prop['run-count'].readAsInt(0) + 1;
-  ini.section['kernel'].prop['run-count'].value := inttostr(FRunNumber);
-  ini.save;
+  FRunNumber := ini.runNumber + 1;
+  ini.runNumber := FRunNumber;
   FRequestId := 0;
 
   FMaintenanceThreadStatus := 'Not started';
   FSubscriptionThreadStatus := 'Not started';
   FEmailThreadStatus := 'Not started';
 
-  FOwnerName := ini.section['admin'].prop['ownername'].value;
+  FOwnerName := ini.admin['ownername'];
 
-  FSMTPPort := ini.section['destinations'].section['email'].prop['port'].value;
-  FSMTPPassword := ini.section['destinations'].section['email'].prop['password'].value;
-  FSMTPHost := ini.section['destinations'].section['email'].prop['host'].value;
-  FSMTPSender := ini.section['destinations'].section['email'].prop['sender'].value;
-  FSMTPUsername := ini.section['destinations'].section['email'].prop['username'].value;
-  FSMTPUseTLS := ini.section['destinations'].section['email'].prop['secure'].readAsBool(false);
+  FSMTPPort := ini.destinations['email']['port'];
+  FSMTPPassword := ini.destinations['email']['password'];
+  FSMTPHost := ini.destinations['email']['host'];
+  FSMTPSender := ini.destinations['email']['sender'];
+  FSMTPUsername := ini.destinations['email']['username'];
+  FSMTPUseTLS := ini.destinations['email']['secure'] = 'true';
 
-  FDirectPort := ini.section['destinations'].section['direct'].prop['port'].value;
-  FDirectPassword := ini.section['destinations'].section['direct'].prop['password'].value;
-  FDirectHost := ini.section['destinations'].section['direct'].prop['host'].value;
-  FDirectSender := ini.section['destinations'].section['direct'].prop['sender'].value;
-  FDirectUsername := ini.section['destinations'].section['direct'].prop['username'].value;
-  FDirectPopHost  := ini.section['destinations'].section['direct'].prop['pop-host'].value;
-  FDirectPopPort  := ini.section['destinations'].section['direct'].prop['pop-port'].value;
+  FDirectPort := ini.destinations['direct']['port'];
+  FDirectPassword := ini.destinations['direct']['password'];
+  FDirectHost := ini.destinations['direct']['host'];
+  FDirectSender := ini.destinations['direct']['sender'];
+  FDirectUsername := ini.destinations['direct']['username'];
+  FDirectPopHost  := ini.destinations['direct']['pop-host'];
+  FDirectPopPort  := ini.destinations['direct']['pop-port'];
 
-  FSMSFrom := ini.section['destinations'].section['sms'].prop['from'].value;
-  FSMSToken := ini.section['destinations'].section['sms'].prop['token'].value;
-  FSMSAccount := ini.section['destinations'].section['sms'].prop['account'].value;
+  FSMSFrom := ini.destinations['sms']['from'];
+  FSMSToken := ini.destinations['sms']['token'];
+  FSMSAccount := ini.destinations['sms']['account'];
 end;
 
 function TFHIRServerSettings.nextRequestId: string;
@@ -365,33 +364,34 @@ begin
   end;
 end;
 
-function connectToDatabase(s : String; details : TFHIRConfigFileSection) : TFDBManager;
+function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
 var
   dbn, ddr : String;
 begin
-  dbn := details['database'].value;
-  ddr := details['driver'].value;
-  if sameText(details['type'].value, 'mssql') then
+  dbn := details['database'];
+  ddr := details['driver'];
+  if sameText(details['type'], 'mssql') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type'].value+'://'+details['server'].value+'/'+dbn+')');
+    Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'].value, dbn, details['username'].value, details['password'].value);
+    result := TFDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
-  else if sameText(details['type'].value, 'mysql') then
+  else if sameText(details['type'], 'mysql') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type'].value+'://'+details['server'].value+'/'+dbn+')');
-    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'].value, dbn, details['username'].value, details['password'].value);
+    Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
-  else if sameText(details['type'].value, 'SQLite') then
+  else if sameText(details['type'], 'SQLite') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type'].value+':'+dbn+')');
-    result := TFDBSQLiteManager.create(s, dbn, details['auto-create'].readAsBool(false));
+    Logging.log('Connect to '+s+' ('+details['type']+':'+dbn+')');
+    result := TFDBSQLiteManager.create(s, dbn, details['auto-create'] = 'true');
   end
   else
-    raise ELibraryException.Create('Unknown database type '+details['type'].value);
+    raise ELibraryException.Create('Unknown database type '+details['type']);
 end;
 
 end.
+
 
 
