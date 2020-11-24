@@ -40,7 +40,7 @@ uses
    fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   fhir_valuesets,
   fhir_htmlgen, ftx_sct_publisher, ftx_sct_services, ftx_loinc_publisher, ftx_loinc_services, ftx_sct_expressions, ftx_sct_analysis,
-  session, tx_server, ftx_service, tx_manager, server_constants, web_base;
+  session, tx_server, ftx_service, tx_manager, server_constants, web_event;
 
 Type
 

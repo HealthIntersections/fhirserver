@@ -40,7 +40,7 @@ uses
   fhir4_factory,
   fdb_manager, fdb_sqlite3,
   scim_server,
-  server_ini, webserver, kernel_tx, database_installer;
+  server_ini, web_base, kernel_tx, database_installer;
 
 type
   TFHIRServerStatus = (ssNotRunning, ssStarting, ssRunning, ssStopping);
@@ -248,56 +248,56 @@ begin
 end;
 
 procedure TFHIRServerController.makeDB;
-var
-  db : TFDBManager;
-  dbi : TFHIRDatabaseInstaller;
-  scim : TSCIMServer;
-  salt, un, pw, em, dr : String;
-  conn : TFDBConnection;
-  details : TFHIRServerIniComplex;
+//var
+//  db : TFDBManager;
+//  dbi : TFHIRDatabaseInstaller;
+//  scim : TSCIMServer;
+//  salt, un, pw, em, dr : String;
+//  conn : TFDBConnection;
+//  details : TFHIRServerIniComplex;
 begin
-  // check that user account details are provided
-  salt := FIni.admin['scim-salt'];
-  if (salt = '') then
-    salt := NewGuidId;
-  dr := 'openid,fhirUser,profile,user/*.*';
-  un := 'xx';
-  pw := 'xx';
-  em := 'none@nowhere.org';
-
-  db := TFDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
-  try
-    Logging.log('Ínstall database');
-    scim := TSCIMServer.Create(db.Link, salt, 'localhost', dr, true);
-    try
-      conn := db.GetConnection('setup');
-      try
-        dbi := TFHIRDatabaseInstaller.create(conn, TFHIRFactoryR4.create, TTerminologyServerFactory.create(fhirVersionRelease4));
-        try
-          dbi.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
-          dbi.Bases.Add('http://hl7.org/fhir');
-          dbi.Install(scim);
-        finally
-          dbi.free;
-        end;
-        scim.DefineAnonymousUser(conn);
-        scim.DefineAdminUser(conn, un, pw, em);
-        conn.Release;
-      except
-         on e:exception do
-         begin
-           Logging.log('Error: '+e.Message);
-           conn.Error(e);
-           recordStack(e);
-           raise;
-         end;
-      end;
-    finally
-      scim.Free;
-    end;
-  finally
-    db.free;
-  end;
+//  // check that user account details are provided
+//  salt := FIni.admin['scim-salt'];
+//  if (salt = '') then
+//    salt := NewGuidId;
+//  dr := 'openid,fhirUser,profile,user/*.*';
+//  un := 'xx';
+//  pw := 'xx';
+//  em := 'none@nowhere.org';
+//
+//  db := TFDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
+//  try
+//    Logging.log('Ínstall database');
+//    scim := TSCIMServer.Create(db.Link, salt, 'localhost', dr, true);
+//    try
+//      conn := db.GetConnection('setup');
+//      try
+//        dbi := TFHIRDatabaseInstaller.create(conn, TFHIRFactoryR4.create, TTerminologyServerFactory.create(fhirVersionRelease4));
+//        try
+//          dbi.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
+//          dbi.Bases.Add('http://hl7.org/fhir');
+//          dbi.Install(scim);
+//        finally
+//          dbi.free;
+//        end;
+//        scim.DefineAnonymousUser(conn);
+//        scim.DefineAdminUser(conn, un, pw, em);
+//        conn.Release;
+//      except
+//         on e:exception do
+//         begin
+//           Logging.log('Error: '+e.Message);
+//           conn.Error(e);
+//           recordStack(e);
+//           raise;
+//         end;
+//      end;
+//    finally
+//      scim.Free;
+//    end;
+//  finally
+//    db.free;
+//  end;
 end;
 
 procedure TFHIRServerController.checkOk;
@@ -350,50 +350,50 @@ begin
 end;
 
 procedure TFHIRServerControllerThread.execute;
-var
-  svc : TFHIRServiceTxServer;
-  s : String;
+//var
+//  svc : TFHIRServiceTxServer;
+//  s : String;
 begin
-  SetThreadName('Gui Controller');
-  FStopped := false;
-  s := 'Starting';
-  FController.setStatus(ssStarting);
-  try
-    try
-      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.service['utg-folder'], FController.FIni.Link);
-      try
-        svc.DebugMode := true;
-        if svc.CanStart then
-        begin
-          svc.postStart;
-          FController.FStats := svc.WebServer.Stats.link;
-          FController.setStatus(ssRunning);
-          while not FStopped do
-          begin
-            sleep(50);
-          end;
-        end;
-        s := 'Stopping';
-        Logging.log('Stopping');
-        FController.FStats.Free;
-        FController.FStats := nil;
-        FController.setStatus(ssStopping);
-        svc.Stop('User Command');
-        svc.DoStop;
-      finally
-        svc.Free;
-      end;
-      Logging.log('Stopped');
-    except
-      on e : exception do
-      begin
-        Logging.log('Exception '+s+': '+e.message);
-      end;
-    end;
-  finally
-    FController.setStatus(ssNotRunning);
-  end;
-  closeThread;
+//  SetThreadName('Gui Controller');
+//  FStopped := false;
+//  s := 'Starting';
+//  FController.setStatus(ssStarting);
+//  try
+//    try
+//      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.service['utg-folder'], FController.FIni.Link);
+//      try
+//        svc.DebugMode := true;
+//        if svc.CanStart then
+//        begin
+//          svc.postStart;
+//          FController.FStats := svc.WebServer.Stats.link;
+//          FController.setStatus(ssRunning);
+//          while not FStopped do
+//          begin
+//            sleep(50);
+//          end;
+//        end;
+//        s := 'Stopping';
+//        Logging.log('Stopping');
+//        FController.FStats.Free;
+//        FController.FStats := nil;
+//        FController.setStatus(ssStopping);
+//        svc.Stop('User Command');
+//        svc.DoStop;
+//      finally
+//        svc.Free;
+//      end;
+//      Logging.log('Stopped');
+//    except
+//      on e : exception do
+//      begin
+//        Logging.log('Exception '+s+': '+e.message);
+//      end;
+//    end;
+//  finally
+//    FController.setStatus(ssNotRunning);
+//  end;
+//  closeThread;
 end;
 
 end.

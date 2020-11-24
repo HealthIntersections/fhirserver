@@ -32,9 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
-  fsl_base, fsl_utilities,
-  fhir_objects, fhir_common, fhir_factory;
+  SysUtils, Classes,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http,
+  fhir_objects, fhir_common, fhir_factory, fhir_parser;
 
 type
   TFHIRBundleBuilder = class (TFslObject)
@@ -67,6 +67,21 @@ type
     function getBundle : TFHIRResourceV; override;
   end;
 
+  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
+  private
+    FFileBase : String;
+    FFiles : TFslMap<TFslFile>;
+    function fileForType(rType : String) : TFslFile;
+    procedure writeResource(res : TFHIRResourceV); overload;
+    procedure writeResource(rType : String; cnt : TFslBuffer); overload;
+  public
+    constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW; fileBase : String; files : TFslMap<TFslFile>);
+    destructor Destroy; override;
+
+    procedure addEntry(entry : TFhirBundleEntryW; first : boolean); override;
+    function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; override;
+    function getBundle : TFHIRResourceV; override;
+  end;
 
 implementation
 
@@ -133,6 +148,87 @@ end;
 function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
 begin
   result := FBundle.MoveToFirst(res);
+end;
+
+{ TFHIRBundleBuilderNDJson }
+
+constructor TFHIRBundleBuilderNDJson.Create(factory : TFHIRFactory; bundle: TFHIRBundleW; fileBase: String; files : TFslMap<TFslFile>);
+begin
+  inherited Create(factory, bundle);
+  FFileBase := fileBase;
+  FFiles := files;
+end;
+
+destructor TFHIRBundleBuilderNDJson.Destroy;
+begin
+  writeResource(FBundle.Resource);
+  Ffiles.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TFslFile;
+begin
+  if not FFiles.TryGetValue(rType, result) then
+  begin
+    result := TFslFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    FFiles.Add(rType, result);
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntryW; first : boolean);
+begin
+  if (entry.resource.Tag <> nil) and (entry.resource.Tag is TFslBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TFslBuffer)
+  else if entry.resource <> nil then
+    writeResource(entry.resource);
+  entry.Tag := nil;
+  entry.resource := nil;
+  FBundle.addEntry(entry, first);
+end;
+
+function TFHIRBundleBuilderNDJson.getBundle: TFHIRResourceV;
+begin
+  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
+end;
+
+function TFHIRBundleBuilderNDJson.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
+begin
+  raise EFHIRTodo.create('TFHIRBundleBuilderNDJson.moveToFirst');
+end;
+
+
+procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResourceV);
+var
+  f : TFslFile;
+  json : TFHIRComposer;
+  b : ansichar;
+begin
+  f := fileForType(res.fhirType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  json := FFactory.makeComposer(nil, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
+  try
+    json.Compose(f, res);
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TFslBuffer);
+var
+  f : TFslFile;
+  b : ansiChar;
+begin
+  f := fileForType(rType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  cnt.SaveToStream(f);
 end;
 
 

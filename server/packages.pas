@@ -41,7 +41,7 @@ uses
   fsl_npm, package_spider,
   fhir_objects, fsl_stream,
   fhir4_types, // choice of R4 is totally arbitrary
-  web_base, session;
+  web_event, session;
 
 type
   TMatchTableSort = (mtsNull, mtsId, mtsVersion, mtsDate, mtsFhirVersion, mtsCanonical, mtsDownloads);

@@ -603,7 +603,7 @@
         <DCCReference Include="..\library\cda\cda_parser.pas"/>
         <DCCReference Include="..\library\cda\tests\cda_tests.pas"/>
         <DCCReference Include="..\library\fdb\tests\fdb_tests.pas"/>
-        <DCCReference Include="kernel_testing.pas"/>
+        <DCCReference Include="server_testing.pas"/>
         <DCCReference Include="..\library\fsl\tests\fsl_tests_web.pas"/>
         <DCCReference Include="..\library\fhir\tests\fhir_tests_javascript.pas"/>
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_Parser.pas"/>
@@ -622,6 +622,7 @@
         <DCCReference Include="..\library\fhir4\tests\fhir4_tests_graphql.pas"/>
         <DCCReference Include="admin\server_ini.pas"/>
         <DCCReference Include="tests\test_server_ini.pas"/>
+        <DCCReference Include="web_event.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -493,7 +493,7 @@ uses
   cda_parser in '..\library\cda\cda_parser.pas',
   cda_tests in '..\library\cda\tests\cda_tests.pas',
   fdb_tests in '..\library\fdb\tests\fdb_tests.pas',
-  kernel_testing in 'kernel_testing.pas',
+  server_testing in 'server_testing.pas',
   fsl_tests_web in '..\library\fsl\tests\fsl_tests_web.pas',
   fhir_tests_javascript in '..\library\fhir\tests\fhir_tests_javascript.pas',
   fhir4_tests_Parser in '..\library\fhir4\tests\fhir4_tests_Parser.pas',
@@ -511,7 +511,8 @@ uses
   tests_search_syntax in 'tests\tests_search_syntax.pas',
   fhir4_tests_graphql in '..\library\fhir4\tests\fhir4_tests_graphql.pas',
   server_ini in 'admin\server_ini.pas',
-  test_server_ini in 'tests\test_server_ini.pas';
+  test_server_ini in 'tests\test_server_ini.pas',
+  web_event in 'web_event.pas';
 
 begin
   ExecuteFhirServer;

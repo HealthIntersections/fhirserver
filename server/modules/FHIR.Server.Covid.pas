@@ -39,7 +39,7 @@ uses
   fsl_http,
   fhir_objects, fhir_factory, fhir_client, fhir_pathengine,
   fhir4_resources, fhir4_types, fhir4_liquid, fhir4_pathengine, fhir4_context, fhir4_client, fhir4_resources_base,
-  session, webserver, web_source, server_context;
+  session, web_base, endpoint, webserver, web_source, server_context;
 
 type
   TCovidScriptContext = class;
