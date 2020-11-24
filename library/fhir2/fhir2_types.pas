@@ -2143,8 +2143,8 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function isDateTime : boolean; override;
-    function getDateValue : TFslDateTime; override;
-    procedure setDateValue(value : TFslDateTime); override;
+    function GetDateValue : TFslDateTime; override;
+    procedure SetDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the dateTime
     property value : TFslDateTime read FValue write SetValue;
@@ -2243,8 +2243,8 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function isDateTime : boolean; override;
-    function getDateValue : TFslDateTime; override;
-    procedure setDateValue(value : TFslDateTime); override;
+    function GetDateValue : TFslDateTime; override;
+    procedure SetDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the date
     property value : TFslDateTime read FValue write SetValue;
@@ -2634,8 +2634,8 @@ Type
     function isEmpty : boolean; override;
     function fhirType : string; override;
     function isDateTime : boolean; override;
-    function getDateValue : TFslDateTime; override;
-    procedure setDateValue(value : TFslDateTime); override;
+    function GetDateValue : TFslDateTime; override;
+    procedure SetDateValue(value : TFslDateTime); override;
   {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the instant
     property value : TFslDateTime read FValue write SetValue;
@@ -8983,8 +8983,6 @@ begin
 end;
 
 function TFhirEnumList.sizeInBytesV : cardinal;
-var
-  s : String;
 begin
   result := inherited sizeInBytes;
   inc(result, length(FSystems) * sizeof(pointer));

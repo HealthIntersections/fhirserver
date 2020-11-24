@@ -1,7 +1,7 @@
 object ProgressForm: TProgressForm
-  Left = 3508
+  Left = 1304
   Height = 67
-  Top = -34
+  Top = -556
   Width = 387
   BorderIcons = []
   BorderStyle = bsSingle
@@ -20,8 +20,8 @@ object ProgressForm: TProgressForm
     Left = 16
     Height = 15
     Top = 11
-    Width = 34
-    Caption = 'Label1'
+    Width = 79
+    Caption = 'Getting Started'
     ParentColor = False
   end
   object BitBtn1: TBitBtn

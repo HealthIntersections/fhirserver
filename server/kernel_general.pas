@@ -58,7 +58,7 @@ Uses
   tx_manager, tx_server,
   tx_unii,
   scim_server,
-  database_installer, server_version, server_ini, utilities,
+  database_installer, server_version, server_config, utilities,
   server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   storage, database,

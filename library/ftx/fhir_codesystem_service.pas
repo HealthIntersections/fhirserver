@@ -110,7 +110,9 @@ type
   private
     FMap : TFslMap<TFHIRCodeSystemEntry>;
     FList : TFslList<TFHIRCodeSystemEntry>;
+    {$IFDEF FPC}
     function sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
+    {$ENDIF}
     procedure updateList(url, version: String);
   protected
     function sizeInBytesV : cardinal; override;
@@ -1285,6 +1287,7 @@ begin
   end;
 end;
 
+{$IFDEF FPC}
 function TFHIRCodeSystemManager.sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
 var v1, v2, mm1, mm2 : string;
 begin
@@ -1306,6 +1309,7 @@ begin
       result := CompareText(mm1, mm2);
   end;
 end;
+{$ENDIF}
 
 procedure TFHIRCodeSystemManager.updateList(url, version : String);
 var

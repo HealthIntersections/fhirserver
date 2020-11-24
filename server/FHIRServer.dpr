@@ -510,9 +510,12 @@ uses
   fsl_tests_iduri in '..\library\fsl\tests\fsl_tests_iduri.pas',
   tests_search_syntax in 'tests\tests_search_syntax.pas',
   fhir4_tests_graphql in '..\library\fhir4\tests\fhir4_tests_graphql.pas',
-  server_ini in 'admin\server_ini.pas',
-  test_server_ini in 'tests\test_server_ini.pas',
-  web_event in 'web_event.pas';
+  server_config in 'admin\server_config.pas',
+  test_server_config in 'tests\test_server_config.pas',
+  web_event in 'web_event.pas',
+  txweb_endpoint in 'txweb_endpoint.pas',
+  twilio_endpoint in 'twilio_endpoint.pas',
+  common_endpoint in 'common_endpoint.pas';
 
 begin
   ExecuteFhirServer;

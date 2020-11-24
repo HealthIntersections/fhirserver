@@ -255,7 +255,7 @@ Type
 
   TFslComparer<T : class> = class abstract (TFslObject)
   protected
-    function compare(const l, r : T) : integer; virtual; abstract;
+    function Compare(const l, r : T) : integer; virtual; abstract;
   public
     function link : TFslComparer<T>; overload;
   end;
@@ -447,6 +447,7 @@ Type
   type
     TFslCollectionKeyNotifyEvent = procedure(ASender: TObject; const AItem: string; AAction: TCollectionNotification) of object;
     TFslCollectionValueNotifyEvent = procedure(ASender: TObject; const AItem: T; AAction: TCollectionNotification) of object;
+    TFslCollectionKeyMissingEvent = procedure(ASender: TFslMap<T>; const key : String; var item : T) of object;
   private
     type
       TItem = record
@@ -599,6 +600,7 @@ Type
   private
     FOnKeyNotify: TFslCollectionKeyNotifyEvent;
     FOnValueNotify: TFslCollectionValueNotifyEvent;
+    FOnNoMatch: TFslCollectionKeyMissingEvent;
     FKeyCollection: TKeyCollection;
     FValueCollection: TValueCollection;
     function GetKeys: TKeyCollection;
@@ -613,6 +615,7 @@ Type
     property Values: TValueCollection read GetValues;
     property OnKeyNotify: TFslCollectionKeyNotifyEvent read FOnKeyNotify write FOnKeyNotify;
     property OnValueNotify: TFslCollectionValueNotifyEvent read FOnValueNotify write FOnValueNotify;
+    property OnNoMatch: TFslCollectionKeyMissingEvent read FOnNoMatch write FOnNoMatch;
   end;
 
   TFslStringDictionary = class (TDictionary<String, String>)
@@ -2279,6 +2282,8 @@ begin
     Result := FItems[index].Value
   else if hasDefault then
     result := FDefault
+  else if assigned(OnNoMatch) then
+    OnNoMatch(self, Key, result)
   else
     raise EListError.Create('Attempt to access unknown value "'+key+'" from map ' + Fname);
 end;

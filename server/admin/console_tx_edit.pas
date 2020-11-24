@@ -7,28 +7,44 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   Buttons,
-  server_ini;
+  fdb_dialects, fdb_manager, fdb_odbc, fdb_odbc_objects,
+  server_config, utilities;
 
 type
   { TEditTxForm }
 
   TEditTxForm = class(TForm)
+    btnDBTest: TBitBtn;
     btnSource: TBitBtn;
     btnDBTest1: TBitBtn;
     btnDBTest3: TBitBtn;
+    btnTxImport: TBitBtn;
+    cbxDriver: TComboBox;
     cbxType: TComboBox;
-    cbxSource: TComboBox;
     chkDefault: TCheckBox;
+    edtDBName: TEdit;
     edtIdentity: TEdit;
-    edtSource: TEdit;
+    edtPassword: TEdit;
+    edtServer: TEdit;
+    edtFile: TEdit;
+    edtUsername: TEdit;
     edtVersion: TEdit;
     Label1: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     dlgOpen: TOpenDialog;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
     Panel1: TPanel;
+    rbMSSQL: TRadioButton;
+    rbMySQL: TRadioButton;
+    procedure btnDBTestClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -37,14 +53,11 @@ type
     procedure FormShow(Sender: TObject);
     procedure rbMSSQLClick(Sender: TObject);
   private
-    FIni: TFHIRServerIniFile;
-    FTx: TFHIRServerIniComplex;
+    FTx: TFHIRServerConfigSection;
     function isDatabase(type_: String): boolean;
-    procedure SetIni(AValue: TFHIRServerIniFile);
-    procedure SetTx(AValue: TFHIRServerIniComplex);
+    procedure SetTx(AValue: TFHIRServerConfigSection);
   public
-    property Tx : TFHIRServerIniComplex read FTx write SetTx;
-    property Ini : TFHIRServerIniFile read FIni write SetIni;
+    property Tx : TFHIRServerConfigSection read FTx write SetTx;
     procedure update;
   end;
 
@@ -59,7 +72,6 @@ implementation
 
 procedure TEditTxForm.FormDestroy(Sender: TObject);
 begin
-  FIni.Free;
   FTx.Free;
 end;
 
@@ -77,61 +89,105 @@ begin
   result := (type_ = 'rxnorm') or (type_ = 'ndc') or (type_ = 'unii') or (type_ = 'ndfrt') or (type_ = 'nci');
 end;
 
-procedure TEditTxForm.SetIni(AValue: TFHIRServerIniFile);
-var
-  s : String;
-begin
-  FIni.Free;
-  FIni:=AValue;
-  if (FIni <> nil) then
-  begin
-    cbxSource.items.clear;
-    for s in FIni.databases.SortedKeys do
-      cbxSource.items.add(s);
-  end;
-end;
-
 procedure TEditTxForm.cbxTypeChange(Sender: TObject);
 begin
-  Tx['type'] := cbxType.items[cbxType.ItemIndex];
-  if isDatabase(Tx['type']) then
+  if isDatabase(Tx['type'].value) then
   begin
-    edtSource.Visible := false;
-    btnSource.Visible := false;
-    cbxSource.Visible := true;
-    cbxSource.itemIndex := cbxSource.Items.IndexOf(Tx['database']);
+    edtFile.enabled := false;
+    btnSource.enabled := false;
+    rbMSSQL.Enabled := true;
+    rbMySQL.Enabled := true;
+    cbxDriver.Enabled := true;
+    edtServer.Enabled := true;
+    edtDBName.Enabled := true;
+    edtUsername.Enabled := true;
+    edtPassword.Enabled := true;
   end
   else
   begin
-    cbxSource.Visible := false;
-    edtSource.Visible := true;
-    btnSource.Visible := true;
-    edtSource.Text := Tx['source'];
+    edtFile.enabled := true;
+    btnSource.enabled := true;
+    rbMSSQL.Enabled := false;
+    rbMySQL.Enabled := false;
+    cbxDriver.Enabled := false;
+    edtServer.Enabled := false;
+    edtDBName.Enabled := false;
+    edtUsername.Enabled := false;
+    edtPassword.Enabled := false;
   end;
-  edtVersion.enabled := Tx['type'] = 'ndc';
-  chkDefault.Enabled := Tx['type'] = 'snomed';
+  edtVersion.enabled := Tx['type'].value = 'ndc';
+  chkDefault.Enabled := Tx['type'].value = 'snomed';
 end;
 
 procedure TEditTxForm.btnSourceClick(Sender: TObject);
 begin
-  dlgOpen.fileName := edtSource.text;
+  dlgOpen.fileName := edtFile.text;
   if dlgOpen.Execute then
-    edtSource.text := dlgOpen.fileName;
+    edtFile.text := dlgOpen.fileName;
+end;
+
+procedure TEditTxForm.btnDBTestClick(Sender: TObject);
+var
+  db : TFDBManager;
+begin
+  update;
+  try
+    db := connectToDatabase(tx);
+    try
+      db.checkConnection;
+    finally
+      db.free;
+    end;
+    MessageDlg('Database Connection Succeeded', mtInformation, [mbok], 0);
+  except
+    on e: Exception do
+      MessageDlg('Database Connection Failed: '+e.message, mtError, [mbok], 0);
+  end
 end;
 
 procedure TEditTxForm.FormResize(Sender: TObject);
 begin
+  rbMySQL.left := edtIdentity.Left + edtIdentity.Width div 2;
 end;
 
 procedure TEditTxForm.FormShow(Sender: TObject);
+var
+ env : TOdbcEnv;
+ adm : TOdbcAdministrator;
 begin
+  env := TOdbcEnv.create;
+  try
+    adm := TOdbcAdministrator.create(env);
+    try
+      cbxDriver.items.assign(adm.Drivers);
+    finally
+      adm.Free;
+    end;
+  finally
+    env.free;
+  end;
 end;
 
 procedure TEditTxForm.rbMSSQLClick(Sender: TObject);
+var
+  dialect : TFDBPlatform;
+  i : integer;
 begin
+  if rbMySQL.Checked then
+    dialect := kdbMySQL
+  else
+    dialect := kdbSQLServer;
+  if RecogniseDriver(cbxDriver.Text) <> dialect then
+  begin
+    i := cbxDriver.items.IndexOf(StandardODBCDriverName(dialect));
+    if i > -1 then
+      cbxDriver.text := StandardODBCDriverName(dialect)
+    else
+      cbxDriver.text := '';
+  end;
 end;
 
-procedure TEditTxForm.SetTx(AValue: TFHIRServerIniComplex);
+procedure TEditTxForm.SetTx(AValue: TFHIRServerConfigSection);
 begin
   FTx.Free;
   FTx:=AValue;
@@ -139,28 +195,45 @@ begin
   if FTx <> nil then
   begin
     edtIdentity.text := Tx.name;
-    cbxType.itemIndex := cbxType.Items.IndexOf(Tx['type']);
+    cbxType.itemIndex := cbxType.Items.IndexOf(Tx['type'].value);
     cbxTypeChange(self);
-    edtVersion.text := Tx['version'];
-    chkDefault.Checked := Tx['default'] = 'true';
+
+    edtFile.Text := Tx['source'].value;
+    rbMSSQL.Checked := tx['db-type'].value = 'mssql';
+    rbMySQL.Checked := tx['db-type'].value = 'mysql';
+    rbMSSQLClick(self);
+    if tx['db-type'].value <> '' then
+      cbxDriver.Text := tx['db-type'].value;
+    edtServer.Text := tx['db-server'].value;
+    edtDBName.Text := tx['db-database'].value;
+    edtUsername.Text := tx['db-username'].value;
+    edtPassword.Text := tx['db-password'].value;
+    edtVersion.text := Tx['version'].value;
+    chkDefault.Checked := Tx['default'].readAsBool;
   end;
 end;
 
 procedure TEditTxForm.update;
 begin
   Tx.name := edtIdentity.text;
-  if cbxSource.itemIndex > -1 then
-    Tx['database'] := cbxSource.Items[cbxSource.itemIndex]
+  Tx['type'].value := cbxType.items[cbxType.ItemIndex];
+  Tx['source'].value := edtFile.Text;
+  tx['db-type'].value := cbxDriver.Text;
+  if rbMySQL.Checked then
+    tx['db-type'].value := 'mysql'
   else
-    Tx['database'] := '';
-  Tx['source'] := edtSource.Text;
-  Tx['version'] := edtVersion.text;
+    tx['db-type'].value := 'mssql';
+  tx['db-server'].value := edtServer.Text;
+  tx['db-database'].value := edtDBName.Text;
+  tx['db-username'].value := edtUsername.Text;
+  tx['db-password'].value := edtPassword.Text;
+  Tx['version'].value := edtVersion.text;
   if not chkDefault.Enabled then
-    Tx['default'] := ''
+    Tx['default'].value := ''
   else if chkDefault.Checked then
-    Tx['default'] := 'true'
+    Tx['default'].value := 'true'
   else
-    Tx['default'] := 'false'
+    Tx['default'].value := 'false'
 end;
 
 end.

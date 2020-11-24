@@ -363,6 +363,8 @@ Type
     function HasChild(kind : TLoincFilterHolderKind; v : integer) : boolean;
   end;
 
+  { TLOINCServices }
+
   TLOINCServices = class (TCodeSystemProvider)
   Private
     FLang : TLoincLanguages;
@@ -398,6 +400,7 @@ Type
     Function Link : TLOINCServices; Overload;
 
     Procedure Load(Const sFilename : String);
+    class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String; statedDate : String);
     function langsForLang(const lang : THTTPLanguages): TLangArray;
     function supportsLang(const lang : THTTPLanguages): boolean;
@@ -522,10 +525,6 @@ end;
 
 // the bytes contain UTF8
 function memU8toString(bytes : TBytes; index, chars : integer) : String;
-{$IFNDEF FPC}
-var
-  a : AnsiString;
-{$ENDIF}
 begin
   if chars = 0 then
     exit('');
@@ -536,9 +535,6 @@ begin
   Move(bytes[index], result[1], chars);
   {$ELSE}
   result := TEncoding.UTF8.GetString(bytes, index, chars);
-//  setLength(a, chars);
-//  Move(bytes[index], a[1], chars);
-//  result := String(a);
   {$ENDIF}
 end;
 
@@ -984,7 +980,8 @@ begin
   result := Desc.GetEntry(iName, lang);
 end;
 
-procedure TLOINCServices.GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TStringList);
+procedure TLOINCServices.GetDisplaysByName(const sCode: String;
+  langs: TLangArray; list: TStringList);
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
@@ -1219,6 +1216,53 @@ begin
   Loaded := true;
 end;
 
+class function TLOINCServices.checkFile(const sFilename: String): String;
+var
+  oFile : Tfilestream;
+  oread : TReader;
+  v : String;
+  function readBytes : TBytes;
+  begin
+    SetLength(result, oRead.ReadInteger);
+    if length(result) > 0 then
+      oread.Read(result[0], length(result));
+  end;
+begin
+  try
+    oFile := TFileStream.Create(sFilename, fmOpenRead + fmShareDenyWrite);
+    try
+      oread := TReader.Create(oFile, 8192);
+      try
+        v := oRead.ReadString;
+        if (v = LOINC_CACHE_VERSION_CURRENT) or (v = LOINC_CACHE_VERSION_UTF16) then
+        begin
+          oRead.ReadInteger;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          ReadBytes;
+          oRead.ReadInteger;
+          result := 'Ok (version = '+oRead.ReadString+')';
+        end
+        else
+          result := 'Needs rebuilding';
+      Finally
+        oread.Free;
+      End;
+    Finally
+      oFile.Free;
+    End;
+  except
+    on e : Exception do
+      result := 'Error: '+e.message;
+  end;
+end;
+
 procedure TLOINCServices.Save(const sFilename: String; statedDate : String);
 var
   oFile : Tfilestream;
@@ -1288,7 +1332,9 @@ begin
   end;
 end;
 
-function TLOINCServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
+function TLOINCServices.searchFilter(filter: TSearchFilterText;
+  prep: TCodeSystemProviderFilterPreparationContext; sort: boolean
+  ): TCodeSystemProviderFilterContext;
 var
   matches : TMatchArray;
   children : TCardinalArray;
@@ -1787,7 +1833,7 @@ begin
   inc(result, FBuilder.sizeInBytes);
 end;
 
-function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
+function TLOINCServices.FindStem(s: String; var index: Integer): Boolean;
 var
   L, H, I, c: Integer;
   lang : byte;
@@ -2017,7 +2063,8 @@ begin
   end;
 end;
 
-function TLoincServices.ChildCount(context: TCodeSystemProviderContext): integer;
+function TLOINCServices.ChildCount(context: TCodeSystemProviderContext
+  ): integer;
 var
   ctxt : TLoincProviderContext;
 begin
@@ -2037,7 +2084,8 @@ begin
   ctxt.Free;
 end;
 
-function TLoincServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function TLOINCServices.getcontext(context: TCodeSystemProviderContext;
+  ndx: integer): TCodeSystemProviderContext;
 begin
   if (context = nil) then
     result := TLoincProviderContext.Create(lpckCode, ndx) // offset from 0 to avoid ambiguity about nil contxt, and first entry
@@ -2045,7 +2093,7 @@ begin
     raise ETerminologyError.create('shouldn''t be here');
 end;
 
-function TLoincServices.Code(context: TCodeSystemProviderContext): string;
+function TLOINCServices.Code(context: TCodeSystemProviderContext): string;
 var
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry, iCode, iOther, iConcepts, iStem, iParent, iChildren, iDescendents, iDescendantConcepts : Cardinal;
@@ -2073,7 +2121,8 @@ begin
   end;
 end;
 
-function TLoincServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
+function TLOINCServices.Display(context: TCodeSystemProviderContext;
+  const lang: THTTPLanguages): string;
 var
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem : Cardinal;
@@ -2208,7 +2257,8 @@ begin
   End;
 end;
 
-procedure TLoincServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
+procedure TLOINCServices.Displays(code: String; list: TStringList;
+  const lang: THTTPLanguages);
 begin
   GetDisplaysByName(code, langsForLang(lang), list);
 end;
@@ -2219,22 +2269,24 @@ begin
   result := '';
 end;
 
-function TLoincServices.getDisplay(code: String; const lang : THTTPLanguages): String;
+function TLOINCServices.getDisplay(code: String; const lang: THTTPLanguages
+  ): String;
 begin
   result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then
     raise ETerminologyError.create('unable to find '+code+' in '+systemUri(nil));
 end;
 
-function TLoincServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+function TLOINCServices.IsAbstract(context: TCodeSystemProviderContext
+  ): boolean;
 begin
   result := false; // loinc don't do abstract
 end;
 
-function TLoincServices.locate(code: String; var message : String): TCodeSystemProviderContext;
+function TLOINCServices.locate(code: String; var message: String
+  ): TCodeSystemProviderContext;
 var
   i : Cardinal;
-  s : TLoincStrings;
 begin
   if CodeList.FindCode(code, i) then
     result := TLoincProviderContext.Create(lpckCode, i)
@@ -2246,12 +2298,12 @@ begin
     result := nil;//raise ETerminologyError.create('unable to find '+code+' in '+system);
 end;
 
-function TLoincServices.systemUri(context : TCodeSystemProviderContext): String;
+function TLOINCServices.systemUri(context: TCodeSystemProviderContext): String;
 begin
   result := 'http://loinc.org';
 end;
 
-function TLoincServices.TotalCount: integer;
+function TLOINCServices.TotalCount: integer;
 begin
   result := CodeList.Count;
 end;
@@ -2271,17 +2323,19 @@ begin
   result := FVersion;
 end;
 
-function TLoincServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+function TLOINCServices.InFilter(ctxt: TCodeSystemProviderFilterContext;
+  concept: TCodeSystemProviderContext): Boolean;
 begin
   result := TLoincFilterHolder(ctxt).HasChild(lfkConcept, integer(concept)-1);
 end;
 
-procedure TLoincServices.Close(ctxt: TCodeSystemProviderFilterContext);
+procedure TLOINCServices.Close(ctxt: TCodeSystemProviderFilterContext);
 begin
   TLoincFilterHolder(ctxt).free;
 end;
 
-function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+function TLOINCServices.FilterByPropertyId(prop: TLoincPropertyType;
+  op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
   function getProp(i : integer) : String;
   var
     langs : TLangArray;
@@ -2366,7 +2420,8 @@ begin
 end;
 
 // this is a rare operation. But even so, is it worth pre-calculating this one on import?
-function TLoincServices.FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+function TLOINCServices.FilterBySubset(op: TFhirFilterOperator;
+  subset: TLoincSubsetId): TCodeSystemProviderFilterContext;
 begin
   if op <> foEqual then
     raise ETerminologyError.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
@@ -2427,7 +2482,8 @@ begin
     result := lsiNull;
 end;
 
-function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
+function TLOINCServices.FilterByHeirarchy(op: TFhirFilterOperator;
+  value: String; transitive: boolean): TCodeSystemProviderFilterContext;
 var
   index : Cardinal;
   aChildren, c : ftx_loinc_services.TCardinalArray;
@@ -2466,7 +2522,8 @@ begin
   end;
 end;
 
-function TLoincServices.FilterByIsA(value: String; this : boolean): TCodeSystemProviderFilterContext;
+function TLOINCServices.FilterByIsA(value: String; this: boolean
+  ): TCodeSystemProviderFilterContext;
 var
   index, i: Cardinal;
   aChildren, c : ftx_loinc_services.TCardinalArray;
@@ -2528,7 +2585,9 @@ begin
     result := nil;
 end;
 
-function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TLOINCServices.filter(prop: String; op: TFhirFilterOperator;
+  value: String; prep: TCodeSystemProviderFilterPreparationContext
+  ): TCodeSystemProviderFilterContext;
 begin
   if prop = 'SCALE_TYP' then
     result := FilterByPropertyId(lptScales, op, value)
@@ -2566,18 +2625,21 @@ begin
     result := nil;
 end;
 
-function TLoincServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function TLOINCServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext
+  ): TCodeSystemProviderContext;
 begin
   result := TLoincProviderContext.create(lpckCode, TLoincFilterHolder(ctxt).FChildren[TLoincFilterHolder(ctxt).FIndex-1]);
 end;
 
-function TLoincServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+function TLOINCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext
+  ): boolean;
 begin
   inc(TLoincFilterHolder(ctxt).FIndex);
   result := TLoincFilterHolder(ctxt).FIndex <= length(TLoincFilterHolder(ctxt).FChildren);
 end;
 
-function TLoincServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+function TLOINCServices.locateIsA(code, parent: String
+  ): TCodeSystemProviderContext;
 begin
   result := nil; // cause loinc don't do subsumption
 end;
@@ -2587,7 +2649,8 @@ begin
   result := 'LOINC';
 end;
 
-function TLoincServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
+function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext;
+  code: String; var message: String): TCodeSystemProviderContext;
 var
   i : Cardinal;
   holder : TLoincFilterHolder;

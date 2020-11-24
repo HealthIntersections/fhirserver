@@ -68,6 +68,8 @@ Type
     property canonical : String read FCanonical write FCanonical;
   end;
 
+  { TUcumServices }
+
   TUcumServices = class (TCodeSystemProvider)
   Private
     FModel : TUcumModel;
@@ -228,6 +230,7 @@ Type
 
     // load from ucum-essence.xml
     Procedure Import(sFilename : String);
+    class function checkFile(sFilename : String) : String;
 
     Property Loaded : Boolean read FLoaded write FLoaded;
 
@@ -612,7 +615,7 @@ begin
     result := '';
 end;
 
-function TUcumServices.Validate(code: String): String;
+function TUcumServices.validate(code: String): String;
 begin
   if (code <> '') Then
   Try
@@ -722,7 +725,7 @@ begin
   End;
 end;
 
-function TUcumServices.Version(context: TCodeSystemProviderContext): String;
+function TUcumServices.version(context: TCodeSystemProviderContext): String;
 begin
   result := UcumVersion;
 end;
@@ -942,6 +945,31 @@ begin
   end;
 end;
 
+class function TUcumServices.checkFile(sFilename: String): String;
+var
+  oXml : TMXmlDocument;
+  rd : String;
+begin
+  try
+    oXml := TMXmlParser.parseFile(sFilename, [xpDropWhitespace]);
+    try
+      if oXml.document.Name <> 'root' Then
+        raise ETerminologySetup.create('Invalid ucum essence file - "root" element not found')
+      else
+      begin
+        rd := oXml.document.Attribute['revision-date'];
+        rd := copy(rd, 8, length(rd)-9);
+        result := 'Ok (version = '+oXml.document.attribute['version']+', date = '+rd+')';
+      end;
+    finally
+      oXml.Free;
+    end;
+  except
+    on e : Exception do
+      result := 'Error: '+e.message;
+  end;
+end;
+
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 var
   code : String;
@@ -1032,7 +1060,7 @@ begin
   result := nil;
 end;
 
-function TUcumServices.ParseDecimal(s, s1: String): TFslDecimal;
+function TUcumServices.ParseDecimal(S, s1: String): TFslDecimal;
 begin
   if s = '' then
     result := TFslDecimal.makeOne
@@ -1040,7 +1068,7 @@ begin
     result := TFslDecimal.ValueOf(s);
 end;
 
-Function TUcumServices.ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
+function TUcumServices.ParsePrefix(oElem: TMXmlElement): TUcumPrefix;
 var
   oChild : TMXmlElement;
   s : String;
@@ -1076,7 +1104,7 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
+function TUcumServices.ParseBaseUnit(oElem: TMXmlElement): TUcumBaseUnit;
 var
   oChild : TMXmlElement;
   s : String;
@@ -1107,7 +1135,7 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
+function TUcumServices.ParseUnit(oElem: TMXmlElement): TUcumDefinedUnit;
 var
   oChild : TMXmlElement;
 Begin

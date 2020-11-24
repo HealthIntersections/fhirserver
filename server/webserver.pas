@@ -92,7 +92,7 @@ Uses
   fhir_graphql, fhir_ndjson,
   {$IFNDEF NO_CONVERSION} fxver_convertors,{$ENDIF}
   tx_server, tx_manager, ftx_sct_expressions, ftx_loinc_services, ftx_loinc_publisher, tx_webserver, ftx_service,
-  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_ini,
+  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_config,
   scim_server,
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
@@ -102,53 +102,6 @@ Uses
 
 Type
   TFhirWebServer = class;
-
-  TFHIRServerThread = class (TThread)
-  protected
-    FServer: TFhirWebServer;
-
-    procedure sendEmail(dest, subj, body : String);
-  public
-    constructor Create(server: TFhirWebServer; suspended : boolean);
-  end;
-
-  TFhirServerMaintenanceThread = class(TFHIRServerThread)
-  private
-    FLastSweep: TDateTime;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(server: TFhirWebServer);
-  end;
-
-  TFhirServerSubscriptionThread = class(TFHIRServerThread)
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(server: TFhirWebServer);
-  end;
-
-  TFhirServerEmailThread = class(TFHIRServerThread)
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(server: TFhirWebServer);
-  end;
-
-  {$IFNDEF FHIR3}
-  TPackageUpdaterThread  = class(TFHIRServerThread)
-  private
-    FDB : TFDBManager;
-    FNextRun : TDateTime;
-    FLastEmail : TDateTime;
-    procedure RunUpdater;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(server: TFhirWebServer; db : TFDBManager);
-    destructor Destroy; override;
-  end;
-  {$ENDIF}
 
   TFHIRPathServerObject = class (TFHIRObject)
   protected
@@ -193,8 +146,6 @@ Type
     FHomePage: String;
     FFacebookLike: boolean;
     FHostSms: String; // for status update messages
-    FTwilioDB : String;
-    FTwilioResponse : String;
 
     // web configuration
     FCertFile: String;
@@ -204,78 +155,57 @@ Type
     FOutLog : TLogger;
 
     // operational fields
+    FUsageServer : TUsageStatsServer;
+    FTelnet : TFHIRTelnetServer;
     FPlainServer: TIdHTTPServer;
     FSSLServer: TIdHTTPServer;
     FIOHandler: TIdOpenSSLIOHandlerServer {TIdServerIOHandlerSSLOpenSSL};
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
-    FMaintenanceThread: TFhirServerMaintenanceThread;
-    FSubscriptionThread: TFhirServerSubscriptionThread;
-    FEmailThread: TFhirServerEmailThread;
-    FIsTerminologyServerOnly: boolean;
-    FUsageServer : TUsageStatsServer;
-    {$IFNDEF FHIR3}
-    FPackageServer : TFHIRPackageServer;
-    {$ENDIF}
-    FTwilioServer : TTwilioServer;
-    FTelnet : TFHIRTelnetServer;
-
-    function TerminologyWebServer: TTerminologyWebServer;
-
-    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
-    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
-    function WebDump: String;
-    procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
-    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
-
-//    function hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
 
     procedure logRequest(secure : boolean; id : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
-
-    // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
+    function WebDump: String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
-    Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkExit(AContext: TIdContext);
-    Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure StartServer(active: boolean);
-    Procedure StopServer;
-    procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
-    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
-    function packageLink: String;
-    procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
-    function ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
-    function HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : string;
-    procedure smsStatus(Msg: String);
+
     function endpointList: String;
+
+    Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
+    procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
+    procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
+
+    procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
+    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
+    function  ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
+
+    Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+
+    Procedure StartServer();
+    Procedure StopServer;
+
+    procedure smsStatus(Msg: String);
   Public
     constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
-    procedure loadConfiguration(ini : TFHIRServerIniFile);
+    procedure loadConfiguration(ini : TFHIRServerConfigFile);
+    property settings : TFHIRServerSettings read FSettings;
 
-    Procedure Start(active, threads: boolean);
+    Procedure Start; // (active, threads: boolean);
     Procedure Stop;
 
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
-    property settings : TFHIRServerSettings read FSettings;
-    {$IFNDEF FHIR3}
-    property PackageServer : TFHIRPackageServer read FPackageServer;
-    {$ENDIF}
-
-    property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
-    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
+//    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerConfigFile) : TFhirWebServerEndpoint;
   End;
 
-
-Function ProcessPath(base, path: String): string;
 
 Implementation
 
@@ -299,10 +229,6 @@ Begin
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
 
-  {$IFNDEF FHIR3}
-  FPackageServer := TFHIRPackageServer.create;
-  FPackageServer.OnReturnProcessFileEvent := ReturnProcessedFile;
-  {$ENDIF}
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
   // FAppSecrets := ini.ReadString('fhir', 'oauth-secrets', '');
 End;
@@ -310,10 +236,6 @@ End;
 Destructor TFhirWebServer.Destroy;
 Begin
   FTelnet.Free;
-  FTwilioServer.Free;
-  {$IFNDEF FHIR3}
-  FPackageServer.Free;
-  {$ENDIF}
   FUsageServer.Free;
   FEndPoints.Free;
   FSettings.Free;
@@ -324,32 +246,12 @@ Begin
 End;
 
 
-Function ProcessPath(base, path: String): string;
-var
-  s: String;
-begin
-  base := base.Substring(0, base.Length - 1);
-  if path.StartsWith('..\') then
-  begin
-    s := base;
-    while path.StartsWith('..\') do
-    begin
-      path := path.Substring(3);
-      s := ExtractFilePath(s);
-      s := s.Substring(0, s.Length - 1);
-    end;
-    result := IncludeTrailingPathDelimiter(s) + IncludeTrailingPathDelimiter(path);
-  end
-  else
-    result := IncludeTrailingPathDelimiter(path);
-end;
-
-procedure TFhirWebServer.loadConfiguration(ini : TFHIRServerIniFile);
+procedure TFhirWebServer.loadConfiguration(ini : TFHIRServerConfigFile);
 var
   fn: String;
   txu: String;
 begin
-  fn := ini.admin['logging-in'];
+  fn := ini.admin['logging-in'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
     if (FolderExists('c:\temp')) then
@@ -361,7 +263,7 @@ begin
     FInLog.Policy.AllowExceptions := false;
   end;
 
-  fn := ini.admin['logging-out'];
+  fn := ini.admin['logging-out'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
     if (FolderExists('c:\temp')) then
@@ -375,33 +277,26 @@ begin
 
   // web identity / configuration
   FHomePage := 'homepage.html';
-  FFacebookLike := ini.identityProviders['facebook.com']['like'] = 'true';
-  Common.Host := ini.web['host'];
+  FFacebookLike := ini.identityProviders.section['facebook.com']['like'].value = 'true';
+  Common.Host := ini.web['host'].value;
 
 
   // web server configuration
-  Common.ActualPort := StrToIntDef(ini.web['http'], 0);
-  Common.ActualSSLPort := StrToIntDef(ini.web['https'], 0);
-  {$IFNDEF FHIR3}
-  if Common.ActualPort <> 80 then
-    FPackageServer.pathAbsolute := 'http://'+Common.host+':'+inttostr(Common.ActualPort)+'/packages'
-  else
-    FPackageServer.pathAbsolute := 'http://'+Common.host+'/packages';
-  FPackageServer.pathRelative := '/packages';
-  {$ENDIF}
-  FCertFile := ini.web['certname'];
-  FRootCertFile := ini.web['cacertname'];
-  FSSLPassword := ini.web['password'];
+  Common.ActualPort := ini.web['http'].readAsInt;
+  Common.ActualSSLPort := ini.web['https'].readAsInt;
+  FCertFile := ini.web['certname'].value;
+  FRootCertFile := ini.web['cacertname'].value;
+  FSSLPassword := ini.web['password'].value;
 
-  NoUserAuthentication := ini.web['no-auth'] = 'true';
-  UseOAuth := ini.web['oauth'] <> 'false';
-  OWinSecuritySecure := ini.web['owin'] = 'true';
-  OWinSecurityPlain := ini.web['owin-http'] = 'true';
-  ServeMissingCertificate := ini.web['no-cert'] <> 'false';
-  ServeUnknownCertificate := ini.web['unknown-cert'] = 'true';
-  ServeMissingJWT := ini.web['no-jwt'] = 'true';
-  ServeUnverifiedJWT := ini.web['unverified-jwt'] = 'true';
-  FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir']);
+  NoUserAuthentication := ini.web['no-auth'].readAsBool;
+  UseOAuth := ini.web['oauth'].readAsBool(true);
+  OWinSecuritySecure := ini.web['owin'].readAsBool;
+  OWinSecurityPlain := ini.web['owin-http'].readAsBool;
+  ServeMissingCertificate := ini.web['no-cert'].readAsBool;
+  ServeUnknownCertificate := ini.web['unknown-cert'].readAsBool;
+  ServeMissingJWT := ini.web['no-jwt'].readAsBool(true);
+  ServeUnverifiedJWT := ini.web['unverified-jwt'].readAsBool;
+  FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir'].value);
 
 //  if ini.SectionExists(voVersioningNotApplicable, 'patient-view') then
 //  begin
@@ -415,22 +310,20 @@ begin
 //    end;
 //  end;
 
-  Common.OwnerName := ini.admin['ownername'];
+  Common.OwnerName := ini.admin['ownername'].value;
   if Common.OwnerName = '' then
     Common.OwnerName := 'Health Intersections';
-  Common.AdminEmail := ini.admin['email'];
+  Common.AdminEmail := ini.admin['email'].value;
   if Common.AdminEmail = '' then
     raise EFHIRException.create('An admin email is required');
 
-  FHostSms := ini.admin['owner-sms'];
+  FHostSms := ini.admin['owner-sms'].value;
   if Common.ActualPort = 80 then
     txu := 'http://' + Common.Host
   else
     txu := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort);
 
-  Common.Google.serverId := ini.web['googleid'];
-  FTwilioDB := ini.admin['twilio'];
-  FTwilioResponse := ini.admin['twilio-text'];
+  Common.Google.serverId := ini.web['googleid'].value;
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -503,31 +396,6 @@ begin
   Accepted := ServeUnknownCertificate or CertificateIdList.Find(x509.SerialNumber, i);
 end;
 
-function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
-var
-  j, o : TJsonObject;
-  a : TJsonArray;
-  s : String;
-begin
-  j := TJsonObject.Create;
-  try
-    j.str['transactionTime'] := transactionTime.toXML;
-    j.str['request'] := reqUrl;
-    j.bool['secure'] := secure;
-    a := j.forceArr['output'];
-    for s in names do
-    begin
-      o := a.addObject;
-      o.str['url'] := request.baseUrl+'task/'+request.id+'/'+s+EXT_WEB_TFHIRFormat[fmt];
-      o.str['type'] := s;
-    end;
-
-    result := TJSONWriter.writeObjectStr(j, true);
-  finally
-    j.Free;
-  end;
-end;
-
 function TFhirWebServer.EndPoint(name: String): TFhirWebServerEndpoint;
 var
   t : TFhirWebServerEndpoint;
@@ -538,12 +406,8 @@ begin
       exit(t);
 end;
 
-Procedure TFhirWebServer.Start(active, threads: boolean);
+Procedure TFhirWebServer.Start; // (active, threads: boolean);
 Begin
-  {$IFDEF WINDOWS}
-  if FTwilioDB <> '' then
-    FTwilioServer := TTwilioServer.Create(TFDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
-  {$ENDIF}
 
   Logging.log('Start Web Server:');
   if (Common.ActualPort = 0) then
@@ -555,17 +419,10 @@ Begin
     Logging.log('  https: not active')
   else
     Logging.log('  https: listen on ' + inttostr(Common.ActualSSLPort));
-  FActive := active;
+  FActive := true;
   Common.Stats.Start;
-  StartServer(active);
+  StartServer;
 
-  if (active and threads) then
-  begin
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
-    FSubscriptionThread := TFhirServerSubscriptionThread.Create(self);
-    FEmailThread := TFhirServerEmailThread.Create(self);
-  end;
-  smsStatus('The server ' + Common.Host + ' for ' + FSettings.OwnerName + ' has started');
 End;
 
 procedure TFhirWebServer.smsStatus(Msg: String);
@@ -596,16 +453,10 @@ Begin
   if FActive then
     smsStatus('The server ' + Common.Host + ' for ' + FSettings.OwnerName + ' is stopping');
   FActive := false;
-  if FSubscriptionThread <> nil then
-    FSubscriptionThread.Terminate;
-  if FMaintenanceThread <> nil then
-    FMaintenanceThread.Terminate;
-  if FEmailThread <> nil then
-    FEmailThread.Terminate;
   StopServer;
 End;
 
-Procedure TFhirWebServer.StartServer(active: boolean);
+Procedure TFhirWebServer.StartServer();
 Begin
   if Common.ActualPort > 0 then
   begin
@@ -622,7 +473,7 @@ Begin
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
-    FPlainServer.active := active;
+    FPlainServer.active := true;
   end;
   if Common.ActualSSLPort > 0 then
   begin
@@ -666,7 +517,7 @@ Begin
     FSSLServer.OnConnect := DoConnect;
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
-    FSSLServer.active := active;
+    FSSLServer.active := true;
   end;
 end;
 
@@ -686,11 +537,6 @@ Begin
     FreeAndNil(FPlainServer);
   end;
 End;
-
-function TFhirWebServer.TerminologyWebServer: TTerminologyWebServer;
-begin
-  result := EndPoints[0].TerminologyWebServer;
-end;
 
 function TFhirWebServer.WebDump: String;
 var
@@ -796,10 +642,6 @@ begin
         begin
           summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
         end
-        {$IFNDEF FHIR3}
-        else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-          summ := FPackageServer.serve(request, response)
-        {$ENDIF}
         else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
         begin
           summ := 'Static File';
@@ -880,12 +722,6 @@ begin
           begin
             summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
           end
-          {$IFNDEF FHIR3}
-          else if (FPackageServer.DB <> nil) and request.Document.startsWith('/packages') then
-            summ := FPackageServer.serve(request, response)
-          {$ENDIF}
-          else if request.Document = '/twilio' then
-            summ := HandleTwilio(AContext, request, response, false, false)
           else if SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
           begin
             summ := 'Static File';
@@ -1077,51 +913,6 @@ begin
   end;
 end;
 
-function TFhirWebServer.packageLink: String;
-begin
-  {$IFNDEF FHIR3}
-  if FPackageServer <> nil then
-    result := '<p>This server also runs as a <a href="'+FPackageServer.pathRelative+'">package server</a></p>'
-  else
-  {$ENDIF}
-    result := '';
-end;
-
-function TFhirWebServer.HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
-begin
-  result := FTwilioServer.process(AContext, request, response);
-end;
-
-procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
-var
-  b : TBytes;
-begin
-  {$IfDEF NO_CONVERSION}
-  raise EFHIRException.create('Version Conversion Services are not made available on this server');
-  {$ELSE}
-  b := StreamToBytes(stream);
-  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, version, CURRENT_FHIR_VERSION);
-  stream.Size := 0;
-  stream.Write(b[0], length(b));
-  stream.Position := 0;
-  {$ENDIF}
-end;
-
-procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
-var
-  b : TBytes;
-begin
-  {$IfDEF NO_CONVERSION}
-  raise EFHIRException.create('Version Conversion Services are not made available on this server');
-  {$ELSE}
-  b := StreamToBytes(stream);
-  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, CURRENT_FHIR_VERSION, version);
-  stream.Size := 0;
-  stream.Write(b[0], length(b));
-  stream.Position := 0;
-  {$ENDIF}
-end;
-
 
 function TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
 var
@@ -1140,9 +931,9 @@ begin
     vars.Add('status.thread.email', TFHIRSystemString.Create(FSettings.EmailThreadStatus));
     for ep in FEndPoints do
     begin
-      vars.Add('status.'+ep.Code+'.sessions', TFHIRSystemString.Create(ep.Context.SessionManager.DumpSessions));
-      vars.Add('status.'+ep.Code+'.tx', TFHIRSystemString.Create(ep.Context.TerminologyServer.Summary));
-      vars.Add('status.'+ep.Code+'.cdsclient', TFHIRSystemString.Create(inttostr(ep.PatientHooks.Count)));
+// todo      vars.Add('status.'+ep.Code+'.sessions', TFHIRSystemString.Create(ep.Context.SessionManager.DumpSessions));
+//      vars.Add('status.'+ep.Code+'.tx', TFHIRSystemString.Create(ep.Context.TerminologyServer.Summary));
+//      vars.Add('status.'+ep.Code+'.cdsclient', TFHIRSystemString.Create(inttostr(ep.PatientHooks.Count)));
     end;
     vars.Add('status.web', TFHIRSystemString.Create(WebDump));
     vars.Add('status.web-total-count', TFHIRSystemString.Create(inttostr(Common.Stats.TotalCount)));
@@ -1172,7 +963,7 @@ begin
   try
     b.append('<ul>');
     for ep in FEndPoints do
-      b.Append('<li><a href="'+ep.Path+'">'+ep.Path+'</a>: v'+ep.factory.versionString+'</li>');
+      b.Append('<li><a href="'+ep.Path+'">'+ep.Path+'</a>: '+ep.description+'</li>');
 
     b.append('</ul>');
     result := b.toString;
@@ -1197,7 +988,6 @@ begin
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  s := s.Replace('[%package-link%]', packageLink, [rfReplaceAll]);
   if Common.ActualPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
@@ -1234,28 +1024,28 @@ begin
   response.contentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;
 
-function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerIniFile): TFhirWebServerEndpoint;
-begin
-  result := TFhirWebServerEndpoint.create(code, path, context, Common.Link);
-  FEndPoints.Add(result);
-  context.userProvider.OnProcessFile := result.ReturnProcessedFile;
-  result.AuthServer := TAuth2Server.Create(context.Factory.link, ini, Common.Host, inttostr(Common.SslPort), path);
-  result.AuthServer.UserProvider := context.userProvider.Link;
-  result.AuthServer.ServerContext := context.Link;
-  result.AuthServer.EndPoint := result.ClientAddress(true);
-  result.AuthServer.OnProcessFile := result.ReturnProcessedFile;
-  result.AuthServer.OnGetPatients := result.GetPatients;
-  result.AuthServer.OnProcessLaunchParams := result.GetLaunchParameters;
-  result.AuthServer.Active := true;
-  context.JWTServices := TJWTServices.Create;
-  context.JWTServices.Cert := FCertFile;
-  context.JWTServices.Password := FSSLPassword;
-  context.JWTServices.DatabaseId := context.DatabaseId;
-  context.JWTServices.Host := Common.Host;
-  context.FormalURLPlain := 'http://'+Common.host+port(Common.ActualPort, 80)+path;
-  context.FormalURLSecure := 'https://'+Common.host+port(Common.ActualSSLPort, 443)+path;
-//  context.JWTServices.JWKAddress := ?;
-end;
+//function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerConfigFile): TFhirWebServerEndpoint;
+//begin
+//  result := TFhirWebServerEndpoint.create(code, path, context, Common.Link);
+//  FEndPoints.Add(result);
+//  context.userProvider.OnProcessFile := result.ReturnProcessedFile;
+//  result.AuthServer := TAuth2Server.Create(context.Factory.link, ini, Common.Host, inttostr(Common.SslPort), path);
+//  result.AuthServer.UserProvider := context.userProvider.Link;
+//  result.AuthServer.ServerContext := context.Link;
+//  result.AuthServer.EndPoint := result.ClientAddress(true);
+//  result.AuthServer.OnProcessFile := result.ReturnProcessedFile;
+//  result.AuthServer.OnGetPatients := result.GetPatients;
+//  result.AuthServer.OnProcessLaunchParams := result.GetLaunchParameters;
+//  result.AuthServer.Active := true;
+//  context.JWTServices := TJWTServices.Create;
+//  context.JWTServices.Cert := FCertFile;
+//  context.JWTServices.Password := FSSLPassword;
+//  context.JWTServices.DatabaseId := context.DatabaseId;
+//  context.JWTServices.Host := Common.Host;
+//  context.FormalURLPlain := 'http://'+Common.host+port(Common.ActualPort, 80)+path;
+//  context.FormalURLSecure := 'https://'+Common.host+port(Common.ActualSSLPort, 443)+path;
+////  context.JWTServices.JWKAddress := ?;
+//end;
 
 // procedure TFhirWebServer.DoSendFHIR(iMsgKey, SrcID: Integer; request: TFHIRRequest; response: TFHIRResponse);
 // var
@@ -1288,298 +1078,6 @@ end;
 // end;
 //
 
-{ TFhirServerMaintenanceThread }
-
-constructor TFhirServerMaintenanceThread.Create(server: TFhirWebServer);
-begin
-  FreeOnTerminate := true;
-  FLastSweep := Now;
-  inherited Create(server, false);
-end;
-
-procedure TFhirServerMaintenanceThread.Execute;
-var
-  ep : TFhirWebServerEndpoint;
-begin
-  SetThreadName('Server Maintenance Thread');
-  SetThreadStatus('Working');
-  Logging.log('Starting TFhirServerMaintenanceThread');
-  try
-    FServer.FSettings.MaintenanceThreadStatus := 'starting';
-{$IFDEF WINDOWS}
-    CoInitialize(nil);
-{$ENDIF}
-    {$IFNDEF NO_JS}
-    GJsHost := TJsHost.Create;
-    FServer.Common.OnRegisterJs(self, GJsHost);
-    {$ENDIF}
-//    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-
-    repeat
-      FServer.Settings.MaintenanceThreadStatus := 'sleeping';
-      sleep(1000);
-      if not terminated and (FLastSweep < Now - (DATETIME_SECOND_ONE * 5)) then
-      begin
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Sessions';
-          for ep in FServer.FEndPoints do
-            ep.Context.Storage.Sweep;
-          if not FServer.settings.ForLoad then
-            FServer.Common.Google.commit;
-        except
-        end;
-        FLastSweep := Now;
-      end;
-      if not FServer.settings.ForLoad then
-      begin
-        if (not terminated) then
-          try
-            FServer.Settings.MaintenanceThreadStatus := 'Building Indexes';
-            for ep in FServer.FEndPoints do
-              ep.Context.TerminologyServer.BuildIndexes(false);
-          except
-          end;
-      end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Processing Observations';
-          for ep in FServer.FEndPoints do
-            ep.Context.Storage.ProcessObservations;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Checking Snomed';
-          FServer.FEndPoints.First.Context.TerminologyServer.CommonTerminologies.sweepSnomed;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
-          for ep in FServer.FEndPoints do
-            ep.CheckAsyncTasks;
-        except
-        end;
-      if (not terminated) and (FServer.FTwilioServer <> nil) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
-          FServer.FTwilioServer.sweep;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Client Cache';
-          for ep in FServer.FEndPoints do
-            ep.Context.ClientCacheManager.sweep;
-        except
-        end;
-    until terminated;
-    try
-      FServer.Settings.MaintenanceThreadStatus := 'dead';
-    except
-    end;
-    try
-      FServer.FMaintenanceThread := nil;
-    except
-    end;
-    {$IFNDEF NO_JS}
-    GJsHost.Free;
-    GJsHost := nil;
-    {$ENDIF}
-
-
-{$IFDEF WINDOWS}
-    CoUninitialize;
-{$ENDIF}
-    Logging.log('Ending TFhirServerMaintenanceThread');
-  except
-    Logging.log('Failing TFhirServerMaintenanceThread');
-  end;
-  SetThreadStatus('Done');
-  closeThread;
-end;
-
-{ TFhirServerSubscriptionThread }
-
-constructor TFhirServerSubscriptionThread.Create(server: TFhirWebServer);
-begin
-  FreeOnTerminate := true;
-  FServer := server;
-  inherited Create(server, false);
-end;
-
-procedure TFhirServerSubscriptionThread.Execute;
-var
-  ep : TFhirWebServerEndpoint;
-begin
-  SetThreadName('Server Subscription Thread');
-  SetThreadStatus('Working');
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  FServer.Common.OnRegisterJs(self, GJsHost);
-  {$ENDIF}
-//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  Logging.log('Starting TFhirServerSubscriptionThread');
-  try
-    FServer.Settings.SubscriptionThreadStatus := 'starting';
-    repeat
-      FServer.Settings.SubscriptionThreadStatus := 'sleeping';
-      sleep(1000);
-      if FServer.FActive then
-      begin
-        FServer.Settings.SubscriptionThreadStatus := 'processing subscriptions';
-        for ep in FServer.FEndPoints do
-          ep.Context.Storage.ProcessSubscriptions;
-      end;
-    until terminated;
-    try
-      FServer.Settings.SubscriptionThreadStatus := 'dead';
-    except
-    end;
-    try
-      FServer.FSubscriptionThread := nil;
-    except
-    end;
-    Logging.log('Ending TFhirServerSubscriptionThread');
-  except
-    Logging.log('Failing TFhirServerSubscriptionThread');
-  end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
-  SetThreadStatus('Done');
-  closeThread;
-end;
-
-{ TFhirServerEmailThread }
-
-constructor TFhirServerEmailThread.Create(server: TFhirWebServer);
-begin
-  FreeOnTerminate := true;
-  inherited Create(server, false);
-end;
-
-procedure TFhirServerEmailThread.Execute;
-var
-  i: integer;
-  ep : TFhirWebServerEndpoint;
-begin
-  SetThreadName('Server Email Thread');
-  SetThreadStatus('Working');
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  FServer.Common.OnRegisterJs(self, GJsHost);
-  {$ENDIF}
-//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  Logging.log('Starting TFhirServerEmailThread');
-  try
-    FServer.Settings.EmailThreadStatus := 'starting';
-    repeat
-      FServer.Settings.EmailThreadStatus := 'sleeping';
-      i := 0;
-      while not terminated and (i < 60) do
-      begin
-        sleep(1000);
-        inc(i);
-      end;
-      if FServer.FActive and not terminated then
-      begin
-        FServer.Settings.EmailThreadStatus := 'processing Emails';
-        for ep in FServer.FEndPoints do
-          ep.Context.Storage.ProcessEmails;
-      end;
-    until terminated;
-    try
-      FServer.Settings.EmailThreadStatus := 'dead';
-    except
-    end;
-    try
-      FServer.FEmailThread := nil;
-    except
-    end;
-    Logging.log('Ending TFhirServerEmailThread');
-  except
-    Logging.log('Failing TFhirServerEmailThread');
-  end;
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
-  SetThreadStatus('Done');
-  closeThread;
-end;
-
-{$IFNDEF FHIR3}
-{ TPackageUpdaterThread }
-
-constructor TPackageUpdaterThread.Create(server: TFhirWebServer; db: TFDBManager);
-begin
-  inherited create(server, false);
-  FDB := db;
-  FNextRun := now + 1/(24 * 60);
-end;
-
-destructor TPackageUpdaterThread.Destroy;
-begin
-  FDB.Free;
-  inherited;
-end;
-
-procedure TPackageUpdaterThread.Execute;
-begin
-  repeat
-    sleep(50);
-    if not Terminated and (now > FNextRun) and (FNextRun > 0) then
-    begin
-      FServer.FPackageServer.scanning := true;
-      try
-        RunUpdater;
-      finally
-        FServer.FPackageServer.scanning := false;
-      end;
-      FNextRun := now + 1/24;
-      FServer.FPackageServer.NextScan := FNextRun;
-    end;
-  until (Terminated);
-end;
-
-procedure TPackageUpdaterThread.RunUpdater;
-var
-  conn : TFDBConnection;
-  upd : TPackageUpdater;
-begin
-  conn := FDB.getConnection('server.packages.update');
-  try
-    upd := TPackageUpdater.create;
-    try
-      try
-        upd.update(conn);
-        if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
-        begin
-          if upd.errors <> '' then
-            sendEmail('grahameg@gmail.com', 'Package Feed Errors', upd.errors);
-          FLastEmail := TFslDateTime.makeToday.DateTime;
-        end;
-      except
-        on e : exception do
-        begin
-          Logging.log('Exception updating packages: '+e.Message);
-        end;
-      end;
-    finally
-      upd.free;
-    end;
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
-  end;
-end;
-{$ENDIF}
 
 { TFHIRWebServerExtension }
 
@@ -1687,58 +1185,6 @@ end;
 function TFHIRPathServerObject.ToString: String;
 begin
   result := '(Server '+FContext.DatabaseId+'';
-end;
-
-{ TFHIRServerThread }
-
-constructor TFHIRServerThread.Create(server: TFhirWebServer;
-  suspended: boolean);
-begin
-  FServer := server;
-  inherited Create(suspended);
-end;
-
-procedure TFHIRServerThread.sendEmail(dest, subj, body: String);
-var
-  sender : TIdSMTP;
-  msg : TIdMessage;
-  ssl : TIdOpenSSLIOHandlerClient;
-begin
-  sender := TIdSMTP.Create(Nil);
-  try
-    sender.Host := FServer.settings.SMTPHost;
-    sender.port := StrToInt(FServer.settings.SMTPPort);
-    sender.Username := FServer.settings.SMTPUsername;
-    sender.Password := FServer.settings.SMTPPassword;
-    if FServer.settings.SMTPUseTLS then
-    begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
-      sender.IOHandler := ssl;
-      sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := FServer.settings.SMTPHost+':'+FServer.settings.SMTPPort;
-      ssl.Host := FServer.settings.SMTPHost;
-      ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(FServer.settings.SMTPPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-      ssl.Options.VerifyServerCertificate := false;
-    end;
-    sender.Connect;
-    msg := TIdMessage.Create(Nil);
-    try
-      msg.Subject := subj;
-      msg.Recipients.Add.Address := dest;
-      msg.From.Text := FServer.settings.SMTPSender;
-      msg.Body.Text := body;
-      Logging.log('Send '+msg.MsgId+' to '+dest);
-      sender.Send(msg);
-    Finally
-      msg.Free;
-    End;
-    sender.Disconnect;
-  Finally
-    sender.IOHandler.free;
-    sender.Free;
-  End;
 end;
 
 

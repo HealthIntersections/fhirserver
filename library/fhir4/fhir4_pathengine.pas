@@ -1418,6 +1418,8 @@ begin
       equalNull: result := false;
       equalFalse: result := false;
       equalTrue: result := true;
+    else
+      result := false;
     end;
   end
   else if (left.hasType(['string', 'id', 'code', 'uri']) and right.hasType(['string', 'id', 'code', 'uri'])) then
@@ -2393,8 +2395,6 @@ begin
 end;
 
 function TFHIRPathEngine.funcTrim(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
-var
-  item : TFHIRSelection;
 begin
   if focus.Count = 1 then
     result := TFHIRSelectionList.Create(TFhirString.Create(focus[0].value.primitiveValue.trim))
@@ -4851,7 +4851,6 @@ var
   d1,d2,d3 : TFslDecimal;
   s : String;
   qty, qty2 : TFHIRQuantity;
-  d : TFHIRObject;
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);

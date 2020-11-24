@@ -15264,7 +15264,6 @@ Procedure DetermineMsXmlProgId;
     ClassID: TCLSID;
     iTest : IDispatch;
     Res : HResult;
-    s : String;
   Begin
     Result := false;
     if Succeeded(CLSIDFromProgID(PWideChar(String('MSXML2.DOMDocument'+sId)), ClassID)) Then

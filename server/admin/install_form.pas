@@ -41,8 +41,8 @@ type
     FConnection: TFDBConnection;
     FEndPoint: String;
     FFilename: String;
-    FMode: String;
     FPackages : TFslList<TFHIRPackageInfo>;
+    FType: String;
     FVersion: String;
     function isAutomatic(pi: TFHIRPackageInfo): boolean;
     function matchesVersion(pi, piv: String): boolean;
@@ -53,10 +53,10 @@ type
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages write SetPackages;
     property Connection : TFDBConnection read FConnection write SetConnection;
-    property version : String read FVersion write FVersion;
-    property mode : String read FMode write FMode;
     property Filename : String read FFilename write FFilename;
     property endpoint : String read FEndPoint write FEndPoint;
+    property version : String read FVersion write FVersion;
+    property type_ : String read FType write FType;
   end;
 
 var
@@ -121,8 +121,8 @@ end;
 
 procedure TEndpointInstallForm.FormShow(Sender: TObject);
 begin
-  lblMode.caption := 'Install '+mode+' for version '+version;
-  if mode = 'terminology' then
+  lblMode.caption := 'Install '+type_+' for version '+version;
+  if type_ = 'terminology' then
   begin
     edtUserName.text := '';
     edtUserName.Enabled := true;
@@ -136,7 +136,7 @@ begin
     lvPackages.Enabled := false;
     loadPackages;
   end
-  else if mode = 'general' then
+  else if type_ = 'general' then
   begin
     edtUserName.text := '';
     edtUserName.Enabled := true;

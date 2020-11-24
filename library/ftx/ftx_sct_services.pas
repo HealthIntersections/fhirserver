@@ -505,6 +505,8 @@ operations
     property Unmatched : TFslList<TSnomedRefinementGroup> read FUnmatched;
   end;
 
+  { TSnomedServices }
+
   TSnomedServices = class (TCodeSystemProvider)
   Private
     FLock : TFslLock;
@@ -603,6 +605,7 @@ operations
     destructor Destroy; Override;
     Function Link : TSnomedServices; Overload;
     Procedure Load(Const sFilename : String; immediate : boolean);
+    class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String);
     procedure checkLoaded;
     procedure checkUnload;
@@ -1456,6 +1459,39 @@ begin
     InitialLoad;
 end;
 
+class function TSnomedServices.checkFile(const sFilename: String): String;
+var
+  oFile : Tfilestream;
+  oread : TReader;
+  v : String;
+  s : TArray<string>;
+begin
+  try
+    oFile := TFileStream.Create(sFilename, fmOpenread+fmShareDenyWrite);
+    try
+      oread := TReader.Create(oFile, 8192);
+      try
+        v := oRead.ReadString;
+        if (v = SNOMED_CACHE_VERSION_CURRENT) or (v = SNOMED_CACHE_VERSION_UTF16) Then
+        begin
+          s := oread.ReadString.split(['/']);
+          v := oread.ReadString;
+          result := 'Ok (edition = '+s[4]+', version = '+s[6]+', date = '+v+')'
+        end
+        else
+          result := 'Needs rebuilding';
+      Finally
+        oread.Free;
+      End;
+    Finally
+      oFile.Free;
+    End;
+  except
+    on e : Exception do
+      result := 'Error: '+e.message;
+  end;
+end;
+
 procedure TSnomedServices.InitialLoad;
 var
   oFile : Tfilestream;
@@ -1602,7 +1638,7 @@ begin
     result := GetConceptRefSet(index, true, iName, members, types, iFieldNames) > 0;
 end;
 
-function TSnomedServices.RefSetCount: Cardinal;
+function TSnomedServices.RefSetCount: cardinal;
 var
   i : integer;
   iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
@@ -1669,7 +1705,9 @@ begin
   End;
 end;
 
-function TSnomedServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
+function TSnomedServices.searchFilter(filter: TSearchFilterText;
+  prep: TCodeSystemProviderFilterPreparationContext; sort: boolean
+  ): TCodeSystemProviderFilterContext;
 var
   res : TSnomedFilterContext;
 begin
@@ -2195,7 +2233,8 @@ begin
   result := FLoaded <> 0;
 end;
 
-Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte);
+procedure TSnomedServices.ListDisplayNames(list: TStringList; const iConcept,
+  iLang: Cardinal; FlagMask: Byte);
 var
   aMembers : TSnomedReferenceSetMemberArray;
   iLoop : integer;
@@ -2221,7 +2260,8 @@ begin
   End;
 end;
 
-Procedure TSnomedServices.ListDisplayNames(list : TStringList; Const sTerm, sLangSet : String; FlagMask : Byte);
+procedure TSnomedServices.ListDisplayNames(list: TStringList; const sTerm,
+  sLangSet: String; FlagMask: Byte);
 var
   iTerm, iLang : Cardinal;
 begin
@@ -2796,7 +2836,7 @@ begin
   end;
 end;
 
-function TSnomedServices.SubsumesTest(codeA, codeB: String): String;
+function TSnomedServices.subsumesTest(codeA, codeB: String): String;
 var
   exprA, exprB : TSnomedExpression;
   b1, b2 : boolean;
@@ -4091,7 +4131,7 @@ begin
 end;
 
 
-Function TSnomedServices.GetPNForConcept(iIndex : Cardinal) : String;
+function TSnomedServices.GetPNForConcept(iIndex: Cardinal): String;
 var
   Identity : UInt64;
   Flags : Byte;
@@ -4231,7 +4271,7 @@ begin
   result := true;
 end;
 
-function TSnomedServices.ParseExpression(source: String): TSnomedExpression;
+function TSnomedServices.parseExpression(source: String): TSnomedExpression;
 var
   prsr : TSnomedExpressionParser;
 begin
@@ -5046,7 +5086,8 @@ end;
 //end;
 
 
-procedure TSnomedServices.RenderExpr(b : TStringBuilder; expr : TSnomedConcept; option : TSnomedServicesRenderOption);
+procedure TSnomedServices.renderExpr(b: TStringBuilder; expr: TSnomedConcept;
+  option: TSnomedServicesRenderOption);
 var
   s : String;
 begin
@@ -5083,7 +5124,8 @@ begin
 end;
 
 
-procedure TSnomedServices.RenderExpr(b : TStringBuilder; expr : TSnomedRefinement; option : TSnomedServicesRenderOption);
+procedure TSnomedServices.renderExpr(b: TStringBuilder;
+  expr: TSnomedRefinement; option: TSnomedServicesRenderOption);
 begin
   renderExpr(b, expr.name, option);
   b.Append('=');
@@ -5104,7 +5146,8 @@ begin
   end;
 end;
 
-procedure TSnomedServices.DisplayExpr(b: TStringBuilder; expr: TSnomedExpression);
+procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedExpression
+  );
 var
   i, j : integer;
   done : boolean;
@@ -5155,7 +5198,7 @@ begin
     end;
 end;
 
-procedure TSnomedServices.DisplayExpr(b : TStringBuilder; expr : TSnomedConcept);
+procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedConcept);
 var
   s : String;
 begin
@@ -5166,7 +5209,8 @@ begin
 end;
 
 
-procedure TSnomedServices.DisplayExpr(b : TStringBuilder; expr : TSnomedRefinement);
+procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedRefinement
+  );
 begin
   DisplayExpr(b, expr.name);
   b.Append(' = ');

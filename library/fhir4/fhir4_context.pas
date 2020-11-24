@@ -61,7 +61,7 @@ type
     FMap : TFslMap<T>;
     FList : TFslList<T>;
     procedure updateList(url, version: String);
-    function doSort(sender : TObject; const L, R: T): Integer;
+//    function doSort(sender : TObject; const L, R: T): Integer;
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -391,28 +391,28 @@ begin
   end;
 end;
 
-function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
-var v1, v2, mm1, mm2 : string;
-begin
-  v1 := l.version;
-  v2 := r.version;
-  if (v1 = '') and (v2 = '') then
-    result := FList.indexOf(l) - FList.indexOf(r)
-  else if (v1 = '') then
-    result := -1
-  else if (v2 = '') then
-    result := 1
-  else
-  begin
-    mm1 := TFHIRVersions.getMajMin(v1);
-    mm2 := TFHIRVersions.getMajMin(v2);
-    if (mm1 = '') or (mm2 = '') then
-      result := v1.compareTo(v2)
-    else
-      result := CompareText(mm1, mm2);
-  end;
-end;
-
+//function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
+//var v1, v2, mm1, mm2 : string;
+//begin
+//  v1 := l.version;
+//  v2 := r.version;
+//  if (v1 = '') and (v2 = '') then
+//    result := FList.indexOf(l) - FList.indexOf(r)
+//  else if (v1 = '') then
+//    result := -1
+//  else if (v2 = '') then
+//    result := 1
+//  else
+//  begin
+//    mm1 := TFHIRVersions.getMajMin(v1);
+//    mm2 := TFHIRVersions.getMajMin(v2);
+//    if (mm1 = '') or (mm2 = '') then
+//      result := v1.compareTo(v2)
+//    else
+//      result := CompareText(mm1, mm2);
+//  end;
+//end;
+//
 procedure TFHIRMetadataResourceManager<T>.updateList(url, version : String);
 var
   rl : TFslList<T>;

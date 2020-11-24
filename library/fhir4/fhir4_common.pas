@@ -1475,8 +1475,8 @@ end;
 
 
 procedure TFHIRCapabilityStatement4.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
-var
-  ext : TFhirExtension;
+//var
+//  ext : TFhirExtension;
 begin
   if statement.restList.isEmpty then
     statement.restList.append.mode := RestfulCapabilityModeServer;

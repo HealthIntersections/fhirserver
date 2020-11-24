@@ -56,6 +56,8 @@ type
     function Link : TICD10Node; overload;
   end;
 
+  { TICD10Provider }
+
   TICD10Provider = class (TCodeSystemProvider)
   private
     FUrl : String;
@@ -75,6 +77,7 @@ type
     destructor Destroy; override;
     function link : TICD10Provider; overload;
 
+    class function checkFile(sourceFile : String) : String;
     Property Title : String read FTitle;
 
     function TotalCount : integer;  override;
@@ -368,6 +371,29 @@ end;
 function TICD10Provider.link: TICD10Provider;
 begin
   result := TICD10Provider(Inherited Link);
+end;
+
+class function TICD10Provider.checkFile(sourceFile: String): String;
+var
+  cells : TArray<String>;
+  ts : TStringList;
+begin
+  try
+    ts := TStringList.create;
+    try
+      ts.loadFromFile(sourceFile);
+      cells := ts[0].Split([#9]);
+      if cells[0] <> 'icd-10' then
+        result := 'Not an ICD-10 File'
+      else
+        result := 'Ok (country = '+cells[3]+', lang  '+cells[2]+')';
+    finally
+      ts.free;
+    end;
+  except
+    on e : Exception do
+      result := 'Error: '+e.message;
+  end;
 end;
 
 procedure TICD10Provider.load(filename: String);

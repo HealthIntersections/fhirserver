@@ -62,6 +62,8 @@ type
     destructor Destroy; Override;
   end;
 
+  { TUniiServices }
+
   TUniiServices = class (TCodeSystemProvider)
   public
     db : TFDBManager;
@@ -69,6 +71,8 @@ type
     constructor Create(db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
+
+    class function checkDB(conn : TFDBConnection) : String;
 
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
@@ -112,7 +116,7 @@ uses
 
 { TUniiServices }
 
-Constructor TUniiServices.create(db : TFDBManager);
+constructor TUniiServices.Create(db: TFDBManager);
 begin
   inherited Create;
 
@@ -348,6 +352,21 @@ end;
 function TUniiServices.Link: TUniiServices;
 begin
   result := TUniiServices(Inherited Link);
+end;
+
+class function TUniiServices.checkDB(conn: TFDBConnection): String;
+var
+  meta : TFDBMetaData;
+begin
+  meta := conn.FetchMetaData;
+  try
+    if not meta.HasTable('Unii') or not meta.HasTable('UniiDesc') then
+      result := 'Missing Tables - needs re-importing'
+    else
+      result := 'OK ('+inttostr(conn.countSql('Select count(*) from Unii'))+' Concepts)';
+  finally
+    meta.free;
+  end;
 end;
 
 function TUniiServices.ChildCount(context : TCodeSystemProviderContext) : integer;

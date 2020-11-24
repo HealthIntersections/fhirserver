@@ -97,6 +97,8 @@ type
     function Link : TIETFLanguageVariant; overload;
   end;
 
+  { TIETFLanguageDefinitions }
+
   TIETFLanguageDefinitions = class (TFslObject)
   private
     FLanguages : TFslMap<TIETFLanguageLanguage>;
@@ -115,6 +117,7 @@ type
     constructor Create(source : String);
     destructor Destroy; override;
 
+    class function checkSource(source : String) : String;
     function parse(code : String; var msg : String) : TIETFLanguageCodeConcept;
     function present(code : TIETFLanguageCodeConcept) : String; overload;
     function present(code : TIETFLanguageCodeConcept; template : String) : String; overload;
@@ -138,6 +141,8 @@ type
   TIETFLanguageCodePrep = class (TCodeSystemProviderFilterPreparationContext)
   end;
 
+  { TIETFLanguageCodeServices }
+
   TIETFLanguageCodeServices = class (TCodeSystemProvider)
   private
     FDefinitions : TIETFLanguageDefinitions;
@@ -145,6 +150,8 @@ type
     constructor Create(sourceFile : String);
     destructor Destroy; Override;
     Function Link : TIETFLanguageCodeServices; overload;
+
+    class function checkFile(sourceFile : String) : String;
 
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
@@ -252,7 +259,7 @@ https://www.w3.org/International/articles/language-tags/index.en
 
 { TIETFLanguageCodeServices }
 
-Constructor TIETFLanguageCodeServices.create(sourceFile : String);
+constructor TIETFLanguageCodeServices.Create(sourceFile: String);
 begin
   inherited Create;
   FDefinitions := TIETFLanguageDefinitions.Create(FileToString(sourceFile, TEncoding.ASCII));
@@ -371,6 +378,16 @@ end;
 function TIETFLanguageCodeServices.Link: TIETFLanguageCodeServices;
 begin
   result := TIETFLanguageCodeServices(Inherited Link);
+end;
+
+class function TIETFLanguageCodeServices.checkFile(sourceFile: String): String;
+begin
+  try
+    result := TIETFLanguageDefinitions.checkSource(FileToString(sourceFile, TEncoding.ASCII));
+  except
+    on e : Exception do
+      result := 'Error: '+e.message;
+  end;
 end;
 
 function TIETFLanguageCodeServices.ChildCount(context : TCodeSystemProviderContext) : integer;
@@ -534,6 +551,14 @@ begin
   FRegions.Free;
   FLanguages.Free;
   inherited;
+end;
+
+class function TIETFLanguageDefinitions.checkSource(source: String): String;
+begin
+  if source.StartsWith('%%') then
+    result := 'Ok'
+  else
+    result := 'Invalid';
 end;
 
 function TIETFLanguageDefinitions.getDisplayForRegion(code: String): String;

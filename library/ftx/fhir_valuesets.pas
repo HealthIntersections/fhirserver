@@ -231,7 +231,7 @@ begin
   if (url = '') then
     exit(nil);
 
-  result := nil;
+//  result := nil;
 
   if FAdditionalResources <> nil then
   begin
@@ -543,7 +543,7 @@ var
   ics : TFHIRValueSetCodeSystemW;
   ccl : TFhirCodeSystemConceptListW;
 begin
-  result := false;
+//  result := false;
   {special case:}
   if (FValueSet.url = ANY_CODE_VS) then
   begin

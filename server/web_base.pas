@@ -169,6 +169,8 @@ type
     function GetMimeTypeForExt(AExt: String): String;
   end;
 
+// Function ProcessPath(base, path: String): string;
+
 
 implementation
 
@@ -495,5 +497,25 @@ begin
   FSourceProvider := Value;
 end;
 
+//Function ProcessPath(base, path: String): string;
+//var
+//  s: String;
+//begin
+//  base := base.Substring(0, base.Length - 1);
+//  if path.StartsWith('..\') then
+//  begin
+//    s := base;
+//    while path.StartsWith('..\') do
+//    begin
+//      path := path.Substring(3);
+//      s := ExtractFilePath(s);
+//      s := s.Substring(0, s.Length - 1);
+//    end;
+//    result := IncludeTrailingPathDelimiter(s) + IncludeTrailingPathDelimiter(path);
+//  end
+//  else
+//    result := IncludeTrailingPathDelimiter(path);
+//end;
+//
 
 end.

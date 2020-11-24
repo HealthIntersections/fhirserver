@@ -6,11 +6,11 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc,
-  ftx_ucum_services, fsl_http,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm,
+  fdb_manager,
+  ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
-  fsl_npm_cache, fsl_npm,
 
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
@@ -20,11 +20,10 @@ uses
   validator_r2, validator_r3, validator_r4, validator_r5,
 
   fhir_indexing, search_base,
-  fdb_manager,
-  fsl_scim,
   tx_manager, tx_server, tx_operations, operations,
-  storage, server_context, session, user_manager, server_ini, bundlebuilder,
-  utilities, security, indexing, server_factory, subscriptions, webserver;
+  storage, server_context, session, user_manager, server_config, bundlebuilder,
+  utilities, security, indexing, server_factory, subscriptions, webserver,
+  endpoint;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;
@@ -163,6 +162,20 @@ type
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
     function allowInsecure : boolean; override;
   end;
+
+  TTerminologyServerEndPoint = class (TFHIRServerEndPoint)
+  private
+  public
+    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    destructor Destroy; override;
+  end;
+
+//     function TerminologyWebServer: TTerminologyWebServer;
+//function TFhirWebServer.TerminologyWebServer: TTerminologyWebServer;
+//begin
+//  result := EndPoints[0].TerminologyWebServer;
+//end;
+//
 
 implementation
 
@@ -1176,5 +1189,19 @@ begin
   result := LoadUser(key);
 end;
 
+
+{ TTerminologyServerEndPoint }
+
+constructor TTerminologyServerEndPoint.Create(
+  settings: TFHIRServerConfigSection; db: TFDBManager);
+begin
+
+end;
+
+destructor TTerminologyServerEndPoint.Destroy;
+begin
+
+  inherited;
+end;
 
 end.

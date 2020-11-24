@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   Buttons,
-  server_ini;
+  server_config;
 
 type
   { TEditIDForm }
@@ -27,10 +27,10 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
   private
-    FId: TFHIRServerIniComplex;
-    procedure SetId(AValue: TFHIRServerIniComplex);
+    FId: TFHIRServerConfigSection;
+    procedure SetId(AValue: TFHIRServerConfigSection);
   public
-    property Id : TFHIRServerIniComplex read FId write SetId;
+    property Id : TFHIRServerConfigSection read FId write SetId;
     procedure update;
   end;
 
@@ -57,7 +57,7 @@ begin
   end;
 end;
 
-procedure TEditIDForm.SetId(AValue: TFHIRServerIniComplex);
+procedure TEditIDForm.SetId(AValue: TFHIRServerConfigSection);
 begin
   FId.Free;
   FId := AValue;
@@ -65,18 +65,18 @@ begin
   if FId <> nil then
   begin
     edtIdentity.text := Id.name;
-    edtAppid.text := Id['app-id'];
-    edtAppSecret.text := Id['app-secret'];
-    edtAPIKey.text := Id['api-key'];
+    edtAppid.text := Id['app-id'].value;
+    edtAppSecret.text := Id['app-secret'].value;
+    edtAPIKey.text := Id['api-key'].value;
   end;
 end;
 
 procedure TEditIDForm.update;
 begin
   Id.name := edtIdentity.text;
-  Id['app-id'] := edtAppid.Text;
-  Id['app-secret'] := edtAppSecret.Text;
-  Id['api-key'] := edtAPIKey.Text;
+  Id['app-id'].value := edtAppid.Text;
+  Id['app-secret'].value := edtAppSecret.Text;
+  Id['api-key'].value := edtAPIKey.Text;
 end;
 
 end.

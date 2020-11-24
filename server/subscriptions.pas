@@ -179,7 +179,7 @@ Type
     FCloseAll : boolean;
     FSemaphores : TFslMap<TWebSocketQueueInfo>;
     FLang : THTTPLanguages;
-    FLoading: boolean;
+//    FLoading: boolean;
 
     function settings : TFHIRServerSettings;
     function factory : TFHIRFactory;
@@ -1251,7 +1251,6 @@ var
   i : integer;
   list : TFHIRSubscriptionEntryList;
   created : boolean;
-  bytes : TBytes;
   id : String;
   oldRes, newRes : TFHIRResourceV;
 begin

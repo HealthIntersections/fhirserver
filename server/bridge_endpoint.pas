@@ -34,9 +34,8 @@ interface
 
 Uses
   SysUtils, StrUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_collections, fsl_threads,
-  fsl_stream, fsl_json,
-  fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http,
+  fdb_manager,
   ftx_ucum_services,
   fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
 
@@ -45,8 +44,9 @@ Uses
   fhir3_validator, fhir3_indexinfo, validator_r3,
 
   fhir_indexing,
-  server_factory, indexing, subscriptions, session, user_manager,
-  server_context, storage;
+  server_factory, indexing, subscriptions, session, user_manager, server_config,
+  server_context, storage,
+  endpoint;
 
 
 Const
@@ -182,6 +182,12 @@ Type
     function allowInsecure : boolean; override;
   end;
 
+  TBridgeEndPoint = class (TFHIRServerEndPoint)
+  private
+  public
+    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    destructor Destroy; override;
+  end;
 
 implementation
 
@@ -784,5 +790,19 @@ begin
   raise EFslException.Create('Not supported in this server');
 end;
 
+
+{ TBridgeEndPoint }
+
+constructor TBridgeEndPoint.Create(settings: TFHIRServerConfigSection;
+  db: TFDBManager);
+begin
+
+end;
+
+destructor TBridgeEndPoint.Destroy;
+begin
+
+  inherited;
+end;
 
 end.

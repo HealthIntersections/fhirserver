@@ -29,7 +29,7 @@ uses
   tx_manager, tx_server,
   tx_unii,
   scim_server,
-  database_installer, server_version, server_ini, utilities,
+  database_installer, server_version, server_config, utilities,
   server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   storage, database,
@@ -64,6 +64,53 @@ Type
     procedure load(rType, id : String; stream : TStream);
   end;
 
+  TFhirServerEmailThread = class(TFHIRServerThread)
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(server: TFhirWebServer);
+  end;
+
+{
+    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
+    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
+    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
+
+}
+  TFHIRServerThread = class (TThread)
+  protected
+    FServer: TFhirWebServer;
+
+    procedure sendEmail(dest, subj, body : String);
+  public
+    constructor Create(server: TFhirWebServer; suspended : boolean);
+  end;
+
+  TFhirServerSubscriptionThread = class(TFHIRServerThread)
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(server: TFhirWebServer);
+  end;
+
+  TGeneralServerEndPoint = class (TFHIRServerEndPoint)
+  private
+    FSubscriptionThread: TFhirServerSubscriptionThread;
+    FEmailThread: TFhirServerEmailThread;
+  public
+    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    destructor Destroy; override;
+  end;
+
+//  if (true {active and threads}) then
+//  begin
+//    FSubscriptionThread := TFhirServerSubscriptionThread.Create(self);
+//    FEmailThread := TFhirServerEmailThread.Create(self);
+//  end;
+//  if FSubscriptionThread <> nil then
+//    FSubscriptionThread.Terminate;
+//  if FEmailThread <> nil then
+//    FEmailThread.Terminate;
 
 implementation
 
@@ -189,5 +236,161 @@ begin
 
 end;
 
+
+{ TGeneralServerEndPoint }
+
+constructor TGeneralServerEndPoint.Create(settings: TFHIRServerConfigSection;
+  db: TFDBManager);
+begin
+
+end;
+
+destructor TGeneralServerEndPoint.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
+var
+  b : TBytes;
+begin
+  {$IfDEF NO_CONVERSION}
+  raise EFHIRException.create('Version Conversion Services are not made available on this server');
+  {$ELSE}
+  b := StreamToBytes(stream);
+  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, version, CURRENT_FHIR_VERSION);
+  stream.Size := 0;
+  stream.Write(b[0], length(b));
+  stream.Position := 0;
+  {$ENDIF}
+end;
+
+procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
+var
+  b : TBytes;
+begin
+  {$IfDEF NO_CONVERSION}
+  raise EFHIRException.create('Version Conversion Services are not made available on this server');
+  {$ELSE}
+  b := StreamToBytes(stream);
+  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, CURRENT_FHIR_VERSION, version);
+  stream.Size := 0;
+  stream.Write(b[0], length(b));
+  stream.Position := 0;
+  {$ENDIF}
+end;
+
+
+{ TFhirServerSubscriptionThread }
+
+constructor TFhirServerSubscriptionThread.Create(server: TFhirWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  inherited Create(server, false);
+end;
+
+procedure TFhirServerSubscriptionThread.Execute;
+var
+  ep : TFhirWebServerEndpoint;
+begin
+  SetThreadName('Server Subscription Thread');
+  SetThreadStatus('Working');
+  {$IFNDEF NO_JS}
+  GJsHost := TJsHost.Create;
+  FServer.Common.OnRegisterJs(self, GJsHost);
+  {$ENDIF}
+//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
+  Logging.log('Starting TFhirServerSubscriptionThread');
+  try
+    FServer.Settings.SubscriptionThreadStatus := 'starting';
+    repeat
+      FServer.Settings.SubscriptionThreadStatus := 'sleeping';
+      sleep(1000);
+      if FServer.FActive then
+      begin
+        FServer.Settings.SubscriptionThreadStatus := 'processing subscriptions';
+        for ep in FServer.FEndPoints do
+          ep.Context.Storage.ProcessSubscriptions;
+      end;
+    until terminated;
+    try
+      FServer.Settings.SubscriptionThreadStatus := 'dead';
+    except
+    end;
+    try
+      FServer.FSubscriptionThread := nil;
+    except
+    end;
+    Logging.log('Ending TFhirServerSubscriptionThread');
+  except
+    Logging.log('Failing TFhirServerSubscriptionThread');
+  end;
+  {$IFNDEF NO_JS}
+  GJsHost.Free;
+  GJsHost := nil;
+  {$ENDIF}
+  SetThreadStatus('Done');
+  closeThread;
+end;
+
+{ TFhirServerEmailThread }
+
+constructor TFhirServerEmailThread.Create(server: TFhirWebServer);
+begin
+  FreeOnTerminate := true;
+  inherited Create(server, false);
+end;
+
+procedure TFhirServerEmailThread.Execute;
+var
+  i: integer;
+  ep : TFhirWebServerEndpoint;
+begin
+  SetThreadName('Server Email Thread');
+  SetThreadStatus('Working');
+  {$IFNDEF NO_JS}
+  GJsHost := TJsHost.Create;
+  FServer.Common.OnRegisterJs(self, GJsHost);
+  {$ENDIF}
+//  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
+  Logging.log('Starting TFhirServerEmailThread');
+  try
+    FServer.Settings.EmailThreadStatus := 'starting';
+    repeat
+      FServer.Settings.EmailThreadStatus := 'sleeping';
+      i := 0;
+      while not terminated and (i < 60) do
+      begin
+        sleep(1000);
+        inc(i);
+      end;
+      if FServer.FActive and not terminated then
+      begin
+        FServer.Settings.EmailThreadStatus := 'processing Emails';
+        for ep in FServer.FEndPoints do
+          ep.Context.Storage.ProcessEmails;
+      end;
+    until terminated;
+    try
+      FServer.Settings.EmailThreadStatus := 'dead';
+    except
+    end;
+    try
+      FServer.FEmailThread := nil;
+    except
+    end;
+    Logging.log('Ending TFhirServerEmailThread');
+  except
+    Logging.log('Failing TFhirServerEmailThread');
+  end;
+  {$IFNDEF NO_JS}
+  GJsHost.Free;
+  GJsHost := nil;
+  {$ENDIF}
+  SetThreadStatus('Done');
+  closeThread;
+end;
 
 end.
