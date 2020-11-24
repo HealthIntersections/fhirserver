@@ -273,10 +273,12 @@
       <Unit8>
         <Filename Value="admin\console_tx_edit.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditTxForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit8>
       <Unit9>
-        <Filename Value="admin\server_ini.pas"/>
+        <Filename Value="admin\server_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
@@ -334,13 +336,16 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="2">
+    <Exceptions Count="3">
       <Item1>
         <Name Value="EIdSocketError"/>
       </Item1>
       <Item2>
         <Name Value="EIdConnClosedGracefully"/>
       </Item2>
+      <Item3>
+        <Name Value="ELibraryException"/>
+      </Item3>
     </Exceptions>
   </Debugging>
 </CONFIG>

@@ -38,7 +38,7 @@ uses
   {$IFDEF WINDOWS} Windows, fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   tx_manager,
-  server_ini, telnet_server, utilities, web_source,
+  server_config, telnet_server, utilities, web_source,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   webserver;
 
@@ -49,7 +49,7 @@ type
     Fcallback: TInstallerCallback;
     FLoadStore : boolean;
     FTelnet : TFHIRTelnetServer;
-    FIni : TFHIRServerIniFile;
+    FIni : TFHIRServerConfigFile;
     FSettings : TFHIRServerSettings;
     FWebServer : TFhirWebServer;
     FProgress : integer;
@@ -76,7 +76,7 @@ type
     function WantActive : boolean; virtual;
     function WantThreads : boolean; virtual;
   public
-    constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerIniFile);
+    constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
     destructor Destroy; override;
 
     function CanStart : boolean; Override;
@@ -87,7 +87,7 @@ type
     property callback : TInstallerCallback read Fcallback write Fcallback;
     property loadStore : boolean read FLoadStore write FLoadStore;
     property Telnet : TFHIRTelnetServer read FTelnet;
-    property Ini : TFHIRServerIniFile read FIni;
+    property Ini : TFHIRServerConfigFile read FIni;
     property Settings : TFHIRServerSettings read FSettings;
     property WebServer : TFhirWebServer read FWebServer;
 
@@ -96,10 +96,7 @@ type
 
   TFHIRServiceDataStore = class (TFHIRServiceBase)
   private
-    FDatabases : TFslMap<TFDBManager>;
     FTerminologies : TCommonTerminologies;
-    procedure ConnectToDatabases;
-    procedure CloseDatabases;
     procedure LoadTerminologies;
     procedure UnloadTerminologies;
   protected
@@ -108,19 +105,18 @@ type
     procedure closeDown; override;
   public
     destructor Destroy; override;
-    property Databases : TFslMap<TFDBManager> read FDatabases;
     property Terminologies : TCommonTerminologies read FTerminologies;
   end;
 
 implementation
 
-constructor TFHIRServiceBase.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerIniFile);
+constructor TFHIRServiceBase.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerConfigFile);
 begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
-  FTelnet.Password := FIni.web['telnet-password'];
+  FTelnet.Password := FIni.web['telnet-password'].value;
 
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not hasCommandLineParam('noload');
@@ -180,9 +176,9 @@ begin
   FWebServer.OnRegisterJs := registerJs;
   {$ENDIF}
   FWebServer.loadConfiguration(Ini);
-  if FolderExists('c:\work\fhirserver\server\webn') then
+  if FolderExists('c:\work\fhirserver\server\web') then
   begin
-    Logging.log('Web source from '+Ini.web['folder']);
+    Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhiserver\server\web')
   end
   else if FileExists(partnerFile('fhirserver.web')) then
@@ -306,14 +302,11 @@ end;
 
 destructor TFHIRServiceDataStore.Destroy;
 begin
-  FDatabases.Free;
   inherited;
 end;
 
 function TFHIRServiceDataStore.initialise: boolean;
 begin
-  FDatabases := TFslMap<TFDBManager>.create('fhir.svc');
-  ConnectToDatabases;
   result := true;
 end;
 
@@ -327,34 +320,12 @@ end;
 procedure TFHIRServiceDataStore.closeDown;
 begin
   UnloadTerminologies;
-  CloseDatabases;
 end;
-
-Procedure TFHIRServiceDataStore.ConnectToDatabases();
-var
-  s : String;
-  details : TFHIRServerIniComplex;
-begin
-  Logging.log('Load Databases. Config file = '+Ini.FileName);
-  for s in Ini.databases.keys do
-  begin
-    details := Ini.databases[s];
-    FDatabases.Add(s, connectToDatabase(s, details));
-  end;
-  Logging.log('Databases Loaded');
-end;
-
-procedure TFHIRServiceDataStore.CloseDatabases;
-begin
-  if FDatabases <> nil then
-    FDatabases.Clear;
-end;
-
 
 procedure TFHIRServiceDataStore.LoadTerminologies;
 begin
   FTerminologies := TCommonTerminologies.Create(Settings.link);
-  FTerminologies.load(Ini, FDatabases, false);
+  FTerminologies.load(Ini['terminologies'], false);
 end;
 
 procedure TFHIRServiceDataStore.UnloadTerminologies;

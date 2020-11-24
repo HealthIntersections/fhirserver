@@ -36,7 +36,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
   StdCtrls, Buttons, lclintf,
   fsl_utilities,
-  server_ini, gui_controller;
+  server_config, gui_controller;
 
 type
 
@@ -71,7 +71,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
-    FIni : TFHIRServerIniFile;
+    FIni : TFHIRServerConfigFile;
     FServer : TFHIRServerController;
     procedure serverStatusChange(Sender: TObject);
     procedure log(msg : String);
@@ -90,13 +90,13 @@ implementation
 
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
-  Fini := TFHIRServerIniFile.Create(Path([ExtractFilePath(paramstr(0)), 'fhir-server-gui.ini']));
+  Fini := TFHIRServerConfigFile.Create(Path([ExtractFilePath(paramstr(0)), 'fhir-server-gui.cfg']));
   FServer := TFHIRServerController.create(FIni.link);
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;
   FServer.Initialise;
-  edtFolder.Text := FIni.service['utg-folder'];
-  edtPort.Text := Fini.web['http'];
+  edtFolder.Text := FIni.service['utg-folder'].value;
+  edtPort.Text := Fini.web['http'].value;
 end;
 
 procedure TServerGUI.FormDestroy(Sender: TObject);
@@ -122,22 +122,22 @@ procedure TServerGUI.BitBtn1Click(Sender: TObject);
 var
   s, s2 : String;
 begin
-  s := FIni.service['utg-folder'];
+  s := FIni.service['utg-folder'].value;
   if SelectDirectory('Select UTG Folder', s, s2) then
   begin
-    FIni.service['utg-folder'] := s2;
+    FIni.service['utg-folder'].value := s2;
     edtFolder.Text := s2;
   end;
 end;
 
 procedure TServerGUI.edtFolderChange(Sender: TObject);
 begin
-  FIni.service['utg-folder'] := edtFolder.Text;
+  FIni.service['utg-folder'].value := edtFolder.Text;
 end;
 
 procedure TServerGUI.edtPortChange(Sender: TObject);
 begin
-  Fini.web['http'] := edtPort.Text;
+  Fini.web['http'].value := edtPort.Text;
 end;
 
 procedure TServerGUI.btnBrowserClick(Sender: TObject);

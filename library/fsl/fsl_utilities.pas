@@ -9217,6 +9217,8 @@ begin
          ((other.TimezoneType = dttzUTC) and (TimeZoneBias = 0));
     dttzSpecified: result := (other.TimezoneType = dttzSpecified) and
          ((TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins));
+  else
+    result := false;
   end;
 end;
 
@@ -12250,6 +12252,8 @@ begin
       compLess: result := equalFalse;
       compEqual: result := equalTrue;
       compGreater : result := equalFalse;
+    else
+      Result := equalNull;
     end;
   end;
 end;

@@ -39,7 +39,7 @@ uses
   fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http,
   fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
   fhir_objects,  fhir_utilities, fhir_factory, fhir_common,
-  server_ini, session;
+  server_config, session;
 
 var
   GCounterWebConnections : integer = 0;
@@ -126,7 +126,7 @@ type
     destructor Destroy; override;
     Function Link : TFHIRServerSettings; overload;
 
-    procedure load(ini : TFHIRServerIniFile);
+    procedure load(ini : TFHIRServerConfigFile);
 
     Property Bases: TStringList read FBases;
     Property OwnerName: String read FOwnerName;// write FOwnerName;
@@ -158,7 +158,8 @@ type
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
-function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
+function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
+function describeDatabase(details : TFHIRServerConfigSection) : String;
 
 implementation
 
@@ -261,38 +262,38 @@ begin
   result := TFHIRServerSettings(inherited Link);
 end;
 
-procedure TFHIRServerSettings.load(ini: TFHIRServerIniFile);
+procedure TFHIRServerSettings.load(ini: TFHIRServerConfigFile);
 begin
    // FBases - set in kernel
    // FForLoad - set in kernel
-  FRunNumber := ini.runNumber + 1;
-  ini.runNumber := FRunNumber;
+  FRunNumber := ini['service'].prop['runNumber'].readAsInt(0) + 1;
+  ini['service'].prop['runNumber'].value := inttostr(FRunNumber);
   FRequestId := 0;
 
   FMaintenanceThreadStatus := 'Not started';
   FSubscriptionThreadStatus := 'Not started';
   FEmailThreadStatus := 'Not started';
 
-  FOwnerName := ini.admin['ownername'];
+  FOwnerName := ini['admin']['ownername'].value;
 
-  FSMTPPort := ini.destinations['email']['port'];
-  FSMTPPassword := ini.destinations['email']['password'];
-  FSMTPHost := ini.destinations['email']['host'];
-  FSMTPSender := ini.destinations['email']['sender'];
-  FSMTPUsername := ini.destinations['email']['username'];
-  FSMTPUseTLS := ini.destinations['email']['secure'] = 'true';
+  FSMTPPort := ini['destinations'].section['email']['port'].value;
+  FSMTPPassword := ini['destinations'].section['email']['password'].value;
+  FSMTPHost := ini['destinations'].section['email']['host'].value;
+  FSMTPSender := ini['destinations'].section['email']['sender'].value;
+  FSMTPUsername := ini['destinations'].section['email']['username'].value;
+  FSMTPUseTLS := ini['destinations'].section['email']['secure'].readAsBool(false);
 
-  FDirectPort := ini.destinations['direct']['port'];
-  FDirectPassword := ini.destinations['direct']['password'];
-  FDirectHost := ini.destinations['direct']['host'];
-  FDirectSender := ini.destinations['direct']['sender'];
-  FDirectUsername := ini.destinations['direct']['username'];
-  FDirectPopHost  := ini.destinations['direct']['pop-host'];
-  FDirectPopPort  := ini.destinations['direct']['pop-port'];
+  FDirectPort := ini['destinations'].section['direct']['port'].value;
+  FDirectPassword := ini['destinations'].section['direct']['password'].value;
+  FDirectHost := ini['destinations'].section['direct']['host'].value;
+  FDirectSender := ini['destinations'].section['direct']['sender'].value;
+  FDirectUsername := ini['destinations'].section['direct']['username'].value;
+  FDirectPopHost  := ini['destinations'].section['direct']['pop-host'].value;
+  FDirectPopPort  := ini['destinations'].section['direct']['pop-port'].value;
 
-  FSMSFrom := ini.destinations['sms']['from'];
-  FSMSToken := ini.destinations['sms']['token'];
-  FSMSAccount := ini.destinations['sms']['account'];
+  FSMSFrom := ini['destinations'].section['sms']['from'].value;
+  FSMSToken := ini['destinations'].section['sms']['token'].value;
+  FSMSAccount := ini['destinations'].section['sms']['account'].value;
 end;
 
 function TFHIRServerSettings.nextRequestId: string;
@@ -364,31 +365,43 @@ begin
   end;
 end;
 
-function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TFDBManager;
+function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
 var
   dbn, ddr : String;
 begin
-  dbn := details['database'];
-  ddr := details['driver'];
-  if sameText(details['type'], 'mssql') then
+  dbn := details['db-database'].value;
+  ddr := details['db-driver'].value;
+  if sameText(details['db-type'].value, 'mssql') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFDBOdbcManager.create(s, kdbSQLServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
-  else if sameText(details['type'], 'mysql') then
+  else if sameText(details['type'].value, 'mysql') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
-    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
+    result := TFDBOdbcManager.create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
-  else if sameText(details['type'], 'SQLite') then
+  else if sameText(details['db-type'].value, 'SQLite') then
   begin
-    Logging.log('Connect to '+s+' ('+details['type']+':'+dbn+')');
-    result := TFDBSQLiteManager.create(s, dbn, details['auto-create'] = 'true');
+    Logging.log('Connect to '+details.name+' ('+details['db-type'].value+':'+dbn+')');
+    result := TFDBSQLiteManager.create(details.name, dbn, details['db-auto-create'].value = 'true');
   end
   else
-    raise ELibraryException.Create('Unknown database type '+details['type']);
+    raise ELibraryException.Create('Unknown database type '+details['db-type'].value);
+end;
+
+function describeDatabase(details: TFHIRServerConfigSection): String;
+begin
+  if sameText(details['db-type'].value, 'mssql') then
+    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
+  else if sameText(details['type'].value, 'mysql') then
+    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
+  else if sameText(details['db-type'].value, 'SQLite') then
+    result := details['db-type'].value+':'+details['db-database'].value
+  else
+    result := 'Unknown database type '+details['db-type'].value
 end;
 
 end.

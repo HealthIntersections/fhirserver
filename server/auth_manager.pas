@@ -43,7 +43,7 @@ uses
   fsl_http, fdb_manager, fdb_dialects,
   fsl_oauth, scim_server, fsl_scim, fsl_crypto, fhir_oauth,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
-  session, security, server_ini,
+  session, security, server_config,
   user_manager, utilities, server_context, storage,
   jwt;
 
@@ -153,7 +153,7 @@ type
     function GetPatientListAsOptions(launch : String) : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
-    constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
+    constructor Create(factory : TFHIRFactory; ini : TFHIRServerConfigFile; Host, SSLPort, path : String);
     destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -199,7 +199,7 @@ uses
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
+constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerConfigFile; Host, SSLPort, path : String);
 begin
   inherited create;
   FFactory := factory;
@@ -210,14 +210,14 @@ begin
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;
 
-  FHL7Appid := ini.identityProviders['hl7.org']['app-id'];
-  FHL7AppSecret := ini.identityProviders['hl7.org']['app-secret'];
-  FFacebookAppid := ini.identityProviders['facebook.com']['app-id'];
-  FFacebookAppSecret := ini.identityProviders['facebook.com']['app-secret'];
-  FGoogleAppid := ini.identityProviders['google.com']['app-id'];
-  FGoogleAppSecret := ini.identityProviders['google.com']['app-secret'];
-  FGoogleAppKey := ini.identityProviders['google.com']['app-key'];
-  FPassword := ini.admin['password'];
+  FHL7Appid := ini.identityProviders.section['hl7.org']['app-id'].value;
+  FHL7AppSecret := ini.identityProviders.section['hl7.org']['app-secret'].value;
+  FFacebookAppid := ini.identityProviders.section['facebook.com']['app-id'].value;
+  FFacebookAppSecret := ini.identityProviders.section['facebook.com']['app-secret'].value;
+  FGoogleAppid := ini.identityProviders.section['google.com']['app-id'].value;
+  FGoogleAppSecret := ini.identityProviders.section['google.com']['app-secret'].value;
+  FGoogleAppKey := ini.identityProviders.section['google.com']['app-key'].value;
+  FPassword := ini.admin['password'].value;
   FRawPath := path;
   FPath := path+'/auth';
   FRelPath := '/auth';

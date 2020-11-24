@@ -529,7 +529,7 @@
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="admin\server_ini.pas"/>
+        <Filename Value="admin\server_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
     </Units>

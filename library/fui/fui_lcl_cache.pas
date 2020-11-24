@@ -122,7 +122,7 @@ var
 begin
   resp := TFHIRLoadPackagesTaskResponse.create;
   try
-    result := DoTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.create(FCache.link), resp.link);
+    result := DoBackgroundTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.create(FCache.link), resp.link);
     if result then
       Data.AddAll(resp.Packages);
   finally

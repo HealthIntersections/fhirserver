@@ -41,7 +41,7 @@ uses
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_icd10, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
   tx_mimetypes, tx_lang, fsl_logging, tx_ndc, tx_hgvs,
-  utilities, server_ini;
+  utilities, server_config;
 
 const
   URI_VERSION_BREAK = '#';
@@ -86,7 +86,7 @@ Type
     procedure sweepSnomed;
 
     // load external terminology resources (snomed, Loinc, etc)
-    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TFDBManager>; testing : boolean);
+    procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -1809,9 +1809,9 @@ begin
 end;
 
 
-procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<TFDBManager>; testing : boolean);
+procedure TCommonTerminologies.load(txlist: TFHIRServerConfigSection; testing : boolean);
 var
-  details : TFHIRServerIniComplex;
+  tx : TFHIRServerConfigSection;
   s : string;
   sn: TSnomedServices;
 //  def : boolean;
@@ -1827,15 +1827,14 @@ begin
   add(TUSStateServices.Create).free;
   add(THGVSProvider.Create).free;
 
-  for s in ini.terminologies.Keys do
+  for tx in txList.sections do
   begin
-    details := ini.terminologies[s];
-    if not testing or (details['when-testing'] = 'true') then
+    if not testing or (tx['when-testing'].readAsBool) then
     begin
-      if details['type'] = 'icd10' then
+      if tx['type'].value = 'icd10' then
       begin
-        Logging.log('load '+s+' from '+details['source']);
-        icdX := TICD10Provider.Create(true, details['source']);
+        Logging.log('load '+s+' from '+tx['source'].value);
+        icdX := TICD10Provider.Create(true, tx['source'].value);
         try
           add(icdX);
           icd10.Add(icdX.link);
@@ -1843,67 +1842,67 @@ begin
           icdX.free;
         end;
       end
-      else if details['type'] = 'snomed' then
+      else if tx['type'].value = 'snomed' then
       begin
-        Logging.log('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+tx['source'].value);
         sn := TSnomedServices.Create;
         try
-          sn.Load(details['source'], details['default'] = 'true');
-          add(sn, details['default'] = 'true');
+          sn.Load(tx['source'].value, tx['default'].value = 'true');
+          add(sn, tx['default'].readAsBool);
           if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
             FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
           snomed.Add(sn.Link);
-          if details['default'] = 'true' then
+          if tx['default'].readAsBool then
             DefSnomed := sn.Link;
         finally
           sn.Free;
         end;
       end
-      else if details['type'] = 'loinc' then
+      else if tx['type'].value = 'loinc' then
       begin
-        Logging.log('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+tx['source'].value);
         Loinc := TLoincServices.Create;
         add(Loinc);
-        Loinc.Load(details['source']);
+        Loinc.Load(tx['source'].value);
       end
-      else if details['type'] = 'ucum' then
+      else if tx['type'].value = 'ucum' then
       begin
-        Logging.log('load '+s+' from '+details['source']);
+        Logging.log('load '+s+' from '+tx['source'].value);
         Ucum := TUcumServices.Create;
-        Ucum.Import(details['source']);
+        Ucum.Import(tx['source'].value);
       end
-      else if details['type'] = 'rxnorm' then
+      else if tx['type'].value = 'rxnorm' then
       begin
-        Logging.log('load '+s+' from '+details['database']);
-        RxNorm := TRxNormServices.create(databases[details['database']].link)
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        RxNorm := TRxNormServices.create(connectToDatabase(tx))
       end
-      else if details['type'] = 'ndc' then
+      else if tx['type'].value = 'ndc' then
       begin
-        Logging.log('load '+s+' from '+details['database']);
-        NDC := TNDCServices.create(databases[details['database']].link, details['version'])
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        NDC := TNDCServices.create(connectToDatabase(tx), tx['version'].value)
       end
-      else if details['type'] = 'ndfrt' then
+      else if tx['type'].value = 'ndfrt' then
       begin
-        Logging.log('load '+s+' from '+details['database']);
-        NDFRT := TNDFRTServices.create(databases[details['database']].link)
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        NDFRT := TNDFRTServices.create(connectToDatabase(tx))
       end
-      else if details['type'] = 'mcimeta' then
+      else if tx['type'].value = 'mcimeta' then
       begin
-        Logging.log('load '+s+' from '+details['database']);
-        NciMeta := TNciMetaServices.Create(databases[details['database']].link)
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        NciMeta := TNciMetaServices.Create(connectToDatabase(tx))
       end
-      else if details['type'] = 'unii' then
+      else if tx['type'].value = 'unii' then
       begin
-        Logging.log('load '+s+' from '+details['database']);
-        Unii := TUniiServices.Create(databases[details['database']].link)
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        Unii := TUniiServices.Create(connectToDatabase(tx))
       end
-      else if details['type'] = 'lang' then
+      else if tx['type'].value = 'lang' then
       begin
-        Logging.log('load '+s+' from '+details['source']);
-        add(TIETFLanguageCodeServices.Create(details['source'])).free;
+        Logging.log('load '+s+' from '+tx['source'].value);
+        add(TIETFLanguageCodeServices.Create(tx['source'].value)).free;
       end
       else
-        raise EFslException.Create('Unknown type '+details['type']);
+        raise EFslException.Create('Unknown type '+tx['type'].value);
     end;
   end;
 end;

@@ -51,7 +51,7 @@ uses
   fdb_manager,
   fsl_scim,
   tx_manager, tx_server, tx_operations, operations,
-  storage, server_context, session, user_manager, server_ini, bundlebuilder,
+  storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, webserver,
   kernel_base;
 
@@ -1293,35 +1293,33 @@ end;
 
 procedure TFHIRServiceTxServer.registerEndPoints;
 var
-  s : String;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
   factory : TFHIRFactory;
   listF : TStringList;
   listP : TStringList;
 begin
-  for s in Ini.endpoints.sortedKeys do
+  for details in Ini['endpoints'].sections do
   begin
-    details := Ini.endpoints[s];
-    Logging.log('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
+    Logging.log('Initialise endpoint '+details.name+' at '+details['path'].value+' for '+details['version'].value);
 
-    if details['version'] = 'r2' then
+    if details['version'].value = 'r2' then
     begin
       factory := TFHIRFactoryR2.Create;
     end
-    else if details['version'] = 'r3' then
+    else if details['version'].value  = 'r3' then
     begin
       factory := TFHIRFactoryR3.Create;
     end
-    else if details['version'] = 'r4' then
+    else if details['version'].value  = 'r4' then
     begin
       factory := TFHIRFactoryR4.Create;
     end
-    else if details['version'] = 'r5' then
+    else if details['version'].value  = 'r5' then
     begin
       factory := TFHIRFactoryR5.Create;
     end
     else
-      raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
+      raise EFslException.Create('Cannot load end-point '+details.name+' version '+details['version'].value);
     try
       listF := TStringList.create;
       listP := TStringList.create;

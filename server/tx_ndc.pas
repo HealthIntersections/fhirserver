@@ -34,17 +34,19 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities,
   fhir_cdshooks,
   ftx_service;
 
 type
+
+  { TNdcImporter }
+
   TNdcImporter = class (TFslObject)
   private
     FSource: String;
-    FDatabase: TFDBManager;
     FConn : TFDBConnection;
     FCodes : TDictionary<String, integer>;
     FTypes : TDictionary<String, integer>;
@@ -52,21 +54,20 @@ type
     FRoutes : TDictionary<String, integer>;
     FDoseforms : TDictionary<String, integer>;
     FKey : integer;
-    procedure SetDatabase(const Value: TFDBManager);
-    procedure importProducts(callback: TInstallerCallback);
-    procedure importPackages(callback: TInstallerCallback);
+    procedure importProducts(callback: TWorkProgressEvent);
+    procedure importPackages(callback: TWorkProgressEvent);
     procedure processProduct(fields: TFslStringList);
     procedure processPackage(fields: TFslStringList);
     procedure prepareDatabase;
     procedure finishDatabase;
   public
-    constructor Create(source : String);
+    constructor Create(source : String; conn : TFDBConnection);
     destructor Destroy; override;
 
-    property Database : TFDBManager read FDatabase write SetDatabase;
     property source : String read FSource write FSource;
 
     procedure process(callback : TInstallerCallback);
+    procedure Doinstall(sender : TObject; callback : TWorkProgressEvent);
   end;
 
   TNDCProviderContext = class (TCodeSystemProviderContext)
@@ -78,6 +79,8 @@ type
     property package : boolean read FPackage write FPackage;
     property key : integer read FKey write FKey;
   end;
+
+  { TNDCServices }
 
   TNDCServices = class (TCodeSystemProvider)
   private
@@ -96,6 +99,8 @@ type
     constructor Create(db : TFDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
+
+    class function checkDB(conn : TFDBConnection) : String;
 
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
@@ -162,10 +167,11 @@ const
 
 { TNdcImporter }
 
-constructor TNdcImporter.Create(source: String);
+constructor TNdcImporter.Create(source: String; conn : TFDBConnection);
 begin
   inherited create;
   FSource := source;
+  FConn := conn;
   FTypes := TDictionary<String, integer>.create;
   FCodes := TDictionary<String, integer>.create;
   FOrgs := TDictionary<String, integer>.create;
@@ -175,7 +181,7 @@ end;
 
 destructor TNdcImporter.Destroy;
 begin
-  FDatabase.Free;
+  FConn.Free;
   FDoseForms.Free;
   FRoutes.Free;
   FOrgs.Free;
@@ -221,19 +227,23 @@ end;
 
 procedure TNdcImporter.process(callback: TInstallerCallback);
 begin
+  //FOrgs.Clear;
+  //FTypes.Clear;
+  //prepareDatabase;
+  //importProducts(callback);
+  //importPackages(callback);
+  //finishDatabase;
+  //FConn.Release;
+end;
+
+procedure TNdcImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
+begin
   FOrgs.Clear;
   FTypes.Clear;
-  FConn := FDatabase.GetConnection('NDC');
-  try
-    prepareDatabase;
-    importProducts(callback);
-    importPackages(callback);
-    finishDatabase;
-    FConn.Release;
-  except
-    on e : Exception do
-      FConn.Error(e);
-  end;
+  prepareDatabase;
+  importProducts(callback);
+  importPackages(callback);
+  finishDatabase;
 end;
 
 procedure TNdcImporter.prepareDatabase;
@@ -264,11 +274,11 @@ begin
 //        'Generic nchar(80) NOT NULL, '+
         'DoseForm int NOT NULL, '+
         'Route int NOT NULL, '+
-        'StartDate '+DBDateTimeType(FDatabase.Platform)+' NULL, '+
-        'EndDate '+DBDateTimeType(FDatabase.Platform)+' NULL, '+
+        'StartDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
+        'EndDate '+DBDateTimeType(FConn.Owner.Platform)+' NULL, '+
         'Category nchar(40) NOT NULL, '+
         'Company int NOT NULL, '+
-        'Generics '+DBBlobType(FDatabase.Platform)+' NULL, '+
+        'Generics '+DBBlobType(FConn.Owner.Platform)+' NULL, '+
         'CONSTRAINT PK_NDCProducts PRIMARY KEY CLUSTERED (NDCKey ASC))');
     FConn.ExecSQL('CREATE UNIQUE NONCLUSTERED INDEX [NDCProductsCode] ON NDCProducts ( Code ASC )');
     FConn.ExecSQL('CREATE TABLE NDCPackages ('+
@@ -280,6 +290,8 @@ begin
         'Description nchar(255) NOT NULL, '+
         'CONSTRAINT PK_NDCPackages PRIMARY KEY CLUSTERED (NDCKey ASC))');
     FConn.ExecSQL('CREATE UNIQUE NONCLUSTERED INDEX [NDCPackagesCode] ON NDCPackages ( Code ASC )');
+    FConn.ExecSQL('CREATE NONCLUSTERED INDEX NDCPackagesProductCode ON NDCPackages (ProductKey ASC, Code ASC )');
+    FConn.ExecSQL('CREATE NONCLUSTERED INDEX NDCPackagesProductCode11 ON NDCPackages (ProductKey ASC, Code11 ASC )');
   finally
     md.Free;
   end;
@@ -371,7 +383,7 @@ begin
   FConn.Execute;
 end;
 
-procedure TNdcImporter.importPackages(callback: TInstallerCallback);
+procedure TNdcImporter.importPackages(callback: TWorkProgressEvent);
 var
   f : TFslCSVExtractor;
   fields : TFslStringList;
@@ -389,7 +401,7 @@ begin
       f.ConsumeEntries(fields); // headers
       while f.More do
       begin
-        callback(50 + f.percent div 2, 'Processing Packages');
+        callback(self, 50 + f.percent div 2, false, 'Processing Packages');
         f.ConsumeEntries(fields);
         processPackage(fields);
       end;
@@ -400,9 +412,10 @@ begin
     fields.free;
   end;
   FConn.Terminate;
+  callback(self, 100, true, 'Finished Processing');
 end;
 
-procedure TNdcImporter.importProducts(callback: TInstallerCallback);
+procedure TNdcImporter.importProducts(callback: TWorkProgressEvent);
 var
   f : TFslCSVExtractor;
   fields : TFslStringList;
@@ -420,7 +433,7 @@ begin
       f.ConsumeEntries(fields); // headers
       while f.More do
       begin
-        callback(f.percent div 2, 'Processing Products');
+        callback(self, f.percent div 2, false, 'Processing Products');
         f.ConsumeEntries(fields);
         processProduct(fields);
       end;
@@ -431,11 +444,6 @@ begin
     fields.free;
   end;
   FConn.Terminate;
-end;
-
-procedure TNdcImporter.SetDatabase(const Value: TFDBManager);
-begin
-  FDatabase := Value;
 end;
 
 { TNDCServices }
@@ -466,6 +474,21 @@ end;
 function TNDCServices.Link: TNDCServices;
 begin
   result := TNDCServices(inherited link);
+end;
+
+class function TNDCServices.checkDB(conn: TFDBConnection): String;
+var
+  meta : TFDBMetaData;
+begin
+  meta := conn.FetchMetaData;
+  try
+    if not meta.HasTable('NDCPackages') or not meta.HasTable('NDCProducts') or not meta.HasTable('NDCProductTypes') or not meta.HasTable('NDCOrganizations') or not meta.HasTable('NDCDoseForms') or not meta.HasTable('NDCRoutes') then
+      result := 'Missing Tables - needs re-importing'
+    else
+      result := 'OK ('+inttostr(conn.countSql('Select count(*) from NDCProducts'))+' products, '+inttostr(conn.countSql('Select count(*) from NDCPackages'))+' packages)';
+  finally
+    meta.free;
+  end;
 end;
 
 procedure TNDCServices.Close(ctxt: TCodeSystemProviderFilterContext);

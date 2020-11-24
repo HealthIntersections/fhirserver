@@ -1,20 +1,22 @@
 object EditEPForm: TEditEPForm
-  Left = 3682
-  Height = 204
-  Top = 25
-  Width = 497
+  Left = 1008
+  Height = 339
+  Top = -795
+  Width = 626
   Caption = 'Edit EndPoint'
-  ClientHeight = 204
-  ClientWidth = 497
+  ClientHeight = 339
+  ClientWidth = 626
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
+  OnResize = FormResize
+  OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object cbxMode: TComboBox
     Left = 80
     Height = 23
     Top = 64
-    Width = 402
+    Width = 531
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Items.Strings = (
@@ -29,14 +31,14 @@ object EditEPForm: TEditEPForm
   object Panel1: TPanel
     Left = 0
     Height = 44
-    Top = 160
-    Width = 497
+    Top = 295
+    Width = 626
     Align = alBottom
     ClientHeight = 44
-    ClientWidth = 497
+    ClientWidth = 626
     TabOrder = 0
     object btnDBTest1: TBitBtn
-      Left = 328
+      Left = 460
       Height = 26
       Top = 8
       Width = 75
@@ -83,7 +85,7 @@ object EditEPForm: TEditEPForm
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
-      Left = 408
+      Left = 540
       Height = 26
       Top = 8
       Width = 75
@@ -129,12 +131,101 @@ object EditEPForm: TEditEPForm
       ModalResult = 2
       TabOrder = 1
     end
+    object btnDBTest: TBitBtn
+      Left = 10
+      Height = 26
+      Top = 8
+      Width = 75
+      Caption = 'Test'
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        000000000000000000000696F2DC0696F2500000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000069AF3A90694F2FF0697F18400000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000595F1350697F3FB05A2F4F50699F29E0080FF040000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000069BF3D802DBFBFF04B1F6F5059AF3C40099
+        EE0F000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000595F26004B0F6F200FEFFFF03BFF8F70699
+        F2DE0991EE1E0000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000008EFF090698F2F301F1FDFF00FFFFFF03CF
+        F9FC0598F2EE0593F034000000000000000000000000000000000594F2620694
+        F2FF0694F2FF0694F2FF0694F2FF0694F2FF0694F2FF02D4FAFF00FFFFFF00FF
+        FFFF02DEFBFE0599F2F40696F2500000000000000000000000000080FF06059A
+        F3C204BDF7F600FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FF
+        FFFF00FFFFFF01EBFDFF059DF4F50697F1840000000000000000000000000099
+        E60A069AF3D203C7F8F900FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FF
+        FFFF00FFFFFF00FFFFFF01F4FEFF05A5F5F40699F2A20099FF05000000000000
+        00000099F2140699F3E203CFF9FC00FFFFFF00FFFFFF00FFFFFF05A0F4FB0694
+        F2FF0694F2FF0694F2FF0694F2FF0694F2FF0694F2FF0594F262000000000000
+        0000000000000992F61C0598F3E902D7FAFD00FFFFFF00FFFFFF01E5FCFF0599
+        F2F40893F3420000000000000000000000000000000000000000000000000000
+        000000000000000000000791F1250599F2EF02E0FBFF00FFFFFF00FFFFFF01E5
+        FCFF0599F2F40893F34200000000000000000000000000000000000000000000
+        00000000000000000000000000000595F1350699F2F401E5FCFF00FFFFFF00FF
+        FFFF01E5FCFF0599F2F40893F342000000000000000000000000000000000000
+        0000000000000000000000000000000000000893F3420599F3F501EBFDFF00FF
+        FFFF00FFFFFF01E5FCFF0599F2F40893F3420000000000000000000000000000
+        000000000000000000000000000000000000000000000695F3570695F2FE0694
+        F2FF0694F2FF0694F2FF0694F2FF0695F2E50000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = btnDBTestClick
+      TabOrder = 2
+    end
+    object btnEPInstall: TBitBtn
+      Left = 92
+      Height = 26
+      Top = 8
+      Width = 75
+      Caption = 'Install'
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000D0804C36E2946094F4A774C8F9AB77E7EB9962F7DC864CF7CE73
+        36E7C16021C8B14C0A93A8430035000000000000000000000000000000000000
+        0000C476438ACE804CFFE19460FFF4A774FFF9AB77FFEB9962FFDC864CFFCE73
+        36FFC06021FFB14D0BFFAA4400FFAB4400880000000000000000000000000000
+        0000C47642EBD6956AFFF1D0B9FFFBF1EAFFFDFAF7FFFEFDFDFFFEFDFDFFFDF9
+        F6FFF7EBE2FFDEB397FFB8642BFFAA4400EA0000000000000000000000000000
+        0000ECD1BFC8F3DED0FFEAB795FFF3B387FFF8AF7EFFEB9B65FFDC8950FFD17C
+        43FFCB7B46FFCE8E63FFEAD0BFFFE3C0A9C70000000000000000000000000000
+        0000DEB396FACE804CFFE19460FFF4A774FFF9AB77FFEB9962FFDC864CFFCE73
+        36FFC06021FFB14D0BFFAA4400FFD09873FA0000000000000000000000000000
+        0000C77B49F4D6956AFFF1D0B9FFFBF1EAFFFDFAF7FFFEFDFDFFFEFDFDFFFDF9
+        F6FFF7EBE2FFDEB397FFB8642BFFAD4B09F30000000000000000000000000000
+        0000ECD1BFC8F3DED0FFEAB795FFF3B387FFF8AF7EFFEB9B65FFDC8950FFD17C
+        43FFCB7B46FFCE8E63FFEAD0BFFFE3C0A9C70000000000000000000000000000
+        0000DEB396FACE804CFFE19460FFF4A774FFF9AB77FFEB9962FFDC864CFFCE73
+        36FFC06021FFB14D0BFFAA4400FFD09873FA0000000000000000000000000000
+        0000C77B49F4D6956AFFF1D0B9FFFBF1EAFFFDFAF7FFFEFDFDFFFEFDFDFFFDF9
+        F6FFF7EBE2FFDEB397FFB8642BFFAD4B09F30000000000000000000000000000
+        0000ECD1BFC8F4E4DAFFEBBB9BFFF4B185FFF9AE7DFFEC9B65FFDD884FFFD37D
+        43FFCC7B46FFD29770FFEFDACCFFE3C0A9C70000000000000000000000000000
+        0000E2B99FFAD28654FFF0A470FFFCB07DFFFEB27FFFFEB27EFFFEB27EFFFAAC
+        78FFEF9E68FFD77F44FFB1500FFFD5A280FA0000000000000000000000000000
+        0000C77A47FAF8AC78FFFFB380FFFFB380FFFFB380FFFFB380FFFFB380FFFFB3
+        80FFFFB380FFFFB380FFF2A26CFFAE4908FA0000000000000000000000000000
+        0000C7794683D18451F6F0A370FDFCB07DFFFEB27FFFFEB27EFFFEB27EFFFAAC
+        78FFEF9D67FFD77F45FDAF4B09F6AF4B08820000000000000000000000000000
+        000000000000CD834B29E2955F8BF5A776D4FAAB76EFEC9A63FADC874DFAD075
+        39EFC46528D4B44F0F8BA8440029000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000
+      }
+      TabOrder = 3
+    end
   end
   object edtIdentity: TEdit
     Left = 80
     Height = 23
     Top = 8
-    Width = 402
+    Width = 531
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 1
     Text = 'edtIdentity'
@@ -143,7 +234,7 @@ object EditEPForm: TEditEPForm
     Left = 80
     Height = 23
     Top = 36
-    Width = 402
+    Width = 531
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Items.Strings = (
@@ -160,8 +251,8 @@ object EditEPForm: TEditEPForm
   object edtPath: TEdit
     Left = 80
     Height = 23
-    Top = 96
-    Width = 402
+    Top = 92
+    Width = 531
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 3
     Text = 'edtPath'
@@ -177,7 +268,7 @@ object EditEPForm: TEditEPForm
   object Label4: TLabel
     Left = 16
     Height = 15
-    Top = 66
+    Top = 70
     Width = 31
     Caption = 'Mode'
     ParentColor = False
@@ -185,33 +276,10 @@ object EditEPForm: TEditEPForm
   object Label5: TLabel
     Left = 16
     Height = 15
-    Top = 98
+    Top = 100
     Width = 24
     Caption = 'Path'
     ParentColor = False
-  end
-  object Label7: TLabel
-    Left = 16
-    Height = 15
-    Top = 126
-    Width = 48
-    Caption = 'Database'
-    ParentColor = False
-  end
-  object cbxDatabase: TComboBox
-    Left = 80
-    Height = 23
-    Top = 124
-    Width = 402
-    Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
-    Items.Strings = (
-      'terminology'
-      'open'
-      'secure'
-    )
-    Style = csDropDownList
-    TabOrder = 5
   end
   object Label1: TLabel
     Left = 16
@@ -220,5 +288,119 @@ object EditEPForm: TEditEPForm
     Width = 40
     Caption = 'Identity'
     ParentColor = False
+  end
+  object cbxDriver: TComboBox
+    Left = 80
+    Height = 23
+    Top = 150
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    TabOrder = 5
+    Text = 'cbxDriver'
+  end
+  object edtServer: TEdit
+    Left = 80
+    Height = 23
+    Top = 178
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 6
+    Text = 'edtServer'
+  end
+  object edtDBName: TEdit
+    Left = 80
+    Height = 23
+    Top = 206
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 7
+    Text = 'edtDBName'
+  end
+  object edtUsername: TEdit
+    Left = 80
+    Height = 23
+    Top = 234
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 8
+    Text = 'edtUsername'
+  end
+  object edtPassword: TEdit
+    Left = 80
+    Height = 23
+    Top = 262
+    Width = 531
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 9
+    Text = 'edtPassword'
+  end
+  object Label3: TLabel
+    Left = 15
+    Height = 15
+    Top = 128
+    Width = 48
+    Caption = 'Database'
+    ParentColor = False
+  end
+  object Label7: TLabel
+    Left = 15
+    Height = 15
+    Top = 154
+    Width = 31
+    Caption = 'Driver'
+    ParentColor = False
+  end
+  object Label8: TLabel
+    Left = 16
+    Height = 15
+    Top = 182
+    Width = 32
+    Caption = 'Server'
+    ParentColor = False
+  end
+  object Label9: TLabel
+    Left = 16
+    Height = 15
+    Top = 212
+    Width = 50
+    Caption = 'DB Name'
+    ParentColor = False
+  end
+  object Label10: TLabel
+    Left = 15
+    Height = 15
+    Top = 238
+    Width = 53
+    Caption = 'Username'
+    ParentColor = False
+  end
+  object Label11: TLabel
+    Left = 15
+    Height = 15
+    Top = 266
+    Width = 50
+    Caption = 'Password'
+    ParentColor = False
+  end
+  object rbMSSQL: TRadioButton
+    Left = 80
+    Height = 19
+    Top = 124
+    Width = 130
+    AutoSize = False
+    Caption = 'Microsoft SQL Server'
+    OnChange = rbMSSQLChange
+    TabOrder = 10
+  end
+  object rbMySQL: TRadioButton
+    Left = 266
+    Height = 19
+    Top = 124
+    Width = 58
+    AutoSize = False
+    Caption = 'MySQL'
+    OnChange = rbMSSQLChange
+    TabOrder = 11
   end
 end

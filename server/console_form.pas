@@ -42,7 +42,7 @@ uses
   fdb_manager, fdb_odbc, fdb_dialects,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   fui_lcl_managers,
-  server_ini,
+  server_config,
   console_managers;
 
 const
@@ -99,11 +99,10 @@ type
 
   TMainConsoleForm = class(TForm)
     BitBtn1: TBitBtn;
-    btnDBAdd: TBitBtn;
+    btnTxImport: TBitBtn;
     btnIDAdd: TBitBtn;
     btnIDDelete: TBitBtn;
     btnTxAdd: TBitBtn;
-    btnDBDelete: TBitBtn;
     btnEPAdd: TBitBtn;
     btnTxDelete: TBitBtn;
     btnAddEdition: TSpeedButton;
@@ -121,18 +120,13 @@ type
     btnLoincDest: TSpeedButton;
     btnLoincImportStop: TBitBtn;
     btnLoincSource: TSpeedButton;
-    btnProcessUMLS: TBitBtn;
-    btnNDC: TBitBtn;
     btnSnomedImportStop: TBitBtn;
     btnSource: TSpeedButton;
     btnStopCombine: TBitBtn;
     btnEPDelete: TBitBtn;
     btnEPInstall: TBitBtn;
-    btnUMLSStop: TBitBtn;
     btnFetchThreads: TButton;
     btnClearCache: TButton;
-    cbUMLSDriver: TComboBox;
-    cbUMLSType: TComboBox;
     cbxEdition: TComboBox;
     chkWebMode: TCheckBox;
     edtCACert: TEdit;
@@ -144,6 +138,7 @@ type
     edtDestination: TEdit;
     edtAdmitUsername: TEdit;
     edtAdminSCIMSalt: TEdit;
+    edtTelnetPassword: TEdit;
     edtInternational: TEdit;
     edtLoincDate: TEdit;
     edtLoincDest: TEdit;
@@ -157,10 +152,6 @@ type
     edtHostName: TEdit;
     edtWebPort: TEdit;
     edtGoogleId: TEdit;
-    edtUMLSDatabase: TEdit;
-    edtUMLSPassword: TEdit;
-    edtUMLSServer: TEdit;
-    edtUMLSUsername: TEdit;
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
@@ -185,28 +176,21 @@ type
     Image2: TImage;
     Image3: TImage;
     Image4: TImage;
-    Image5: TImage;
     ImageList1: TImageList;
-    Label1: TLabel;
     Label10: TLabel;
-    Label11: TLabel;
     Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
-    Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
     Label19: TLabel;
     Label2: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
     Label22: TLabel;
     Label23: TLabel;
     Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
-    Label27: TLabel;
     Label28: TLabel;
     Label29: TLabel;
     Label3: TLabel;
@@ -223,12 +207,11 @@ type
     Label4: TLabel;
     Label40: TLabel;
     Label41: TLabel;
+    Label42: TLabel;
     lblSomething: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
     lbEditions: TListBox;
     lblCombineAction: TLabel;
     lblCombineAmount: TLabel;
@@ -236,11 +219,8 @@ type
     lblLoincAmount: TLabel;
     lblSCTAction: TLabel;
     lblSCTAmount: TLabel;
-    lblUMLSAction: TLabel;
-    lblUMLSAmount: TLabel;
     lvPackages: TListView;
     lvID: TListView;
-    lvDB: TListView;
     lvTx: TListView;
     lvEP: TListView;
     MainMenu1: TMainMenu;
@@ -270,8 +250,6 @@ type
     Panel1: TPanel;
     Panel29: TPanel;
     Panel30: TPanel;
-    Panel31: TPanel;
-    Panel32: TPanel;
     Panel33: TPanel;
     Panel34: TPanel;
     Panel35: TPanel;
@@ -287,9 +265,6 @@ type
     Panel14: TPanel;
     Panel15: TPanel;
     Panel16: TPanel;
-    Panel17: TPanel;
-    Panel18: TPanel;
-    Panel19: TPanel;
     Panel2: TPanel;
     Panel20: TPanel;
     Panel21: TPanel;
@@ -297,9 +272,6 @@ type
     Panel23: TPanel;
     Panel24: TPanel;
     Panel25: TPanel;
-    Panel26: TPanel;
-    Panel27: TPanel;
-    Panel28: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
@@ -314,7 +286,6 @@ type
     prgCombine: TProgressBar;
     prgLoincImport: TProgressBar;
     prgSnomedImport: TProgressBar;
-    prgUMLSImport: TProgressBar;
     dlgFolder: TSelectDirectoryDialog;
     dlgSave: TSaveDialog;
     sBar: TStatusBar;
@@ -329,7 +300,6 @@ type
     tbUserAdmin: TTabSheet;
     tbEndPoints: TTabSheet;
     tbTermload: TTabSheet;
-    tbDatabases: TTabSheet;
     tbConsole: TTabSheet;
     tbStatistics: TTabSheet;
     tbManage: TTabSheet;
@@ -338,7 +308,6 @@ type
     tbSnomed: TTabSheet;
     tbSnomedCombine: TTabSheet;
     tbLoinc: TTabSheet;
-    tbUMLS: TTabSheet;
     Timer1: TTimer;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
@@ -364,7 +333,6 @@ type
     procedure btnLoincImportStopClick(Sender: TObject);
     procedure btnLoincSourceClick(Sender: TObject);
     procedure btnNDCClick(Sender: TObject);
-    procedure btnProcessUMLSClick(Sender: TObject);
     procedure btnSnomedImportStopClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnStopCombineClick(Sender: TObject);
@@ -387,6 +355,7 @@ type
     procedure edtSSLCertChange(Sender: TObject);
     procedure edtSSLPasswordChange(Sender: TObject);
     procedure edtSSLPortChange(Sender: TObject);
+    procedure edtTelnetPasswordChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -423,12 +392,11 @@ type
     FPassword : String;
     FFilter : String;
     FIni : TIniFile;
-    FConfig : TFHIRServerIniFile;
+    FConfig : TFHIRServerConfigFile;
     FWantStop : boolean;
     FRunning : boolean;
     FLoading : boolean;
 
-    FDBManager : TDBManager;
     FTxManager : TTxManager;
     FEPManager : TEndPointManager;
     FIDManager : TIdentityProviderManager;
@@ -446,7 +414,6 @@ type
     procedure sctCallback(pct: Integer; action: String);
     procedure cmbCallback(pct: Integer; action: String);
     procedure loincCallback(pct: Integer; action: String);
-    procedure umlsCallback(pct: Integer; action: String);
     Procedure SetUpTerminologyPage;
     function getSnomedModule: String;
     procedure connectToServer(server : String);
@@ -625,17 +592,12 @@ begin
   FPackageThread := TPackageClientThread.create;
   FPackageThread.Open;
 
-  FDBManager := TDBManager.create;
-  FDBManager.Settings := FIni;
-  FDBManager.List := lvDB;
-  FDBManager.registerControl(btnDBAdd, copAdd);
-  FDBManager.registerControl(btnDBDelete, copDelete);
-
   FTxManager := TTxManager.create;
   FTxManager.Settings := FIni;
   FTxManager.List := lvTx;
   FTxManager.registerControl(btnTxAdd, copAdd);
   FTxManager.registerControl(btnTxDelete, copDelete);
+  FTxManager.registerControl(btnTxImport, copExecute);
 
   FEPManager := TEndPointManager.create;
   FEPManager.Settings := FIni;
@@ -662,7 +624,6 @@ begin
     ;
   FPackageThread.Stop;
   FTxManager.Free;
-  FDBManager.Free;
   FEPManager.Free;
   FIDManager.Free;
   FPackages.free;
@@ -677,7 +638,6 @@ end;
 
 procedure TMainConsoleForm.FormShow(Sender: TObject);
 begin
-  GetODBCDriversList(cbUMLSDriver.items);
 end;
 
 procedure TMainConsoleForm.Image2Click(Sender: TObject);
@@ -736,7 +696,7 @@ var
 begin
   if FEPManager.Focus <> nil then
   begin
-    ts := FEPManager.Focus.section.prop['packages'].values;
+    ts := FEPManager.Focus.prop['packages'].values;
     i := ts.IndexOf(item.Caption);
     if item.Checked then
     begin
@@ -827,42 +787,43 @@ end;
 
 procedure TMainConsoleForm.SetConfigEditable;
 begin
-  FConfig := TFHIRServerIniFile.create(edtConfigFile.text);
-  FDBManager.ini := FConfig.link;
-  FTxManager.ini := FConfig.link;
-  FEPManager.ini := FConfig.link;
-  FIDManager.ini := FConfig.link;
+  FConfig := TFHIRServerConfigFile.create(edtConfigFile.text);
+  FTxManager.ConfigFile := FConfig.link;
+  FEPManager.ConfigFile := FConfig.link;
+  FIDManager.ConfigFile := FConfig.link;
 
   FLoading := true;
   try
-    edtHostName.Text := FConfig.web['host'];
+    edtHostName.Text := FConfig.web['host'].value;
     edtHostName.Enabled := true;
-    edtWebPort.Text := FConfig.web['http'];
+    edtWebPort.Text := FConfig.web['http'].value;
     edtWebPort.Enabled := true;
-    chkWebMode.Checked := FConfig.web['plain-mode'] = 'redirect';
+    chkWebMode.Checked := FConfig.web['plain-mode'].value = 'redirect';
     chkWebMode.Enabled := true;
-    edtSSLPort.Text := FConfig.web['https'];
+    edtSSLPort.Text := FConfig.web['https'].value;
     edtSSLPort.Enabled := true;
-    edtSSLCert.Text := FConfig.web['certname'];
+    edtSSLCert.Text := FConfig.web['certname'].value;
     edtSSLCert.Enabled := true;
-    edtCACert.Text := FConfig.web['cacertname'];
+    edtCACert.Text := FConfig.web['cacertname'].value;
     edtCACert.Enabled := true;
-    edtPrivateKey.Text := FConfig.web['certkey'];
+    edtPrivateKey.Text := FConfig.web['certkey'].value;
     edtPrivateKey.Enabled := true;
-    edtSSLPassword.Text := FConfig.web['password'];
+    edtSSLPassword.Text := FConfig.web['password'].value;
     edtSSLPassword.Enabled := true;
-    edtGoogleId.Text := FConfig.web['googleid'];
+    edtGoogleId.Text := FConfig.web['googleid'].value;
     edtGoogleId.Enabled := true;
+    edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
+    edtTelnetPassword.Enabled := true;
 
-    edtAdminEmail.Text := FConfig.admin['email'];
+    edtAdminEmail.Text := FConfig.admin['email'].value;
     edtAdminEmail.Enabled := true;
-    edtAdminOrganization.Text := FConfig.admin['ownername'];
+    edtAdminOrganization.Text := FConfig.admin['ownername'].value;
     edtAdminOrganization.Enabled := true;
-    edtAdminSMS.Text := FConfig.admin['owner-sms'];
+    edtAdminSMS.Text := FConfig.admin['owner-sms'].value;
     edtAdminSMS.Enabled := true;
-    edtAdmitUsername.Text := FConfig.admin['username'];
+    edtAdmitUsername.Text := FConfig.admin['username'].value;
     edtAdmitUsername.Enabled := true;
-    edtAdminSCIMSalt.Text := FConfig.admin['scim-salt'];
+    edtAdminSCIMSalt.Text := FConfig.admin['scim-salt'].value;
     edtAdminSCIMSalt.Enabled := true;
 
     lvPackages.Enabled := true;
@@ -875,10 +836,9 @@ procedure TMainConsoleForm.SetConfigReadonly;
 begin
   FConfig.Free;
   FConfig := nil;
-  FDBManager.ini := nil;
-  FTxManager.ini := nil;
-  FEPManager.ini := nil;
-  FIDManager.ini := nil;
+  FTxManager.ConfigFile := nil;
+  FEPManager.ConfigFile := nil;
+  FIDManager.ConfigFile := nil;
 
   FLoading := true;
   try
@@ -910,6 +870,8 @@ begin
     edtSSLPassword.Enabled := false;
     edtGoogleId.Text := '';
     edtGoogleId.Enabled := false;
+    edtTelnetPassword.Text := '';
+    edtTelnetPassword.Enabled := false;
     lvPackages.Enabled := true;
   finally
     FLoading := false;
@@ -944,7 +906,7 @@ end;
 
 procedure TMainConsoleForm.EPFocusChange(sender : TObject);
 var
-  ep : TFHIRServerIniComplex;
+  ep : TFHIRServerConfigSection;
   pi : TFHIRPackageInfo;
   li : TListItem;
   ts : TStringList;
@@ -953,10 +915,10 @@ begin
   ep := FEPManager.Focus;
   if (ep <> nil) then
   begin
-    ts := ep.section.prop['packages'].values;
+    ts := ep['packages'].values;
     for pi in FPackages do
     begin
-      if matchesversion(ep['type'], pi.fhirVersion, pi.version) and not isAutomatic(ep['type'], pi) then
+      if matchesversion(ep['type'].value, pi.fhirVersion, pi.version) and not isAutomatic(ep['type'].value, pi) then
       begin
         li := lvPackages.items.Add;
         li.Caption := pi.id+'#'+pi.version;
@@ -1017,7 +979,7 @@ procedure TMainConsoleForm.edtGoogleIdChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['googleid'] := edtGoogleId.Text;
+    FConfig.web['googleid'].value := edtGoogleId.Text;
     FConfig.Save;
   end;
 end;
@@ -1026,7 +988,7 @@ procedure TMainConsoleForm.edtHostNameChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['host'] := edtHostName.Text;
+    FConfig.web['host'].value := edtHostName.Text;
     FConfig.Save;
   end;
 end;
@@ -1035,7 +997,7 @@ procedure TMainConsoleForm.edtPrivateKeyChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['certkey'] := edtPrivateKey.Text;
+    FConfig.web['certkey'].value := edtPrivateKey.Text;
     FConfig.Save;
   end;
 end;
@@ -1044,7 +1006,7 @@ procedure TMainConsoleForm.edtSSLCertChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['certname'] := edtSSLCert.Text;
+    FConfig.web['certname'].value := edtSSLCert.Text;
     FConfig.Save;
   end;
 end;
@@ -1053,7 +1015,7 @@ procedure TMainConsoleForm.edtSSLPasswordChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['password'] := edtSSLPassword.Text;
+    FConfig.web['password'].value := edtSSLPassword.Text;
     FConfig.Save;
   end;
 end;
@@ -1062,7 +1024,16 @@ procedure TMainConsoleForm.edtSSLPortChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['https'] := edtSSLPort.Text;
+    FConfig.web['https'].value := edtSSLPort.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtTelnetPasswordChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['telnet-password'].value := edtGoogleId.Text;
     FConfig.Save;
   end;
 end;
@@ -1071,7 +1042,7 @@ procedure TMainConsoleForm.edtWebPortChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['http'] := edtWebPort.Text;
+    FConfig.web['http'].value := edtWebPort.Text;
     FConfig.Save;
   end;
 end;
@@ -1106,11 +1077,6 @@ end;
 
 procedure TMainConsoleForm.cbUMLSDriverChange(Sender: TObject);
 begin
-  cbUMLSType.itemindex := -1;
-  if (pos('MySQL',cbUMLSDriver.text) <> 0) then
-    cbUMLSType.itemIndex := 1;
-  if (pos('SQL Server',cbUMLSDriver.text) <> 0) then
-    cbUMLSType.itemIndex := 0;
 end;
 
 procedure TMainConsoleForm.btnBaseClick(Sender: TObject);
@@ -1346,7 +1312,6 @@ begin
       importLoinc(edtloincSource.Text, edtLoincVersion.Text, edtLoincDate.Text, edtLoincDest.text, loincCallBack);
     finally
       cursor := crDefault;
-      btnUMLSStop.Visible := false;
       FRunning := false;
       edtLoincSource.enabled := true;
       edtLoincVersion.enabled := true;
@@ -1463,115 +1428,65 @@ end;
 
 
 procedure TMainConsoleForm.btnNDCClick(Sender: TObject);
-var
-  start : TDateTime;
-  ndc : TNdcImporter;
+//var
+//  start : TDateTime;
+//  ndc : TNdcImporter;
 begin
-  if dlgFolder.execute then
-  begin
-    start := now;
-    if cbUMLSDriver.Text = '' then
-      ShowMessage('No Database Driver specified') else
-    if not AnsiMatchText(cbUMLSType.Text, ['mssql', 'mysql']) then
-      ShowMessage('No valid Server Type specified') else
-    if edtUMLSServer.Text = '' then
-      ShowMessage('No Server specified')
-    else if edtUMLSDatabase.Text = '' then
-      ShowMessage('No Database specified')
-    else if (edtUMLSUsername.Text = '') xor (edtUMLSPassword.Text = '') then
-      ShowMessage('Plase specify both a username and password, or neither')
-    else
-    begin
-      FIni.WriteString('umls-process', 'driver', cbUMLSDriver.text);
-      FIni.WriteString('umls-process', 'type', cbUMLSType.text);
-      FIni.WriteString('umls-process', 'server', edtUMLSServer.text);
-      FIni.WriteString('umls-process', 'database', edtUMLSDatabase.text);
-      FIni.WriteString('umls-process', 'username', edtUMLSUsername.text);
-      FIni.WriteString('umls-process', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
-
-      ndc := TNDCImporter.create(dlgFolder.FileName);
-      try
-        ndc.Database := TFDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
-        FWantStop := false;
-        btnUMLSStop.Visible := true;
-        cursor := crHourGlass;
-        FRunning := true;
-        edtUMLSServer.enabled := false;
-        edtUMLSDatabase.enabled := false;
-        edtUMLSUsername.enabled := false;
-        edtUMLSPassword.enabled := false;
-        btnProcessUMLS.enabled := false;
-        btnNDC.Enabled := false;
-        try
-          ndc.process(umlsCallback);
-        finally
-          cursor := crDefault;
-          btnNDC.Enabled := true;
-          btnUMLSStop.Visible := false;
-          FRunning := false;
-          edtUMLSServer.enabled := true;
-          edtUMLSDatabase.enabled := true;
-          edtUMLSUsername.enabled := true;
-          edtUMLSPassword.enabled := true;
-          btnProcessUMLS.enabled := true;
-          umlsCallback(0, '');
-        end;
-      finally
-        ndc.Free;
-      end;
-      MessageDlg('Successfully Upload NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
-    end;
-  end;
-end;
-
-procedure TMainConsoleForm.btnProcessUMLSClick(Sender: TObject);
-var
-  db : TFDBManager;
-  start : TDateTime;
-begin
-  start := now;
-  if cbUMLSDriver.Text = '' then
-    ShowMessage('No Database Driver specified') else
-  if not MatchText(cbUMLSType.Text, ['mssql', 'mysql']) then
-    ShowMessage('No valid Server Type specified') else
-  if edtUMLSServer.Text = '' then
-    ShowMessage('No Server specified')
-  else if edtUMLSDatabase.Text = '' then
-    ShowMessage('No Database specified')
-  else if (edtUMLSUsername.Text = '') xor (edtUMLSPassword.Text = '') then
-    ShowMessage('Plase specify both a username and password, or neither')
-  else
-  begin
-    FIni.WriteString('umls-process', 'server', edtUMLSServer.text);
-    FIni.WriteString('umls-process', 'database', edtUMLSDatabase.text);
-    FIni.WriteString('umls-process', 'username', edtUMLSUsername.text);
-    FIni.WriteString('umls-process', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
-
-    FWantStop := false;
-    btnUMLSStop.Visible := true;
-    cursor := crHourGlass;
-    FRunning := true;
-    edtUMLSServer.enabled := false;
-    edtUMLSDatabase.enabled := false;
-    edtUMLSUsername.enabled := false;
-    edtUMLSPassword.enabled := false;
-    btnProcessUMLS.enabled := false;
-    try
-      db := TFDBOdbcManager.create('umls', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
-      generateRxStems(db, umlsCallback);
-    finally
-      cursor := crDefault;
-      btnUMLSStop.Visible := false;
-      FRunning := false;
-      edtUMLSServer.enabled := true;
-      edtUMLSDatabase.enabled := true;
-      edtUMLSUsername.enabled := true;
-      edtUMLSPassword.enabled := true;
-      btnProcessUMLS.enabled := true;
-      umlsCallback(0, '');
-    end;
-    MessageDlg('Successfully Process UMLS Entries in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
-  end;
+  //if dlgFolder.execute then
+  //begin
+  //  start := now;
+  //  if cbUMLSDriver.Text = '' then
+  //    ShowMessage('No Database Driver specified') else
+  //  if not AnsiMatchText(cbUMLSType.Text, ['mssql', 'mysql']) then
+  //    ShowMessage('No valid Server Type specified') else
+  //  if edtUMLSServer.Text = '' then
+  //    ShowMessage('No Server specified')
+  //  else if edtUMLSDatabase.Text = '' then
+  //    ShowMessage('No Database specified')
+  //  else if (edtUMLSUsername.Text = '') xor (edtUMLSPassword.Text = '') then
+  //    ShowMessage('Plase specify both a username and password, or neither')
+  //  else
+  //  begin
+  //    FIni.WriteString('umls-process', 'driver', cbUMLSDriver.text);
+  //    FIni.WriteString('umls-process', 'type', cbUMLSType.text);
+  //    FIni.WriteString('umls-process', 'server', edtUMLSServer.text);
+  //    FIni.WriteString('umls-process', 'database', edtUMLSDatabase.text);
+  //    FIni.WriteString('umls-process', 'username', edtUMLSUsername.text);
+  //    FIni.WriteString('umls-process', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
+  //
+  //    ndc := TNDCImporter.create(dlgFolder.FileName);
+  //    try
+  //      ndc.Database := TFDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+  //      FWantStop := false;
+  //      btnUMLSStop.Visible := true;
+  //      cursor := crHourGlass;
+  //      FRunning := true;
+  //      edtUMLSServer.enabled := false;
+  //      edtUMLSDatabase.enabled := false;
+  //      edtUMLSUsername.enabled := false;
+  //      edtUMLSPassword.enabled := false;
+  //      btnProcessUMLS.enabled := false;
+  //      btnNDC.Enabled := false;
+  //      try
+  //        ndc.process(umlsCallback);
+  //      finally
+  //        cursor := crDefault;
+  //        btnNDC.Enabled := true;
+  //        btnUMLSStop.Visible := false;
+  //        FRunning := false;
+  //        edtUMLSServer.enabled := true;
+  //        edtUMLSDatabase.enabled := true;
+  //        edtUMLSUsername.enabled := true;
+  //        edtUMLSPassword.enabled := true;
+  //        btnProcessUMLS.enabled := true;
+  //        umlsCallback(0, '');
+  //      end;
+  //    finally
+  //      ndc.Free;
+  //    end;
+  //    MessageDlg('Successfully Upload NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
+  //  end;
+  //end;
 end;
 
 procedure TMainConsoleForm.btnSnomedImportStopClick(Sender: TObject);
@@ -1595,9 +1510,9 @@ begin
   if not FLoading then
   begin
     if chkWebMode.Checked then
-      FConfig.web['plain-mode'] := 'redirect'
+      FConfig.web['plain-mode'].value := 'redirect'
     else
-      FConfig.web['plain-mode'] := 'serve';
+      FConfig.web['plain-mode'].value := 'serve';
     FConfig.save;
   end;
 end;
@@ -1606,7 +1521,7 @@ procedure TMainConsoleForm.edtAdminEmailChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.admin['email'] := edtAdminEmail.Text;
+    FConfig.admin['email'].value := edtAdminEmail.Text;
     FConfig.Save;
   end;
 end;
@@ -1615,7 +1530,7 @@ procedure TMainConsoleForm.edtAdminOrganizationChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.admin['ownername'] := edtAdminOrganization.Text;
+    FConfig.admin['ownername'].value := edtAdminOrganization.Text;
     FConfig.Save;
   end;
 end;
@@ -1624,7 +1539,7 @@ procedure TMainConsoleForm.edtAdminSCIMSaltChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.admin['scim-salt'] := edtAdminSCIMSalt.Text;
+    FConfig.admin['scim-salt'].value := edtAdminSCIMSalt.Text;
     FConfig.Save;
   end;
 end;
@@ -1633,7 +1548,7 @@ procedure TMainConsoleForm.edtAdminSMSChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.admin['owner-sms'] := edtAdminSMS.Text;
+    FConfig.admin['owner-sms'].value := edtAdminSMS.Text;
     FConfig.Save;
   end;
 end;
@@ -1642,7 +1557,7 @@ procedure TMainConsoleForm.edtAdmitUsernameChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.admin['username'] := edtAdmitUsername.Text;
+    FConfig.admin['username'].value := edtAdmitUsername.Text;
     FConfig.Save;
   end;
 end;
@@ -1651,7 +1566,7 @@ procedure TMainConsoleForm.edtCACertChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
   begin
-    FConfig.web['cacertname'] := edtCACert.Text;
+    FConfig.web['cacertname'].value := edtCACert.Text;
     FConfig.Save;
   end;
 end;
@@ -1763,8 +1678,8 @@ begin
     tsl.free;
     tsd.free;
   end;
-  FDBManager.timer;
   FEPManager.timer;
+  FTxManager.timer;
   if st = csDiconnected then
   begin
     sBar.Panels[1].Text := 'n/a';
@@ -1967,19 +1882,6 @@ begin
     abort;
 end;
 
-procedure TMainConsoleForm.umlsCallback(pct: Integer; action: String);
-begin
-  prgUMLSImport.Position := pct;
-  lblUMLSAction.Caption := action;
-  lblUMLSAmount.Caption := inttostr(pct)+'%';
-  prgUMLSImport.Update;
-  lblUMLSAction.Update;
-  lblUMLSAmount.Update;
-  Application.ProcessMessages;
-  if (FWantStop) then
-    abort;
-end;
-
 procedure TMainConsoleForm.SetUpTerminologyPage;
 begin
   edtSource.text := FIni.ReadString('snomed-import', 'source', '');
@@ -1992,13 +1894,6 @@ begin
   edtLoincVersion.Text := FIni.ReadString('loinc-import', 'date', ''); // should not be date for is for legacy reasons
   edtLoincDest.text := FIni.ReadString('loinc-import', 'dest', '');
   edtLoincDate.Text := FIni.ReadString('loinc-import', 'tdate', '');
-
-  cbUMLSDriver.text := FIni.ReadString('umls-process', 'driver', '');
-  cbUMLSType.text := FIni.ReadString('umls-process', 'type', '');
-  edtUMLSServer.text := FIni.ReadString('umls-process', 'server', '');
-  edtUMLSDatabase.text := FIni.ReadString('umls-process', 'database', '');
-  edtUMLSUsername.text := FIni.ReadString('umls-process', 'username', '');
-  edtUMLSPassword.text := strDecrypt(FIni.ReadString('umls-process', 'password', ''), GetCryptKey('umls encryption key'));
 
   edtInternational.text := FIni.ReadString('snomed-combine', 'base', '');
   lbEditions.Items.CommaText := FIni.ReadString('snomed-combine', 'editions', '');

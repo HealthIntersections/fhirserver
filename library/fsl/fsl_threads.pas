@@ -141,6 +141,7 @@ Type
 
   TFslThread = Class (TFslObject)
     Private
+      FAutoFree: boolean;
       FInternal : TThread; // Handle to the Windows thread.
       FID : TFslThreadID;         // Unique ID of the Windows thread.
       FActive : Boolean;          // Run thread has finished.
@@ -175,7 +176,7 @@ Type
 
       Property ID : TFslThreadID Read FID Write FID;
       Property Delegate : TFslThreadDelegate Read FDelegate Write FDelegate;
-//    Property Processor : Cardinal Write SetProcessor; // see comments in SetProcessor
+      Property AutoFree : boolean read FAutoFree write FAutoFree;
   End;
 
   TFslThreadClass = Class Of TFslThread;
@@ -1078,6 +1079,8 @@ begin
     // ignore any further exceptions
   End;
   FOwner.FActive := False;
+  if FOwner.AutoFree then
+    FOwner.Free;
   SetThreadName('');
 end;
 

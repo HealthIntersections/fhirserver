@@ -40,7 +40,7 @@ uses
   fhir4_factory,
   fdb_manager, fdb_sqlite3,
   scim_server,
-  server_ini, webserver, kernel_tx, database_installer;
+  server_config, webserver, kernel_tx, database_installer;
 
 type
   TFHIRServerStatus = (ssNotRunning, ssStarting, ssRunning, ssStopping);
@@ -61,7 +61,7 @@ type
   private
     FLock : TFslLock;
     FThread : TFHIRServerControllerThread;
-    FIni : TFHIRServerIniFile;
+    FIni : TFHIRServerConfigFile;
     FOnStatusChange: TNotifyEvent;
     FPendingStatus : TFHIRServerStatus;
     FStatus: TFHIRServerStatus;
@@ -81,7 +81,7 @@ type
     procedure logContinue(s : String); override;
     procedure logFinish(s : String); override;
   public
-    constructor Create(ini : TFHIRServerIniFile);
+    constructor Create(ini : TFHIRServerConfigFile);
     destructor Destroy; override;
 
     property OnStatusChange : TNotifyEvent read FOnStatusChange write FOnStatusChange;
@@ -104,7 +104,7 @@ implementation
 { TFHIRServerController }
 
 
-constructor TFHIRServerController.Create(ini: TFHIRServerIniFile);
+constructor TFHIRServerController.Create(ini: TFHIRServerConfigFile);
 begin
   inherited Create;
   FLock := TFslLock.create;
@@ -211,40 +211,45 @@ begin
   result := Path([ExtractFilePath(ParamStr(0)), s]);
 end;
 
-function makeUcum : TFHIRServerIniComplex;
+function makeUcum : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('ucum');
 //  result.value['type'] := 'ucum';
 //  result.value['source'] := localFile('ucum-essence.xml');
+  result := nil;
 end;
 
-function makeLoinc : TFHIRServerIniComplex;
+function makeLoinc : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('loinc');
 //  result.value['type'] := 'loinc';
 //  result.value['source'] := localFile('loinc-2.65.cache');
+  result := nil;
 end;
 
-function makeLang : TFHIRServerIniComplex;
+function makeLang : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('lang');
 //  result.value['type'] := 'lang';
 //  result.value['source'] := localFile('lang.txt');
+  result := nil;
 end;
 
-function makeR4 : TFHIRServerIniComplex;
+function makeR4 : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('r4');
 //  result.value['path'] := '/r4';
 //  result.value['version'] := 'r4';
 //  result.value['database'] := 'utg';
+  result := nil;
 end;
 
-function makeUtgDB : TFHIRServerIniComplex;
+function makeUtgDB : TFHIRServerConfigSection;
 begin
 //  result := TFHIRServerIniComplex.Create('sqlite');
 //  result.value['type'] := 'sqlite';
 //  result.value['database'] := localFile('fhir-server-gui.db');
+  result := nil;
 end;
 
 procedure TFHIRServerController.makeDB;
@@ -254,10 +259,10 @@ var
   scim : TSCIMServer;
   salt, un, pw, em, dr : String;
   conn : TFDBConnection;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
 begin
   // check that user account details are provided
-  salt := FIni.admin['scim-salt'];
+  salt := FIni.admin['scim-salt'].value;
   if (salt = '') then
     salt := NewGuidId;
   dr := 'openid,fhirUser,profile,user/*.*';
@@ -302,7 +307,7 @@ end;
 
 procedure TFHIRServerController.checkOk;
 begin
-  if not StringIsInteger16(FIni.web['http']) then
+  if not StringIsInteger16(FIni.web['http'].value) then
     raise EFslException.create('Port must be a Positive Integer between 0 and 65535');
 //  if not folderExists(FIni.kernel['utg-folder']) then
 //    raise EFslException.create('UTG Folder "'+FIni.kernel['utg-folder']+'" not found');
@@ -312,17 +317,15 @@ begin
 //  FIni.kernel['mode'] := 'tx';
 //  FIni.kernel['tx-versions'] := 'r4';
 //  FIni.kernel['packages-r4'] := '';
-  FIni.databases.Clear;
-  FIni.databases.Add('utg', makeUtgDB);
-  FIni.terminologies.clear;
-  FIni.terminologies.Add('ucum', makeUcum);
-  FIni.terminologies.Add('loinc', makeLoinc);
-  FIni.terminologies.Add('lang', makeLang);
-  FIni.endpoints.clear;
-  FIni.endpoints.Add('r4', makeR4);
-  Fini.web['host'] := 'localhost';
-  Fini.admin['email'] := 'grahame@hl7.org';
-  Fini.web['clients'] := IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini';
+//  FIni.terminologies.clear;
+//  FIni.terminologies.Add('ucum', makeUcum);
+//  FIni.terminologies.Add('loinc', makeLoinc);
+//  FIni.terminologies.Add('lang', makeLang);
+//  FIni.endpoints.clear;
+//  FIni.endpoints.Add('r4', makeR4);
+//  Fini.web['host'] := 'localhost';
+//  Fini.admin['email'] := 'grahame@hl7.org';
+//  Fini.web['clients'] := IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini';
 
   if not FileExists(localFile('fhir-server-gui.db')) then
     makeDB;
@@ -360,7 +363,7 @@ begin
   FController.setStatus(ssStarting);
   try
     try
-      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.service['utg-folder'], FController.FIni.Link);
+      svc := TFHIRServiceTxServer.Create('utg', 'UTG Server', 'Starting Server, UTG = '+FController.FIni.service['utg-folder'].value, FController.FIni.Link);
       try
         svc.DebugMode := true;
         if svc.CanStart then

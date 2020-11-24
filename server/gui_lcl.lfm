@@ -1,133 +1,144 @@
 object ServerGUI: TServerGUI
   Left = 391
-  Height = 1278
+  Height = 730
   Top = 201
-  Width = 1637
+  Width = 935
   Caption = 'FHIR Terminology Server'
-  ClientHeight = 1244
-  ClientWidth = 1637
-  DesignTimePPI = 168
+  ClientHeight = 710
+  ClientWidth = 935
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.1.0.0'
   object Panel3: TPanel
     Left = 0
-    Height = 128
+    Height = 73
     Top = 0
-    Width = 1637
+    Width = 935
     Align = alTop
-    ClientHeight = 128
-    ClientWidth = 1637
+    ClientHeight = 73
+    ClientWidth = 935
+    ParentFont = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 14
-      Height = 30
-      Top = 19
-      Width = 101
+      Left = 8
+      Height = 15
+      Top = 11
+      Width = 57
       Caption = 'UTG Folder'
       ParentColor = False
+      ParentFont = False
     end
     object Label2: TLabel
-      Left = 16
-      Height = 30
-      Top = 64
-      Width = 37
+      Left = 9
+      Height = 15
+      Top = 37
+      Width = 22
       Caption = 'Port'
       ParentColor = False
+      ParentFont = False
     end
     object edtFolder: TEdit
-      Left = 128
-      Height = 38
-      Top = 16
-      Width = 1432
+      Left = 73
+      Height = 23
+      Top = 9
+      Width = 818
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtFolderChange
+      ParentFont = False
       TabOrder = 0
       Text = 'edtFolder'
     end
     object edtPort: TEdit
-      Left = 126
-      Height = 38
-      Top = 64
-      Width = 1493
+      Left = 72
+      Height = 23
+      Top = 37
+      Width = 853
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtPortChange
+      ParentFont = False
       TabOrder = 1
       Text = 'edtPort'
     end
     object BitBtn1: TBitBtn
-      Left = 1576
-      Height = 35
-      Top = 19
-      Width = 35
+      Left = 900
+      Height = 20
+      Top = 11
+      Width = 20
       Anchors = [akTop, akRight]
       Caption = '...'
       OnClick = BitBtn1Click
+      ParentFont = False
       TabOrder = 2
     end
   end
   object Panel1: TPanel
     Left = 0
-    Height = 65
-    Top = 128
-    Width = 1637
+    Height = 37
+    Top = 73
+    Width = 935
     Align = alTop
-    ClientHeight = 65
-    ClientWidth = 1637
+    ClientHeight = 37
+    ClientWidth = 935
+    ParentFont = False
     TabOrder = 1
     object lblStatus: TLabel
-      Left = 120
-      Height = 30
-      Top = 12
-      Width = 1360
+      Left = 69
+      Height = 15
+      Top = 7
+      Width = 776
       Anchors = [akTop, akLeft, akRight]
       Caption = 'Not Running'
       ParentColor = False
+      ParentFont = False
     end
     object btnStatus: TButton
-      Left = 8
-      Height = 41
-      Top = 8
-      Width = 99
+      Left = 5
+      Height = 23
+      Top = 5
+      Width = 57
       Caption = 'Start'
       OnClick = btnStatusClick
+      ParentFont = False
       TabOrder = 0
     end
     object btnBrowser: TButton
-      Left = 1504
-      Height = 40
-      Top = 8
-      Width = 116
+      Left = 859
+      Height = 23
+      Top = 5
+      Width = 66
       Anchors = [akTop, akRight]
       Caption = 'Browser'
       OnClick = btnBrowserClick
+      ParentFont = False
       TabOrder = 1
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 1051
-    Top = 193
-    Width = 1637
+    Height = 600
+    Top = 110
+    Width = 935
     Align = alClient
     BorderWidth = 4
     Caption = 'Panel2'
-    ClientHeight = 1051
-    ClientWidth = 1637
+    ClientHeight = 600
+    ClientWidth = 935
+    ParentFont = False
     TabOrder = 2
     object mLog: TMemo
       Left = 5
-      Height = 1041
+      Height = 590
       Top = 5
-      Width = 1627
+      Width = 925
       Align = alClient
+      ParentFont = False
       TabOrder = 0
     end
   end
   object MainMenu1: TMainMenu
-    Left = 40
-    Top = 208
+    Left = 23
+    Top = 119
     object File1: TMenuItem
       Caption = '&File'
       object Exit1: TMenuItem
@@ -147,7 +158,7 @@ object ServerGUI: TServerGUI
   object Timer1: TTimer
     Interval = 50
     OnTimer = Timer1Timer
-    Left = 144
-    Top = 208
+    Left = 82
+    Top = 119
   end
 end

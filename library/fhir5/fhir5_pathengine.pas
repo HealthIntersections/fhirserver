@@ -1418,6 +1418,8 @@ begin
       equalNull: result := false;
       equalFalse: result := false;
       equalTrue: result := true;
+    else
+      result := false;
     end;
   end
   else if (left.hasType(['string', 'id', 'code', 'uri']) and right.hasType(['string', 'id', 'code', 'uri'])) then

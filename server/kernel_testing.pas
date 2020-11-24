@@ -42,12 +42,12 @@ uses
   XGuiTestRunner, fsl_tests_console,
   {$ENDIF}
   fsl_utilities, fsl_testing,
-  server_ini,
+  server_config,
   test_registry;
 
 function isTestInsight : boolean;
-procedure runTestInsight(ini : TFHIRServerIniFile);
-procedure runTests(ini : TFHIRServerIniFile);
+procedure runTestInsight(ini : TFHIRServerConfigFile);
+procedure runTests(ini : TFHIRServerConfigFile);
 
 implementation
 
@@ -70,7 +70,7 @@ begin
   {$ENDIF}
 end;
 
-procedure RunTestGui(ini : TFHIRServerIniFile);
+procedure RunTestGui(ini : TFHIRServerConfigFile);
 begin
   {$IFDEF WINDOWS}
   FreeConsole;
@@ -85,7 +85,7 @@ begin
   {$ENDIF}
 end;
 
-procedure RunTestConsole(ini : TFHIRServerIniFile);
+procedure RunTestConsole(ini : TFHIRServerConfigFile);
 {$IFDEF FPC}
 var
   app : TFHIRTestRunner;
@@ -108,7 +108,7 @@ begin
 end;
 {$ENDIF}
 
-procedure runTests(ini : TFHIRServerIniFile);
+procedure runTests(ini : TFHIRServerConfigFile);
 begin
   test_registry.registerTests;
   if hasCommandLineParam('gui') then

@@ -843,7 +843,7 @@ function TFHIRServiceBridgeServer.setup: boolean;
 var
   s : String;
 begin
-  s := ini.service['data-path'];
+  s := ini.service['data-path'].value;
   if (s = '') then
     s := SystemTemp;
   FData := TExampleServerData.Create(s);
@@ -874,7 +874,7 @@ begin
       store.FServerContext := ctxt;
       ctxt.Globals := Settings.Link;
       ctxt.userProvider := TExampleFHIRUserProvider.Create;
-      WebServer.registerEndPoint('example', ini.service['path'], ctxt.Link, Ini);
+      WebServer.registerEndPoint('example', ini.service['path'].value, ctxt.Link, Ini);
     finally
       ctxt.Free;
     end;

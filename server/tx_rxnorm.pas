@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads,
   fdb_manager,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities,
   fhir_cdshooks,
@@ -69,6 +69,8 @@ type
     destructor Destroy; Override;
   end;
 
+  { TUMLSServices }
+
   TUMLSServices = class (TCodeSystemProvider)
   private
     nci : boolean;
@@ -79,12 +81,14 @@ type
 
     procedure load(list : TStringList; sql : String);
   protected
-    function getSAB : String; virtual;
+    class function getSAB : String; virtual;
     function getCodeField : String; virtual;
   public
     constructor Create(nci : boolean; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
+
+    class function checkDB(conn : TFDBConnection) : String;
 
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
@@ -130,7 +134,7 @@ type
 
   TNDFRTServices = class (TUMLSServices)
   protected
-    function getSAB : String; override;
+    class function getSAB : String; override;
     function getCodeField : String; override;
   public
     constructor Create(db : TFDBManager);
@@ -147,11 +151,263 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
 
-procedure generateRxStems(db : TFDBManager; callback : TInstallerCallback = nil);
+  { TUMLSImporter }
+
+  TUMLSImporter = class (TFslObject)
+  private
+    FFolder : String;
+    FConn : TFDBConnection;
+    procedure CheckFiles;
+    procedure MakeStems(stemmer : TFslWordStemmer; stems : TStringList; desc : String; cui : string); overload;
+    procedure makeStems(callback: TWorkProgressEvent); overload;
+    procedure CreateTables(callback : TWorkProgressEvent);
+    procedure loadRXNCONSO(callback : TWorkProgressEvent);
+    procedure loadRXNRel(callback : TWorkProgressEvent);
+    procedure loadRXNSty(callback : TWorkProgressEvent);
+  public
+    constructor Create(folder : String; conn : TFDBConnection);
+    destructor Destroy; override;
+
+    procedure Doinstall(sender : TObject; callback : TWorkProgressEvent);
+  end;
+
 
 implementation
+{ TUMLSImporter }
 
-procedure MakeStems(stemmer : TFslWordStemmer; stems : TStringList; desc : String; cui : string);
+constructor TUMLSImporter.Create(folder: String; conn: TFDBConnection);
+begin
+  inherited create;
+  FFolder := folder;
+  FCOnn := conn;
+end;
+
+destructor TUMLSImporter.Destroy;
+begin
+  FConn.Free;
+  inherited Destroy;
+end;
+
+procedure TUMLSImporter.CheckFiles;
+begin
+  if not FileExists(path([FFolder, 'RXNCONSO.RRF'])) then
+    raise Exception.create('File not found: RXNCONSO.RRF');
+  if not FileExists(path([FFolder, 'RXNREL.RRF'])) then
+    raise Exception.create('File not found: RXNREL.RRF');
+  if not FileExists(path([FFolder, 'RXNSTY.RRF'])) then
+    raise Exception.create('File not found: RXNSTY.RRF');
+end;
+
+procedure TUMLSImporter.CreateTables(callback : TWorkProgressEvent);
+var
+  meta : TFDBMetaData;
+begin
+  meta := FConn.FetchMetaData;
+  try
+    if meta.HasTable('RXNCONSO') then  FConn.ExecSQL('Drop table RXNCONSO');
+    if meta.HasTable('RXNREL') then  FConn.ExecSQL('Drop table RXNREL');
+    if meta.HasTable('RXNSTY') then  FConn.ExecSQL('Drop table RXNSTY');
+    if meta.HasTable('RXNSTEMS') then  FConn.ExecSQL('Drop table RXNSTEMS');
+  finally
+    meta.free;
+  end;
+
+  callback(self, 0, false, 'Create table RXNCONSO (Step 1 of 5)');
+  FConn.ExecSQL('CREATE TABLE RXNCONSO ( '+
+                '  RXCUI             varchar(8) NOT NULL, '+
+                '  RXAUI             varchar(8) NOT NULL, '+
+                '  SAB               varchar (20) NOT NULL, '+
+                '  TTY               varchar (20) NOT NULL, '+
+                '  CODE              varchar (50) NOT NULL, '+
+                '  STR               varchar (3000) NOT NULL, '+
+                '  SUPPRESS          varchar (1))');
+  FConn.ExecSQL('CREATE INDEX X_RXNCONSO_1 ON RXNCONSO(RXCUI)');
+  FConn.ExecSQL('CREATE INDEX X_RXNCONSO_2 ON RXNCONSO(SAB, TTY)');
+  FConn.ExecSQL('CREATE INDEX X_RXNCONSO_3 ON RXNCONSO(CODE, SAB, TTY)');
+  FConn.ExecSQL('CREATE INDEX X_RXNCONSO_4 ON RXNCONSO(TTY, SAB)');
+  FConn.ExecSQL('CREATE INDEX X_RXNCONSO_6 ON RXNCONSO(RXAUI)');
+
+  callback(self, 25, false, 'Create table RXNREL (Step 1 of 5)');
+  FConn.ExecSQL('CREATE TABLE RXNREL ( '+
+                '  RXCUI1    varchar(8) , '+
+                '  RXAUI1    varchar(8), '+
+                '  REL       varchar(4) , '+
+                '  RXCUI2    varchar(8) , '+
+                '  RXAUI2    varchar(8), '+
+                '  RELA      varchar(100) , '+
+                '  SAB       varchar(20) NOT NULL '+
+                ')');
+  FConn.ExecSQL('CREATE INDEX X_RXNREL_2 ON RXNREL(REL, RXAUI1)');
+  FConn.ExecSQL('CREATE INDEX X_RXNREL_3 ON RXNREL(REL, RXCUI1)');
+  FConn.ExecSQL('CREATE INDEX X_RXNREL_4 ON RXNREL(RELA, RXAUI2)');
+  FConn.ExecSQL('CREATE INDEX X_RXNREL_5 ON RXNREL(RELA, RXCUI2)');
+
+  callback(self, 50, false, 'Create table RXNSTY (Step 1 of 5)');
+  FConn.ExecSQL('CREATE TABLE RXNSTY ( '+
+                '  RXCUI          varchar(8) NOT NULL, '+
+                '  TUI            varchar (4) '+
+                ') ');
+  FConn.ExecSQL('CREATE INDEX X_RXNSTY_2 ON RXNSTY(TUI)');
+
+  callback(self, 75, false, 'Create table RXNSTEMS (Step 1 of 5)');
+  FConn.ExecSQL('CREATE TABLE RXNSTEMS ( '+
+                ' stem CHAR(20) NOT NULL, '+
+                ' CUI VARCHAR(8) NOT NULL, '+
+                'PRIMARY KEY (stem, CUI))');
+  callback(self, 100, false, 'Created Tables (Step 1 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNCONSO(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNCONSO (Step 2 of 5)');
+  ts := TStringList.create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNCONSO.RRF']));
+    FConn.sql := 'insert into RXNCONSO (RXCUI, RXAUI, SAB, TTY, CODE, STR, SUPPRESS) values (:RXCUI, :RXAUI, :SAB, :TTY, :CODE, :STR, :SUPPRESS)';
+    FConn.Prepare;
+    for i := 0 to ts.count - 1 do
+    begin
+      if (i mod 135 = 0) then
+        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNCONSO line '+inttostr(i)+' (Step 2 of 5)');
+
+      s := ts[i].split(['|']);
+      FConn.BindString('RXCUI', s[0]);
+      FConn.BindString('RXAUI', s[7]);
+      FConn.BindString('SAB', s[11]);
+      FConn.BindString('TTY', s[12]);
+      FConn.BindString('CODE', s[13]);
+      FConn.BindString('STR', s[14]);
+      FConn.BindString('SUPPRESS', s[16]);
+      FConn.Execute;
+    end;
+    FConn.Terminate;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNCONSO Loaded (Step 2 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNRel(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNREL (Step 3 of 5)');
+  ts := TStringList.create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNREL.RRF']));
+    FConn.sql := 'insert into RXNREL (RXCUI1, RXAUI1, REL, RXCUI2, RXAUI2, RELA, SAB) values (:RXCUI1, :RXAUI1, :REL, :RXCUI2, :RXAUI2, :RELA, :SAB)';
+    FConn.Prepare;
+    for i := 0 to ts.count - 1 do
+    begin
+      if (i mod 135 = 0) then
+        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNREL line '+inttostr(i)+' (Step 3 of 5)');
+
+      s := ts[i].split(['|']);
+      FConn.BindString('RXCUI1', s[0]);
+      FConn.BindString('RXAUI1', s[1]);
+      FConn.BindString('REL', s[3]);
+      FConn.BindString('RXCUI2', s[4]);
+      FConn.BindString('RXAUI2', s[5]);
+      FConn.BindString('RELA', s[7]);
+      FConn.BindString('SAB', s[10]);
+      FConn.Execute;
+    end;
+    FConn.Terminate;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNREL Loaded (Step 3 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNSty(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNSTY (Step 4 of 5)');
+  ts := TStringList.create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNSTY.RRF']));
+    FConn.sql := 'insert into RXNSTY (RXCUI, TUI) values (:RXCUI, :TUI)';
+    FConn.Prepare;
+    for i := 0 to ts.count - 1 do
+    begin
+      if (i mod 37 = 0) then
+        callback(self, trunc((i / ts.count) * 100), false, 'Load RXNSTY line '+inttostr(i)+' (Step 4 of 5)');
+
+      s := ts[i].split(['|']);
+      FConn.BindString('RXCUI', s[0]);
+      FConn.BindString('TUI', s[1]);
+      FConn.Execute;
+    end;
+    FConn.Terminate;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNSTY Loaded (Step 4 of 5)');
+end;
+
+procedure TUMLSImporter.makeStems(callback: TWorkProgressEvent);
+var
+  stems, list : TStringList;
+  stemmer : TFslWordStemmer;
+  i, j, t : integer;
+begin
+  callback(self, 100, false, 'Generate Word Index (Step 5 of 5)');
+
+  stemmer := TFslWordStemmer.create('english');
+  stems := TStringList.Create;
+  try
+    stems.Sorted := true;
+    FConn.ExecSQL('delete from rxnstems');
+    t := FConn.CountSQL('Select count(*) from rxnconso where SAB = ''RXNORM''');
+    FConn.SQL := 'select RXCUI, STR from rxnconso where SAB = ''RXNORM'''; // allow SY
+    FConn.Prepare;
+    FConn.Execute;
+    i := 0;
+    while FConn.FetchNext do
+    begin
+      makeStems(stemmer, stems, FConn.ColString[2], FConn.ColString[1]);
+      inc(i);
+      if (i mod 137 = 0) then
+        callback(self, trunc(i * 10 / t), false, 'Generate Word Index (Step 5 of 5)')
+    end;
+    FConn.Terminate;
+
+    FConn.SQL := 'insert into rxnstems (stem, cui) values (:stem, :cui)';
+    FConn.Prepare;
+    callback(self, 10, false, 'Store Word Index (Step 5 of 5)');
+    for i := 0 to stems.count - 1 do
+    begin
+      list := stems.objects[i] as TStringList;
+      for j := 0 to list.count-1 do
+      begin
+        FConn.BindString('stem', copy(stems[i], 1, 20));
+        FConn.BindString('cui', list[j]);
+        FConn.Execute;
+      end;
+      if (i mod 137 = 0) then
+        callback(self, 10 + trunc(i * 90 / stems.Count), false, 'Store Word Index (Step 5 of 5)');
+    end;
+    callback(self, 100, true, 'Finished building Word Index (Step 5 of 5)');
+    FConn.Terminate;
+    FConn.Release;
+  finally
+    for i := 0 to stems.Count - 1 do
+      stems.Objects[i].free;
+    stems.Free;
+    stemmer.Free;
+  end;
+end;
+
+procedure TUMLSImporter.MakeStems(stemmer : TFslWordStemmer; stems : TStringList; desc : String; cui : string);
 var
   s : String;
   i : integer;
@@ -177,95 +433,22 @@ begin
   end;
 end;
 
-procedure generateRxStems(db : TFDBManager; callback : TInstallerCallback = nil);
-var
-  stems, list : TStringList;
-  qry : TFDBConnection;
-  stemmer : TFslWordStemmer;
-  i, j, t : integer;
+procedure TUMLSImporter.Doinstall(sender: TObject; callback: TWorkProgressEvent);
 begin
-  stemmer := TFslWordStemmer.create('english');
-  stems := TStringList.Create;
-  try
-    stems.Sorted := true;
-    qry := db.GetConnection('stems');
-    try
-      qry.ExecSQL('delete from rxnstems');
-
-      t := qry.CountSQL('Select count(*) from rxnconso where SAB = ''RXNORM''');
-
-      qry.SQL := 'select RXCUI, STR from rxnconso where SAB = ''RXNORM'''; // allow SY
-      qry.Prepare;
-      qry.Execute;
-      i := 0;
-      if (assigned(callback)) then
-        callback(0, 'Stemming')
-      else
-        write('Stemming');
-      while qry.FetchNext do
-      begin
-        makeStems(stemmer, stems, qry.ColString[2], qry.ColString[1]);
-        inc(i);
-        if (i mod 1000 = 0) then
-          if assigned(callback) then
-            callback(trunc(i * 10 / t), 'Stemming')
-          else
-            write('.');
-      end;
-      qry.Terminate;
-      if (not assigned(callback)) then
-      begin
-        writeln('done');
-        writeln(inttostr(stems.Count)+' stems');
-      end;
-
-      qry.SQL := 'insert into rxnstems (stem, cui) values (:stem, :cui)';
-      qry.Prepare;
-      if (assigned(callback)) then
-        callback(10, 'Storing')
-      else
-        write('Storing');
-      for i := 0 to stems.count - 1 do
-      begin
-        list := stems.objects[i] as TStringList;
-        for j := 0 to list.count-1 do
-        begin
-          qry.BindString('stem', copy(stems[i], 1, 20));
-          qry.BindString('cui', list[j]);
-          qry.Execute;
-        end;
-        if (i mod 100 = 0) then
-          if (assigned(callback)) then
-            callback(10 + trunc(i * 90 / stems.Count), 'Storing')
-          else
-            write('.');
-      end;
-      if (assigned(callback)) then
-        callback(100, 'Done')
-      else
-        writeln('done');
-      qry.Terminate;
-      qry.Release;
-    except
-      on e : Exception do
-      begin
-        qry.Error(e);
-        recordStack(e);
-        raise;
-      end;
-    end;
-  finally
-    for i := 0 to stems.Count - 1 do
-      stems.Objects[i].free;
-    stems.Free;
-    stemmer.Free;
-    db.free;
-  end;
+  callback(self, 1, false, 'Checking');
+  CheckFiles;
+  callback(self, 1, false, 'Creating Tables');
+  CreateTables(callback);
+  loadRXNCONSO(callback);
+  loadRXNRel(callback);
+  loadRXNSty(callback);
+  makeStems(callback);
+  callback(self, 1, true, 'Finished importing');
 end;
 
 { TUMLSServices }
 
-Constructor TUMLSServices.create(nci : boolean; db : TFDBManager);
+constructor TUMLSServices.Create(nci: boolean; db: TFDBManager);
 begin
   inherited Create;
 
@@ -343,7 +526,7 @@ begin
   result := TUMLSPrep.Create;
 end;
 
-function TUMLSServices.getSAB: String;
+class function TUMLSServices.getSAB: String;
 begin
   result := 'RXNORM';
 end;
@@ -507,13 +690,28 @@ begin
   result := TUMLSServices(Inherited Link);
 end;
 
+class function TUMLSServices.checkDB(conn: TFDBConnection): String;
+var
+  meta : TFDBMetaData;
+begin
+  meta := conn.FetchMetaData;
+  try
+    if not meta.HasTable('RXNConso') or not meta.HasTable('RXNREL') or not meta.HasTable('RXNSTY') or not meta.HasTable('RXNSTEMS') then
+      result := 'Missing Tables - needs re-importing'
+    else
+      result := 'OK ('+inttostr(conn.countSql('Select count(*) from RXNConso where SAB = '''+getSAB+''' and TTY <> ''SY'''))+' Concepts)';
+  finally
+    meta.free;
+  end;
+end;
+
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 var
   qry : TFDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
-    result := qry.CountSQL('Select count(cui1) from RXNCUI');
+    result := qry.CountSQL('Select count(cui1) from RXNCONSO');
     qry.Release;
   except
     on e : Exception do
@@ -869,7 +1067,7 @@ begin
   result := 'SCUI';
 end;
 
-function TNDFRTServices.getSAB: String;
+class function TNDFRTServices.getSAB: String;
 begin
   result := 'NDFRT';
 end;

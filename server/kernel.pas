@@ -42,7 +42,7 @@ Uses
 
   {$IFDEF FPC} {odbcsqldyn, }gui_lcl, {$ELSE} gui_vcl, {$ENDIF}
 
-  server_constants, server_ini, utilities,
+  server_constants, server_config, utilities,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   kernel_base, kernel_general, kernel_tx, kernel_bridge, kernel_testing;
 
@@ -53,7 +53,7 @@ implementation
 uses
   fsl_logging {$IFDEF WINDOWS}, JclDebug {$ENDIF};
 
-procedure RunGui(ini : TFHIRServerIniFile);
+procedure RunGui(ini : TFHIRServerConfigFile);
 begin
   {$IFDEF WINDOWS}
   FreeConsole;
@@ -69,11 +69,11 @@ begin
   Application.Run;
 end;
 
-function makeKernel(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerIniFile) : TFHIRServiceBase;
+function makeKernel(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile) : TFHIRServiceBase;
 var
   mode : String;
 begin
-  mode := ini.service['mode'];
+  mode := ini.service['mode'].value;
   if mode = 'bridge' then
   begin
     Logging.log('Mode: Bridge Server');
@@ -93,7 +93,7 @@ begin
     raise Exception.Create('Unknown kernel mode '+mode);
 end;
 
-procedure ExecuteFhirServer(ini : TFHIRServerIniFile); overload;
+procedure ExecuteFhirServer(ini : TFHIRServerConfigFile); overload;
 var
   svcName : String;
   dispName : String;
@@ -140,14 +140,14 @@ begin
     Logging.log(commandLineAsString);
 
     if not getCommandLineParam('name', svcName) then
-      if ini.service['name'] <> '' then
-        svcName := ini.service['name']
+      if ini.service['name'].value <> '' then
+        svcName := ini.service['name'].value
       else
         svcName := 'FHIRServer';
 
     if not getCommandLineParam('title', dispName) then
-      if ini.service['title'] <> '' then
-        dispName := ini.service['title']
+      if ini.service['title'].value <> '' then
+        dispName := ini.service['title'].value
       else
         dispName := 'FHIR Server';
 
@@ -195,8 +195,8 @@ end;
 
 procedure ExecuteFhirServer;
 var
-  ini : TFHIRServerIniFile;
-  iniName : String;
+  ini : TFHIRServerConfigFile;
+  ConfigName : String;
 begin
   {$IFDEF WINDOWS}
   JclStartExceptionTracking;
@@ -214,14 +214,14 @@ begin
       GJsHost := TJsHost.Create;
       try
       {$ENDIF}
-        if not getCommandLineParam('ini', iniName) then
+        if not getCommandLineParam('config', ConfigName) then
         {$IFDEF OSX}
-          iniName := GetAppConfigDir(false)+'fhirserver.ini';
+          ConfigName := GetAppConfigDir(false)+'fhirserver.cfg';
         {$ELSE}
-          iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
+          ConfigName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
         {$ENDIF}
 
-        ini := TFHIRServerIniFile.create(iniName);
+        ini := TFHIRServerConfigFile.create(ConfigName);
         try
           ExecuteFhirServer(ini);
         finally

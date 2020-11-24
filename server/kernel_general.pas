@@ -58,7 +58,7 @@ Uses
   tx_manager, tx_server,
   tx_unii,
   scim_server,
-  database_installer, server_version, server_ini, utilities,
+  database_installer, server_version, server_config, utilities,
   server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   storage, database,
@@ -104,7 +104,7 @@ Type
     Procedure checkDatabase(db : TFDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 
     // commands
-    function InstallDatabase(name : String) : String;
+    procedure InstallDatabase(name : String);
     procedure updateAdminPassword(name : String);
     procedure UnInstallDatabase(name : String);
     procedure LoadPackages(name, plist : String);
@@ -310,67 +310,65 @@ procedure TFHIRServiceGeneral.registerEndPoints;
 var
   ctxt : TFHIRServerContext;
   store : TFHIRNativeStorageService;
-  s : String;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
   conn : TFDBConnection;
 begin
   store := nil;
 
-  for s in Ini.endpoints.sortedKeys do
+  for details in Ini['endpoints'].sections do
   begin
-    details := Ini.endpoints[s];
-    Logging.log('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
+    Logging.log('Initialise endpoint '+details.name+' at '+details['path'].value+' for '+details['version'].value);
 
     case FKnownVersion of
-      fhirVersionRelease2: if details['version'] <> 'r2' then continue;
-      fhirVersionRelease3: if details['version'] <> 'r3' then continue;
-      fhirVersionRelease4: if details['version'] <> 'r4' then continue;
-      fhirVersionRelease5: if details['version'] <> 'r5' then continue;
+      fhirVersionRelease2: if details['version'].value <> 'r2' then continue;
+      fhirVersionRelease3: if details['version'].value <> 'r3' then continue;
+      fhirVersionRelease4: if details['version'].value <> 'r4' then continue;
+      fhirVersionRelease5: if details['version'].value <> 'r5' then continue;
     end;
 
-    if hasCommandLineParam('r5') and (details['version'] <> 'r5') then
+    if hasCommandLineParam('r5') and (details['version'].value <> 'r5') then
       continue;
-    if hasCommandLineParam('r4') and (details['version'] <> 'r4') then
+    if hasCommandLineParam('r4') and (details['version'].value <> 'r4') then
       continue;
-    if hasCommandLineParam('r3') and (details['version'] <> 'r3') then
+    if hasCommandLineParam('r3') and (details['version'].value <> 'r3') then
       continue;
-    if hasCommandLineParam('r2') and (details['version'] <> 'r2') then
+    if hasCommandLineParam('r2') and (details['version'].value <> 'r2') then
       continue;
 
-    if details['version'] = 'r2' then
+    if details['version'].value = 'r2' then
     begin
-      store := TFHIRNativeStorageServiceR2.create(Databases[details['database']].Link, TFHIRFactoryR2.Create);
+      store := TFHIRNativeStorageServiceR2.create(connectToDatabase(details), TFHIRFactoryR2.Create);
     end
-    else if details['version'] = 'r3' then
+    else if details['version'].value = 'r3' then
     begin
-      store := TFHIRNativeStorageServiceR3.create(Databases[details['database']].Link, TFHIRFactoryR3.Create);
+      store := TFHIRNativeStorageServiceR3.create(connectToDatabase(details), TFHIRFactoryR3.Create);
     end
-    else if details['version'] = 'r4' then
+    else if details['version'].value = 'r4' then
     begin
-      store := TFHIRNativeStorageServiceR4.create(Databases[details['database']].Link, TFHIRFactoryR4.Create);
+      store := TFHIRNativeStorageServiceR4.create(connectToDatabase(details), TFHIRFactoryR4.Create);
     end
-    else if details['version'] = 'r5' then
+    else if details['version'].value = 'r5' then
     begin
-      store := TFHIRNativeStorageServiceR5.create(Databases[details['database']].Link, TFHIRFactoryR5.Create);
+      store := TFHIRNativeStorageServiceR5.create(connectToDatabase(details), TFHIRFactoryR5.Create);
     end
     else
-      raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
+      raise EFslException.Create('Cannot load end-point '+details.name+' version '+details['version'].value);
 
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
       try
         Telnet.addContext(ctxt);
-        FContexts.add(s, ctxt.Link);
+        FContexts.add(details.name, ctxt.Link);
         ctxt.OnGetNamedContext := doGetNamedContext;
-        Logging.log('  .. check DB '+details['database']);
+        Logging.log('  .. check DB '+describeDatabase(details));
         checkDatabase(store.DB, store.Factory, ctxt.ServerFactory);
         ctxt.Globals := Settings.Link;
         store.ServerContext := ctxt;
         ctxt.TerminologyServer := TTerminologyServer.Create(store.DB.link, ctxt.factory.Link, Terminologies.link);
-        Logging.log('  .. load DB '+details['database']);
+        Logging.log('  .. load DB '+describeDatabase(details));
         store.Initialise();
-        ctxt.userProvider := TSCIMServer.Create(store.db.link, Ini.admin['scim-salt'], WebServer.host, Ini.admin['default-rights'], false);
-        WebServer.registerEndPoint(s, details['path'], ctxt.Link, Ini);
+        ctxt.userProvider := TSCIMServer.Create(store.db.link, Ini.admin['scim-salt'].value, WebServer.host, Ini.admin['default-rights'].value, false);
+        WebServer.registerEndPoint(details.name, details['path'].value, ctxt.Link, Ini);
       finally
         ctxt.Free;
       end;
@@ -399,12 +397,12 @@ begin
 //      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
 //      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
-  if Ini.web['package-server'] <> '' then
-  begin
-    WebServer.PackageServer.DB := Databases[Ini.web['package-server']].Link;
-    Logging.log('Starting TPackageUpdaterThread (db = '+Ini.web['package-server']+')');
-    FPackageUpdater := TPackageUpdaterThread.Create(WebServer, WebServer.PackageServer.DB.Link);
-  end;
+//  if Ini.web['package-server'].value <> '' then
+//  begin
+//    WebServer.PackageServer.DB := Databases[Ini.web['package-server']].Link;
+//    Logging.log('Starting TPackageUpdaterThread (db = '+Ini.web['package-server']+')');
+//    FPackageUpdater := TPackageUpdaterThread.Create(WebServer, WebServer.PackageServer.DB.Link);
+//  end;
 end;
 
 function endpoint : String;
@@ -415,16 +413,14 @@ end;
 
 function TFHIRServiceGeneral.command(cmd : String) : boolean;
 var
-  name, fn : String;
+  fn : String;
 begin
   result := true;
   if cmd = 'mount' then
   begin
     CanStart;
     try
-      name := InstallDatabase(endpoint);
-      if getCommandLineParam('unii', fn) then
-        ImportUnii(fn, Databases[name]);
+      InstallDatabase(endpoint);
     finally
       closeDown;
     end;
@@ -452,9 +448,7 @@ begin
     CanStart;
     try
       UninstallDatabase(endpoint);
-      name := InstallDatabase(endpoint);
-      if getCommandLineParam('unii', fn) then
-        ImportUnii(fn, Databases[name]);
+      InstallDatabase(endpoint);
       if getCommandLineParam('packages', fn) then
       begin
         LoadPackages(endpoint, fn);
@@ -468,9 +462,9 @@ begin
     CanStart;
     try
       if getCommandLineParam('packages', fn) then
-        LoadPackages(name, fn)
-      else
-        Logging.log('no Packages to install');
+      begin
+        LoadPackages(endpoint, fn);
+      end;
     finally
       closeDown;
     end;
@@ -520,35 +514,35 @@ begin
   end;
 end;
 
-function TFHIRServiceGeneral.InstallDatabase(name : String) : String;
+procedure TFHIRServiceGeneral.InstallDatabase(name : String);
 var
   db : TFDBManager;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   salt, un, pw, em, sql, dr : String;
   conn : TFDBConnection;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
   v : TFHIRVersion;
 begin
   // check that user account details are provided
-  salt := Ini.admin['scim-salt'];
+  salt := Ini.admin['scim-salt'].value;
   if (salt = '') then
     raise EFHIRException.create('You must define a scim salt in the ini file');
-  dr := Ini.admin['default-rights'];
+  dr := Ini.admin['default-rights'].value;
   if (dr = '') then
   begin
-    Ini.admin['default-rights'] := 'openid,fhirUser,profile,user/*.*';
-    dr := Ini.admin['default-rights'];
+    Ini.admin['default-rights'].value := 'openid,fhirUser,profile,user/*.*';
+    dr := Ini.admin['default-rights'].value;
   end;
   if (dr = '') then
     raise EFHIRException.create('You must define some default rights for SCIM users in the ini file');
-  un := Ini.admin['username'];
+  un := Ini.admin['username'].value;
   if (un = '') then
     raise EFHIRException.create('You must define an admin username in the ini file');
   getCommandLineParam('password', pw);
   if (pw = '') then
     raise EFHIRException.create('You must provide a admin password as a parameter to the command');
-  em := Ini.admin['email'];
+  em := Ini.admin['email'].value;
   if (em = '') then
     raise EFHIRException.create('You must define an admin email in the ini file');
 
@@ -556,31 +550,25 @@ begin
   if not DirectoryExists(sql) then
     sql := IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'sql';
 
-  details := Ini.endpoints[name];
+  details := Ini['endpoints'].section[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
-  if details['version'] = 'r2' then
+  if details['version'].value = 'r2' then
     v := fhirVersionRelease2
-  else if details['version'] = 'r3' then
+  else if details['version'].value = 'r3' then
     v := fhirVersionRelease3
-  else if details['version'] = 'r4' then
+  else if details['version'].value = 'r4' then
     v := fhirVersionRelease4
-  else if details['version'] = 'r5' then
+  else if details['version'].value = 'r5' then
     v := fhirVersionRelease5
   else
-    raise EFslException.Create('unknown version '+details['version']);
+    raise EFslException.Create('unknown version '+details['version'].value);
 
-  result := details['database'];
-  if result = '' then
-    raise EFslException.Create('No defined database '+name);
-  if Databases.ContainsKey(result) then
-    db := Databases[result].Link
-  else
-    db := connectToDatabase(result, Ini.databases[result]);
+  db := connectToDatabase(details);
   try
-    Logging.log('mount endpoint '+result+' on '+db.DBDetails);
-    scim := TSCIMServer.Create(db.Link, salt, Ini.web['host'], Ini.admin['default-rights'], true);
+    Logging.log('mount endpoint '+details.name+' on '+describeDatabase(details));
+    scim := TSCIMServer.Create(db.Link, salt, Ini.web['host'].value, Ini.admin['default-rights'].value, true);
     try
       conn := db.GetConnection('setup');
       try
@@ -620,33 +608,27 @@ var
   dbi : TFHIRDatabaseInstaller;
   conn : TFDBConnection;
   n : String;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
   v : TFHIRVersion;
 begin
-  details := Ini.endpoints[name];
+  details := Ini['endpoints'].section[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
-  if details['version'] = 'r2' then
+  if details['version'].value = 'r2' then
     v := fhirVersionRelease2
-  else if details['version'] = 'r3' then
+  else if details['version'].value = 'r3' then
     v := fhirVersionRelease3
-  else if details['version'] = 'r4' then
+  else if details['version'].value = 'r4' then
     v := fhirVersionRelease4
-  else if details['version'] = 'r5' then
+  else if details['version'].value = 'r5' then
     v := fhirVersionRelease5
   else
-    raise EFslException.Create('unknown version '+details['version']);
+    raise EFslException.Create('unknown version '+details['version'].value);
 
-  n := details['database'];
-  if n = '' then
-    raise EFslException.Create('No defined database '+name);
-  if Databases.ContainsKey(n) then
-    db := Databases[n].Link
-  else
-    db := connectToDatabase(n, Ini.databases[n]);
+  db := connectToDatabase(details);
   try
-    Logging.log('unmount database '+n+' at '+db.DBDetails);
+    Logging.log('unmount database '+details.name+' at '+describeDatabase(details));
     conn := db.GetConnection('setup');
     try
       dbi := TFHIRDatabaseInstaller.create(conn, factoryFactory(v), TKernelServerFactory.create(v));
@@ -679,27 +661,27 @@ var
   ploader : TPackageLoader;
   pcm : TFHIRPackageManager;
   li : TPackageLoadingInformation;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
   v : TFHIRVersion;
   dbn : String;
   db : TFDBManager;
   loadList : TArray<String>;
 begin
 
-  details := Ini.endpoints[name];
+  details := Ini['endpoints'].section[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
-  if details['version'] = 'r2' then
+  if details['version'].value = 'r2' then
     v := fhirVersionRelease2
-  else if details['version'] = 'r3' then
+  else if details['version'].value = 'r3' then
     v := fhirVersionRelease3
-  else if details['version'] = 'r4' then
+  else if details['version'].value = 'r4' then
     v := fhirVersionRelease4
-  else if details['version'] = 'r5' then
+  else if details['version'].value = 'r5' then
     v := fhirVersionRelease5
   else
-    raise EFslException.Create('unknown version '+details['version']);
+    raise EFslException.Create('unknown version '+details['version'].value);
 
   FknownVersion := v;
   FNotServing := true;
@@ -707,9 +689,6 @@ begin
   cb(1, 'Load: start kernel');
   postStart;
 
-  dbn := details['database'];
-  if dbn = '' then
-    raise EFslException.Create('No defined database '+name);
   pcm := TFHIRPackageManager.Create(false);
   try
     pcm.OnWork := fetchProgress2;
@@ -719,7 +698,7 @@ begin
     finishProgress('ok');
 
 
-    db := Databases[dbn].Link;
+    db := connectToDatabase(details);
     try
       Logging.log('Load: register value sets');
       // identifyValueSets(db);
@@ -771,36 +750,30 @@ var
   scim : TSCIMServer;
   salt, un, pw, em, result : String;
   conn : TFDBConnection;
-  details : TFHIRServerIniComplex;
+  details : TFHIRServerConfigSection;
 begin
   // check that user account details are provided
-  salt := Ini.admin['scim-salt'];
+  salt := Ini.admin['scim-salt'].value;
   if (salt = '') then
     raise EFHIRException.create('You must define a scim salt in the ini file');
-  un := Ini.admin['username'];
+  un := Ini.admin['username'].value;
   if (un = '') then
     raise EFHIRException.create('You must define an admin username in the ini file');
   getCommandLineParam('password', pw);
   if (pw = '') then
     raise EFHIRException.create('You must provide a admin password as a parameter to the command');
-  em := Ini.admin['email'];
+  em := Ini.admin['email'].value;
   if (em = '') then
     raise EFHIRException.create('You must define an admin email in the ini file');
 
-  details := Ini.endpoints[name];
+  details := Ini['endpoints'].section[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
-  result := details['database'];
-  if result = '' then
-    raise EFslException.Create('No defined database '+name);
-  if Databases.ContainsKey(result) then
-    db := Databases[result].Link
-  else
-    db := connectToDatabase(result, Ini.databases[result]);
+  db := connectToDatabase(details);
   try
     Logging.log('fix admin password for '+result);
-    scim := TSCIMServer.Create(db.Link, salt, Ini.web['host'], Ini.admin['default-rights'], true);
+    scim := TSCIMServer.Create(db.Link, salt, Ini.web['host'].value, Ini.admin['default-rights'].value, true);
     try
       conn := db.GetConnection('setup');
       try

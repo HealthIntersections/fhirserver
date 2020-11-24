@@ -95,7 +95,7 @@ Uses
   fhir_graphql, fhir_ndjson,
   {$IFNDEF NO_CONVERSION} fxver_convertors,{$ENDIF}
   tx_server, tx_manager, ftx_sct_expressions, ftx_loinc_services, ftx_loinc_publisher, tx_webserver, ftx_service,
-  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_ini,
+  tags, session, storage, security, html_builder, ftx_sct_services, ftx_sct_publisher, server_config,
   scim_server,
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
@@ -418,7 +418,7 @@ Type
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW;
     function processRegistration(request: TIdHTTPRequestInfo; session : TFhirSession): String;
 
-    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
@@ -436,7 +436,7 @@ Type
     property Context : TFHIRServerContext read FContext;
     property AuthServer : TAuth2Server  read FAuthServer;
 
-    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; mode : TOperationMode; callback: TInstallerCallback); overload;
+    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerConfigFile; mode : TOperationMode; callback: TInstallerCallback); overload;
     Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; mode : TOperationMode; callback: TInstallerCallback); overload;
   end;
 
@@ -578,7 +578,7 @@ Type
   Public
     constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
-    procedure loadConfiguration(ini : TFHIRServerIniFile);
+    procedure loadConfiguration(ini : TFHIRServerConfigFile);
 
     Procedure Start(active, threads: boolean);
     Procedure Stop;
@@ -605,7 +605,7 @@ Type
     {$ENDIF}
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
-    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
+    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerConfigFile) : TFhirWebServerEndpoint;
     {$IFNDEF NO_JS}
     property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
     {$ENDIF}
@@ -831,7 +831,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServerEndpoint.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; mode : TOperationMode; callback: TInstallerCallback);
+procedure TFhirWebServerEndpoint.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerConfigFile; mode : TOperationMode; callback: TInstallerCallback);
 var
   req: TFHIRRequest;
   resp: TFHIRResponse;
@@ -2460,7 +2460,7 @@ begin
   result := FContext.SessionManager.buildTable;
 end;
 
-Function TFhirWebServerEndpoint.ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+Function TFhirWebServerEndpoint.ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 var
   rdr: TFslZipReader;
   p: TFHIRParser;
@@ -4327,12 +4327,12 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-procedure TFhirWebServer.loadConfiguration(ini : TFHIRServerIniFile);
+procedure TFhirWebServer.loadConfiguration(ini : TFHIRServerConfigFile);
 var
   fn: String;
   txu: String;
 begin
-  fn := ini.admin['logging-in'];
+  fn := ini.admin['logging-in'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
     if (FolderExists('c:\temp')) then
@@ -4344,7 +4344,7 @@ begin
     FInLog.Policy.AllowExceptions := false;
   end;
 
-  fn := ini.admin['logging-out'];
+  fn := ini.admin['logging-out'].value;
   if (fn <> '') and ((fn <> '-')) then
   begin
     if (FolderExists('c:\temp')) then
@@ -4358,13 +4358,13 @@ begin
 
   // web identity / configuration
   FHomePage := 'homepage.html';
-  FFacebookLike := ini.identityProviders['facebook.com']['like'] = 'true';
-  FHost := ini.web['host'];
+  FFacebookLike := ini.identityProviders.section['facebook.com']['like'].readAsBool;
+  FHost := ini.web['host'].value;
 
 
   // web server configuration
-  FActualPort := StrToIntDef(ini.web['http'], 0);
-  FActualSSLPort := StrToIntDef(ini.web['https'], 0);
+  FActualPort := ini.web['http'].readAsInt(0);
+  FActualSSLPort := ini.web['https'].readAsInt(0);
   {$IFNDEF FHIR3}
   if FActualPort <> 80 then
     FPackageServer.pathAbsolute := 'http://'+host+':'+inttostr(FActualPort)+'/packages'
@@ -4372,19 +4372,19 @@ begin
     FPackageServer.pathAbsolute := 'http://'+host+'/packages';
   FPackageServer.pathRelative := '/packages';
   {$ENDIF}
-  FCertFile := ini.web['certname'];
-  FRootCertFile := ini.web['cacertname'];
-  FSSLPassword := ini.web['password'];
+  FCertFile := ini.web['certname'].value;
+  FRootCertFile := ini.web['cacertname'].value;
+  FSSLPassword := ini.web['password'].value;
 
-  FNoUserAuthentication := ini.web['no-auth'] = 'true';
-  FUseOAuth := ini.web['oauth'] <> 'false';
-  FOWinSecuritySecure := ini.web['owin'] = 'true';
-  FOWinSecurityPlain := ini.web['owin-http'] = 'true';
-  FServeMissingCertificate := ini.web['no-cert'] <> 'false';
-  FServeUnknownCertificate := ini.web['unknown-cert'] = 'true';
-  FServeMissingJWT := ini.web['no-jwt'] = 'true';
-  FServeUnverifiedJWT := ini.web['unverified-jwt'] = 'true';
-  FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir']);
+  FNoUserAuthentication := ini.web['no-auth'].readAsBool;
+  FUseOAuth := ini.web['oauth'].readAsBool(true);
+  FOWinSecuritySecure := ini.web['owin'].readAsBool;
+  FOWinSecurityPlain := ini.web['owin-http'].readAsBool;
+  FServeMissingCertificate := ini.web['no-cert'].readAsBool(true);
+  FServeUnknownCertificate := ini.web['unknown-cert'].readAsBool;
+  FServeMissingJWT := ini.web['no-jwt'].readAsBool;
+  FServeUnverifiedJWT := ini.web['unverified-jwt'].readAsBool;
+  FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir'].value);
 
 //  if ini.SectionExists(voVersioningNotApplicable, 'patient-view') then
 //  begin
@@ -4398,22 +4398,22 @@ begin
 //    end;
 //  end;
 
-  FOwnerName := ini.admin['ownername'];
+  FOwnerName := ini.admin['ownername'].value;
   if FOwnerName = '' then
     FOwnerName := 'Health Intersections';
-  FAdminEmail := ini.admin['email'];
+  FAdminEmail := ini.admin['email'].value;
   if FAdminEmail = '' then
     raise EFHIRException.create('An admin email is required');
 
-  FHostSms := ini.admin['owner-sms'];
+  FHostSms := ini.admin['owner-sms'].value;
   if FActualPort = 80 then
     txu := 'http://' + FHost
   else
     txu := 'http://' + FHost + ':' + inttostr(FActualPort);
 
-  FGoogle.serverId := ini.web['googleid'];
-  FTwilioDB := ini.admin['twilio'];
-  FTwilioResponse := ini.admin['twilio-text'];
+  FGoogle.serverId := ini.web['googleid'].value;
+  FTwilioDB := ini.admin['twilio'].value;
+  FTwilioResponse := ini.admin['twilio-text'].value;
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -5251,7 +5251,7 @@ begin
 end;
 
 
-function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerIniFile): TFhirWebServerEndpoint;
+function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerConfigFile): TFhirWebServerEndpoint;
 begin
   result := TFhirWebServerEndpoint.create(code, path, self, context);
   FEndPoints.Add(result);
