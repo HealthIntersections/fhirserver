@@ -65,7 +65,7 @@ Type
     FWorker : TFHIRWorkerContextWithFactory;
     FServer : TTerminologyServer;
     FFHIRPath : String;
-    FReturnProcessFileEvent : TReturnProcessFileEvent;
+    FReturnProcessFileEvent : TWebReturnProcessedFileEvent;
 
     function asJson(r : TFHIRResourceV) : String;
     function asXml(r : TFHIRResourceV) : String;
@@ -102,7 +102,7 @@ Type
     function ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
   public
-    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequestVersion(path : String) : boolean;
     function HandlesRequestNoVersion(path : String) : boolean;
@@ -118,7 +118,7 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
 begin
   create;
   FServer := server;
@@ -220,7 +220,7 @@ begin
       else if pm['op'] = 'translate' then
         vars['translate.results'] := FWorker.Factory.makeString(processTranslate(pm));
 
-      FReturnProcessFileEvent(request, response, session, request.Document, 'txhome.html', false, vars);
+      FReturnProcessFileEvent(self, request, response, session, request.Document, 'txhome.html', false, vars);
     finally
       pm.Free;
     end;
@@ -247,7 +247,7 @@ begin
     finally
       cm.Free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-cm-id.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-cm-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -271,7 +271,7 @@ begin
     finally
       vs.Free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs-id.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -295,7 +295,7 @@ begin
     finally
       cs.Free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-cs-id.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-cs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -340,7 +340,7 @@ begin
     finally
       html.Free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -403,7 +403,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -479,7 +479,7 @@ begin
     finally
       mlist.free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -616,7 +616,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;

@@ -11,7 +11,8 @@ uses
   session;
 
 type
-  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) of Object;
+  TWebReturnProcessedFileEvent = procedure (sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) of Object;
+  TWebProcessFileEvent = procedure (sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String) of Object;
 
 implementation
 

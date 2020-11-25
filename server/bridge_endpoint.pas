@@ -53,6 +53,8 @@ Const
   SYSTEM_ID = 'http://example.org/mrn-id';
 
 Type
+  TBridgeEndPoint = class;
+
   TCSVData = class (TFslObject)
   private
     FRows : TFslList<TFslStringList>;
@@ -169,7 +171,6 @@ Type
     Procedure SetUpRecording(session : TFhirSession); override;
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
-
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
@@ -182,33 +183,90 @@ Type
     function allowInsecure : boolean; override;
   end;
 
-  TBridgeWebServer = class (TFhirWebServerEndpoint)
+  TBridgeWebServer = class (TStorageWebEndpoint)
   private
+    FBridge : TBridgeEndPoint;
   protected
     function description : String; override;
 
-
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
+    procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
+    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
   public
-
-
     destructor Destroy; override;
-    function link : TLoincWebServer; overload;
-
-    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
-    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+    function link : TBridgeWebServer; overload;
   end;
 
-
-  TBridgeEndPoint = class (TFHIRServerEndPoint)
+  TBridgeEndPoint = class (TStorageEndPoint)
   private
+    FData : TExampleServerData;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
+
+    procedure Load; override;
+    procedure Unload; override;
   end;
 
 implementation
+
+{ TBridgeEndPoint }
+
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+begin
+  inherited create(config, settings, db);
+end;
+
+destructor TBridgeEndPoint.Destroy;
+begin
+  FData.Free;
+  inherited;
+end;
+
+procedure TBridgeEndPoint.Load;
+var
+  s : String;
+  store : TExampleFhirServerStorage;
+begin
+  s := Config['data-path'].value;
+  if (s = '') then
+    s := SystemTemp;
+  FData := TExampleServerData.Create(s);
+  store := TExampleFhirServerStorage.create(TFHIRFactoryR3.create);
+  FServerContext := TFHIRServerContext.Create(store.Link, TExampleServerFactory.create);
+  store.FData := FData.link;
+  store.FServerContext := FServerContext;
+  FServerContext.Globals := Settings.Link;
+  FServerContext.userProvider := TExampleFHIRUserProvider.Create;
+end;
+
+procedure TBridgeEndPoint.Unload;
+begin
+  FServerContext.Free;
+  FServerContext := nil;
+  FData.Free;
+  FData := nil;
+end;
+
+function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+var
+  wep : TBridgeWebServer;
+begin
+  wep := TBridgeWebServer.Create(Config.name, Config['path'].value, common, self);
+  wep.FBridge := self;
+  result := wep;
+end;
+
+function TBridgeEndPoint.summary: String;
+begin
+  result := 'Bridge Server using '+describeDatabase(Config);
+end;
 
 { TCSVData }
 
@@ -809,27 +867,57 @@ begin
   raise EFslException.Create('Not supported in this server');
 end;
 
+{ TBridgeWebServer }
 
-{ TBridgeEndPoint }
-
-constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+destructor TBridgeWebServer.Destroy;
 begin
-  inherited create(config, settings, db);
-end;
-
-destructor TBridgeEndPoint.Destroy;
-begin
+  // nothing
   inherited;
 end;
 
-function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+function TBridgeWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise Exception.Create('Authentication is not supported for this endpoint');
 end;
 
-function TBridgeEndPoint.summary: String;
+function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 begin
-  result := 'Bridge Server using '+describeDatabase(Config);
+  result := processContent('template-fhir.html', secure, 'Bridge Home Page', 'Home Page');
+end;
+
+function TBridgeWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+begin
+  raise Exception.Create('Upload is not supported for this endpoint');
+end;
+
+function TBridgeWebServer.description: String;
+begin
+  result := 'Bridge, with data in '+FBridge.FData.FPath;
+end;
+
+function TBridgeWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+begin
+  raise Exception.Create('todo?');
+end;
+
+procedure TBridgeWebServer.GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String);
+begin
+  raise Exception.Create('WebUI is not supported for this endpoint');
+end;
+
+function TBridgeWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+begin
+  raise Exception.Create('WebUI is not supported for this endpoint');
+end;
+
+function TBridgeWebServer.link: TBridgeWebServer;
+begin
+  result := TBridgeWebServer(inherited link);
+end;
+
+function TBridgeWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+begin
+  raise Exception.Create('Upload is not supported for this endpoint');
 end;
 
 end.

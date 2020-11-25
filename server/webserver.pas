@@ -180,8 +180,9 @@ Type
     procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
 
-    procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
-    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+    procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
+    procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
+    Procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     function  ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
 
@@ -190,7 +191,6 @@ Type
 
     Procedure StartServer();
     Procedure StopServer;
-
   Public
     constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
@@ -647,7 +647,7 @@ begin
         else if request.Document = '/' then
         begin
           summ := 'processed File';
-          ReturnProcessedFile(request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
+          ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
         end
         else
         begin
@@ -668,6 +668,42 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.ProcessFile(sender: TObject; session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>; var result: String);
+var
+  s, n: String;
+begin
+  s := SourceProvider.getSource(named);
+  s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
+  s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
+  s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
+  s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
+  s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
+  s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
+  if Common.ActualPort = 80 then
+    s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
+  else
+    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.ActualPort), [rfReplaceAll]);
+
+  if Common.ActualSSLPort = 443 then
+    s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
+  else
+    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
+//  if s.Contains('[%fitbit-redirect%]') then
+//    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
+//      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
+//      NewGuidId, // nonce
+//      'https://local.healthintersections.com.au:961/_web/fitbit.html')
+//      // callback
+//      , [rfReplaceAll]);
+
+//  s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
+  if variables <> nil then
+    for n in variables.Keys do
+      s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
+  result := s;
+end;
+
 procedure TFhirWebServer.registerEndPoint(endPoint: TFHIRServerEndPoint);
 var
   wep : TFhirWebServerEndpoint;
@@ -675,6 +711,7 @@ begin
   wep := endPoint.makeWebEndPoint(Common.link);
   FEndPoints.add(wep);
   wep.OnReturnFile := ReturnProcessedFile;
+  wep.OnProcessFile := ProcessFile;
 end;
 
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -736,7 +773,7 @@ begin
           else if request.Document = '/' then
           begin
             summ := 'Processed File';
-            ReturnProcessedFile(request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), true)
+            ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), true)
           end
           else
           begin
@@ -948,7 +985,7 @@ begin
     vars.Add('status.web-rest-time', TFHIRSystemString.Create(inttostr(Common.Stats.RestTime)));
     vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount - Common.Stats.StartTime) * DATETIME_MILLISECOND_ONE)));
     vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount - Common.Stats.StartTime)));
-    ReturnProcessedFile(request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics.html', ''), false, vars);
+    ReturnProcessedFile(self, request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics.html', ''), false, vars);
   finally
     vars.Free;
   end;
@@ -982,12 +1019,12 @@ begin
   end;
 end;
 
-procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
+procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>);
 begin
-  ReturnProcessedFile(request, response, named, path, secure, variables);
+  ReturnProcessedFile(sender, request, response, named, path, secure, variables);
 end;
 
-procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
+procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
   s, n: String;
 begin

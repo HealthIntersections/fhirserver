@@ -5,7 +5,7 @@ unit common_endpoint;
 // shared between terminology server and general server
 
 interface
-
+(*
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, ComObj, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
@@ -75,16 +75,6 @@ type
     property Format : TFHIRFormat read FFormat write FFormat;
     Property Server : TFhirWebServerCommonEndpoint read FServer write SetServer;
     Property Request : TFHIRRequest read FRequest write SetRequest;
-  end;
-
-  TFHIRWebServerScriptPlugin = class abstract (TFslObject)
-  private
-    FEndPoint : TFhirWebServerCommonEndpoint;
-  protected
-    procedure ProcessFile(name : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
-  public
-    function process(s : String; request : TIdHTTPRequestInfo; pm : THTTPParameters; variables : TFslMap<TFHIRObject>; Session: TFHIRSession; client : TFhirClientV) : String; virtual; abstract;
-    function processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV) : boolean; virtual;
   end;
 
   THtmlFormScriptPlugin = class (TFHIRWebServerScriptPlugin)
@@ -303,18 +293,6 @@ type
   end;
 
 implementation
-
-{ TFHIRWebServerScriptPlugin }
-
-procedure TFHIRWebServerScriptPlugin.ProcessFile(name: String; request: TIdHTTPRequestInfo; pm: THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; secure : boolean; variables : TFslMap<TFhirObject>);
-begin
-  FEndPoint.ReturnSecureFile(request, response, session, name, ChangeFileExt(FEndPoint.Common.SourceProvider.AltFile(request.Document, FEndPoint.path), '.secure.html'), '', secure, variables);
-end;
-
-function TFHIRWebServerScriptPlugin.processPage(request : TIdHTTPRequestInfo; pm : THTTPParameters; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject>; client : TFhirClientV): boolean;
-begin
-  result := false;
-end;
 
 { TFhirWebServerCommonEndpoint }
 
@@ -1907,7 +1885,6 @@ Var
   bundle: TFHIRBundleW;
   b : TBytes;
 Begin
-
   relativeReferenceAdjustment := 0;
   oRequest := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   try
@@ -4571,5 +4548,8 @@ end;
 //  end;
 //end;
 //
+  *)
+
+  implementation
 
 end.

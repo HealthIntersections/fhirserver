@@ -516,7 +516,8 @@ uses
   common_endpoint in 'common_endpoint.pas',
   package_endpoint in 'package_endpoint.pas',
   storage_endpoint in 'storage_endpoint.pas',
-  loinc_endpoint in 'loinc_endpoint.pas';
+  loinc_endpoint in 'loinc_endpoint.pas',
+  internal_client in 'internal_client.pas';
 
 begin
   ExecuteFhirServer;

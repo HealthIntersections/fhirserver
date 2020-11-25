@@ -68,10 +68,10 @@ type
     FCode : String;
     FPathWithSlash : String;
     FPathNoSlash : String;
-    FOnReturnFile : TReturnProcessFileEvent;
+    FOnReturnFile : TWebReturnProcessedFileEvent;
+    FOnProcessFile : TWebProcessFileEvent;
 
 
-    procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
     function EndPointDesc(secure: boolean): String;
 
 
@@ -87,6 +87,9 @@ type
 
 //    Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
 //    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
+    procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
+
+    function processFile(session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) : string; overload;
     procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
     procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean); overload;
     procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>); overload;
@@ -99,7 +102,8 @@ type
     property code : String read FCode;
     function ClientAddress(secure: boolean): String;
 
-    property OnReturnFile : TReturnProcessFileEvent read FOnReturnFile write FOnReturnFile;
+    property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
+    property OnProcessFile : TWebProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
 //    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
 //    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
@@ -368,9 +372,14 @@ begin
 end;
 
 
+function TFhirWebServerEndpoint.processFile(session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
+begin
+  FOnProcessFile(self, session, named, path, secure, variables, result);
+end;
+
 procedure TFhirWebServerEndpoint.returnFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>);
 begin
-  FOnReturnFile(request, response, session, named, path, secure, variables);
+  FOnReturnFile(self, request, response, session, named, path, secure, variables);
 end;
 
 procedure TFhirWebServerEndpoint.returnFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; secure: boolean);
@@ -379,7 +388,7 @@ var
 begin
   variables := TFslMap<TFHIRObject>.create;
   try
-    FOnReturnFile(request, response, session, named, path, secure, variables);
+    FOnReturnFile(self, request, response, session, named, path, secure, variables);
   finally
     variables.free;
   end;
@@ -387,7 +396,7 @@ end;
 
 procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>);
 begin
-  FOnReturnFile(request, response, session, named, path, true, variables);
+  FOnReturnFile(self, request, response, session, named, path, true, variables);
 end;
 
 procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String);
@@ -396,7 +405,7 @@ var
 begin
   variables := TFslMap<TFHIRObject>.create;
   try
-    FOnReturnFile(request, response, session, named, path, true, variables);
+    FOnReturnFile(self, request, response, session, named, path, true, variables);
   finally
     variables.free;
   end;
