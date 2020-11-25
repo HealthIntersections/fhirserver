@@ -45,8 +45,8 @@ Uses
 
   fhir_indexing,
   server_factory, indexing, subscriptions, session, user_manager, server_config,
-  server_context, storage,
-  endpoint;
+  server_context, storage, utilities,
+  web_base, endpoint, storage_endpoint;
 
 
 Const
@@ -182,11 +182,30 @@ Type
     function allowInsecure : boolean; override;
   end;
 
+  TBridgeWebServer = class (TFhirWebServerEndpoint)
+  private
+  protected
+    function description : String; override;
+
+
+  public
+
+
+    destructor Destroy; override;
+    function link : TLoincWebServer; overload;
+
+    function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
+    function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
+  end;
+
+
   TBridgeEndPoint = class (TFHIRServerEndPoint)
   private
   public
-    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
     destructor Destroy; override;
+    function summary : String; override;
+    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
   end;
 
 implementation
@@ -793,16 +812,24 @@ end;
 
 { TBridgeEndPoint }
 
-constructor TBridgeEndPoint.Create(settings: TFHIRServerConfigSection;
-  db: TFDBManager);
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
 begin
-
+  inherited create(config, settings, db);
 end;
 
 destructor TBridgeEndPoint.Destroy;
 begin
-
   inherited;
+end;
+
+function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TBridgeEndPoint.summary: String;
+begin
+  result := 'Bridge Server using '+describeDatabase(Config);
 end;
 
 end.

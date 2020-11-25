@@ -547,7 +547,7 @@ end;
 
 procedure TConnectingThread.execute;
 begin
-  while Active do
+  while not Terminated do
   begin
     try
       MainConsoleForm.Connect;
@@ -555,8 +555,6 @@ begin
     end;
     sleep(50);
   end;
-  MainConsoleForm.FThread := nil;
-  free;
 end;
 
 
@@ -586,11 +584,11 @@ begin
   FStatistics := TServerSessionStatistics.create;
   FLock := TFslLock.create('incoming');
   FThread := TConnectingThread.create;
-  FThread.Open;
+  FThread.Start;
 
   FPackages := TFslList<TFHIRPackageInfo>.create;
   FPackageThread := TPackageClientThread.create;
-  FPackageThread.Open;
+  FPackageThread.Start;
 
   FTxManager := TTxManager.create;
   FTxManager.Settings := FIni;
@@ -619,9 +617,8 @@ end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);
 begin
-  FThread.Stop;
-  while assigned(FThread) do
-    ;
+  FThread.StopAndWait(40);
+  FThread.Free;
   FPackageThread.Stop;
   FTxManager.Free;
   FEPManager.Free;

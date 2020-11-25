@@ -268,7 +268,7 @@ uses
   fsl_oauth in '..\library\fsl\fsl_oauth.pas',
   fsl_fetcher in '..\library\fsl\fsl_fetcher.pas',
   fsl_graphql in '..\library\fsl\fsl_graphql.pas',
-  fhir_htmlgen in '..\library\fhir\fhir_htmlgen.pas',
+  fsl_htmlgen in '..\library\fsl\fsl_htmlgen.pas',
   fsl_http in '..\library\fsl\fsl_http.pas',
   fsl_rdf in '..\library\fsl\fsl_rdf.pas',
   fsl_websocket in '..\library\fsl\fsl_websocket.pas',
@@ -394,9 +394,7 @@ uses
   fhir5_graphdefinition in '..\library\fhir5\fhir5_graphdefinition.pas',
   fhir5_maputils in '..\library\fhir5\fhir5_maputils.pas',
   package_spider in 'package_spider.pas',
-  packages in 'packages.pas',
   fsl_npm_client in '..\library\fsl\fsl_npm_client.pas',
-  FHIR.Server.Covid in 'Modules\FHIR.Server.Covid.pas',
   fhir4_liquid in '..\library\fhir4\fhir4_liquid.pas',
   twilio in 'twilio.pas',
   VirtualTrees.AccessibilityFactory in '..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
@@ -513,9 +511,12 @@ uses
   server_config in 'admin\server_config.pas',
   test_server_config in 'tests\test_server_config.pas',
   web_event in 'web_event.pas',
-  txweb_endpoint in 'txweb_endpoint.pas',
+  snomed_endpoint in 'snomed_endpoint.pas',
   twilio_endpoint in 'twilio_endpoint.pas',
-  common_endpoint in 'common_endpoint.pas';
+  common_endpoint in 'common_endpoint.pas',
+  package_endpoint in 'package_endpoint.pas',
+  storage_endpoint in 'storage_endpoint.pas',
+  loinc_endpoint in 'loinc_endpoint.pas';
 
 begin
   ExecuteFhirServer;

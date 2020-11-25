@@ -14,6 +14,7 @@ type
   { TEditTxForm }
 
   TEditTxForm = class(TForm)
+    Bevel1: TBevel;
     btnDBTest: TBitBtn;
     btnSource: TBitBtn;
     btnDBTest1: TBitBtn;
@@ -21,6 +22,7 @@ type
     btnTxImport: TBitBtn;
     cbxDriver: TComboBox;
     cbxType: TComboBox;
+    chkActive: TCheckBox;
     chkDefault: TCheckBox;
     edtDBName: TEdit;
     edtIdentity: TEdit;
@@ -32,6 +34,7 @@ type
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
+    Label12: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -199,6 +202,7 @@ begin
     cbxTypeChange(self);
 
     edtFile.Text := Tx['source'].value;
+    chkActive.Checked := tx['active'].readAsBool;
     rbMSSQL.Checked := tx['db-type'].value = 'mssql';
     rbMySQL.Checked := tx['db-type'].value = 'mysql';
     rbMSSQLClick(self);
@@ -218,6 +222,7 @@ begin
   Tx.name := edtIdentity.text;
   Tx['type'].value := cbxType.items[cbxType.ItemIndex];
   Tx['source'].value := edtFile.Text;
+  Tx['active'].ValueBool := chkActive.Checked;
   tx['db-type'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     tx['db-type'].value := 'mysql'

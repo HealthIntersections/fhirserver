@@ -679,6 +679,10 @@
         <Filename Value="..\dependencies\Indy10\Protocols\IdServerInterceptLogFile.pas"/>
         <UnitName Value="IdServerInterceptLogFile"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_htmlgen.pas"/>
+        <UnitName Value="fsl_htmlgen"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

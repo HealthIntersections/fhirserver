@@ -64,7 +64,7 @@ type
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function locate(code : String) : TCodeSystemProviderContext; overload; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -276,7 +276,7 @@ begin
   result := locate(code, msg);
 end;
 
-function THGVSProvider.locateIsA(code, parent: String): TCodeSystemProviderContext;
+function THGVSProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil;
 end;

@@ -492,7 +492,7 @@ Type
     procedure KeyNotify(const Key: String; Action: TCollectionNotification); virtual;
     procedure ValueNotify(const Value: T; Action: TCollectionNotification); virtual;
   public
-    constructor Create(name : String; ACapacity: Integer = 0);
+    constructor Create(name : String = ''; ACapacity: Integer = 0);
     constructor CreateCollection(name : String; const Collection: TEnumerable<TFslPair<T>>); overload;
     destructor Destroy; override;
     function Link : TFslMap<T>; overload;
@@ -2345,7 +2345,7 @@ begin
     FOnValueNotify(Self, Value, Action);
 end;
 
-constructor TFslMap<T>.Create(name : String; ACapacity: Integer = 0);
+constructor TFslMap<T>.Create(name : String = ''; ACapacity: Integer = 0);
 begin
   inherited Create;
   FName := name;

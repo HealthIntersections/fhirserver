@@ -9,8 +9,10 @@ Uses
   IdCustomHTTPServer, IdContext, IdOpenSSLX509,
   fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json,
   fdb_manager,
-  server_config, session,
-  web_base;
+  fhir_objects,
+  server_config, utilities, session,
+  {$IFNDEF NO_JS} server_javascript, {$ENDIF}
+  web_event, web_base;
 
 type
   TFHIRWebServerClientInfo = class(TFslObject)
@@ -64,26 +66,40 @@ type
   TFhirWebServerEndpoint = class abstract (TFHIRWebServerBase)
   private
     FCode : String;
-    FPath: String;
-    FTokenRedirects : TTokenRedirectManager;
-    FCache : THTTPCacheManager;
+    FPathWithSlash : String;
+    FPathNoSlash : String;
+    FOnReturnFile : TReturnProcessFileEvent;
+
 
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
     function EndPointDesc(secure: boolean): String;
 
-//    Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-//    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
 
   protected
+    FTokenRedirects : TTokenRedirectManager;
+    FCache : THTTPCacheManager;
+
     function OAuthPath(secure: boolean): String;
+    function AbsoluteURL(secure: boolean) : String;
+
 //    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
 //    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
+
+//    Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+//    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
+    procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>); overload;
+    procedure returnFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean); overload;
+    procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>); overload;
+    procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon);
     destructor Destroy; override;
-    property path : String read FPath;
+    property PathNoSlash : String read FPathNoSlash;
+    property PathWithSlash : String read FPathWithSlash;
     property code : String read FCode;
     function ClientAddress(secure: boolean): String;
+
+    property OnReturnFile : TReturnProcessFileEvent read FOnReturnFile write FOnReturnFile;
 
 //    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
 //    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
@@ -98,20 +114,36 @@ type
   // this is the base for actual end points - they are a pair - a web end point - the class above, a
   // and this class, which is the administrative base
 
-  TFHIRServerEndPoint = class (TFslObject)
+  TFHIRServerEndPoint = class abstract (TFslObject)
   private
     FDatabase : TFDBManager;
+    FConfig : TFHIRServerConfigSection;
+    FSettings : TFHIRServerSettings;
+    {$IFNDEF NO_JS}
+    FOnRegisterJs: TRegisterJavascriptEvent;
+    {$ENDIF}
   public
-    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
     destructor Destroy; override;
 
+    property Database : TFDBManager read FDatabase;
+    property Config : TFHIRServerConfigSection read FConfig;
+    property Settings : TFHIRServerSettings read FSettings;
+    {$IFNDEF NO_JS}
+    property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
+    {$ENDIF}
+
+    function summary : String; virtual; abstract;
+    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
     procedure LoadPackages(plist : String); virtual;
     procedure updateAdminPassword; virtual;
     procedure Load; virtual;
     Procedure Unload; virtual;
+    procedure internalThread; virtual;
   end;
+
 
 implementation
 
@@ -248,7 +280,16 @@ constructor TFhirWebServerEndpoint.create(code, path: String; common : TFHIRWebS
 begin
   inherited create(common);
   FCode := code;
-  FPath := path;
+  if (path.EndsWith('/')) then
+  begin
+    FPathWithSlash := path;
+    FPathNoSlash := path.Substring(0, path.Length-1);
+  end
+  else
+  begin
+    FPathNoSlash := path;
+    FPathWithSlash := path+'/';
+  end;
   FTokenRedirects := TTokenRedirectManager.create;
   FCache := THTTPCacheManager.create;
 end;
@@ -313,26 +354,68 @@ begin
   if secure then
   begin
     if Common.ActualSSLPort = 443 then
-      result := 'https://' + Common.Host + FPath
+      result := 'https://' + Common.Host + FPathNoSlash
     else
-      result := 'https://' + Common.Host + ':' + inttostr(Common.ActualSSLPort) + FPath;
+      result := 'https://' + Common.Host + ':' + inttostr(Common.ActualSSLPort) + FPathNoSlash;
   end
   else
   begin
     if Common.ActualPort = 80 then
-      result := 'http://' + Common.Host + FPath
+      result := 'http://' + Common.Host + FPathNoSlash
     else
-      result := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort) + FPath;
+      result := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort) + FPathNoSlash;
   end;
 end;
 
 
+procedure TFhirWebServerEndpoint.returnFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>);
+begin
+  FOnReturnFile(request, response, session, named, path, secure, variables);
+end;
+
+procedure TFhirWebServerEndpoint.returnFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; secure: boolean);
+var
+  variables : TFslMap<TFHIRObject>;
+begin
+  variables := TFslMap<TFHIRObject>.create;
+  try
+    FOnReturnFile(request, response, session, named, path, secure, variables);
+  finally
+    variables.free;
+  end;
+end;
+
+procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>);
+begin
+  FOnReturnFile(request, response, session, named, path, true, variables);
+end;
+
+procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFhirSession; named, path: String);
+var
+  variables : TFslMap<TFHIRObject>;
+begin
+  variables := TFslMap<TFHIRObject>.create;
+  try
+    FOnReturnFile(request, response, session, named, path, true, variables);
+  finally
+    variables.free;
+  end;
+end;
+
 function TFhirWebServerEndpoint.ClientAddress(secure: boolean): String;
 begin
   if secure then
-    result := 'https://'+Common.host+ port(Common.ActualSSLPort, 443) + FPath
+    result := 'https://'+Common.host+ port(Common.ActualSSLPort, 443) + FPathNoSlash
   else
-    result := 'http://'+Common.host+port(Common.ActualPort, 80) + FPath;
+    result := 'http://'+Common.host+port(Common.ActualPort, 80) + FPathNoSlash;
+end;
+
+function TFhirWebServerEndpoint.AbsoluteURL(secure: boolean): String;
+begin
+  if secure then
+    result := 'https://'+common.host+SSLPort+FPathNoSlash
+  else
+    result := 'http://'+common.host+HTTPPort+FPathNoSlash;
 end;
 
 procedure TFhirWebServerEndPoint.cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
@@ -355,39 +438,49 @@ begin
   result := '';
   if (secure) then
   begin
-    if FPath <> '' then
-      result := result + ' <li><a href="http://' + Common.Host + port(Common.ActualPort, 80) + FPath + '">Unsecured access at ' + FPath +
+    if FPathNoSlash <> '' then
+      result := result + ' <li><a href="http://' + Common.Host + port(Common.ActualPort, 80) + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
         '</a> - direct access with no security considerations</li>'#13#10;
     if Common.ActualSSLPort <> 0 then
-      result := result + ' <li><a href="' + FPath + '">Secured access at ' + FPath +
+      result := result + ' <li><a href="' + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
         '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
   end
   else
   begin
-    result := result + ' <li><a href="' + FPath + '">Unsecured access at ' + FPath +
+    result := result + ' <li><a href="' + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
         '</a> - direct access with no security considerations</li>'#13#10;
-    if FPath <> '' then
-      result := result + ' <li><a href="https://' + Common.Host + port(Common.ActualSSLPort, 443) + FPath + '">Secured access at ' + FPath +
+    if FPathNoSlash <> '' then
+      result := result + ' <li><a href="https://' + Common.Host + port(Common.ActualSSLPort, 443) + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
         '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
   end;
 end;
 
 { TFHIRServerEndPoint }
 
-constructor TFHIRServerEndPoint.Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
 begin
-
+  inherited create;
+  FConfig := config;
+  FSettings := settings;
+  FDatabase := db;
 end;
 
 destructor TFHIRServerEndPoint.Destroy;
 begin
-
+  FConfig.Free;
+  FSettings.Free;
+  FDatabase.Free;
   inherited;
 end;
 
 procedure TFHIRServerEndPoint.InstallDatabase;
 begin
 
+end;
+
+procedure TFHIRServerEndPoint.internalThread;
+begin
+  // nothing
 end;
 
 procedure TFHIRServerEndPoint.Load;

@@ -37,9 +37,9 @@ uses
   IdContext, IdCustomHTTPServer,
   fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
   fhir_objects,
-  session, server_javascript,
+  session, {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   storage,
-  tx_webserver, web_source, web_event, analytics;
+  web_source, web_event, analytics;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -121,7 +121,6 @@ type
   TFHIRWebServerBase = class (TFslObject)
   private
     FCommon : TFHIRWebServerCommon;
-    FTerminologyWebServer: TTerminologyWebServer;
 
     // security admin
     FNoUserAuthentication : boolean;
@@ -137,8 +136,10 @@ type
 
     FPatientViewServers: TFslStringDictionary;
 
-    procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     function GetSourceProvider: TFHIRWebServerSourceProvider;
+  protected
+    function HTTPPort : String;
+    function SSLPort : String;
   public
     constructor Create(common : TFHIRWebServerCommon);
     destructor Destroy; override;
@@ -147,7 +148,6 @@ type
     function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     function port(actual, default: integer): String;
 
-    property TerminologyWebServer: TTerminologyWebServer read FTerminologyWebServer write SetTerminologyWebServer;
     property Common : TFHIRWebServerCommon read FCommon;
 
     property UseOAuth: boolean read FUseOAuth write FUseOAuth;
@@ -165,7 +165,6 @@ type
     property SourceProvider : TFHIRWebServerSourceProvider read GetSourceProvider;
 
     function IsTerminologyServerOnly : boolean;
-    Function WebDesc: String;
     function GetMimeTypeForExt(AExt: String): String;
   end;
 
@@ -318,15 +317,8 @@ destructor TFHIRWebServerBase.Destroy;
 begin
   FPatientViewServers.Free;
   FCertificateIdList.Free;
-  FTerminologyWebServer.free;
   FCommon.Free;
   inherited;
-end;
-
-procedure TFHIRWebServerBase.SetTerminologyWebServer(const Value: TTerminologyWebServer);
-begin
-  FTerminologyWebServer.free;
-  FTerminologyWebServer := Value;
 end;
 
 function TFHIRWebServerBase.loadMultipartForm(const request: TStream; const contentType: String; var mode: TOperationMode): TMimeMessage;
@@ -409,16 +401,6 @@ begin
   result := false;
 end;
 
-function TFhirWebServerBase.WebDesc: String;
-begin
-  if (Common.FActualPort = 0) then
-    result := 'Port ' + inttostr(Common.FActualSSLPort) + ' (https).'
-  else if Common.FActualSSLPort = 0 then
-    result := 'Port ' + inttostr(Common.FActualPort) + ' (http).'
-  else
-    result := 'Port ' + inttostr(Common.FActualSSLPort) + ' (https) and Port ' + inttostr(Common.FActualPort) + ' (http).'
-end;
-
 Function TFhirWebServerBase.GetMimeTypeForExt(AExt: String): String;
 {$IFDEF WINDOWS}
 Var
@@ -466,6 +448,23 @@ function TFHIRWebServerBase.GetSourceProvider: TFHIRWebServerSourceProvider;
 begin
   result := Common.SourceProvider;
 end;
+
+function TFHIRWebServerBase.SSLPort: String;
+begin
+  if Common.SSLPort = 443 then
+    result := ''
+  else
+    result := ':'+inttostr(Common.SSLPort);
+end;
+
+function TFHIRWebServerBase.HTTPPort: String;
+begin
+  if Common.ActualPort = 80 then
+    result := ''
+  else
+    result := ':'+inttostr(Common.ActualPort);
+end;
+
 
 { TFHIRWebServerCommon }
 

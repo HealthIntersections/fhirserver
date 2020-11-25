@@ -37,9 +37,9 @@ uses
   fsl_http,
   fsl_base, fsl_utilities, fsl_stream,
   IdContext, IdCustomHTTPServer,
-   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
+  fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   fhir_valuesets,
-  fhir_htmlgen, ftx_sct_publisher, ftx_sct_services, ftx_loinc_publisher, ftx_loinc_services, ftx_sct_expressions, ftx_sct_analysis,
+  fsl_htmlgen, ftx_sct_publisher, ftx_sct_services, ftx_loinc_publisher, ftx_loinc_services, ftx_sct_expressions, ftx_sct_analysis,
   session, tx_server, ftx_service, tx_manager, server_constants, web_event;
 
 Type
@@ -79,16 +79,12 @@ Type
     function processExpand(pm : THTTPParameters; const lang : THTTPLanguages) : String;
     function processTranslate(pm : THTTPParameters) : String;
 
-    function chooseSnomedRelease() : String;
-    function HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
-    function HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
     function HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
     function HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
 //    Procedure BuildCsByName(html : THtmlPublisher; id : String);
 //    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByName(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
-    function processSnomedForTool(ss : TSnomedServices; code : String) : String;
 
     function sortCmByUrl(pA, pB : Pointer) : Integer;
     function sortCmByVer(pA, pB : Pointer) : Integer;
@@ -113,7 +109,6 @@ Type
     function HandlesRequestInNoVersion(path: String): boolean;
     function ProcessVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
     function RedirectToNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
-    function ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : string;
   end;
 
 implementation
@@ -122,43 +117,6 @@ uses
   fsl_logging;
 
 { TTerminologyWebServer }
-
-function TTerminologyWebServer.chooseSnomedRelease: String;
-var
-  html : THtmlPublisher;
-  ss : TSnomedServices;
-begin
-  html := THtmlPublisher.Create(FWorker.Factory.link);
-  try
-    html.Version := SERVER_VERSION;
-    html.Header('Choose SNOMED CT Version');
-    html.StartTable(true);
-    html.StartTableRow;
-    html.AddTableCell('Choose SNOMED Edition');
-    html.AddTableCell('Version');
-    html.AddTableCell('Date');
-    html.AddTableCell('UseCount');
-    html.AddTableCell('Last Used');
-    html.AddTableCell('Load Status');
-    html.EndTableRow;
-    for ss in FServer.CommonTerminologies.Snomed do
-    begin
-      html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
-      html.AddTableCell(ss.VersionUri);
-      html.AddTableCell(ss.VersionDate);
-      html.AddTableCell(inttostr(ss.UseCount));
-      html.AddTableCell(ss.LastUseStatus);
-      html.AddTableCell(ss.LoadStatus);
-      html.EndTableRow;
-    end;
-    html.EndTable;
-    html.done;
-    result := html.output;
-  finally
-    html.Free;
-  end;
-end;
 
 constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
@@ -219,17 +177,6 @@ begin
     doc := doc + '?'+request.UnparsedParams;
   response.Redirect(doc);
   result := 'Redirect to base';
-end;
-
-function TTerminologyWebServer.ProcessNoVersion(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean) : String;
-var
-  path : string;
-begin
-  path := request.Document;
-  if path.StartsWith('/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
-    result := HandleSnomedRequest(AContext, request, response)
-  else if request.Document.StartsWith('/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
-    result := HandleLoincRequest(AContext, request, response)
 end;
 
 function TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
@@ -364,7 +311,7 @@ begin
   result := 'Code System List';
   vars := TFslMap<TFHIRObject>.create('tx.vars');
   try
-    html := THtmlPublisher.Create(FWorker.Factory.link);
+    html := THtmlPublisher.Create();
     try
       html.Version := SERVER_VERSION;
       html.StartTable(true);
@@ -426,7 +373,7 @@ begin
         sort.FSortType := byUrl;
       list.Sort(sort);
 
-      html := THtmlPublisher.Create(FWorker.Factory.link);
+      html := THtmlPublisher.Create();
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -491,7 +438,7 @@ begin
       else
         mlist.SortedBy(sortCmByUrl);
       // build the table
-      html := THtmlPublisher.Create(FWorker.Factory.link);
+      html := THtmlPublisher.Create();
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -637,7 +584,7 @@ begin
       list.Sort(sort);
 
       // build the table
-      html := THtmlPublisher.Create(FWorker.Factory.link);
+      html := THtmlPublisher.Create();
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -755,7 +702,7 @@ var
   html : THtmlPublisher;
   pp : TFhirParametersParameterW;
 begin
-  html := THtmlPublisher.Create(FWorker.Factory.link);
+  html := THtmlPublisher.Create();
   try
     html.Version := SERVER_VERSION;
     html.StartTable(true);
@@ -829,7 +776,7 @@ end;
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
-//    html.Header('Terminology Server');
+//    html.Heading(1, 'Terminology Server');
 //    html.Heading(2, 'CodeSystems');
 //    html.StartList;
 //
@@ -859,7 +806,7 @@ end;
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
-//    html.Header('Terminology Server');
+//    html.Heading(1, 'Terminology Server');
 //    html.Heading(2, 'Code Systems (by URL)');
 //    html.StartList;
 //    for i := 0 to list.Count - 1 do
@@ -890,7 +837,7 @@ end;
 //  ts := TStringList.Create;
 //  list := FServer.GetValueSetList;
 //  try
-//    html.Header('Terminology Server');
+//    html.Heading(1, 'Terminology Server');
 //    html.Heading(2, 'Value Sets (By Name)');
 //    html.StartList;
 //    for i := 0 to list.Count - 1 do
@@ -919,7 +866,7 @@ end;
 ////  s : TStringStream;
 //begin
 //{  Logging.log('Tx: VS By URL '+Id);
-//  html.Header('Terminology Server');
+//  html.Heading(1, 'Terminology Server');
 //  html.Heading(2, 'Value Sets (By URL)');
 //  if (id <> '') then
 //  begin
@@ -964,277 +911,6 @@ end;
 //  end;
 //  html.EndList;}
 //end;
-
-function TTerminologyWebServer.HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
-var
-  code : String;
-  pub : TSnomedPublisher;
-  html : THtmlPublisher;
-  analysis : TSnomedAnalysis;
-  parts : TArray<String>;
-  ss, t : TSnomedServices;
-  pm : THTTPParameters;
-  buf : TFslNameBuffer;
-begin
-  if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
-  begin
-    parts := request.Document.Split(['/']);
-    ss := nil;
-    for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[length(parts)-2] then
-        ss := t;
-    if ss = nil then
-    begin
-      response.ResponseNo := 404;
-      response.ContentText := 'Document '+request.Document+' not found';
-      result := 'miss: '+request.Document;
-    end
-    else
-    begin
-      ss.RecordUse;
-      ss.checkLoaded;
-      result := 'Snomed Tool: '+parts[length(parts)-1];
-      response.ContentType := 'text/xml';
-      try
-        response.ContentText := processSnomedForTool(ss, parts[length(parts)-1]);
-        response.ResponseNo := 200;
-      except
-        on e : Exception do
-        begin
-          response.ResponseNo := 500;
-          response.ContentText := '<snomed version="'+FServer.CommonTerminologies.DefSnomed.VersionDate+'" type="error" message="'+FormatTextToXml(e.Message, xmlAttribute)+'"/>';
-        end;
-      end;
-    end;
-  end
-  else if request.Document.StartsWith('/snomed/analysis/')  then
-  begin
-    result := 'Snomed Analysis';
-    FServer.CommonTerminologies.DefSnomed.RecordUse;
-    analysis := TSnomedAnalysis.create(FServer.CommonTerminologies.DefSnomed.Link);
-    try
-      pm := THTTPParameters.create(request.UnparsedParams);
-      try
-        buf := analysis.generate(pm);
-        try
-          response.ContentType := buf.Name;
-          response.ContentStream := TBytesStream.Create(buf.AsBytes);
-          response.FreeContentStream := true;
-        finally
-          buf.free;
-        end;
-      finally
-        pm.Free;
-      end;
-      response.ResponseNo := 200;
-    finally
-      analysis.free;
-    end;
-  end
-  else if request.Document.StartsWith('/snomed/doco') then
-  begin
-    response.ContentText := chooseSnomedRelease();
-    response.ResponseNo := 200;
-    result := 'Snomed - choose version';
-  end
-  else if request.Document.StartsWith('/snomed/') then
-  begin
-    parts := request.Document.Split(['/']);
-    ss := nil;
-    for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId+'-'+t.VersionDate = parts[2] then
-        ss := t;
-    if ss = nil then
-    begin
-      response.ResponseNo := 404;
-      response.ContentText := 'Document '+request.Document+' not found';
-      result := 'Snomed: miss '+request.Document;
-    end
-    else
-    begin
-      ss.RecordUse;
-      ss.checkLoaded;
-      code := request.UnparsedParams;
-      result := 'Snomed Doco ('+ss.EditionName+'): '+code;
-
-      try
-        html := THtmlPublisher.Create(FWorker.factory.link);
-        pub := TSnomedPublisher.create(ss, FFHIRPath);
-        try
-          html.Version := SERVER_VERSION;
-          html.BaseURL := '/snomed/'+ss.EditionId+'/';
-          html.Lang := THTTPLanguages.Create(request.AcceptLanguage);
-          pub.PublishDict(code, '/snomed/'+ss.EditionId+'/', html);
-          response.ContentText := html.output;
-          response.ResponseNo := 200;
-        finally
-          html.free;
-          pub.free;
-        end;
-      except
-        on e:exception do
-        begin
-          response.ResponseNo := 500;
-          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
-        end;
-      end;
-    end;
-  end
-  else
-  begin
-    response.ResponseNo := 404;
-    response.ContentText := 'Document '+request.Document+' not found';
-    result := 'Snomed: miss: '+request.Document;
-  end;
-end;
-
-function TTerminologyWebServer.HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : string;
-var
-  code, lang, country : String;
-  pub : TLoincPublisher;
-  html : THtmlPublisher;
-  mem : TMemoryStream;
-  op : TBytes;
-  i : integer;
-  st : TStringList;
-begin
-  FServer.CommonTerminologies.Loinc.RecordUse;
-  if request.Document.StartsWith('/loinc/doco/') then
-  begin
-    code := request.UnparsedParams;
-    lang := request.Document.Substring(12);
-    result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
-    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(THTTPLanguages.create(lang))) then
-    begin
-      st := TStringList.create;
-      try
-        for i := 0 to FServer.CommonTerminologies.Loinc.Lang.count - 1 do
-        begin
-          FServer.CommonTerminologies.Loinc.Lang.GetEntry(i, lang, country);
-          st.add(lang+'-'+country);
-        end;
-        st.sort;
-        html := THtmlPublisher.Create(FWorker.factory.link);
-        try
-          html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/';
-          html.Lang := THTTPLanguages.create(lang);
-          html.Header('LOINC Languages');
-          html.StartList();
-          for i := 0 to st.count - 1 do
-          begin
-            html.StartListItem;
-            html.URL(st[i], st[i]);
-            html.EndListItem;
-          end;
-          html.EndList();
-          mem := TMemoryStream.Create;
-          response.ContentStream := mem;
-          response.FreeContentStream := true;
-          op := TEncoding.UTF8.GetBytes(html.output);
-          mem.Write(op[0], length(op));
-          mem.Position := 0;
-          response.ContentType := 'text/html; charset=utf-8';
-          response.ResponseNo := 200;
-        finally
-          html.free;
-        end;
-      finally
-        st.free;
-      end;
-    end
-    else
-    begin
-      result := 'Loinc Doco: '+code;
-      try
-        html := THtmlPublisher.Create(FWorker.factory.link);
-        pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, THTTPLanguages.Create(lang));
-        try
-          html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/'+lang;
-          html.Lang := THTTPLanguages.Create(Lang);
-          pub.PublishDict(code, '/loinc/doco/'+lang, html);
-          mem := TMemoryStream.Create;
-          response.ContentStream := mem;
-          response.FreeContentStream := true;
-          op := TEncoding.UTF8.GetBytes(html.output);
-          mem.Write(op[0], length(op));
-          mem.Position := 0;
-          response.ContentType := 'text/html; charset=utf-8';
-          response.ResponseNo := 200;
-        finally
-          html.free;
-          pub.free;
-        end;
-      except
-        on e:exception do
-        begin
-          response.ResponseNo := 500;
-          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
-        end;
-      end;
-    end;
-  end
-  else
-  begin
-    response.ResponseNo := 404;
-    response.ContentText := 'Document '+request.Document+' not found';
-    result := ('Loinc : miss '+request.Document);
-  end;
-end;
-
-function TTerminologyWebServer.processSnomedForTool(ss : TSnomedServices; code : String) : String;
-var
-  sl : TStringList;
-  s : String;
-  id : UInt64;
-  exp : TSnomedExpression;
-  index : cardinal;
-begin
-  if StringIsInteger64(code) then
-  begin
-    if ss.ConceptExists(code, index) then
-    begin
-      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
-       '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
-       '" active="'+booleanToString(ss.isActive(index))+'">';
-      sl := TStringList.Create;
-      try
-        ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
-        for s in sl do
-          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
-      finally
-        sl.free;
-      end;
-      result := result + '</snomed>';
-    end
-    else if ss.IsValidDescription(code, id, s) then
-    begin
-      result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+FormatTextToXml(s, xmlAttribute)+'">';
-      sl := TStringList.Create;
-      try
-        ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
-        for s in sl do
-          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
-      finally
-        sl.free;
-      end;
-      result := result + '</snomed>';
-    end
-    else
-      result := '<snomed version="'+ss.VersionDate+'" description="Snomed ID '+code+' not known"/>';
-  end
-  else
-  begin
-    exp := ss.parseExpression(code);
-    try
-      result := '<snomed version="'+ss.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+FormatTextToXml(ss.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
-      FormatTextToXml(ss.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+FormatTextToXml(ss.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
-    finally
-      exp.Free;
-    end;
-  end;
-end;
 
 
 function TTerminologyWebServer.processTranslate(pm: THTTPParameters): String;

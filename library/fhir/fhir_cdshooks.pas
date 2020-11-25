@@ -1366,7 +1366,7 @@ begin
               work.context := context;
               work.hash := hash;
               FThreads.add(work.link);
-              work.Open;
+              work.Start;
             finally
               work.Free;
             end;

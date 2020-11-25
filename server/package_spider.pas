@@ -92,19 +92,18 @@ implementation
 class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
 var
   fver, dep : String;
-  fhirVersions : String;
   pkey, vkey, cvkey : integer;
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
-    '(PackageVersionKey,  GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, Description, ManualToken, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, :t, :p, :c)';
+    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, Description, ManualToken, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, :desc, :mt, :c)';
   conn.prepare;
-  conn.BindBlobFromString('t', description);
-  conn.BindString('u', canonical);
-  conn.BindStringOrNull('p', canonical);
-  conn.BindString('f', token);
   conn.BindDateTimeEx('d', date);
+  conn.BindString('u', canonical);
+  conn.BindString('f', npm.fhirVersionList);
+  conn.BindBlobFromString('desc', description);
+  conn.BindString('mt', token);
   conn.BindBlob('c', pck);
   conn.Execute;
   conn.Terminate;
@@ -185,7 +184,7 @@ end;
 procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
-  id, version, description, canonical : String;
+  id, version, description, canonical, fhirVersion : String;
   kind : TFHIRPackageKind;
 begin
   npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil);
@@ -205,6 +204,7 @@ begin
       log('Error processing '+idver+': this package is not suitable for publication', source, true);
       exit;
     end;
+    fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
       raise Exception.Create('Id "'+id+'" is not valid');
     if not isValidSemVer(version) then

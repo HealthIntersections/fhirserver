@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Package Server - FHIR Server [%id%] Version [%ver%]</title>
+    <title>[%title%] - FHIR Server [%id%]</title>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="http://hl7.org/fhir" name="author"/>
@@ -65,7 +65,6 @@
   <a href="/" style="color: gold">Server Home</a>   &nbsp;|&nbsp;
   <a href="http://www.healthintersections.com.au" style="color: gold">[%id%]</a> FHIR Server
   &nbsp;|&nbsp;
-  <a href="[%specurl%]" style="color: gold">FHIR Version [%ver%]</a>
   &nbsp;[%logout%]
 		</div>  <!-- /container -->
 		</div>  <!-- /container -->
@@ -78,40 +77,8 @@
             <div class="row">
             	<div class="inner-wrapper">
  <div class="col-9">
-<h3>FHIR Package Server</h3>
-<p>
-Search the Packages:
-</p>
-  
-<form method="GET" action="[%prefix%]/catalog">
-<input type="hidden" name="op" value="find"/>
-<table> 
-  <tr><td>Id</td><td><input type="text" name="name" value=""></td></tr>
-  <tr><td>Canonical</td><td><input type="text" name="canonical" value=""></td></tr>
-  <tr><td>FHIR Version</td><td><select name="fhirversion">
-  <option value=""></option>
-  <option value="R2">R2</option>
-  <option value="R3">R3</option>
-  <option value="R4">R4</option>
-</select>
-</table>
-<input type="submit" value="Search"/>
-</form>
-<hr/>
 
-<p>
-[%count%] Packages available. [%downloads%] Packages Downloaded. Status = [%status%]. <a href="[%prefix%]/catalog?lastUpdated=-30">Package History last 30 days</a>
-</p>
-
-<p>
-How to add packages to this package server:
-</p>
-<ol>
- <li>Create an RSS feed, using the template at <a href="http://hl7.org/fhir/package-feed.xml">http://hl7.org/fhir/package-feed.xml</a>, and then register the package feed here in https://github.com/FHIR/ig-registry/blob/master/fhir-ig-list.json by making a GitHub PR. The Package server will check the RSS feed for new packages every hour</li>
- <li>Ask the FHIR product director for a token that allows you to submit packages to the server directly, using <a href="packages-upload-api.html">the API</a></li>
-</ol>
-
-
+[%content%]
 
  </div>
 
@@ -126,7 +93,7 @@ How to add packages to this package server:
 		<div class="container">  <!-- container -->
 			<div class="inner-wrapper">
 				<p>
-        <a href="/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; This server based on version <a href="[%specurl%]" style="color: gold">[%ver%]</a>
+        <a href="/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; Server Provided by Health Intersections Pty Ltd</a>
         </span>
         </p>
 			</div>  <!-- /inner-wrapper -->

@@ -143,16 +143,15 @@ Type
     Private
       FAutoFree: boolean;
       FInternal : TThread; // Handle to the Windows thread.
-      FID : TFslThreadID;         // Unique ID of the Windows thread.
-      FActive : Boolean;          // Run thread has finished.
-      FDelegate : TFslThreadDelegate;
+//      FID : TFslThreadID;         // Unique ID of the Windows thread.
+      FRunning : Boolean;          // Run thread has finished.
+//      FDelegate : TFslThreadDelegate;
 
     Protected
       Procedure Execute; Virtual;
-      Procedure Interrupt; Virtual;
-      Function Running : Boolean; Virtual;
+//      Procedure Interrupt; Virtual;
 
-      Procedure ExecuteYield(Const iTimeout : Cardinal);
+      Procedure Sleep(Const iTimeout : Cardinal);
 
     Public
       constructor Create; Override;
@@ -160,22 +159,18 @@ Type
 
       Function Link : TFslThread;
 
-      Procedure Open;
-      Procedure Close;
-      Procedure CloseOut;
-      Procedure Stop; Virtual;
-
-      function Terminated : boolean;
-
+      Procedure Start;
+      Procedure Stop;
+      procedure StopAndWait(ms : Cardinal);
       Procedure Wait;
-      Function WaitTimeout(iTimeout : Cardinal) : Boolean;
-
+//      Function WaitTimeout(iTimeout : Cardinal) : Boolean;
       Procedure Kill;
 
-      Function Active : Boolean;
+      function Terminated : boolean;
+      Property Running : Boolean read FRunning;
 
-      Property ID : TFslThreadID Read FID Write FID;
-      Property Delegate : TFslThreadDelegate Read FDelegate Write FDelegate;
+//      Property ID : TFslThreadID Read FID Write FID;
+//      Property Delegate : TFslThreadDelegate Read FDelegate Write FDelegate;
       Property AutoFree : boolean read FAutoFree write FAutoFree;
   End;
 
@@ -957,6 +952,7 @@ End;
 
 destructor TFslThread.Destroy;
 Begin
+  FInternal.Free;
   Inherited;
 End;
 
@@ -969,50 +965,29 @@ End;
 
 procedure TFslThread.Execute;
 Begin
-  SetThreadName(ClassName);
-  If Assigned(FDelegate) Then
-    FDelegate;
+//  If Assigned(FDelegate) Then
+//    FDelegate;
 End;
 
-
-procedure TFslThread.Interrupt;
+procedure TFslThread.Start;
 Begin
-End;
-
-
-function TFslThread.Running: Boolean;
-Begin
-  Result := True;
-End;
-
-
-procedure TFslThread.Open;
-Begin
-  If FActive Then
-    RaiseError('Open', 'Thread is already active.');
-
-  FActive := True;
-
-  System.IsMultiThread := True;
-
+  If FRunning Then
+    RaiseError('Open', 'Thread is already running.');
+  FRunning := True;
   FInternal := TInternalThread.create(self);
 End;
 
-
-procedure TFslThread.Close;
+procedure TFslThread.Stop;
 Begin
   FInternal.Terminate;
 End;
 
-procedure TFslThread.CloseOut;
+procedure TFslThread.StopAndWait;
 begin
-  Close;
-  while Active do
+  Stop;
+  while FRunning do
     sleep(20);
-  FInternal.Free;
-  FInternal := nil;
 end;
-
 
 procedure TFslThread.Kill;
 Begin
@@ -1020,23 +995,17 @@ Begin
   {$IFDEF WINDOWS}
   TerminateThread(FInternal.Handle, 0);
   {$ENDIF}
+  FRunning := False;
   FInternal.Free;
   FInternal := nil;
-
-  FActive := False;
-End;
-
-
-procedure TFslThread.Stop;
-Begin
-  FActive := False;
-
-  FInternal.Terminate;
 End;
 
 function TFslThread.Terminated: boolean;
 begin
-  result := FInternal.CheckTerminated;
+  if FInternal = nil then
+    result := true
+  else
+    result := FInternal.CheckTerminated;
 end;
 
 
@@ -1046,20 +1015,14 @@ Begin
 End;
 
 
-function TFslThread.WaitTimeout(iTimeout: Cardinal): Boolean;
-begin
-  result := FInternal.WaitFor > 0;// todo
-end;
+//function TFslThread.WaitTimeout(iTimeout: Cardinal): Boolean;
+//begin
+//  result := FInternal.WaitFor > 0;// todo
+//end;
 
-procedure TFslThread.ExecuteYield(const iTimeout: Cardinal);
+procedure TFslThread.Sleep(const iTimeout: Cardinal);
 Begin
   ThreadSleep(iTimeout);
-End;
-
-
-function TFslThread.Active: Boolean;
-Begin
-  Result := FActive And Running;
 End;
 
 { TInternalThread }
@@ -1072,13 +1035,13 @@ end;
 
 procedure TInternalThread.execute;
 begin
-  SetThreadName('TInternalThread');
+  SetThreadName(FOwner.ClassName);
   Try
     FOwner.Execute;
   Except
     // ignore any further exceptions
   End;
-  FOwner.FActive := False;
+  FOwner.FRunning := False;
   if FOwner.AutoFree then
     FOwner.Free;
   SetThreadName('');

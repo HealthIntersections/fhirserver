@@ -1,4 +1,4 @@
-unit fhir_htmlgen;
+unit fsl_htmlgen;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,31 +34,23 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_utilities,
-  fsl_stream,
-  fhir_objects, fhir_xhtml,  fhir_factory,
-  fsl_http,
-  fhir_parser;
+  fsl_base, fsl_utilities, fsl_stream, fsl_http;
 
 Type
 
   THtmlPublisher = class (TFslObject)
   private
     FBuilder : TFslStringBuilder;
-    FFactory : TFHIRFactory;
     FBaseURL: String;
     FLang: THTTPLanguages;
     FVersion: String;
     FLogId: String;
-    function Footer(base : String; const lang : THTTPLanguages; logId: String; tail: boolean = true): string;
-    function HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create(factory : TFHIRFactory);
+    constructor Create; override;
     destructor Destroy; Override;
 
-    procedure Header(s : String);
     procedure Done;
 
     procedure Line;
@@ -105,7 +97,7 @@ Type
     procedure hiddenInput(name, value : String);
     procedure Submit(name : String);
     procedure EndForm;
-    procedure writeXhtml(node : TFhirXHtmlNode);
+//    procedure writeXhtml(node : TFhirXHtmlNode);
     procedure Spacer;
 
     function output : String;
@@ -187,79 +179,23 @@ begin
   FBuilder.Append('</div>')
 end;
 
-constructor THtmlPublisher.Create(factory : TFHIRFactory);
+constructor THtmlPublisher.Create();
 begin
   inherited Create;
   FBuilder := TFslStringBuilder.create;
-  FFactory := factory;
 end;
 
 destructor THtmlPublisher.Destroy;
 begin
   FBuilder.Free;
-  FFactory.Free;
   inherited;
 end;
 
-function THtmlPublisher.Footer(base : String; const lang : THTTPLanguages; logId : String; tail : boolean = true): string;
-begin
-  result :=
-    '</div>'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '        </div>  <!-- /inner-wrapper -->'+#13#10+
-    '            </div>  <!-- /row -->'+#13#10+
-    '        </div>  <!-- /container -->'+#13#10+
-    '    </div>  <!-- /segment-content -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '  <div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
-    '    <div class="container">  <!-- container -->'+#13#10+
-    '      <div class="inner-wrapper">'+#13#10+
-    '        <p>'+#13#10+
-    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+Ffactory.specUrl+'" style="color: gold">'+FFactory.versionString+'</a>'+#13#10+
-    '        | Request-id: '+logId+
-    '        </span>'+#13#10+
-    '        </p>'+#13#10+
-    '      </div>  <!-- /inner-wrapper -->'+#13#10+
-    '    </div>  <!-- /container -->'+#13#10+
-    '  </div>  <!-- /segment-footer -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '  <div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
-    '    <div class="container">  <!-- container -->'+#13#10+
-    '    </div>  <!-- /container -->'+#13#10+
-    '  </div>  <!-- /segment-post-footer -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '      <!-- JS and analytics only. -->'+#13#10+
-    '      <!-- Bootstrap core JavaScript'+#13#10+
-    '================================================== -->'+#13#10+
-    '  <!-- Placed at the end of the document so the pages load faster -->'+#13#10+
-    '<script src="/assets/js/jquery.js"/>'+#13#10+
-    '<script src="/dist/js/bootstrap.min.js"/>'+#13#10+
-    '<script src="/assets/js/respond.min.js"/>'+#13#10+
-    ''+#13#10+
-    '<script src="/assets/js/fhir.js"/>'+#13#10+
-    ''+#13#10+
-    '  <!-- Analytics Below'+#13#10+
-    '================================================== -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10;
-if tail then
-  result := result +
-    '</body>'+#13#10+
-    '</html>'+#13#10;
-end;
 
 
 procedure THtmlPublisher.Done;
 begin
-  FBuilder.Append(footer(BaseURL, lang, logid));
+  FBuilder.Append('');
 end;
 
 procedure THtmlPublisher.EndBlockQuote;
@@ -308,103 +244,6 @@ end;
 procedure THtmlPublisher.EndTableRow;
 begin
   FBuilder.Append('</tr>'#13#10);
-end;
-
-function THtmlPublisher.HeaderX(base : String; const lang : THTTPLanguages; version: String): String;
-begin
-  result :=
-    '  <div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
-    '    <div id="stripe"> </div>'+#13#10+
-    '    <div class="container">  <!-- container -->'+#13#10+
-    '    <div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
-
-
-  result := result +
-    '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
-    ''#13#10+
-    '  &copy; HL7.org'#13#10+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="'+Ffactory.specUrl+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FFactory.versionString+'</a>'#13#10;
-
-  result := result +
-    '  &nbsp;'#13#10+
-    '    </div>  <!-- /container -->'+#13#10+
-    '    </div>  <!-- /container -->'+#13#10+
-    '</div>'#13#10+
-    ''#13#10;
-//    if FFacebookLike and (FOauthUrl <> '') then
-//      result := result + '<iframe src="https://www.facebook.com/plugins/like.php?href='+FOauthUrl+'" scrolling="no" frameborder="0" style="border:none; width:450px; height:30px"></iframe>'#13#10;
-
-  result := result +
-    '  <!-- /segment-breadcrumb -->'+#13#10+
-    ''+#13#10+
-    '  <div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
-    '  <div class="container">  <!-- container -->'+#13#10+
-    '            <div class="row">'+#13#10+
-    '              <div class="inner-wrapper">'+#13#10+
-    ' <div id="div-cnt" class="col-9">'+#13#10+
-    ''+#13#10+
-    ''+#13#10;
-end;
-
-function PageLinks: String;
-begin
-  result :=
-    '  <meta charset="utf-8"/>'+#13#10+
-    '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
-    '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
-    '  <meta content="http://hl7.org/fhir" name="author"/>'+#13#10+
-    ''+#13#10+
-    '  <link rel="stylesheet" href="/fhir.css"/>'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '    <!-- Bootstrap core CSS -->'+#13#10+
-    '  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- Project extras -->'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/project.css"/>'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- FHIR Server stuff -->'+#13#10+
-    '  <link rel="stylesheet" href="/css/tags.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'+#13#10+
-    '    <!-- [if lt IE 9]>'+#13#10+
-    '  <script src="/assets/js/html5shiv.js"></script>'+#13#10+
-    '  <script src="/assets/js/respond.min.js"></script>'+#13#10+
-    '  <![endif] -->'+#13#10+
-    ''+#13#10+
-    '    <!-- Favicons -->'+#13#10+
-    '  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>'+#13#10+
-    '  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>'+#13#10+
-    '  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>'+#13#10+
-    '  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>'+#13#10+
-    '  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>'+#13#10;
-end;
-
-
-procedure THtmlPublisher.Header(s: String);
-begin
-  FBuilder.Append(
-  '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
-  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
-  '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
-  ''#13#10+
-  '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
-  '<head>'#13#10+
-  '    <title>'+s+'FHIR Server</title>'#13#10+
-  pagelinks+
-  FHIR_JS+
-  '</head>'#13#10+
-  ''#13#10+
-  '<body>'#13#10+
-  HeaderX(BaseURL, FLang, Version)+
-  '<h1>'+s+'</h1>'#13#10);
 end;
 
 procedure THtmlPublisher.Heading(level: integer; text: String);
@@ -541,34 +380,34 @@ begin
   FBuilder.Append('</a>');
 end;
 
-procedure THtmlPublisher.writeXhtml(node: TFhirXHtmlNode);
-var
-  i : integer;
-begin
-  case node.NodeType of
-    fhntElement, fhntDocument:
-      begin
-        FBuilder.Append('<'+node.Name);
-        if node.HasAttributes then
-          for i := 0 to node.Attributes.Count - 1 do
-            FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
-        if node.ChildNodes.Count = 0 then
-          FBuilder.Append('/>')
-        else
-        begin
-          FBuilder.Append('>');
-          for i := 0 to node.ChildNodes.Count - 1 do
-            writeXhtml(node.ChildNodes[i]);
-          FBuilder.Append('</'+node.Name+'>');
-        end;
-      end;
-    fhntText:
-      AddTextPlain(node.Content);
-    fhntComment:
-      FBuilder.Append('<!-- '+FormatTextToXml(node.Content, xmlText)+' -->');
-  end;
-end;
-
+//procedure THtmlPublisher.writeXhtml(node: TFhirXHtmlNode);
+//var
+//  i : integer;
+//begin
+//  case node.NodeType of
+//    fhntElement, fhntDocument:
+//      begin
+//        FBuilder.Append('<'+node.Name);
+//        if node.HasAttributes then
+//          for i := 0 to node.Attributes.Count - 1 do
+//            FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
+//        if node.ChildNodes.Count = 0 then
+//          FBuilder.Append('/>')
+//        else
+//        begin
+//          FBuilder.Append('>');
+//          for i := 0 to node.ChildNodes.Count - 1 do
+//            writeXhtml(node.ChildNodes[i]);
+//          FBuilder.Append('</'+node.Name+'>');
+//        end;
+//      end;
+//    fhntText:
+//      AddTextPlain(node.Content);
+//    fhntComment:
+//      FBuilder.Append('<!-- '+FormatTextToXml(node.Content, xmlText)+' -->');
+//  end;
+//end;
+//
 procedure THtmlPublisher.TextInput(name, value, text: String; length: integer);
 begin
   FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
@@ -578,7 +417,6 @@ function THtmlPublisher.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, FBuilder.sizeInBytes);
-  inc(result, FFactory.sizeInBytes);
   inc(result, (FBaseURL.length * sizeof(char)) + 12);
   inc(result, FLang.sizeInBytes);
   inc(result, (FVersion.length * sizeof(char)) + 12);

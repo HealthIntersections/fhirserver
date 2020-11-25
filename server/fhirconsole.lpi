@@ -222,10 +222,11 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="11">
       <Unit0>
-        <Filename Value="fhirconsole.pas"/>
+        <Filename Value="FHIRConsole.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="fhirconsole"/>
       </Unit0>
       <Unit1>
         <Filename Value="console_form.pas"/>
@@ -235,65 +236,58 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="admin\console_db_edit.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="EditDBForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit2>
-      <Unit3>
         <Filename Value="admin\console_dest_edit.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="admin\console_ep_edit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditEPForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit4>
-      <Unit5>
+      </Unit3>
+      <Unit4>
         <Filename Value="admin\console_id_edit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditIDForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit5>
-      <Unit6>
+      </Unit4>
+      <Unit5>
         <Filename Value="admin\console_managers.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
+      </Unit5>
+      <Unit6>
         <Filename Value="admin\console_server_form.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
-      </Unit7>
-      <Unit8>
+      </Unit6>
+      <Unit7>
         <Filename Value="admin\console_tx_edit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditTxForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit8>
-      <Unit9>
+      </Unit7>
+      <Unit8>
         <Filename Value="admin\server_config.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="admin\install_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EndpointInstallForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="admin\install_log.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="InstallProgressForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit11>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

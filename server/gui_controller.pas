@@ -179,7 +179,7 @@ begin
     begin
       if FThread <> nil then
       begin
-        FThread.CloseOut;
+        FThread.StopAndWait(50);
         FThread.Free;
         FThread := nil;
       end;
@@ -336,7 +336,7 @@ begin
   if FThread <> nil then
     raise Exception.Create('Thread already exists');
   FThread := TFHIRServerControllerThread.Create(self);
-  FThread.Open;
+  FThread.Start;
 end;
 
 procedure TFHIRServerController.Stop;

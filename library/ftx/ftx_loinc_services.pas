@@ -454,7 +454,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
     function getDefinition(code : String):String; override;
@@ -2638,8 +2638,7 @@ begin
   result := TLoincFilterHolder(ctxt).FIndex <= length(TLoincFilterHolder(ctxt).FChildren);
 end;
 
-function TLOINCServices.locateIsA(code, parent: String
-  ): TCodeSystemProviderContext;
+function TLOINCServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil; // cause loinc don't do subsumption
 end;

@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-xtestinsight -cmd exec -load -ini C:\work\fhirserver\Exec\fhir.dev.local.cfg</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -load -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -378,7 +378,7 @@
         <DCCReference Include="..\library\fsl\fsl_oauth.pas"/>
         <DCCReference Include="..\library\fsl\fsl_fetcher.pas"/>
         <DCCReference Include="..\library\fsl\fsl_graphql.pas"/>
-        <DCCReference Include="..\library\fhir\fhir_htmlgen.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_htmlgen.pas"/>
         <DCCReference Include="..\library\fsl\fsl_http.pas"/>
         <DCCReference Include="..\library\fsl\fsl_rdf.pas"/>
         <DCCReference Include="..\library\fsl\fsl_websocket.pas"/>
@@ -504,9 +504,7 @@
         <DCCReference Include="..\library\fhir5\fhir5_graphdefinition.pas"/>
         <DCCReference Include="..\library\fhir5\fhir5_maputils.pas"/>
         <DCCReference Include="package_spider.pas"/>
-        <DCCReference Include="packages.pas"/>
         <DCCReference Include="..\library\fsl\fsl_npm_client.pas"/>
-        <DCCReference Include="Modules\FHIR.Server.Covid.pas"/>
         <DCCReference Include="..\library\fhir4\fhir4_liquid.pas"/>
         <DCCReference Include="twilio.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas"/>
@@ -623,9 +621,12 @@
         <DCCReference Include="admin\server_config.pas"/>
         <DCCReference Include="tests\test_server_config.pas"/>
         <DCCReference Include="web_event.pas"/>
-        <DCCReference Include="txweb_endpoint.pas"/>
+        <DCCReference Include="snomed_endpoint.pas"/>
         <DCCReference Include="twilio_endpoint.pas"/>
         <DCCReference Include="common_endpoint.pas"/>
+        <DCCReference Include="package_endpoint.pas"/>
+        <DCCReference Include="storage_endpoint.pas"/>
+        <DCCReference Include="loinc_endpoint.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

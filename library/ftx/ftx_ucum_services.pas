@@ -252,7 +252,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -1055,7 +1055,7 @@ begin
   result := nil;
 end;
 
-function TUcumServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+function TUcumServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil;
 end;

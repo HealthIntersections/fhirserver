@@ -1,12 +1,11 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 748
-  Height = 1213
-  Top = 481
-  Width = 1573
+  Left = 861
+  Height = 693
+  Top = 168
+  Width = 899
   Caption = 'FHIRServer Console'
-  ClientHeight = 1179
-  ClientWidth = 1573
-  DesignTimePPI = 168
+  ClientHeight = 673
+  ClientWidth = 899
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -15,50 +14,50 @@ object MainConsoleForm: TMainConsoleForm
   LCLVersion = '2.1.0.0'
   object sBar: TStatusBar
     Left = 0
-    Height = 43
-    Top = 1136
-    Width = 1573
+    Height = 23
+    Top = 650
+    Width = 899
     Panels = <    
       item
-        Width = 262
+        Width = 150
       end    
       item
-        Width = 175
+        Width = 100
       end    
       item
-        Width = 175
+        Width = 100
       end    
       item
-        Width = 175
+        Width = 100
       end    
       item
-        Width = 350
+        Width = 200
       end>
     ParentFont = False
     SimplePanel = False
   end
   object Splitter2: TSplitter
     Left = 0
-    Height = 1136
+    Height = 650
     Top = 0
-    Width = 9
+    Width = 5
   end
   object Panel3: TPanel
-    Left = 9
-    Height = 1136
+    Left = 5
+    Height = 650
     Top = 0
-    Width = 1564
+    Width = 894
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 1136
-    ClientWidth = 1564
+    ClientHeight = 650
+    ClientWidth = 894
     ParentFont = False
     TabOrder = 2
     object PageControl1: TPageControl
       Left = 1
-      Height = 1125
+      Height = 643
       Top = 1
-      Width = 1562
+      Width = 892
       ActivePage = tbManage
       Align = alClient
       ParentFont = False
@@ -83,7 +82,7 @@ object MainConsoleForm: TMainConsoleForm
         end
         object ToolBar1: TToolBar
           Left = 0
-          Height = 46
+          Height = 26
           Top = 0
           Width = 884
           Caption = 'ToolBar1'
@@ -91,26 +90,26 @@ object MainConsoleForm: TMainConsoleForm
           ParentFont = False
           TabOrder = 1
           object ToolButton1: TToolButton
-            Left = 2
+            Left = 1
             Hint = 'Clear the log'
-            Top = 4
+            Top = 2
             Caption = 'ToolButton1'
             ImageIndex = 0
             OnClick = ToolButton1Click
           end
           object ToolButton2: TToolButton
-            Left = 42
-            Height = 14
-            Top = 4
+            Left = 24
+            Height = 8
+            Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
           end
           object edtFilter: TEdit
-            Left = 56
+            Left = 32
             Height = 23
             Hint = 'Filter what you see in the log'
-            Top = 4
-            Width = 252
+            Top = 2
+            Width = 144
             OnChange = edtFilterChange
             ParentFont = False
             TabOrder = 0
@@ -125,50 +124,50 @@ object MainConsoleForm: TMainConsoleForm
         ParentFont = False
         object Panel29: TPanel
           Left = 0
-          Height = 60
+          Height = 34
           Top = 0
           Width = 884
           Align = alTop
           Caption = 'Panel29'
-          ClientHeight = 60
+          ClientHeight = 34
           ClientWidth = 884
           ParentFont = False
           TabOrder = 0
           object btnFetchThreads: TButton
-            Left = 10
-            Height = 44
-            Top = 9
-            Width = 214
+            Left = 6
+            Height = 25
+            Top = 5
+            Width = 122
             Caption = 'Thread List'
             OnClick = btnFetchThreadsClick
             ParentFont = False
             TabOrder = 0
           end
           object btnClearCache: TButton
-            Left = 686
-            Height = 44
-            Top = 9
-            Width = 168
+            Left = 392
+            Height = 25
+            Top = 5
+            Width = 96
             Caption = 'Clear Cache'
             OnClick = btnClearCacheClick
             ParentFont = False
             TabOrder = 1
           end
           object btnFetchObjects: TButton
-            Left = 238
-            Height = 44
-            Top = 9
-            Width = 214
+            Left = 136
+            Height = 25
+            Top = 5
+            Width = 122
             Caption = 'Object Counts'
             OnClick = btnFetchObjectsClick
             ParentFont = False
             TabOrder = 2
           end
           object btnFetchObjectsPlus: TButton
-            Left = 462
-            Height = 44
-            Top = 9
-            Width = 214
+            Left = 264
+            Height = 25
+            Top = 5
+            Width = 122
             Caption = 'Object Delta'
             OnClick = btnFetchObjectsPlusClick
             ParentFont = False
@@ -208,7 +207,7 @@ object MainConsoleForm: TMainConsoleForm
           Left = 0
           Height = 615
           Top = 0
-          Width = 509
+          Width = 291
           Align = alLeft
           Caption = 'Panel5'
           ParentFont = False
@@ -218,51 +217,51 @@ object MainConsoleForm: TMainConsoleForm
           Left = 291
           Height = 615
           Top = 0
-          Width = 9
+          Width = 5
         end
       end
       object tbManage: TTabSheet
         Caption = 'Manage Server'
-        ClientHeight = 1082
-        ClientWidth = 1554
+        ClientHeight = 615
+        ClientWidth = 884
         ParentFont = False
         object Panel1: TPanel
           Left = 0
-          Height = 1082
+          Height = 615
           Top = 0
-          Width = 1554
+          Width = 884
           Align = alClient
           Caption = 'Panel1'
-          ClientHeight = 1082
-          ClientWidth = 1554
+          ClientHeight = 615
+          ClientWidth = 884
           ParentBackground = False
           ParentFont = False
           TabOrder = 0
           object Panel30: TPanel
             Left = 1
-            Height = 68
+            Height = 39
             Top = 1
-            Width = 1552
+            Width = 882
             Align = alTop
             Caption = 'Panel30'
-            ClientHeight = 68
-            ClientWidth = 1552
+            ClientHeight = 39
+            ClientWidth = 882
             ParentFont = False
             TabOrder = 0
             object Label28: TLabel
-              Left = 14
-              Height = 30
-              Top = 14
-              Width = 164
+              Left = 8
+              Height = 15
+              Top = 8
+              Width = 95
               Caption = 'Configuration File'
               ParentColor = False
               ParentFont = False
             end
             object edtConfigFile: TEdit
-              Left = 210
-              Height = 38
-              Top = 10
-              Width = 1184
+              Left = 120
+              Height = 23
+              Top = 6
+              Width = 672
               Anchors = [akTop, akLeft, akRight]
               OnChange = edtConfigFileChange
               ParentFont = False
@@ -270,10 +269,10 @@ object MainConsoleForm: TMainConsoleForm
               TabOrder = 0
             end
             object BitBtn1: TBitBtn
-              Left = 1409
-              Height = 46
-              Top = 10
-              Width = 131
+              Left = 800
+              Height = 26
+              Top = 6
+              Width = 75
               Anchors = [akTop, akRight]
               Caption = 'Choose'
               Glyph.Data = {
@@ -319,46 +318,46 @@ object MainConsoleForm: TMainConsoleForm
           end
           object PageControl2: TPageControl
             Left = 1
-            Height = 1012
-            Top = 69
-            Width = 1552
-            ActivePage = tbEndPoints
+            Height = 574
+            Top = 40
+            Width = 882
+            ActivePage = tbTermload
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 3
+            TabIndex = 2
             TabOrder = 1
             object tbWebSettings: TTabSheet
               Caption = 'Web Settings'
-              ClientHeight = 969
-              ClientWidth = 1544
+              ClientHeight = 546
+              ClientWidth = 874
               ImageIndex = 9
               ParentFont = False
               object GroupBox1: TGroupBox
                 Left = 0
-                Height = 196
+                Height = 112
                 Top = 0
-                Width = 1544
+                Width = 874
                 Align = alTop
                 Caption = '  Web Host  '
-                ClientHeight = 161
-                ClientWidth = 1540
+                ClientHeight = 92
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 0
                 object Label34: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 7
-                  Width = 105
+                  Left = 8
+                  Height = 15
+                  Top = 4
+                  Width = 60
                   Caption = 'Host Name'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtHostName: TEdit
-                  Left = 140
-                  Height = 38
+                  Left = 80
+                  Height = 23
                   Top = 0
-                  Width = 1376
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtHostNameChange
                   ParentFont = False
@@ -366,19 +365,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtHostName'
                 end
                 object Label35: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 60
-                  Width = 92
+                  Left = 8
+                  Height = 15
+                  Top = 34
+                  Width = 53
                   Caption = 'HTTP Port'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtWebPort: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 56
-                  Width = 1376
+                  Left = 80
+                  Height = 23
+                  Top = 32
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtWebPortChange
                   ParentFont = False
@@ -386,19 +385,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtWebPort'
                 end
                 object Label36: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 114
-                  Width = 102
+                  Left = 8
+                  Height = 15
+                  Top = 65
+                  Width = 58
                   Caption = 'Web Mode'
                   ParentColor = False
                   ParentFont = False
                 end
                 object chkWebMode: TCheckBox
-                  Left = 140
-                  Height = 34
-                  Top = 114
-                  Width = 434
+                  Left = 80
+                  Height = 19
+                  Top = 65
+                  Width = 245
                   Caption = 'Just redirect to SSL instead of serving HTTP'
                   OnChange = chkWebModeChange
                   ParentFont = False
@@ -407,20 +406,20 @@ object MainConsoleForm: TMainConsoleForm
               end
               object GroupBox2: TGroupBox
                 Left = 0
-                Height = 322
-                Top = 196
-                Width = 1544
+                Height = 184
+                Top = 112
+                Width = 874
                 Align = alTop
                 Caption = '  SSL  '
-                ClientHeight = 287
-                ClientWidth = 1540
+                ClientHeight = 164
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 1
                 object edtSSLPort: TEdit
-                  Left = 140
-                  Height = 38
+                  Left = 80
+                  Height = 23
                   Top = 0
-                  Width = 1379
+                  Width = 778
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPortChange
                   ParentFont = False
@@ -428,28 +427,28 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtSSLPort'
                 end
                 object Label29: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 7
-                  Width = 37
+                  Left = 8
+                  Height = 15
+                  Top = 4
+                  Width = 22
                   Caption = 'Port'
                   ParentColor = False
                   ParentFont = False
                 end
                 object Label30: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 61
-                  Width = 94
+                  Left = 8
+                  Height = 15
+                  Top = 35
+                  Width = 54
                   Caption = 'Certificate'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtSSLCert: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 56
-                  Width = 1323
+                  Left = 80
+                  Height = 23
+                  Top = 32
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLCertChange
                   ParentFont = False
@@ -457,19 +456,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtSSLCert'
                 end
                 object Label31: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 116
-                  Width = 71
+                  Left = 8
+                  Height = 15
+                  Top = 66
+                  Width = 41
                   Caption = 'CA Cert'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtCACert: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 112
-                  Width = 1323
+                  Left = 80
+                  Height = 23
+                  Top = 64
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtCACertChange
                   ParentFont = False
@@ -477,19 +476,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtCACert'
                 end
                 object Label32: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 170
-                  Width = 102
+                  Left = 8
+                  Height = 15
+                  Top = 97
+                  Width = 58
                   Caption = 'Private Key'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtPrivateKey: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 168
-                  Width = 1323
+                  Left = 80
+                  Height = 23
+                  Top = 96
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtPrivateKeyChange
                   ParentFont = False
@@ -497,19 +496,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtPrivateKey'
                 end
                 object Label33: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 224
-                  Width = 86
+                  Left = 8
+                  Height = 15
+                  Top = 128
+                  Width = 50
                   Caption = 'Password'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtSSLPassword: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 224
-                  Width = 1377
+                  Left = 80
+                  Height = 23
+                  Top = 128
+                  Width = 777
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPasswordChange
                   ParentFont = False
@@ -517,10 +516,10 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtSSLPassword'
                 end
                 object btnCert: TSpeedButton
-                  Left = 1479
-                  Height = 38
-                  Top = 56
-                  Width = 40
+                  Left = 835
+                  Height = 22
+                  Top = 32
+                  Width = 23
                   Anchors = [akTop, akRight]
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -562,10 +561,10 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCACert: TSpeedButton
-                  Left = 1479
-                  Height = 38
-                  Top = 114
-                  Width = 40
+                  Left = 835
+                  Height = 22
+                  Top = 65
+                  Width = 23
                   Anchors = [akTop, akRight]
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -607,10 +606,10 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCertKey: TSpeedButton
-                  Left = 1479
-                  Height = 38
-                  Top = 168
-                  Width = 40
+                  Left = 835
+                  Height = 22
+                  Top = 96
+                  Width = 23
                   Anchors = [akTop, akRight]
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -654,29 +653,29 @@ object MainConsoleForm: TMainConsoleForm
               end
               object GroupBox3: TGroupBox
                 Left = 0
-                Height = 163
-                Top = 518
-                Width = 1544
+                Height = 93
+                Top = 296
+                Width = 874
                 Align = alTop
                 Caption = '  Misc  '
-                ClientHeight = 128
-                ClientWidth = 1540
+                ClientHeight = 73
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 2
                 object Label37: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 7
-                  Width = 90
+                  Left = 8
+                  Height = 15
+                  Top = 4
+                  Width = 51
                   Caption = 'Google Id'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtGoogleId: TEdit
-                  Left = 140
-                  Height = 38
+                  Left = 80
+                  Height = 23
                   Top = 0
-                  Width = 1376
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtGoogleIdChange
                   ParentFont = False
@@ -684,19 +683,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtGoogleId'
                 end
                 object Label42: TLabel
-                  Left = 14
-                  Height = 30
-                  Top = 63
-                  Width = 100
+                  Left = 8
+                  Height = 15
+                  Top = 36
+                  Width = 57
                   Caption = 'Telnet Pwd'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtTelnetPassword: TEdit
-                  Left = 140
-                  Height = 38
-                  Top = 56
-                  Width = 1376
+                  Left = 80
+                  Height = 23
+                  Top = 32
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtTelnetPasswordChange
                   ParentFont = False
@@ -707,35 +706,35 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbUserAdmin: TTabSheet
               Caption = 'User Admin'
-              ClientHeight = 482
+              ClientHeight = 546
               ClientWidth = 874
               ImageIndex = 8
               ParentFont = False
               object GroupBox4: TGroupBox
                 Left = 0
-                Height = 318
+                Height = 182
                 Top = 0
                 Width = 874
                 Align = alTop
                 Caption = '  Administrator  '
-                ClientHeight = 283
+                ClientHeight = 162
                 ClientWidth = 870
                 ParentFont = False
                 TabOrder = 0
                 object Label38: TLabel
-                  Left = 14
+                  Left = 8
                   Height = 15
-                  Top = 7
+                  Top = 4
                   Width = 58
                   Caption = 'User Name'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtAdmitUsername: TEdit
-                  Left = 140
+                  Left = 80
                   Height = 23
                   Top = 0
-                  Width = 706
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtAdmitUsernameChange
                   ParentFont = False
@@ -743,19 +742,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtHostName'
                 end
                 object Label39: TLabel
-                  Left = 14
+                  Left = 8
                   Height = 15
-                  Top = 60
+                  Top = 34
                   Width = 29
                   Caption = 'Email'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtAdminEmail: TEdit
-                  Left = 140
+                  Left = 80
                   Height = 23
-                  Top = 56
-                  Width = 706
+                  Top = 32
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtAdminEmailChange
                   ParentFont = False
@@ -763,19 +762,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtWebPort'
                 end
                 object Label40: TLabel
-                  Left = 14
+                  Left = 8
                   Height = 15
-                  Top = 116
+                  Top = 66
                   Width = 68
                   Caption = 'Organization'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtAdminOrganization: TEdit
-                  Left = 140
+                  Left = 80
                   Height = 23
-                  Top = 112
-                  Width = 706
+                  Top = 64
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtAdminOrganizationChange
                   ParentFont = False
@@ -783,19 +782,19 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtWebPort'
                 end
                 object Label41: TLabel
-                  Left = 14
+                  Left = 8
                   Height = 15
-                  Top = 172
+                  Top = 98
                   Width = 23
                   Caption = 'SMS'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtAdminSMS: TEdit
-                  Left = 140
+                  Left = 80
                   Height = 23
-                  Top = 168
-                  Width = 706
+                  Top = 96
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtAdminSMSChange
                   ParentFont = False
@@ -803,10 +802,10 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtWebPort'
                 end
                 object edtAdminSCIMSalt: TEdit
-                  Left = 140
+                  Left = 80
                   Height = 23
-                  Top = 220
-                  Width = 706
+                  Top = 126
+                  Width = 776
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtAdminSCIMSaltChange
                   ParentFont = False
@@ -814,9 +813,9 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtHostName'
                 end
                 object lblSomething: TLabel
-                  Left = 14
+                  Left = 8
                   Height = 15
-                  Top = 228
+                  Top = 130
                   Width = 50
                   Caption = 'SCIM Salt'
                   ParentColor = False
@@ -830,25 +829,25 @@ object MainConsoleForm: TMainConsoleForm
                 Width = 874
                 Align = alClient
                 Caption = '  Identity Providers  '
-                ClientHeight = 329
+                ClientHeight = 344
                 ClientWidth = 870
                 ParentFont = False
                 TabOrder = 1
                 object Panel37: TPanel
                   Left = 0
-                  Height = 60
+                  Height = 34
                   Top = 0
                   Width = 870
                   Align = alTop
-                  ClientHeight = 60
+                  ClientHeight = 34
                   ClientWidth = 870
                   ParentFont = False
                   TabOrder = 0
                   object btnIDAdd: TBitBtn
-                    Left = 14
-                    Height = 46
-                    Top = 7
-                    Width = 131
+                    Left = 8
+                    Height = 26
+                    Top = 4
+                    Width = 75
                     Caption = 'Add'
                     Glyph.Data = {
                       36040000424D3604000000000000360000002800000010000000100000000100
@@ -890,10 +889,10 @@ object MainConsoleForm: TMainConsoleForm
                     TabOrder = 0
                   end
                   object btnIDDelete: TBitBtn
-                    Left = 154
-                    Height = 46
-                    Top = 7
-                    Width = 131
+                    Left = 88
+                    Height = 26
+                    Top = 4
+                    Width = 75
                     Caption = 'Delete'
                     Glyph.Data = {
                       36040000424D3604000000000000360000002800000010000000100000000100
@@ -944,19 +943,19 @@ object MainConsoleForm: TMainConsoleForm
                   Columns = <                  
                     item
                       Caption = 'id'
-                      Width = 140
+                      Width = 80
                     end                  
                     item
                       Caption = 'app-id'
-                      Width = 262
+                      Width = 150
                     end                  
                     item
                       Caption = 'app-secret'
-                      Width = 262
+                      Width = 150
                     end                  
                     item
                       Caption = 'app-key'
-                      Width = 262
+                      Width = 150
                     end>
                   ParentFont = False
                   RowSelect = True
@@ -967,25 +966,25 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbTermload: TTabSheet
               Caption = 'Terminologies'
-              ClientHeight = 482
+              ClientHeight = 546
               ClientWidth = 874
               ImageIndex = 7
               ParentFont = False
               object Panel33: TPanel
                 Left = 0
-                Height = 60
+                Height = 34
                 Top = 0
                 Width = 874
                 Align = alTop
-                ClientHeight = 60
+                ClientHeight = 34
                 ClientWidth = 874
                 ParentFont = False
                 TabOrder = 0
                 object btnTxAdd: TBitBtn
                   Left = 0
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Add'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1027,10 +1026,10 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 0
                 end
                 object btnTxDelete: TBitBtn
-                  Left = 140
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Left = 80
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Delete'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1072,10 +1071,10 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 1
                 end
                 object btnTxImport: TBitBtn
-                  Left = 280
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Left = 160
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Import'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1119,8 +1118,8 @@ object MainConsoleForm: TMainConsoleForm
               end
               object Panel34: TPanel
                 Left = 0
-                Height = 88
-                Top = 458
+                Height = 50
+                Top = 496
                 Width = 874
                 Align = alBottom
                 ParentFont = False
@@ -1136,27 +1135,29 @@ object MainConsoleForm: TMainConsoleForm
                 Columns = <                
                   item
                     Caption = 'Identity'
-                    Width = 140
+                    Width = 80
                   end                
                   item
                     Caption = 'Type'
-                    Width = 88
+                  end                
+                  item
+                    Caption = 'Active'
                   end                
                   item
                     Caption = 'Source'
-                    Width = 438
+                    Width = 250
                   end                
                   item
                     Caption = 'Version'
-                    Width = 175
+                    Width = 100
                   end                
                   item
                     Caption = 'Def.'
-                    Width = 105
+                    Width = 60
                   end                
                   item
                     Caption = 'Status'
-                    Width = 350
+                    Width = 200
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1168,25 +1169,25 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbEndPoints: TTabSheet
               Caption = 'End Points'
-              ClientHeight = 969
-              ClientWidth = 1544
+              ClientHeight = 546
+              ClientWidth = 874
               ImageIndex = 8
               ParentFont = False
               object Panel35: TPanel
                 Left = 0
-                Height = 60
+                Height = 34
                 Top = 0
-                Width = 1544
+                Width = 874
                 Align = alTop
-                ClientHeight = 60
-                ClientWidth = 1544
+                ClientHeight = 34
+                ClientWidth = 874
                 ParentFont = False
                 TabOrder = 0
                 object btnEPAdd: TBitBtn
                   Left = 0
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Add'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1228,10 +1229,10 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 0
                 end
                 object btnEPDelete: TBitBtn
-                  Left = 140
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Left = 80
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Delete'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1273,10 +1274,10 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 1
                 end
                 object btnEPInstall: TBitBtn
-                  Left = 280
-                  Height = 46
-                  Top = 7
-                  Width = 131
+                  Left = 160
+                  Height = 26
+                  Top = 4
+                  Width = 75
                   Caption = 'Install'
                   Glyph.Data = {
                     36040000424D3604000000000000360000002800000010000000100000000100
@@ -1320,44 +1321,47 @@ object MainConsoleForm: TMainConsoleForm
               end
               object Panel36: TPanel
                 Left = 0
-                Height = 88
-                Top = 881
-                Width = 1544
+                Height = 50
+                Top = 496
+                Width = 874
                 Align = alBottom
                 ParentFont = False
                 TabOrder = 1
               end
               object lvEP: TListView
                 Left = 0
-                Height = 304
-                Top = 60
-                Width = 1544
+                Height = 174
+                Top = 34
+                Width = 874
                 Align = alTop
                 AutoWidthLastColumn = True
                 Columns = <                
                   item
                     Caption = 'Identity'
-                    Width = 140
+                    Width = 80
                   end                
                   item
                     Caption = 'Type'
-                    Width = 140
+                    Width = 80
                   end                
                   item
                     Caption = 'Version'
-                    Width = 140
+                    Width = 80
+                  end                
+                  item
+                    Caption = 'Active'
                   end                
                   item
                     Caption = 'Path'
-                    Width = 105
+                    Width = 60
                   end                
                   item
                     Caption = 'Database'
-                    Width = 262
+                    Width = 150
                   end                
                   item
                     Caption = 'Status'
-                    Width = 753
+                    Width = 420
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1369,29 +1373,29 @@ object MainConsoleForm: TMainConsoleForm
               object Splitter1: TSplitter
                 Cursor = crVSplit
                 Left = 0
-                Height = 16
-                Top = 364
-                Width = 1544
+                Height = 9
+                Top = 208
+                Width = 874
                 Align = alTop
                 ResizeAnchor = akTop
               end
               object Panel38: TPanel
                 Left = 0
-                Height = 501
-                Top = 380
-                Width = 1544
+                Height = 279
+                Top = 217
+                Width = 874
                 Align = alClient
                 BorderWidth = 4
                 Caption = 'Panel38'
-                ClientHeight = 501
-                ClientWidth = 1544
+                ClientHeight = 279
+                ClientWidth = 874
                 ParentFont = False
                 TabOrder = 4
                 object lvPackages: TListView
                   Left = 5
-                  Height = 454
-                  Top = 42
-                  Width = 1534
+                  Height = 248
+                  Top = 26
+                  Width = 864
                   Align = alClient
                   Checkboxes = True
                   Columns = <>
@@ -1401,9 +1405,9 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Panel39: TPanel
                   Left = 5
-                  Height = 37
+                  Height = 21
                   Top = 5
-                  Width = 1534
+                  Width = 864
                   Align = alTop
                   Alignment = taLeftJustify
                   Caption = 'Packages loaded with current EndPoint'
@@ -1425,13 +1429,13 @@ object MainConsoleForm: TMainConsoleForm
           Left = 0
           Height = 615
           Top = 0
-          Width = 201
+          Width = 115
           Align = alLeft
           BevelInner = bvLowered
           BevelOuter = bvNone
           BorderWidth = 2
           ClientHeight = 615
-          ClientWidth = 201
+          ClientWidth = 115
           Color = clWhite
           ParentBackground = False
           ParentColor = False
@@ -1439,13 +1443,13 @@ object MainConsoleForm: TMainConsoleForm
           TabOrder = 0
           object pnlLoincImport: TPanel
             Left = 3
-            Height = 150
+            Height = 86
             Top = 175
             Width = 109
             Align = alTop
             BevelOuter = bvNone
             BorderWidth = 10
-            ClientHeight = 150
+            ClientHeight = 86
             ClientWidth = 109
             Color = clWhite
             ParentBackground = False
@@ -1454,9 +1458,9 @@ object MainConsoleForm: TMainConsoleForm
             TabOrder = 0
             OnClick = Image2Click
             object Image2: TImage
-              Left = 52
+              Left = 30
               Height = 48
-              Top = 18
+              Top = 10
               Width = 48
               AutoSize = True
               OnClick = Image2Click
@@ -1557,9 +1561,9 @@ object MainConsoleForm: TMainConsoleForm
               }
             end
             object Label26: TLabel
-              Left = 28
+              Left = 16
               Height = 15
-              Top = 116
+              Top = 66
               Width = 74
               Caption = 'LOINC Import'
               ParentColor = False
@@ -1568,13 +1572,13 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pnlCombineSnomed: TPanel
             Left = 3
-            Height = 150
+            Height = 86
             Top = 89
             Width = 109
             Align = alTop
             BevelOuter = bvNone
             BorderWidth = 10
-            ClientHeight = 150
+            ClientHeight = 86
             ClientWidth = 109
             Color = clWhite
             ParentBackground = False
@@ -1583,9 +1587,9 @@ object MainConsoleForm: TMainConsoleForm
             TabOrder = 1
             OnClick = Image3Click
             object Image3: TImage
-              Left = 52
+              Left = 30
               Height = 48
-              Top = 18
+              Top = 10
               Width = 48
               AutoSize = True
               OnClick = Image3Click
@@ -1772,9 +1776,9 @@ object MainConsoleForm: TMainConsoleForm
               }
             end
             object Label25: TLabel
-              Left = 14
+              Left = 8
               Height = 15
-              Top = 116
+              Top = 66
               Width = 101
               Caption = 'Combine SNOMED'
               ParentColor = False
@@ -1783,13 +1787,13 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pnlSnomedImport: TPanel
             Left = 3
-            Height = 150
+            Height = 86
             Top = 3
             Width = 109
             Align = alTop
             BevelOuter = bvNone
             BorderWidth = 10
-            ClientHeight = 150
+            ClientHeight = 86
             ClientWidth = 109
             Color = clWhite
             ParentBackground = False
@@ -1798,9 +1802,9 @@ object MainConsoleForm: TMainConsoleForm
             TabOrder = 2
             OnClick = Image4Click
             object Image4: TImage
-              Left = 52
+              Left = 30
               Height = 48
-              Top = 30
+              Top = 17
               Width = 48
               AutoSize = True
               OnClick = Image4Click
@@ -1865,9 +1869,9 @@ object MainConsoleForm: TMainConsoleForm
               }
             end
             object Label24: TLabel
-              Left = 14
+              Left = 8
               Height = 15
-              Top = 116
+              Top = 66
               Width = 88
               Caption = 'SNOMED Import'
               ParentColor = False
@@ -1876,7 +1880,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pnlProcessUMLS: TPanel
             Left = 3
-            Height = 150
+            Height = 86
             Top = 261
             Width = 109
             Align = alTop
@@ -1910,7 +1914,7 @@ object MainConsoleForm: TMainConsoleForm
             ParentFont = False
             object Panel4: TPanel
               Left = 0
-              Height = 72
+              Height = 41
               Top = 0
               Width = 761
               Align = alTop
@@ -1918,7 +1922,7 @@ object MainConsoleForm: TMainConsoleForm
               BevelOuter = bvNone
               Caption = '  SNOMED CT Importer'
               Font.Color = clWindowText
-              Font.Height = -33
+              Font.Height = -19
               Font.Name = 'Tahoma'
               Font.Style = [fsBold]
               ParentFont = False
@@ -1926,20 +1930,20 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel6: TPanel
               Left = 0
-              Height = 72
-              Top = 535
+              Height = 41
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
-              ClientHeight = 72
+              ClientHeight = 41
               ClientWidth = 761
               ParentFont = False
               TabOrder = 1
               object btnImportSnomed: TBitBtn
-                Left = 608
-                Height = 44
-                Top = 16
-                Width = 144
+                Left = 674
+                Height = 25
+                Top = 9
+                Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Import'
                 Glyph.Data = {
@@ -1975,10 +1979,10 @@ object MainConsoleForm: TMainConsoleForm
                 TabOrder = 0
               end
               object btnSnomedImportStop: TBitBtn
-                Left = 4
-                Height = 44
-                Top = 16
-                Width = 131
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
                 Caption = 'Stop'
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2016,21 +2020,21 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel7: TPanel
               Left = 0
-              Height = 89
-              Top = 477
+              Height = 51
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 89
+              ClientHeight = 51
               ClientWidth = 761
               ParentFont = False
               TabOrder = 2
               object lblSCTAmount: TLabel
-                Left = 717
+                Left = 724
                 Height = 15
-                Top = 18
+                Top = 10
                 Width = 28
                 Anchors = [akTop, akRight]
                 Caption = '100%'
@@ -2038,18 +2042,18 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object lblSCTAction: TLabel
-                Left = 18
+                Left = 10
                 Height = 1
-                Top = 56
+                Top = 32
                 Width = 1
                 ParentColor = False
                 ParentFont = False
               end
               object prgSnomedImport: TProgressBar
-                Left = 18
-                Height = 30
-                Top = 18
-                Width = 668
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 708
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 Step = 1
@@ -2068,46 +2072,46 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
               TabOrder = 3
               object Label2: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 10
+                Top = 6
                 Width = 36
                 Caption = 'Source'
                 ParentColor = False
                 ParentFont = False
               end
               object Label3: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 66
+                Top = 38
                 Width = 37
                 Caption = 'Edition'
                 ParentColor = False
                 ParentFont = False
               end
               object Label4: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 178
+                Top = 102
                 Width = 38
                 Caption = 'Version'
                 ParentColor = False
                 ParentFont = False
               end
               object Label5: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 234
+                Top = 134
                 Width = 60
                 Caption = 'Destination'
                 ParentColor = False
                 ParentFont = False
               end
               object btnSource: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 7
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 4
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2141,10 +2145,10 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnDestination: TSpeedButton
-                Left = 705
-                Height = 49
-                Top = 224
-                Width = 47
+                Left = 729
+                Height = 28
+                Top = 128
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2178,19 +2182,19 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object Label23: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 122
+                Top = 70
                 Width = 67
                 Caption = 'International'
                 ParentColor = False
                 ParentFont = False
               end
               object btnBase: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 116
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 66
+                Width = 27
                 Anchors = [akTop, akRight]
                 Enabled = False
                 Glyph.Data = {
@@ -2225,21 +2229,21 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object edtSource: TEdit
-                Left = 135
+                Left = 77
                 Height = 23
-                Top = 10
-                Width = 560
+                Top = 6
+                Width = 646
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 0
               end
               object cbxEdition: TComboBox
-                Left = 133
-                Height = 38
-                Top = 66
-                Width = 610
+                Left = 76
+                Height = 23
+                Top = 38
+                Width = 675
                 Anchors = [akTop, akLeft, akRight]
-                ItemHeight = 30
+                ItemHeight = 15
                 Items.Strings = (
                   'International'
                   'US'
@@ -2259,10 +2263,10 @@ object MainConsoleForm: TMainConsoleForm
                 TabOrder = 1
               end
               object edtDate: TDateTimePicker
-                Left = 135
+                Left = 77
                 Height = 23
-                Top = 175
-                Width = 610
+                Top = 100
+                Width = 675
                 CenturyFrom = 1941
                 MaxDate = 2958465
                 MinDate = -53780
@@ -2283,19 +2287,19 @@ object MainConsoleForm: TMainConsoleForm
                 MonthNames = 'Long'
               end
               object edtDestination: TEdit
-                Left = 135
+                Left = 77
                 Height = 23
-                Top = 231
-                Width = 560
+                Top = 132
+                Width = 646
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 3
               end
               object edtBase: TEdit
-                Left = 133
+                Left = 76
                 Height = 23
-                Top = 117
-                Width = 560
+                Top = 67
+                Width = 646
                 Anchors = [akTop, akLeft, akRight]
                 Enabled = False
                 ParentFont = False
@@ -2304,14 +2308,14 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel9: TPanel
               Left = 0
-              Height = 105
+              Height = 60
               Top = 41
               Width = 761
               Align = alTop
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 105
+              ClientHeight = 60
               ClientWidth = 761
               ParentBackground = False
               ParentFont = False
@@ -2331,10 +2335,10 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
                 TabOrder = 0
                 object Label6: TLabel
-                  Left = 7
-                  Height = 79
-                  Top = 7
-                  Width = 782
+                  Left = 4
+                  Height = 45
+                  Top = 4
+                  Width = 769
                   Anchors = [akTop, akLeft, akRight]
                   AutoSize = False
                   Caption = 'This pane allows you to import SNOMED CT to a pre-processed file. Pick an a RF2 distribution, the Snapshot directory, and the content will be processed to a ready to use form. The output file is about 800MB, and the process takes about 60min. Once the process is complete, the file can be listed in the FHIRServer.ini file, [snomed] cache value'
@@ -2353,20 +2357,20 @@ object MainConsoleForm: TMainConsoleForm
             ParentFont = False
             object Panel20: TPanel
               Left = 0
-              Height = 72
-              Top = 535
+              Height = 41
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
-              ClientHeight = 72
+              ClientHeight = 41
               ClientWidth = 761
               ParentFont = False
               TabOrder = 0
               object btnCombineGo: TBitBtn
-                Left = 607
-                Height = 44
-                Top = 14
-                Width = 144
+                Left = 673
+                Height = 25
+                Top = 8
+                Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Combine'
                 Glyph.Data = {
@@ -2402,10 +2406,10 @@ object MainConsoleForm: TMainConsoleForm
                 TabOrder = 0
               end
               object btnStopCombine: TBitBtn
-                Left = 4
-                Height = 44
-                Top = 16
-                Width = 131
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
                 Caption = 'Stop'
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2443,21 +2447,21 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel21: TPanel
               Left = 0
-              Height = 89
-              Top = 477
+              Height = 51
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 89
+              ClientHeight = 51
               ClientWidth = 761
               ParentFont = False
               TabOrder = 1
               object lblCombineAmount: TLabel
-                Left = 717
+                Left = 724
                 Height = 15
-                Top = 18
+                Top = 10
                 Width = 28
                 Anchors = [akTop, akRight]
                 Caption = '100%'
@@ -2465,18 +2469,18 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object lblCombineAction: TLabel
-                Left = 18
+                Left = 10
                 Height = 1
-                Top = 56
+                Top = 32
                 Width = 1
                 ParentColor = False
                 ParentFont = False
               end
               object prgCombine: TProgressBar
-                Left = 18
-                Height = 30
-                Top = 18
-                Width = 668
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 708
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 Step = 1
@@ -2485,14 +2489,14 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel22: TPanel
               Left = 0
-              Height = 105
+              Height = 60
               Top = 41
               Width = 761
               Align = alTop
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 105
+              ClientHeight = 60
               ClientWidth = 761
               ParentBackground = False
               ParentFont = False
@@ -2528,7 +2532,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel24: TPanel
               Left = 0
-              Height = 72
+              Height = 41
               Top = 0
               Width = 761
               Align = alTop
@@ -2536,7 +2540,7 @@ object MainConsoleForm: TMainConsoleForm
               BevelOuter = bvNone
               Caption = '  Combine SNOMED CT Editions'
               Font.Color = clWindowText
-              Font.Height = -33
+              Font.Height = -19
               Font.Name = 'Tahoma'
               Font.Style = [fsBold]
               ParentFont = False
@@ -2554,28 +2558,28 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
               TabOrder = 4
               object Label18: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 10
+                Top = 6
                 Width = 70
                 Caption = 'International:'
                 ParentColor = False
                 ParentFont = False
               end
               object Label19: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 68
+                Top = 39
                 Width = 78
                 Caption = 'Other Editions:'
                 ParentColor = False
                 ParentFont = False
               end
               object btnInternational: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 7
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 4
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2609,10 +2613,10 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnAddEdition: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 66
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 38
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2646,10 +2650,10 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnDeleteEdition: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 126
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 72
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2683,19 +2687,19 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object Label14: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 200
+                Top = 114
                 Width = 63
                 Caption = 'Destination:'
                 ParentColor = False
                 ParentFont = False
               end
               object btnCombinedDestination: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 191
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 109
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2729,19 +2733,19 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object Label15: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 256
+                Top = 146
                 Width = 30
                 Caption = 'Store:'
                 ParentColor = False
                 ParentFont = False
               end
               object btnCombinedStore: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 247
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 141
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -2775,38 +2779,38 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object edtInternational: TEdit
-                Left = 154
+                Left = 88
                 Height = 23
-                Top = 10
-                Width = 539
+                Top = 6
+                Width = 634
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 0
               end
               object lbEditions: TListBox
-                Left = 154
-                Height = 124
-                Top = 60
-                Width = 807
+                Left = 88
+                Height = 71
+                Top = 34
+                Width = 461
                 ItemHeight = 0
                 OnClick = lbEditionsClick
                 ParentFont = False
                 TabOrder = 1
               end
               object edtCombinedDestination: TEdit
-                Left = 154
+                Left = 88
                 Height = 23
-                Top = 196
-                Width = 539
+                Top = 112
+                Width = 634
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 2
               end
               object edtCombinedStore: TEdit
-                Left = 154
+                Left = 88
                 Height = 23
-                Top = 252
-                Width = 539
+                Top = 144
+                Width = 634
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 3
@@ -2821,14 +2825,14 @@ object MainConsoleForm: TMainConsoleForm
             ParentFont = False
             object Panel11: TPanel
               Left = 0
-              Height = 138
+              Height = 79
               Top = 41
               Width = 761
               Align = alTop
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 138
+              ClientHeight = 79
               ClientWidth = 761
               ParentBackground = False
               ParentFont = False
@@ -2864,7 +2868,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel13: TPanel
               Left = 0
-              Height = 72
+              Height = 41
               Top = 0
               Width = 761
               Align = alTop
@@ -2872,7 +2876,7 @@ object MainConsoleForm: TMainConsoleForm
               BevelOuter = bvNone
               Caption = '  LOINC Importer'
               Font.Color = clWindowText
-              Font.Height = -33
+              Font.Height = -19
               Font.Name = 'Tahoma'
               Font.Style = [fsBold]
               ParentFont = False
@@ -2880,21 +2884,21 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel14: TPanel
               Left = 0
-              Height = 89
-              Top = 477
+              Height = 51
+              Top = 515
               Width = 761
               Align = alBottom
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
-              ClientHeight = 89
+              ClientHeight = 51
               ClientWidth = 761
               ParentFont = False
               TabOrder = 2
               object lblLoincAmount: TLabel
-                Left = 717
+                Left = 724
                 Height = 15
-                Top = 18
+                Top = 10
                 Width = 28
                 Anchors = [akTop, akRight]
                 Caption = '100%'
@@ -2902,18 +2906,18 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object lblLoincAction: TLabel
-                Left = 18
+                Left = 10
                 Height = 1
-                Top = 56
+                Top = 32
                 Width = 1
                 ParentColor = False
                 ParentFont = False
               end
               object prgLoincImport: TProgressBar
-                Left = 18
-                Height = 30
-                Top = 18
-                Width = 668
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 708
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 Step = 1
@@ -2922,20 +2926,20 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel15: TPanel
               Left = 0
-              Height = 72
-              Top = 535
+              Height = 41
+              Top = 566
               Width = 761
               Align = alBottom
               BevelOuter = bvNone
-              ClientHeight = 72
+              ClientHeight = 41
               ClientWidth = 761
               ParentFont = False
               TabOrder = 3
               object btnImportLoinc: TBitBtn
-                Left = 601
-                Height = 44
-                Top = 16
-                Width = 144
+                Left = 670
+                Height = 25
+                Top = 9
+                Width = 82
                 Anchors = [akTop, akRight]
                 Caption = 'Import'
                 Glyph.Data = {
@@ -2971,10 +2975,10 @@ object MainConsoleForm: TMainConsoleForm
                 TabOrder = 0
               end
               object btnLoincImportStop: TBitBtn
-                Left = 4
-                Height = 44
-                Top = 16
-                Width = 131
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
                 Caption = 'Stop'
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -3022,37 +3026,37 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
               TabOrder = 4
               object Label10: TLabel
-                Left = 4
+                Left = 2
                 Height = 15
-                Top = 10
+                Top = 6
                 Width = 36
                 Caption = 'Source'
                 ParentColor = False
                 ParentFont = False
               end
               object Label12: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 70
+                Top = 40
                 Width = 38
                 Caption = 'Version'
                 ParentColor = False
                 ParentFont = False
               end
               object Label13: TLabel
-                Left = 18
+                Left = 10
                 Height = 15
-                Top = 130
+                Top = 74
                 Width = 60
                 Caption = 'Destination'
                 ParentColor = False
                 ParentFont = False
               end
               object btnLoincSource: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 7
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 4
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -3086,10 +3090,10 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnLoincDest: TSpeedButton
-                Left = 704
-                Height = 49
-                Top = 117
-                Width = 47
+                Left = 728
+                Height = 28
+                Top = 67
+                Width = 27
                 Anchors = [akTop, akRight]
                 Glyph.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
@@ -3123,47 +3127,47 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object Label22: TLabel
-                Left = 21
+                Left = 12
                 Height = 15
-                Top = 189
+                Top = 108
                 Width = 24
                 Caption = 'Date'
                 ParentColor = False
                 ParentFont = False
               end
               object edtLoincSource: TEdit
-                Left = 140
+                Left = 80
                 Height = 23
-                Top = 10
-                Width = 560
+                Top = 6
+                Width = 646
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 0
               end
               object edtLoincDest: TEdit
-                Left = 140
+                Left = 80
                 Height = 23
-                Top = 124
-                Width = 560
+                Top = 71
+                Width = 646
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 2
               end
               object edtLoincVersion: TEdit
-                Left = 140
+                Left = 80
                 Height = 23
-                Top = 66
-                Width = 611
+                Top = 38
+                Width = 675
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 1
                 TextHint = '2.56'
               end
               object edtLoincDate: TEdit
-                Left = 140
+                Left = 80
                 Height = 23
-                Top = 177
-                Width = 611
+                Top = 101
+                Width = 675
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 3
@@ -3177,9 +3181,9 @@ object MainConsoleForm: TMainConsoleForm
     object Splitter3: TSplitter
       Cursor = crVSplit
       Left = 1
-      Height = 9
-      Top = 1126
-      Width = 1562
+      Height = 5
+      Top = 644
+      Width = 892
       Align = alBottom
       ResizeAnchor = akBottom
     end
@@ -3187,12 +3191,12 @@ object MainConsoleForm: TMainConsoleForm
   object Timer1: TTimer
     Interval = 100
     OnTimer = Timer1Timer
-    Left = 770
-    Top = 14
+    Left = 440
+    Top = 8
   end
   object ImageList1: TImageList
-    Left = 840
-    Top = 14
+    Left = 480
+    Top = 8
     Bitmap = {
       4C7A0B0000001000000010000000751A00000000000078DAED99775894D7D6F6
       9F444D3B471393184D3C316AACB1448CD89520461105BB5244B0504410040544
@@ -3411,8 +3415,8 @@ object MainConsoleForm: TMainConsoleForm
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
-    Left = 714
-    Top = 14
+    Left = 408
+    Top = 8
     object MenuItem1: TMenuItem
       Caption = '&File'
       object MenuItem6: TMenuItem
@@ -3475,8 +3479,8 @@ object MainConsoleForm: TMainConsoleForm
   end
   object ActionList1: TActionList
     Images = ImageList1
-    Left = 1106
-    Top = 14
+    Left = 632
+    Top = 8
     object EditCut1: TEditCut
       Category = 'Edit'
       Caption = 'Cu&t'
@@ -3544,26 +3548,26 @@ object MainConsoleForm: TMainConsoleForm
   object dlgFolder: TSelectDirectoryDialog
     Title = 'Choose SNOMED CT RF2 Snapshot Folder'
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    Left = 910
-    Top = 14
+    Left = 520
+    Top = 8
   end
   object dlgSave: TSaveDialog
     Title = 'Choose Cache File Name'
     DefaultExt = '.*.cache'
-    Left = 980
-    Top = 14
+    Left = 560
+    Top = 8
   end
   object dlgOpen: TOpenDialog
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    Left = 1050
-    Top = 14
+    Left = 600
+    Top = 8
   end
   object dlgConfig: TOpenDialog
     Title = 'Op[en Configuration'
     DefaultExt = '.ini'
     Filter = '*.ini'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    Left = 1173
-    Top = 18
+    Left = 670
+    Top = 10
   end
 end

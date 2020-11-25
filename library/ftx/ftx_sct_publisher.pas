@@ -36,7 +36,7 @@ Uses
   SysUtils, Classes, Math,
   fsl_utilities, fsl_threads,
   fsl_base, fsl_collections,
-  fhir_htmlgen, ftx_sct_services;
+  fsl_htmlgen, ftx_sct_services;
 
 Const
   MAX_ROWS = 100;
@@ -197,7 +197,7 @@ Begin
   html.AddLine(1);
 }
 
-  html.Header('Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
+  html.Heading(1, 'Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
   if Not FSnomed.Loaded Then
   Begin
     html.StartParagraph;
@@ -590,7 +590,7 @@ Begin
   end;
   if not ok Then
   Begin
-    html.Header('Snomed Concept '+sId);
+    html.Heading(1, 'Snomed Concept '+sId);
     html.AddParagraph(sId+' is not a valid Snomed-CT Concept or Description Id');
     SetLength(FPaths, 0);
     SetLength(Parents, 0);
@@ -609,7 +609,7 @@ Begin
     FSN := FSnomed.GetFSN(Descriptions);
     PN := FSnomed.GetPN(Descriptions);
     if Not bRoot then
-      html.Header(inttostr(Identity)+': '+screen(FSN, ''));
+      html.Heading(1, inttostr(Identity)+': '+screen(FSN, ''));
     if not bRoot Then
     Begin
       FPaths := GetPaths(iIndex);
@@ -1495,7 +1495,7 @@ var
 begin
   b2 := false;
 
-  html.Header('Concept List');
+  html.Heading(1, 'Concept List');
   html.StartTable(false, 'bare');
   html.StartTableRow;
   html.StartTableCell;
@@ -1580,9 +1580,9 @@ begin
   End;
 
   if iContext <> 0 then
-    html.header('Search for '+sText+' in '+sContext)
+    html.Heading(1, 'Search for '+sText+' in '+sContext)
   Else
-    html.header('Search for '+sText+' in all of Snomed');
+    html.Heading(1, 'Search for '+sText+' in all of Snomed');
 
   b2 := false;
 

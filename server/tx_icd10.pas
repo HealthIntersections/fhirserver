@@ -90,7 +90,7 @@ type
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function locate(code : String) : TCodeSystemProviderContext; overload; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -425,7 +425,7 @@ begin
   result := locate(code, msg);
 end;
 
-function TICD10Provider.locateIsA(code,parent: String): TCodeSystemProviderContext;
+function TICD10Provider.locateIsA(code,parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('Not implemented: TICD10Provider.locateIsA');
 end;

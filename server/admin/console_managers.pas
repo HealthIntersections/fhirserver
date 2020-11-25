@@ -367,10 +367,12 @@ end;
 
 function TEndPointManager.status(item: TFHIRServerConfigSection): String;
 begin
-  if (item.status = '') then
+  if not hasDatabase(item['type'].value) then
+    item.status := '-'
+  else if (item.status = '') then
   begin
     item.status := 'Checking...';
-    TEndPointCheck.create(self, item.link).open;
+    TEndPointCheck.create(self, item.link).Start;
   end;
   result := item.status;
 end;
@@ -425,9 +427,10 @@ begin
     0: result := item.name;
     1: result := item['type'].value;
     2: result := item['version'].value;
-    3: result := item['path'].value;
-    4: result := item['database'].value;
-    5: result := status(item);
+    3: result := BoolToStr(item['active'].valueBool, 'yes', 'no');
+    4: result := item['path'].value;
+    5: result := item['database'].value;
+    6: result := status(item);
   end;
 end;
 
@@ -442,9 +445,10 @@ begin
     0: result := CompareStr(left.name, right.name);
     1: result := CompareStr(left['type'].value, right['type'].value);
     2: result := CompareStr(left['version'].value, right['version'].value);
-    3: result := CompareStr(left['path'].value, right['path'].value);
-    4: result := CompareStr(left['database'].value, right['database'].value);
-    5: result := CompareStr(status(left), status(right));
+    3: result := CompareStr(BoolToStr(left['active'].valueBool, 'yes', 'no'), BoolToStr(right['active'].valueBool, 'yes', 'no'));
+    4: result := CompareStr(left['path'].value, right['path'].value);
+    5: result := CompareStr(left['database'].value, right['database'].value);
+    6: result := CompareStr(status(left), status(right));
   else
     result := inherited compareItem(left, right, col);
   end;
@@ -509,13 +513,13 @@ begin
       begin
         if MessageDlg('Install Package Server', 'This operation will wipe any existing installation in the database. Proceed?', mtConfirmation, mbYesNo, 0) = mryes then
         begin
-            dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
-            try
-              dbi.uninstall;
-              dbi.installPackageServer;
-            finally
-              dbi.free;
-            end;
+          dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
+          try
+            dbi.uninstall;
+            dbi.installPackageServer;
+          finally
+            dbi.free;
+          end;
         end;
       end
       else
@@ -582,7 +586,7 @@ begin
   if (item.status = '') then
   begin
     item.status := 'Checking ...';
-    TTxCheck.create(self, item.link).Open;
+    TTxCheck.create(self, item.link).Start;
   end;
   result := item.status;
 end;
@@ -676,10 +680,11 @@ begin
   case col of
     0: result := item.name;
     1: result := item['type'].value;
-    2: result := source(item);
-    3: result := item['version'].value;
-    4: result := item['default'].value;
-    5: result := status(item);
+    2: result := BoolToStr(item['active'].valueBool, 'yes', 'no');
+    3: result := source(item);
+    4: result := item['version'].value;
+    5: result := item['default'].value;
+    6: result := status(item);
   end;
 end;
 
@@ -693,10 +698,11 @@ begin
   case col of
     0: result := CompareStr(left.name, right.name);
     1: result := CompareStr(left['type'].value, right['type'].value);
-    2: result := CompareStr(source(left), source(right));
-    3: result := CompareStr(left['version'].value, right['version'].value);
-    4: result := CompareStr(left['default'].value, right['default'].value);
-    5: result := CompareStr(status(left), status(right));
+    2: result := CompareStr(BoolToStr(left['active'].valueBool, 'yes', 'no'), BoolToStr(right['active'].valueBool, 'yes', 'no'));
+    3: result := CompareStr(source(left), source(right));
+    4: result := CompareStr(left['version'].value, right['version'].value);
+    5: result := CompareStr(left['default'].value, right['default'].value);
+    6: result := CompareStr(status(left), status(right));
   else
     result := inherited compareItem(left, right, col);
   end;

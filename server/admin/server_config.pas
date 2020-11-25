@@ -47,9 +47,11 @@ type
     FName: String;
     FValues: TStringList;
     function GetValue: String;
+    function GetValueBool: Boolean;
     procedure SetValue(AValue: String);
 
     procedure save(indent : String; ts : TStringList);
+    procedure SetValueBool(AValue: Boolean);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -61,6 +63,7 @@ type
     property comment : String read FComment write FComment;
     property values : TStringList read FValues;
     property value : String read GetValue write SetValue;
+    property valueBool : Boolean read GetValueBool write SetValueBool;
     function readAsInt(def : integer = 0) : Integer;
     function readAsBool(def : boolean = false) : boolean;
 
@@ -258,7 +261,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TFHIRServerConfigProperty.assign(source: TFslObject);
+procedure TFHIRServerConfigProperty.Assign(source: TFslObject);
 var
   src : TFHIRServerConfigProperty;
 begin
@@ -276,6 +279,11 @@ begin
     result := FValues[0]
   else
     result := '';
+end;
+
+function TFHIRServerConfigProperty.GetValueBool: Boolean;
+begin
+  result := readAsBool(false);
 end;
 
 procedure TFHIRServerConfigProperty.SetValue(AValue: String);
@@ -306,6 +314,14 @@ begin
     for s in FValues do
       ts.add(indent+'   - '+s);
   end;
+end;
+
+procedure TFHIRServerConfigProperty.SetValueBool(AValue: Boolean);
+begin
+  if avalue then
+    Value := 'true'
+  else
+    Value := 'false';
 end;
 
 function TFHIRServerConfigProperty.readAsInt(def: integer): Integer;

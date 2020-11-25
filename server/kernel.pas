@@ -39,14 +39,14 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
 
   server_constants, server_config, utilities, {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, webserver,
   server_testing,
-  endpoint, general_endpoint, bridge_endpoint, terminology_endpoint, package_endpoint, txweb_endpoint;
+  endpoint, general_endpoint, bridge_endpoint, terminology_endpoint, package_endpoint, loinc_endpoint, snomed_endpoint;
 
 
 // how the kernel works:
@@ -65,13 +65,15 @@ Uses
 //  - turn the web server on
 
 type
-  TFhirServerMaintenanceThread = class(TFHIRServerThread)
+  TFhirServerMaintenanceThread = class (TFslThread)
   private
     FLastSweep: TDateTime;
+    FEndPoints : TFslList<TFHIRServerEndPoint>;
   protected
     procedure Execute; override;
   public
-    constructor Create(server: TFhirWebServer);
+    constructor Create(endPoints : TFslList<TFHIRServerEndPoint>);
+    destructor Destroy; override;
   end;
 
 type
@@ -131,98 +133,51 @@ uses
 
 { TFhirServerMaintenanceThread }
 
-constructor TFhirServerMaintenanceThread.Create(server: TFhirWebServer);
+constructor TFhirServerMaintenanceThread.Create(endPoints : TFslList<TFHIRServerEndPoint>);
 begin
-  FreeOnTerminate := true;
+  inherited Create();
   FLastSweep := Now;
-  inherited Create(server, false);
+  FEndPoints := endPoints;
+end;
+
+destructor TFhirServerMaintenanceThread.Destroy;
+begin
+  FEndPoints.free;
+  inherited;
 end;
 
 procedure TFhirServerMaintenanceThread.Execute;
 var
-  ep : TFhirWebServerEndpoint;
+  ep : TFhirServerEndpoint;
 begin
   SetThreadName('Server Maintenance Thread');
   SetThreadStatus('Working');
   Logging.log('Starting TFhirServerMaintenanceThread');
   try
-    FServer.FSettings.MaintenanceThreadStatus := 'starting';
 {$IFDEF WINDOWS}
     CoInitialize(nil);
 {$ENDIF}
     {$IFNDEF NO_JS}
     GJsHost := TJsHost.Create;
-    FServer.Common.OnRegisterJs(self, GJsHost);
+// todo    FServer.Common.OnRegisterJs(self, GJsHost);
     {$ENDIF}
 //    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
-      FServer.Settings.MaintenanceThreadStatus := 'sleeping';
-      sleep(1000);
-      if not terminated and (FLastSweep < Now - (DATETIME_SECOND_ONE * 5)) then
-      begin
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Sessions';
-          for ep in FServer.FEndPoints do
-            ep.Context.Storage.Sweep;
-          if not FServer.settings.ForLoad then
-            FServer.Common.Google.commit;
-        except
-        end;
-        FLastSweep := Now;
-      end;
-      if not FServer.settings.ForLoad then
-      begin
-        if (not terminated) then
-          try
-            FServer.Settings.MaintenanceThreadStatus := 'Building Indexes';
-            for ep in FServer.FEndPoints do
-              ep.Context.TerminologyServer.BuildIndexes(false);
-          except
-          end;
-      end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Processing Observations';
-          for ep in FServer.FEndPoints do
-            ep.Context.Storage.ProcessObservations;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Checking Snomed';
-          FServer.FEndPoints.First.Context.TerminologyServer.CommonTerminologies.sweepSnomed;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
-          for ep in FServer.FEndPoints do
-            ep.CheckAsyncTasks;
-        except
-        end;
-      if (not terminated) and (FServer.FTwilioServer <> nil) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
-          FServer.FTwilioServer.sweep;
-        except
-        end;
-      if (not terminated) then
-        try
-          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Client Cache';
-          for ep in FServer.FEndPoints do
-            ep.Context.ClientCacheManager.sweep;
-        except
-        end;
+//      FServer.Settings.MaintenanceThreadStatus := 'sleeping';
+      sleep(10);
+      if not terminated then
+        for ep in FEndPoints do
+          ep.internalThread;
     until terminated;
-    try
-      FServer.Settings.MaintenanceThreadStatus := 'dead';
-    except
-    end;
-    try
-      FServer.FMaintenanceThread := nil;
-    except
-    end;
+//    try
+//      FServer.Settings.MaintenanceThreadStatus := 'dead';
+//    except
+//    end;
+//    try
+//      FServer.FMaintenanceThread := nil;
+//    except
+//    end;
     {$IFNDEF NO_JS}
     GJsHost.Free;
     GJsHost := nil;
@@ -253,10 +208,13 @@ begin
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not hasCommandLineParam('noload');
   FSettings.load(FIni);
+
+  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FEndPoints.Free;
   FIni.Free;
   FSettings.Free;
   FTelnet.Free;
@@ -266,7 +224,7 @@ end;
 function TFHIRServiceKernel.CanStart: boolean;
 begin
   Logging.log('Run Number '+inttostr(Settings.RunNumber));
-  result := false;
+  result := true;
 end;
 
 procedure TFHIRServiceKernel.postStart;
@@ -275,13 +233,14 @@ begin
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
+    FMaintenanceThread := TFhirServerMaintenanceThread.Create(FEndPoints.link);
+    FMaintenanceThread.Start;
 
     // post start up time.
     getReport('|', true); // base line the object counting
     Logging.log('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
     Logging.Starting := false;
-!  smsStatus('The server ' + Common.Host + ' for ' + FSettings.OwnerName + ' has started');
+    sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
   except
     on e : Exception do
     begin
@@ -296,9 +255,13 @@ begin
   try
     Logging.log('stopping: '+StopReason);
     Logging.log('stop web server');
-    if FMaintenanceThread <> nil then
-      FMaintenanceThread.Terminate;
 
+    sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' is stopping');
+    if FMaintenanceThread <> nil then
+    begin
+      FMaintenanceThread.StopAndWait(100);
+    end;
+    FMaintenanceThread.Free;
     StopWebServer;
     Logging.log('closing');
     UnLoadEndPoints;
@@ -342,15 +305,20 @@ var
 begin
   for section in FIni['endpoints'].sections do
   begin
-    ep := makeEndPoint(section);
-    FEndPoints.Add(ep);
+    if section['active'].valueBool then
+      FEndPoints.Add(makeEndPoint(section.link));
   end;
 
   for ep in FEndPoints do
+  begin
+    Logging.log('Load End Point '+ep.summary);
     ep.Load;
+  end;
 end;
 
 procedure TFHIRServiceKernel.StartWebServer;
+var
+  ep : TFHIRServerEndPoint;
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, Telnet.Link, DisplayName);
   {$IFNDEF NO_JS}
@@ -359,8 +327,8 @@ begin
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
   begin
-    Logging.log('Web source from c:\work\fhiserver\server\web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhiserver\server\web')
+    Logging.log('Web source from c:\work\fhirserver\server\web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
   end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
@@ -370,6 +338,8 @@ begin
   else
     raise Exception.Create('Unable to find web source');
 
+  for ep in FEndPoints do
+    FWebServer.registerEndPoint(ep);
   // todo: registerEndPoints;
 
   FWebServer.Start;
@@ -470,17 +440,19 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config, connectToDatabase(config))
-  else if config['type'].value = 'txweb' then
-    result := TTerminologyWebEndPoint.Create(config, connectToDatabase(config))
+    result := TPackageServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
+  else if config['type'].value = 'loinc' then
+    result := TLoincWebEndPoint.Create(config, FSettings.Link, FTerminologies.Link)
+  else if config['type'].value = 'snomed' then
+    result := TSnomedWebEndPoint.Create(config, FSettings.Link, FTerminologies.Link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config, connectToDatabase(config))
+    result := TBridgeEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config, connectToDatabase(config))
+    result := TTerminologyServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
   else if config['type'].value = 'general' then
-    result := TGeneralServerEndPoint.Create(config, connectToDatabase(config))
+    result := TGeneralServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
   else
-    raise Exception.Create('Unknown server type');
+    raise Exception.Create('Unknown server type ' +config['type'].value);
 end;
 
 { === Core ====================================================================}

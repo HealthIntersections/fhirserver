@@ -210,7 +210,7 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -1197,7 +1197,7 @@ begin
 end;
 
 
-function TFhirCodeSystemProvider.locateIsA(code, parent: String): TCodeSystemProviderContext;
+function TFhirCodeSystemProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 var
   p : TFhirCodeSystemProviderContext;
 begin
@@ -1205,10 +1205,10 @@ begin
   p := Locate(parent) as TFhirCodeSystemProviderContext;
   if (p <> nil) then
     try
-      if (p.context.code = code) then
+      if (p.context.code <> code) then
+        result := doLocate(p.context.conceptList, code)
+      else if not disallowParent then
         result := p.Link
-      else
-        result := doLocate(p.context.conceptList, code);
     finally
       p.free;
     end;

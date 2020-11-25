@@ -75,10 +75,6 @@
         <UnitName Value="fhir_graphql"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir\fhir_htmlgen.pas"/>
-        <UnitName Value="fhir_htmlgen"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir\fhir_indexing.pas"/>
         <UnitName Value="fhir_indexing"/>
       </Item>

@@ -696,7 +696,7 @@ operations
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function buildValueSet(factory : TFHIRFactory; url : String) : TFhirValueSetW;
@@ -4111,13 +4111,13 @@ begin
   result := nil;
 end;
 
-function TSnomedServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
+function TSnomedServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 var
   ic, ip : Cardinal;
 begin
   checkIsLoaded;
   if Concept.FindConcept(StringToIdOrZero(parent), ip) And
-       Concept.FindConcept(StringToIdOrZero(code), ic) And Subsumes(ip, ic) then
+       Concept.FindConcept(StringToIdOrZero(code), ic) And Subsumes(ip, ic) And (not disallowParent or (ic <> ip)) then
     result := TSnomedExpressionContext.create(code, ic)
   else
     result := nil;

@@ -66,7 +66,7 @@ type
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -202,7 +202,7 @@ begin
   raise ETerminologyTodo.create('TMimeTypeCodeServices.getcontext');
 end;
 
-function TMimeTypeCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
+function TMimeTypeCodeServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
   result := nil; // no subsumption
 end;

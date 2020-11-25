@@ -623,6 +623,7 @@ type
     constructor Create(value : String); Overload;
     constructor Create(value : TFslDateTime); Overload;
     constructor Create(value : boolean); Overload;
+    constructor Create(value : integer); Overload;
     constructor Create(value : TBytes); Overload;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
@@ -1395,6 +1396,12 @@ constructor TFHIRObjectText.create(value: TBytes);
 begin
   Create;
   self.value := String(EncodeBase64(value));
+end;
+
+constructor TFHIRObjectText.Create(value: integer);
+begin
+  Create;
+  self.value := inttostr(value);
 end;
 
 function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;

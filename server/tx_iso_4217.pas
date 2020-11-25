@@ -83,7 +83,7 @@ type
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -211,7 +211,7 @@ begin
   result := TIso4217Concept.Create(FCurrencies.Codes[ndx].link);
 end;
 
-function TIso4217Services.locateIsA(code, parent : String) : TCodeSystemProviderContext;
+function TIso4217Services.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('locateIsA not supported by Iso4217'); // Iso4217 doesn't have formal subsumption property, so this is not used
 end;

@@ -55,7 +55,7 @@ uses
   fsl_npm_cache in '..\library\fsl\fsl_npm_cache.pas',
   fhir_parser in '..\library\fhir\fhir_parser.pas',
   fhir_objects in '..\library\fhir\fhir_objects.pas',
-  fhir_htmlgen in '..\library\fhir\fhir_htmlgen.pas',
+  fsl_htmlgen in '..\library\fsl\fsl_htmlgen.pas',
   fsl_scim in '..\library\fsl\fsl_scim.pas',
   fhir_xhtml in '..\library\fhir\fhir_xhtml.pas',
   fhir_factory in '..\library\fhir\fhir_factory.pas',

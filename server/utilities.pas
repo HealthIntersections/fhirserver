@@ -35,8 +35,13 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, IniFiles, Generics.Collections,
+  IdSMTP, IdMessage, IdOpenSSLIOHandlerClient, IdExplicitTLSClientServerBase, IdGlobal, IdOpenSSLVersion,
+//  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL,
+//  IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, fsl_websocket,
+//  IdOpenSSLIOHandlerServer, IdOpenSSLX509,
+
   IdCustomHTTPServer,
-  fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http,
+  fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http, fsl_twilio,
   fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
   fhir_objects,  fhir_utilities, fhir_factory, fhir_common,
   server_config, session;
@@ -114,6 +119,7 @@ type
     FSMSFrom: String;
     FSMSToken: String;
     FSMSAccount: String;
+    FHostSms: String; // for status update messages
 
     function GetMaintenanceThreadStatus: String;
     procedure SetMaintenanceThreadStatus(const Value: String);
@@ -150,6 +156,7 @@ type
     Property SMSFrom : String read FSMSFrom;// write FSMSFrom;
     property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
+    property HostSms : String read FHostSms write FHostSms;
 
     Property MaintenanceThreadStatus : String read GetMaintenanceThreadStatus write SetMaintenanceThreadStatus;
     Property SubscriptionThreadStatus : String read GetSubscriptionThreadStatus write SetSubscriptionThreadStatus;
@@ -160,6 +167,8 @@ function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartm
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
 function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
 function describeDatabase(details : TFHIRServerConfigSection) : String;
+procedure sendEmail(settings : TFHIRServerSettings; dest, subj, body: String);
+procedure sendSMS(settings : TFHIRServerSettings; Dest, Msg: String);
 
 implementation
 
@@ -274,7 +283,8 @@ begin
   FSubscriptionThreadStatus := 'Not started';
   FEmailThreadStatus := 'Not started';
 
-  FOwnerName := ini['admin']['ownername'].value;
+  FOwnerName := ini.admin['ownername'].value;
+  FHostSms := ini.admin['owner-sms'].value;
 
   FSMTPPort := ini['destinations'].section['email']['port'].value;
   FSMTPPassword := ini['destinations'].section['email']['password'].value;
@@ -403,6 +413,76 @@ begin
   else
     result := 'Unknown database type '+details['db-type'].value
 end;
+
+procedure sendEmail(settings : TFHIRServerSettings; dest, subj, body: String);
+var
+  sender : TIdSMTP;
+  msg : TIdMessage;
+  ssl : TIdOpenSSLIOHandlerClient;
+begin
+  sender := TIdSMTP.Create(Nil);
+  try
+    sender.Host := settings.SMTPHost;
+    sender.port := StrToInt(settings.SMTPPort);
+    sender.Username := settings.SMTPUsername;
+    sender.Password := settings.SMTPPassword;
+    if settings.SMTPUseTLS then
+    begin
+      ssl := TIdOpenSSLIOHandlerClient.create;
+      sender.IOHandler := ssl;
+      sender.UseTLS := utUseExplicitTLS;
+      ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
+      ssl.Host := settings.SMTPHost;
+      ssl.MaxLineAction := maException;
+      ssl.Port := StrToInt(settings.SMTPPort);
+      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+      ssl.Options.VerifyServerCertificate := false;
+    end;
+    sender.Connect;
+    msg := TIdMessage.Create(Nil);
+    try
+      msg.Subject := subj;
+      msg.Recipients.Add.Address := dest;
+      msg.From.Text := settings.SMTPSender;
+      msg.Body.Text := body;
+      Logging.log('Send '+msg.MsgId+' to '+dest);
+      sender.Send(msg);
+    Finally
+      msg.Free;
+    End;
+    sender.Disconnect;
+  Finally
+    sender.IOHandler.free;
+    sender.Free;
+  End;
+end;
+
+procedure sendSMS(settings : TFHIRServerSettings; Dest,Msg: String);
+var
+  client: TTwilioClient;
+begin
+  if Dest <> '' then
+  begin
+    try
+      client := TTwilioClient.Create;
+      try
+        client.Account := settings.SMSAccount;
+        if (client.Account <> '') and (settings.HostSms <> '') then
+        begin
+          client.Token := settings.SMSToken;
+          client.From := settings.SMSFrom;
+          client.dest := settings.HostSms;
+          client.Body := Msg;
+          client.send;
+        end;
+      finally
+        client.Free;
+      end;
+    except
+    end;
+  end;
+end;
+
 
 end.
 

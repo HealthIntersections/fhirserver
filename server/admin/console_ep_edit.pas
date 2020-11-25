@@ -14,6 +14,7 @@ type
   { TEditEPForm }
 
   TEditEPForm = class(TForm)
+    Bevel1: TBevel;
     btnDBTest: TBitBtn;
     btnDBTest1: TBitBtn;
     btnDBTest3: TBitBtn;
@@ -21,6 +22,7 @@ type
     cbxDriver: TComboBox;
     cbxType: TComboBox;
     cbxVersion: TComboBox;
+    chkActive: TCheckBox;
     edtDBName: TEdit;
     edtIdentity: TEdit;
     edtPassword: TEdit;
@@ -34,6 +36,7 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
@@ -59,6 +62,7 @@ var
   EditEPForm: TEditEPForm;
 
 function hasVersion(typ : String) : boolean;
+function hasDatabase(typ : String) : boolean;
 
 implementation
 
@@ -67,6 +71,11 @@ implementation
 function hasVersion(typ : String) : boolean;
 begin
   result := (typ = 'general') or (typ = 'terminology') or (typ = 'bridge');
+end;
+
+function hasDatabase(typ : String) : boolean;
+begin
+  result := not ((typ = 'snomed') or (typ = 'loinc'));
 end;
 
 { TEditEPForm }
@@ -136,8 +145,11 @@ begin
   begin
     edtIdentity.text := EP.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type'].value);
+    cbxTypeChange(self);
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
     edtPath.text := EP['path'].value;
+    chkActive.Checked := EP['active'].readAsBool;
+
     rbMSSQL.Checked := EP['db-type'].value = 'mssql';
     rbMySQL.Checked := EP['db-type'].value = 'mysql';
     rbMSSQLChange(self);
@@ -153,15 +165,35 @@ end;
 
 procedure TEditEPForm.cbxTypeChange(Sender: TObject);
 begin
-  if hasVersion(cbxType.items[cbxType.ItemIndex]) then
-  begin
-    cbxVersion.Enabled := false;
-    cbxVersion.itemIndex := -1;
-  end
-  else
+  if (cbxType.ItemIndex = -1) or (hasVersion(cbxType.items[cbxType.ItemIndex])) then
   begin
     cbxVersion.Enabled := true;
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
+  end
+  else
+  begin
+    cbxVersion.Enabled := false;
+    cbxVersion.itemIndex := -1;
+  end;
+  if (cbxType.ItemIndex = -1) or (hasDatabase(cbxType.items[cbxType.ItemIndex])) then
+  begin
+    rbMSSQL.enabled := true;
+    rbMySQL.enabled := true;
+    cbxDriver.enabled := true;
+    edtServer.enabled := true;
+    edtDBName.enabled := true;
+    edtUsername.enabled := true;
+    edtPassword.enabled := true;
+  end
+  else
+  begin
+    rbMSSQL.enabled := false;
+    rbMySQL.enabled := false;
+    cbxDriver.enabled := false;
+    edtServer.enabled := false;
+    edtDBName.enabled := false;
+    edtUsername.enabled := false;
+    edtPassword.enabled := false;
   end;
 end;
 
@@ -195,10 +227,11 @@ begin
 
   if not hasVersion(EP['type'].value) then
     EP['version'].value := ''
-  else if cbxVersion.itemIndex > -1 then
+  else if cbxVersion.itemIndex = -1 then
     raise Exception.create('A Version is required')
   else
     EP['version'].value := cbxVersion.Items[cbxVersion.itemIndex];
+  EP['active'].ValueBool := chkActive.Checked;
 
   EP['path'].value := edtPath.text;
   EP['db-type'].value := cbxDriver.Text;

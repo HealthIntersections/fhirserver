@@ -103,7 +103,7 @@ Type
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
     function IsInactive(code : String) : boolean; overload; virtual;

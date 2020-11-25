@@ -23,7 +23,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, webserver,
-  endpoint;
+  web_base, endpoint;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;
@@ -166,8 +166,10 @@ type
   TTerminologyServerEndPoint = class (TFHIRServerEndPoint)
   private
   public
-    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
     destructor Destroy; override;
+    function summary : String; override;
+    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
   end;
 
 //     function TerminologyWebServer: TTerminologyWebServer;
@@ -1192,8 +1194,7 @@ end;
 
 { TTerminologyServerEndPoint }
 
-constructor TTerminologyServerEndPoint.Create(
-  settings: TFHIRServerConfigSection; db: TFDBManager);
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
 begin
 
 end;
@@ -1202,6 +1203,16 @@ destructor TTerminologyServerEndPoint.Destroy;
 begin
 
   inherited;
+end;
+
+function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TTerminologyServerEndPoint.summary: String;
+begin
+  result := 'Terminology Server using '+describeDatabase(Config);
 end;
 
 end.

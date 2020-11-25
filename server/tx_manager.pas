@@ -279,7 +279,7 @@ Type
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -377,10 +377,11 @@ begin
 end;
 
 
-function TAllCodeSystemsProvider.locateIsA(code, parent : String) : TCodeSystemProviderContext;
+function TAllCodeSystemsProvider.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
+
 function TAllCodeSystemsProvider.IsAbstract(context : TCodeSystemProviderContext) : boolean;
 var
   c : TAllCodeSystemsProviderContext;
@@ -1829,7 +1830,7 @@ begin
 
   for tx in txList.sections do
   begin
-    if not testing or (tx['when-testing'].readAsBool) then
+    if tx['active'].valueBool and (not testing or (tx['when-testing'].readAsBool)) then
     begin
       if tx['type'].value = 'icd10' then
       begin

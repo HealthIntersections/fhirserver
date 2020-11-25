@@ -473,7 +473,7 @@ begin
     for ccf in cc.filters.forEnum do
     begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
-      if not (('concept' = ccf.prop) and (ccf.Op = foIsA)) then
+      if not (('concept' = ccf.prop) and (ccf.Op in [foIsA, foDescendentOf])) then
         if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
           raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.systemUri(nil));
     end;
@@ -1014,9 +1014,9 @@ begin
           i := 0;
           for fc in cfl do
           begin
-            if ('concept' = fc.prop) and (fc.Op = foIsA) then
+            if ('concept' = fc.prop) and (fc.Op in [foIsA, foDescendentOf]) then
             begin
-              loc := cs.locateIsA(code, fc.value);
+              loc := cs.locateIsA(code, fc.value, fc.Op = foDescendentOf);
               try
                 result := result and (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
                 if loc <> nil then

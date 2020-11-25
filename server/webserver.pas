@@ -80,7 +80,7 @@ Uses
 
   fsl_base, fsl_utilities, fsl_crypto, fsl_logging, fsl_stream, fsl_collections, fsl_threads, fsl_json, fsl_xml,
   {$IFDEF WINDOWS} fsl_msxml, fsl_service_win, {$ENDIF}
-  fsl_openssl, fsl_http, fdb_manager, fhir_htmlgen, fdb_dialects, fsl_rdf, fsl_graphql, fsl_twilio,
+  fsl_openssl, fsl_http, fdb_manager, fsl_htmlgen, fdb_dialects, fsl_rdf, fsl_graphql, fsl_twilio,
 
   {$IFDEF WINDOWS}
   fdb_odbc,
@@ -97,7 +97,7 @@ Uses
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
-  subscriptions, {$IFNDEF FHIR3}packages, {$ENDIF}twilio, telnet_server,
+  subscriptions, twilio, telnet_server,
   web_base, endpoint;
 
 Type
@@ -145,7 +145,6 @@ Type
     // can start without actually making the web servers available - for internal use e.g. loading...
     FHomePage: String;
     FFacebookLike: boolean;
-    FHostSms: String; // for status update messages
 
     // web configuration
     FCertFile: String;
@@ -173,6 +172,8 @@ Type
     procedure DoDisconnect(AContext: TIdContext);
 
     function endpointList: String;
+    Function WebDesc(secure : boolean): String;
+    function AbsoluteURL(secure: boolean) : String;
 
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
@@ -190,7 +191,6 @@ Type
     Procedure StartServer();
     Procedure StopServer;
 
-    procedure smsStatus(Msg: String);
   Public
     constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
     destructor Destroy; Override;
@@ -203,7 +203,7 @@ Type
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
-//    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerConfigFile) : TFhirWebServerEndpoint;
+    procedure registerEndPoint(endPoint : TFHIRServerEndPoint);
   End;
 
 
@@ -217,6 +217,14 @@ Uses
 
 
 { TFhirWebServer }
+
+function TFhirWebServer.AbsoluteURL(secure: boolean): String;
+begin
+  if secure then
+    result := 'https://'+common.host+SSLPort+'/'
+  else
+    result := 'http://'+common.host+HTTPPort+'/'
+end;
 
 Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
 Begin
@@ -317,7 +325,6 @@ begin
   if Common.AdminEmail = '' then
     raise EFHIRException.create('An admin email is required');
 
-  FHostSms := ini.admin['owner-sms'].value;
   if Common.ActualPort = 80 then
     txu := 'http://' + Common.Host
   else
@@ -396,6 +403,20 @@ begin
   Accepted := ServeUnknownCertificate or CertificateIdList.Find(x509.SerialNumber, i);
 end;
 
+
+function TFhirWebServer.WebDesc(secure : boolean): String;
+begin
+  if (Common.ActualPort = 0) then
+    result := 'Port ' + inttostr(Common.ActualSSLPort) + ' (https).'
+  else if Common.ActualSSLPort = 0 then
+    result := 'Port ' + inttostr(Common.ActualPort) + ' (http).'
+  else if secure then
+    result := '<a href="'+absoluteUrl(false)+'">Port ' + inttostr(Common.ActualPort) + ' (http)</a> and Port ' + inttostr(Common.ActualSSLPort) + ' (https - this server).'
+  else
+    result := 'Port ' + inttostr(Common.ActualPort) + ' (http - this server) and <a href="'+absoluteUrl(true)+'">Port ' + inttostr(Common.ActualSSLPort) + ' (https)</a>.'
+end;
+
+
 function TFhirWebServer.EndPoint(name: String): TFhirWebServerEndpoint;
 var
   t : TFhirWebServerEndpoint;
@@ -425,33 +446,8 @@ Begin
 
 End;
 
-procedure TFhirWebServer.smsStatus(Msg: String);
-var
-  client: TTwilioClient;
-begin
-  try
-    client := TTwilioClient.Create;
-    try
-      client.Account := FSettings.SMSAccount;
-      if (client.Account <> '') and (FHostSms <> '') then
-      begin
-        client.Token := FSettings.SMSToken;
-        client.From := FSettings.SMSFrom;
-        client.dest := FHostSms;
-        client.Body := Msg;
-        client.send;
-      end;
-    finally
-      client.Free;
-    end;
-  except
-  end;
-end;
-
 Procedure TFhirWebServer.Stop;
 Begin
-  if FActive then
-    smsStatus('The server ' + Common.Host + ' for ' + FSettings.OwnerName + ' is stopping');
   FActive := false;
   StopServer;
 End;
@@ -629,19 +625,20 @@ begin
     begin
       ok := false;
       for ep in FEndPoints do
-        if request.Document.StartsWith(ep.path) then
+        if request.Document.StartsWith(ep.PathWithSlash) then
         begin
           ok := true;
           summ := ep.PlainRequest(AContext, request, response, id);
+        end else if (request.Document = ep.PathNoSlash) then
+        begin
+          ok := true;
+          response.Redirect(request.Document+'/');
         end;
+
       if not ok then
       begin
         if request.Document = '/diagnostics' then
           summ := ReturnDiagnostics(AContext, request, response, false, false)
-        else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
-        begin
-          summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
-        end
         else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
         begin
           summ := 'Static File';
@@ -671,6 +668,15 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.registerEndPoint(endPoint: TFHIRServerEndPoint);
+var
+  wep : TFhirWebServerEndpoint;
+begin
+  wep := endPoint.makeWebEndPoint(Common.link);
+  FEndPoints.add(wep);
+  wep.OnReturnFile := ReturnProcessedFile;
+end;
+
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   cert: TIdOpenSSLX509;
@@ -685,8 +691,7 @@ begin
   begin
     InterlockedIncrement(GCounterWebRequests);
     t := GetTickCount;
-    raise Exception.Create('todo');
-    cert := nil; // todo (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
+    cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
     SetThreadStatus('Processing '+request.Document);
     MarkEntry(AContext, request, response);
@@ -709,19 +714,20 @@ begin
       begin
         ok := false;
         for ep in FEndPoints do
-          if request.Document.StartsWith(ep.path) then
+          if request.Document.StartsWith(ep.PathWithSlash) then
           begin
             ok := true;
             summ := ep.SecureRequest(AContext, request, response, cert, id);
+          end
+          else if request.Document = ep.PathNoSlash then
+          begin
+            ok := true;
+            response.Redirect(ep.PathWithSlash);
           end;
         if not ok then
         begin
           if request.Document = '/diagnostics' then
             summ := ReturnDiagnostics(AContext, request, response, false, false)
-          else if (TerminologyWebServer <> nil) and TerminologyWebServer.handlesRequestNoVersion(request.Document) then
-          begin
-            summ := TerminologyWebServer.ProcessNoVersion(AContext, request, nil, response, false)
-          end
           else if SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
           begin
             summ := 'Static File';
@@ -958,12 +964,16 @@ function TFhirWebServer.endpointList : String;
 var
   b : TStringBuilder;
   ep : TFhirWebServerEndpoint;
+  found : boolean;
 begin
   b := TStringBuilder.create;
   try
     b.append('<ul>');
-    for ep in FEndPoints do
-      b.Append('<li><a href="'+ep.Path+'">'+ep.Path+'</a>: '+ep.description+'</li>');
+    if FEndPoints.Count = 0 then
+      b.Append('<li><i>(No configured end-points)</i></li>')
+    else
+      for ep in FEndPoints do
+        b.Append('<li><a href="'+ep.PathWithSlash+'">'+ep.PathNoSlash+'</a>: '+ep.description+'</li>');
 
     b.append('</ul>');
     result := b.toString;
@@ -984,10 +994,11 @@ begin
   s := SourceProvider.getSource(actual);
   s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
-  s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
+  s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
   if Common.ActualPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
@@ -1024,28 +1035,6 @@ begin
   response.contentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;
 
-//function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerConfigFile): TFhirWebServerEndpoint;
-//begin
-//  result := TFhirWebServerEndpoint.create(code, path, context, Common.Link);
-//  FEndPoints.Add(result);
-//  context.userProvider.OnProcessFile := result.ReturnProcessedFile;
-//  result.AuthServer := TAuth2Server.Create(context.Factory.link, ini, Common.Host, inttostr(Common.SslPort), path);
-//  result.AuthServer.UserProvider := context.userProvider.Link;
-//  result.AuthServer.ServerContext := context.Link;
-//  result.AuthServer.EndPoint := result.ClientAddress(true);
-//  result.AuthServer.OnProcessFile := result.ReturnProcessedFile;
-//  result.AuthServer.OnGetPatients := result.GetPatients;
-//  result.AuthServer.OnProcessLaunchParams := result.GetLaunchParameters;
-//  result.AuthServer.Active := true;
-//  context.JWTServices := TJWTServices.Create;
-//  context.JWTServices.Cert := FCertFile;
-//  context.JWTServices.Password := FSSLPassword;
-//  context.JWTServices.DatabaseId := context.DatabaseId;
-//  context.JWTServices.Host := Common.Host;
-//  context.FormalURLPlain := 'http://'+Common.host+port(Common.ActualPort, 80)+path;
-//  context.FormalURLSecure := 'https://'+Common.host+port(Common.ActualSSLPort, 443)+path;
-////  context.JWTServices.JWKAddress := ?;
-//end;
 
 // procedure TFhirWebServer.DoSendFHIR(iMsgKey, SrcID: Integer; request: TFHIRRequest; response: TFHIRResponse);
 // var

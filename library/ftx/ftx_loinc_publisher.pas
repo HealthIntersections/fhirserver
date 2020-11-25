@@ -34,8 +34,8 @@ Interface
 
 Uses
   SysUtils, Classes, Math, fsl_threads,
-  fsl_base, fsl_collections, fsl_http,
-  fhir_htmlgen, ftx_loinc_services;
+  fsl_base, fsl_collections, fsl_http, fsl_htmlgen,
+  ftx_loinc_services;
 
 Const
   MAX_ROWS = 50;
@@ -223,7 +223,7 @@ begin
   arr := FLoinc.Refs.GetCardinals(children);
   if (length(arr) = 0) then
   begin
-    html.Header('LOINC Part Concept '+sText+' ('+scode+')');
+    html.Heading(1, 'LOINC Part Concept '+sText+' ('+scode+')');
     html.StartParagraph;
     html.addTextPlain('Heirarchy: ');
     addParent(index);
@@ -231,7 +231,7 @@ begin
   end
   else
   begin
-    html.Header('Categories in LOINC Part Concept '+sText+' ('+scode+')');
+    html.Heading(1, 'Categories in LOINC Part Concept '+sText+' ('+scode+')');
     html.StartParagraph;
     html.addTextPlain('Heirarchy: ');
     addParent(index);
@@ -373,7 +373,7 @@ procedure TloincPublisher.PublishHome(const sPrefix: String; html: THTMLPublishe
 var
   i : Integer;
 Begin
-  html.Header('LOINC Definitions');
+  html.Heading(1, 'LOINC Definitions');
   if not FLOINC.Loaded then
   Begin
     html.StartParagraph;
@@ -461,7 +461,7 @@ Begin
   Begin
     FLoinc.CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    html.Header('LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription, lang));
+    html.Heading(1, 'LOINC Code '+sCode+' : '+FLoinc.Desc.GetEntry(iDescription, lang));
     html.StartTable(true);
     if iComponent <> 0 Then
     Begin
@@ -614,7 +614,7 @@ begin
   aCodes := nil;
   FLoinc.Concepts.GetConcept(StrToInt(sId), langs, iName, iChildren, iCodes);
   if Not bRoot then
-    html.Header('LOINC Concept '+FLoinc.Desc.GetEntry(iName, lang));
+    html.Heading(1, 'LOINC Concept '+FLoinc.Desc.GetEntry(iName, lang));
 
   b := false;
 
@@ -752,9 +752,9 @@ begin
   b := false;
 
   if iStart = 0 then
-    html.header('All Loinc Codes')
+    html.Heading(1, 'All Loinc Codes')
   else
-    html.header('All Loinc Codes (offset = '+inttostr(iStart)+')');
+    html.Heading(1, 'All Loinc Codes (offset = '+inttostr(iStart)+')');
 
     html.StartTable(false);
     html.StartTableRow;
@@ -886,7 +886,7 @@ begin
   Finally
     Lock.Unlock;
   End;
-  html.Header('Search LOINC for '+sText);
+  html.Heading(1, 'Search LOINC for '+sText);
 
   html.StartTable(false);
   html.StartTableRow;

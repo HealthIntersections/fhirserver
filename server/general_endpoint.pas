@@ -7,7 +7,11 @@ interface
 uses
   SysUtils, StrUtils, Classes, IniFiles,
 
-  fsl_base, fsl_utilities, fsl_logging,
+  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
+  IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
+  IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
+
+  fsl_base, fsl_utilities, fsl_logging, fsl_threads,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
@@ -34,9 +38,11 @@ uses
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   storage, database,
   server_factory, indexing, subscriptions,
-  endpoint;
+  web_base, endpoint;
 
 Type
+  TGeneralServerEndPoint = class;
+
   TKernelServerFactory = class (TFHIRServerFactory)
   private
     FVersion : TFHIRVersion;
@@ -64,33 +70,25 @@ Type
     procedure load(rType, id : String; stream : TStream);
   end;
 
-  TFhirServerEmailThread = class(TFHIRServerThread)
+  TFHIRServerThread = class (TThread)
+  protected
+    FServer: TGeneralServerEndPoint;
+  public
+    constructor Create(server: TGeneralServerEndPoint; suspended : boolean);
+  end;
+
+  TFhirServerEmailThread = class (TFHIRServerThread) // todo: make this a TFslThread
   protected
     procedure Execute; override;
   public
-    constructor Create(server: TFhirWebServer);
-  end;
-
-{
-    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
-    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
-    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
-
-}
-  TFHIRServerThread = class (TThread)
-  protected
-    FServer: TFhirWebServer;
-
-    procedure sendEmail(dest, subj, body : String);
-  public
-    constructor Create(server: TFhirWebServer; suspended : boolean);
+    constructor Create(server: TGeneralServerEndPoint);
   end;
 
   TFhirServerSubscriptionThread = class(TFHIRServerThread)
   protected
     procedure Execute; override;
   public
-    constructor Create(server: TFhirWebServer);
+    constructor Create(server: TGeneralServerEndPoint);
   end;
 
   TGeneralServerEndPoint = class (TFHIRServerEndPoint)
@@ -98,8 +96,12 @@ Type
     FSubscriptionThread: TFhirServerSubscriptionThread;
     FEmailThread: TFhirServerEmailThread;
   public
-    constructor Create(settings : TFHIRServerConfigSection; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
     destructor Destroy; override;
+
+    function summary : String; override;
+    procedure internalThread; override;
+    function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
   end;
 
 //  if (true {active and threads}) then
@@ -111,6 +113,13 @@ Type
 //    FSubscriptionThread.Terminate;
 //  if FEmailThread <> nil then
 //    FEmailThread.Terminate;
+{
+    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
+    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages);
+    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TFslDateTime; names : TStringList) : string;
+
+}
+
 
 implementation
 
@@ -239,8 +248,7 @@ end;
 
 { TGeneralServerEndPoint }
 
-constructor TGeneralServerEndPoint.Create(settings: TFHIRServerConfigSection;
-  db: TFDBManager);
+constructor TGeneralServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
 begin
 
 end;
@@ -251,6 +259,79 @@ begin
   inherited;
 end;
 
+procedure TGeneralServerEndPoint.internalThread;
+begin
+
+                 (*
+      if not terminated and (FLastSweep < Now - (DATETIME_SECOND_ONE * 5)) then
+      begin
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Sessions';
+          for ep in FServer.FEndPoints do
+            ep.Context.Storage.Sweep;
+          if not FServer.settings.ForLoad then
+            FServer.Common.Google.commit;
+        except
+        end;
+        FLastSweep := Now;
+      end;
+      if not FServer.settings.ForLoad then
+      begin
+        if (not terminated) then
+          try
+            FServer.Settings.MaintenanceThreadStatus := 'Building Indexes';
+            for ep in FServer.FEndPoints do
+              ep.Context.TerminologyServer.BuildIndexes(false);
+          except
+          end;
+      end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Processing Observations';
+          for ep in FServer.FEndPoints do
+            ep.Context.Storage.ProcessObservations;
+        except
+        end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Checking Snomed';
+          FServer.FEndPoints.First.Context.TerminologyServer.CommonTerminologies.sweepSnomed;
+        except
+        end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Checking Async Tasks';
+          for ep in FServer.FEndPoints do
+            ep.CheckAsyncTasks;
+        except
+        end;
+      if (not terminated) and (FServer.FTwilioServer <> nil) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Twilio';
+          FServer.FTwilioServer.sweep;
+        except
+        end;
+      if (not terminated) then
+        try
+          FServer.Settings.MaintenanceThreadStatus := 'Sweeping Client Cache';
+          for ep in FServer.FEndPoints do
+            ep.Context.ClientCacheManager.sweep;
+        except
+        end;
+        *)
+end;
+
+function TGeneralServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TGeneralServerEndPoint.summary: String;
+begin
+  result := 'FHIR Server for Version ? using '+describeDatabase(Config);
+end;
+
+(*
 procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages);
 var
   b : TBytes;
@@ -281,10 +362,11 @@ begin
   {$ENDIF}
 end;
 
+*)
 
 { TFhirServerSubscriptionThread }
 
-constructor TFhirServerSubscriptionThread.Create(server: TFhirWebServer);
+constructor TFhirServerSubscriptionThread.Create(server: TGeneralServerEndPoint);
 begin
   FreeOnTerminate := true;
   FServer := server;
@@ -299,7 +381,7 @@ begin
   SetThreadStatus('Working');
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
-  FServer.Common.OnRegisterJs(self, GJsHost);
+  FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   Logging.log('Starting TFhirServerSubscriptionThread');
@@ -308,12 +390,8 @@ begin
     repeat
       FServer.Settings.SubscriptionThreadStatus := 'sleeping';
       sleep(1000);
-      if FServer.FActive then
-      begin
-        FServer.Settings.SubscriptionThreadStatus := 'processing subscriptions';
-        for ep in FServer.FEndPoints do
-          ep.Context.Storage.ProcessSubscriptions;
-      end;
+      FServer.Settings.SubscriptionThreadStatus := 'processing subscriptions';
+      // todo FServer.Context.Storage.ProcessSubscriptions;
     until terminated;
     try
       FServer.Settings.SubscriptionThreadStatus := 'dead';
@@ -337,7 +415,7 @@ end;
 
 { TFhirServerEmailThread }
 
-constructor TFhirServerEmailThread.Create(server: TFhirWebServer);
+constructor TFhirServerEmailThread.Create(server: TGeneralServerEndPoint);
 begin
   FreeOnTerminate := true;
   inherited Create(server, false);
@@ -352,7 +430,7 @@ begin
   SetThreadStatus('Working');
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
-  FServer.Common.OnRegisterJs(self, GJsHost);
+  FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   Logging.log('Starting TFhirServerEmailThread');
@@ -366,11 +444,10 @@ begin
         sleep(1000);
         inc(i);
       end;
-      if FServer.FActive and not terminated then
+      if not terminated then
       begin
         FServer.Settings.EmailThreadStatus := 'processing Emails';
-        for ep in FServer.FEndPoints do
-          ep.Context.Storage.ProcessEmails;
+        // todo FServer.Context.Storage.ProcessEmails;
       end;
     until terminated;
     try
@@ -392,5 +469,41 @@ begin
   SetThreadStatus('Done');
   closeThread;
 end;
+
+{ TFHIRServerThread }
+
+constructor TFHIRServerThread.Create(server: TGeneralServerEndPoint; suspended: boolean);
+begin
+  FServer := server;
+  inherited Create(suspended);
+end;
+
+
+
+
+//function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerConfigFile): TFhirWebServerEndpoint;
+//begin
+//  result := TFhirWebServerEndpoint.create(code, path, context, Common.Link);
+//  FEndPoints.Add(result);
+//  context.userProvider.OnProcessFile := result.ReturnProcessedFile;
+//  result.AuthServer := TAuth2Server.Create(context.Factory.link, ini, Common.Host, inttostr(Common.SslPort), path);
+//  result.AuthServer.UserProvider := context.userProvider.Link;
+//  result.AuthServer.ServerContext := context.Link;
+//  result.AuthServer.EndPoint := result.ClientAddress(true);
+//  result.AuthServer.OnProcessFile := result.ReturnProcessedFile;
+//  result.AuthServer.OnGetPatients := result.GetPatients;
+//  result.AuthServer.OnProcessLaunchParams := result.GetLaunchParameters;
+//  result.AuthServer.Active := true;
+//  context.JWTServices := TJWTServices.Create;
+//  context.JWTServices.Cert := FCertFile;
+//  context.JWTServices.Password := FSSLPassword;
+//  context.JWTServices.DatabaseId := context.DatabaseId;
+//  context.JWTServices.Host := Common.Host;
+//  context.FormalURLPlain := 'http://'+Common.host+port(Common.ActualPort, 80)+path;
+//  context.FormalURLSecure := 'https://'+Common.host+port(Common.ActualSSLPort, 443)+path;
+////  context.JWTServices.JWKAddress := ?;
+//end;
+
+
 
 end.
