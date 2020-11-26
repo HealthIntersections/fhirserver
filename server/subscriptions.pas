@@ -1372,7 +1372,7 @@ begin
       raise EFHIRException.create('Resource has been deleted');
     end;
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['XmlContent'])
     else
     begin
       parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, FLang);

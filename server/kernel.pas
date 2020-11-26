@@ -317,6 +317,9 @@ begin
   for ep in FEndPoints do
   begin
     Logging.log('Load End Point '+ep.config.name+': '+ep.summary);
+    {$IFNDEF NO_JS}
+    ep.OnRegisterJs := registerJs;
+    {$ENDIF}
     ep.Load;
   end;
 end;

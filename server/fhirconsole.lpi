@@ -224,9 +224,8 @@
     </RequiredPackages>
     <Units Count="11">
       <Unit0>
-        <Filename Value="FHIRConsole.pas"/>
+        <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fhirconsole"/>
       </Unit0>
       <Unit1>
         <Filename Value="console_form.pas"/>

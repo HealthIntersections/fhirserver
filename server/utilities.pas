@@ -43,7 +43,7 @@ uses
   IdCustomHTTPServer,
   fsl_utilities, fsl_base, fsl_logging, fsl_threads, fsl_http, fsl_twilio,
   fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
-  fhir_objects,  fhir_utilities, fhir_factory, fhir_common,
+  fhir_objects,  fhir_utilities, fhir_factory, fhir_common, fhir_parser,
   server_config, session;
 
 var
@@ -166,14 +166,21 @@ var
   s : TBytes;
   i, j : integer;
   ct : AnsiString;
+  p : TFHIRParser;
 begin
-  s := ZDecompressBytes(b);
-  move(s[0], i, 4);
-  setLength(ct, i);
-  move(s[4], ct[1], i);
-  move(s[4+i], j, 4);
-
-  result := factory.makeBinary(copy(s, 8+i, j), String(ct));
+//  s := ZDecompressBytes(b);
+//  move(s[0], i, 4);
+//  setLength(ct, i);
+//  move(s[4], ct[1], i);
+//  move(s[4+i], j, 4);
+//
+//  result := factory.makeBinary(copy(s, 8+i, j), String(ct));
+  p := factory.makeParser(nil, ffXml, lang);
+  try
+    result := p.parseResource(b);
+  finally
+    p.Free;
+  end;
 end;
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
@@ -268,6 +275,7 @@ begin
   FIni := ini.link;
   FRunNumber := ini['service'].prop['runNumber'].readAsInt(0) + 1;
   ini['service'].prop['runNumber'].value := inttostr(FRunNumber);
+  ini.Save;
   FRequestId := 0;
 
   FOwnerName := ini.admin['ownername'].value;

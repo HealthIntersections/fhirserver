@@ -136,7 +136,6 @@ type
     edtCombinedStore: TEdit;
     edtDate: TDateTimePicker;
     edtDestination: TEdit;
-    edtAdmitUsername: TEdit;
     edtAdminSCIMSalt: TEdit;
     edtTelnetPassword: TEdit;
     edtInternational: TEdit;
@@ -177,6 +176,7 @@ type
     Image3: TImage;
     Image4: TImage;
     ImageList1: TImageList;
+    lblDoco: TLabel;
     Label10: TLabel;
     Label12: TLabel;
     Label13: TLabel;
@@ -202,7 +202,6 @@ type
     Label35: TLabel;
     Label36: TLabel;
     Label37: TLabel;
-    Label38: TLabel;
     Label39: TLabel;
     Label4: TLabel;
     Label40: TLabel;
@@ -248,6 +247,8 @@ type
     PageControl1: TPageControl;
     PageControl2: TPageControl;
     Panel1: TPanel;
+    Panel17: TPanel;
+    Panel18: TPanel;
     Panel29: TPanel;
     Panel30: TPanel;
     Panel33: TPanel;
@@ -345,7 +346,6 @@ type
     procedure edtAdminOrganizationChange(Sender: TObject);
     procedure edtAdminSCIMSaltChange(Sender: TObject);
     procedure edtAdminSMSChange(Sender: TObject);
-    procedure edtAdmitUsernameChange(Sender: TObject);
     procedure edtCACertChange(Sender: TObject);
     procedure edtConfigFileChange(Sender: TObject);
     procedure edtFilterChange(Sender: TObject);
@@ -421,6 +421,7 @@ type
     procedure SetConfigEditable;
     procedure SetConfigReadonly;
     procedure EPFocusChange(sender : TObject);
+    procedure updateDoco;
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages;
   end;
@@ -818,8 +819,6 @@ begin
     edtAdminOrganization.Enabled := true;
     edtAdminSMS.Text := FConfig.admin['owner-sms'].value;
     edtAdminSMS.Enabled := true;
-    edtAdmitUsername.Text := FConfig.admin['username'].value;
-    edtAdmitUsername.Enabled := true;
     edtAdminSCIMSalt.Text := FConfig.admin['scim-salt'].value;
     edtAdminSCIMSalt.Enabled := true;
 
@@ -845,8 +844,6 @@ begin
     edtAdminOrganization.Enabled := false;
     edtAdminSMS.Text := '';
     edtAdminSMS.Enabled := false;
-    edtAdmitUsername.Text := '';
-    edtAdmitUsername.Enabled := false;
     edtAdminSCIMSalt.Text := '';
     edtAdminSCIMSalt.Enabled := false;
     edtHostName.Text := '';
@@ -925,6 +922,49 @@ begin
   end;
   lvPackages.ViewStyle := vsIcon;
   lvPackages.ViewStyle := vsList;
+end;
+
+procedure TMainConsoleForm.updateDoco;
+begin
+  if ActiveControl = chkWebMode then
+    lblDoco.caption := 'If this is selected, then any requests on the non-secure port will immediately be redirected to the SSL port. Note that end-points may have their own security rules for SSL, but won''t have any restrictions on open (other than not working)'
+  else if ActiveControl = edtCACert then
+    lblDoco.caption := 'The CA certificate for the SSL certificate, in DER format'
+  else if ActiveControl = edtAdminSCIMSalt then
+    lblDoco.caption := 'The Salt used when hashing passwords. Note that changing the salt will invalidate all passwords'
+  else if ActiveControl = edtTelnetPassword then
+    lblDoco.caption := 'The password required to connect to telnet when connecting from an external computer (not localhost). Default is no password required. Note that the telnet interface can make no changes on the server'
+  else if ActiveControl = edtPrivateKey then
+    lblDoco.caption := 'The private key file for the SSL certificate'
+  else if ActiveControl = edtSSLCert then
+    lblDoco.caption := 'The SSL certificate, as issued by a CA. In DER format'
+  else if ActiveControl = edtSSLPassword then
+    lblDoco.caption := 'The password for the SSL private key'
+  else if ActiveControl = edtSSLPort then
+    lblDoco.caption := 'The port to use for SSL services'
+  else if ActiveControl = edtHostName then
+    lblDoco.caption := 'The host name by which clients know this server (normally, the server uses the Host details provided by the client, but there are places in the OAuth process and others where this is not available'
+  else if ActiveControl = edtWebPort then
+    lblDoco.caption := 'The post to use for plain (unsecured) web services'
+  else if ActiveControl = edtGoogleId then
+    lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
+  else if ActiveControl = edtAdminEmail then
+    lblDoco.caption := 'The administrator email for this server'
+  else if ActiveControl = edtAdminOrganization then
+    lblDoco.caption := 'The organization that owns the server (typically, would match the SSL certificate, but this is not required)'
+  else if ActiveControl = edtAdminSMS then
+    lblDoco.caption := 'The SMS of the owner. If an SMS destination (twilio) is set up, the server will get SMS messages when the server starts and stops'
+  else if ActiveControl = lvPackages then
+    lblDoco.caption := 'Packages loaded when this end-point starts (typically, these are used when validating or providing terminology services)'
+  else if ActiveControl = lvID then
+    lblDoco.caption := 'identity providers supported for this server. These need external registration, and specific API support - consult the #pascal channel on chat.fhir.org for advice to use these'
+  else if ActiveControl = lvTx then
+    lblDoco.caption := 'Terminologies loaded when the server loads. These terminologies are available on all end=points for terminoogy services and reasoning. Most of the terminologies require some kind of import process). Note that some terminologies are loaded internally to the server, and are not subject to user configuration. All servers SHOULD have UCUM loaded for normal functionality'
+  else if ActiveControl = lvEP then
+    lblDoco.caption := 'A list of end-points available on the server. Each end-point represents a set of functional web services available to the client. Most of the end-points require a database, and some kind of install process'
+  else
+    lblDoco.caption := ''
+
 end;
 
 procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
@@ -1550,15 +1590,6 @@ begin
   end;
 end;
 
-procedure TMainConsoleForm.edtAdmitUsernameChange(Sender: TObject);
-begin
-  if not FLoading and (FConfig <> nil) then
-  begin
-    FConfig.admin['username'].value := edtAdmitUsername.Text;
-    FConfig.Save;
-  end;
-end;
-
 procedure TMainConsoleForm.edtCACertChange(Sender: TObject);
 begin
   if not FLoading and (FConfig <> nil) then
@@ -1692,7 +1723,7 @@ begin
   end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
   sBar.Panels[3].Text := Logging.MemoryStatus;
-
+  updateDoco;
 end;
 
 procedure TMainConsoleForm.ToolButton1Click(Sender: TObject);
