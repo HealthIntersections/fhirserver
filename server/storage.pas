@@ -730,7 +730,7 @@ begin
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
-      oConf.version := factory.versionString+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+      oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
       oConf.name := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
@@ -738,7 +738,7 @@ begin
       oConf.acceptUnknown := csauBoth;
 
       oConf.date := TFslDateTime.makeUTC;
-      oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
+      oConf.software('Reference Server', SERVER_FULL_VERSION, SERVER_RELEASE_DATE);
       if ServerContext.FormalURLPlain <> '' then
         oConf.impl(ServerContext.FormalURLPlain, 'FHIR Server running at '+ServerContext.FormalURLPlain);
       if assigned(OnPopulateConformance) then
@@ -765,7 +765,7 @@ begin
       html := TFslStringBuilder.Create;
       try
         html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
-         'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
+         'Server version '+SERVER_FULL_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
         for a in ServerContext.ValidatorContext.allResourceNames do
           if (a <> 'Custom') and (a <> 'Parameters') then
           begin
@@ -948,7 +948,7 @@ FHIR_JS+
 ''#13#10+
 '<body>'#13#10+
 ''#13#10+
-TFHIRXhtmlComposer.Header(factory, request.Session, request.baseUrl, request.lang, SERVER_VERSION)+
+TFHIRXhtmlComposer.Header(factory, request.Session, request.baseUrl, request.lang, SERVER_FULL_VERSION)+
 '<h2>'+GetFhirMessage('SEARCH_TITLE', lang)+'</h2>'#13#10+
 '</p>'#13#10;
 if Request.DefaultSearch then
@@ -1123,7 +1123,7 @@ begin
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
-      oConf.version := factory.versionString+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+      oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
       oConf.name := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
@@ -1585,7 +1585,7 @@ begin
 //    result.id := 'fso-'+name;
 //    result.meta := TFhirMeta.Create;
 //    result.meta.lastUpdated := TFslDateTime.fromXml(FHIR_GENERATED_DATE);
-//    result.meta.versionId := SERVER_VERSION;
+//    result.meta.versionId := SERVER_FULL_VERSION;
 //    result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
 //    result.version := FHIR_GENERATED_VERSION;
 //    result.name := 'Operation Definition for "'+name+'"';

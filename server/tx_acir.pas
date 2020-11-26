@@ -76,6 +76,7 @@ type
     destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -257,6 +258,11 @@ end;
 function TACIRServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TACIRServices.description: String;
+begin
+  result := 'ACIR';
 end;
 
 destructor TACIRServices.Destroy;

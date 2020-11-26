@@ -42,9 +42,11 @@ unit fsl_java_runtime;
 interface
 
 uses
+  {$IFDEF WINDOWS}
   Windows, Registry,
+  {$ENDIF}
   Classes, SysUtils,
-  fsl_java_jni, fsl_java_utilities, fsl_java_strings, fsl_java_wrapper;
+  fsl_fpc, fsl_java_jni, fsl_java_utilities, fsl_java_strings, fsl_java_wrapper;
 
 type
 
@@ -54,7 +56,7 @@ type
 {$IFEND}
 {$IF Declared(UTF8String)} {$ELSE} UTF8String = AnsiString;
 {$IFEND}
-  JvmType = (SunJava1, SunJava2, MSJava);
+  JvmType = (SunJava1, SunJava2{$IFDEF WINDOWS}, MSJava{$ENDIF});
   RuntimeOptions = set of JvmType;
   PPJavaVM = ^PJavaVM;
 
@@ -115,7 +117,9 @@ type
 
     function FindJava11: Boolean;
     function FindJava12: Boolean;
+    {$IFDEF WINDOWS}
     function FindMSJava: Boolean;
+    {$ENDIF}
     function CheckJavaRegistryKey(key: String): Boolean;
     function GetClasspath: String;
     procedure setClasspath(S: String);
@@ -500,7 +504,7 @@ begin
   if GJavaVM <> Nil then
   begin
     if IsMS then
-      Sleep(INFINITE)
+      Sleep({$IFDEF WINDOWS} INFINITE {$ELSE} -1 {$ENDIF})
     else
       GJavaVM.Wait;
   end;
@@ -579,6 +583,7 @@ begin
   begin
     FirstChoice := SunJava2;
     SecondChoice := SunJava1;
+    {$IFDEF WINDOWS}
     ThirdChoice := MSJava;
     if PrefersMS then
     begin
@@ -586,6 +591,7 @@ begin
       SecondChoice := SunJava2;
       ThirdChoice := SunJava1;
     end;
+    {$ENDIF}
     if Prefers11 then
     begin
       temp := FirstChoice;
@@ -634,6 +640,7 @@ end;
 
 
 function TJavaRuntime.GetClasspath: String;
+{$IFDEF WINDOWS}
 var
   cpath: TClassPath;
   Reg: TRegistry;
@@ -656,6 +663,10 @@ begin
     Reg.Free;
   end;
   result := cpath.FullPath;
+{$ELSE}
+begin
+raise exception.create('not done yet');
+{$ENDIF}
 end;
 
 procedure TJavaRuntime.setClasspath(S: String);
@@ -677,9 +688,11 @@ begin
     SunJava2:
       if not FindJava12 then
         raise EJavaRuntimeNotFound.Create('Java 2 runtime not found');
+    {$IFDEF WINDOWS}
     MSJava:
       if not FindMSJava then
         raise EJavaRuntimeNotFound.Create('MS Java runtime not found');
+    {$ENDIF}
   end;
   DefaultRuntime := Self; // set the singleton
   FClasspath := TClassPath.getDefault;
@@ -714,6 +727,7 @@ begin
 end;
 
 
+{$IFDEF WINDOWS}
 function TJavaRuntime.FindMSJava: Boolean;
 var
   DLLPath: String;
@@ -735,6 +749,7 @@ begin
     result := True;
   end;
 end;
+{$ENDIF}
 
 function TJavaRuntime.FindJava12: Boolean;
 var
@@ -757,7 +772,7 @@ var
   i: Integer;
 begin
   // First look on the system path.
-  FRuntimeLib := FindOnSystemPath('javai.dll');
+  FRuntimeLib := {$IFDEF WINDOWS} FindOnSystemPath('javai.dll'); {$ELSE} ''; {$ENDIF}
   if FRuntimeLib <> '' then
   begin
     FJavaHome := ExtractFileDir(ExtractFileDir(FRuntimeLib));
@@ -797,6 +812,7 @@ end;
   fields }
 
 function TJavaRuntime.CheckJavaRegistryKey(key: String): Boolean;
+{$IFDEF WINDOWS}
 var
   Reg: TRegistry;
   S, HotspotLib: String;
@@ -859,6 +875,9 @@ begin
   finally
     Reg.Free;
   end;
+{$ELSE}
+begin
+{$ENDIF}
 end;
 
 procedure TJavaRuntime.SetNativeStackSize(Size: Integer);

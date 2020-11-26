@@ -234,6 +234,7 @@ Type
 
     Property Loaded : Boolean read FLoaded write FLoaded;
 
+    function description : String; override;
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -420,6 +421,11 @@ end;
 function TUcumServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUcumServices.description: String;
+begin
+  result := 'UCUM';
 end;
 
 destructor TUcumServices.Destroy;

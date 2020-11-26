@@ -680,6 +680,7 @@ operations
     function LastUseStatus : String;
 
     // generic terminology server interface
+    function description : String; override;
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -1431,6 +1432,11 @@ begin
     result := true
   else
     result := sv[1] < tv[1];
+end;
+
+function TSnomedServices.description: String;
+begin
+  result := 'SNOMED CT '+EditionName;
 end;
 
 destructor TSnomedServices.Destroy;

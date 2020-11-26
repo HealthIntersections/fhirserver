@@ -215,7 +215,7 @@ uses
   subscriptions in 'subscriptions.pas',
   user_manager in 'user_manager.pas',
   utilities in 'utilities.pas',
-  webserver in 'webserver.pas',
+  web_server in 'web_server.pas',
   web_source in 'web_source.pas',
   html_builder in 'html_builder.pas',
   fhir_oauth in '..\library\fhir\fhir_oauth.pas',
@@ -428,10 +428,6 @@ uses
   fhir5_resources_other in '..\library\fhir5\fhir5_resources_other.pas',
   MarkdownUnicodeUtils in '..\..\markdown\source\MarkdownUnicodeUtils.pas',
   telnet_server in 'telnet_server.pas',
-  kernel_base in 'kernel_base.pas',
-  kernel_general in 'kernel_general.pas',
-  kernel_bridge in 'kernel_bridge.pas',
-  kernel_tx in 'kernel_tx.pas',
   gui_vcl in 'gui_vcl.pas' {ServerGUI},
   gui_controller in 'gui_controller.pas',
   search_base in '..\library\tools\search_base.pas',
@@ -511,13 +507,15 @@ uses
   server_config in 'admin\server_config.pas',
   test_server_config in 'tests\test_server_config.pas',
   web_event in 'web_event.pas',
-  snomed_endpoint in 'snomed_endpoint.pas',
-  twilio_endpoint in 'twilio_endpoint.pas',
-  common_endpoint in 'common_endpoint.pas',
-  package_endpoint in 'package_endpoint.pas',
-  storage_endpoint in 'storage_endpoint.pas',
-  loinc_endpoint in 'loinc_endpoint.pas',
-  internal_client in 'internal_client.pas';
+  endpoint_snomed in 'endpoint_snomed.pas',
+  endpoint_twilio in 'endpoint_twilio.pas',
+  endpoint_packages in 'endpoint_packages.pas',
+  endpoint_storage in 'endpoint_storage.pas',
+  endpoint_loinc in 'endpoint_loinc.pas',
+  internal_client in 'internal_client.pas',
+  endpoint_bridge in 'endpoint_bridge.pas',
+  endpoint_txsvr in 'endpoint_txsvr.pas',
+  endpoint_full in 'endpoint_full.pas';
 
 begin
   ExecuteFhirServer;

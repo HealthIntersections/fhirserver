@@ -1,4 +1,4 @@
-unit snomed_endpoint;
+unit endpoint_snomed;
 
 {$i fhir.inc}
 
@@ -12,7 +12,7 @@ uses
   ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager,
+  tx_manager, telnet_server,
   web_base, endpoint;
 
 type
@@ -38,10 +38,9 @@ type
 
   TSnomedWebEndPoint = class (TFHIRServerEndPoint)
   private
-    FTx : TCommonTerminologies;
     FSnomedServer : TSnomedWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; tx : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -60,22 +59,20 @@ implementation
 
 { TSnomedWebEndPoint }
 
-constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; tx : TCommonTerminologies);
+constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, nil);
-  FTx := tx;
+  inherited create(config, settings, nil, telnet, common);
 end;
 
 destructor TSnomedWebEndPoint.Destroy;
 begin
-  FTx.Free;
   inherited;
 end;
 
 function TSnomedWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   FSnomedServer := TSnomedWebServer.Create(config.name, config['path'].value, common);
-  FSnomedServer.FTx := FTx.Link;
+  FSnomedServer.FTx := Terminologies.Link;
   result := FSnomedServer.link;
 end;
 
@@ -96,7 +93,6 @@ end;
 
 procedure TSnomedWebEndPoint.Load;
 begin
-  // nothing
 end;
 
 procedure TSnomedWebEndPoint.LoadPackages(plist: String);
@@ -225,7 +221,7 @@ begin
         html := THtmlPublisher.Create();
         pub := TSnomedPublisher.create(ss, AbsoluteURL(secure));
         try
-          html.Version := SERVER_VERSION;
+          html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
           html.Lang := THTTPLanguages.Create(request.AcceptLanguage);
           pub.PublishDict(code, PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/', html);
@@ -341,7 +337,7 @@ var
 begin
   html := THtmlPublisher.Create;
   try
-    html.Version := SERVER_VERSION;
+    html.Version := SERVER_FULL_VERSION;
     html.Heading(1, 'Choose SNOMED CT Version');
     html.StartTable(true);
     html.StartTableRow;

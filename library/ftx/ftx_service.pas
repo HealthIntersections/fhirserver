@@ -93,6 +93,7 @@ Type
   public
     function Link : TCodeSystemProvider; overload;
 
+    function description : String;  virtual; abstract;
     function TotalCount : integer;  virtual; abstract;
     function ChildCount(context : TCodeSystemProviderContext) : integer; virtual; abstract;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;

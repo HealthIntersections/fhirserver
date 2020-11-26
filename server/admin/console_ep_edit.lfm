@@ -245,7 +245,7 @@ object EditEPForm: TEditEPForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Items.Strings = (
-      'general'
+      'full'
       'terminology'
       'bridge'
       'package'

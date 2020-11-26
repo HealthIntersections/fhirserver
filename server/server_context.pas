@@ -77,6 +77,7 @@ Type
   TFHIRServerContext = class (TFslObject)
   private
     FLock: TFslLock;
+    FName : string;
     FStorage : TFHIRStorageService;
     FQuestionnaireCache: TQuestionnaireCache;
     FResConfig: TFslMap<TFHIRResourceConfig>;
@@ -122,10 +123,11 @@ Type
 
     procedure SetClientCacheManager(const Value: TClientCacheManager);
   public
-    constructor Create(storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
+    constructor Create(name : String; storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
     Function Link : TFHIRServerContext; overload;
 
+    property Name : string read FName;
     property Globals : TFHIRServerSettings read FGlobals write SetGlobals;
     property DatabaseId: String read FSystemId write FSystemId;
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
@@ -352,12 +354,13 @@ begin
   FClientCacheManager.clearCache;
 end;
 
-constructor TFHIRServerContext.Create(storage: TFHIRStorageService; serverFactory : TFHIRServerFactory);
+constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory);
 var
   a: String;
   cfg : TFHIRResourceConfig;
 begin
   Inherited Create;
+  FName := name;
   FLock := TFslLock.Create('ServerContext');
   FStorage := storage;
   FServerFactory := serverFactory;

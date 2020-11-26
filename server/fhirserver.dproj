@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\exec\fhirserver.cfg</Debugger_RunParams>
+        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>
@@ -325,7 +325,7 @@
         <DCCReference Include="subscriptions.pas"/>
         <DCCReference Include="user_manager.pas"/>
         <DCCReference Include="utilities.pas"/>
-        <DCCReference Include="webserver.pas"/>
+        <DCCReference Include="web_server.pas"/>
         <DCCReference Include="web_source.pas"/>
         <DCCReference Include="html_builder.pas"/>
         <DCCReference Include="..\library\fhir\fhir_oauth.pas"/>
@@ -538,10 +538,6 @@
         <DCCReference Include="..\library\fhir5\fhir5_resources_other.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
         <DCCReference Include="telnet_server.pas"/>
-        <DCCReference Include="kernel_base.pas"/>
-        <DCCReference Include="kernel_general.pas"/>
-        <DCCReference Include="kernel_bridge.pas"/>
-        <DCCReference Include="kernel_tx.pas"/>
         <DCCReference Include="gui_vcl.pas">
             <Form>ServerGUI</Form>
         </DCCReference>
@@ -621,13 +617,15 @@
         <DCCReference Include="admin\server_config.pas"/>
         <DCCReference Include="tests\test_server_config.pas"/>
         <DCCReference Include="web_event.pas"/>
-        <DCCReference Include="snomed_endpoint.pas"/>
-        <DCCReference Include="twilio_endpoint.pas"/>
-        <DCCReference Include="common_endpoint.pas"/>
-        <DCCReference Include="package_endpoint.pas"/>
-        <DCCReference Include="storage_endpoint.pas"/>
-        <DCCReference Include="loinc_endpoint.pas"/>
+        <DCCReference Include="endpoint_snomed.pas"/>
+        <DCCReference Include="endpoint_twilio.pas"/>
+        <DCCReference Include="endpoint_packages.pas"/>
+        <DCCReference Include="endpoint_storage.pas"/>
+        <DCCReference Include="endpoint_loinc.pas"/>
         <DCCReference Include="internal_client.pas"/>
+        <DCCReference Include="endpoint_bridge.pas"/>
+        <DCCReference Include="endpoint_txsvr.pas"/>
+        <DCCReference Include="endpoint_full.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

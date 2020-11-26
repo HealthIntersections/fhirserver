@@ -102,6 +102,7 @@ type
 
     class function checkDB(conn : TFDBConnection) : String;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -587,6 +588,11 @@ end;
 function TNDCServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := Display(context, THTTPLanguages.Create(''));
+end;
+
+function TNDCServices.description: String;
+begin
+  result := 'NDC Codes';
 end;
 
 function TNDCServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;

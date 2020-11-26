@@ -57,6 +57,7 @@ type
     destructor Destroy; Override;
     Function Link : TMimeTypeCodeServices; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -160,6 +161,11 @@ end;
 function TMimeTypeCodeServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TMimeTypeCodeServices.description: String;
+begin
+  result := 'Mime Types';
 end;
 
 destructor TMimeTypeCodeServices.Destroy;

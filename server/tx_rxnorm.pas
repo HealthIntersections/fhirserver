@@ -130,6 +130,7 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
+    function description : String; override;
   end;
 
   TNDFRTServices = class (TUMLSServices)
@@ -141,6 +142,7 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
+    function description : String; override;
   end;
 
   TNciMetaServices = class (TUMLSServices)
@@ -149,6 +151,7 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
+    function description : String; override;
   end;
 
   { TUMLSImporter }
@@ -1018,6 +1021,11 @@ begin
   inherited create(false, db);
 end;
 
+function TRxNormServices.description: String;
+begin
+  result := 'RxNorm';
+end;
+
 function TRxNormServices.name(context: TCodeSystemProviderContext): String;
 begin
   result := 'RxNorm';
@@ -1040,6 +1048,11 @@ begin
   inherited create(true, db);
 end;
 
+function TNciMetaServices.description: String;
+begin
+  result := 'NCI Metathesaurus';
+end;
+
 function TNciMetaServices.name(context: TCodeSystemProviderContext): String;
 begin
   result := 'NCI Metathesaurus';
@@ -1060,6 +1073,11 @@ end;
 constructor TNDFRTServices.Create(db: TFDBManager);
 begin
   inherited create(false, db);
+end;
+
+function TNDFRTServices.description: String;
+begin
+  result := 'NDFRT';
 end;
 
 function TNDFRTServices.getCodeField: String;

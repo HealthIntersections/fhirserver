@@ -80,6 +80,7 @@ type
     class function checkFile(sourceFile : String) : String;
     Property Title : String read FTitle;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -232,6 +233,11 @@ end;
 function TICD10Provider.defToThisVersion(specifiedVersion: String): boolean;
 begin
   result := FIsDefault;
+end;
+
+function TICD10Provider.description: String;
+begin
+  result := FTitle;
 end;
 
 function TICD10Provider.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;

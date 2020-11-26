@@ -40,7 +40,7 @@ unit fsl_java_utilities;
 interface
    
 uses 
-  Windows,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   Classes,
   fsl_java_strings;
 
@@ -61,14 +61,18 @@ uses
   procedure setEnvironmentString(key, value : String);
     
   // redeclared here because in D2, the prototype in Window.pas is incorrect.
+  {$IFDEF WINDOWS}
   function SearchPath(lpPath, lpFileName, lpExtension: PUTF8Char; 
                           nBufferLength: DWORD; 
                           lpBuffer: PUTF8Char; 
                           var lpFilePart: PUTF8Char): DWORD; stdcall;
+  {$ENDIF}
     
   //uses the above SearchPath routine to
   // find the file on path. Returns full path or empty string.
+  {$IFDEF WINDOWS}
   function FindOnSystemPath(Filename : String) : String;
+  {$ENDIF}
     
   // converts the dots or forward slashes to backslashes
   function toBackSlash(const s : String) : String;
@@ -142,7 +146,7 @@ qualified Class names.}
 
 
    {Trivial wrapper of the SearchPath API call.}
-    
+  {$IFDEF WINDOWS}
   function FindOnSystemPath(Filename : String) : String;
   var
     p : UTF8String;
@@ -152,6 +156,7 @@ qualified Class names.}
     if SearchPath(Nil, PUTF8Char(p), Nil, MAX_PATH, @Buf, PC)<>0 then
     Result := String(Buf);
   end;
+  {$ENDIF}
     
     
   function getEnvironmentString(S : String) : String;
@@ -166,7 +171,9 @@ qualified Class names.}
     
   procedure SetEnvironmentString(key, value : String);
   begin
+    {$IFDEF WINDOWS}
     SetEnvironmentVariable(PChar(key), PChar(value));
+    {$ENDIF}
   end;
 
   procedure ChopExtension(var Filename : String);
@@ -182,7 +189,9 @@ qualified Class names.}
     Filename := Copy(Filename, 1, Length(Filename) - Length(Ext));
   end;
 
-    
+
+  {$IFDEF WINDOWS}
   function SearchPath; external kernel32 name 'SearchPathA';
+  {$ENDIF}
 
 end.

@@ -48,10 +48,6 @@
         <UnitName Value="Compat"/>
       </Item>
       <Item>
-        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
-        <UnitName Value="FastMM4"/>
-      </Item>
-      <Item>
         <Filename Value="..\dependencies\Indy10\Protocols\IdHeaderList.pas"/>
         <UnitName Value="IdHeaderList"/>
       </Item>
@@ -682,6 +678,10 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_htmlgen.pas"/>
         <UnitName Value="fsl_htmlgen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
+        <UnitName Value="FastMM4"/>
       </Item>
     </Files>
     <RequiredPkgs>

@@ -79,6 +79,7 @@ Type
     procedure AddTableCell(text : String; bold : boolean = false);
     procedure AddTableCellHint(text, hint : String);
 
+    procedure AddListItem(text : String);
     procedure StartList(ordered : boolean = false);
     procedure EndList(ordered : boolean = false);
     procedure StartListItem;
@@ -87,6 +88,8 @@ Type
     procedure EndBlockQuote;
     procedure startDiv;
     procedure endDiv;
+
+    procedure break;
 
     procedure StartForm(method, action : String);
     procedure TextInput(name : String; length : integer = 20); overload;
@@ -112,6 +115,13 @@ Type
 implementation
 
 { THtmlPublisher }
+
+procedure THtmlPublisher.AddListItem(text: String);
+begin
+  StartListItem;
+  AddTextPlain(text);
+  EndListItem;
+end;
 
 procedure THtmlPublisher.AddParagraph(text: String);
 begin
@@ -164,6 +174,11 @@ end;
 procedure THtmlPublisher.AddTitle(text: String);
 begin
   AddText(text, true, false);
+end;
+
+procedure THtmlPublisher.break;
+begin
+  FBuilder.Append('<br/>');
 end;
 
 procedure THtmlPublisher.checkbox(name : String; value : boolean; text : String);

@@ -1,4 +1,4 @@
-unit storage_endpoint;
+unit endpoint_storage;
 
 {$i fhir.inc}
 
@@ -20,7 +20,7 @@ uses
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
-  tx_webserver,
+  tx_manager, tx_webserver, telnet_server,
   web_base, endpoint;
 
 type
@@ -87,20 +87,15 @@ type
 
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
-    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
     procedure ReturnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
-    procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
     function loadFromRsaDer(cert : string) : TJWKList;
 
     function readVersion(mt : String) : TFHIRVersion;
-    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
@@ -115,11 +110,11 @@ type
     function getReferencesByType(t : String) : String;
     function buildPackageList : String;
     function buildSessionsTable : String;
-    procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
 
     function ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     function ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
+    procedure SetAuthServer(const Value: TAuth2Server);
   protected
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; virtual; abstract;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; virtual; abstract;
@@ -128,16 +123,24 @@ type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); virtual; abstract;
     Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; virtual; abstract;
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; virtual; abstract;
+    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
     function processContent(path: String; secure : boolean; title, content : String) : String;
+    procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
+    procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon; endPoint : TStorageEndPoint);
     destructor Destroy; override;
 
     property Plugins : TFslList<TFHIRWebServerScriptPlugin> read FPlugins;
     property Context : TFHIRServerContext read FContext;
+    property AuthServer : TAuth2Server read FAuthServer write SetAuthServer;
     property TerminologyWebServer: TTerminologyWebServer read FTerminologyWebServer write SetTerminologyWebServer;
+
+    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
+    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
@@ -148,7 +151,7 @@ type
   protected
     FServerContext : TFHIRServerContext;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
   end;
 
@@ -208,9 +211,9 @@ end;
 
 { TStorageEndPoint }
 
-constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager);
+constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, db);
+  inherited create(config, settings, db, telnet, common);
 end;
 
 destructor TStorageEndPoint.Destroy;
@@ -431,7 +434,14 @@ begin
   FAdaptors.Free;
   FPlugins.Free;
   FTerminologyWebServer.free;
+  FAuthServer.Free;
   inherited;
+end;
+
+procedure TStorageWebEndpoint.SetAuthServer(const Value: TAuth2Server);
+begin
+  FAuthServer.Free;
+  FAuthServer := Value;
 end;
 
 procedure TStorageWebEndpoint.SetTerminologyWebServer(const Value: TTerminologyWebServer);
@@ -1660,7 +1670,7 @@ begin
           begin
             oComp := TFHIRXhtmlComposer.Create(self.Context.ValidatorContext.link, style, oRequest.lang, oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(oRequest.baseUrl);
-            TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
+            TFHIRXhtmlComposer(oComp).Version := SERVER_FULL_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.link;
             TFHIRXhtmlComposer(oComp).tags := oResponse.tags.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
@@ -1777,7 +1787,7 @@ begin
         ffXhtml:
           begin
             oComp := TFHIRXhtmlComposer.Create(self.Context.ValidatorContext.link, OutputStyleNormal, lang, AppendForwardSlash(url));
-            TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
+            TFHIRXhtmlComposer(oComp).Version := SERVER_FULL_VERSION;
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
@@ -2312,7 +2322,7 @@ begin
     vars.add('content', TFHIRObjectText.Create(content));
     vars.add('ver', TFHIRObjectText.Create(FContext.Factory.versionString));
     vars.add('specurl', TFHIRObjectText.Create(FContext.Factory.specUrl));
-    result := processFile(nil, path, 'template-nfhir.html', secure, vars);
+    result := processFile(nil, path, 'template-fhir.html', secure, vars);
   finally
     vars.free;
   end;

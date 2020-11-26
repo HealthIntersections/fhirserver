@@ -50,6 +50,8 @@ type
   public
     Function Link : TUriServices; overload;
 
+    function description : String; override;
+
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -136,6 +138,11 @@ end;
 function TUriServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUriServices.description: String;
+begin
+  result := 'URIs';
 end;
 
 function TUriServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;

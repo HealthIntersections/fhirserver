@@ -313,7 +313,7 @@ begin
   try
     html := THtmlPublisher.Create();
     try
-      html.Version := SERVER_VERSION;
+      html.Version := SERVER_FULL_VERSION;
       html.StartTable(true);
       html.StartTableRow;
       html.AddTableCell('URL', true);
@@ -375,7 +375,7 @@ begin
 
       html := THtmlPublisher.Create();
       try
-        html.Version := SERVER_VERSION;
+        html.Version := SERVER_FULL_VERSION;
         html.StartTable(true);
         html.StartTableRow;
         html.AddTableCellURL('URL', '/tx/codesystems?sort=url');
@@ -440,7 +440,7 @@ begin
       // build the table
       html := THtmlPublisher.Create();
       try
-        html.Version := SERVER_VERSION;
+        html.Version := SERVER_FULL_VERSION;
         html.StartTable(true);
         html.StartTableRow;
         html.AddTableCellURL('URL', '/tx/maps?sort=url');
@@ -586,7 +586,7 @@ begin
       // build the table
       html := THtmlPublisher.Create();
       try
-        html.Version := SERVER_VERSION;
+        html.Version := SERVER_FULL_VERSION;
         html.StartTable(true);
         html.StartTableRow;
         html.AddTableCellURL('URL', '/tx/valuesets?sort=url');
@@ -704,7 +704,7 @@ var
 begin
   html := THtmlPublisher.Create();
   try
-    html.Version := SERVER_VERSION;
+    html.Version := SERVER_FULL_VERSION;
     html.StartTable(true);
     for pp in p.parameterList do
     begin

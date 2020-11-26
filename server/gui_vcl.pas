@@ -165,7 +165,7 @@ end;
 
 procedure TServerGUI.About1Click(Sender: TObject);
 begin
-  ShowMessage('FHIR Terminology Server v'+SERVER_VERSION);
+  ShowMessage('FHIR Terminology Server v'+SERVER_FULL_VERSION);
 end;
 
 procedure TServerGUI.btnBrowserClick(Sender: TObject);

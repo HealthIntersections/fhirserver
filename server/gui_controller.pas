@@ -40,7 +40,7 @@ uses
   fhir4_factory,
   fdb_manager, fdb_sqlite3,
   scim_server,
-  server_config, web_base, webserver, kernel_tx, database_installer;
+  server_config, web_base, web_server, database_installer;
 
 type
   TFHIRServerStatus = (ssNotRunning, ssStarting, ssRunning, ssStopping);

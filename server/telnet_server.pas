@@ -90,6 +90,7 @@ type
 
     procedure addContext(ctxt : TFHIRServerContext);
     procedure removeContext(ctxt : TFHIRServerContext);
+    function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   end;
 
 implementation
@@ -141,6 +142,16 @@ begin
   FLog.Free;
   FLock.Free;
   inherited;
+end;
+
+function TFHIRTelnetServer.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
+var
+  t : TFHIRServerContext;
+begin
+  result := nil;
+  for t in FContexts do
+    if t.Name = name then
+      exit(t);
 end;
 
 procedure TFHIRTelnetServer.Log(const msg: String);

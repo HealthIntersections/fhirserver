@@ -71,6 +71,7 @@ type
     destructor Destroy; Override;
     Function Link : TUSStateServices; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -248,6 +249,11 @@ end;
 function TUSStateServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUSStateServices.description: String;
+begin
+  result := 'US State Codes';
 end;
 
 destructor TUSStateServices.Destroy;

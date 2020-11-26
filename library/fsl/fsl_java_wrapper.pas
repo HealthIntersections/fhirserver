@@ -42,7 +42,7 @@ unit fsl_java_wrapper;
 interface
 
 uses 
-  Windows,
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   Classes, SysUtils,
   fsl_java_strings, fsl_java_jni, fsl_java_utilities;
 

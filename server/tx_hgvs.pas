@@ -54,6 +54,7 @@ type
     destructor Destroy; override;
     function link : THGVSProvider; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -144,6 +145,11 @@ end;
 function THGVSProvider.defToThisVersion(specifiedVersion: String): boolean;
 begin
   result := true;
+end;
+
+function THGVSProvider.description: String;
+begin
+  result := 'HGVS codes';
 end;
 
 function THGVSProvider.Display(context: TCodeSystemProviderContext; const lang: THTTPLanguages): string;

@@ -34,11 +34,11 @@ interface
 {
 [settings]
 } const
-BuildCount='343';
+BuildCount='0';
 BuildDate='2020-08-13';
 
 
-  SERVER_VERSION = '1.0.'+buildCount;
+  SERVER_FULL_VERSION = '1.9.'+buildCount;
   SERVER_RELEASE_DATE = BuildDate;
 
   INDEX_DIGITS = 20;

@@ -73,6 +73,7 @@ Type
     FSupportSystemHistory: boolean;
     FFactory : TFHIRFactory;
     FServerFactory : TFHIRServerFactory;
+    FDefaultRights : String;
 
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig(res : boolean);
@@ -102,7 +103,6 @@ Type
     procedure DefineResourceSpaces;
     procedure DoPostTransactionInstall;
     procedure DoPostTransactionUnInstall;
-    procedure CreateUnii;
     procedure CreateObservations;
     procedure CreateObservationCodes;
     procedure CreateObservationQueue;
@@ -115,7 +115,7 @@ Type
     procedure CreatePackagesTables;
     procedure CreatePackagePermissionsTable;
     procedure CreateLoadedPackagesTable;
-    procedure CreateTwilioTable;
+//    procedure CreateTwilioTable;
 //    procedure runScript(s : String);
   public
     constructor Create(conn : TFDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -123,9 +123,11 @@ Type
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property DoAudit : boolean read FDoAudit write FDoAudit;
-    Property  Bases : TStringList read FBases;
+    Property Bases : TStringList read FBases;
+    Property DefaultRights : String read FDefaultRights write FDefaultRights;
 
     procedure installPackageServer;
+    procedure InstallTerminologyServer;
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
 
@@ -286,6 +288,7 @@ Begin
     FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
     FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FFactory.versionString+''')');
     FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (9, '''+BooleanToInt(true)+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (10, '''+FDefaultRights+''')');
   end;
 End;
 
@@ -460,25 +463,6 @@ begin
        ' Version int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Closures', 'ClosureKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Closure_Name ON Closures (Name)');
-end;
-
-procedure TFHIRDatabaseInstaller.CreateUnii;
-begin
-  FConn.ExecSQL('CREATE TABLE Unii ('+#13#10+
-    'UniiKey int NOT NULL,'+#13#10+
-    'Code nchar(20) NOT NULL,'+#13#10+
-    'Display nchar(255) NULL,'+#13#10+
-    PrimaryKeyType(FConn.owner.Platform, 'PK_Unii', 'UniiKey')+') '+CreateTableInfo(FConn.owner.platform));
-
-  FConn.ExecSQL('CREATE TABLE UniiDesc ('+#13#10+
-     'UniiDescKey int NOT NULL, '+#13#10+
-    'UniiKey int NOT NULL, '+#13#10+
-    'Type nchar(20) NOT NULL, '+#13#10+
-     'Display nchar(255) NULL, '+#13#10+
-       InlineForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey')+
-    PrimaryKeyType(FConn.owner.Platform, 'PK_UniiDesc', 'UniiDescKey')+') '+CreateTableInfo(FConn.owner.platform));
-
-  FConn.ExecSQL(ForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey'));
 end;
 
 procedure TFHIRDatabaseInstaller.CreateConcepts;
@@ -792,20 +776,20 @@ begin
   FConn.ExecSQL('Create INDEX SK_SubscriptionsQueue_Reload ON SubscriptionQueue (Handled)');
 end;
 
-procedure TFHIRDatabaseInstaller.CreateTwilioTable;
-begin
-  FConn.ExecSQL('CREATE TABLE Twilio ( '+#13#10+
-       ' TwilioKey      '+DBKeyType(FConn.owner.platform)+'       '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
-       ' AccountId       nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
-       ' Status          int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
-       ' SourceNum       nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
-       ' CreatedDate    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
-       ' DownloadedDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
-       ' MsgBody            '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       PrimaryKeyType(FConn.owner.Platform, 'PK_Twilio', 'TwilioKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_Twilio_Account ON Twilio (AccountId, Status, DownloadedDate)');
-end;
-
+//procedure TFHIRDatabaseInstaller.CreateTwilioTable;
+//begin
+//  FConn.ExecSQL('CREATE TABLE Twilio ( '+#13#10+
+//       ' TwilioKey      '+DBKeyType(FConn.owner.platform)+'       '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+//       ' AccountId       nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+//       ' Status          int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+//       ' SourceNum       nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+//       ' CreatedDate    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+//       ' DownloadedDate '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+//       ' MsgBody            '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+//       PrimaryKeyType(FConn.owner.Platform, 'PK_Twilio', 'TwilioKey')+') '+CreateTableInfo(FConn.owner.platform));
+//  FConn.ExecSQL('Create INDEX SK_Twilio_Account ON Twilio (AccountId, Status, DownloadedDate)');
+//end;
+//
 procedure TFHIRDatabaseInstaller.CreateAsyncTasks;
 begin
   FConn.ExecSQL('CREATE TABLE AsyncTasks ( '+#13#10+
@@ -974,10 +958,39 @@ begin
   end;
 end;
 
+procedure TFHIRDatabaseInstaller.InstallTerminologyServer;
+begin
+  FConn.StartTransact;
+  try
+    if assigned(CallBack) then Callback(1, 'Create Config');
+    CreateResourceConfig(false);
+    if assigned(CallBack) then Callback(1, 'Create Closure Table');
+    CreateClosures;
+    if assigned(CallBack) then Callback(1, 'Create Concept Table');
+    CreateConcepts;
+    if assigned(CallBack) then Callback(1, 'Create ValueSet Table');
+    CreateValueSets;
+    if assigned(CallBack) then Callback(1, 'Create ValueSetMember Table');
+    CreateValueSetMembers;
+    if assigned(CallBack) then Callback(1, 'Create ClosureEntry Table');
+    CreateClosureEntries;
+    if assigned(CallBack) then Callback(4, 'Commit');
+
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (100, ''txsvr||Installed '+TFslDateTime.makeLocal.toString+''')');
+    FConn.Commit;
+  except
+    on e:exception do
+    begin
+      FConn.Rollback;
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
 procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
   try
-
     if FConn.owner.platform = kdbMySQL then
     begin
 //      FConn.ExecSQL('ALTER TABLE IndexEntries MODIFY Xhtml LONGTEXT;');
@@ -1072,9 +1085,6 @@ begin
     if assigned(CallBack) then Callback(43, 'Create OAuthLogins');
     CreateOAuthLogins;
 
-    if assigned(CallBack) then Callback(44, 'Create Unii');
-    CreateUnii;
-
     if assigned(CallBack) then Callback(45, 'Create Closures');
     CreateClosures;
     if assigned(CallBack) then Callback(46, 'Create Concepts');
@@ -1143,8 +1153,6 @@ begin
     CreatePackagesTables;
     if assigned(CallBack) then Callback(77, 'Create Package Permissions Table');
     CreatePackagePermissionsTable;
-    if assigned(CallBack) then Callback(78, 'Commit');
-    CreateTwilioTable;
     if assigned(CallBack) then Callback(79, 'Commit');
     CreateLoadedPackagesTable;
     if assigned(CallBack) then Callback(80, 'Commit');
@@ -1333,8 +1341,6 @@ begin
     end;
     if (version < 24) then
       CreatePackagesTables;
-    if (version <= 25) then
-      CreateTwilioTable;
     if (version <= 26) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.PackageVersions ADD DownloadCount int NULL');

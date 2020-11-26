@@ -498,7 +498,7 @@ end;
 
 function TFHIRFactoryR4.specUrl: String;
 begin
-  result := 'http://build.fhir.org';
+  result := 'http://hl7.org/fhir/R4';
 end;
 
 function TFHIRFactoryR4.txPackage: String;

@@ -94,6 +94,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
+    function description : String; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -320,6 +321,11 @@ end;
 function TUniiServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUniiServices.description: String;
+begin
+  result := 'UNII Codes';
 end;
 
 destructor TUniiServices.Destroy;

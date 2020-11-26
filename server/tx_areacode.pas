@@ -74,6 +74,7 @@ type
     destructor Destroy; Override;
     Function Link : TAreaCodeServices; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -457,6 +458,11 @@ end;
 function TAreaCodeServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TAreaCodeServices.description: String;
+begin
+  result := 'International area/region Codes';
 end;
 
 destructor TAreaCodeServices.Destroy;

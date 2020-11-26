@@ -5,10 +5,10 @@ unit console_managers;
 interface
 
 uses
-  Classes, SysUtils, UITypes,
+  SysUtils, Classes, Graphics, UITypes,
   Dialogs,
   fsl_base, fsl_threads, fsl_utilities,
-  fdb_manager, fdb_odbc, fdb_dialects, fdb_sqlite3,
+  fdb_manager,
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
   tx_icd10, tx_ndc, tx_rxnorm, tx_unii,
@@ -61,6 +61,7 @@ type
     function loadList : boolean; override;
 
     function getCellText(item : TFHIRServerConfigSection; col : integer) : String; override;
+    function getCellColors(item : TFHIRServerConfigSection; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
@@ -92,6 +93,7 @@ type
     procedure Timer; override;
 
     function getCellText(item : TFHIRServerConfigSection; col : integer) : String; override;
+    function getCellColors(item : TFHIRServerConfigSection; col : integer; var fore, back : TColor) : boolean; override;
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
@@ -434,6 +436,19 @@ begin
   end;
 end;
 
+function TEndPointManager.getCellColors(item: TFHIRServerConfigSection; col: integer; var fore, back: TColor): boolean;
+begin
+  Result := false;
+  if col = 3 then
+  begin
+    result := true;
+    if item['active'].valueBool then
+      back := ColourCompose(120, 236, 120, 0)
+    else
+      back := ColourCompose(255, 180, 180, 0);
+  end;
+end;
+
 function TEndPointManager.getSummaryText(item: TFHIRServerConfigSection): String;
 begin
   Result := item.name;
@@ -685,6 +700,19 @@ begin
     4: result := item['version'].value;
     5: result := item['default'].value;
     6: result := status(item);
+  end;
+end;
+
+function TTXManager.getCellColors(item: TFHIRServerConfigSection; col: integer; var fore, back: TColor): boolean;
+begin
+  Result := false;
+  if col = 2 then
+  begin
+    result := true;
+    if item['active'].valueBool then
+      back := ColourCompose(120, 236, 120, 0)
+    else
+      back := ColourCompose(255, 180, 180, 0);
   end;
 end;
 

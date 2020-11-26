@@ -1,4 +1,4 @@
-unit terminology_endpoint;
+unit endpoint_txsvr;
 
 {$i fhir.inc}
 
@@ -6,11 +6,13 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen,
   fdb_manager,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
   {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
+
+  ftx_service, ftx_sct_services,
 
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
@@ -19,17 +21,20 @@ uses
   fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
   validator_r2, validator_r3, validator_r4, validator_r5,
 
-  fhir_indexing, search_base,
-  tx_manager, tx_server, tx_operations, operations,
+  fhir_indexing, search_base, database_installer,
+  tx_manager, tx_server, tx_operations, operations, tx_icd10,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
-  utilities, security, indexing, server_factory, subscriptions, webserver,
-  web_base, endpoint;
+  utilities, security, indexing, server_factory, subscriptions,
+  telnet_server,
+  web_server, web_base, endpoint, endpoint_storage;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;
   TX_SEARCH_PAGE_LIMIT = 20;
 
 type
+  TTerminologyServerEndPoint = class;
+
   TTerminologyServerFactory = class (TFHIRServerFactory)
   private
     FVersion : TFHIRVersion;
@@ -47,6 +52,7 @@ type
 
   TTerminologyServerData = class (TFslObject)
   private
+    FPackages : TStringList;
     FCodeSystems : TFslMap<TFHIRMetadataResourceW>;
     FValueSets : TFslMap<TFHIRMetadataResourceW>;
     FNamingSystems : TFslMap<TFHIRMetadataResourceW>;
@@ -148,8 +154,8 @@ type
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
 
-    procedure loadUTGFolder(factory : TFHIRFactory; folder : String);
-    procedure loadPackage(factory : TFHIRFactory; pid : String; ignoreEmptyCodeSystems : boolean);
+    procedure loadUTGFolder(folder : String);
+    procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
   end;
 
@@ -163,13 +169,48 @@ type
     function allowInsecure : boolean; override;
   end;
 
-  TTerminologyServerEndPoint = class (TFHIRServerEndPoint)
+  TTerminologyServerWebServer = class (TStorageWebEndpoint)
   private
+    FEndPoint : TTerminologyServerEndPoint;
+    function factory : TFHIRFactory;
+    function data : TTerminologyServerData;
+    function terminologies : TCommonTerminologies;
+  protected
+    function description : String; override;
+
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
+    procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
+    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+    destructor Destroy; override;
+    function link : TTerminologyServerWebServer; overload;
+  end;
+
+
+  TTerminologyServerEndPoint = class (TStorageEndPoint)
+  private
+    FStore : TTerminologyFhirServerStorage;
+    UTGFolder : String;
+    function version : TFHIRVersion;
+    function makeFactory : TFHIRFactory;
+    function makeServerFactory : TFHIRServerFactory;
+  public
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
+
+    procedure Load; override;
+    procedure Unload; override;
+    procedure InstallDatabase; override;
+    procedure UninstallDatabase; override;
+    procedure LoadPackages(plist : String); override;
+    procedure updateAdminPassword; override;
+    procedure internalThread; override;
   end;
 
 //     function TerminologyWebServer: TTerminologyWebServer;
@@ -261,10 +302,12 @@ begin
   FNamingSystems.defaultValue := nil;
   FConceptMaps := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
   FConceptMaps.defaultValue := nil;
+  FPackages := TStringList.create;
 end;
 
 destructor TTerminologyServerData.Destroy;
 begin
+  FPackages.Free;
   FConceptMaps.Free;
   FNamingSystems.Free;
   FValueSets.Free;
@@ -901,7 +944,7 @@ begin
   end;
 end;
 
-procedure TTerminologyFhirServerStorage.loadPackage(factory : TFHIRFactory; pid: String; ignoreEmptyCodeSystems : boolean);
+procedure TTerminologyFhirServerStorage.loadPackage(pid: String; ignoreEmptyCodeSystems : boolean);
 var
   npm : TNpmPackage;
   s : String;
@@ -919,6 +962,7 @@ begin
   try
     npm := FCache.loadPackage(pid);
     try
+      FData.FPackages.Add(npm.name+'#'+npm.version);
       for s in npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']) do
       begin
         inc(i);
@@ -1047,7 +1091,7 @@ begin
   end;
 end;
 
-procedure TTerminologyFhirServerStorage.loadUTGFolder(factory : TFHIRFactory; folder : String);
+procedure TTerminologyFhirServerStorage.loadUTGFolder(folder : String);
 var
   count : integer;
 begin
@@ -1194,25 +1238,333 @@ end;
 
 { TTerminologyServerEndPoint }
 
-constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-
+  inherited Create(config, settings, db, telnet, common);
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
 begin
-
+  FStore.Free;
   inherited;
-end;
-
-function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
-begin
-  raise Exception.Create('Not Done Yet');
 end;
 
 function TTerminologyServerEndPoint.summary: String;
 begin
   result := 'Terminology Server using '+describeDatabase(Config);
+end;
+
+function TTerminologyServerEndPoint.makeFactory: TFHIRFactory;
+begin
+  case version of
+    fhirVersionRelease2 : result := TFHIRFactoryR2.create;
+    fhirVersionRelease3 : result := TFHIRFactoryR3.create;
+    fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+    fhirVersionRelease5 : result := TFHIRFactoryR5.create;
+  else
+    raise Exception.Create('Unsupported Version');
+  end;
+end;
+
+function TTerminologyServerEndPoint.makeServerFactory: TFHIRServerFactory;
+begin
+  result := TTerminologyServerFactory.Create(version);
+end;
+
+function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
+var
+  wep : TTerminologyServerWebServer;
+begin
+  wep := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
+  wep.FEndPoint := self;
+  result := wep;
+end;
+
+procedure TTerminologyServerEndPoint.Load;
+begin
+  FStore := TTerminologyFhirServerStorage.Create(makeFactory);
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeServerFactory);
+  FStore.FServerContext := FServerContext;
+  FServerContext.Globals := Settings.Link;
+  FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
+  Telnet.addContext(FServerContext);
+  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
+  FStore.loadPackage(FStore.factory.corePackage, false);
+  if UTGFolder <> '' then
+    FStore.loadUTGFolder(UTGFolder)
+  else if FStore.factory.txPackage <> '' then
+    FStore.loadPackage(FStore.factory.txPackage, true);
+  FStore.loadPackage(FStore.factory.txSupportPackage, false);
+//
+//    for s in listP do
+//      store.loadPackage(factory, s, false);
+//    for s in listF do
+//      store.loadFile(factory, s);
+end;
+
+procedure TTerminologyServerEndPoint.Unload;
+begin
+  telnet.removeContext(FServerContext);
+
+  FServerContext.Free;
+  FServerContext := nil;
+  FStore.Free;
+  FStore := nil;
+end;
+
+procedure TTerminologyServerEndPoint.internalThread;
+begin
+  // nothing to check
+end;
+
+procedure TTerminologyServerEndPoint.InstallDatabase;
+var
+  conn : TFDBConnection;
+  dbi : TFHIRDatabaseInstaller;
+begin
+  conn := Database.getConnection('install');
+  try
+    dbi := TFHIRDatabaseInstaller.Create(conn, makeFactory, makeServerFactory);
+    try
+      dbi.InstallTerminologyServer;
+    finally
+      dbi.Free;
+    end;
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+end;
+
+procedure TTerminologyServerEndPoint.UninstallDatabase;
+var
+  dbi : TFHIRDatabaseInstaller;
+  conn : TFDBConnection;
+begin
+  conn := Database.GetConnection('uninstall');
+  try
+    dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
+    try
+      dbi.Uninstall;
+    finally
+      dbi.free;
+    end;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
+end;
+
+procedure TTerminologyServerEndPoint.LoadPackages(plist: String);
+begin
+  raise Exception.Create('This operation does not apply to this endpoint');
+end;
+
+procedure TTerminologyServerEndPoint.updateAdminPassword;
+begin
+  raise Exception.Create('This operation does not apply to this endpoint');
+end;
+
+function TTerminologyServerEndPoint.version: TFHIRVersion;
+var
+  v : String;
+begin
+  v := Config['version'].value;
+  if (v = 'r2') then
+    result := fhirVersionRelease2
+  else if (v = 'r3') then
+    result := fhirVersionRelease3
+  else if (v = 'r4') then
+    result := fhirVersionRelease4
+  else if (v = 'r5') then
+    result := fhirVersionRelease5
+  else
+    raise Exception.Create('Unknown version "'+v+'"');
+end;
+
+{ TTerminologyServerWebServer }
+
+destructor TTerminologyServerWebServer.Destroy;
+begin
+  // nothing
+  inherited;
+end;
+
+function TTerminologyServerWebServer.link: TTerminologyServerWebServer;
+begin
+  result := TTerminologyServerWebServer(inherited link);
+end;
+
+function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
+begin
+  raise Exception.Create('Authentication is not supported for the terminology server');
+end;
+
+function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+var
+  h : THtmlPublisher;
+  s : String;
+  sct : TSnomedServices;
+  icd : TICD10Provider;
+  p : TCodeSystemProvider;
+  pl : TFslList<TCodeSystemProvider>;
+begin
+  h := THtmlPublisher.Create;
+  try
+    h.Heading(2, 'Terminology Server');
+    h.StartParagraph;
+    h.AddTextPlain('This server implements the ');
+    h.URL('FHIR Terminology Service', urlPath([factory.specURL, 'terminology-service.html']));
+    h.AddTextPlain('.');
+    h.EndParagraph;
+
+    h.Line;
+    h.StartList();
+
+    h.StartListItem;
+    h.AddTextPlain(inttostr(data.CodeSystems.Count)+' CodeSystem Resources');
+    h.EndListItem;
+
+    h.StartListItem;
+    h.AddTextPlain(inttostr(data.ValueSets.Count)+' ValueSet Resources');
+    h.EndListItem;
+
+    h.StartListItem;
+    h.AddTextPlain(inttostr(data.ConceptMaps.Count)+' ConceptMap Resources');
+    h.EndListItem;
+
+    h.StartListItem;
+    h.AddTextPlain(inttostr(data.NamingSystems.Count)+' NamingSystem Resources');
+    h.EndListItem;
+
+    h.EndList();
+    h.Line;
+
+    h.AddParagraph('The following packages are loaded:');
+    h.StartList();
+    for s in data.FPackages do
+      h.AddListItem(s);
+    h.EndList();
+
+    h.Line;
+    h.AddParagraph('In addition, the server supports the following code systems:');
+    h.StartTable(true);
+    h.StartTableRow;
+    h.AddTableCell('Code System', true);
+    h.AddTableCell('Version', true);
+    h.AddTableCell('Uri', true);
+    h.EndTableRow;
+//    if terminologies.Loinc <> nil then
+//      h.AddListItem('Loinc v'+terminologies.Loinc.version(nil));
+//    if terminologies.DefSnomed <> nil then
+//      h.AddListItem('Snomed v'+terminologies.DefSnomed.version(nil)+' ('+terminologies.DefSnomed.EditionName+'; default)');
+//    for sct in terminologies.Snomed do
+//      if (sct <> terminologies.DefSnomed) then
+//        h.AddListItem('Snomed v'+sct.version(nil)+' ('+sct.EditionName+')');
+//    for icd in terminologies.Icd10 do
+//      h.AddListItem('ICD-10: '+icd.systemUri(nil)+'#'+icd.version(nil)+' ('+icd.Title+')');
+//    if terminologies.Ucum <> nil then
+//      h.AddListItem('Ucum v'+terminologies.Ucum.version(nil));
+//    if terminologies.RxNorm <> nil then
+//      h.AddListItem('RxNorm v'+terminologies.RxNorm.version(nil));
+//    if terminologies.NDFRT <> nil then
+//      h.AddListItem('NDFRT v'+terminologies.NDFRT.version(nil));
+//    if terminologies.NDC <> nil then
+//      h.AddListItem('NDC v'+terminologies.NDC.version(nil));
+//    if terminologies.NciMeta <> nil then
+//      h.AddListItem('NciMeta v'+terminologies.NciMeta.version(nil));
+//    if terminologies.Unii <> nil then
+//      h.AddListItem('Unii v'+terminologies.Unii.version(nil));
+//    if terminologies.ACIR <> nil then
+//      h.AddListItem('ACIR v'+terminologies.ACIR.version(nil));
+
+    pl := TFslList<TCodeSystemProvider>.create;
+    try
+      for s in terminologies.ProviderClasses.SortedKeys do
+      begin
+        p := terminologies.ProviderClasses[s];
+        if not pl.Contains(p) then
+        begin
+          pl.add(p.Link);
+          h.StartTableRow;
+          h.AddTableCell(p.description);
+          if p is TSnomedServices then
+          begin
+            sct := p as TSnomedServices;
+            if p = terminologies.DefSnomed then
+              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate+' (default)')
+            else
+              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate);
+          end
+          else
+            h.AddTableCell(p.version(nil));
+          h.AddTableCell(p.systemUri(nil));
+          h.EndTableRow;
+        end;
+      end;
+      h.EndTable();
+    finally
+      pl.free;
+    end;
+
+    result := processContent('template-fhir.html', secure, 'Terminology Service Home Page', h.output);
+  finally
+    h.Free;
+  end;
+end;
+
+function TTerminologyServerWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+begin
+  raise Exception.Create('Uploads are not supported for the terminology server');
+end;
+
+function TTerminologyServerWebServer.data: TTerminologyServerData;
+begin
+  result := FEndPoint.FStore.FData;
+end;
+
+function TTerminologyServerWebServer.description: String;
+begin
+  result := 'Terminology server for v'+factory.versionString;
+end;
+
+function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TTerminologyServerWebServer.factory: TFHIRFactory;
+begin
+  result := FEndPoint.FStore.Factory;
+end;
+
+procedure TTerminologyServerWebServer.GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String);
+begin
+  link := '';
+  text := '';
+end;
+
+function TTerminologyServerWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+begin
+  raise Exception.Create('The WebUI is not supported for the terminology server');
+end;
+
+function TTerminologyServerWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+begin
+  raise Exception.Create('Uploads are not supported for the terminology server');
+end;
+
+function TTerminologyServerWebServer.terminologies: TCommonTerminologies;
+begin
+  result := FEndPoint.FServerContext.TerminologyServer.CommonTerminologies;
 end;
 
 end.

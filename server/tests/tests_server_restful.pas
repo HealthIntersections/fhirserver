@@ -556,7 +556,7 @@ begin
   c.system := ContactPointSystemOther;
   c.value := 'http://healthintersections.com.au/';
 
-  oConf.version := FHIR_GENERATED_VERSION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+  oConf.version := FHIR_GENERATED_VERSION+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
   oConf.name := 'Health Intersections FHIR Server Conformance Statement';
   oConf.publisher := 'Health Intersections'; //
   oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
@@ -565,7 +565,7 @@ begin
   oConf.date := TFslDateTime.makeUTC;
   oConf.software := TFhirCapabilityStatementSoftware.Create;
   oConf.software.name := 'Reference Server';
-  oConf.software.version := SERVER_VERSION;
+  oConf.software.version := SERVER_FULL_VERSION;
   oConf.software.releaseDate := TFslDateTime.fromXml(SERVER_RELEASE_DATE);
 
   rest := oConf.restList.Append;

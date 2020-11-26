@@ -76,6 +76,7 @@ type
     destructor Destroy; Override;
     Function Link : TIso4217Services; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -165,6 +166,11 @@ end;
 function TIso4217Services.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TIso4217Services.description: String;
+begin
+  result := 'Currencies';
 end;
 
 destructor TIso4217Services.Destroy;

@@ -44,9 +44,9 @@ Uses
   fdb_manager,
 
   server_constants, server_config, utilities, {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  tx_manager, telnet_server, web_source, webserver,
+  tx_manager, telnet_server, web_source, web_server,
   server_testing,
-  endpoint, general_endpoint, bridge_endpoint, terminology_endpoint, package_endpoint, loinc_endpoint, snomed_endpoint;
+  endpoint, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
 
 
 // how the kernel works:
@@ -306,7 +306,7 @@ begin
   for section in FIni['endpoints'].sections do
   begin
     if section['active'].valueBool then
-      FEndPoints.Add(makeEndPoint(section.link));
+      FEndPoints.Add(makeEndPoint(section));
   end;
 
   for ep in FEndPoints do
@@ -408,7 +408,7 @@ begin
       ep.free;
     end;
   end
-  else if cmd = 'remount' then
+  else if (cmd = 'remount') or (cmd = 'installdb') then
   begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
@@ -440,17 +440,17 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
   else if config['type'].value = 'loinc' then
-    result := TLoincWebEndPoint.Create(config, FSettings.Link, FTerminologies.Link)
+    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Telnet.Link, Terminologies.link)
   else if config['type'].value = 'snomed' then
-    result := TSnomedWebEndPoint.Create(config, FSettings.Link, FTerminologies.Link)
+    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Telnet.Link, Terminologies.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
-  else if config['type'].value = 'general' then
-    result := TGeneralServerEndPoint.Create(config, FSettings.Link, connectToDatabase(config))
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
+  else if config['type'].value = 'full' then
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
   else
     raise Exception.Create('Unknown server type ' +config['type'].value);
 end;
@@ -533,15 +533,15 @@ begin
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
-      logMsg := 'FHIR Server '+SERVER_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName+' (+stack dumps)'
+      logMsg := 'FHIR Server '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
-      logMsg := 'FHIR Server '+SERVER_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName;
+      logMsg := 'FHIR Server '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName;
     if Logging.FileLog <> nil then
       logMsg := logMsg + '. Log File = '+Logging.FileLog.filename;
 
     Logging.log(logMsg);
-    dispName := dispName + ' '+SERVER_VERSION+' '+Logging.buildDetails+'';
+    dispName := dispName + ' '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'';
 
     svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
     try

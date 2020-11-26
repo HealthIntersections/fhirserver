@@ -107,6 +107,8 @@ type
     property status : String read FStatus write FStatus;
     property threadStatus : String read FThreadStatus write FThreadStatus;
 
+    function getProp(name : String; var value : String) : boolean; overload;
+
     class function fromLine(line : String; comments : TStringList) : TFHIRServerConfigSection;
   end;
 
@@ -434,6 +436,12 @@ begin
   finally
     result.free;
   end;
+end;
+
+function TFHIRServerConfigSection.getProp(name: String; var value: String): boolean;
+begin
+  value := prop[name].value;
+  result := value <> '';
 end;
 
 function TFHIRServerConfigSection.GetProperty(name : String): TFHIRServerConfigProperty;

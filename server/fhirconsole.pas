@@ -5,7 +5,8 @@ program fhirconsole;
 uses
   {$IFDEF UNIX}
   cthreads,
-  {$ELSE}
+  {$ENDIF}
+  {$IFDEF WINDOWS}
   FastMM4,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset

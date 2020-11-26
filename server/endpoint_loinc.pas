@@ -1,4 +1,4 @@
-unit loinc_endpoint;
+unit endpoint_loinc;
 
 {$i fhir.inc}
 
@@ -15,7 +15,7 @@ uses
   ftx_loinc_services, ftx_loinc_publisher,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager,
+  tx_manager, telnet_server,
   web_base, endpoint;
 
 type
@@ -39,10 +39,9 @@ type
 
   TLoincWebEndPoint = class (TFHIRServerEndPoint)
   private
-    FTx : TCommonTerminologies;
     FLoincServer : TLoincWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; tx : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -60,22 +59,20 @@ implementation
 
 { TLoincWebEndPoint }
 
-constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; tx : TCommonTerminologies);
+constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, nil);
-  FTx := tx;
+  inherited create(config, settings, db, telnet, common);
 end;
 
 destructor TLoincWebEndPoint.Destroy;
 begin
-  FTx.Free;
   inherited;
 end;
 
 function TLoincWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
 begin
   FLoincServer := TLoincWebServer.Create(config.name, config['path'].value, common);
-  FLoincServer.FTx := FTx.Link;
+  FLoincServer.FTx := Terminologies.Link;
   result := FLoincServer.link;
 end;
 
@@ -96,7 +93,6 @@ end;
 
 procedure TLoincWebEndPoint.Load;
 begin
-  // nothing
 end;
 
 procedure TLoincWebEndPoint.LoadPackages(plist: String);
@@ -158,7 +154,7 @@ begin
       st.sort;
       html := THtmlPublisher.Create();
       try
-        html.Version := SERVER_VERSION;
+        html.Version := SERVER_FULL_VERSION;
         html.BaseURL := '/loinc/doco/';
         html.Lang := THTTPLanguages.create(lang);
         html.Heading(1, 'LOINC Languages');
@@ -185,7 +181,7 @@ begin
       html := THtmlPublisher.Create();
       pub := TLoincPublisher.create(FTX.Loinc, AbsoluteURL(secure), THTTPLanguages.Create(lang));
       try
-        html.Version := SERVER_VERSION;
+        html.Version := SERVER_FULL_VERSION;
         html.BaseURL := PathWithSlash+lang;
         html.Lang := THTTPLanguages.Create(Lang);
         pub.PublishDict(code, PathWithSlash+lang, html);

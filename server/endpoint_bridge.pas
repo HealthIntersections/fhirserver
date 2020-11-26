@@ -1,15 +1,16 @@
-unit bridge_endpoint;
+unit endpoint_bridge;
 
 {$i fhir.inc}
 
 {
-This unit shows an example of how to integrate the FHIR Server into another
+This unit shows an example of how to add a FHIR Server into another
 application server. It instantiates a FHIR Server, and provides storage
-to allow the FHIR server to expose application functionality.
+to allow the server to expose underlying application functionality e.g. from a
+relational database.
 
 This example FHIR server uses some CSV files to provide somewhat meaningful
 services. The intent is that you replace the CSV routines with functionality
-from your own application
+from your own application (todo: move to database)
 
 There are 3 different classes that you must subclass to implement an end-point:
 
@@ -45,8 +46,9 @@ Uses
 
   fhir_indexing,
   server_factory, indexing, subscriptions, session, user_manager, server_config,
-  server_context, storage, utilities,
-  web_base, endpoint, storage_endpoint;
+  server_context, storage, utilities, tx_manager,
+  telnet_server,
+  web_base, endpoint, endpoint_storage;
 
 
 Const
@@ -205,28 +207,44 @@ Type
   private
     FData : TExampleServerData;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
 
     procedure Load; override;
     procedure Unload; override;
+    procedure InstallDatabase; override;
+    procedure UninstallDatabase; override;
+    procedure LoadPackages(plist : String); override;
+    procedure updateAdminPassword; override;
+    procedure internalThread; override;
   end;
 
 implementation
 
 { TBridgeEndPoint }
 
-constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, db);
+  inherited create(config, settings, db, telnet, common);
 end;
 
 destructor TBridgeEndPoint.Destroy;
 begin
   FData.Free;
   inherited;
+end;
+
+procedure TBridgeEndPoint.InstallDatabase;
+begin
+  raise Exception.Create('Todo'); // when we swtich to db
+end;
+
+procedure TBridgeEndPoint.internalThread;
+begin
+  inherited;
+
 end;
 
 procedure TBridgeEndPoint.Load;
@@ -239,19 +257,36 @@ begin
     s := SystemTemp;
   FData := TExampleServerData.Create(s);
   store := TExampleFhirServerStorage.create(TFHIRFactoryR3.create);
-  FServerContext := TFHIRServerContext.Create(store.Link, TExampleServerFactory.create);
+  FServerContext := TFHIRServerContext.Create(Config.name, store, TExampleServerFactory.create);
   store.FData := FData.link;
   store.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TExampleFHIRUserProvider.Create;
+  Telnet.addContext(FServerContext);
+end;
+
+procedure TBridgeEndPoint.LoadPackages(plist: String);
+begin
+  raise Exception.Create('This is not supported the bridge end point');
+end;
+
+procedure TBridgeEndPoint.UninstallDatabase;
+begin
+  raise Exception.Create('Todo'); // when we swtich to db
 end;
 
 procedure TBridgeEndPoint.Unload;
 begin
+  telnet.removeContext(FServerContext);
   FServerContext.Free;
   FServerContext := nil;
   FData.Free;
   FData := nil;
+end;
+
+procedure TBridgeEndPoint.updateAdminPassword;
+begin
+  raise Exception.Create('This is not supported the bridge end point');
 end;
 
 function TBridgeEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;

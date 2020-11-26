@@ -1,4 +1,4 @@
-  Unit webserver;
+  Unit web_server;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -679,7 +679,6 @@ begin
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
   if Common.ActualPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
@@ -701,6 +700,7 @@ begin
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
   result := s;
 end;
 

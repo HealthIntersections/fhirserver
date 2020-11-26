@@ -1,4 +1,4 @@
-unit package_endpoint;
+unit endpoint_packages;
 
 {$i fhir.inc}
 
@@ -13,7 +13,8 @@ uses
   package_spider,
 
   server_config, utilities,
-  database_installer,
+  database_installer, telnet_server,
+  tx_manager,
   web_event, web_base, endpoint, session;
 
 type
@@ -78,7 +79,7 @@ type
     FPackageServer : TFHIRPackageWebServer;
     FUpdater : TPackageUpdaterThread;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -94,9 +95,9 @@ type
 
 implementation
 
-constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
-  inherited create(config, settings, db);
+  inherited create(config, settings, db, telnet, common);
 end;
 
 destructor TPackageServerEndPoint.Destroy;
@@ -147,7 +148,7 @@ var
   dbi : TFHIRDatabaseInstaller;
   conn : TFDBConnection;
 begin
-  conn := Database.GetConnection('install');
+  conn := Database.GetConnection('uninstall');
   try
     dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
     try

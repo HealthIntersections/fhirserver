@@ -92,6 +92,7 @@ type
   TFHIRServerSettings = class (TFslObject)
   private
     FLock : TFslLock;
+    FIni : TFHIRServerConfigFile;
 
     FBases: TStringList;
     FOwnerName: String;
@@ -134,6 +135,7 @@ type
 
     procedure load(ini : TFHIRServerConfigFile);
 
+    property Ini : TFHIRServerConfigFile read FIni;
     Property Bases: TStringList read FBases;
     Property OwnerName: String read FOwnerName;// write FOwnerName;
     property ForLoad : boolean read FForLoad write FForLoad;
@@ -261,6 +263,7 @@ end;
 
 destructor TFHIRServerSettings.Destroy;
 begin
+  FIni.Free;
   FBases.free;
   FLock.Free;
   inherited;
@@ -275,6 +278,7 @@ procedure TFHIRServerSettings.load(ini: TFHIRServerConfigFile);
 begin
    // FBases - set in kernel
    // FForLoad - set in kernel
+  FIni := ini.link;
   FRunNumber := ini['service'].prop['runNumber'].readAsInt(0) + 1;
   ini['service'].prop['runNumber'].value := inttostr(FRunNumber);
   FRequestId := 0;

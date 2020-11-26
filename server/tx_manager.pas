@@ -273,6 +273,7 @@ Type
     constructor Create(store : TCommonTerminologies; actCode : TCodeSystemProvider);
     destructor Destroy; override;
     function TotalCount : integer;  override;
+    function description : String; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
@@ -449,6 +450,11 @@ begin
     acssActCode : result := FActCode.Definition(c.context);
   end;
 end;
+function TAllCodeSystemsProvider.description: String;
+begin
+  result := 'All Code Systems combined';
+end;
+
 destructor TAllCodeSystemsProvider.Destroy;
 begin
   FActCode.Free;
@@ -1011,7 +1017,7 @@ begin
     begin
       vs := FFactory.wrapValueSet(resource.link);
       try
-        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
           FCommonTerminologies.FUcum.SetCommonUnits(factory.wrapValueSet(resource.Link));
 
         FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
@@ -1830,6 +1836,7 @@ begin
 
   for tx in txList.sections do
   begin
+    s := tx.Name;
     if tx['active'].valueBool and (not testing or (tx['when-testing'].readAsBool)) then
     begin
       if tx['type'].value = 'icd10' then

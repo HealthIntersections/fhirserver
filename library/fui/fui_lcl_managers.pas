@@ -44,7 +44,7 @@ This unit contains a set of classes that orchestrate the UI interface
 Interface
 
 uses
-  SysUtils, Classes, IniFiles,
+  SysUtils, Classes, Graphics, IniFiles,
   Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs,
   SynEdit, SynEditTypes,
   fsl_base, fsl_stream, fsl_http,
@@ -116,6 +116,7 @@ type
     procedure doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
     procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure doListDoubleClick(Sender: TObject);
+    procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure populateEntry(entry : TListItem; item : T);
   public
     constructor Create; override;
@@ -150,6 +151,7 @@ type
 
     function getImageIndex(item : T) : integer; virtual; abstract;
     function getCellText(item : T; col : integer) : String; virtual; abstract;
+    function getCellColors(item : T; col : integer; var fore, back : TColor) : boolean; virtual;
     function getSummaryText(item : T) : String; virtual;
     function compareItem(left, right : T; col : integer) : integer; virtual; // if col is -1, then the comparison is for the object as a whole
     function filterItem(item : T; s : String) : boolean; virtual;
@@ -543,6 +545,7 @@ begin
   List.OnCompare := doListCompare;
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
+  List.OnCustomDrawSubItem := doListDrawSubItem;
   if FSettings <> nil then
     for i := 0 to List.columns.count - 1 do
       list.columns[i].width := FSettings.ReadInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
@@ -624,6 +627,19 @@ begin
     entry := FList.items[FList.itemindex];
     entry.SubItems.Clear;
     populateEntry(entry, item);
+  end;
+end;
+
+procedure TListManager<T>.doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
+var
+  fore, back : TColor;
+begin
+  fore := sender.Canvas.Font.Color;
+  back := sender.Canvas.Brush.Color;
+  if getCellColors(T(item.data), subItem, fore, back) then
+  begin
+    sender.Canvas.Font.Color := fore;
+    sender.Canvas.Brush.Color := back;
   end;
 end;
 
@@ -778,6 +794,11 @@ begin
 end;
 
 function TListManager<T>.canSort: boolean;
+begin
+  result := false;
+end;
+
+function TListManager<T>.getCellColors(item: T; col: integer; var fore, back: TColor): boolean;
 begin
   result := false;
 end;

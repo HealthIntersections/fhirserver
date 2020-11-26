@@ -33,7 +33,7 @@ interface
 uses
   fsl_base,
   v2_protocol,
-  endpoint, webserver;
+  endpoint, web_server;
 
 type
   Tv2ServerInstance = class (TFslObject)

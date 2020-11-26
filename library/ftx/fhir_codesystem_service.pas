@@ -187,6 +187,7 @@ type
     constructor Create(factory : TFHIRFactory; vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
 
+    function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
     function TotalCount : integer; override;
@@ -405,6 +406,11 @@ end;
 function TFhirCodeSystemProvider.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := TFhirCodeSystemProviderContext(context).context.definition;
+end;
+
+function TFhirCodeSystemProvider.description: String;
+begin
+  result := fcs.FCodeSystem.name;
 end;
 
 destructor TFhirCodeSystemProvider.destroy;

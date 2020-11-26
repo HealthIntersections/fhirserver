@@ -249,7 +249,7 @@ type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const iValue : Int64); Override;
 
-    function sizeInBytesV : cardinal; override;
+      function sizeInBytesV : cardinal; override;
     Public
       Procedure Read(Var aBuffer; iCount : Integer); Override;
       Procedure Write(Const aBuffer; iCount : Integer); Override;
@@ -2938,13 +2938,13 @@ begin
   result := 0; // ?
 end;
 
-{$IFDEF WINDOWS}
-
 function TFslFile.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytes;
   inc(result, sizeof(FStream));
 end;
+
+{$IFDEF WINDOWS}
 
 Procedure TAfsObject.RaiseError(Const sMethod, sException : String);
 

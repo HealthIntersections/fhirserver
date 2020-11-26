@@ -71,6 +71,7 @@ type
     destructor Destroy; Override;
     Function Link : TCountryCodeServices; overload;
 
+    function description : String; override;
     function TotalCount : integer;  override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -930,6 +931,11 @@ end;
 function TCountryCodeServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TCountryCodeServices.description: String;
+begin
+  result := 'ISO Country Codes';
 end;
 
 destructor TCountryCodeServices.Destroy;

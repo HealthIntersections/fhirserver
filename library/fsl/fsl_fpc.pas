@@ -68,6 +68,7 @@ type
   TLibHandle = THandle;
 {$ELSE}
 function RGB(r,g,b : longint) : DWORD; inline;
+procedure setCurrentDirectory(dir : String);
 {$ENDIF}
 
 // unicode helpers - make life easier for shared fpc/delphi code
@@ -280,6 +281,12 @@ function RGB(r,g,b : longint) : DWORD;
   begin
      RGB:=DWORD(((DWORD(BYTE(r))) or ((DWORD(WORD(g))) shl 8)) or ((DWORD(BYTE(b))) shl 16));
   end;
+
+procedure setCurrentDirectory(dir : String);
+begin
+  chdir(dir);
+end;
+
 {$ENDIF}
 
 function unicodeChars(s : String) : TUCharArray;

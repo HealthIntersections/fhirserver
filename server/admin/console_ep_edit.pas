@@ -62,6 +62,8 @@ var
   EditEPForm: TEditEPForm;
 
 function hasVersion(typ : String) : boolean;
+function hasFixedVersion(typ : String) : boolean;
+function hasVersions(typ : String) : boolean;
 function hasDatabase(typ : String) : boolean;
 
 implementation
@@ -70,7 +72,17 @@ implementation
 
 function hasVersion(typ : String) : boolean;
 begin
-  result := (typ = 'general') or (typ = 'terminology') or (typ = 'bridge');
+  result := (typ = 'full') or (typ = 'terminology') or (typ = 'bridge');
+end;
+
+function hasVersions(typ : String) : boolean;
+begin
+  result := (typ = 'full') or (typ = 'terminology');
+end;
+
+function hasFixedVersion(typ : String) : boolean;
+begin
+  result := (typ = 'bridge');
 end;
 
 function hasDatabase(typ : String) : boolean;
@@ -165,10 +177,15 @@ end;
 
 procedure TEditEPForm.cbxTypeChange(Sender: TObject);
 begin
-  if (cbxType.ItemIndex = -1) or (hasVersion(cbxType.items[cbxType.ItemIndex])) then
+  if (cbxType.ItemIndex = -1) or (hasVersions(cbxType.items[cbxType.ItemIndex])) then
   begin
     cbxVersion.Enabled := true;
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
+  end
+  else if hasFixedVersion(cbxType.items[cbxType.ItemIndex]) then
+  begin
+    cbxVersion.Enabled := false;
+    cbxVersion.itemIndex := cbxVersion.Items.IndexOf('r3');
   end
   else
   begin

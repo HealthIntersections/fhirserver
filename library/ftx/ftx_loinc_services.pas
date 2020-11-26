@@ -433,6 +433,7 @@ Type
     Property Key : integer read FKey write FKey;
     Property Subsets : TLoincSubsets read FSubsets Write FSubsets;
 
+    function description : String; override;
     function TotalCount : integer; override;
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
@@ -953,6 +954,11 @@ end;
 function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TLOINCServices.description: String;
+begin
+  result := 'LOINC';
 end;
 
 destructor TLOINCServices.Destroy;

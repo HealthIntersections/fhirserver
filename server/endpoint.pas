@@ -10,7 +10,8 @@ Uses
   fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json,
   fdb_manager,
   fhir_objects,
-  server_config, utilities, session,
+  server_config, utilities, session, tx_manager,
+  telnet_server,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   web_event, web_base;
 
@@ -123,16 +124,20 @@ type
     FDatabase : TFDBManager;
     FConfig : TFHIRServerConfigSection;
     FSettings : TFHIRServerSettings;
+    FTelnet : TFHIRTelnetServer;
+    FTerminologies : TCommonTerminologies;
     {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
 
     property Database : TFDBManager read FDatabase;
     property Config : TFHIRServerConfigSection read FConfig;
     property Settings : TFHIRServerSettings read FSettings;
+    property telnet : TFHIRTelnetServer read FTelnet;
+    property Terminologies : TCommonTerminologies read FTerminologies;
     {$IFNDEF NO_JS}
     property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
     {$ENDIF}
@@ -326,7 +331,7 @@ end;
 //    '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10 + '<head>'#13#10 +
 //    '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>FHIR RESTful Server - FHIR v' + Factory.versionString
 //    + '</title>'#13#10 + TFHIRXhtmlComposer.PageLinks + #13#10 + FHIR_JS + '</head>'#13#10 + ''#13#10 + '<body>'#13#10 + ''#13#10 +
-//    TFHIRXhtmlComposer.header(factory, nil, FPath, lang, SERVER_VERSION) + '<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10;
+//    TFHIRXhtmlComposer.header(factory, nil, FPath, lang, SERVER_FULL_VERSION) + '<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10;
 //
 //  result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', lang) + '</p>'#13#10;
 //  if (Msg = '') and (params <> '') then
@@ -466,19 +471,23 @@ end;
 
 { TFHIRServerEndPoint }
 
-constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager);
+constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
 begin
   inherited create;
   FConfig := config;
   FSettings := settings;
   FDatabase := db;
+  FTelnet := telnet;
+  FTerminologies := common;
 end;
 
 destructor TFHIRServerEndPoint.Destroy;
 begin
+  FTerminologies.Free;
   FConfig.Free;
   FSettings.Free;
   FDatabase.Free;
+  FTelnet.Free;
   inherited;
 end;
 
