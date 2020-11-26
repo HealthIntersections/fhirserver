@@ -51,28 +51,23 @@ Type
   TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String) of object;
 
   TOperationMode = (opmRestful, opmUpload, opmInternal, opmCmdLine, opmSweep);
+  TOperationLoggingLevel = (ollNone, ollHuman, ollInstaller);
 
   TOperationContext = class (TFslObject)
   private
     FMode : TOperationMode;
-    FCallback : TInstallerCallback;
-    FMessage : String;
-    FMessageDetail: String;
+    FLogging : TOperationLoggingLevel;
     FCacheResponse : boolean;
     FInTransaction: boolean;
   public
     constructor Create; overload; override;
-    constructor Create(mode : TOperationMode; callback : TInstallerCallback; message : String); overload;
-    constructor Create(mode : TOperationMode; message : String); overload;
+    constructor Create(mode : TOperationMode; logDetails : TOperationLoggingLevel); overload;
+    constructor Create(mode : TOperationMode); overload;
 
     property mode : TOperationMode read FMode write FMode;
-    property callback : TInstallerCallback read FCallback write FCallback;
-    property message : String read FMessage write FMessage;
-    property MessageDetail : String read FMessageDetail write FMessageDetail;
+    property Logging : TOperationLoggingLevel read FLogging write FLogging;
     property CacheResponse : boolean read FCacheResponse write FCacheResponse;
     property inTransaction : boolean read FInTransaction write FInTransaction;
-
-    procedure progress(i : integer);
   end;
 
 const
@@ -519,33 +514,18 @@ begin
   inherited Create;
 end;
 
-constructor TOperationContext.Create(mode : TOperationMode; callback: TInstallerCallback; message : String);
+constructor TOperationContext.Create(mode : TOperationMode; logDetails : TOperationLoggingLevel);
 begin
   Create;
   FMode := mode;
-  FCallback := callback;
-  FMessage := message;
+  FLogging := logDetails;
 end;
 
-constructor TOperationContext.Create(mode : TOperationMode; message: String);
+constructor TOperationContext.Create(mode : TOperationMode);
 begin
   Create;
   FMode := mode;
-  FMessage := message;
-end;
-
-procedure TOperationContext.progress(i: integer);
-var
-  s : String;
-begin
-  if MessageDetail <> '' then
-    s := FMessage+' '+MessageDetail
-  else
-    s := FMessage;
-  if assigned(FCallback) then
-    FCallback(i, s)
-  else
-    Logging.log(inttostr(i)+' : '+s);
+  FLogging := ollNone;
 end;
 
 
@@ -1295,7 +1275,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(opmRestful, 'internal');
+  ctxt := TOperationContext.Create(opmRestful);
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1386,7 +1366,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(opmInternal, 'internal');
+  ctxt := TOperationContext.Create(opmInternal);
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1417,7 +1397,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(opmInternal, 'internal');
+  ctxt := TOperationContext.Create(opmInternal);
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1464,7 +1444,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(opmInternal, 'internal');
+  ctxt := TOperationContext.Create(opmInternal);
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try

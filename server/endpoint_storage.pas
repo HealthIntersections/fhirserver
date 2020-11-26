@@ -14,7 +14,7 @@ uses
   Windows,
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509, IdGlobalProtocols, IdCompressorZLib, IdZlib,
-  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client,
+  fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_stream, fsl_crypto, fsl_oauth, fsl_xml, fsl_graphql, fsl_npm_cache, fsl_npm_client, fsl_threads, fsl_logging,
   fhir_objects, fhir_client, fhir_common, fhir_parser, fhir_utilities, fhir_xhtml, fhir_ndjson,
   fdb_manager,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
@@ -76,14 +76,44 @@ type
     procedure terminate; override;
   end;
 
+  TAsyncTaskThread = class (TFslThread)
+  private
+    FKey : integer;
+    FServer : TStorageWebEndpoint;
+    FRequest : TFHIRRequest;
+    FFormat : TFHIRFormat;
+    files : TFslMap<TFslFile>;
+    FBundle : TFHIRBundleW;
+    procedure SetRequest(const Value: TFHIRRequest);
+    procedure SetServer(const Value: TStorageWebEndpoint);
+
+    procedure status(status : TAsyncTaskStatus; message : String);
+    procedure details;
+    procedure callback(IntParam: Integer; StrParam: String);
+
+    procedure saveOutcome(response : TFHIRResponse);
+    procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(server: TStorageWebEndpoint);
+    destructor Destroy; override;
+
+    property Key : integer read FKey write FKey;
+    property Format : TFHIRFormat read FFormat write FFormat;
+    Property Server : TStorageWebEndpoint read FServer;
+    Property Request : TFHIRRequest read FRequest write SetRequest;
+  end;
+
   TStorageWebEndpoint = class (TFhirWebServerEndpoint)
   private
     FContext : TFHIRServerContext;
     FEndPoint : TStorageEndPoint;
-    FAuthServer: TAuth2Server; // todo - where does this come from?
-    FTerminologyWebServer: TTerminologyWebServer; // todo - where does this come from?
+    FAuthServer: TAuth2Server;
+    FTerminologyWebServer: TTerminologyWebServer;
     FPlugins : TFslList<TFHIRWebServerScriptPlugin>;
     FAdaptors: TFslMap<TFHIRFormatAdaptor>;
+    FThreads : TFslList<TAsyncTaskThread>;
 
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -115,6 +145,8 @@ type
     function ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
     function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
     procedure SetAuthServer(const Value: TAuth2Server);
+    function encodeAsyncResponseAsJson(request: TFHIRRequest; reqUrl: String; secure: boolean; fmt: TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
+    procedure StopAsyncTasks;
   protected
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; virtual; abstract;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; virtual; abstract;
@@ -136,11 +168,13 @@ type
     property Plugins : TFslList<TFHIRWebServerScriptPlugin> read FPlugins;
     property Context : TFHIRServerContext read FContext;
     property AuthServer : TAuth2Server read FAuthServer write SetAuthServer;
+    property ServerContext : TFHIRServerContext read FContext;
     property TerminologyWebServer: TTerminologyWebServer read FTerminologyWebServer write SetTerminologyWebServer;
 
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
+    procedure CheckAsyncTasks;
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
@@ -150,9 +184,12 @@ type
   private
   protected
     FServerContext : TFHIRServerContext;
+
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
+
+    property ServerContext : TFHIRServerContext read FServerContext;
   end;
 
 implementation
@@ -386,7 +423,7 @@ var
   dummy : integer;
   l, r : String;
 begin
-  ctxt := TOperationContext.Create(opmInternal, 'internal');
+  ctxt := TOperationContext.Create(opmInternal);
   try
     req := TFHIRRequest.Create(FEndPoint.Context.ValidatorContext.link, roRestInternal, FEndPoint.Context.Indexes.Compartments.link);
     try
@@ -417,6 +454,184 @@ begin
   end;
 end;
 
+{ TAsyncTaskThread }
+
+constructor TAsyncTaskThread.Create(server : TStorageWebEndpoint);
+begin
+  inherited Create; // suspended
+  FServer := server;
+  AutoFree := true;
+end;
+
+destructor TAsyncTaskThread.Destroy;
+begin
+  Files.free;
+  FRequest.Free;
+  FBundle.Free;
+  inherited;
+end;
+
+procedure TAsyncTaskThread.callback(IntParam: Integer; StrParam: String);
+begin
+  status(atsProcessing, StrParam);
+end;
+
+procedure TAsyncTaskThread.details;
+begin
+  if FBundle <> nil then
+    FServer.Context.Storage.setAsyncTaskDetails(key, FBundle.timestamp, Fbundle.Links['self']);
+end;
+
+procedure TAsyncTaskThread.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
+begin
+  FBundle := FServer.FContext.factory.wrapBundle(fserver.FContext.factory.makeResource('Bundle'));
+  FBundle.type_ := aType;
+  if context.Format = ffNDJson then
+  begin
+    files := TFslMap<TFslFile>.create('async.files');
+    builder := TFHIRBundleBuilderNDJson.Create(FServer.FContext.factory.link, FBundle.link, IncludeTrailingPathDelimiter(FServer.Context.TaskFolder)+'task-'+inttostr(FKey), files.link)
+  end
+  else
+    builder := TFHIRBundleBuilderSimple.Create(FServer.FContext.factory.link, FBundle.link);
+end;
+
+procedure TAsyncTaskThread.Execute;
+var
+  response : TFHIRResponse;
+  op: TFHIROperationEngine;
+  t: cardinal;
+  us, cs: String;
+  ctxt : TOperationContext;
+begin
+  t := 0;
+
+  SetThreadName('Server Async Thread');
+  SetThreadStatus('Working');
+  {$IFNDEF NO_JS}
+  GJsHost := TJsHost.Create;
+  {$ENDIF}
+  try
+    {$IFNDEF NO_JS}
+    FServer.Common.OnRegisterJs(self, GJsHost);
+    {$ENDIF}
+    status(atsWaiting, 'Waiting to start');
+    sleep(100);
+    response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);
+    try
+      response.format := FFormat;
+      response.OnCreateBuilder := doGetBundleBuilder;
+
+      t := GetTickCount;
+      if request.Session = nil then // during OAuth only
+        us := 'user=(in-oauth)'
+      else
+        us := 'user=' + request.Session.UserName;
+      if request.CommandType = fcmdOperation then
+        cs := '$' + request.OperationName
+      else
+        cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
+      status(atsProcessing, 'Processing');
+      Logging.log('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
+      op := FServer.Context.Storage.createOperationContext(request.lang);
+      try
+        op.OnPopulateConformance := FServer.PopulateConformance;
+        ctxt := TOperationContext.create(opmRestful, ollNone);
+        try
+          op.Execute(ctxt, request, response);
+        finally
+          ctxt.Free;
+        end;
+        FServer.Context.Storage.yield(op, nil);
+      except
+        on e: exception do
+        begin
+          FServer.Context.Storage.yield(op, e);
+          raise;
+        end;
+      end;
+      details;
+      saveOutcome(response);
+      status(atsComplete, 'Complete');
+      t := GetTickCount - t;
+      Logging.log('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms');
+    finally
+      response.Free;
+    end;
+  except
+    on e : exception do
+    begin
+      Logging.log('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms: '+e.Message);
+      status(atsError, e.Message);
+    end;
+  end;
+  FServer.Common.Lock.Lock;
+  try
+    FServer.FThreads.Remove(self);
+  finally
+    FServer.Common.Lock.Unlock;
+  end;
+  {$IFNDEF NO_JS}
+  GJsHost.Free;
+  GJsHost := nil;
+  {$ENDIF}
+  SetThreadStatus('Done');
+end;
+
+procedure TAsyncTaskThread.saveOutcome;
+var
+  names : TStringList;
+  f : TFileStream;
+  n : String;
+  c : TFHIRComposer;
+begin
+  names := TStringList.Create;
+  try
+    if files = nil then
+    begin
+      names.Add('content');
+      f := TFileStream.Create(Path([FServer.Context.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
+      try
+        if fFormat = ffNDJson then
+          c := FServer.FContext.factory.makeComposer(fserver.Context.ValidatorContext.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal)
+        else
+          c := FServer.FContext.factory.makeComposer(fserver.Context.ValidatorContext.link, Format, THTTPLanguages.create('en'), OutputStyleNormal);
+        try
+          c.Compose(f, response.Resource);
+        finally
+          c.Free;
+        end;
+      finally
+        f.Free;
+      end;
+    end
+    else
+    begin
+      for n in files.Keys do
+        names.Add(n);
+      files.Clear;
+    end;
+    FServer.Context.Storage.MarkTaskForDownload(key, names);
+  finally
+    names.Free;
+  end;
+end;
+
+procedure TAsyncTaskThread.SetRequest(const Value: TFHIRRequest);
+begin
+  FRequest.Free;
+  FRequest := Value;
+end;
+
+procedure TAsyncTaskThread.SetServer(const Value: TStorageWebEndpoint);
+begin
+  FServer.Free;
+  FServer := Value;
+end;
+
+procedure TAsyncTaskThread.status(status: TAsyncTaskStatus; message: String);
+begin
+  FServer.Context.Storage.updateAsyncTaskStatus(key, status, message);
+end;
 
 { TStorageWebEndpoint }
 
@@ -427,16 +642,68 @@ begin
   FContext := FEndPoint.FServerContext;
   FPlugins := TFslList<TFHIRWebServerScriptPlugin>.create;
   FAdaptors := TFslMap<TFHIRFormatAdaptor>.Create('adaptors');
+  FThreads := TFslList<TAsyncTaskThread>.create;
 end;
 
 destructor TStorageWebEndpoint.Destroy;
 begin
+  StopAsyncTasks;
+  FThreads.Free;
   FAdaptors.Free;
   FPlugins.Free;
   FTerminologyWebServer.free;
   FAuthServer.Free;
   inherited;
 end;
+
+procedure TStorageWebEndpoint.StopAsyncTasks;
+var
+  task : TAsyncTaskThread;
+  done : boolean;
+  i : integer;
+begin
+  done := false;
+  Common.Lock.Lock;
+  try
+    for task in FThreads do
+    begin
+      task.Stop;
+      done := true;
+    end;
+  finally
+    Common.Lock.Unlock;
+  end;
+  if done then
+  begin
+    i := 0;
+    repeat
+      sleep(100);
+      inc(i);
+      done := true;
+      Common.Lock.Lock;
+      try
+        for task in FThreads do
+          done := false;
+      finally
+        Common.Lock.Unlock;
+      end;
+    until done or (i = 10);
+    if not done then
+    begin
+      Common.Lock.Lock;
+      try
+        for task in FThreads do
+        begin
+          task.kill;
+          Context.Storage.updateAsyncTaskStatus(task.Key, atsTerminated, 'Terminated due to system shut down');
+        end;
+      finally
+        Common.Lock.Unlock;
+      end;
+    end;
+  end;
+end;
+
 
 procedure TStorageWebEndpoint.SetAuthServer(const Value: TAuth2Server);
 begin
@@ -755,13 +1022,6 @@ begin
         s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
       else
         s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
-    //  if s.Contains('[%fitbit-redirect%]') then
-    //    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
-    //      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
-    //      NewGuidId, // nonce
-    //      'https://local.healthintersections.com.au:961/_web/fitbit.html')
-    //      // callback
-    //      , [rfReplaceAll]);
 
       s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
       if variables <> nil then
@@ -2122,6 +2382,32 @@ begin
   // js-todo - figure out which scripts to run, and then run them
 end;
 
+function TStorageWebEndpoint.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TFslDateTime; names: TStringList): string;
+var
+  j, o : TJsonObject;
+  a : TJsonArray;
+  s : String;
+begin
+  j := TJsonObject.Create;
+  try
+    j.str['transactionTime'] := transactionTime.toXML;
+    j.str['request'] := reqUrl;
+    j.bool['secure'] := secure;
+    a := j.forceArr['output'];
+    for s in names do
+    begin
+      o := a.addObject;
+      o.str['url'] := request.baseUrl+'task/'+request.id+'/'+s+EXT_WEB_TFHIRFormat[fmt];
+      o.str['type'] := s;
+    end;
+
+    result := TJSONWriter.writeObjectStr(j, true);
+  finally
+    j.Free;
+  end;
+end;
+
+
 function TStorageWebEndpoint.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   status : TAsyncTaskStatus;
@@ -2232,7 +2518,7 @@ begin
             else
             begin
               response.ContentType := 'application/json';
-// todo              response.Body := FWebServer.encodeAsyncResponseAsJson(request, originalRequest, secure, fmt, transactionTime, names);
+              response.Body := encodeAsyncResponseAsJson(request, originalRequest, secure, fmt, transactionTime, names);
             end;
             end;
           atsTerminated, atsError :
@@ -2280,36 +2566,59 @@ end;
 
 function TStorageWebEndpoint.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
-//  thread : TAsyncTaskThread;
+  thread : TAsyncTaskThread;
   id : String;
 begin
   if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
     raise EFHIRException.CreateLang('NO_ASYNC', request.Lang);
-//  thread := TAsyncTaskThread.create(FWebServer);
-//  FWebServer.FLock.Lock;
-//  try
-//    FWebServer.FThreads.add(thread);
-//  finally
-//    FWebServer.FLock.Unlock;
-//  end;
-//  id := NewGuidId;
-//  if request.Parameters.has('_outputFormat') then
-//    thread.Format := mimeTypeToFormat(request.Parameters['_outputFormat'])
-//  else
-//    thread.Format := response.Format;
-//  thread.key := self.Context.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
-//  result := 'Async Request => '+id;
-//  thread.server := self.link as TFhirWebServerCommonEndpoint;
-//  thread.request := request.Link;
-//  thread.Start;
-//  response.HTTPCode := 202;
-//  response.Message := 'Accepted';
-//  response.ContentLocation := request.baseUrl+'task/'+id;
-//  if response.format = ffXhtml then
-//  begin
-//    response.ContentType := 'text/html';
-//    response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', thread.Format, nil);
-//  end;
+  thread := TAsyncTaskThread.create(self);
+  Common.Lock.Lock;
+  try
+    FThreads.add(thread);
+  finally
+    Common.Lock.Unlock;
+  end;
+  id := NewGuidId;
+  if request.Parameters.has('_outputFormat') then
+    thread.Format := mimeTypeToFormat(request.Parameters['_outputFormat'])
+  else
+    thread.Format := response.Format;
+  thread.key := self.Context.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
+  result := 'Async Request => '+id;
+  thread.request := request.Link;
+  thread.Start;
+  response.HTTPCode := 202;
+  response.Message := 'Accepted';
+  response.ContentLocation := request.baseUrl+'task/'+id;
+  if response.format = ffXhtml then
+  begin
+    response.ContentType := 'text/html';
+    response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', thread.Format, nil);
+  end;
+end;
+
+procedure TStorageWebEndpoint.CheckAsyncTasks;
+var
+  tasks : TFslList<TAsyncTaskInformation>;
+  task : TAsyncTaskInformation;
+  n, fn : string;
+begin
+  tasks := TFslList<TAsyncTaskInformation>.create;
+  try
+    self.Context.Storage.fetchExpiredTasks(tasks);
+    for task in tasks do
+    begin
+      self.Context.Storage.MarkTaskDeleted(task.key);
+      for n in task.names do
+      begin
+        fn := fsl_utilities.Path([self.Context.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
+        if FileExists(fn) then
+          DeleteFile(fn);
+      end;
+    end;
+  finally
+    tasks.free;
+  end;
 end;
 
 function TStorageWebEndpoint.processContent(path: String; secure: boolean; title, content: String): String;

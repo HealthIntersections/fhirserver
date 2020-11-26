@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  fsl_base, fsl_utilities, fsl_collections, fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads,
   fdb_manager,
   fhir_objects, fhir_common, fhir_cdshooks, fhir_factory,
   fhir_valuesets,
@@ -1081,12 +1081,12 @@ var
   finish : TDateTime;
 begin
   finish := now + DATETIME_SECOND_ONE * 30;
-  CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: counting';
+  setThreadStatus('BI: counting');
   if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
     conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
 
   // first, update value set member information
-  CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Updating ValueSet Members';
+  setThreadStatus('BI: Updating ValueSet Members');
   if (prog) then Logging.start('Updating ValueSet Members');
   conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
   conn1.Prepare;
@@ -1097,7 +1097,7 @@ begin
   begin
     inc(i);
     if (prog and (i mod 10 = 0)) then Logging.continue('.');
-    CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
+    setThreadStatus('BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey']);
     processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
     if finish < now then
       break;
@@ -1110,7 +1110,7 @@ begin
 
   // second, for each concept that needs indexing, check it's value set information
   if (prog) then logging.start('Indexing Concepts');
-  CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Indexing Concepts';
+  setThreadStatus('BI: Indexing Concepts');
   conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
   conn1.Prepare;
   conn1.Execute;
@@ -1119,7 +1119,7 @@ begin
   begin
     inc(i);
     if (prog and (i mod 10 = 0)) then Logging.continue('.');
-    CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
+    setThreadStatus('BI: Indexing Concept '+conn1.ColStringByName['ConceptKey']);
     processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
     if finish < now then
       break;
@@ -1131,7 +1131,7 @@ begin
 
   // last, for each entry in the closure entry table that needs closureing, do it
   if (prog) then Logging.start('Generating Closures');
-  CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Generating Closures';
+  setThreadStatus('BI: Generating Closures');
   conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
      'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
   conn1.Prepare;
@@ -1140,7 +1140,7 @@ begin
   begin
     inc(i);
     if (prog and (i mod 100 = 0)) then logging.continue('.');
-    CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
+    setThreadStatus('BI: Generating Closures for '+conn1.ColStringByName['Name']);
     FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
     if finish < now then
       break;
@@ -1151,7 +1151,7 @@ begin
     exit;
 
   if (prog) then Logging.log('Done');
-  CommonTerminologies.Settings.MaintenanceThreadStatus := 'BI: ';
+  setThreadStatus('BI: ');
 end;
 
 procedure TTerminologyServer.BuildIndexes(prog : boolean);

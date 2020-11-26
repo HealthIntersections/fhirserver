@@ -139,17 +139,14 @@ Type
 
   { TFslThread }
 
-  TFslThread = Class (TFslObject)
+  TFslThread = Class abstract (TFslObject)
     Private
       FAutoFree: boolean;
       FInternal : TThread; // Handle to the Windows thread.
-//      FID : TFslThreadID;         // Unique ID of the Windows thread.
       FRunning : Boolean;          // Run thread has finished.
-//      FDelegate : TFslThreadDelegate;
 
     Protected
-      Procedure Execute; Virtual;
-//      Procedure Interrupt; Virtual;
+      Procedure Execute; Virtual; abstract;
 
       Procedure Sleep(Const iTimeout : Cardinal);
 
@@ -962,13 +959,6 @@ Begin
   Result := TFslThread(Inherited Link);
 End;
 
-
-procedure TFslThread.Execute;
-Begin
-//  If Assigned(FDelegate) Then
-//    FDelegate;
-End;
-
 procedure TFslThread.Start;
 Begin
   If FRunning Then
@@ -1008,17 +998,10 @@ begin
     result := FInternal.CheckTerminated;
 end;
 
-
 procedure TFslThread.Wait;
 Begin
   FInternal.WaitFor;
 End;
-
-
-//function TFslThread.WaitTimeout(iTimeout: Cardinal): Boolean;
-//begin
-//  result := FInternal.WaitFor > 0;// todo
-//end;
 
 procedure TFslThread.Sleep(const iTimeout: Cardinal);
 Begin

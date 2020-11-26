@@ -35,13 +35,16 @@ interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
-  {$IFDEF FPC} {odbcsqldyn, }gui_lcl, {$ELSE} gui_vcl, {$ENDIF}
+  {$IFDEF FPC} gui_lcl, {$ELSE} gui_vcl, {$ENDIF}
 
   IdOpenSSLLoader,
 
   fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
+  fhir_objects,
+  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
+  fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
 
   server_constants, server_config, utilities, {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, web_server,
@@ -65,18 +68,19 @@ Uses
 //  - turn the web server on
 
 type
+  TFHIRServiceKernel = class;
+
   TFhirServerMaintenanceThread = class (TFslThread)
   private
     FLastSweep: TDateTime;
-    FEndPoints : TFslList<TFHIRServerEndPoint>;
+    FKernel : TFHIRServiceKernel;
   protected
     procedure Execute; override;
   public
-    constructor Create(endPoints : TFslList<TFHIRServerEndPoint>);
+    constructor Create(kernel : TFHIRServiceKernel);
     destructor Destroy; override;
   end;
 
-type
   TFHIRServiceKernel = class (TSystemService)
   private
     FIni : TFHIRServerConfigFile;
@@ -133,16 +137,15 @@ uses
 
 { TFhirServerMaintenanceThread }
 
-constructor TFhirServerMaintenanceThread.Create(endPoints : TFslList<TFHIRServerEndPoint>);
+constructor TFhirServerMaintenanceThread.Create(kernel : TFHIRServiceKernel);
 begin
   inherited Create();
   FLastSweep := Now;
-  FEndPoints := endPoints;
+  FKernel := kernel;
 end;
 
 destructor TFhirServerMaintenanceThread.Destroy;
 begin
-  FEndPoints.free;
   inherited;
 end;
 
@@ -159,31 +162,33 @@ begin
 {$ENDIF}
     {$IFNDEF NO_JS}
     GJsHost := TJsHost.Create;
-// todo    FServer.Common.OnRegisterJs(self, GJsHost);
     {$ENDIF}
-//    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
+//  todo, once eventing is sorted out  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
-//      FServer.Settings.MaintenanceThreadStatus := 'sleeping';
+      setThreadStatus('sleeping');
       sleep(10);
-      if not terminated then
-        for ep in FEndPoints do
-          ep.internalThread;
-    until terminated;
-//    try
-//      FServer.Settings.MaintenanceThreadStatus := 'dead';
-//    except
-//    end;
-//    try
-//      FServer.FMaintenanceThread := nil;
-//    except
-//    end;
+      if not Terminated and (FLastSweep < Now - (DATETIME_SECOND_ONE * 5)) then
+      begin
+        try
+          for ep in FKernel.FEndPoints do
+            if not Terminated then
+              ep.internalThread;
+          if not Terminated then
+            FKernel.FTerminologies.sweepSnomed;
+        except
+        end;
+      end;
+      FLastSweep := Now;
+    until Terminated;
+    try
+      setThreadStatus('dead');
+    except
+    end;
     {$IFNDEF NO_JS}
     GJsHost.Free;
     GJsHost := nil;
     {$ENDIF}
-
-
 {$IFDEF WINDOWS}
     CoUninitialize;
 {$ENDIF}
@@ -233,7 +238,7 @@ begin
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create(FEndPoints.link);
+    FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
     FMaintenanceThread.Start;
 
     // post start up time.
@@ -282,11 +287,11 @@ end;
 {$IFNDEF NO_JS}
 procedure TFHIRServiceKernel.registerJs(sender : TObject; js : TJsHost);
 begin
-//  js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
-//  js.engine.registerFactory(fhir3_javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
-//  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
-//  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
-//  js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
+  js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
+  js.engine.registerFactory(fhir3_javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
+  js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
 end;
 {$ENDIF}
 
@@ -311,7 +316,7 @@ begin
 
   for ep in FEndPoints do
   begin
-    Logging.log('Load End Point '+ep.summary);
+    Logging.log('Load End Point '+ep.config.name+': '+ep.summary);
     ep.Load;
   end;
 end;
@@ -340,7 +345,6 @@ begin
 
   for ep in FEndPoints do
     FWebServer.registerEndPoint(ep);
-  // todo: registerEndPoints;
 
   FWebServer.Start;
 end;
@@ -410,14 +414,20 @@ begin
   end
   else if (cmd = 'remount') or (cmd = 'installdb') then
   begin
-    ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
+    Logging.log('Install new database (wipe if necessary)');
+    loadTerminologies;
     try
-      ep.UninstallDatabase;
-      ep.InstallDatabase;
-      if getCommandLineParam('packages', fn) then
-        ep.LoadPackages(fn);
+      ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
+      try
+        ep.UninstallDatabase;
+        ep.InstallDatabase;
+        if getCommandLineParam('packages', fn) then
+          ep.LoadPackages(fn);
+      finally
+        ep.free;
+      end;
     finally
-      ep.free;
+      unloadTerminologies;
     end;
   end
   else if cmd = 'load' then
@@ -452,7 +462,7 @@ begin
   else if config['type'].value = 'full' then
     result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
   else
-    raise Exception.Create('Unknown server type ' +config['type'].value);
+    raise Exception.Create('Unknown server type "' +config['type'].value+'"');
 end;
 
 { === Core ====================================================================}

@@ -196,7 +196,7 @@ var
   i : TListItem;
 begin
   // default-rights
-  result := '-cmd installdb -cfg '+filename+' -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
+  result := '-cmd installdb -installer -cfg '+filename+' -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
   case cbxSecurity.ItemIndex of
     0: result := result + ' -security open';
     1: result := result + ' -security oauth?';

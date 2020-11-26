@@ -213,13 +213,6 @@ type
     procedure internalThread; override;
   end;
 
-//     function TerminologyWebServer: TTerminologyWebServer;
-//function TFhirWebServer.TerminologyWebServer: TTerminologyWebServer;
-//begin
-//  result := EndPoints[0].TerminologyWebServer;
-//end;
-//
-
 implementation
 
 { TTerminologyServerFactory }
@@ -1295,9 +1288,8 @@ begin
   else if FStore.factory.txPackage <> '' then
     FStore.loadPackage(FStore.factory.txPackage, true);
   FStore.loadPackage(FStore.factory.txSupportPackage, false);
-//
-//    for s in listP do
-//      store.loadPackage(factory, s, false);
+
+  // still to be done: load ad-hoc files
 //    for s in listF do
 //      store.loadFile(factory, s);
 end;
@@ -1462,29 +1454,6 @@ begin
     h.AddTableCell('Version', true);
     h.AddTableCell('Uri', true);
     h.EndTableRow;
-//    if terminologies.Loinc <> nil then
-//      h.AddListItem('Loinc v'+terminologies.Loinc.version(nil));
-//    if terminologies.DefSnomed <> nil then
-//      h.AddListItem('Snomed v'+terminologies.DefSnomed.version(nil)+' ('+terminologies.DefSnomed.EditionName+'; default)');
-//    for sct in terminologies.Snomed do
-//      if (sct <> terminologies.DefSnomed) then
-//        h.AddListItem('Snomed v'+sct.version(nil)+' ('+sct.EditionName+')');
-//    for icd in terminologies.Icd10 do
-//      h.AddListItem('ICD-10: '+icd.systemUri(nil)+'#'+icd.version(nil)+' ('+icd.Title+')');
-//    if terminologies.Ucum <> nil then
-//      h.AddListItem('Ucum v'+terminologies.Ucum.version(nil));
-//    if terminologies.RxNorm <> nil then
-//      h.AddListItem('RxNorm v'+terminologies.RxNorm.version(nil));
-//    if terminologies.NDFRT <> nil then
-//      h.AddListItem('NDFRT v'+terminologies.NDFRT.version(nil));
-//    if terminologies.NDC <> nil then
-//      h.AddListItem('NDC v'+terminologies.NDC.version(nil));
-//    if terminologies.NciMeta <> nil then
-//      h.AddListItem('NciMeta v'+terminologies.NciMeta.version(nil));
-//    if terminologies.Unii <> nil then
-//      h.AddListItem('Unii v'+terminologies.Unii.version(nil));
-//    if terminologies.ACIR <> nil then
-//      h.AddListItem('ACIR v'+terminologies.ACIR.version(nil));
 
     pl := TFslList<TCodeSystemProvider>.create;
     try

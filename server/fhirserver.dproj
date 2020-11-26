@@ -132,7 +132,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -cfg C:\work\fhirserver\Exec\fhir.dev.local.cfg</Debugger_RunParams>
+        <Debugger_RunParams>-cmd installdb -cfg C:\work\fhirserver\exec\fhir.dev.local.cfg -endpoint fhir4 -username gg -password gg -default-rights User/*.* -security open -packages hl7.fhir.r4.examples</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\64\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\exec\64</DCC_ExeOutput>
         <DCC_MapFile>3</DCC_MapFile>

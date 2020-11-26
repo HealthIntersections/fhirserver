@@ -1,29 +1,31 @@
 object EndpointInstallForm: TEndpointInstallForm
   Left = 906
-  Height = 545
+  Height = 954
   Top = -823
-  Width = 865
+  Width = 1514
   Caption = 'Install Endpoint'
-  ClientHeight = 545
-  ClientWidth = 865
+  ClientHeight = 954
+  ClientWidth = 1514
+  DesignTimePPI = 168
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 49
-    Top = 496
-    Width = 865
+    Height = 86
+    Top = 868
+    Width = 1514
     Align = alBottom
-    ClientHeight = 49
-    ClientWidth = 865
+    ClientHeight = 86
+    ClientWidth = 1514
+    ParentFont = False
     TabOrder = 0
     object btnInstall: TBitBtn
-      Left = 698
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 1222
+      Height = 46
+      Top = 14
+      Width = 131
       Anchors = [akTop, akRight]
       Caption = 'Install'
       Default = True
@@ -65,13 +67,14 @@ object EndpointInstallForm: TEndpointInstallForm
         0000000000000000000000000000000000000000000000000000
       }
       OnClick = btnInstallClick
+      ParentFont = False
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
-      Left = 778
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 1362
+      Height = 46
+      Top = 14
+      Width = 131
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
@@ -112,102 +115,113 @@ object EndpointInstallForm: TEndpointInstallForm
         AA5100009F100000000000000000000000000000000000000000
       }
       ModalResult = 2
+      ParentFont = False
       TabOrder = 1
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 44
+    Height = 77
     Top = 0
-    Width = 865
+    Width = 1514
     Align = alTop
-    ClientHeight = 44
-    ClientWidth = 865
+    ClientHeight = 77
+    ClientWidth = 1514
+    ParentFont = False
     TabOrder = 1
     object lblMode: TLabel
-      Left = 20
-      Height = 15
-      Top = 14
-      Width = 44
+      Left = 35
+      Height = 30
+      Top = 24
+      Width = 76
       Caption = 'lblMode'
       ParentColor = False
+      ParentFont = False
     end
   end
   object GroupBox1: TGroupBox
     Left = 0
-    Height = 144
-    Top = 44
-    Width = 865
+    Height = 252
+    Top = 77
+    Width = 1514
     Align = alTop
     Caption = '  Security  '
-    ClientHeight = 124
-    ClientWidth = 861
+    ClientHeight = 217
+    ClientWidth = 1510
+    ParentFont = False
     TabOrder = 2
     object edtUserName: TEdit
-      Left = 128
-      Height = 23
-      Top = 2
-      Width = 714
+      Left = 224
+      Height = 38
+      Top = 4
+      Width = 1250
       OnChange = edtUserNameChange
+      ParentFont = False
       TabOrder = 0
       Text = 'edtUserName'
     end
     object Label1: TLabel
-      Left = 16
-      Height = 15
-      Top = 8
-      Width = 53
+      Left = 28
+      Height = 30
+      Top = 14
+      Width = 93
       Caption = 'Username'
       ParentColor = False
+      ParentFont = False
     end
     object Label2: TLabel
-      Left = 16
-      Height = 15
-      Top = 36
-      Width = 50
+      Left = 28
+      Height = 30
+      Top = 63
+      Width = 86
       Caption = 'Password'
       ParentColor = False
+      ParentFont = False
     end
     object edtPassword: TEdit
-      Left = 128
-      Height = 23
-      Top = 32
-      Width = 714
+      Left = 224
+      Height = 38
+      Top = 56
+      Width = 1250
       OnChange = edtUserNameChange
+      ParentFont = False
       TabOrder = 1
       Text = 'edtPassword'
     end
     object Label3: TLabel
-      Left = 18
-      Height = 15
-      Top = 94
-      Width = 101
+      Left = 32
+      Height = 30
+      Top = 164
+      Width = 175
       Caption = 'Anonymous Rights'
       ParentColor = False
+      ParentFont = False
     end
     object edtAnonymousRights: TEdit
-      Left = 128
-      Height = 23
-      Top = 92
-      Width = 713
+      Left = 224
+      Height = 38
+      Top = 161
+      Width = 1248
       OnChange = edtUserNameChange
+      ParentFont = False
       TabOrder = 2
       Text = 'edtAnonymousRights'
     end
     object Label4: TLabel
-      Left = 16
-      Height = 15
-      Top = 66
-      Width = 42
+      Left = 28
+      Height = 30
+      Top = 116
+      Width = 73
       Caption = 'Security'
       ParentColor = False
+      ParentFont = False
     end
     object cbxSecurity: TComboBox
-      Left = 128
-      Height = 23
-      Top = 62
-      Width = 713
-      ItemHeight = 15
+      Left = 224
+      Height = 38
+      Top = 108
+      Width = 1248
+      ItemHeight = 30
       Items.Strings = (
         'Open Access'
         'OAuth Optional'
@@ -215,40 +229,44 @@ object EndpointInstallForm: TEndpointInstallForm
         'Certificate Required'
         ''
       )
+      ParentFont = False
       Style = csDropDownList
       TabOrder = 3
     end
   end
   object GroupBox2: TGroupBox
     Left = 0
-    Height = 308
-    Top = 188
-    Width = 865
+    Height = 539
+    Top = 329
+    Width = 1514
     Align = alClient
     Caption = '  Packages to load into Database  '
-    ClientHeight = 288
-    ClientWidth = 861
+    ClientHeight = 504
+    ClientWidth = 1510
+    ParentFont = False
     TabOrder = 3
     object Panel3: TPanel
       Left = 0
-      Height = 288
+      Height = 504
       Top = 0
-      Width = 861
+      Width = 1510
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 10
       Caption = 'Panel3'
-      ClientHeight = 288
-      ClientWidth = 861
+      ClientHeight = 504
+      ClientWidth = 1510
+      ParentFont = False
       TabOrder = 0
       object lvPackages: TListView
         Left = 10
-        Height = 268
+        Height = 484
         Top = 10
-        Width = 841
+        Width = 1490
         Align = alClient
         Checkboxes = True
         Columns = <>
+        ParentFont = False
         TabOrder = 0
       end
     end

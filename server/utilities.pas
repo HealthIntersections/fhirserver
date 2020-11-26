@@ -100,10 +100,6 @@ type
     FRunNumber: integer;
     FRequestId : integer;
 
-    FMaintenanceThreadStatus : String;
-    FSubscriptionThreadStatus : String;
-    FEmailThreadStatus : String;
-
     FSMTPPort: String;
     FSMTPPassword: String;
     FSMTPHost: String;
@@ -122,12 +118,6 @@ type
     FSMSAccount: String;
     FHostSms: String; // for status update messages
 
-    function GetMaintenanceThreadStatus: String;
-    procedure SetMaintenanceThreadStatus(const Value: String);
-    function GetSubscriptionThreadStatus: String;
-    procedure SetSubscriptionThreadStatus(const Value: String);
-    function GetEmailThreadStatus: String;
-    procedure SetEmailThreadStatus(const Value: String);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -160,9 +150,6 @@ type
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
     property HostSms : String read FHostSms write FHostSms;
 
-    Property MaintenanceThreadStatus : String read GetMaintenanceThreadStatus write SetMaintenanceThreadStatus;
-    Property SubscriptionThreadStatus : String read GetSubscriptionThreadStatus write SetSubscriptionThreadStatus;
-    Property EmailThreadStatus : String read GetEmailThreadStatus write SetEmailThreadStatus;
   end;
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
@@ -283,10 +270,6 @@ begin
   ini['service'].prop['runNumber'].value := inttostr(FRunNumber);
   FRequestId := 0;
 
-  FMaintenanceThreadStatus := 'Not started';
-  FSubscriptionThreadStatus := 'Not started';
-  FEmailThreadStatus := 'Not started';
-
   FOwnerName := ini.admin['ownername'].value;
   FHostSms := ini.admin['owner-sms'].value;
 
@@ -316,67 +299,6 @@ var
 begin
   v := InterlockedIncrement(FRequestId);
   result := inttostr(FRunNumber)+'-'+inttostr(v);
-end;
-
-
-procedure TFHIRServerSettings.SetMaintenanceThreadStatus(const Value: String);
-begin
-  FLock.Lock;
-  try
-    FMaintenanceThreadStatus := Value;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TFHIRServerSettings.SetSubscriptionThreadStatus(const Value: String);
-begin
-  FLock.Lock;
-  try
-    FSubscriptionThreadStatus := Value;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TFHIRServerSettings.SetEmailThreadStatus(const Value: String);
-begin
-  FLock.Lock;
-  try
-    FEmailThreadStatus := Value;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-function TFHIRServerSettings.GetMaintenanceThreadStatus: String;
-begin
-  FLock.Lock;
-  try
-    result := FMaintenanceThreadStatus;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-function TFHIRServerSettings.GetSubscriptionThreadStatus: String;
-begin
-  FLock.Lock;
-  try
-    result := FSubscriptionThreadStatus;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-function TFHIRServerSettings.GetEmailThreadStatus: String;
-begin
-  FLock.Lock;
-  try
-    result := FEmailThreadStatus;
-  finally
-    FLock.Unlock;
-  end;
 end;
 
 function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;

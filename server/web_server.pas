@@ -98,7 +98,7 @@ Uses
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   subscriptions, twilio, telnet_server,
-  web_base, endpoint;
+  web_base, endpoint, endpoint_storage;
 
 Type
   TFhirWebServer = class;
@@ -236,9 +236,6 @@ Begin
 
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
-
-  // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
-  // FAppSecrets := ini.ReadString('fhir', 'oauth-secrets', '');
 End;
 
 Destructor TFhirWebServer.Destroy;
@@ -288,7 +285,6 @@ begin
   FFacebookLike := ini.identityProviders.section['facebook.com']['like'].value = 'true';
   Common.Host := ini.web['host'].value;
 
-
   // web server configuration
   Common.ActualPort := ini.web['http'].readAsInt;
   Common.ActualSSLPort := ini.web['https'].readAsInt;
@@ -305,18 +301,6 @@ begin
   ServeMissingJWT := ini.web['no-jwt'].readAsBool(true);
   ServeUnverifiedJWT := ini.web['unverified-jwt'].readAsBool;
   FUsageServer := TUsageStatsServer.Create(ini.web['stats-dir'].value);
-
-//  if ini.SectionExists(voVersioningNotApplicable, 'patient-view') then
-//  begin
-//    ts := TStringList.Create;
-//    try
-//      ini.ReadSection(voVersioningNotApplicable, 'patient-view', ts);
-//      for s in ts do
-//        FPatientViewServers.Add(s, ini.ReadString(voVersioningNotApplicable, 'patient-view', s, ''));
-//    finally
-//      ts.Free;
-//    end;
-//  end;
 
   Common.OwnerName := ini.admin['ownername'].value;
   if Common.OwnerName = '' then
@@ -496,18 +480,12 @@ Begin
     FIOHandler.Options.VerifyCertificate := FRootCertFile;
     FIOHandler.Options.OnGetPassword := SSLPassword;
 
-//    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
-//    FIOHandler.Options.UseServerCipherPreferences := true;
-//    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
-//    FIOHandler.Options.UseLegacyServerConnect := true;
-//
-//   FIOHandler.Options.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
-//   FIOHandler.Options.CipherSuites := '';
-//    FIOHandler.Options.RequestCertificate := true;
-//    FIOHandler.Options.RequestCertificateOnlyOnce := true;
-//    FIOHandler.Options.FailIfNoPeerCertificate := not FServeMissingCertificate;
-//    FIOHandler.Options.OnVerify := DoVerifyPeer;
+    FIOHandler.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+    FIOHandler.Options.TLSVersionMaximum := TIdOpenSSLVersion.TLSv1_3;
+    FIOHandler.Options.UseServerCipherPreferences := true;
+    FIOHandler.Options.AllowUnsafeLegacyRenegotiation := true;
+    FIOHandler.Options.UseLegacyServerConnect := true;
+
     FSSLServer.OnCommandGet := SecureRequest;
     FSSLServer.OnCommandOther := SecureRequest;
     FSSLServer.OnConnect := DoConnect;
@@ -688,15 +666,6 @@ begin
     s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
   else
     s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
-//  if s.Contains('[%fitbit-redirect%]') then
-//    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
-//      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
-//      NewGuidId, // nonce
-//      'https://local.healthintersections.com.au:961/_web/fitbit.html')
-//      // callback
-//      , [rfReplaceAll]);
-
-//  s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
@@ -787,10 +756,6 @@ begin
       t := GetTickCount - t;
       Logging.log(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+Logging.MemoryStatus);
       Logging.log(id+' '+StringPadLeft(inttostr(t), ' ', 4)+'ms '+Logging.MemoryStatus+' #'+inttostr(GCounterWebRequests)+' '+AContext.Binding.PeerIP+' '+inttostr(response.ResponseNo)+' https: '+request.RawHTTPCommand+': '+summ);
-      {$IFNDEF OSX}
-  //    if GService <> nil then
-  //      Logging.log(GService.ThreadStatus);
-      {$ENDIF}
       response.CloseConnection := not SECURE_KEEP_ALIVE;
     finally
       InterlockedDecrement(GCounterWebRequests);
@@ -961,6 +926,7 @@ function TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTP
 var
   vars : TFslMap<TFHIRObject>;
   ep : TFhirWebServerEndpoint;
+  sp : TStorageWebEndpoint;
 begin
   vars := TFslMap<TFHIRObject>.Create('dx.vars');
   try
@@ -969,14 +935,14 @@ begin
     vars.Add('live.requests', TFHIRSystemString.Create(inttostr(GCounterWebRequests)));
     vars.Add('live.requests.kernel', TFHIRSystemString.Create(inttostr(GCounterFHIRRequests)));
     vars.Add('status.locks', TFHIRSystemString.Create(FormatTextToHTML(DumpLocks)));
-    vars.Add('status.thread.maintenance', TFHIRSystemString.Create(FSettings.MaintenanceThreadStatus));
-    vars.Add('status.thread.subscriptions', TFHIRSystemString.Create(FSettings.SubscriptionThreadStatus));
-    vars.Add('status.thread.email', TFHIRSystemString.Create(FSettings.EmailThreadStatus));
     for ep in FEndPoints do
     begin
-// todo      vars.Add('status.'+ep.Code+'.sessions', TFHIRSystemString.Create(ep.Context.SessionManager.DumpSessions));
-//      vars.Add('status.'+ep.Code+'.tx', TFHIRSystemString.Create(ep.Context.TerminologyServer.Summary));
-//      vars.Add('status.'+ep.Code+'.cdsclient', TFHIRSystemString.Create(inttostr(ep.PatientHooks.Count)));
+      if ep is TStorageWebEndpoint then
+      begin
+        sp := ep as TStorageWebEndpoint;
+        vars.Add('status.'+ep.Code+'.sessions', TFHIRSystemString.Create(sp.ServerContext.SessionManager.DumpSessions));
+        vars.Add('status.'+ep.Code+'.tx', TFHIRSystemString.Create(sp.ServerContext.TerminologyServer.Summary));
+      end;
     end;
     vars.Add('status.web', TFHIRSystemString.Create(WebDump));
     vars.Add('status.web-total-count', TFHIRSystemString.Create(inttostr(Common.Stats.TotalCount)));
@@ -992,11 +958,6 @@ begin
   result := 'Diagnostics';
 end;
 
-//procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
-//begin
-//  ReturnProcessedFile(request, response, path, path, secure, variables);
-//end;
-//
 function TFhirWebServer.endpointList : String;
 var
   b : TStringBuilder;
@@ -1035,7 +996,6 @@ begin
   s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
   s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
   if Common.ActualPort = 80 then
     s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
   else
@@ -1045,18 +1005,10 @@ begin
     s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
   else
     s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.ActualSSLPort), [rfReplaceAll]);
-//  if s.Contains('[%fitbit-redirect%]') then
-//    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
-//      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
-//      NewGuidId, // nonce
-//      'https://local.healthintersections.com.au:961/_web/fitbit.html')
-//      // callback
-//      , [rfReplaceAll]);
-
-//  s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
+  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
 
   response.Expires := Now + 1;
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
@@ -1071,39 +1023,6 @@ begin
   response.FreeContentStream := true;
   response.contentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;
-
-
-// procedure TFhirWebServer.DoSendFHIR(iMsgKey, SrcID: Integer; request: TFHIRRequest; response: TFHIRResponse);
-// var
-// client : TFhirHTTPClient;
-// begin
-// client := TFhirHTTPClient.create(FBaseURL, false);
-// try
-// FClientLock.Lock('MakeClient');
-// Try
-// FClients.Add(client);
-// Finally
-// FClientLock.Unlock;
-// End;
-// try
-// if (request.CommandType = fcmdUpdate) and (request.id = '') then
-// request.id := 'test';
-//
-// client.doRequest(request, response);
-// finally
-// FClientLock.Lock('CloseClient');
-// Try
-// FClients.Remove(client);
-// Finally
-// FClientLock.Unlock;
-// End;
-// end;
-// finally
-// client.free;
-// end;
-// end;
-//
-
 
 { TFHIRWebServerExtension }
 

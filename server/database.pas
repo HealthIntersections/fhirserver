@@ -3649,11 +3649,6 @@ var
   ne : TFHIRBundleEntryW;
   context : TOperationContext;
 begin
-  if (entry.requestMethod <> '') then
-    Logging.log(inttostr(i)+': '+entry.requestMethod+' '+id.summary)
-  else
-    Logging.log(inttostr(i)+': '+id.summary);
-
   request.Id := id.id;
   if entry.resource <> nil then
     entry.resource.id := id.id;;
@@ -3730,6 +3725,21 @@ var
   bl : TFslList<TFHIRBundleEntryW>;
   be, ne : TFHIRBundleEntryW;
   entry : TFHIRTransactionEntry;
+  lpct : integer;
+  procedure log(s : String);
+  begin
+    if context.Logging <> ollNone then
+      Logging.log(s);
+  end;
+  procedure progress(pct : integer);
+  begin
+    if lpct <> pct then
+    begin
+      lpct := pct;
+      if context.Logging = ollInstaller then
+        Logging.log('%%%%: '+inttostr(pct));
+    end;
+  end;
 begin
   try
     ok := true;
@@ -3762,39 +3772,34 @@ begin
           resp.id := FhirGUIDToString(CreateGuid);
           bl := bundle.entries;
           try
+            log('Scanning IDs');
             // first pass: scan ids
             for i := 0 to bl.count - 1 do
             begin
               be := bl[i];
-              if (be.resource <> nil) then
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id
-              else
-                Context.messageDetail := be.requestUrl;
-
-              context.progress(0+trunc(100 * (i / (bl.count * 10))));
+              progress(0+trunc(100 * (i / (bl.count * 10))));
               be.Tag := scanId(request, be, ids, i).Link;
             end;
 
-            // third pass: reassign references
+            log('Updating References');
+            // second pass: reassign references
             for i := 0 to bl.count - 1 do
             begin
               be := bl[i];
               entry := be.Tag as TFHIRTransactionEntry;
-              Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-              context.progress(10+trunc(100 * (i / (bl.count * 10))));
-
+              progress(10+trunc(100 * (i / (bl.count * 10))));
               if not entry.ignore and not entry.deleted then
                 adjustReferences(request, response, be.Tag as TFHIRTransactionEntry, request.baseUrl, be, ids);
             end;
 
-            // four pass: commit resources
+            // thrid pass: commit resources
             bundle := bundle.Link;
             try
+              log('Preparing');
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(20+trunc(100 * (i / (bl.count * 10))));
+                progress(20+trunc(100 * (i / (bl.count * 10))));
                 ne := resp.addEntry;
     //             ne.request := be.request.Link;
                 (be.Tag as TFHIRTransactionEntry).entry := ne;
@@ -3803,47 +3808,55 @@ begin
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(30+trunc(100 * (i / (bl.count * 10))));
+                progress(30+trunc(100 * (i / (bl.count * 10))));
                 if (be.Tag as TFHIRTransactionEntry).state = tesCreate then
                   ignoreEntry(be, (be.Tag as TFHIRTransactionEntry).entry);
               end;
 
+              log('Processing');
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(40+trunc(100 * (i / (bl.count * 5))));
+                progress(40+trunc(100 * (i / (bl.count * 5))));
                 if (be.Tag as TFHIRTransactionEntry).state = tesCreate then
+                begin
+                  log(' c: '+ be.resource.fhirType+'/'+be.resource.id);
                   if not commitResource(request, response, context.mode, be, i, be.Tag as TFHIRTransactionEntry, request.Session, resp) then
                     Abort;
+                end;
               end;
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(60+trunc(100 * (i / (bl.count * 5))));
+                progress(60+trunc(100 * (i / (bl.count * 5))));
                 if (be.Tag as TFHIRTransactionEntry).state = tesUpdate then
+                begin
+                  log(' u: '+ be.resource.fhirType+'/'+be.resource.id);
                   if not commitResource(request, response, context.mode, be, i, be.Tag as TFHIRTransactionEntry, request.Session, resp) then
                     Abort;
+                end;
               end;
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(80+trunc(100 * (i / (bl.count * 10))));
+                progress(80+trunc(100 * (i / (bl.count * 10))));
                 if (be.Tag as TFHIRTransactionEntry).state = tesDelete then
+                begin
+                  log(' d: '+ be.resource.fhirType+'/'+be.resource.id);
                   if not commitResource(request, response, context.mode, be, i, be.Tag as TFHIRTransactionEntry, request.Session, resp) then
                     Abort;
+                end;
               end;
               for i := 0 to bl.count - 1 do
               begin
                 be := bl[i];
-                Context.messageDetail := be.resource.fhirType+'/'+be.resource.id;
-                context.progress(90+trunc(100 * (i / (bl.count * 10))));
+                progress(90+trunc(100 * (i / (bl.count * 10))));
                 if (be.Tag as TFHIRTransactionEntry).state = tesRead then
+                begin
+                  log(' r: '+ be.resource.fhirType+'/'+be.resource.id);
                   if not commitResource(request, response, context.mode, be, i, be.Tag as TFHIRTransactionEntry, request.Session, resp) then
                     Abort;
+                end;
               end;
 
             finally
@@ -5490,7 +5503,7 @@ begin
           if not TFHIRVersions.matches(conn.ColStringByName['Value'], factory.versionString) then
             raise EFHIRException.create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+factory.versionString)
         end
-        else if conn.ColIntegerByName['ConfigKey'] <> 5 then
+        else if not (conn.ColIntegerByName['ConfigKey'] in [5,10,100]) then
           raise EFHIRException.create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
 
       conn.terminate;
@@ -6515,7 +6528,7 @@ var
 begin
   list := nil;
   d := TFslDateTime.makeUTC.DateTime;
-  ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Sessions';
+  setThreadStatus('Sweeping Sessions');
   ServerContext.SessionManager.Sweep;
   FLock.Lock('sweep2');
   try
@@ -6528,7 +6541,7 @@ begin
     FLock.Unlock;
   end;
   try
-    ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping Search';
+    setThreadStatus('Sweeping Search');
     if FNextSearchSweep < d then
     begin
       conn := FDB.GetConnection('Sweep.search');
@@ -6559,10 +6572,10 @@ begin
       FNextSearchSweep := d + 10 * DATETIME_MINUTE_ONE;
     end;
 
-    ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping - Closing';
+    setThreadStatus('Sweeping - Closing');
     if list <> nil then
     begin
-      ServerContext.Globals.MaintenanceThreadStatus := 'Sweeping - audits';
+      setThreadStatus('Sweeping - audits');
       storage := engineFactory(THTTPLanguages.create('en'), 'fhir.sweep');
       try
         try
