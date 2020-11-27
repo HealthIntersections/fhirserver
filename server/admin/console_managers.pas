@@ -12,7 +12,7 @@ uses
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
   tx_icd10, tx_ndc, tx_rxnorm, tx_unii,
-  server_config, database_installer, utilities, installer,
+  server_config, database_installer, utilities,
   console_tx_edit, console_ep_edit, console_id_edit, install_form;
 
 type
@@ -304,56 +304,8 @@ end;
 { TEndPointCheck }
 
 procedure TEndPointCheck.execute;
-var
-  db : TFDBManager;
-  conn : TFDBConnection;
-  meta : TFDBMetaData;
-  t, m, s : String;
 begin
-  try
-    db := connectToDatabase(FItem);
-    try
-      conn := db.GetConnection('check');
-      try
-        meta := conn.FetchMetaData;
-        try
-          if not meta.HasTable('Config') then
-            FItem.threadStatus := 'Not Installed'
-          else
-          begin
-            s := conn.Lookup('Config', 'ConfigKey', '100', 'Value', '');
-            if (s = '') then
-              FItem.threadStatus := 'Needs Reinstalling'
-            else
-            begin
-              StringSplit(s, '|', t, s);
-              StringSplit(s, '|', m, s);
-              if (t <> FItem['type'].value) then
-                FItem.threadStatus := 'Type Mismatch - Database is for '+t+': reinstall'
-              else if (m <> FItem['mode'].value) then
-                FItem.threadStatus := 'Mode Mismatch - Database is for '+m+': reinstall'
-              else
-                FItem.threadStatus := 'OK ('+s+')';
-            end;
-          end;
-        finally
-          meta.free;
-        end;
-        conn.release;
-      except
-        on e : Exception do
-        begin
-          conn.Error(e);
-          raise;
-        end;
-      end;
-    finally
-      db.free;
-    end;
-  except
-    on e: Exception do
-      FItem.threadStatus := 'Error: '+e.message;
-  end;
+  FItem.threadStatus := checkDatabaseInstall(FItem);
   Stop;
 end;
 
@@ -367,7 +319,7 @@ begin
   else if (item.status = '') then
   begin
     item.status := 'Checking...';
-    TEndPointCheck.create(self, item.link).Start;
+    TEndPointCheck.create(self, item).Start;
   end;
   result := item.status;
 end;
@@ -425,7 +377,7 @@ begin
     2: result := item['version'].value;
     3: result := BoolToStr(item['active'].valueBool, 'yes', 'no');
     4: result := item['path'].value;
-    5: result := item['database'].value;
+    5: result := describeDatabase(item);
     6: result := status(item);
   end;
 end;
@@ -470,6 +422,7 @@ begin
   frm := TEditEPForm.create(List.Owner);
   try
     frm.EP := item.clone;
+    frm.Cfg := FFile.link;
     result := frm.ShowModal = mrOK;
     if result then
       item.assign(frm.EP);

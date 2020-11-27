@@ -9,7 +9,7 @@ uses
   Buttons,
   fdb_dialects, fdb_manager, fdb_odbc, fdb_odbc_objects,
   server_config, utilities,
-  installer;
+  install_form;
 
 type
   { TEditEPForm }
@@ -162,8 +162,8 @@ begin
   begin
     edtIdentity.text := EP.name;
     cbxType.itemIndex := cbxType.Items.IndexOf(EP['type'].value);
-    cbxTypeChange(self);
     cbxVersion.itemIndex := cbxVersion.Items.IndexOf(EP['version'].value);
+    cbxTypeChange(self);
     edtPath.text := EP['path'].value;
     chkActive.Checked := EP['active'].readAsBool;
 

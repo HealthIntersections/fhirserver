@@ -1,11 +1,12 @@
 object EditEPForm: TEditEPForm
   Left = 1139
-  Height = 372
+  Height = 651
   Top = -712
-  Width = 626
+  Width = 1096
   Caption = 'Edit EndPoint'
-  ClientHeight = 372
-  ClientWidth = 626
+  ClientHeight = 651
+  ClientWidth = 1096
+  DesignTimePPI = 168
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
   OnResize = FormResize
@@ -13,12 +14,12 @@ object EditEPForm: TEditEPForm
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object cbxVersion: TComboBox
-    Left = 80
-    Height = 23
-    Top = 64
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 112
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 30
     Items.Strings = (
       'r2'
       'r3'
@@ -31,19 +32,19 @@ object EditEPForm: TEditEPForm
   end
   object Panel1: TPanel
     Left = 0
-    Height = 44
-    Top = 328
-    Width = 626
+    Height = 77
+    Top = 574
+    Width = 1096
     Align = alBottom
-    ClientHeight = 44
-    ClientWidth = 626
+    ClientHeight = 77
+    ClientWidth = 1096
     ParentFont = False
     TabOrder = 0
     object btnDBTest1: TBitBtn
-      Left = 460
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 806
+      Height = 46
+      Top = 14
+      Width = 131
       Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
@@ -88,10 +89,10 @@ object EditEPForm: TEditEPForm
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
-      Left = 540
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 946
+      Height = 46
+      Top = 14
+      Width = 131
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
@@ -136,10 +137,10 @@ object EditEPForm: TEditEPForm
       TabOrder = 1
     end
     object btnDBTest: TBitBtn
-      Left = 10
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 18
+      Height = 46
+      Top = 14
+      Width = 131
       Caption = 'Test DB'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -182,10 +183,10 @@ object EditEPForm: TEditEPForm
       TabOrder = 2
     end
     object btnEPInstall: TBitBtn
-      Left = 92
-      Height = 26
-      Top = 8
-      Width = 75
+      Left = 161
+      Height = 46
+      Top = 14
+      Width = 131
       Caption = 'Install'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -229,22 +230,22 @@ object EditEPForm: TEditEPForm
     end
   end
   object edtIdentity: TEdit
-    Left = 80
-    Height = 23
-    Top = 8
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 14
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 1
     Text = 'edtIdentity'
   end
   object cbxType: TComboBox
-    Left = 80
-    Height = 23
-    Top = 36
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 63
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 30
     Items.Strings = (
       'full'
       'terminology'
@@ -259,161 +260,161 @@ object EditEPForm: TEditEPForm
     TabOrder = 2
   end
   object edtPath: TEdit
-    Left = 80
-    Height = 23
-    Top = 92
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 161
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 3
     Text = 'edtPath'
   end
   object Label2: TLabel
-    Left = 16
-    Height = 15
-    Top = 36
-    Width = 24
+    Left = 28
+    Height = 30
+    Top = 63
+    Width = 43
     Caption = 'Type'
     ParentColor = False
     ParentFont = False
   end
   object Label4: TLabel
-    Left = 16
-    Height = 15
-    Top = 67
-    Width = 38
+    Left = 28
+    Height = 30
+    Top = 117
+    Width = 68
     Caption = 'Version'
     ParentColor = False
     ParentFont = False
   end
   object Label5: TLabel
-    Left = 16
-    Height = 15
-    Top = 94
-    Width = 24
+    Left = 28
+    Height = 30
+    Top = 164
+    Width = 41
     Caption = 'Path'
     ParentColor = False
     ParentFont = False
   end
   object Label1: TLabel
-    Left = 16
-    Height = 15
-    Top = 8
-    Width = 40
+    Left = 28
+    Height = 30
+    Top = 14
+    Width = 70
     Caption = 'Identity'
     ParentColor = False
     ParentFont = False
   end
   object cbxDriver: TComboBox
-    Left = 80
-    Height = 23
-    Top = 180
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 315
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 30
     ParentFont = False
     TabOrder = 5
     Text = 'cbxDriver'
   end
   object edtServer: TEdit
-    Left = 80
-    Height = 23
-    Top = 208
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 364
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 6
     Text = 'edtServer'
   end
   object edtDBName: TEdit
-    Left = 80
-    Height = 23
-    Top = 236
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 413
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 7
     Text = 'edtDBName'
   end
   object edtUsername: TEdit
-    Left = 80
-    Height = 23
-    Top = 264
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 462
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 8
     Text = 'edtUsername'
   end
   object edtPassword: TEdit
-    Left = 80
-    Height = 23
-    Top = 292
-    Width = 531
+    Left = 140
+    Height = 38
+    Top = 511
+    Width = 930
     Anchors = [akTop, akLeft, akRight]
     ParentFont = False
     TabOrder = 9
     Text = 'edtPassword'
   end
   object Label3: TLabel
-    Left = 15
-    Height = 15
-    Top = 158
-    Width = 48
+    Left = 26
+    Height = 30
+    Top = 276
+    Width = 87
     Caption = 'Database'
     ParentColor = False
     ParentFont = False
   end
   object Label7: TLabel
-    Left = 15
-    Height = 15
-    Top = 184
-    Width = 31
+    Left = 26
+    Height = 30
+    Top = 322
+    Width = 55
     Caption = 'Driver'
     ParentColor = False
     ParentFont = False
   end
   object Label8: TLabel
-    Left = 16
-    Height = 15
-    Top = 212
-    Width = 32
+    Left = 28
+    Height = 30
+    Top = 371
+    Width = 57
     Caption = 'Server'
     ParentColor = False
     ParentFont = False
   end
   object Label9: TLabel
-    Left = 16
-    Height = 15
-    Top = 242
-    Width = 50
+    Left = 28
+    Height = 30
+    Top = 424
+    Width = 89
     Caption = 'DB Name'
     ParentColor = False
     ParentFont = False
   end
   object Label10: TLabel
-    Left = 15
-    Height = 15
-    Top = 268
-    Width = 53
+    Left = 26
+    Height = 30
+    Top = 469
+    Width = 93
     Caption = 'Username'
     ParentColor = False
     ParentFont = False
   end
   object Label11: TLabel
-    Left = 15
-    Height = 15
-    Top = 296
-    Width = 50
+    Left = 26
+    Height = 30
+    Top = 518
+    Width = 86
     Caption = 'Password'
     ParentColor = False
     ParentFont = False
   end
   object rbMSSQL: TRadioButton
-    Left = 80
-    Height = 19
-    Top = 154
-    Width = 130
+    Left = 140
+    Height = 33
+    Top = 270
+    Width = 228
     AutoSize = False
     Caption = 'Microsoft SQL Server'
     OnChange = rbMSSQLChange
@@ -421,10 +422,10 @@ object EditEPForm: TEditEPForm
     TabOrder = 10
   end
   object rbMySQL: TRadioButton
-    Left = 266
-    Height = 19
-    Top = 154
-    Width = 58
+    Left = 466
+    Height = 33
+    Top = 270
+    Width = 102
     AutoSize = False
     Caption = 'MySQL'
     OnChange = rbMSSQLChange
@@ -432,28 +433,29 @@ object EditEPForm: TEditEPForm
     TabOrder = 11
   end
   object Bevel1: TBevel
-    Left = 8
-    Height = 14
-    Top = 134
-    Width = 612
+    Left = 14
+    Height = 24
+    Top = 234
+    Width = 1072
     Anchors = [akTop, akLeft, akRight]
     Shape = bsBottomLine
   end
   object Label6: TLabel
-    Left = 18
-    Height = 15
-    Top = 122
-    Width = 33
+    Left = 32
+    Height = 30
+    Top = 214
+    Width = 57
     Caption = 'Active'
     ParentColor = False
     ParentFont = False
   end
   object chkActive: TCheckBox
-    Left = 80
-    Height = 19
-    Top = 120
-    Width = 198
+    Left = 140
+    Height = 34
+    Top = 210
+    Width = 349
     Caption = 'Load this when starting the Server'
+    ParentFont = False
     TabOrder = 12
   end
 end

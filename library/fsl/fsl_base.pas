@@ -717,9 +717,21 @@ end;
 procedure endUnit;
 var
   t : TClassTrackingType;
+  n, s : String;
+  i : integer;
 begin
-  for t in GClassTracker.Values do
+  s := '';
+  i := 0;
+  for n in GClassTracker.Keys do
+  begin
+    t := GClassTracker[n];
+    i := i + t.count;
+    if t.count > 0 then
+      s := s + n+': '+inttostr(t.count)+#13#10;
     t.Free;
+  end;
+  if i > 0 then
+    messagebox(0, pchar(s), 'Object Leaks', MB_OK);
   GClassTracker.Free;
   DeleteCriticalSection(GLock);
   GInited := false;

@@ -949,7 +949,8 @@ End;
 
 destructor TFslThread.Destroy;
 Begin
-  FInternal.Free;
+  if not FAutoFree then
+    FInternal.Free;
   Inherited;
 End;
 
@@ -974,9 +975,12 @@ End;
 
 procedure TFslThread.StopAndWait;
 begin
-  Stop;
-  while FRunning do
-    sleep(20);
+  if Running then
+  begin
+    Stop;
+    while FRunning do
+      sleep(20);
+  end;
 end;
 
 procedure TFslThread.Kill;
@@ -1025,9 +1029,12 @@ begin
     // ignore any further exceptions
   End;
   FOwner.FRunning := False;
-  if FOwner.AutoFree then
-    FOwner.Free;
   SetThreadName('');
+  if FOwner.AutoFree then
+  begin
+    FOwner.Free;
+    Free;
+  end;
 end;
 
 { TBackgroundTaskEngine }

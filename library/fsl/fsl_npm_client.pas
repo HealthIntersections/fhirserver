@@ -273,11 +273,15 @@ begin
     result := TFslList<TFHIRPackageInfo>.create;
     try
       json := TInternetFetcher.fetchJsonArray(URLPath([address, 'catalog?'])+b.asString());
-      for e in json do
-      begin
-        obj := e as TJsonObject;
-        result.add(TFHIRPackageInfo.create(obj.str2('Name', 'name'), obj.str2('Version', 'version'), obj.str2('FhirVersion', 'fhirVersion'),
-                   obj.str2('Description', 'description'), obj['canonical'], obj['url']));
+      try
+        for e in json do
+        begin
+          obj := e as TJsonObject;
+          result.add(TFHIRPackageInfo.create(obj.str2('Name', 'name'), obj.str2('Version', 'version'), obj.str2('FhirVersion', 'fhirVersion'),
+                     obj.str2('Description', 'description'), obj['canonical'], obj['url']));
+        end;
+      finally
+        json.free;
       end;
       result.link;
     finally

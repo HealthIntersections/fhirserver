@@ -1,31 +1,34 @@
 object InstallProgressForm: TInstallProgressForm
-  Left = 1250
-  Height = 370
-  Top = -570
-  Width = 540
+  Left = 1266
+  Height = 648
+  Top = 659
+  Width = 945
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'Database Install Progress'
-  ClientHeight = 370
-  ClientWidth = 540
+  ClientHeight = 648
+  ClientWidth = 945
+  DesignTimePPI = 168
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
-    Top = 320
-    Width = 540
+    Height = 88
+    Top = 560
+    Width = 945
     Align = alBottom
-    ClientHeight = 50
-    ClientWidth = 540
+    ClientHeight = 88
+    ClientWidth = 945
+    ParentFont = False
     TabOrder = 0
     object btnDBTest3: TBitBtn
-      Left = 454
-      Height = 26
-      Top = 10
-      Width = 75
+      Left = 795
+      Height = 46
+      Top = 18
+      Width = 131
       Anchors = [akTop, akRight]
-      Cancel = True
       Caption = 'Cancel'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -64,13 +67,15 @@ object InstallProgressForm: TInstallProgressForm
         AA5100009F100000000000000000000000000000000000000000
       }
       ModalResult = 2
+      OnClick = btnDBTest3Click
+      ParentFont = False
       TabOrder = 0
     end
     object BitBtn1: TBitBtn
-      Left = 10
-      Height = 28
-      Top = 10
-      Width = 75
+      Left = 18
+      Height = 49
+      Top = 18
+      Width = 131
       Caption = 'Copy'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -108,52 +113,55 @@ object InstallProgressForm: TInstallProgressForm
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000
       }
+      OnClick = BitBtn1Click
+      ParentFont = False
       TabOrder = 1
-    end
-    object Button1: TButton
-      Left = 209
-      Height = 25
-      Top = 18
-      Width = 75
-      Caption = 'Button1'
-      OnClick = Button1Click
-      TabOrder = 2
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 60
+    Height = 105
     Top = 0
-    Width = 540
+    Width = 945
     Align = alTop
-    ClientHeight = 60
-    ClientWidth = 540
+    ClientHeight = 105
+    ClientWidth = 945
+    ParentFont = False
     TabOrder = 1
     object lblStatus: TLabel
-      Left = 16
-      Height = 15
-      Top = 35
-      Width = 79
+      Left = 28
+      Height = 30
+      Top = 61
+      Width = 140
       Caption = 'Not Started Yet'
       ParentColor = False
+      ParentFont = False
     end
     object ProgressBar1: TProgressBar
-      Left = 10
-      Height = 20
-      Top = 10
-      Width = 518
+      Left = 18
+      Height = 35
+      Top = 18
+      Width = 906
       Anchors = [akTop, akLeft, akRight]
+      ParentFont = False
       TabOrder = 0
     end
   end
   object Memo1: TMemo
     Left = 0
-    Height = 260
-    Top = 60
-    Width = 540
+    Height = 455
+    Top = 105
+    Width = 945
     Align = alClient
+    ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 2
+  end
+  object Timer1: TTimer
+    Enabled = False
+    OnTimer = Timer1Timer
+    Left = 51
+    Top = 153
   end
 end

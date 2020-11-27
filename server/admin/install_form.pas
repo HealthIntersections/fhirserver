@@ -9,6 +9,7 @@ uses
   StdCtrls, ComCtrls,
   fsl_base, fsl_utilities, fsl_npm_client,
   fdb_manager,
+  server_config, utilities, database_installer,
   install_log;
 
 type
@@ -28,6 +29,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    lblCurrentStatus: TLabel;
     lblMode: TLabel;
     lvPackages: TListView;
     Panel1: TPanel;
@@ -62,9 +64,56 @@ type
 var
   EndpointInstallForm: TEndpointInstallForm;
 
+procedure InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection);
+
 implementation
 
 {$R *.lfm}
+
+uses
+  console_form;
+
+procedure InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection);
+var
+  t : String;
+  db : TFDBManager;
+  conn : TFDBConnection;
+  dbi : TFHIRDatabaseInstaller;
+  form : TEndpointInstallForm;
+  cursor : TCursor;
+begin
+  cursor := Screen.Cursor;
+  try
+    Screen.Cursor := crHourGlass;
+    db := connectToDatabase(epInfo);
+    try
+      conn := db.GetConnection('install');
+      try
+        form := TEndpointInstallForm.create(owner);
+        try
+          form.Packages := MainConsoleForm.Packages.link;
+          form.Connection := conn.link;
+          form.Filename := cfg.filename;
+          form.endpoint := epInfo.name;
+          form.type_ := epInfo['type'].value;
+          form.version := epInfo['version'].value;
+          form.lblCurrentStatus.Caption := 'Current Database Status: '+checkDatabaseInstall(epInfo);
+          Screen.Cursor := crDefault;
+          form.ShowModal;
+        finally
+          form.free;
+        end;
+      finally
+        conn.release;
+      end;
+    finally
+      db.free;
+    end;
+  finally
+    Screen.Cursor := cursor;
+  end;
+end;
+
 
 { TEndpointInstallForm }
 

@@ -367,6 +367,7 @@ type
     procedure lbEditionsClick(Sender: TObject);
     procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
     procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure pnlSnomedImportClick(Sender: TObject);
@@ -623,9 +624,11 @@ begin
   FThread.StopAndWait(40);
   FThread.Free;
   FPackageThread.Stop;
+  FPackageThread.Free;
   FTxManager.Free;
   FEPManager.Free;
   FIDManager.Free;
+  FConfig.free;
   FPackages.free;
   FTelnet.Free;
   FIncoming.Free;
@@ -732,6 +735,11 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.MenuItem6Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainConsoleForm.connectToServer(server : String);
 var
   pwd : String;
@@ -787,6 +795,8 @@ end;
 
 procedure TMainConsoleForm.SetConfigEditable;
 begin
+  if FConfig <> nil then
+    FConfig.Free;
   FConfig := TFHIRServerConfigFile.create(edtConfigFile.text);
   FTxManager.ConfigFile := FConfig.link;
   FEPManager.ConfigFile := FConfig.link;

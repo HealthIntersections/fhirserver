@@ -156,8 +156,10 @@ function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartm
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
 function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
 function describeDatabase(details : TFHIRServerConfigSection) : String;
+function checkDatabaseInstall(cfg : TFHIRServerConfigSection) : String;
 procedure sendEmail(settings : TFHIRServerSettings; dest, subj, body: String);
 procedure sendSMS(settings : TFHIRServerSettings; Dest, Msg: String);
+
 
 implementation
 
@@ -346,6 +348,59 @@ begin
     result := details['db-type'].value+':'+details['db-database'].value
   else
     result := 'Unknown database type '+details['db-type'].value
+end;
+
+function checkDatabaseInstall(cfg : TFHIRServerConfigSection) : String;
+var
+  db : TFDBManager;
+  conn : TFDBConnection;
+  meta : TFDBMetaData;
+  t, m, s : String;
+begin
+  try
+    db := connectToDatabase(cfg);
+    try
+      conn := db.GetConnection('check');
+      try
+        meta := conn.FetchMetaData;
+        try
+          if not meta.HasTable('Config') then
+            result := 'Not Installed'
+          else
+          begin
+            s := conn.Lookup('Config', 'ConfigKey', '100', 'Value', '');
+            if (s = '') then
+              result := 'Needs Reinstalling'
+            else
+            begin
+              StringSplit(s, '|', t, s);
+              StringSplit(s, '|', m, s);
+              if (t <> cfg['type'].value) then
+                result := 'Type Mismatch - Database is for '+t+': reinstall'
+              else if (m <> cfg['mode'].value) then
+                result := 'Mode Mismatch - Database is for '+m+': reinstall'
+              else
+                result := 'OK ('+s+')';
+            end;
+          end;
+        finally
+          meta.free;
+        end;
+        conn.release;
+      except
+        on e : Exception do
+        begin
+          conn.Error(e);
+          raise;
+        end;
+      end;
+    finally
+      db.free;
+    end;
+  except
+    on e: Exception do
+      result := 'Error: '+e.message;
+  end;
 end;
 
 procedure sendEmail(settings : TFHIRServerSettings; dest, subj, body: String);
