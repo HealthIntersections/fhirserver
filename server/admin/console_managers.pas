@@ -12,7 +12,7 @@ uses
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
   tx_icd10, tx_ndc, tx_rxnorm, tx_unii,
-  server_config, database_installer, utilities,
+  server_config, database_installer, utilities, installer,
   console_tx_edit, console_ep_edit, console_id_edit, install_form;
 
 type
@@ -36,7 +36,6 @@ type
     FManager : TAdminManager;
   public
     constructor create(manager : TAdminManager; item : TFHIRServerConfigSection);
-    destructor Destroy; override;
   end;
 
   { TTxCheck }
@@ -192,12 +191,6 @@ begin
   FManager := manager;
   FItem := item;
   AutoFree := true;
-end;
-
-destructor TAdminThread.Destroy;
-begin
-  FItem.Free;
-  inherited Destroy;
 end;
 
 { TAdminManager }
@@ -396,6 +389,7 @@ function TEndPointManager.loadList: boolean;
 var
   sect : TFHIRServerConfigSection;
 begin
+  result := true;
   if (FFile <> nil) then
     for sect in FFile['endpoints'].sections do
       Data.Add(sect.link);
@@ -512,52 +506,8 @@ begin
 end;
 
 procedure TEndPointManager.ExecuteItem(item: TFHIRServerConfigSection; mode : String);
-var
-  t : String;
-  db : TFDBManager;
-  conn : TFDBConnection;
-  dbi : TFHIRDatabaseInstaller;
-  form : TEndpointInstallForm;
 begin
-  db := connectToDatabase(item);
-  try
-    conn := db.GetConnection('install');
-    try
-      t := item['type'].value;
-      if (t = 'package') then
-      begin
-        if MessageDlg('Install Package Server', 'This operation will wipe any existing installation in the database. Proceed?', mtConfirmation, mbYesNo, 0) = mryes then
-        begin
-          dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
-          try
-            dbi.uninstall;
-            dbi.installPackageServer;
-          finally
-            dbi.free;
-          end;
-        end;
-      end
-      else
-      begin
-        form := TEndpointInstallForm.create(MainConsoleForm);
-        try
-          form.Packages := MainConsoleForm.Packages.link;
-          form.Connection := conn.link;
-          form.Filename := FFile.filename;
-          form.endpoint := item.name;
-          form.type_ := item['type'].value;
-          form.version := item['version'].value;
-          form.ShowModal;
-        finally
-          form.free;
-        end;
-      end;
-    finally
-      conn.release;
-    end;
-  finally
-    db.free;
-  end;
+  InstallEndPoint(list.Owner, FFile, item);
   item.status := '';
   doLoad;
 end;
@@ -583,6 +533,7 @@ function TTXManager.loadList: boolean;
 var
   sect : TFHIRServerConfigSection;
 begin
+  result := true;
   if (FFile <> nil) then
     for sect in FFile['terminologies'].sections do
       Data.Add(sect.link);
@@ -601,7 +552,7 @@ begin
   if (item.status = '') then
   begin
     item.status := 'Checking ...';
-    TTxCheck.create(self, item.link).Start;
+    TTxCheck.create(self, item).Start;
   end;
   result := item.status;
 end;

@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   Buttons,
   fdb_dialects, fdb_manager, fdb_odbc, fdb_odbc_objects,
-  server_config, utilities;
+  server_config, utilities,
+  installer;
 
 type
   { TEditEPForm }
@@ -44,6 +45,7 @@ type
     rbMSSQL: TRadioButton;
     rbMySQL: TRadioButton;
     procedure btnDBTestClick(Sender: TObject);
+    procedure btnEPInstallClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
@@ -52,9 +54,12 @@ type
     procedure rbMSSQLChange(Sender: TObject);
   private
     FEP: TFHIRServerConfigSection;
+    FCfg : TFHIRServerConfigFile;
+    procedure SetCfg(AValue: TFHIRServerConfigFile);
     procedure SetEP(AValue: TFHIRServerConfigSection);
   public
     property EP : TFHIRServerConfigSection read FEP write SetEP;
+    property Cfg : TFHIRServerConfigFile read FCfg write SetCfg;
     procedure update;
   end;
 
@@ -174,6 +179,12 @@ begin
   end;
 end;
 
+procedure TEditEPForm.SetCfg(AValue: TFHIRServerConfigFile);
+begin
+  FCfg.Free;
+  FCfg := AValue;
+end;
+
 
 procedure TEditEPForm.cbxTypeChange(Sender: TObject);
 begin
@@ -232,6 +243,11 @@ begin
     on e: Exception do
       MessageDlg('Database Connection Failed: '+e.message, mtError, [mbok], 0);
   end
+end;
+
+procedure TEditEPForm.btnEPInstallClick(Sender: TObject);
+begin
+  InstallEndPoint(self, FCfg, EP);
 end;
 
 procedure TEditEPForm.update;

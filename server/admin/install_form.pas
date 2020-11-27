@@ -76,7 +76,10 @@ end;
 
 procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
 begin
-  btnInstall.enabled := (edtUserName.text <> '') and IsValidIdent(edtUserName.text) and (edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0) and (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));
+  btnInstall.enabled :=
+   (not edtUserName.enabled or ((edtUserName.text <> '') and IsValidIdent(edtUserName.text))) and
+   (not edtPassword.enabled or ((edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0))) and
+   (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));
 end;
 
 procedure TEndpointInstallForm.btnInstallClick(Sender: TObject);
@@ -129,7 +132,7 @@ begin
     edtPassword.text := '';
     edtPassword.Enabled := true;
     cbxSecurity.itemIndex := 0;
-    edtPassword.Enabled := false;
+    cbxSecurity.Enabled := false;
     edtAnonymousRights.text := 'User/*.read';
     edtAnonymousRights.Enabled := false;
     lvPackages.items.clear;

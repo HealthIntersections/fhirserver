@@ -614,6 +614,8 @@ begin
 
   edtConfigFile.text := FIni.ReadString('config', 'filename', '');
   edtConfigFileChange(self);
+
+  Timer1.enabled := true;
 end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);

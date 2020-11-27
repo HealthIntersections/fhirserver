@@ -105,6 +105,7 @@ begin
     edtDBName.Enabled := true;
     edtUsername.Enabled := true;
     edtPassword.Enabled := true;
+    btnDBTest.enabled := true;
   end
   else
   begin
@@ -117,6 +118,7 @@ begin
     edtDBName.Enabled := false;
     edtUsername.Enabled := false;
     edtPassword.Enabled := false;
+    btnDBTest.enabled := false;
   end;
   edtVersion.enabled := Tx['type'].value = 'ndc';
   chkDefault.Enabled := Tx['type'].value = 'snomed';

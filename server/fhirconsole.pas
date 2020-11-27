@@ -12,7 +12,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, datetimectrls, fsl_base, fsl_fpc, fsl_utilities, fdb_odbc_fpc,
   console_form,
-  console_tx_edit, console_ep_edit, install_form, install_log;
+  console_tx_edit, console_ep_edit, install_form, install_log, installer;
 
 {$R *.res}
 

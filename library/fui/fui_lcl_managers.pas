@@ -430,7 +430,10 @@ var
 begin
   if FSettings <> nil then
     for i := 0 to List.columns.count - 1 do
+    begin
+      showmessage('Saving: '+List.Name+'-column-'+inttostr(i)+'='+inttostr(list.columns[i].width));
       FSettings.WriteInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
+    end;
 
   FControls.Free;
   FFiltered.free;
