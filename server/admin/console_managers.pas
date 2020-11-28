@@ -28,33 +28,50 @@ type
     property ConfigFile : TFHIRServerConfigFile read FFile write SetFile;
   end;
 
-  { TAdminThread }
+  { TTXStatusCheckRequest }
 
-  TAdminThread = class (TFslThread)
+  TTXStatusCheckRequest = class (TBackgroundTaskRequestPackage)
   private
-    FItem : TFHIRServerConfigSection;
-    FManager : TAdminManager;
+    Fitem : TFHIRServerConfigSection;
   public
-    constructor create(manager : TAdminManager; item : TFHIRServerConfigSection);
+    constructor Create(item : TFHIRServerConfigSection);
+    destructor Destroy; override;
   end;
 
-  { TTxCheck }
+  { TTXStatusCheckResponse }
 
-  TTxCheck = class (TAdminThread)
+  TTXStatusCheckResponse = class (TBackgroundTaskResponsePackage)
+  private
+    FItem : TFHIRServerConfigSection;
+    FStatus : String;
   public
-    procedure execute; override;
+    constructor Create(item : TFHIRServerConfigSection);
+    destructor Destroy; override;
+    Property Status : String read FStatus write FStatus;
+  end;
+
+  { TTXStatusChecker }
+
+  TTXStatusChecker = class (TBackgroundTaskEngine)
+  public
+    procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
+    function name : String; override;
   end;
 
   { TTXManager }
 
   TTXManager = class (TAdminManager)
   private
+    FStatusTask : integer;
     function source(item: TFHIRServerConfigSection): String;
     function status(item: TFHIRServerConfigSection): String;
+    procedure doStatusCallback(id : integer; response : TBackgroundTaskResponsePackage);
 
     procedure importNDC(item: TFHIRServerConfigSection);
     procedure importRxNorm(item: TFHIRServerConfigSection);
   public
+    constructor Create; override;
+
     function canSort : boolean; override;
     function allowedOperations(item : TFHIRServerConfigSection) : TNodeOperationSet; override;
     function loadList : boolean; override;
@@ -64,32 +81,60 @@ type
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
-    procedure Timer; override;
+    procedure buildMenu; override;
 
     function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
     function AddItem(mode : String) : TFHIRServerConfigSection; override;
     procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    procedure ExecuteItem(item : TFHIRServerConfigSection; mode : String); override;
+    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
-  { TEndPointCheck }
+  { TEPStatusCheckRequest }
 
-  TEndPointCheck = class (TAdminThread)
+  TEPStatusCheckRequest = class (TBackgroundTaskRequestPackage)
+  private
+    Fitem : TFHIRServerConfigSection;
   public
-    procedure execute; override;
+    constructor Create(item : TFHIRServerConfigSection);
+    destructor Destroy; override;
+  end;
+
+  { TEPStatusCheckResponse }
+
+  TEPStatusCheckResponse = class (TBackgroundTaskResponsePackage)
+  private
+  private
+    FItem : TFHIRServerConfigSection;
+    FStatus : String;
+  public
+    constructor Create(item : TFHIRServerConfigSection);
+    destructor Destroy; override;
+    Property Status : String read FStatus write FStatus;
+  end;
+
+  { TEPStatusChecker }
+
+  TEPStatusChecker = class (TBackgroundTaskEngine)
+  public
+    procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
+    function name : String; override;
   end;
 
   { TEndPointManager }
 
   TEndPointManager = class (TAdminManager)
   private
+    FStatusTask : integer;
     function status(item: TFHIRServerConfigSection): String;
+    procedure doStatusCallback(id : integer; response : TBackgroundTaskResponsePackage);
   public
+    constructor Create; override;
+
     function canSort : boolean; override;
     function allowedOperations(item : TFHIRServerConfigSection) : TNodeOperationSet; override;
     function loadList : boolean; override;
 
-    procedure Timer; override;
+    procedure buildMenu; override;
 
     function getCellText(item : TFHIRServerConfigSection; col : integer) : String; override;
     function getCellColors(item : TFHIRServerConfigSection; col : integer; var fore, back : TColor) : boolean; override;
@@ -99,7 +144,7 @@ type
     function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
     function AddItem(mode : String) : TFHIRServerConfigSection; override;
     procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    procedure ExecuteItem(item : TFHIRServerConfigSection; mode : String); override;
+    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
   { TIdentityProviderManager }
@@ -125,45 +170,74 @@ implementation
 uses
   console_form;
 
-{ TTxCheck }
+{ TEPStatusChecker }
 
-procedure TTxCheck.execute;
+procedure TEPStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
+begin
+  (response as TEPStatusCheckResponse).status := checkDatabaseInstall((request as TEPStatusCheckRequest).Fitem);
+end;
+
+function TEPStatusChecker.name: String;
+begin
+  result := 'End-point Status Checker';
+end;
+
+{ TEPStatusCheckResponse }
+
+constructor TEPStatusCheckResponse.Create(item: TFHIRServerConfigSection);
+begin
+  inherited Create;
+  FItem := item;
+end;
+
+destructor TEPStatusCheckResponse.Destroy;
+begin
+  FItem.Free;
+  inherited Destroy;
+end;
+
+{ TTXStatusChecker }
+
+procedure TTXStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 var
+  item : TFHIRServerConfigSection;
+  s : String;
   db : TFDBManager;
   conn : TFDBConnection;
 begin
-  if (FItem['source'].value <> '') then
+  item := (request as TTXStatusCheckRequest).Fitem;
+  if (item['source'].value <> '') then
   begin
-    if not FileExists(FItem['source'].value) then
-      FItem.threadStatus := 'File Not Found'
-    else if FItem['type'].value = 'snomed' then
-      FItem.threadStatus := TSnomedServices.checkFile(FItem['source'].value)
-    else if FItem['type'].value = 'loinc' then
-      FItem.threadStatus := TLoincServices.checkFile(FItem['source'].value)
-    else if FItem['type'].value = 'ucum' then
-      FItem.threadStatus := TUcumServices.checkFile(FItem['source'].value)
-    else if FItem['type'].value = 'lang' then
-      FItem.threadStatus := TIETFLanguageCodeServices.checkFile(FItem['source'].value)
-    else if FItem['type'].value = 'icd10' then
-      FItem.threadStatus := TICD10Provider.checkFile(FItem['source'].value)
+    if not FileExists(item['source'].value) then
+      s := 'File Not Found'
+    else if item['type'].value = 'snomed' then
+      s := TSnomedServices.checkFile(item['source'].value)
+    else if item['type'].value = 'loinc' then
+      s := TLoincServices.checkFile(item['source'].value)
+    else if item['type'].value = 'ucum' then
+      s := TUcumServices.checkFile(item['source'].value)
+    else if item['type'].value = 'lang' then
+      s := TIETFLanguageCodeServices.checkFile(item['source'].value)
+    else if item['type'].value = 'icd10' then
+      s := TICD10Provider.checkFile(item['source'].value)
     else
-      FItem.threadStatus := 'to do';
+      s := 'to do';
   end
   else
   begin
     try
-      db := connectToDatabase(FItem);
+      db := connectToDatabase(item);
       try
         conn := db.GetConnection('check');
         try
-          if FItem['type'].value = 'rxnorm' then
-            FItem.threadStatus := TRxNormServices.checkDB(conn)
-          else if FItem['type'].value = 'ndc' then
-            FItem.threadStatus := TNDCServices.checkDB(conn)
-          else if FItem['type'].value = 'unii' then
-            FItem.threadStatus := TUNIIServices.checkDB(conn)
+          if item['type'].value = 'rxnorm' then
+            s := TRxNormServices.checkDB(conn)
+          else if item['type'].value = 'ndc' then
+            s := TNDCServices.checkDB(conn)
+          else if item['type'].value = 'unii' then
+            s := TUNIIServices.checkDB(conn)
           else
-            FItem.threadStatus := 'to do';
+            s := 'to do';
           conn.release;
         except
           on e : Exception do
@@ -177,20 +251,57 @@ begin
       end;
     except
       on e: Exception do
-        FItem.threadStatus := 'Error: '+e.message;
+        s := 'Error: '+e.message;
     end;
   end;
-  Stop;
+  (response as TTXStatusCheckResponse).Status := s;
 end;
 
-{ TAdminThread }
-
-constructor TAdminThread.create(manager: TAdminManager; item: TFHIRServerConfigSection);
+function TTXStatusChecker.name: String;
 begin
-  inherited create;
-  FManager := manager;
+  result := 'Terminology Status Checker';
+end;
+
+{ TTXStatusCheckResponse }
+
+constructor TTXStatusCheckResponse.Create(item: TFHIRServerConfigSection);
+begin
+  Inherited Create;
   FItem := item;
-  AutoFree := true;
+end;
+
+destructor TTXStatusCheckResponse.Destroy;
+begin
+  FItem.Free;
+  inherited Destroy;
+end;
+
+{ TTXStatusCheckRequest }
+
+constructor TTXStatusCheckRequest.Create(item: TFHIRServerConfigSection);
+begin
+  inherited Create;
+  FItem := item;
+end;
+
+destructor TTXStatusCheckRequest.Destroy;
+begin
+  FItem.Free;
+  inherited Destroy;
+end;
+
+{ TEPStatusCheckRequest }
+
+constructor TEPStatusCheckRequest.Create(item: TFHIRServerConfigSection);
+begin
+  inherited Create;
+  Fitem := item;
+end;
+
+destructor TEPStatusCheckRequest.Destroy;
+begin
+  FItem.Free;
+  inherited;
 end;
 
 { TAdminManager }
@@ -300,16 +411,6 @@ begin
   FFile.Save;
 end;
 
-
-{ TEndPointCheck }
-
-procedure TEndPointCheck.execute;
-begin
-  FItem.threadStatus := checkDatabaseInstall(FItem);
-  Stop;
-end;
-
-
 { TEndPointManager }
 
 function TEndPointManager.status(item: TFHIRServerConfigSection): String;
@@ -319,9 +420,24 @@ begin
   else if (item.status = '') then
   begin
     item.status := 'Checking...';
-    TEndPointCheck.create(self, item).Start;
+    GBackgroundTasks.queueTask(FStatusTask, TEPStatusCheckRequest.create(item.clone), TEPStatusCheckResponse.create(item.link), doStatusCallback);
   end;
   result := item.status;
+end;
+
+procedure TEndPointManager.doStatusCallback(id: integer; response: TBackgroundTaskResponsePackage);
+var
+  resp : TEPStatusCheckResponse;
+begin
+  resp := response as TEPStatusCheckResponse;
+  resp.FItem.status := resp.Status; // we're in the right thread for this now
+  refresh(resp.FItem);
+end;
+
+constructor TEndPointManager.Create;
+begin
+  inherited Create;
+  FStatusTask := GBackgroundTasks.registerTaskEngine(TEPStatusChecker.create);
 end;
 
 function TEndPointManager.canSort: boolean;
@@ -333,8 +449,10 @@ function TEndPointManager.allowedOperations(item: TFHIRServerConfigSection): TNo
 begin
   if (item = nil) then
     result := [opAdd]
+  else if hasDatabase(item['type'].value) then
+    result := [opAdd, opEdit, opDelete, opExecute]
   else
-    result := [opAdd, opEdit, opDelete, opExecute];
+    result := [opAdd, opEdit, opDelete];
 end;
 
 function TEndPointManager.loadList: boolean;
@@ -347,26 +465,12 @@ begin
       Data.Add(sect.link);
 end;
 
-procedure TEndPointManager.Timer;
-var
-  item : TFHIRServerConfigSection;
-  wantLoad : boolean;
+procedure TEndPointManager.buildMenu;
 begin
-  if FFile = nil then
-    exit;
-
-  wantLoad := false;
-  for item in FFile['endpoints'].sections do
-  begin
-    if item.threadStatus <> '' then
-    begin
-      item.status := item.threadStatus;
-      item.threadStatus := '';
-      wantLoad := true;
-    end;
-  end;
-  if wantLoad then
-    doLoad;
+  registerMenuEntry('Add', 11, copAdd);
+  registerMenuEntry('Delete', 12, copDelete);
+  registerMenuEntry('Edit', 11, copEdit);
+  registerMenuEntry('Install', 15, copExecute);
 end;
 
 function TEndPointManager.getCellText(item: TFHIRServerConfigSection; col: integer): String;
@@ -377,7 +481,10 @@ begin
     2: result := item['version'].value;
     3: result := BoolToStr(item['active'].valueBool, 'yes', 'no');
     4: result := item['path'].value;
-    5: result := describeDatabase(item);
+    5: if hasDatabase(item['type'].value) then
+         result := describeDatabase(item)
+       else
+         result := '';
     6: result := status(item);
   end;
 end;
@@ -408,7 +515,7 @@ begin
     2: result := CompareStr(left['version'].value, right['version'].value);
     3: result := CompareStr(BoolToStr(left['active'].valueBool, 'yes', 'no'), BoolToStr(right['active'].valueBool, 'yes', 'no'));
     4: result := CompareStr(left['path'].value, right['path'].value);
-    5: result := CompareStr(left['database'].value, right['database'].value);
+    5: result := CompareStr(describeDatabase(left), describeDatabase(right));
     6: result := CompareStr(status(left), status(right));
   else
     result := inherited compareItem(left, right, col);
@@ -458,11 +565,11 @@ begin
   FFile.Save;
 end;
 
-procedure TEndPointManager.ExecuteItem(item: TFHIRServerConfigSection; mode : String);
+function TEndPointManager.ExecuteItem(item: TFHIRServerConfigSection; mode : String) : boolean;
 begin
-  InstallEndPoint(list.Owner, FFile, item);
-  item.status := '';
-  doLoad;
+  result := InstallEndPoint(list.Owner, FFile, item);
+  if result then
+    item.status := '';
 end;
 
 { TTXManager }
@@ -505,9 +612,18 @@ begin
   if (item.status = '') then
   begin
     item.status := 'Checking ...';
-    TTxCheck.create(self, item).Start;
+    GBackgroundTasks.queueTask(FStatusTask, TTXStatusCheckRequest.create(item.clone), TTXStatusCheckResponse.create(item.link), doStatusCallback);
   end;
   result := item.status;
+end;
+
+procedure TTXManager.doStatusCallback(id: integer; response: TBackgroundTaskResponsePackage);
+var
+  resp : TTXStatusCheckResponse;
+begin
+  resp := response as TTXStatusCheckResponse;
+  resp.FItem.status := resp.Status; // we're in the right thread for this now
+  doLoad;
 end;
 
 procedure TTXManager.importNDC(item: TFHIRServerConfigSection);
@@ -594,6 +710,12 @@ begin
   end;
 end;
 
+constructor TTXManager.Create;
+begin
+  inherited Create;
+  FStatusTask := GBackgroundTasks.registerTaskEngine(TTXStatusChecker.create);
+end;
+
 function TTXManager.getCellText(item: TFHIRServerConfigSection; col: integer): String;
 begin
   case col of
@@ -640,25 +762,12 @@ begin
   end;
 end;
 
-procedure TTXManager.Timer;
-var
-  item : TFHIRServerConfigSection;
-  wantLoad : boolean;
+procedure TTXManager.buildMenu;
 begin
-  if FFile = nil then
-    exit;
-  wantLoad := false;
-  for item in FFile['terminologies'].sections do
-  begin
-    if item.threadStatus <> '' then
-    begin
-      item.status := item.threadStatus;
-      item.threadStatus := '';
-      wantLoad := true;
-    end;
-  end;
-  if wantLoad then
-    doLoad;
+  registerMenuEntry('Add', 11, copAdd);
+  registerMenuEntry('Delete', 12, copDelete);
+  registerMenuEntry('Edit', 11, copEdit);
+  registerMenuEntry('Import', 13, copExecute);
 end;
 
 function TTXManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
@@ -703,8 +812,9 @@ begin
   FFile.Save;
 end;
 
-procedure TTXManager.ExecuteItem(item: TFHIRServerConfigSection; mode: String);
+function TTXManager.ExecuteItem(item: TFHIRServerConfigSection; mode: String) : boolean;
 begin
+  result := true;
   if (item['type'].value = 'ndc') then
     importNDC(item)
   else if (item['type'].value = 'rxnorm') then

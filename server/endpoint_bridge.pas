@@ -29,6 +29,21 @@ TFHIROperationEngine
   - you also must override the transaction methods, though you are not required to
   - do anything with them
 
+Bridge Database
+
+The bridge database is very simple:
+
+Patient:
+  PatientKey int Pimary Key
+  VersionId int
+  LastModified dateTime
+  Active  int (0 or 1)
+  MRN String[20]
+  Surname String[60]
+  First String[60]
+  Middle String[60]
+  Gender  String[1]
+  Birthdate date
 }
 
 interface
@@ -36,7 +51,7 @@ interface
 Uses
   SysUtils, StrUtils, Classes, IniFiles,
   fsl_base, fsl_utilities, fsl_collections, fsl_threads, fsl_stream, fsl_json, fsl_http,
-  fdb_manager,
+  fdb_manager, fdb_dialects,
   ftx_ucum_services,
   fhir_objects,  fhir_validator, fhir_factory, fhir_pathengine, fhir_utilities, fhir_common, fsl_scim,
 
@@ -57,20 +72,6 @@ Const
 Type
   TBridgeEndPoint = class;
 
-  TCSVData = class (TFslObject)
-  private
-    FRows : TFslList<TFslStringList>;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-
-    procedure load(path : String; names : array of String);
-    procedure save(path : String);
-
-    function GetById(id : String) : TFslStringList;
-    function addRow(data : TFslStringList) : integer;
-  end;
-
  TExampleServerFactory = class (TFHIRServerFactory)
   public
     function makeIndexes : TFHIRIndexBuilder; override;
@@ -84,29 +85,16 @@ Type
 
   TExampleFhirServerStorage = class;
 
-  TExampleServerData = class (TFslObject)
-  private
-    FLock : TFslLock;
-    FPath : String;
-    FPatients : TCSVData;
-    FObservations : TCSVData;
-  public
-    constructor Create(path : String);
-    destructor Destroy; override;
-    function link : TExampleServerData;
-    procedure save;
-  end;
-
   TExampleFHIROperationEngine = class (TFHIROperationEngine)
   private
-    FData : TExampleServerData;
+    FConnection : TFDBConnection;
 
-    function dataFromPatient(pat : TFHIRPatient) : TFslStringList;
-    function patientFromData(data : TFslStringList) : TFHIRPatient;
+    function loadPatient(key : integer) : TFHIRPatient;
 
     function patientCreate(request: TFHIRRequest; response : TFHIRResponse) : String;
     procedure patientUpdate(request: TFHIRRequest; response : TFHIRResponse);
     function patientRead(request: TFHIRRequest; response : TFHIRResponse) : boolean;
+    function CreatePatientRecord(key: integer; pat: TFHIRPatient): TFHIRPatient;
   protected
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
@@ -117,7 +105,7 @@ Type
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
-    constructor Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Data : TExampleServerData; const lang : THTTPLanguages);
+    constructor Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; const lang : THTTPLanguages);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -129,7 +117,7 @@ Type
 
   TExampleFhirServerStorage = class (TFHIRStorageService)
   private
-    FData : TExampleServerData;
+    FDataBase : TFDBManager;
     FServerContext : TFHIRServerContext; // not linked
   protected
     function GetTotalResourceCount: integer; override;
@@ -205,7 +193,6 @@ Type
 
   TBridgeEndPoint = class (TStorageEndPoint)
   private
-    FData : TExampleServerData;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
     destructor Destroy; override;
@@ -232,19 +219,12 @@ end;
 
 destructor TBridgeEndPoint.Destroy;
 begin
-  FData.Free;
   inherited;
-end;
-
-procedure TBridgeEndPoint.InstallDatabase;
-begin
-  raise Exception.Create('Todo'); // when we swtich to db
 end;
 
 procedure TBridgeEndPoint.internalThread;
 begin
-  inherited;
-
+  // nothing
 end;
 
 procedure TBridgeEndPoint.Load;
@@ -255,10 +235,9 @@ begin
   s := Config['data-path'].value;
   if (s = '') then
     s := SystemTemp;
-  FData := TExampleServerData.Create(s);
   store := TExampleFhirServerStorage.create(TFHIRFactoryR3.create);
+  store.FDataBase := Database.Link;
   FServerContext := TFHIRServerContext.Create(Config.name, store, TExampleServerFactory.create);
-  store.FData := FData.link;
   store.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TExampleFHIRUserProvider.Create;
@@ -267,12 +246,69 @@ end;
 
 procedure TBridgeEndPoint.LoadPackages(plist: String);
 begin
-  raise Exception.Create('This is not supported the bridge end point');
+  raise Exception.Create('This is not supported by the bridge end point');
+end;
+
+procedure TBridgeEndPoint.InstallDatabase;
+var
+  conn : TFDBConnection;
+  meta : TFDBMetaData;
+begin
+  conn := Database.GetConnection('install');
+  try
+    conn.ExecSQL('CREATE TABLE Config ('+#13#10+
+       ' ConfigKey '+DBKeyType(conn.owner.platform)+' '+ColCanBeNull(conn.owner.platform, False)+',  '+#13#10+
+       ' Value nchar(200) '+ColCanBeNull(conn.owner.platform, False)+') '+CreateTableInfo(conn.owner.platform));
+    conn.ExecSQL('Create INDEX SK_Config_ConfigKey ON Config (ConfigKey)');
+    conn.ExecSQL('Insert into Config (ConfigKey, Value) values (100, ''bridge||Installed '+TFslDateTime.makeLocal.toString+''')');
+
+    conn.ExecSQL('CREATE TABLE Patients ('+#13#10+
+       ' PatientKey '+DBKeyType(conn.owner.platform)+' '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' VersionId int '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' LastModified '+DBDateTimeType(conn.owner.platform)+' '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' Active int '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' MRN nchar(20) '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' Surname nchar(60) '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' First nchar(60) '+ColCanBeNull(conn.owner.platform, False)+','+#13#10+
+       ' Middle nchar(60) '+ColCanBeNull(conn.owner.platform, True)+','+#13#10+
+       ' Gender int '+ColCanBeNull(conn.owner.platform, True)+','+#13#10+
+       ' Birthdate '+DBDateTimeType(conn.owner.platform)+' '+ColCanBeNull(conn.owner.platform, True)+#13#10+
+       PrimaryKeyType(conn.owner.Platform, 'PK_Patients', 'PatientKey')+') '+CreateTableInfo(conn.owner.platform));
+    conn.ExecSQL('Create INDEX PK_MRN ON Patients (MRN)');
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TBridgeEndPoint.UninstallDatabase;
+var
+  conn : TFDBConnection;
+  meta : TFDBMetaData;
 begin
-  raise Exception.Create('Todo'); // when we swtich to db
+  conn := Database.GetConnection('uninstall');
+  try
+    meta := conn.FetchMetaData;
+    try
+      if meta.HasTable('Patients') then
+        conn.DropTable('Patients');
+      if meta.HasTable('Config') then
+        conn.DropTable('Config');
+    finally
+      meta.Free;
+    end;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TBridgeEndPoint.Unload;
@@ -280,8 +316,6 @@ begin
   telnet.removeContext(FServerContext);
   FServerContext.Free;
   FServerContext := nil;
-  FData.Free;
-  FData := nil;
 end;
 
 procedure TBridgeEndPoint.updateAdminPassword;
@@ -303,146 +337,27 @@ begin
   result := 'Bridge Server using '+describeDatabase(Config);
 end;
 
-{ TCSVData }
-
-constructor TCSVData.Create;
-begin
-  inherited create;
-  FRows := TFslList<TFslStringList>.create;
-end;
-
-destructor TCSVData.Destroy;
-begin
-  FRows.Free;
-  inherited;
-end;
-
-procedure TCSVData.load(path: String; names : array of String);
-var
-  csv : TFslCSVExtractor;
-  f : TFslFile;
-  ts : TFslStringList;
-  s : String;
-begin
-  if FileExists(path) then
-  begin
-    f := TFslFile.Create(path, fmOpenRead);
-    try
-      csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
-      try
-        while csv.More do
-        begin
-         ts := TFslStringList.Create;
-         FRows.Add(ts);
-         csv.ConsumeEntries(ts);
-         csv.ConsumeLine;
-        end;
-      finally
-        csv.Free;
-      end;
-    finally
-      f.free;
-    end;
-  end
-  else
-  begin
-    ts := TFslStringList.Create;
-    FRows.Add(ts);
-    for s in names do
-      ts.Add(s);
-  end;
-end;
-
-procedure TCSVData.save(path: String);
-var
-  csv : TFslCSVFormatter;
-  f : TFslFile;
-  ts : TFslStringList;
-begin
-  f := TFslFile.Create(path, fmCreate);
-  try
-    csv := TFslCSVFormatter.Create;
-    try
-      csv.Stream := f.Link;
-      csv.Encoding := TEncoding.UTF8;
-      for ts in FRows do
-      begin
-        csv.ProduceEntryStringList(ts);
-        csv.ProduceNewLine;
-      end;
-    finally
-      csv.Free;
-    end;
-  finally
-    f.free;
-  end;
-end;
-
-function TCSVData.addRow(data: TFslStringList): integer;
-begin
-  result := FRows.Count;
-  FRows.Add(data.Link);
-end;
-
-function TCSVData.GetById(id: String): TFslStringList;
-var
-  index : integer;
-begin
-  index := StrToIntDef(id, -1);
-  if (index > 0) and (index < FRows.Count) then
-    result := FRows[index].Link
-  else
-    result := nil;
-end;
-
-{ TExampleServerData }
-
-constructor TExampleServerData.Create(path: String);
-begin
-  inherited Create;
-  FLock := TFslLock.Create;
-  FPath := path;
-  FPatients := TCSVData.Create;
-  FObservations := TCSVData.Create;
-  FPatients.load(fsl_utilities.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
-  FObservations.load(fsl_utilities.Path([path, 'observations.csv']), ['Version', 'LastModified']);
-end;
-
-destructor TExampleServerData.Destroy;
-begin
-  FPatients.free;
-  FObservations.free;
-  FLock.Free;
-  inherited;
-end;
-
-function TExampleServerData.link: TExampleServerData;
-begin
-  result := TExampleServerData(inherited link);
-end;
-
-procedure TExampleServerData.save;
-begin
-  FPatients.save(fsl_utilities.Path([Fpath, 'patients.csv']));
-  FObservations.save(fsl_utilities.Path([Fpath, 'observations.csv']));
-end;
-
 { TExampleFHIROperationEngine }
 
-constructor TExampleFHIROperationEngine.create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Data: TExampleServerData; const lang : THTTPLanguages);
+constructor TExampleFHIROperationEngine.create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; const lang : THTTPLanguages);
 begin
   inherited Create(storage, serverContext, lang);
-  FData := data;
+  FConnection := Conn;
 end;
 
 procedure TExampleFHIROperationEngine.StartTransaction;
 begin
-  FData.FLock.Lock();
+  FConnection.StartTransact;
+end;
+
+procedure TExampleFHIROperationEngine.CommitTransaction;
+begin
+  FConnection.Commit;
 end;
 
 procedure TExampleFHIROperationEngine.RollbackTransaction;
 begin
-  FData.FLock.Unlock;
+  FConnection.Rollback;
 end;
 
 procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; httpCode: Integer; name, message: String; patients : TArray<String>);
@@ -453,11 +368,6 @@ end;
 procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patients : TArray<String>);
 begin
   raise EFslException.Create('Not Implemented');
-end;
-
-procedure TExampleFHIROperationEngine.CommitTransaction;
-begin
-  FData.FLock.Unlock;
 end;
 
 function TExampleFHIROperationEngine.ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
@@ -496,38 +406,48 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+function TExampleFHIROperationEngine.loadPatient(key: integer): TFHIRPatient;
+begin
+  FConnection.SQL := 'Select * from Patients where PatientKey = '+inttostr(key);
+  FConnection.prepare;
+  FConnection.Execute;
+  if FConnection.FetchNext then
+  begin
+    result := TFHIRPatient.Create;
+    try
+      result.id := inttostr(key);
+      result.meta := TFHIRMeta.Create;
+      result.meta.versionId := FConnection.ColStringByName['VersionId'];
+      result.meta.lastUpdated := FConnection.ColDateTimeExByName['LastModified'];
+      with result.identifierList.Append do
+      begin
+        system := SYSTEM_ID;
+        value := FConnection.ColStringByName['MRN'];
+      end;
+      with result.nameList.Append do
+      begin
+        family := FConnection.ColStringByName['Surname'];
+        givenList.add(FConnection.ColStringByName['First']);
+        if (FConnection.ColStringByName['Middle'] <> '') then
+          givenList.add(FConnection.ColStringByName['Middle']);
+      end;
+      result.gender := TFhirAdministrativeGenderEnum(FConnection.ColIntegerByName['Gender']);
+      if not FConnection.ColNullByName['Birthdate'] then
+        result.birthDate := FConnection.ColDateTimeExByName['Birthdate'];
+      result.active := FConnection.ColIntegerByName['Active'] = 1;
+      result.Link;
+    finally
+      result.Free;
+    end;
+  end
+  else
+    result := nil;
+  FConnection.Terminate;
+end;
+
 function TExampleFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
   raise EFslException.Create('Not Implemented');
-end;
-
-function TExampleFHIROperationEngine.patientFromData(data: TFslStringList): TFHIRPatient;
-begin
-  result := TFHIRPatient.Create;
-  try
-    result.meta := TFHIRMeta.Create;
-    result.meta.versionId := data[0];
-    result.meta.lastUpdated := TFslDateTime.fromHL7(data[1]);
-    with result.identifierList.Append do
-    begin
-      system := SYSTEM_ID;
-      value := data[2];
-    end;
-    with result.nameList.Append do
-    begin
-      family := data[3];
-      givenList.add(data[4]);
-      if (data[5] <> '') then
-        givenList.add(data[5]);
-    end;
-    result.gender := TFhirAdministrativeGenderEnum(StrToIntDef(data[6], 0));
-    if (data[7] <> '') then
-      result.birthDate := TFslDateTime.fromHL7(data[7]);
-    result.active := data[8] = '1';
-    result.Link;
-  finally
-    result.Free;
-  end;
 end;
 
 function TExampleFHIROperationEngine.patientIds(request: TFHIRRequest; res: TFHIRResourceV): TArray<String>;
@@ -535,104 +455,136 @@ begin
   result := nil;
 end;
 
-function TExampleFHIROperationEngine.dataFromPatient(pat: TFHIRPatient): TFslStringList;
+function TExampleFHIROperationEngine.patientCreate(request: TFHIRRequest; response: TFHIRResponse) : String;
+var
+  pat : TFHIRPatient;
+begin
+  pat := request.Resource as TFHIRPatient;
+  response.Resource := CreatePatientRecord(0, pat);
+  result := response.Resource.id;
+  response.id := result;
+  response.HTTPCode := 201;
+  response.Message := 'Created';
+  response.Location := request.baseUrl+'Patient/'+result+'/_history/1';
+  response.LastModifiedDate := TFHIRPatient(response.Resource).meta.lastUpdated.DateTime;
+end;
+
+function TExampleFHIROperationEngine.CreatePatientRecord(key : integer; pat : TFHIRPatient) : TFHIRPatient;
 var
   id : TFhirIdentifier;
 begin
-  result := TFslStringList.Create;
-  try
-    result.add(pat.meta.versionId);
-    result.add(pat.meta.lastUpdated.ToHL7);
+  id := pat.identifierList.BySystem(SYSTEM_ID);
+  if (id = nil) or (id.value = '') then
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A MRN (system = "http://example.org/mrn-id") is required', lang);
+  if FConnection.CountSQL('Select count(*) from Patients where MRN = '+id.value) > 0 then
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'Duplicate MRNs are not allowed ('+id.value+')', lang);
+  if (pat.nameList.IsEmpty) then
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A name is required', lang);
+  if (pat.nameList[0].family = '') then
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A family name is required', lang);
+  if (pat.nameList[0].givenList.isEmpty) then
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A given name is required', lang);
 
-    id := pat.identifierList.BySystem(SYSTEM_ID);
-    if (id = nil) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A MRN is required', lang);
-    result.Add(id.value);
+  if (key = 0) then
+    key := FConnection.CountSQL('Select Max(PatientKey) from Patients')+1;
 
-    if (pat.nameList.IsEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A name is required', lang);
-    if (pat.nameList[0].family = '') then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A family name is required', lang);
-    if (pat.nameList[0].givenList.isEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A given name is required', lang);
-    result.Add(pat.nameList[0].family);
-    result.Add(pat.nameList[0].givenList[0].value);
-    if (pat.nameList[0].givenList.Count > 1) then
-      result.Add(pat.nameList[0].givenList[1].value);
-    result.add(inttostr(ord(pat.gender)));
-    if pat.birthDate.notNull then
-      result.add(pat.birthDate.ToHL7);
-    if (pat.activeElement = nil) or pat.active then
-      result.add('1')
-    else
-      result.add('0');
-    result.Link;
-  finally
-    result.Free;
-  end;
+  FConnection.sql := 'insert into Patients (PatientKey, VersionId, LastModified, Active, MRN, Surname, First, Middle, Gender, Birthdate) '
+                                  +'values (:pk,        :v,      :lm,          :a,    :mrn, :s, :f, :m, :g, :b)';
+  FConnection.Prepare;
+  FConnection.BindInteger('pk', key);
+  FConnection.BindInteger('v', 1);
+  FConnection.BindDateTimeEx('lm', TFslDateTime.makeUTC);
+  FConnection.BindIntegerFromBoolean('a', (pat.activeElement = nil) or pat.active);
+  FConnection.BindString('mrn', id.value);
+  FConnection.BindString('s', pat.nameList[0].family);
+  FConnection.BindString('f', pat.nameList[0].givenList[0].value);
+  if (pat.nameList[0].givenList.Count > 1) then
+    FConnection.BindString('m', pat.nameList[0].givenList[1].value)
+  else
+    FConnection.BindNull('m');
+  FConnection.BindInteger('g', ord(pat.gender));
+  if pat.birthDate.notNull then
+    FConnection.BindDateTimeEx('b', pat.birthDate)
+  else
+    FConnection.BindNull('m');
+  FConnection.Execute;
+  FConnection.Terminate;
 
-end;
-
-function TExampleFHIROperationEngine.patientCreate(request: TFHIRRequest; response: TFHIRResponse) : String;
-var
-  data : TFslStringList;
-  r : TFHIRPatient;
-begin
-  r := request.Resource as TFHIRPatient;
-  if r.meta = nil then
-    r.meta := TFHIRMeta.Create;
-  r.meta.versionId := '1';
-  r.meta.lastUpdated := TFslDateTime.makeUTC;
-
-  data := dataFromPatient(r);
-  try
-    response.Resource := patientFromData(data);
-    result := inttostr(FData.FPatients.addRow(data));
-    response.id := result;
-    response.Resource.id := result;
-    response.versionId := '1';
-    response.HTTPCode := 201;
-    response.Message := 'Created';
-    response.Location := request.baseUrl+request.ResourceName+'/'+result+'/_history/1';
-    response.LastModifiedDate := TFHIRPatient(response.Resource).meta.lastUpdated.DateTime;
-  finally
-    data.Free;
-  end;
+  result := loadPatient(key);
 end;
 
 procedure TExampleFHIROperationEngine.patientUpdate(request: TFHIRRequest; response: TFHIRResponse);
 var
-  odata, ndata : TFslStringList;
-  r : TFHIRPatient;
+  key : integer;
+  patClient, patServer : TFHIRPatient;
+  sql : String;
+  id : TFhirIdentifier;
 begin
-  r := request.Resource as TFHIRPatient;
-  odata := FData.FPatients.GetById(request.Id);
-  if odata = nil then
-    raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, itBusinessRule, 'Cannot update a patient that does not already exist', lang);
+  patClient := request.Resource as TFHIRPatient;
+
+  id := patClient.identifierList.BySystem(SYSTEM_ID);
+
+  if not StringIsInteger32(patClient.id) then
+    raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'Paitent ID must be a 32bit integer', lang);
+  key := StrToInt(patClient.id);
+
+  patServer := nil;
   try
-    if r.meta = nil then
-      r.meta := TFHIRMeta.Create;
-    r.meta.versionId := inttostr(StrToInt(odata[0])+1);
-    r.meta.lastUpdated := TFslDateTime.makeUTC;
-
-    ndata := dataFromPatient(request.Resource as TFHIRPatient);
-    try
-      // can't change MRN
-      if odata[2] <> ndata[2] then
-        raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, itBusinessRule, 'Cannot change a patient''s MRN', lang);
-
-      response.Resource := patientFromData(ndata);
-      response.Id := request.Id;
-      response.versionId := ndata[0];
-      response.HTTPCode := 200;
-      response.Message := 'OK';
-      response.Location := request.baseUrl+request.ResourceName+'/'+request.id+'/_history/'+response.versionId;
-      response.LastModifiedDate := TFHIRPatient(response.Resource).meta.lastUpdated.DateTime;
-    finally
-      ndata.Free;
+    // upsert support
+    if FConnection.CountSQL('Select count(PatientKey) from Patients where PatientKey = '+inttostr(key)) = 0 then
+      patServer := CreatePatientRecord(key, patClient)
+    else if (id <> nil) and (FConnection.Lookup('Patients', 'PatientKey', patClient.id, 'MRN', '$$') <> id.value) then
+      raise ERestfulException.Create('patientUpdate', 422, itRequired, 'The Patient''s MRN (system = "http://example.org/mrn-id") cannot be changed once created', lang)
+    else
+    begin
+      sql := 'update Patients set VersionId = VersionId + 1, LastModified = :lm';
+      if patClient.activeElement <> nil then
+        CommaAdd(sql, 'Active= :a');
+      if patClient.nameList.Count > 0 then
+      begin
+        if patClient.nameList[0].family <> '' then
+           CommaAdd(sql, 'Surname = :s');
+        if patClient.nameList[0].givenList.count > 0 then
+           CommaAdd(sql, 'First =:f');
+        if patClient.nameList[0].givenList.count > 1 then
+           CommaAdd(sql, 'Middle = :m');
+      end;
+      if patClient.genderElement <> nil then
+        CommaAdd(sql, 'Gender = :g');
+      if patClient.birthDate.notNull then
+        CommaAdd(sql, 'Birthdate = :b');
+      FConnection.SQL := sql+' where PatientKey = '+inttostr(key);
+      FConnection.Prepare;
+      FConnection.BindDateTimeEx('lm', TFslDateTime.makeUTC);
+      if patClient.activeElement <> nil then
+        FConnection.BindIntegerFromBoolean('a', patClient.active);
+      if patClient.nameList.Count > 0 then
+      begin
+        if patClient.nameList[0].family <> '' then
+          FConnection.BindString('s', patClient.nameList[0].family);
+        if patClient.nameList[0].givenList.count > 0 then
+          FConnection.BindString('f', patClient.nameList[0].givenList[0].value);
+        if patClient.nameList[0].givenList.count > 1 then
+          FConnection.BindString('m', patClient.nameList[0].givenList[1].value)
+      end;
+      if patClient.genderElement <> nil then
+        FConnection.BindInteger('g', ord(patClient.gender));
+      if patClient.birthDate.notNull then
+        FConnection.BindDateTimeEx('b', patClient.birthDate);
+      FConnection.Execute;
+      FConnection.Terminate;
+      patServer := loadPatient(key);
     end;
+
+    response.Resource := patServer.Link;
+    response.Id := request.Id;
+    response.versionId := patServer.meta.versionId;
+    response.LastModifiedDate := patServer.meta.lastUpdated.DateTime;
+    response.HTTPCode := 200;
+    response.Message := 'OK';
+    response.Location := request.baseUrl+'Patient/'+request.id+'/_history/'+response.versionId;
   finally
-    odata.Free;
+    patServer.Free;
   end;
 end;
 
@@ -643,26 +595,31 @@ end;
 
 function TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
-  data : TFslStringList;
+  pat : TFhirPatient;
 begin
   result := false;
-  data := FData.FPatients.GetById(request.Id);
-  if data <> nil then
-  begin
-    try
-      response.HTTPCode := 200;
-      response.Message := 'OK';
-      response.Resource := patientFromData(data);
-      result := true;
-    finally
-      data.Free;
-    end;
-  end
-  else
+  if not StringIsInteger32(request.Id) then
   begin
     response.HTTPCode := 404;
     response.Message := 'Not Found';
     response.Resource := BuildOperationOutcome(lang, 'not found', IssueTypeUnknown);
+  end
+  else
+  begin
+    pat := loadPatient(StrToInt(request.Id));
+    if pat <> nil then
+    begin
+      response.Resource := pat;
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+      result := true;
+    end
+    else
+    begin
+      response.HTTPCode := 404;
+      response.Message := 'Not Found';
+      response.Resource := BuildOperationOutcome(lang, 'not found', IssueTypeUnknown);
+    end;
   end;
 end;
 
@@ -675,7 +632,6 @@ end;
 
 destructor TExampleFhirServerStorage.Destroy;
 begin
-  FData.Free;
   inherited;
 end;
 
@@ -710,7 +666,7 @@ end;
 
 function TExampleFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
 begin
-  result := TExampleFHIROperationEngine.create(self.Link, FServerContext.link, FData, lang);
+  result := TExampleFHIROperationEngine.create(self.Link, FServerContext.link, FDataBase.GetConnection('operation'), lang);
 end;
 
 
@@ -721,12 +677,7 @@ end;
 
 procedure TExampleFhirServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList);
 begin
-  FData.FLock.Lock();
-  try
-    counts.AddObject('Patient', TObject(FData.FPatients.FRows.Count));
-  finally
-      FData.FLock.Unlock;
-  end;
+  counts.AddObject('Patient', TObject(FDataBase.CountSQL('Select count(*) from Patient', 'count')));
 end;
 
 procedure TExampleFhirServerStorage.FinishRecording;
@@ -746,9 +697,8 @@ end;
 
 function TExampleFhirServerStorage.GetTotalResourceCount: integer;
 begin
-  result := 1;
+  result := FDataBase.CountSQL('Select count(*) from Patient', 'count');
 end;
-
 
 function TExampleFhirServerStorage.Link: TExampleFhirServerStorage;
 begin
@@ -820,8 +770,18 @@ begin
 end;
 
 procedure TExampleFhirServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);
+var
+  eop : TExampleFHIROperationEngine;
 begin
-  op.Free;
+  eop := op as TExampleFHIROperationEngine;
+  try
+    if exception <> nil then
+      eop.FConnection.Error(exception)
+    else
+      eop.FConnection.Release;
+  finally
+    op.Free;
+  end;
 end;
 
 { TExampleFHIRUserProvider }
@@ -927,7 +887,7 @@ end;
 
 function TBridgeWebServer.description: String;
 begin
-  result := 'Bridge, with data in '+FBridge.FData.FPath;
+  result := 'Bridge, with data  '+FBridge.Database.DBDetails;
 end;
 
 function TBridgeWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;

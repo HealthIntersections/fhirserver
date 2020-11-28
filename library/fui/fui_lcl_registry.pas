@@ -28,8 +28,6 @@ type
     function getCellText(item : TFHIRPackageInfo; col : integer) : String; override;
     function compareItem(left, right : TFHIRPackageInfo; col : integer) : integer; override;
     function filterItem(item : TFHIRPackageInfo; s : String) : boolean; override;
-
-    procedure executeItem(item : TFHIRPackageInfo; mode : String); override;
   end;
 
   { TPackageRegistryForm }
@@ -152,11 +150,6 @@ end;
 function TPackageRegistryManager.filterItem(item: TFHIRPackageInfo; s: String): boolean;
 begin
   Result := item.id.ToLower.Contains(s) or item.version.ToLower.Contains(s) or item.canonical.ToLower.Contains(s) or item.description.ToLower.Contains(s);
-end;
-
-procedure TPackageRegistryManager.executeItem(item: TFHIRPackageInfo; mode: String);
-begin
-  inherited executeItem(item, mode);
 end;
 
 { TPackageRegistryForm }

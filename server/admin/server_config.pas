@@ -80,7 +80,6 @@ type
     FProperties: TFslList<TFHIRServerConfigProperty>;
     FSections: TFslList<TFHIRServerConfigSection>;
     FStatus: String;
-    FThreadStatus: String;
     function GetProperty(name : String): TFHIRServerConfigProperty;
     function GetSection(name : String): TFHIRServerConfigSection;
 
@@ -105,7 +104,6 @@ type
     procedure remove(name : String);
 
     property status : String read FStatus write FStatus;
-    property threadStatus : String read FThreadStatus write FThreadStatus;
 
     function getProp(name : String; var value : String) : boolean; overload;
 
@@ -410,7 +408,6 @@ begin
   FSections.Clear;
   FSections.addAll(src.FSections);
   FStatus := '';
-  FThreadStatus := '';
 end;
 
 procedure TFHIRServerConfigSection.remove(name: String);

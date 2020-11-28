@@ -418,20 +418,28 @@ begin
   else if (cmd = 'remount') or (cmd = 'installdb') then
   begin
     Logging.log('Install new database (wipe if necessary)');
-    loadTerminologies;
+    if getCommandLineParam('packages', fn) then
+      loadTerminologies;
     try
       ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
       try
         ep.UninstallDatabase;
+        Logging.log('  .. uninstalled');
         ep.InstallDatabase;
+        Logging.log('  .. installed');
         if getCommandLineParam('packages', fn) then
+        begin
+          Logging.log('  .. installing packages');
           ep.LoadPackages(fn);
+        end;
       finally
         ep.free;
       end;
     finally
       unloadTerminologies;
     end;
+    if hasCommandLineParam('installer') then
+      Logging.log('---completed ok---');
   end
   else if cmd = 'load' then
   begin

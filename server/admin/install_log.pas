@@ -8,15 +8,19 @@ uses
   Process,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ComCtrls,
   ExtCtrls, StdCtrls,
-  fsl_base, fsl_threads;
+  fsl_base, fsl_threads, fsl_utilities;
 
 type
   TInstallProgressForm = class;
 
+  { TInstallerThread }
+
   TInstallerThread = class (TFslThread)
   private
     FForm : TInstallProgressForm;
+    FCarry : String;
     process : TProcess;
+    procedure processOutput(text : String);
   protected
     procedure execute; override;
   end;
@@ -24,19 +28,19 @@ type
   { TInstallProgressForm }
 
   TInstallProgressForm = class(TForm)
-    BitBtn1: TBitBtn;
-    btnDBTest3: TBitBtn;
+    btnCopy: TBitBtn;
+    btnCancel: TBitBtn;
     lblStatus: TLabel;
     Memo1: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     ProgressBar1: TProgressBar;
     Timer1: TTimer;
-    procedure BitBtn1Click(Sender: TObject);
-    procedure btnDBTest3Click(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnCopyClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     FCommand: String;
@@ -81,17 +85,17 @@ begin
   FLock.Free;
 end;
 
-procedure TInstallProgressForm.Button1Click(Sender: TObject);
+procedure TInstallProgressForm.FormShow(Sender: TObject);
 begin
   FThread.Start;
 end;
 
-procedure TInstallProgressForm.BitBtn1Click(Sender: TObject);
+procedure TInstallProgressForm.btnCopyClick(Sender: TObject);
 begin
   Memo1.CopyToClipboard;
 end;
 
-procedure TInstallProgressForm.btnDBTest3Click(Sender: TObject);
+procedure TInstallProgressForm.btnCancelClick(Sender: TObject);
 begin
   if FThread.process <> nil then
     FThread.process.Terminate(0);
@@ -125,9 +129,25 @@ end;
 procedure TInstallProgressForm.log(s: String);
 begin
   Memo1.lines.Add(s);
+  btnCopy.enabled := true;
+  if (s.contains('---completed ok---')) then
+    ModalResult := mrOk;
 end;
 
 { TInstallerThread }
+
+procedure TInstallerThread.processOutput(text : String);
+var
+  curr, s : String;
+begin
+  curr := FCarry + text;
+  while curr.contains(#13#10) do
+  begin
+    StringSplit(curr, #13#10, s, curr);
+    fform.processOutput(s);
+  end;
+  FCarry := curr;
+end;
 
 procedure TInstallerThread.execute;
 var
@@ -135,6 +155,7 @@ var
   Buffer       : TBytes;
   s : String;
 begin
+  fform.lblStatus.caption := 'Getting Ready';
   fform.processOutput('Running Server to do the install...');
   process := TProcess.create(nil);
   try
@@ -144,15 +165,18 @@ begin
     process.Options := [poUsePipes];
     process.ShowWindow := swoHIDE;
     process.Execute;
+    fform.lblStatus.caption := 'Running';
     repeat
       SetLength(Buffer, BUF_SIZE);
       BytesRead := process.Output.Read(Buffer, BUF_SIZE);
-      fform.processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
+      processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
     until BytesRead = 0;
   finally
     process.free;
   end;
   process := nil;
+  fform.lblStatus.caption := 'Finished';
+  fform.btnCancel.caption := 'Close';
   fform.processOutput('Server Process Terminated');
 end;
 

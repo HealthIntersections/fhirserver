@@ -244,17 +244,15 @@ type
     N8: TMenuItem;
     dlgOpen: TOpenDialog;
     dlgConfig: TOpenDialog;
-    PageControl1: TPageControl;
-    PageControl2: TPageControl;
+    pgMain: TPageControl;
+    pgManage: TPageControl;
     Panel1: TPanel;
     Panel17: TPanel;
     Panel18: TPanel;
     Panel29: TPanel;
     Panel30: TPanel;
     Panel33: TPanel;
-    Panel34: TPanel;
     Panel35: TPanel;
-    Panel36: TPanel;
     Panel37: TPanel;
     Panel38: TPanel;
     Panel39: TPanel;
@@ -594,6 +592,7 @@ begin
 
   FTxManager := TTxManager.create;
   FTxManager.Settings := FIni;
+  FTxManager.Images := ImageList1;
   FTxManager.List := lvTx;
   FTxManager.registerControl(btnTxAdd, copAdd);
   FTxManager.registerControl(btnTxDelete, copDelete);
@@ -601,6 +600,7 @@ begin
 
   FEPManager := TEndPointManager.create;
   FEPManager.Settings := FIni;
+  FEPManager.Images := ImageList1;
   FEPManager.List := lvEP;
   FEPManager.registerControl(btnEPAdd, copAdd);
   FEPManager.registerControl(btnEPDelete, copDelete);
@@ -609,6 +609,7 @@ begin
 
   FIDManager := TIdentityProviderManager.create;
   FIDManager.Settings := FIni;
+  FIDManager.Images := ImageList1;
   FIDManager.List := lvID;
   FIDManager.registerControl(btnIDAdd, copAdd);
   FIDManager.registerControl(btnIDDelete, copDelete);
@@ -640,7 +641,20 @@ begin
 end;
 
 procedure TMainConsoleForm.FormShow(Sender: TObject);
+var
+  fn : string;
 begin
+  if getCommandLineParam('installer', fn) then
+  begin
+    edtConfigFile.text := fn;
+    edtConfigFileChange(self);
+    if edtAdminSCIMSalt.text = '' then
+      edtAdminSCIMSalt.text := NewGuidId;
+    pgMain.ActivePage := tbManage;
+  end
+  else
+    pgMain.ActivePage := tbConsole;
+  pgManage.ActivePage := tbWebSettings;
 end;
 
 procedure TMainConsoleForm.Image2Click(Sender: TObject);
@@ -795,6 +809,8 @@ end;
 
 procedure TMainConsoleForm.SetConfigEditable;
 begin
+  if (FConfig <> nil) and (FConfig.filename = edtConfigFile.text) then
+    exit;
   if FConfig <> nil then
     FConfig.Free;
   FConfig := TFHIRServerConfigFile.create(edtConfigFile.text);
@@ -1718,8 +1734,7 @@ begin
     tsl.free;
     tsd.free;
   end;
-  FEPManager.timer;
-  FTxManager.timer;
+  GBackgroundTasks.primaryThreadCheck;
   if st = csDiconnected then
   begin
     sBar.Panels[1].Text := 'n/a';
@@ -1948,7 +1963,7 @@ begin
   pnlCombineSnomed.color := clWhite;
   pnlProcessUMLS.color := clWhite;
 
-  PageControl1.ActivePageIndex := 0;
+  pgMain.ActivePageIndex := 0;
   lbEditionsClick(self);
 end;
 

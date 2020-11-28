@@ -45,7 +45,7 @@ Interface
 
 uses
   SysUtils, Classes, Graphics, IniFiles,
-  Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs,
+  Controls, StdCtrls, Buttons, ExtCtrls, EditBtn, ComCtrls, Dialogs, Menus,
   SynEdit, SynEditTypes,
   fsl_base, fsl_stream, fsl_http,
   fhir_objects, fhir_factory, fhir_parser;
@@ -93,6 +93,7 @@ type
   private
     FData : TFslList<T>;
     FFiltered : TFslList<T>;
+    FImages: TImagelist;
     FList : TListView;
     FFilter : TEdit;
     FControls : TFslList<TControlEntry>;
@@ -100,6 +101,7 @@ type
     FCanEdit : boolean;
     FOnSetFocus: TNotifyEvent;
     FSettings: TIniFile;
+    FPopup : TPopupMenu;
 
     procedure doFilter;
     function GetHasFocus: boolean;
@@ -117,6 +119,7 @@ type
     procedure doListChange(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure doListDoubleClick(Sender: TObject);
     procedure doListDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure doMnuClick(Sender: TObject);
     procedure populateEntry(entry : TListItem; item : T);
   public
     constructor Create; override;
@@ -127,8 +130,10 @@ type
     property Focus : T read GetFocus;
     property hasFocus : boolean read GetHasFocus;
     property List : TListView read FList write SetList;
+    property Images : TImagelist read FImages write FImages;
     property Filter : TEdit read FFilter write SetFilter;
     procedure registerControl(c : TControl; op : TControlOperation; mode : String = '');
+    procedure registerMenuEntry(caption : String; imageIndex : integer; op : TControlOperation);
     Property Enabled : boolean read FEnabled write SetEnabled;
     property Settings : TIniFile read FSettings write FSettings;
 
@@ -142,13 +147,14 @@ type
     procedure doDown;
     procedure doExecute(mode : String);
     function doLoad : boolean;
+    procedure refresh(item : T = nil); // leaves the items in place (and doesn't refilter) but updates text displays. it item = nil, updates all displayed items
 
-    procedure Timer; virtual;
     // to override:
     function canSort : boolean; virtual;
     function allowedOperations(item : T) : TNodeOperationSet; virtual; abstract; // return what is allowed in principle; no need to be concerned with the selection, except for whether modify/delete is allowed
     function loadList : boolean; virtual; abstract; // return false if not loaded ok
 
+    procedure buildMenu; virtual;
     function getImageIndex(item : T) : integer; virtual; abstract;
     function getCellText(item : T; col : integer) : String; virtual; abstract;
     function getCellColors(item : T; col : integer; var fore, back : TColor) : boolean; virtual;
@@ -159,7 +165,7 @@ type
     function AddItem(mode : String) : T; virtual;
     function EditItem(item : T; mode : String) : boolean; virtual;
     procedure DeleteItem(item : T); virtual;
-    procedure ExecuteItem(item : T; mode : String); virtual;
+    function ExecuteItem(item : T; mode : String) : boolean; virtual;
   end;
 
   TLookupValueEvent = procedure (sender : TObject; propName : String; propValue : TFHIRObject; var index : integer) of object;
@@ -422,6 +428,7 @@ begin
   FData := TFslList<T>.create;
   FFiltered := TFslList<T>.create;
   FControls := TFslList<TControlEntry>.create;
+  FPopup := TPopupMenu.create(nil);
 end;
 
 destructor TListManager<T>.Destroy;
@@ -453,6 +460,18 @@ begin
   finally
     entry.free;
   end;
+end;
+
+procedure TListManager<T>.registerMenuEntry(caption: String; imageIndex: integer; op: TControlOperation);
+var
+  item : TMenuItem;
+begin
+  item  := TMenuItem.create(nil);
+  FPopup.Items.add(item);
+  item.caption := caption;
+  item.imageIndex := imageIndex;
+  item.Tag := Integer(op);
+  item.OnClick := doMnuClick;
 end;
 
 procedure TListManager<T>.doFilter;
@@ -546,6 +565,10 @@ begin
   List.OnSelectItem := doListChange;
   List.OnDblClick := doListDoubleClick;
   List.OnCustomDrawSubItem := doListDrawSubItem;
+  FPopup.Images := FImages;
+  buildMenu;
+  if FPopup.Items.Count > 0 then
+    List.PopupMenu := FPopup;
   if FSettings <> nil then
     for i := 0 to List.columns.count - 1 do
       list.columns[i].width := FSettings.ReadInteger(List.Name, 'column'+inttostr(i), list.columns[i].width);
@@ -594,10 +617,15 @@ end;
 procedure TListManager<T>.updateControls(op: TControlOperation; allowed: boolean);
 var
   entry : TControlEntry;
+  mnu : TMenuItem;
+  i : integer;
 begin
   for entry in FControls do
     if entry.op = op then
       entry.control.enabled := allowed;
+  for i := 0 to FPopup.Items.Count - 1 do
+    if (TControlOperation(FPopup.Items[i].tag) = op) then
+      FPopup.Items[i].enabled := allowed;
 end;
 
 procedure TListManager<T>.doListCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var result: Integer);
@@ -640,6 +668,19 @@ begin
   begin
     sender.Canvas.Font.Color := fore;
     sender.Canvas.Brush.Color := back;
+  end;
+end;
+
+procedure TListManager<T>.doMnuClick(Sender: TObject);
+begin
+  case TControlOperation((Sender as TMenuItem).Tag) of
+    copAdd : doAdd('');
+    copEdit : doEdit('');
+    copDelete : doDelete('');
+    copUp : doUp;
+    copDown : doDown;
+    copReload : doLoad;
+    copExecute : doExecute('');
   end;
 end;
 
@@ -707,6 +748,10 @@ begin
     entry.subItems.add(getCellText(item, c));
 end;
 
+procedure TListManager<T>.buildMenu;
+begin
+end;
+
 procedure TListManager<T>.doEdit(mode : String);
 begin
   raise Exception.create('not done yet');
@@ -742,14 +787,15 @@ end;
 procedure TListManager<T>.doExecute(mode: String);
 begin
   if HasFocus then
-    ExecuteItem(getFocus, mode);
+    if ExecuteItem(getFocus, mode) then
+      refresh(getFocus);
 end;
 
 procedure TListManager<T>.rebuild(focus : T);
 var
   item : T;
   entry : TListItem;
-  i, c : integer;
+  i : integer;
 begin
   FList.BeginUpdate;
   try
@@ -761,9 +807,6 @@ begin
       entry := FList.items.add;
       entry.Data := pointer(item);
       populateEntry(entry, item);
-      entry.caption := getCellText(item, 0);
-      for c := 1 to FList.columnCount - 1 do
-        entry.subItems.add(getCellText(item, c));
       if (focus <> nil) and (compareItem(focus, item, -1) = 0) then
         FList.ItemIndex := i;
       inc(i);
@@ -788,9 +831,23 @@ begin
   end;
 end;
 
-procedure TListManager<T>.Timer;
+procedure TListManager<T>.refresh(item : T);
+var
+  ti : T;
+  entry : TListItem;
+  i, c : integer;
 begin
-  // nothing
+  FList.BeginUpdate;
+  try
+    for entry in FList.items do
+    begin
+      ti := T(entry.Data);
+      if (item = nil) or (item = ti) then
+        populateEntry(entry, ti);
+    end;
+  finally
+    FList.EndUpdate;
+  end;
 end;
 
 function TListManager<T>.canSort: boolean;
@@ -833,7 +890,7 @@ begin
   raise Exception.create('Delete is not supported here');
 end;
 
-procedure TListManager<T>.ExecuteItem(item: T; mode: String);
+function TListManager<T>.ExecuteItem(item: T; mode: String) : boolean;
 begin
   raise Exception.create('Execute is not supported here');
 end;

@@ -64,7 +64,7 @@ type
 var
   EndpointInstallForm: TEndpointInstallForm;
 
-procedure InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection);
+function InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection) : boolean;
 
 implementation
 
@@ -73,7 +73,7 @@ implementation
 uses
   console_form;
 
-procedure InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection);
+function InstallEndPoint(owner : TComponent; cfg : TFHIRServerConfigFile; epInfo : TFHIRServerConfigSection) : boolean;
 var
   t : String;
   db : TFDBManager;
@@ -99,7 +99,7 @@ begin
           form.version := epInfo['version'].value;
           form.lblCurrentStatus.Caption := 'Current Database Status: '+checkDatabaseInstall(epInfo);
           Screen.Cursor := crDefault;
-          form.ShowModal;
+          result := form.ShowModal = mrOK;
         finally
           form.free;
         end;
@@ -139,7 +139,7 @@ begin
   try
     form.command := command;
     if form.ShowModal = mrOk then
-      ModalResult := mrClose;
+      ModalResult := mrOk;
   finally
     form.free;
   end;

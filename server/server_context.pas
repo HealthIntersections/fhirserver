@@ -344,7 +344,9 @@ end;
 
 function TFHIRServerContext.cacheCount: integer;
 begin
-  result := FQuestionnaireCache.cacheCount + FTerminologyServer.cacheCount + FClientCacheManager.cacheCount;
+  result := FQuestionnaireCache.cacheCount + FClientCacheManager.cacheCount;
+  if FTerminologyServer <> nil then
+    result := result + FTerminologyServer.cacheCount;
 end;
 
 procedure TFHIRServerContext.clearCache;

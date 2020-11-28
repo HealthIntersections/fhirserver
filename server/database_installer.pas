@@ -976,7 +976,7 @@ begin
     CreateClosureEntries;
     if assigned(CallBack) then Callback(4, 'Commit');
 
-    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (100, ''txsvr||Installed '+TFslDateTime.makeLocal.toString+''')');
+    FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (100, ''terminology||Installed '+TFslDateTime.makeLocal.toString+''')');
     FConn.Commit;
   except
     on e:exception do
