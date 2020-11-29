@@ -1918,7 +1918,7 @@ end;
 
 function TFHIRApplyOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FActivityDefinition.sizeInBytes);
   inc(result, FSubjectList.sizeInBytes);
   inc(result, (FEncounter.length * sizeof(char)) + 12);
@@ -1979,7 +1979,7 @@ end;
 
 function TFHIRApplyOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2067,7 +2067,7 @@ end;
 
 function TFHIRDataRequirementsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2121,7 +2121,7 @@ end;
 
 function TFHIRConformsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLeft.length * sizeof(char)) + 12);
   inc(result, (FRight.length * sizeof(char)) + 12);
   inc(result, (FMode.length * sizeof(char)) + 12);
@@ -2195,7 +2195,7 @@ end;
 
 function TFHIRConformsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIssues.sizeInBytes);
   inc(result, FUnion.sizeInBytes);
   inc(result, FIntersection.sizeInBytes);
@@ -2257,7 +2257,7 @@ end;
 
 function TFHIRImplementsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FClient.length * sizeof(char)) + 12);
   inc(result, FResource.sizeInBytes);
@@ -2311,7 +2311,7 @@ end;
 
 function TFHIRImplementsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2372,7 +2372,7 @@ end;
 
 function TFHIRSubsetOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -2425,7 +2425,7 @@ end;
 
 function TFHIRSubsetOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2522,7 +2522,7 @@ end;
 
 function TFHIRVersionsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FVersionList.sizeInBytes);
   inc(result, (FDefault.length * sizeof(char)) + 12);
 end;
@@ -2575,7 +2575,7 @@ end;
 
 function TFHIRSubmitOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
 end;
 
@@ -2627,7 +2627,7 @@ end;
 
 function TFHIRSubmitOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2672,7 +2672,7 @@ end;
 
 function TFHIRFindMatchesOpReqSubproperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
@@ -2730,7 +2730,7 @@ end;
 
 function TFHIRFindMatchesOpReqProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, FSubpropertyList.sizeInBytes);
@@ -2799,7 +2799,7 @@ end;
 
 function TFHIRFindMatchesOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSystem.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, FProperty_List.sizeInBytes);
@@ -2813,7 +2813,7 @@ end;
 
 function TFHIRFindMatchesOpRespMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FUnmatchedList.sizeInBytes);
   inc(result, (FComment.length * sizeof(char)) + 12);
@@ -2860,7 +2860,7 @@ end;
 
 function TFHIRFindMatchesOpRespProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
@@ -2918,7 +2918,7 @@ end;
 
 function TFHIRFindMatchesOpRespUnmatched.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, FProperty_List.sizeInBytes);
@@ -3026,7 +3026,7 @@ end;
 
 function TFHIRFindMatchesOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMatchList.sizeInBytes);
 end;
 
@@ -3114,7 +3114,7 @@ end;
 
 function TFHIRLookupOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -3175,7 +3175,7 @@ end;
 
 function TFHIRLookupOpRespDesignation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLanguage.length * sizeof(char)) + 12);
   inc(result, FUse.sizeInBytes);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -3225,7 +3225,7 @@ end;
 
 function TFHIRLookupOpRespSubproperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
@@ -3295,7 +3295,7 @@ end;
 
 function TFHIRLookupOpRespProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
   inc(result, (FDescription.length * sizeof(char)) + 12);
@@ -3371,7 +3371,7 @@ end;
 
 function TFHIRLookupOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
@@ -3455,7 +3455,7 @@ end;
 
 function TFHIRSubsumesOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCodeA.length * sizeof(char)) + 12);
   inc(result, (FCodeB.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
@@ -3506,7 +3506,7 @@ end;
 
 function TFHIRSubsumesOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FOutcome.length * sizeof(char)) + 12);
 end;
 
@@ -3607,7 +3607,7 @@ end;
 
 function TFHIRValidateCodeOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FCodeSystem.sizeInBytes);
   inc(result, (FCode.length * sizeof(char)) + 12);
@@ -3667,7 +3667,7 @@ end;
 
 function TFHIRValidateCodeOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
 end;
@@ -3721,7 +3721,7 @@ end;
 
 function TFHIRDocumentOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FGraph.length * sizeof(char)) + 12);
 end;
@@ -3819,7 +3819,7 @@ end;
 
 function TFHIRClosureOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FConceptList.sizeInBytes);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -3873,7 +3873,7 @@ end;
 
 function TFHIRClosureOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -3897,7 +3897,7 @@ end;
 
 function TFHIRTranslateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FConceptMap.sizeInBytes);
   inc(result, (FConceptMapVersion.length * sizeof(char)) + 12);
@@ -3961,7 +3961,7 @@ end;
 
 function TFHIRTranslateOpReqDependency.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FElement.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
 end;
@@ -4070,7 +4070,7 @@ end;
 
 function TFHIRTranslateOpRespMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FEquivalence.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
   inc(result, FProductList.sizeInBytes);
@@ -4126,7 +4126,7 @@ end;
 
 function TFHIRTranslateOpRespProduct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FElement.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
 end;
@@ -4243,7 +4243,7 @@ end;
 
 function TFHIRTranslateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, FMatchList.sizeInBytes);
 end;
@@ -4309,7 +4309,7 @@ end;
 
 function TFHIREverythingOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTypeList.sizeInBytes);
   inc(result, (FCount.length * sizeof(char)) + 12);
 end;
@@ -4362,7 +4362,7 @@ end;
 
 function TFHIREverythingOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4412,7 +4412,7 @@ end;
 
 function TFHIRFindOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPatient.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
@@ -4507,7 +4507,7 @@ end;
 
 function TFHIRCareGapsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTopic.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
 end;
@@ -4560,7 +4560,7 @@ end;
 
 function TFHIRCareGapsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4626,7 +4626,7 @@ end;
 
 function TFHIRCollectDataOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMeasure.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
   inc(result, (FPractitioner.length * sizeof(char)) + 12);
@@ -4691,7 +4691,7 @@ end;
 
 function TFHIRCollectDataOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeasureReport.sizeInBytes);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -4762,7 +4762,7 @@ end;
 
 function TFHIREvaluateMeasureOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMeasure.length * sizeof(char)) + 12);
   inc(result, (FReportType.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
@@ -4817,7 +4817,7 @@ end;
 
 function TFHIREvaluateMeasureOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4880,7 +4880,7 @@ end;
 
 function TFHIRSubmitDataOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeasureReport.sizeInBytes);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -4976,7 +4976,7 @@ end;
 
 function TFHIRProcessMessageOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContent.sizeInBytes);
   inc(result, (FResponseUrl.length * sizeof(char)) + 12);
 end;
@@ -5029,7 +5029,7 @@ end;
 
 function TFHIRProcessMessageOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5079,7 +5079,7 @@ end;
 
 function TFHIRPreferredIdOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FType_.length * sizeof(char)) + 12);
 end;
@@ -5126,7 +5126,7 @@ end;
 
 function TFHIRPreferredIdOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FResult.length * sizeof(char)) + 12);
 end;
 
@@ -5172,7 +5172,7 @@ end;
 
 function TFHIRLastnOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMax.length * sizeof(char)) + 12);
 end;
 
@@ -5224,7 +5224,7 @@ end;
 
 function TFHIRLastnOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5329,7 +5329,7 @@ end;
 
 function TFHIRStatsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSubject.length * sizeof(char)) + 12);
   inc(result, FCodeList.sizeInBytes);
   inc(result, (FSystem.length * sizeof(char)) + 12);
@@ -5397,7 +5397,7 @@ end;
 
 function TFHIRStatsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStatisticsList.sizeInBytes);
   inc(result, FSourceList.sizeInBytes);
 end;
@@ -5457,7 +5457,7 @@ end;
 
 function TFHIRMatchOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
   inc(result, (FCount.length * sizeof(char)) + 12);
 end;
@@ -5510,7 +5510,7 @@ end;
 
 function TFHIRMatchOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5602,7 +5602,7 @@ end;
 
 function TFHIRPopulateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
   inc(result, FQuestionnaire.sizeInBytes);
   inc(result, FQuestionnaireRef.sizeInBytes);
@@ -5668,7 +5668,7 @@ end;
 
 function TFHIRPopulateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FQuestionnaire.sizeInBytes);
   inc(result, FIssues.sizeInBytes);
 end;
@@ -5750,7 +5750,7 @@ end;
 
 function TFHIRPopulatehtmlOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
   inc(result, FQuestionnaire.sizeInBytes);
   inc(result, FQuestionnaireRef.sizeInBytes);
@@ -5815,7 +5815,7 @@ end;
 
 function TFHIRPopulatehtmlOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FForm.sizeInBytes);
   inc(result, FIssues.sizeInBytes);
 end;
@@ -5897,7 +5897,7 @@ end;
 
 function TFHIRPopulatelinkOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
   inc(result, FQuestionnaire.sizeInBytes);
   inc(result, FQuestionnaireRef.sizeInBytes);
@@ -5956,7 +5956,7 @@ end;
 
 function TFHIRPopulatelinkOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLink_.length * sizeof(char)) + 12);
   inc(result, FIssues.sizeInBytes);
 end;
@@ -6009,7 +6009,7 @@ end;
 
 function TFHIRConvertOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FInput.sizeInBytes);
 end;
 
@@ -6061,7 +6061,7 @@ end;
 
 function TFHIRConvertOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOutput.sizeInBytes);
 end;
 
@@ -6107,7 +6107,7 @@ end;
 
 function TFHIRGraphOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FGraph.length * sizeof(char)) + 12);
 end;
 
@@ -6159,7 +6159,7 @@ end;
 
 function TFHIRGraphOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResult.sizeInBytes);
 end;
 
@@ -6205,7 +6205,7 @@ end;
 
 function TFHIRGraphqlOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FQuery.length * sizeof(char)) + 12);
 end;
 
@@ -6257,7 +6257,7 @@ end;
 
 function TFHIRGraphqlOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResult.sizeInBytes);
 end;
 
@@ -6346,7 +6346,7 @@ end;
 
 function TFHIRMetaOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6399,7 +6399,7 @@ end;
 
 function TFHIRMetaAddOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeta.sizeInBytes);
 end;
 
@@ -6452,7 +6452,7 @@ end;
 
 function TFHIRMetaAddOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6505,7 +6505,7 @@ end;
 
 function TFHIRMetaDeleteOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeta.sizeInBytes);
 end;
 
@@ -6558,7 +6558,7 @@ end;
 
 function TFHIRMetaDeleteOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6618,7 +6618,7 @@ end;
 
 function TFHIRValidateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
   inc(result, (FMode.length * sizeof(char)) + 12);
   inc(result, (FProfile.length * sizeof(char)) + 12);
@@ -6672,7 +6672,7 @@ end;
 
 function TFHIRValidateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6729,7 +6729,7 @@ end;
 
 function TFHIRQuestionnaireOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
   inc(result, (FProfile.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
@@ -6783,7 +6783,7 @@ end;
 
 function TFHIRQuestionnaireOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6839,7 +6839,7 @@ end;
 
 function TFHIRSnapshotOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
   inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
@@ -6892,7 +6892,7 @@ end;
 
 function TFHIRSnapshotOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6948,7 +6948,7 @@ end;
 
 function TFHIRTransformOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, FContent.sizeInBytes);
 end;
@@ -7001,7 +7001,7 @@ end;
 
 function TFHIRTransformOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -7162,7 +7162,7 @@ end;
 
 function TFHIRExpandOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FValueSet.sizeInBytes);
   inc(result, (FValueSetVersion.length * sizeof(char)) + 12);
@@ -7227,7 +7227,7 @@ end;
 
 function TFHIRExpandOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 

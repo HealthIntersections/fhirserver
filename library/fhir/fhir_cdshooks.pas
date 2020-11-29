@@ -767,7 +767,7 @@ end;
 
 function TCDSHookRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FHook.length * sizeof(char)) + 12);
   inc(result, (FHookInstance.length * sizeof(char)) + 12);
   inc(result, (FFhirServer.length * sizeof(char)) + 12);
@@ -823,7 +823,7 @@ end;
 
 function TCDSHookCardSuggestion.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLabel.length * sizeof(char)) + 12);
   inc(result, (FUUID.length * sizeof(char)) + 12);
   inc(result, (FCreate.length * sizeof(char)) + 12);
@@ -868,7 +868,7 @@ end;
 
 function TCDSHookCardLink.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLabel.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
@@ -983,7 +983,7 @@ end;
 
 function TCDSHookCard.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSourceURL.length * sizeof(char)) + 12);
   inc(result, (Fdetail.length * sizeof(char)) + 12);
   inc(result, (FsourceLabel.length * sizeof(char)) + 12);
@@ -1081,7 +1081,7 @@ end;
 
 function TCDSHookResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCards.sizeInBytes);
   inc(result, FDecisions.sizeInBytes);
 end;
@@ -1186,7 +1186,7 @@ end;
 
 function TCDSHookDecision.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCreate.sizeInBytes);
   inc(result, FDelete.sizeInBytes);
 end;
@@ -1420,7 +1420,7 @@ end;
 
 function TCDSHooksManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FServers.sizeInBytes);
   inc(result, FThreads.sizeInBytes);
   inc(result, FCache.sizeInBytes);
@@ -1459,7 +1459,7 @@ end;
 
 function TCDSHooksManagerServerInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Finfo.sizeInBytes);
   inc(result, FToken.sizeInBytes);
 end;
@@ -1604,7 +1604,7 @@ end;
 
 function TCDSHooksManagerWorkThread.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fmanager.sizeInBytes);
   inc(result, Frequest.sizeInBytes);
   inc(result, Fserver.sizeInBytes);
@@ -1636,14 +1636,14 @@ end;
 
 function TCDSHooksManagerCachedResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResponse.sizeInBytes);
   inc(result, (FError.length * sizeof(char)) + 12);
 end;
 
 function TCDSRequestOAuthDetails.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FScopes.length * sizeof(char)) + 12);
   inc(result, (FToken.length * sizeof(char)) + 12);
 end;

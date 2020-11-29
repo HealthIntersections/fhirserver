@@ -2038,7 +2038,7 @@ end;
 
 function TInstanceValidator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, extensionDomains.sizeInBytes);
   inc(result, bpWarnings.sizeInBytes);
   inc(result, txTime.sizeInBytes);

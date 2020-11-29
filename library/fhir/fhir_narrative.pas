@@ -59,7 +59,7 @@ end;
 
 function TFHIRNarrativeGeneratorBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 

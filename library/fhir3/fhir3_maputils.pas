@@ -1615,7 +1615,7 @@ end;
 
 function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWorker.sizeInBytes);
   inc(result, fpp.sizeInBytes);
   inc(result, fpe.sizeInBytes);
@@ -1646,7 +1646,7 @@ end;
 
 function TVariable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, Fobj.sizeInBytes);
 end;
@@ -1714,7 +1714,7 @@ end;
 
 function TVariables.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, list.sizeInBytes);
 end;
 

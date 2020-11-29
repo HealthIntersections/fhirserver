@@ -236,7 +236,7 @@ End;
 
 function TWPCdaReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDoc.sizeInBytes);
 end;
 
@@ -335,7 +335,7 @@ End;
 
 function TWPCdaWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDoc.sizeInBytes);
   inc(result, FCurrent.sizeInBytes);
 end;

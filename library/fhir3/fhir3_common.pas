@@ -3863,7 +3863,7 @@ end;
 
 function TFHIRMeta3.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
 end;
 

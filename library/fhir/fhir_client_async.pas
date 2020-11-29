@@ -389,7 +389,7 @@ end;
 
 function TFHIRClientAsyncTask.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FClient.sizeInBytes);
   inc(result, FFiles.sizeInBytes);
   inc(result, (FFolder.length * sizeof(char)) + 12);
@@ -417,7 +417,7 @@ end;
 
 function TDownloadFile.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FError.length * sizeof(char)) + 12);

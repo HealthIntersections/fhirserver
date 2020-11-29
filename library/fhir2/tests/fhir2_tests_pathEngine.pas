@@ -295,7 +295,7 @@ initialization
   TDUnitX.RegisterTestFixture(TFluentPathTests);
 function TFluentPathTest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, engine.sizeInBytes);
 end;
 

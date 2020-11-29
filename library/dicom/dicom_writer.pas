@@ -857,7 +857,7 @@ end;
 
 function TDicomWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOutput.sizeInBytes);
   inc(result, FDictionary.sizeInBytes);
   inc(result, FBuilder.sizeInBytes);

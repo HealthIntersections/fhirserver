@@ -1726,7 +1726,7 @@ function TFHIRPopulateOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRPopulateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubject.sizeInBytes);
   inc(result, FLocal.sizeInBytes);
 end;
@@ -1770,7 +1770,7 @@ function TFHIRPopulateOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRPopulateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -1888,7 +1888,7 @@ function TFHIRApplyOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRApplyOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FActivityDefinition.sizeInBytes);
   inc(result, FSubjectList.sizeInBytes);
   inc(result, (FEncounter.length * sizeof(char)) + 12);
@@ -1940,7 +1940,7 @@ function TFHIRApplyOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRApplyOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2011,7 +2011,7 @@ function TFHIRDataRequirementsOpResponse.isKnownName(name : String) : boolean;be
 end;
 function TFHIRDataRequirementsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2057,7 +2057,7 @@ function TFHIRConformsOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRConformsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLeft.length * sizeof(char)) + 12);
   inc(result, (FRight.length * sizeof(char)) + 12);
   inc(result, (FMode.length * sizeof(char)) + 12);
@@ -2120,7 +2120,7 @@ function TFHIRConformsOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRConformsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIssues.sizeInBytes);
   inc(result, FUnion.sizeInBytes);
   inc(result, FIntersection.sizeInBytes);
@@ -2173,7 +2173,7 @@ function TFHIRImplementsOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRImplementsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FClient.length * sizeof(char)) + 12);
   inc(result, FResource.sizeInBytes);
@@ -2218,7 +2218,7 @@ function TFHIRImplementsOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRImplementsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2269,7 +2269,7 @@ function TFHIRSubsetOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubsetOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -2313,7 +2313,7 @@ function TFHIRSubsetOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubsetOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2392,7 +2392,7 @@ function TFHIRVersionsOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRVersionsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FVersionList.sizeInBytes);
   inc(result, (FDefault.length * sizeof(char)) + 12);
 end;
@@ -2436,7 +2436,7 @@ function TFHIRSubmitOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubmitOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
 end;
 
@@ -2479,7 +2479,7 @@ function TFHIRSubmitOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubmitOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -2490,7 +2490,7 @@ begin
 end;
 function TFHIRFindMatchesOpReqProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
   inc(result, FSubpropertyList.sizeInBytes);
@@ -2538,7 +2538,7 @@ function TFHIRFindMatchesOpReqSubproperty.isKnownName(name : String) : boolean;b
 end;
 function TFHIRFindMatchesOpReqSubproperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
 end;
@@ -2641,7 +2641,7 @@ function TFHIRFindMatchesOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRFindMatchesOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSystem.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, FProperty_List.sizeInBytes);
@@ -2654,7 +2654,7 @@ begin
 end;
 function TFHIRFindMatchesOpRespMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FUnmatchedList.sizeInBytes);
   inc(result, (FComment.length * sizeof(char)) + 12);
@@ -2667,7 +2667,7 @@ begin
 end;
 function TFHIRFindMatchesOpRespUnmatched.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
   inc(result, FProperty_List.sizeInBytes);
@@ -2715,7 +2715,7 @@ function TFHIRFindMatchesOpRespProperty_.isKnownName(name : String) : boolean;be
 end;
 function TFHIRFindMatchesOpRespProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
 end;
@@ -2849,7 +2849,7 @@ function TFHIRFindMatchesOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRFindMatchesOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMatchList.sizeInBytes);
 end;
 
@@ -2926,7 +2926,7 @@ function TFHIRLookupOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLookupOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -2981,7 +2981,7 @@ function TFHIRLookupOpRespDesignation.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLookupOpRespDesignation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FLanguage.length * sizeof(char)) + 12);
   inc(result, FUse.sizeInBytes);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -2994,7 +2994,7 @@ begin
 end;
 function TFHIRLookupOpRespProperty_.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
   inc(result, (FDescription.length * sizeof(char)) + 12);
@@ -3047,7 +3047,7 @@ function TFHIRLookupOpRespSubproperty.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLookupOpRespSubproperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
   inc(result, (FDescription.length * sizeof(char)) + 12);
@@ -3160,7 +3160,7 @@ function TFHIRLookupOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLookupOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
@@ -3234,7 +3234,7 @@ function TFHIRSubsumesOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubsumesOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCodeA.length * sizeof(char)) + 12);
   inc(result, (FCodeB.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
@@ -3277,7 +3277,7 @@ function TFHIRSubsumesOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubsumesOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FOutcome.length * sizeof(char)) + 12);
 end;
 
@@ -3367,7 +3367,7 @@ function TFHIRValidateCodeOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRValidateCodeOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FCodeSystem.sizeInBytes);
   inc(result, (FCode.length * sizeof(char)) + 12);
@@ -3419,7 +3419,7 @@ function TFHIRValidateCodeOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRValidateCodeOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
 end;
@@ -3465,7 +3465,7 @@ function TFHIRDocumentOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRDocumentOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FGraph.length * sizeof(char)) + 12);
 end;
@@ -3545,7 +3545,7 @@ function TFHIRClosureOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRClosureOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FConceptList.sizeInBytes);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -3590,7 +3590,7 @@ function TFHIRClosureOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRClosureOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -3611,7 +3611,7 @@ begin
 end;
 function TFHIRTranslateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FConceptMap.sizeInBytes);
   inc(result, (FConceptMapVersion.length * sizeof(char)) + 12);
@@ -3668,7 +3668,7 @@ function TFHIRTranslateOpReqDependency.isKnownName(name : String) : boolean;begi
 end;
 function TFHIRTranslateOpReqDependency.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FElement.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
 end;
@@ -3766,7 +3766,7 @@ begin
 end;
 function TFHIRTranslateOpRespMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FRelationship.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
   inc(result, FProductList.sizeInBytes);
@@ -3815,7 +3815,7 @@ function TFHIRTranslateOpRespProduct.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRTranslateOpRespProduct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FElement.length * sizeof(char)) + 12);
   inc(result, FConcept.sizeInBytes);
 end;
@@ -3915,7 +3915,7 @@ function TFHIRTranslateOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRTranslateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, FMatchList.sizeInBytes);
 end;
@@ -3963,7 +3963,7 @@ function TFHIRGenerateOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGenerateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FPersist.sizeInBytes);
 end;
@@ -4007,7 +4007,7 @@ function TFHIRGenerateOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGenerateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocRef.sizeInBytes);
 end;
 
@@ -4062,7 +4062,7 @@ function TFHIREverythingOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIREverythingOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTypeList.sizeInBytes);
   inc(result, (FCount.length * sizeof(char)) + 12);
 end;
@@ -4106,7 +4106,7 @@ function TFHIREverythingOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIREverythingOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4148,7 +4148,7 @@ function TFHIRFindOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRFindOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPatient.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
@@ -4227,7 +4227,7 @@ function TFHIRCareGapsOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRCareGapsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTopic.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
 end;
@@ -4271,7 +4271,7 @@ function TFHIRCareGapsOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRCareGapsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4329,7 +4329,7 @@ function TFHIRCollectDataOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRCollectDataOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMeasure.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
   inc(result, (FPractitioner.length * sizeof(char)) + 12);
@@ -4383,7 +4383,7 @@ function TFHIRCollectDataOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRCollectDataOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeasureReport.sizeInBytes);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -4446,7 +4446,7 @@ function TFHIREvaluateMeasureOpRequest.isKnownName(name : String) : boolean;begi
 end;
 function TFHIREvaluateMeasureOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMeasure.length * sizeof(char)) + 12);
   inc(result, (FReportType.length * sizeof(char)) + 12);
   inc(result, (FSubject.length * sizeof(char)) + 12);
@@ -4492,7 +4492,7 @@ function TFHIREvaluateMeasureOpResponse.isKnownName(name : String) : boolean;beg
 end;
 function TFHIREvaluateMeasureOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4544,7 +4544,7 @@ function TFHIRSubmitDataOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSubmitDataOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeasureReport.sizeInBytes);
   inc(result, FResourceList.sizeInBytes);
 end;
@@ -4623,7 +4623,7 @@ function TFHIRProcessMessageOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRProcessMessageOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContent.sizeInBytes);
   inc(result, (FResponseUrl.length * sizeof(char)) + 12);
 end;
@@ -4667,7 +4667,7 @@ function TFHIRProcessMessageOpResponse.isKnownName(name : String) : boolean;begi
 end;
 function TFHIRProcessMessageOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4709,7 +4709,7 @@ function TFHIRPreferredIdOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRPreferredIdOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FType_.length * sizeof(char)) + 12);
 end;
@@ -4748,7 +4748,7 @@ function TFHIRPreferredIdOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRPreferredIdOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FResult.length * sizeof(char)) + 12);
 end;
 
@@ -4786,7 +4786,7 @@ function TFHIRLastnOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLastnOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMax.length * sizeof(char)) + 12);
 end;
 
@@ -4829,7 +4829,7 @@ function TFHIRLastnOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRLastnOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -4921,7 +4921,7 @@ function TFHIRStatsOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRStatsOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSubject.length * sizeof(char)) + 12);
   inc(result, FCodeList.sizeInBytes);
   inc(result, (FSystem.length * sizeof(char)) + 12);
@@ -4978,7 +4978,7 @@ function TFHIRStatsOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRStatsOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStatisticsList.sizeInBytes);
   inc(result, FSourceList.sizeInBytes);
 end;
@@ -5029,7 +5029,7 @@ function TFHIRMatchOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMatchOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
   inc(result, (FCount.length * sizeof(char)) + 12);
 end;
@@ -5073,7 +5073,7 @@ function TFHIRMatchOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMatchOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5116,7 +5116,7 @@ function TFHIRConvertOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRConvertOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FInput.sizeInBytes);
 end;
 
@@ -5159,7 +5159,7 @@ function TFHIRConvertOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRConvertOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOutput.sizeInBytes);
 end;
 
@@ -5197,7 +5197,7 @@ function TFHIRGraphOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGraphOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FGraph.length * sizeof(char)) + 12);
 end;
 
@@ -5240,7 +5240,7 @@ function TFHIRGraphOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGraphOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResult.sizeInBytes);
 end;
 
@@ -5278,7 +5278,7 @@ function TFHIRGraphqlOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGraphqlOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FQuery.length * sizeof(char)) + 12);
 end;
 
@@ -5321,7 +5321,7 @@ function TFHIRGraphqlOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRGraphqlOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResult.sizeInBytes);
 end;
 
@@ -5393,7 +5393,7 @@ function TFHIRMetaOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMetaOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5437,7 +5437,7 @@ function TFHIRMetaAddOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMetaAddOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeta.sizeInBytes);
 end;
 
@@ -5481,7 +5481,7 @@ function TFHIRMetaAddOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMetaAddOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5525,7 +5525,7 @@ function TFHIRMetaDeleteOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMetaDeleteOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeta.sizeInBytes);
 end;
 
@@ -5569,7 +5569,7 @@ function TFHIRMetaDeleteOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRMetaDeleteOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5620,7 +5620,7 @@ function TFHIRValidateOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRValidateOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
   inc(result, (FMode.length * sizeof(char)) + 12);
   inc(result, (FProfile.length * sizeof(char)) + 12);
@@ -5665,7 +5665,7 @@ function TFHIRValidateOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRValidateOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5714,7 +5714,7 @@ function TFHIRQuestionnaireOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRQuestionnaireOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FIdentifier.length * sizeof(char)) + 12);
   inc(result, (FProfile.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
@@ -5759,7 +5759,7 @@ function TFHIRQuestionnaireOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRQuestionnaireOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5806,7 +5806,7 @@ function TFHIRSnapshotOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSnapshotOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
   inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
@@ -5850,7 +5850,7 @@ function TFHIRSnapshotOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRSnapshotOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5897,7 +5897,7 @@ function TFHIRTransformOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRTransformOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, FContent.sizeInBytes);
 end;
@@ -5941,7 +5941,7 @@ function TFHIRTransformOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRTransformOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -5988,7 +5988,7 @@ function TFHIRStatusOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRStatusOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdsList.sizeInBytes);
 end;
 
@@ -6031,7 +6031,7 @@ function TFHIRStatusOpResponse.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRStatusOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 
@@ -6186,7 +6186,7 @@ function TFHIRExpandOpRequest.isKnownName(name : String) : boolean;begin
 end;
 function TFHIRExpandOpRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FValueSet.sizeInBytes);
   inc(result, (FValueSetVersion.length * sizeof(char)) + 12);
@@ -6245,7 +6245,7 @@ end;
 
 function TFHIRExpandOpResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FReturn.sizeInBytes);
 end;
 

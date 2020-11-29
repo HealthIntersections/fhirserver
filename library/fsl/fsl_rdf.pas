@@ -226,7 +226,7 @@ end;
 
 function TRDFString.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
 end;
@@ -339,7 +339,7 @@ end;
 
 function TRDFComplex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FGen.sizeInBytes);
   inc(result, FPredicates.sizeInBytes);
 end;
@@ -359,7 +359,7 @@ end;
 
 function TRDFPredicate.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPredicate.length * sizeof(char)) + 12);
   inc(result, FObj.sizeInBytes);
   inc(result, (FComment.length * sizeof(char)) + 12);
@@ -426,7 +426,7 @@ end;
 
 function TRDFSubject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (id.length * sizeof(char)) + 12);
 end;
 
@@ -504,7 +504,7 @@ end;
 
 function TRDFSection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FGen.sizeInBytes);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSubjects.sizeInBytes);
@@ -770,7 +770,7 @@ end;
 
 function TRDFGenerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSections.sizeInBytes);
   inc(result, FPrefixes.sizeInBytes);
 end;

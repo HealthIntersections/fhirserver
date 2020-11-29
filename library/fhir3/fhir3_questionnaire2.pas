@@ -185,7 +185,7 @@ end;
 
 function TQuestionnaireRenderer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTerminologyServer.sizeInBytes);
   inc(result, FQuestionnaire.sizeInBytes);
 end;

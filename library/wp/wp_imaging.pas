@@ -358,7 +358,7 @@ End;
 
 function TWPImageLoader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, FSource.sizeInBytes);
   inc(result, FDicomDictionary.sizeInBytes);

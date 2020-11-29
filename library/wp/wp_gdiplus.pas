@@ -1593,7 +1593,7 @@ End;
 {$IFDEF VER130}
 function TGdiPlusBitmapImage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBitmap.sizeInBytes);
   inc(result, FTransparentColour.sizeInBytes);
   inc(result, FBytes.sizeInBytes);
@@ -2204,7 +2204,7 @@ End;
 
 function TGdiPlusHotSpot.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHintStringList.sizeInBytes);
 end;
 
@@ -2933,7 +2933,7 @@ End;
 
 function TGdiPlusFont.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFontFamily.length * sizeof(char)) + 12);
 end;
 
@@ -3016,7 +3016,7 @@ end;
 
 function TGdiPlusImageAnnotator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFontName.length * sizeof(char)) + 12);
   inc(result, FImage.sizeInBytes);
 end;

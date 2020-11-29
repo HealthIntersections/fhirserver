@@ -400,7 +400,7 @@ end;
 
 function TFHIRXmlParserBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FElement.sizeInBytes);
   inc(result, FComments.sizeInBytes);
 end;
@@ -805,7 +805,7 @@ end;
 
 function TFHIRXmlComposerBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -1122,7 +1122,7 @@ end;
 
 function TFHIRJsonComposerBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TFHIRParser }
@@ -1783,7 +1783,7 @@ end;
 
 function TFHIRTurtleComposerBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, FTtl.sizeInBytes);
 end;

@@ -293,6 +293,8 @@ Type
     FPct : Integer;
     procedure break;
     procedure stop;
+    procedure terminate;
+    function stopped : boolean;
     procedure threadProc;
     procedure doExec(pck : TBackgroundTaskPackagePair);
     procedure setStatus(v : TBackgroundTaskStatus);
@@ -346,6 +348,7 @@ Type
     procedure killTask(id : integer);
 
     procedure stopAll; // shut down preparation
+    procedure wait(grace : cardinal);
 
     procedure primaryThreadCheck;
     function TasksAreWorking : boolean;
@@ -656,7 +659,7 @@ end;
 
 function TBackgroundTaskPackagePair.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRequest.sizeInBytes);
   inc(result, FResponse.sizeInBytes);
 end;
@@ -670,7 +673,7 @@ end;
 
 function TBackgroundTaskResponsePackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FException.length * sizeof(char)) + 12);
 end;
 
@@ -1118,6 +1121,17 @@ begin
   setStatus(btsCancelling);
 end;
 
+procedure TBackgroundTaskEngine.terminate;
+begin
+  setStatus(btsClosed);
+  FThread.Terminate;
+end;
+
+function TBackgroundTaskEngine.stopped: boolean;
+begin
+  result := FStatus = btsClosed;
+end;
+
 procedure TBackgroundTaskEngine.threadProc;
 var
   pck : TBackgroundTaskPackagePair;
@@ -1257,6 +1271,25 @@ var
 begin
   for e in FEngines do
     e.stop;
+end;
+
+procedure TBackgroundTaskManager.wait(grace: cardinal);
+var
+  start : UInt64;
+  done : boolean;
+  e : TBackgroundTaskEngine;
+begin
+  start := GetTickCount64;
+  repeat
+    done := true;
+    for e in FEngines do
+      if not e.Stopped then
+        done := false;
+  until done or (GetTickCount64 - start > grace);
+  if not done then
+    for e in FEngines do
+      if not e.Stopped then
+        e.terminate;
 end;
 
 procedure TBackgroundTaskManager.killTask(id: integer);
@@ -1456,7 +1489,7 @@ End;
 
 function TBackgroundTaskManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEngines.sizeInBytes);
 end;
 
@@ -1504,7 +1537,7 @@ end;
 
 function TBackgroundTaskStatusInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FMessage.length * sizeof(char)) + 12);
 end;

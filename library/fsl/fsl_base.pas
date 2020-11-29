@@ -1029,6 +1029,8 @@ begin
   finally
     LeaveCriticalSection(GLock);
   end;
+  if result = '' then
+    result := 'Nothing to report';
   {$ELSE}
   result := 'Object Tracking is not enable';
   {$ENDIF}
@@ -2672,9 +2674,12 @@ begin
   begin
     result := sizeOf(self);
     inc(result, length(FItems) * Sizeof(TItem));
-    inc(result, sizeof(FSortedKeys) + FSortedKeys.Count * 2 * sizeof(pointer));
-    inc(result, sizeof(FAsAddedKeys) + FAsAddedKeys.Count * 2 * sizeof(pointer));
-    inc(result, TFslObject(FDefault).sizeInBytes);
+    if FSortedKeys <> nil then
+      inc(result, sizeof(FSortedKeys) + FSortedKeys.Count * 2 * sizeof(pointer));
+    if FAsAddedKeys <> nil then
+      inc(result, sizeof(FAsAddedKeys) + FAsAddedKeys.Count * 2 * sizeof(pointer));
+    if FDefault <> nil then
+      inc(result, TFslObject(FDefault).sizeInBytes);
     inc(result, (length(FName) * sizeof(char))+12);
     for p in self do
     begin

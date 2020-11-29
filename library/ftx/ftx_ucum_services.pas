@@ -345,7 +345,7 @@ end;
 
 function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 
@@ -750,7 +750,7 @@ end;
 
 function TUcumServices.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FModel.sizeInBytes);
   inc(result, FHandlers.sizeInBytes);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -822,7 +822,7 @@ end;
 
 function TUcumServiceList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
 end;
 
@@ -1191,7 +1191,7 @@ end;
 
 function TUcumFilterContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCanonical.length * sizeof(char)) + 12);
 end;
 
@@ -1224,7 +1224,7 @@ end;
 
 function TUCUMContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConcept.sizeInBytes);
 end;
 
@@ -1264,7 +1264,7 @@ end;
 
 function TUcumServiceImplementation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSvc.sizeInBytes);
 end;
 

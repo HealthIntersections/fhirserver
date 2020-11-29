@@ -1702,7 +1702,7 @@ End;
 
 function TFslStreamAdapter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStream.sizeInBytes);
 end;
 
@@ -1823,7 +1823,7 @@ End;
 
 function TFslAccessStreamAdapter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStream.sizeInBytes);
 end;
 
@@ -1908,7 +1908,7 @@ End;
 
 function TFslStringStream.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FData) + 12);
 end;
 
@@ -2041,7 +2041,7 @@ End;
 (*
 function TVCLStream.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStream.sizeInBytes);
 end;
 
@@ -2418,7 +2418,7 @@ End;
 
 function TFslBuffer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCapacity);
   inc(result, sizeof(FEncoding));
   inc(result, (FFormat.length * sizeof(char)) + 12);
@@ -2510,7 +2510,7 @@ End;
 
 function TFslNameBuffer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2858,7 +2858,7 @@ End;
 
 function TFslMemoryStream.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBuffer.sizeInBytes);
 end;
 
@@ -2940,7 +2940,7 @@ end;
 
 function TFslFile.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, sizeof(FStream));
 end;
 
@@ -4379,7 +4379,7 @@ End;
 
 function TFslTextExtractor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCache.length * sizeof(char)) + 12);
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -4795,7 +4795,7 @@ end;
 
 function TFslStreamReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FBufferedData));
   inc(result, FStream.sizeInBytes);
   inc(result, sizeof(FEncoding));
@@ -4887,7 +4887,7 @@ end;
 
 function TFslStringReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -5140,7 +5140,7 @@ End;
 
 function TFslZipWorker.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStream.sizeInBytes);
   inc(result, FParts.sizeInBytes);
 end;
@@ -5168,7 +5168,7 @@ End;
 
 function TFslZipPart.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -6874,7 +6874,7 @@ end;
 
 function TMimePart.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContent.sizeInBytes);
   inc(result, (FId.length * sizeof(char)) + 12);
 end;

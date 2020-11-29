@@ -619,7 +619,7 @@ End; }
 
 function TDicomImageExtractor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FInstance.sizeInBytes);
   inc(result, FRoot.sizeInBytes);
   inc(result, (FTransferSyntax.length * sizeof(char)) + 12);

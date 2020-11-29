@@ -59,7 +59,7 @@ implementation
 (*
 function TFhirHTTPClientTests.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWorker.sizeInBytes);
 end;
 

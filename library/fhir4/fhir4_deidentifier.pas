@@ -452,7 +452,7 @@ end;
 
 function TFHIRDeIdentifier.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDatabase.sizeInBytes);
   inc(result, FDataCache.sizeInBytes);
   inc(result, FLock.sizeInBytes);
@@ -509,7 +509,7 @@ end;
 
 function TPseudoData.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FName.sizeInBytes);
   inc(result, FTelecom.sizeInBytes);
   inc(result, FAddress.sizeInBytes);
@@ -594,7 +594,7 @@ end;
 
 function TFakeDataRepository.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMale.sizeInBytes);
   inc(result, FFemale.sizeInBytes);
 end;

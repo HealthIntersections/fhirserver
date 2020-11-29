@@ -312,7 +312,7 @@ end;
 
 function TPropertyWrapperDirect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWrapped.sizeInBytes);
   inc(result, FList.sizeInBytes);
 end;
@@ -386,7 +386,7 @@ begin
 
 function TBaseWrapperDirect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWrapped.sizeInBytes);
   inc(result, FList.sizeInBytes);
   inc(result, FOtherList.sizeInBytes);
@@ -472,7 +472,7 @@ end;
 
 function TResourceWrapperDirect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWrapped.sizeInBytes);
 end;
 
@@ -3412,7 +3412,7 @@ end;
 (*
 function TFHIRNarrativeGenerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPrefix.length * sizeof(char)) + 12);
   inc(result, context.sizeInBytes);
   inc(result, (FBasePath.length * sizeof(char)) + 12);

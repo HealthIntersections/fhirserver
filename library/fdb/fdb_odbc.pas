@@ -959,7 +959,7 @@ end;
 
 function TFDBOdbcManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDriver.length * sizeof(char)) + 12);
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FDatabase.length * sizeof(char)) + 12);
@@ -1046,24 +1046,24 @@ end;
 
 function TOdbcBoundBytes.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBytes.Size);
 end;
 
 function TOdbcBoundString.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FString.length * sizeof(char)) + 12);
 end;
 
 function TOdbcBoundInt.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 function TOdbcBoundInt64.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, sizeof(FInt64));
 end;
 

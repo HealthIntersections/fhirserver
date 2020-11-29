@@ -672,7 +672,7 @@ end;
 
 function TFHIRJavascriptDefinedElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDefiningType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFHIRType.length * sizeof(char)) + 12);

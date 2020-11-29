@@ -2331,7 +2331,7 @@ end;
 
 function TDicomDataElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FElementDefinition.sizeInBytes);
   inc(result, FObjects.sizeInBytes);
   inc(result, FValues.sizeInBytes);
@@ -2529,7 +2529,7 @@ end;
 
 function TDicomDataElementList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 
@@ -2772,7 +2772,7 @@ end;
 
 function TDicomObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
   inc(result, FElements.sizeInBytes);
 end;
@@ -2875,7 +2875,7 @@ End;
 
 function TDicomObjectList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 
@@ -3025,7 +3025,7 @@ End;
 
 function TDicomInstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSimpleObject.sizeInBytes);
   inc(result, FFileObject.sizeInBytes);
   inc(result, FAssociateRequest.sizeInBytes);
@@ -3077,7 +3077,7 @@ End;
 
 function TDicomPDU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 
@@ -3123,7 +3123,7 @@ End;
 
 function TDicomPresentationContextInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAbstractSyntax.sizeInBytes);
   inc(result, FTransferSyntaxes.sizeInBytes);
 end;
@@ -3162,7 +3162,7 @@ End;
 
 function TDicomPresentationAcceptContextInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTransferSyntax.sizeInBytes);
 end;
 
@@ -3227,7 +3227,7 @@ End;
 
 function TDicomAssociateRequestPDU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCalledEntity.sizeInBytes);
   inc(result, FCallingEntity.sizeInBytes);
   inc(result, FApplicationContext.sizeInBytes);
@@ -3440,7 +3440,7 @@ End;
 
 function TDicomAssociateAcceptPDU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCalledEntity.sizeInBytes);
   inc(result, FCallingEntity.sizeInBytes);
   inc(result, FApplicationContext.sizeInBytes);
@@ -3476,7 +3476,7 @@ End;
 
 function TDicomAssociateRejectPDU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TDicomDataPDU }
@@ -3513,7 +3513,7 @@ End;
 
 function TDicomDataPDU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDataValues.sizeInBytes);
 end;
 
@@ -3876,7 +3876,7 @@ End;
 
 function TDicomFile.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FContent.sizeInBytes);
   inc(result, FHeader.sizeInBytes);
@@ -4103,7 +4103,7 @@ end;
 
 function TDicomMessage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FData.sizeInBytes);
   inc(result, FCommand.sizeInBytes);
   inc(result, (FAbstractSyntax.length * sizeof(char)) + 12);
@@ -4336,7 +4336,7 @@ End;
 
 function TDicomValueList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 

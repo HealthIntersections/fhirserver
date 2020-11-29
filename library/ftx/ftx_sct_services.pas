@@ -860,7 +860,7 @@ end;
 
 function TSnomedStrings.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -936,7 +936,7 @@ end;
 
 function TSnomedReferences.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -1041,7 +1041,7 @@ end;
 
 function TSnomedDescriptions.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -1372,7 +1372,7 @@ end;
 
 function TSnomedConceptList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -2887,7 +2887,7 @@ end;
 
 function TSnomedServices.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSourceFile.length * sizeof(char)) + 12);
   inc(result, (FEdition.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -2969,7 +2969,7 @@ end;
 
 function TSnomedRelationshipList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -3025,7 +3025,7 @@ end;
 
 function TSnomedWords.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -3081,7 +3081,7 @@ end;
 
 function TSnomedStems.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -3136,7 +3136,7 @@ end;
 
 function TSnomedServiceList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
 end;
 
@@ -3224,7 +3224,7 @@ end;
 
 function TSnomedReferenceSetIndex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -3284,7 +3284,7 @@ end;
 
 function TSnomedDescriptionIndex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -3389,7 +3389,7 @@ end;
 
 function TSnomedReferenceSetMembers.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -5377,7 +5377,7 @@ end;
 
 function TSnomedExpressionContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, FExpression.sizeInBytes);
 end;
@@ -5407,7 +5407,7 @@ end;
 
 function TMatchingConcept.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMatched.length * sizeof(char)) + 12);
   inc(result, FUnmatched.sizeInBytes);
 end;

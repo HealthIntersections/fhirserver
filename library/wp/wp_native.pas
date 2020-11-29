@@ -1256,7 +1256,7 @@ End;
 
 function TWPNativeReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAnnotationMap.sizeInBytes);
   inc(result, FActiveExtractor.sizeInBytes);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -1980,7 +1980,7 @@ End;
 
 function TWPNativeWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FActiveFormatter.sizeInBytes);
   inc(result, (FText.length * sizeof(char)) + 12);
   inc(result, FTextPiece.sizeInBytes);
@@ -2743,7 +2743,7 @@ End;
 
 function TWPNativeDocumentReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FActiveExtractor.sizeInBytes);
   inc(result, (FVersion.length * sizeof(char)) + 12);
 end;
@@ -3392,7 +3392,7 @@ End;
 
 function TWPNativeDocumentWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFormatter.sizeInBytes);
 end;
 
@@ -4613,7 +4613,7 @@ End;
 
 function TWPSnapshotWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 

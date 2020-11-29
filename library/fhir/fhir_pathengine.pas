@@ -360,7 +360,7 @@ end;
 
 function TFHIRPathEngineV.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FExtensions.sizeInBytes);
 end;
 
@@ -373,7 +373,7 @@ end;
 
 function TFHIRPathExpressionNodeV.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TFHIRPathExecutionContext }
@@ -419,7 +419,7 @@ end;
 
 function TFHIRPathExecutionContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAppInfo.sizeInBytes);
   inc(result, FResource.sizeInBytes);
   inc(result, FContext.sizeInBytes);
@@ -477,7 +477,7 @@ end;
 
 function TFHIRPathDebugPackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcontext.sizeInBytes);
   inc(result, Finput2.sizeInBytes);
   inc(result, Finput1.sizeInBytes);

@@ -424,7 +424,7 @@ end;
 
 function TResourceWithReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FReference.length * sizeof(char)) + 12);
   inc(result, FResource.sizeInBytes);
 end;

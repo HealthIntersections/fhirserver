@@ -116,7 +116,7 @@ end;
 
 function TTwilioClient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FBody.length * sizeof(char)) + 12);
   inc(result, (FFrom.length * sizeof(char)) + 12);
   inc(result, (FTo.length * sizeof(char)) + 12);

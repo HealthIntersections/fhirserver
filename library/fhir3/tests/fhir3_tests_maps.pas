@@ -194,7 +194,7 @@ end;
 
 function TMapTransformTests.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, ctxt.sizeInBytes);
   inc(result, utils.sizeInBytes);
 end;

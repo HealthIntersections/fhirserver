@@ -1200,7 +1200,7 @@ end;
 
 function TNarrativeGenerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fprefix.length * sizeof(char)) + 12);
   inc(result, FProfiles.sizeInBytes);
   inc(result, FContext.sizeInBytes);

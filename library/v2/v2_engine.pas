@@ -145,7 +145,7 @@ end;
 
 function TV2ConversionEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMessage.sizeInBytes);
   inc(result, (FScriptName.length * sizeof(char)) + 12);
   inc(result, FClient.sizeInBytes);
@@ -156,7 +156,7 @@ end;
 
 function TV2ConversionEngineScript.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;

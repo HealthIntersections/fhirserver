@@ -99,7 +99,7 @@ var
 
 function TTestingWorkerContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, class function Use.sizeInBytes);
 end;
 
@@ -215,7 +215,7 @@ end;
 
 function TTestObjectThread.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProc.sizeInBytes);
 end;
 

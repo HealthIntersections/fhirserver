@@ -460,7 +460,7 @@ end;
 
 function TFHIRWorkerContextWithFactory.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FLoadInfo.sizeInBytes);
 end;
@@ -490,7 +490,7 @@ end;
 
 function TFHIRValidatorContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIssues.sizeInBytes);
   inc(result, Fowned.sizeInBytes);
   inc(result, (FOperationDescription.length * sizeof(char)) + 12);

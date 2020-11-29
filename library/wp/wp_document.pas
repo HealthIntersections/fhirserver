@@ -2071,7 +2071,7 @@ End;
 
 function TWPDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStyles.sizeInBytes);
   inc(result, FAllowedWords.sizeInBytes);
   inc(result, FAnnotations.sizeInBytes);
@@ -2193,7 +2193,7 @@ End;
 
 function TWPDocumentContainer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBlocks.sizeInBytes);
 end;
 
@@ -2424,7 +2424,7 @@ End;
 
 function TWPDocumentObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FHotspot.sizeInBytes);
@@ -2661,7 +2661,7 @@ End;
 
 function TWPDocumentField.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FData.sizeInBytes);
   inc(result, FContents.sizeInBytes);
 end;
@@ -2886,7 +2886,7 @@ End;
 
 function TWPDocumentContent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FStyle.length * sizeof(char)) + 12);
   inc(result, FFont.sizeInBytes);
 end;
@@ -2966,7 +2966,7 @@ End;
 
 function TWPDocumentSection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, FData.sizeInBytes);
@@ -3141,7 +3141,7 @@ End;
 
 function TWPDocumentText.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FDrawnFont.length * sizeof(char)) + 12);
 end;
@@ -3353,7 +3353,7 @@ End;
 
 function TWPDocumentImage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, FImage.sizeInBytes);
   inc(result, FSelectionImage.sizeInBytes);
@@ -3536,7 +3536,7 @@ End;
 
 function TWPDocumentAnnotation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FOwner.length * sizeof(char)) + 12);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
@@ -3659,7 +3659,7 @@ End;
 
 function TWPDocumentAttachment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, FContent.sizeInBytes);
   inc(result, (FMimeType.length * sizeof(char)) + 12);
@@ -3877,7 +3877,7 @@ End;
 
 function TWPDocumentParagraph.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FStyle.length * sizeof(char)) + 12);
   inc(result, FFormat.sizeInBytes);
   inc(result, FFont.sizeInBytes);
@@ -4088,7 +4088,7 @@ End;
 
 function TWPDocumentTableItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLeftBorder.sizeInBytes);
   inc(result, FTopBorder.sizeInBytes);
   inc(result, FRightBorder.sizeInBytes);
@@ -4231,7 +4231,7 @@ End;
 
 function TWPDocumentTableCell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FParagraphs.sizeInBytes);
 end;
 
@@ -4408,7 +4408,7 @@ End;
 
 function TWPDocumentTableRow.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCells.sizeInBytes);
   inc(result, FRows.sizeInBytes);
 end;
@@ -4656,7 +4656,7 @@ End;
 
 function TWPDocumentTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCenterHorizontalBorder.sizeInBytes);
   inc(result, FCenterVerticalBorder.sizeInBytes);
   inc(result, FRows.sizeInBytes);
@@ -5271,7 +5271,7 @@ End;
 
 function TWPDocumentIteratorContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
 end;
 
@@ -5436,7 +5436,7 @@ End;
 
 function TWPDocumentIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FStack.sizeInBytes);
 end;
@@ -5487,7 +5487,7 @@ End;
 
 function TWPDocumentValidator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProblems.sizeInBytes);
 end;
 
@@ -5590,7 +5590,7 @@ End;
 
 function TWPDocumentValidationProblem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, FObject.sizeInBytes);
 end;

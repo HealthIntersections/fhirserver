@@ -212,7 +212,7 @@ end;
 
 function TSnomedExpressionBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TSnomedConcept }
@@ -294,7 +294,7 @@ end;
 
 function TSnomedConcept.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fcode.length * sizeof(char)) + 12);
   inc(result, (Fdescription.length * sizeof(char)) + 12);
   inc(result, (FLiteral.length * sizeof(char)) + 12);
@@ -518,7 +518,7 @@ end;
 
 function TSnomedExpression.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FrefinementGroups.sizeInBytes);
   inc(result, Frefinements.sizeInBytes);
   inc(result, Fconcepts.sizeInBytes);
@@ -588,7 +588,7 @@ end;
 
 function TSnomedRefinement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fname.sizeInBytes);
   inc(result, Fvalue.sizeInBytes);
 end;
@@ -680,7 +680,7 @@ end;
 
 function TSnomedRefinementGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Frefinements.sizeInBytes);
 end;
 
@@ -1019,7 +1019,7 @@ end;
 
 function TSnomedExpressionParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (source.length * sizeof(char)) + 12);
 end;
 

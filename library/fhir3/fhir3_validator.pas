@@ -326,7 +326,7 @@ end;
 
 function TElementInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (name.length * sizeof(char)) + 12);
   inc(result, element.sizeInBytes);
   inc(result, (path.length * sizeof(char)) + 12);
@@ -443,7 +443,7 @@ end;
 
 function TNodeStack.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, parent.sizeInBytes);
   inc(result, (literalPath.length * sizeof(char)) + 12);
   inc(result, logicalPaths.sizeInBytes);
@@ -3590,7 +3590,7 @@ end;
 
 function TFHIRValidator3.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FExtensionDomains.sizeInBytes);
   inc(result, FPathEngine.sizeInBytes);
   inc(result, FEntryElement.sizeInBytes);
@@ -3681,7 +3681,7 @@ end;
 
 function TChildIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, parent.sizeInBytes);
   inc(result, (basePath.length * sizeof(char)) + 12);
 end;
@@ -3718,7 +3718,7 @@ end;
 
 function TValidationProfileSet.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCanonical.sizeInBytes);
   inc(result, FDefinitions.sizeInBytes);
 end;

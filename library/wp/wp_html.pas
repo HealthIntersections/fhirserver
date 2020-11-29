@@ -1674,7 +1674,7 @@ End;
 
 function TWPHTMLReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDom.sizeInBytes);
   inc(result, FContextStack.sizeInBytes);
 end;
@@ -2435,7 +2435,7 @@ End;
 
 function TWPHTMLWriterEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFormatter.sizeInBytes);
   inc(result, FCSSStyles.sizeInBytes);
   inc(result, (FTitle.length * sizeof(char)) + 12);
@@ -2552,7 +2552,7 @@ End;
 
 function TWPMHTWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHTMLStream.sizeInBytes);
   inc(result, FPackage.sizeInBytes);
 end;

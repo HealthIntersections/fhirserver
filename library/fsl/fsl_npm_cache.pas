@@ -267,7 +267,7 @@ end;
 
 function TFHIRLoadPackagesTaskResponse.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPackages.sizeInBytes);
 end;
 
@@ -287,7 +287,7 @@ end;
 
 function TFHIRLoadPackagesTaskRequest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FManager.sizeInBytes);
 end;
 
@@ -1041,7 +1041,7 @@ end;
 
 function TFHIRPackageManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFolder.length * sizeof(char)) + 12);
   inc(result, FCache.sizeInBytes);
   inc(result, (FTaskDesc.length * sizeof(char)) + 12);
@@ -1083,7 +1083,7 @@ end;
 
 function TPackageLoadingInformation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, FLoaded.sizeInBytes);
 end;
@@ -1097,7 +1097,7 @@ end;
 
 function TPackageDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FCanonical.length * sizeof(char)) + 12);

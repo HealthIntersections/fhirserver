@@ -201,7 +201,7 @@ end;
 
 function TInternetFetcher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, FBuffer.sizeInBytes);
   inc(result, (FUsername.length * sizeof(char)) + 12);

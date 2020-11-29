@@ -306,7 +306,7 @@ finalization
   gTests.Free;
 function TFHIRPathTests.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, engine.sizeInBytes);
   inc(result, resources.sizeInBytes);
   inc(result, ucum.sizeInBytes);

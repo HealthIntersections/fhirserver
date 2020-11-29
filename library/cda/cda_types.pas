@@ -2533,7 +2533,7 @@ end;
 
 function Tv3HXIT.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FvalidTimeHigh.length * sizeof(char)) + 12);
   inc(result, (FvalidTimeLow.length * sizeof(char)) + 12);
   inc(result, (FcontrolInformationExtension.length * sizeof(char)) + 12);
@@ -2629,7 +2629,7 @@ end;
 
 function Tv3ANY.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FflavorId.length * sizeof(char)) + 12);
 end;
 
@@ -2705,7 +2705,7 @@ end;
 
 function Tv3BL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { Tv3ED }
@@ -3003,7 +3003,7 @@ end;
 
 function Tv3ED.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FmediaType.length * sizeof(char)) + 12);
   inc(result, (Fcharset.length * sizeof(char)) + 12);
   inc(result, (Flanguage.length * sizeof(char)) + 12);
@@ -3138,7 +3138,7 @@ end;
 
 function Tv3ST.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Flanguage.length * sizeof(char)) + 12);
   inc(result, Ftranslation.sizeInBytes);
   inc(result, (Fvalue.length * sizeof(char)) + 12);
@@ -3205,7 +3205,7 @@ end;
 
 function Tv3SC.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
 end;
 
@@ -3390,7 +3390,7 @@ end;
 
 function Tv3CD.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, ForiginalText.sizeInBytes);
   inc(result, FdisplayName.sizeInBytes);
   inc(result, (FvalueSetVersion.length * sizeof(char)) + 12);
@@ -3464,7 +3464,7 @@ end;
 
 function Tv3CS.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fcode.length * sizeof(char)) + 12);
 end;
 
@@ -3584,7 +3584,7 @@ end;
 
 function Tv3TEL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fvalue.length * sizeof(char)) + 12);
   inc(result, FuseablePeriod.sizeInBytes);
 end;
@@ -3720,7 +3720,7 @@ end;
 
 function Tv3II.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fextension.length * sizeof(char)) + 12);
   inc(result, (FidentifierName.length * sizeof(char)) + 12);
   inc(result, (Froot.length * sizeof(char)) + 12);
@@ -3803,7 +3803,7 @@ end;
 
 function Tv3XP.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FcodeSystem.length * sizeof(char)) + 12);
   inc(result, (FcodeSystemVersion.length * sizeof(char)) + 12);
   inc(result, (Fcode.length * sizeof(char)) + 12);
@@ -3995,7 +3995,7 @@ end;
 
 function Tv3AD.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fpart.sizeInBytes);
   inc(result, FuseablePeriod.sizeInBytes);
 end;
@@ -4256,7 +4256,7 @@ end;
 
 function Tv3EN.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fpart.sizeInBytes);
 end;
 
@@ -4294,7 +4294,7 @@ end;
 
 function Tv3QTY.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, ForiginalText.sizeInBytes);
   inc(result, Fexpression.sizeInBytes);
   inc(result, FuncertainRange.sizeInBytes);
@@ -4485,7 +4485,7 @@ end;
 
 function Tv3CO.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
 end;
 
@@ -4646,7 +4646,7 @@ end;
 
 function Tv3RTO.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fdenominator.sizeInBytes);
   inc(result, Fnumerator.sizeInBytes);
 end;
@@ -4742,7 +4742,7 @@ end;
 
 function Tv3PQ.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Funit.length * sizeof(char)) + 12);
   inc(result, Ftranslation.sizeInBytes);
 end;
@@ -4948,7 +4948,7 @@ end;
 
 function Tv3PQR.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { Tv3MO }
@@ -4973,7 +4973,7 @@ end;
 
 function Tv3MO.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fcurrency.length * sizeof(char)) + 12);
 end;
 
@@ -5056,7 +5056,7 @@ end;
 
 function Tv3TS.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fvalue.length * sizeof(char)) + 12);
 end;
 
@@ -5233,7 +5233,7 @@ end;
 
 function Tv3QSET.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, ForiginalText.sizeInBytes);
 end;
 
@@ -5313,7 +5313,7 @@ end;
 
 function Tv3QSU.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fterms.sizeInBytes);
 end;
 
@@ -5394,7 +5394,7 @@ end;
 
 function Tv3QSI.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fterms.sizeInBytes);
 end;
 
@@ -5490,7 +5490,7 @@ end;
 
 function Tv3QSD.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fsubtrahend.sizeInBytes);
   inc(result, Fminuend.sizeInBytes);
 end;
@@ -5587,7 +5587,7 @@ end;
 
 function Tv3QSP.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fhigh.sizeInBytes);
   inc(result, Flow.sizeInBytes);
 end;
@@ -5660,7 +5660,7 @@ end;
 
 function Tv3QSS.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fterms.sizeInBytes);
 end;
 
@@ -5731,7 +5731,7 @@ end;
 
 function Tv3QSC.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
 end;
 
@@ -5892,7 +5892,7 @@ end;
 
 function Tv3IVL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Flow.sizeInBytes);
   inc(result, Fany.sizeInBytes);
   inc(result, Fwidth.sizeInBytes);
@@ -6026,7 +6026,7 @@ end;
 
 function Tv3PIVL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcount.sizeInBytes);
   inc(result, Fphase.sizeInBytes);
   inc(result, Fperiod.sizeInBytes);
@@ -6105,7 +6105,7 @@ end;
 
 function Tv3EIVL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Foffset.sizeInBytes);
 end;
 
@@ -6180,7 +6180,7 @@ end;
 
 function Tv3UVP.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fvalue.sizeInBytes);
 end;
 
@@ -6251,7 +6251,7 @@ end;
 
 function Tv3NPPD.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fitem.sizeInBytes);
 end;
 
@@ -7810,7 +7810,7 @@ end;
 
 function Tv3CR.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fvalue.sizeInBytes);
   inc(result, Fname.sizeInBytes);
 end;

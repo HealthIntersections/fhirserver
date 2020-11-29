@@ -3299,7 +3299,7 @@ end;
 
 function TFhirConceptMapGroup2.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fsource.length * sizeof(char)) + 12);
   inc(result, ( Ftarget.length * sizeof(char)) + 12);
 end;
@@ -3497,7 +3497,7 @@ end;
 
 function TFHIRMeta2.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
 end;
 

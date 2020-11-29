@@ -647,7 +647,7 @@ end;
 
 function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FConstant.sizeInBytes);
   inc(result, FParameters.sizeInBytes);
@@ -722,7 +722,7 @@ end;
 
 function TFHIRProfiledType.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Furi.length * sizeof(char)) + 12);
   inc(result, FProfiles.sizeInBytes);
   inc(result, FBindings.sizeInBytes);
@@ -1056,7 +1056,7 @@ end;
 
 function TFHIRTypeDetails.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTypes.sizeInBytes);
 end;
 
@@ -1289,7 +1289,7 @@ end;
 
 function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLang.sizeInBytes);
 end;
 

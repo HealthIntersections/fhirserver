@@ -1137,7 +1137,7 @@ end;
 
 function TFHIRHTTPCommunicator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FProxy.length * sizeof(char)) + 12);
   inc(result, (FCertFile.length * sizeof(char)) + 12);

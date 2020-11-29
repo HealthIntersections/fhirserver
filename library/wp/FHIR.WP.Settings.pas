@@ -1048,7 +1048,7 @@ end;
 
 function TWPSettings.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFieldDefinitions.sizeInBytes);
   inc(result, FAnnotationDefinitions.sizeInBytes);
   inc(result, (FSnapshotEmail.length * sizeof(char)) + 12);
@@ -1086,7 +1086,7 @@ End;
 
 function TWPSettable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSettings.sizeInBytes);
 end;
 

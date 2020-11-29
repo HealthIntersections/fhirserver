@@ -40,7 +40,7 @@ type
   private
     FSnomedServer : TSnomedWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -52,6 +52,8 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 
@@ -59,9 +61,19 @@ implementation
 
 { TSnomedWebEndPoint }
 
-constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TSnomedWebEndPoint.cacheSize: Int64;
 begin
-  inherited create(config, settings, nil, telnet, common);
+  result := inherited cacheSize;
+end;
+
+procedure TSnomedWebEndPoint.clearCache;
+begin
+  inherited;
+end;
+
+constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, nil, common);
 end;
 
 destructor TSnomedWebEndPoint.Destroy;
@@ -73,6 +85,7 @@ function TSnomedWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhir
 begin
   FSnomedServer := TSnomedWebServer.Create(config.name, config['path'].value, common);
   FSnomedServer.FTx := Terminologies.Link;
+  WebEndPoint := FSnomedServer;
   result := FSnomedServer.link;
 end;
 

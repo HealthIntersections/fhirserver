@@ -183,7 +183,7 @@ end;
 
 function TFhirThreadedClientPackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FError.length * sizeof(char)) + 12);
   inc(result, FResult.sizeInBytes);
   inc(result, Fparams.sizeInBytes);

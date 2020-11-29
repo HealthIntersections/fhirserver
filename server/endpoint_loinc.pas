@@ -41,7 +41,7 @@ type
   private
     FLoincServer : TLoincWebServer;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -53,15 +53,27 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
 
 { TLoincWebEndPoint }
 
-constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TLoincWebEndPoint.cacheSize: Int64;
 begin
-  inherited create(config, settings, db, telnet, common);
+  result := inherited cacheSize;
+end;
+
+procedure TLoincWebEndPoint.clearCache;
+begin
+  inherited;
+end;
+
+constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, db, common);
 end;
 
 destructor TLoincWebEndPoint.Destroy;
@@ -73,6 +85,7 @@ function TLoincWebEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirW
 begin
   FLoincServer := TLoincWebServer.Create(config.name, config['path'].value, common);
   FLoincServer.FTx := Terminologies.Link;
+  WebEndPoint := FLoincServer;
   result := FLoincServer.link;
 end;
 

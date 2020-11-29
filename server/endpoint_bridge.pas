@@ -194,7 +194,7 @@ Type
   TBridgeEndPoint = class (TStorageEndPoint)
   private
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -206,15 +206,27 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
 
 { TBridgeEndPoint }
 
-constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TBridgeEndPoint.cacheSize: Int64;
 begin
-  inherited create(config, settings, db, telnet, common);
+  result := inherited cacheSize;
+end;
+
+procedure TBridgeEndPoint.clearCache;
+begin
+  inherited;
+end;
+
+constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, db, common);
 end;
 
 destructor TBridgeEndPoint.Destroy;
@@ -241,7 +253,6 @@ begin
   store.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TExampleFHIRUserProvider.Create;
-  Telnet.addContext(FServerContext);
 end;
 
 procedure TBridgeEndPoint.LoadPackages(plist: String);
@@ -313,7 +324,6 @@ end;
 
 procedure TBridgeEndPoint.Unload;
 begin
-  telnet.removeContext(FServerContext);
   FServerContext.Free;
   FServerContext := nil;
 end;
@@ -329,6 +339,7 @@ var
 begin
   wep := TBridgeWebServer.Create(Config.name, Config['path'].value, common, self);
   wep.FBridge := self;
+  WebEndPoint := wep;
   result := wep;
 end;
 
@@ -632,6 +643,7 @@ end;
 
 destructor TExampleFhirServerStorage.Destroy;
 begin
+  FDatabase.Free;
   inherited;
 end;
 

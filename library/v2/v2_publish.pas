@@ -272,7 +272,7 @@ end;
 
 function THL7V2DocumentPublisher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, FTitleStyle.sizeInBytes);
 end;
@@ -1223,7 +1223,7 @@ End;
 
 function THL7V2HTMLPublisher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDict.sizeInBytes);
 end;
 

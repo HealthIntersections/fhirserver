@@ -184,12 +184,12 @@ type
   private
   protected
     FServerContext : TFHIRServerContext;
-
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
-
     property ServerContext : TFHIRServerContext read FServerContext;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
@@ -248,9 +248,23 @@ end;
 
 { TStorageEndPoint }
 
-constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TStorageEndPoint.cacheSize: Int64;
 begin
-  inherited create(config, settings, db, telnet, common);
+  result := inherited cacheSize;
+  if WebEndPoint <> nil then
+    result := result  + (WebEndPoint as TStorageWebEndpoint).FContext.cacheSize;
+end;
+
+procedure TStorageEndPoint.clearCache;
+begin
+  inherited;
+  if WebEndPoint <> nil then
+    (WebEndPoint as TStorageWebEndpoint).FContext.clearCache;
+end;
+
+constructor TStorageEndPoint.Create(config: TFHIRServerConfigSection; settings: TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, db, common);
 end;
 
 destructor TStorageEndPoint.Destroy;

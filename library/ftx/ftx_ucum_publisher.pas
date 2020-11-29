@@ -424,7 +424,7 @@ end;
 
 function TUcumPublisher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FUcum.sizeInBytes);
 end;
 

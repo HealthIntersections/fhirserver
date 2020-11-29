@@ -430,7 +430,7 @@ end;
 
 function THtmlPublisher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBuilder.sizeInBytes);
   inc(result, (FBaseURL.length * sizeof(char)) + 12);
   inc(result, FLang.sizeInBytes);

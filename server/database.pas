@@ -419,6 +419,8 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
   TFslDateTimeWrapper = class (TFslObject)
@@ -6300,6 +6302,11 @@ end;
 //  conn.Terminate;
 //end;
 //
+function TFHIRNativeStorageService.cacheSize: Int64;
+begin
+  result := inherited cacheSize + FRegisteredValueSets.sizeInBytes + FQueue.sizeInBytes;
+end;
+
 procedure TFHIRNativeStorageService.checkDropResource(session: TFhirSession; request: TFHIRRequest; resource: TFHIRResourceV; tags: TFHIRTagList);
 begin
   // nothing at this time
@@ -6314,6 +6321,12 @@ begin
     doRegisterTag(tag, conn)
   else if conn.transactionId <> tag.TransactionId then
     tag.ConfirmedStored := true;
+end;
+
+procedure TFHIRNativeStorageService.clearCache;
+begin
+  // nothing at this time.
+  inherited;
 end;
 
 procedure TFHIRNativeStorageService.RegisterTag(tag: TFHIRTag);

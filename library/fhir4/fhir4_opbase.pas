@@ -237,7 +237,7 @@ end;
 
 function TFHIROperationBaseObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FExtensions.sizeInBytes);
 end;
 
@@ -257,7 +257,7 @@ end;
 
 function TFHIROpExtension.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
 end;

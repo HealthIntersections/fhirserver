@@ -301,7 +301,7 @@ End;
 
 function TFslMAPI.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBody.sizeInBytes);
   inc(result, FTos.sizeInBytes);
   inc(result, FCcs.sizeInBytes);

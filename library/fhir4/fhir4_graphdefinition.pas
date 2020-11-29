@@ -480,7 +480,7 @@ end;
 
 function TFHIRGraphDefinitionParser4.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLexer.sizeInBytes);
 end;
 
@@ -710,7 +710,7 @@ end;
 
 function TFHIRGraphDefinitionEngine4.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContext.sizeInBytes);
   inc(result, FPathEngine.sizeInBytes);
   inc(result, FBundle.sizeInBytes);

@@ -402,7 +402,7 @@ end;
 
 function TUcumImportAction.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, FUcum.sizeInBytes);
   inc(result, (Fname.length * sizeof(char)) + 12);

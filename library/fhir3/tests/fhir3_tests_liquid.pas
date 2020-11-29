@@ -174,7 +174,7 @@ finalization
   gResources.Free;
 function TLiquidEngineTest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, engine.sizeInBytes);
   inc(result, test.sizeInBytes);
 end;

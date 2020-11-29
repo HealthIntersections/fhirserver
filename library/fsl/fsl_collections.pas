@@ -2023,7 +2023,7 @@ End;
 
 function TFslIntegerList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Capacity * sizeof(Integer));
 end;
 
@@ -2096,7 +2096,7 @@ End;
 
 function TFslIntegerListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIntegerList.sizeInBytes);
 end;
 
@@ -2270,7 +2270,7 @@ End;
 
 function TFslClassListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FClassList.sizeInBytes);
 end;
 
@@ -2300,7 +2300,7 @@ End;
 
 function TFslObjectClassHashTableIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FInternal.sizeInBytes);
 end;
 
@@ -2890,7 +2890,7 @@ End;
 
 function TFslStringObjectMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Capacity * sizeof(TFslStringObjectMatchItem));
   inc(result, FDefaultValue.sizeInBytes);
   inc(result, (FSymbol.length * sizeof(char)) + 12);
@@ -3398,7 +3398,7 @@ End;
 
 function TFslStringMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, capacity * sizeof(TFslStringMatchItem));
   inc(result, (FSymbol.length * sizeof(char)) + 12);
   inc(result, (FSeparator.length * sizeof(char)) + 12);
@@ -3757,7 +3757,7 @@ End;
 
 function TFslStringList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSymbol.length * sizeof(char)) + 12);
 end;
 
@@ -3830,7 +3830,7 @@ End;
 
 function TFslStringListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStringList.sizeInBytes);
 end;
 
@@ -4359,7 +4359,7 @@ End;
 
 function TFslStringHashEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -4406,7 +4406,7 @@ function TFslObjectList.sizeInBytesV : cardinal;
 var
   i : integer;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Capacity * Sizeof(pointer));
   for i := 0 to count - 1 do
     inc(result, Objects[i].sizeInBytes);
@@ -5203,7 +5203,7 @@ End;
 
 function TFslObjectMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, capacity * sizeof(TFslObjectMatchItem));
   inc(result, FDefaultKey.sizeInBytes);
   inc(result, FDefaultValue.sizeInBytes);
@@ -6037,7 +6037,7 @@ end;
 
 function TFslObjectListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -6714,7 +6714,7 @@ End;
 
 function TFslItemList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslPointerList.AssignItem(oItems : TFslItemList; iIndex : Integer);
@@ -6960,7 +6960,7 @@ End;
 
 function TFslPointerListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPointerArray.sizeInBytes);
 end;
 
@@ -7451,7 +7451,7 @@ End;
 
 function TFslHashTableIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHashTable.sizeInBytes);
   inc(result, FCurrentHashEntry.sizeInBytes);
   inc(result, FNextHashEntry.sizeInBytes);
@@ -7665,7 +7665,7 @@ End;
 
 function TFslName.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -7908,7 +7908,7 @@ End;
 
 function TFslNameList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSymbol.length * sizeof(char)) + 12);
 end;
 
@@ -8082,7 +8082,7 @@ End;
 
 function TFslObjectChoice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FObject.sizeInBytes);
 end;
 
@@ -8347,7 +8347,7 @@ End;
 
 function TFslBooleanListIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBooleanList.sizeInBytes);
 end;
 
@@ -8572,7 +8572,7 @@ End;
 
 function TFslTree.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FChildren.sizeInBytes);
 end;
 

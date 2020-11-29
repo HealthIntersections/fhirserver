@@ -149,6 +149,7 @@ Type
     FConfig : TFslStringDictionary;
     FStopping : boolean;
     FWeb : TFullServerWebEndPoint;
+    FOnGetNamedContext: TGetNamedContextEvent;
     function version : TFHIRVersion;
     function makeFactory : TFHIRFactory;
     function makeServerFactory : TFHIRServerFactory;
@@ -160,10 +161,12 @@ Type
     procedure Transaction(bundle: TFHIRBundleW; init: boolean; name, base: String; mode : TOperationMode; logLevel : TOperationLoggingLevel);
     procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
+
+    property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
 
     procedure Load; override;
     procedure Unload; override;
@@ -172,6 +175,8 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
@@ -399,9 +404,15 @@ end;
 
 { TFullServerEndPoint }
 
-constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+procedure TFullServerEndPoint.clearCache;
 begin
-  inherited create(config, settings, db, telnet, common);
+  inherited;
+  FStore.clearCache;
+end;
+
+constructor TFullServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, db, common);
   FConfig := TFslStringDictionary.create;
 end;
 
@@ -543,8 +554,14 @@ begin
   FWeb.AuthServer.OnProcessLaunchParams := FWeb.GetLaunchParameters;
   FWeb.AuthServer.Active := true;
   result := FWeb;
+  WebEndPoint := result;
   FSubscriptionThread.Start;
   FEmailThread.Start;
+end;
+
+function TFullServerEndPoint.cacheSize: Int64;
+begin
+  result := inherited CacheSize + FStore.cacheSize;
 end;
 
 Procedure TFullServerEndPoint.checkDatabase();
@@ -612,10 +629,9 @@ begin
   FServerContext.JWTServices.Host := Settings.Ini.web['host'].value;
   //  FServerContext.JWTServices.JWKAddress := ?;
 
-  Telnet.addContext(FServerContext);
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, makeFactory, Terminologies.link);
   FStore.Initialise;
-  FServerContext.OnGetNamedContext := Telnet.GetNamedContext; // since it has them all
+  FServerContext.OnGetNamedContext := OnGetNamedContext;
 
   FSubscriptionThread := TFhirServerSubscriptionThread.Create(self);
   FEmailThread := TFhirServerEmailThread.Create(self);
@@ -628,8 +644,6 @@ begin
   FSubscriptionThread.Free;
   FEmailThread.StopAndWait(100);
   FEmailThread.Free;
-
-  telnet.removeContext(FServerContext);
 
   FServerContext.Free;
   FServerContext := nil;

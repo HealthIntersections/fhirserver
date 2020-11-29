@@ -291,7 +291,7 @@ end;
 
 function TValueSetWorker.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FParams.sizeInBytes);
   inc(result, FAdditionalResources.sizeInBytes);
@@ -1072,7 +1072,7 @@ end;
 
 function TValueSetChecker.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOthers.sizeInBytes);
   inc(result, FValueSet.sizeInBytes);
   inc(result, (FId.length * sizeof(char)) + 12);
@@ -1710,7 +1710,7 @@ end;
 
 function TFHIRExpansionParams.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFixedVersions.sizeInBytes);
   inc(result, FdisplayLanguage.sizeInBytes);
   inc(result, (FUid.length * sizeof(char)) + 12);
@@ -1768,7 +1768,7 @@ end;
 
 function TFhirExpansionParamsFixedVersion.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fsystem.length * sizeof(char)) + 12);
   inc(result, (Fversion.length * sizeof(char)) + 12);
 end;

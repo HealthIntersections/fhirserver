@@ -282,7 +282,7 @@ end;
 
 function TTurtleObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TTurtleLiteral }
@@ -355,7 +355,7 @@ end;
 
 function TTurtleLiteral.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fvalue.length * sizeof(char)) + 12);
   inc(result, (Ftype.length * sizeof(char)) + 12);
 end;
@@ -417,7 +417,7 @@ end;
 
 function TTurtleURL.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Furi.length * sizeof(char)) + 12);
 end;
 
@@ -500,7 +500,7 @@ end;
 
 function TTurtleList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Flist.sizeInBytes);
 end;
 
@@ -731,7 +731,7 @@ end;
 
 function TTurtleComplex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPredicates.sizeInBytes);
   inc(result, FNames.sizeInBytes);
 end;
@@ -1019,7 +1019,7 @@ end;
 
 function TTurtleLexer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, (Ftoken.length * sizeof(char)) + 12);
 end;
@@ -1405,7 +1405,7 @@ end;
 
 function TTurtlePredicate.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FURL.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -1481,7 +1481,7 @@ end;
 
 function TTurtleDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPrefixes.sizeInBytes);
   inc(result, FObjects.sizeInBytes);
   inc(result, (FBase.length * sizeof(char)) + 12);

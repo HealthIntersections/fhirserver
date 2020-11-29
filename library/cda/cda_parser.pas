@@ -7259,7 +7259,7 @@ end;
 
 function TCDAParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FComments.sizeInBytes);
   inc(result, FIdentifiedObjects.sizeInBytes);
 end;

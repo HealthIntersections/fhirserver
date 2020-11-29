@@ -11,7 +11,6 @@ Uses
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager,
-  telnet_server,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   web_event, web_base;
 
@@ -42,6 +41,7 @@ type
     Destructor Destroy; override;
     procedure recordRedirect(token, url : String);
     function getRedirect(token : String; var url : String) : boolean;
+    procedure clear;
   end;
 
   TCachedHTTPResponse = class (TFslBuffer)
@@ -62,6 +62,7 @@ type
     destructor Destroy; override;
     function respond(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : boolean;
     procedure recordResponse(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure Clear;
   end;
 
   TFhirWebServerEndpoint = class abstract (TFHIRWebServerBase)
@@ -71,23 +72,13 @@ type
     FPathNoSlash : String;
     FOnReturnFile : TWebReturnProcessedFileEvent;
     FOnProcessFile : TWebProcessFileEvent;
-
-
     function EndPointDesc(secure: boolean): String;
-
-
   protected
     FTokenRedirects : TTokenRedirectManager;
     FCache : THTTPCacheManager;
 
     function OAuthPath(secure: boolean): String;
     function AbsoluteURL(secure: boolean) : String;
-
-//    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509) : String;
-//    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
-
-//    Procedure ReturnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-//    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
 
     function processFile(session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>) : string; overload;
@@ -106,10 +97,6 @@ type
     property OnReturnFile : TWebReturnProcessedFileEvent read FOnReturnFile write FOnReturnFile;
     property OnProcessFile : TWebProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
-//    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-//    Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
-//    function GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String>;
-
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; virtual; abstract;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; virtual; abstract;
     function description : string; virtual; abstract;
@@ -124,26 +111,29 @@ type
     FDatabase : TFDBManager;
     FConfig : TFHIRServerConfigSection;
     FSettings : TFHIRServerSettings;
-    FTelnet : TFHIRTelnetServer;
     FTerminologies : TCommonTerminologies;
     {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
     {$ENDIF}
+    FWebEndPoint : TFhirWebServerEndpoint;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
+    function link : TFHIRServerEndPoint; overload;
 
     property Database : TFDBManager read FDatabase;
     property Config : TFHIRServerConfigSection read FConfig;
     property Settings : TFHIRServerSettings read FSettings;
-    property telnet : TFHIRTelnetServer read FTelnet;
     property Terminologies : TCommonTerminologies read FTerminologies;
+    property WebEndPoint : TFhirWebServerEndpoint read FWebEndPoint write FWebEndPoint;
     {$IFNDEF NO_JS}
     property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
     {$ENDIF}
 
     function summary : String; virtual; abstract;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;
+    function cacheSize : Int64; virtual;
+    procedure clearCache; virtual;
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
     procedure LoadPackages(plist : String); virtual;
@@ -178,6 +168,16 @@ begin
 end;
 
 { THTTPCacheManager }
+
+procedure THTTPCacheManager.Clear;
+begin
+  FLock.Lock;
+  try
+    FCache.Clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
 
 constructor THTTPCacheManager.Create;
 begin
@@ -249,6 +249,16 @@ end;
 
 { TTokenRedirectManager }
 
+procedure TTokenRedirectManager.clear;
+begin
+  FLock.Lock('record');
+  try
+    FMap.clear;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 constructor TTokenRedirectManager.Create;
 begin
   inherited;
@@ -307,56 +317,8 @@ destructor TFhirWebServerEndpoint.Destroy;
 begin
   FCache.free;
   FTokenRedirects.Free;
-//  FAuthServer.Free;
   inherited;
 end;
-
-//procedure TFhirWebServerEndpoint.SetAuthServer(const Value: TAuth2Server);
-//begin
-//  FAuthServer.Free;
-//  FAuthServer := Value;
-//end;
-//
-
-
-//function TFhirWebServerEndpoint.BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String;
-//var
-//  authurl: string;
-//  p : THTTPParameters;
-//begin
-//  authurl := OAuthPath(secure);
-//
-//  result := '<?xml version="1.0" encoding="UTF-8"?>'#13#10 + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10 +
-//    '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10 + ''#13#10 +
-//    '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10 + '<head>'#13#10 +
-//    '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>FHIR RESTful Server - FHIR v' + Factory.versionString
-//    + '</title>'#13#10 + TFHIRXhtmlComposer.PageLinks + #13#10 + FHIR_JS + '</head>'#13#10 + ''#13#10 + '<body>'#13#10 + ''#13#10 +
-//    TFHIRXhtmlComposer.header(factory, nil, FPath, lang, SERVER_FULL_VERSION) + '<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10;
-//
-//  result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', lang) + '</p>'#13#10;
-//  if (Msg = '') and (params <> '') then
-//  begin
-//    p := THTTPParameters.Create(params);
-//    try
-//      msg := p['error_description'];
-//    finally
-//      p.Free;
-//    end;
-//  end;
-//
-//  if Msg <> '' then
-//    result := result + '<p><b>' + FormatTextToHTML(Msg) + '</b></p>'#13#10;
-//
-//  result := result + '<p><a href="' + FAuthServer.BasePath + '/auth?client_id=c.1&response_type=code&scope=openid%20profile%20fhirUser%20user/*.*%20' + SCIM_ADMINISTRATOR
-//    + '&redirect_uri=' + authurl + '/internal&aud=' + authurl + '&state=' + FAuthServer.MakeLoginToken(path, apGoogle) + '">Login using OAuth</a></p>' + #13#10;
-//
-//  if Common.ActualSSLPort <> 0 then
-//    result := result + '<p>Or use the <a href="http://' + Host + port(Common.ActualPort, 80) + FPath + '">unsecured API</a>.</p>'#13#10;
-//
-//  result := result + '<p>&nbsp;</p>'#13#10 +
-//    '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
-//  result := result + TFHIRXhtmlComposer.Footer(factory, path, lang, logid);
-//end;
 
 function TFhirWebServerEndPoint.OAuthPath(secure: boolean): String;
 begin
@@ -375,7 +337,6 @@ begin
       result := 'http://' + Common.Host + ':' + inttostr(Common.ActualPort) + FPathNoSlash;
   end;
 end;
-
 
 function TFhirWebServerEndpoint.processFile(session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
 begin
@@ -446,7 +407,6 @@ begin
   end;
 end;
 
-
 function TFhirWebServerEndPoint.EndPointDesc(secure: boolean): String;
 begin
   result := '';
@@ -471,13 +431,29 @@ end;
 
 { TFHIRServerEndPoint }
 
-constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TFHIRServerEndPoint.cacheSize: Int64;
+begin
+  if WebEndPoint <> nil then
+    result := WebEndPoint.FTokenRedirects.sizeInBytes + WebEndPoint.FCache.sizeInBytes
+  else
+    result := 0;
+end;
+
+procedure TFHIRServerEndPoint.clearCache;
+begin
+  if WebEndPoint <> nil then
+  begin
+    WebEndPoint.FTokenRedirects.clear;
+    WebEndPoint.FCache.Clear;
+  end;
+end;
+
+constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
 begin
   inherited create;
   FConfig := config;
   FSettings := settings;
   FDatabase := db;
-  FTelnet := telnet;
   FTerminologies := common;
 end;
 
@@ -487,13 +463,12 @@ begin
   FConfig.Free;
   FSettings.Free;
   FDatabase.Free;
-  FTelnet.Free;
   inherited;
 end;
 
 procedure TFHIRServerEndPoint.InstallDatabase;
 begin
-
+ // nothing
 end;
 
 procedure TFHIRServerEndPoint.internalThread;
@@ -501,29 +476,34 @@ begin
   // nothing
 end;
 
+function TFHIRServerEndPoint.link: TFHIRServerEndPoint;
+begin
+  result := TFHIRServerEndPoint(inherited link);
+end;
+
 procedure TFHIRServerEndPoint.Load;
 begin
-
+ // nothing
 end;
 
 procedure TFHIRServerEndPoint.LoadPackages(plist: String);
 begin
-
+ // nothing
 end;
 
 procedure TFHIRServerEndPoint.updateAdminPassword;
 begin
-
+ // nothing
 end;
 
 procedure TFHIRServerEndPoint.UninstallDatabase;
 begin
-
+ // nothing
 end;
 
 procedure TFHIRServerEndPoint.Unload;
 begin
-
+ // nothing
 end;
 
 end.

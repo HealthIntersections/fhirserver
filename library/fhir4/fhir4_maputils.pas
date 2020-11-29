@@ -774,7 +774,7 @@ type
 
 function TFHIRStructureMapUtilities.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FWorker.sizeInBytes);
   inc(result, fpp.sizeInBytes);
   inc(result, fpe.sizeInBytes);
@@ -804,7 +804,7 @@ end;
 
 function TPrefixInformation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FAbbrev.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
@@ -2679,7 +2679,7 @@ end;
 
 function TVariable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, Fobj.sizeInBytes);
 end;
@@ -2778,7 +2778,7 @@ end;
 
 function TVariables.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -2807,7 +2807,7 @@ end;
 
 function TResolvedGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
   inc(result, FGroup.sizeInBytes);
 end;
@@ -2899,7 +2899,7 @@ end;
 
 function TFHIRStructureMapDebugContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRule.sizeInBytes);
   inc(result, FMap.sizeInBytes);
   inc(result, FAppInfo.sizeInBytes);

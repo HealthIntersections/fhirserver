@@ -475,7 +475,7 @@ end;
 
 function TGraphQLArgument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FValues.sizeInBytes);
 end;
@@ -501,7 +501,7 @@ end;
 
 function TGraphQLDirective.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FArguments.sizeInBytes);
 end;
@@ -561,7 +561,7 @@ end;
 
 function TGraphQLField.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSelectionSet.sizeInBytes);
   inc(result, (FAlias.length * sizeof(char)) + 12);
@@ -600,7 +600,7 @@ end;
 
 function TGraphQLFragmentSpread.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FDirectives.sizeInBytes);
 end;
@@ -645,7 +645,7 @@ end;
 
 function TGraphQLSelection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FField.sizeInBytes);
   inc(result, FInlineFragment.sizeInBytes);
   inc(result, FFragmentSpread.sizeInBytes);
@@ -672,7 +672,7 @@ end;
 
 function TGraphQLVariable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FDefaultValue.sizeInBytes);
   inc(result, (FTypeName.length * sizeof(char)) + 12);
@@ -714,7 +714,7 @@ end;
 
 function TGraphQLOperation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSelectionSet.sizeInBytes);
   inc(result, FVariables.sizeInBytes);
@@ -754,7 +754,7 @@ end;
 
 function TGraphQLFragment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FTypeCondition.length * sizeof(char)) + 12);
   inc(result, FSelectionSet.sizeInBytes);
@@ -804,7 +804,7 @@ end;
 
 function TGraphQLDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFragments.sizeInBytes);
   inc(result, FOperations.sizeInBytes);
 end;
@@ -945,7 +945,7 @@ end;
 
 function TGraphQLParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPeek.length * sizeof(char)) + 12);
 end;
 
@@ -1433,7 +1433,7 @@ end;
 
 function TGraphQLNumberValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -1462,7 +1462,7 @@ end;
 
 function TGraphQLVariableValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -1496,7 +1496,7 @@ end;
 
 function TGraphQLNameValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -1545,7 +1545,7 @@ end;
 
 function TGraphQLStringValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -1630,7 +1630,7 @@ end;
 
 function TGraphQLObjectValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFields.sizeInBytes);
 end;
 
@@ -1668,7 +1668,7 @@ end;
 
 function TGraphQLPackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, (FOperationName.length * sizeof(char)) + 12);
   inc(result, FVariables.sizeInBytes);

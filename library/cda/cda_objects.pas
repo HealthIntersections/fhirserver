@@ -7241,7 +7241,7 @@ end;
 
 function TcdaClinicalStatement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fid.sizeInBytes);
@@ -7425,7 +7425,7 @@ end;
 
 function TcdaAct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -7517,7 +7517,7 @@ end;
 
 function TcdaCustodian.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedCustodian.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -7643,7 +7643,7 @@ end;
 
 function TcdaCustodianOrganization.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Faddr.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
@@ -7745,7 +7745,7 @@ end;
 
 function TcdaDataEnterer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
@@ -8043,7 +8043,7 @@ end;
 
 function TcdaAssignedAuthor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedAuthoringDevice.sizeInBytes);
   inc(result, FrepresentedOrganization.sizeInBytes);
   inc(result, FassignedPerson.sizeInBytes);
@@ -8128,7 +8128,7 @@ end;
 
 function TcdaAssignedCustodian.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FrepresentedCustodianOrganization.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
@@ -8251,7 +8251,7 @@ end;
 
 function TcdaInformantChoice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, Fcode.sizeInBytes);
   inc(result, Faddr.sizeInBytes);
@@ -8363,7 +8363,7 @@ end;
 
 function TcdaAssignedEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FrepresentedOrganization.sizeInBytes);
   inc(result, FassignedPerson.sizeInBytes);
   inc(result, Fid.sizeInBytes);
@@ -8517,7 +8517,7 @@ end;
 
 function TcdaAssociatedEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FscopingOrganization.sizeInBytes);
   inc(result, FassociatedPerson.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -8629,7 +8629,7 @@ end;
 
 function TcdaAuthenticator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, FsignatureCode.sizeInBytes);
@@ -8742,7 +8742,7 @@ end;
 
 function TcdaAuthor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedAuthor.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, FfunctionCode.sizeInBytes);
@@ -8820,7 +8820,7 @@ end;
 
 function TcdaAuthorChoice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
@@ -8944,7 +8944,7 @@ end;
 
 function TcdaAuthoringDevice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FasMaintainedEntity.sizeInBytes);
   inc(result, Fcode.sizeInBytes);
   inc(result, FmanufacturerModelName.sizeInBytes);
@@ -9025,7 +9025,7 @@ end;
 
 function TcdaAuthorization.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fconsent.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -9104,7 +9104,7 @@ end;
 
 function TcdaBirthplace.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fplace.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
@@ -9522,7 +9522,7 @@ end;
 
 function TcdaClinicalDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthenticator.sizeInBytes);
   inc(result, Fauthorization.sizeInBytes);
   inc(result, Fauthor.sizeInBytes);
@@ -9625,7 +9625,7 @@ end;
 
 function TcdaComponent1.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FencompassingEncounter.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -9728,7 +9728,7 @@ end;
 
 function TcdaComponent2.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FnonXMLBody.sizeInBytes);
   inc(result, FstructuredBody.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
@@ -9818,7 +9818,7 @@ end;
 
 function TcdaComponentSect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fsection.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -10070,7 +10070,7 @@ end;
 
 function TcdaComponent4.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fact.sizeInBytes);
   inc(result, Fencounter.sizeInBytes);
   inc(result, Fobservation.sizeInBytes);
@@ -10192,7 +10192,7 @@ end;
 
 function TcdaConsent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fcode.sizeInBytes);
@@ -10275,7 +10275,7 @@ end;
 
 function TcdaConsumable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FmanufacturedProduct.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -10389,7 +10389,7 @@ end;
 
 function TcdaCriterion.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fvalue.sizeInBytes);
@@ -10506,7 +10506,7 @@ end;
 
 function TcdaDevice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
@@ -10589,7 +10589,7 @@ end;
 
 function TcdaDocumentationOf.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FserviceEvent.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -10758,7 +10758,7 @@ end;
 
 function TcdaEncompassingEncounter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FencounterParticipant.sizeInBytes);
   inc(result, Flocation.sizeInBytes);
   inc(result, FresponsibleParty.sizeInBytes);
@@ -11036,7 +11036,7 @@ end;
 
 function TcdaEncounter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -11142,7 +11142,7 @@ end;
 
 function TcdaEncounterParticipant.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, Ftime.sizeInBytes);
@@ -11257,7 +11257,7 @@ end;
 
 function TcdaEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
   inc(result, Fdesc.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -11485,7 +11485,7 @@ end;
 
 function TcdaEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fact.sizeInBytes);
   inc(result, Fencounter.sizeInBytes);
   inc(result, Fobservation.sizeInBytes);
@@ -11767,7 +11767,7 @@ end;
 
 function TcdaEntryRelationship.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fact.sizeInBytes);
   inc(result, Fencounter.sizeInBytes);
   inc(result, Fobservation.sizeInBytes);
@@ -11904,7 +11904,7 @@ end;
 
 function TcdaExternalActChoice.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fcode.sizeInBytes);
@@ -12026,7 +12026,7 @@ end;
 
 function TcdaExternalDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FsetId.sizeInBytes);
   inc(result, FversionNumber.sizeInBytes);
 end;
@@ -12240,7 +12240,7 @@ end;
 
 function TcdaGuardian.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FguardianOrganization.sizeInBytes);
   inc(result, FguardianPerson.sizeInBytes);
   inc(result, Fcode.sizeInBytes);
@@ -12369,7 +12369,7 @@ end;
 
 function TcdaHealthCareFacility.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FserviceProviderOrganization.sizeInBytes);
   inc(result, Flocation.sizeInBytes);
   inc(result, Fcode.sizeInBytes);
@@ -12477,7 +12477,7 @@ end;
 
 function TcdaInformant12.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, FrelatedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
@@ -12560,7 +12560,7 @@ end;
 
 function TcdaInformationRecipient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FintendedRecipient.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -12639,7 +12639,7 @@ end;
 
 function TcdaInFulfillmentOf.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Forder.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -12780,7 +12780,7 @@ end;
 
 function TcdaIntendedRecipient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FreceivedOrganization.sizeInBytes);
   inc(result, FinformationRecipient.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -12881,7 +12881,7 @@ end;
 
 function TcdaLabeledDrug.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
   inc(result, Fname.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -13000,7 +13000,7 @@ end;
 
 function TcdaLanguageCommunication.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FpreferenceInd.sizeInBytes);
   inc(result, FmodeCode.sizeInBytes);
   inc(result, FproficiencyLevelCode.sizeInBytes);
@@ -13091,7 +13091,7 @@ end;
 
 function TcdaEntityIdentifier.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FId.sizeInBytes);
   inc(result, FCode.sizeInBytes);
 end;
@@ -13201,7 +13201,7 @@ end;
 
 function TcdaLegalAuthenticator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
@@ -13283,7 +13283,7 @@ end;
 
 function TcdaLocation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FhealthCareFacility.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -13376,7 +13376,7 @@ end;
 
 function TcdaMaintainedEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FmaintainingPerson.sizeInBytes);
   inc(result, FeffectiveTime.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -13499,7 +13499,7 @@ end;
 
 function TcdaManufacturedProduct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FmanufacturedLabeledDrug.sizeInBytes);
   inc(result, FmanufacturedMaterial.sizeInBytes);
   inc(result, FmanufacturerOrganization.sizeInBytes);
@@ -13613,7 +13613,7 @@ end;
 
 function TcdaMaterial.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
   inc(result, Fname.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -13727,7 +13727,7 @@ end;
 
 function TcdaNonXMLBody.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, FconfidentialityCode.sizeInBytes);
@@ -14129,7 +14129,7 @@ end;
 
 function TcdaObservation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -14386,7 +14386,7 @@ end;
 
 function TcdaObservationMedia.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -14523,7 +14523,7 @@ end;
 
 function TcdaObservationRange.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fvalue.sizeInBytes);
@@ -14641,7 +14641,7 @@ end;
 
 function TcdaOrder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, FpriorityCode.sizeInBytes);
@@ -14802,7 +14802,7 @@ end;
 
 function TcdaOrganization.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FasOrganizationPartOf.sizeInBytes);
   inc(result, FstandardIndustryClassCode.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -14945,7 +14945,7 @@ end;
 
 function TcdaOrganizationPartOf.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FwholeOrganization.sizeInBytes);
   inc(result, Fcode.sizeInBytes);
   inc(result, FstatusCode.sizeInBytes);
@@ -15195,7 +15195,7 @@ end;
 
 function TcdaOrganizer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, Fcomponent.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -15346,7 +15346,7 @@ end;
 
 function TcdaParentDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
   inc(result, Fcode.sizeInBytes);
@@ -15463,7 +15463,7 @@ end;
 
 function TcdaParticipant1.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassociatedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, FfunctionCode.sizeInBytes);
@@ -15578,7 +15578,7 @@ end;
 
 function TcdaParticipant2.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FparticipantRole.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, FawarenessCode.sizeInBytes);
@@ -15749,7 +15749,7 @@ end;
 
 function TcdaParticipantRole.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FplayingDevice.sizeInBytes);
   inc(result, FscopingEntity.sizeInBytes);
   inc(result, FplayingEntity.sizeInBytes);
@@ -16018,7 +16018,7 @@ end;
 
 function TcdaPatient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fbirthplace.sizeInBytes);
   inc(result, Fguardian.sizeInBytes);
   inc(result, FlanguageCommunication.sizeInBytes);
@@ -16169,7 +16169,7 @@ end;
 
 function TcdaPatientRole.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FproviderOrganization.sizeInBytes);
   inc(result, Fpatient.sizeInBytes);
   inc(result, Faddr.sizeInBytes);
@@ -16281,7 +16281,7 @@ end;
 
 function TcdaPerformer1.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, FfunctionCode.sizeInBytes);
@@ -16390,7 +16390,7 @@ end;
 
 function TcdaPerformer2.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, FmodeCode.sizeInBytes);
   inc(result, Ftime.sizeInBytes);
@@ -16474,7 +16474,7 @@ end;
 
 function TcdaPerson.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fname.sizeInBytes);
 end;
 
@@ -16570,7 +16570,7 @@ end;
 
 function TcdaPlace.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Faddr.sizeInBytes);
   inc(result, Fname.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -16702,7 +16702,7 @@ end;
 
 function TcdaPlayingEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcode.sizeInBytes);
   inc(result, Fdesc.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -16785,7 +16785,7 @@ end;
 
 function TcdaPrecondition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcriterion.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -17187,7 +17187,7 @@ end;
 
 function TcdaProcedure.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -17282,7 +17282,7 @@ end;
 
 function TcdaProduct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FmanufacturedProduct.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -17365,7 +17365,7 @@ end;
 
 function TcdaRecordTarget.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FpatientRole.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
@@ -17514,7 +17514,7 @@ end;
 
 function TcdaReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FexternalAct.sizeInBytes);
   inc(result, FexternalDocument.sizeInBytes);
   inc(result, FexternalObservation.sizeInBytes);
@@ -17597,7 +17597,7 @@ end;
 
 function TcdaReferenceRange.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FobservationRange.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -17910,7 +17910,7 @@ end;
 
 function TcdaRegionOfInterest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -18000,7 +18000,7 @@ end;
 
 function TcdaRelatedDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FparentDocument.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -18093,7 +18093,7 @@ end;
 
 function TcdaRelatedEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FrelatedPerson.sizeInBytes);
   inc(result, FeffectiveTime.sizeInBytes);
 end;
@@ -18219,7 +18219,7 @@ end;
 
 function TcdaRelatedSubject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fsubject.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, Fcode.sizeInBytes);
@@ -18301,7 +18301,7 @@ end;
 
 function TcdaResponsibleParty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FassignedEntity.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -18561,7 +18561,7 @@ end;
 
 function TcdaSection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, Fcomponent.sizeInBytes);
   inc(result, Fentry.sizeInBytes);
@@ -18711,7 +18711,7 @@ end;
 
 function TcdaServiceEvent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fperformer.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
@@ -18794,7 +18794,7 @@ end;
 
 function TcdaSpecimen.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FspecimenRole.sizeInBytes);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -18889,7 +18889,7 @@ end;
 
 function TcdaSpecimenRole.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FspecimenPlayingEntity.sizeInBytes);
   inc(result, Fid.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
@@ -19010,7 +19010,7 @@ end;
 
 function TcdaStructuredBody.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcomponent.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
@@ -19110,7 +19110,7 @@ end;
 
 function TcdaSubject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FrelatedSubject.sizeInBytes);
   inc(result, FawarenessCode.sizeInBytes);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
@@ -19225,7 +19225,7 @@ end;
 
 function TcdaSubjectPerson.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FadministrativeGenderCode.sizeInBytes);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
@@ -19688,7 +19688,7 @@ end;
 
 function TcdaSubstanceAdministration.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, Fconsumable.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
@@ -20112,7 +20112,7 @@ end;
 
 function TcdaSupply.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fauthor.sizeInBytes);
   inc(result, FentryRelationship.sizeInBytes);
   inc(result, Finformant.sizeInBytes);
@@ -20244,7 +20244,7 @@ end;
 
 function TcdaBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FxmlId.length * sizeof(char)) + 12);
   inc(result, FtypeId.sizeInBytes);
   inc(result, FrealmCode.sizeInBytes);
@@ -22555,7 +22555,7 @@ end;
 
 function TcdaRegionOfInterest_value.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TcdaRegionOfInterest_valueList }

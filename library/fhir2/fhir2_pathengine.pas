@@ -3512,7 +3512,7 @@ end;
 
 function TFHIRPathEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, worker.sizeInBytes);
   inc(result, primitiveTypes.sizeInBytes);
   inc(result,  allTypes.sizeInBytes);
@@ -3544,7 +3544,7 @@ end;
 
 function TFHIRPathExecutionTypeContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAppInfo.sizeInBytes);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, FContext.sizeInBytes);

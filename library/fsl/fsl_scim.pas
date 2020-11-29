@@ -464,7 +464,7 @@ end;
 
 function TSCIMObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FJson.sizeInBytes);
 end;
 
@@ -918,7 +918,7 @@ end;
 
 function TSCIMUser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEmails.sizeInBytes);
   inc(result, FPhoneNums.sizeInBytes);
   inc(result, FIMs.sizeInBytes);
@@ -975,7 +975,7 @@ end;
 
 function TSCIMContact.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FJson.sizeInBytes);
 end;
 
@@ -1087,7 +1087,7 @@ end;
 
 function TSCIMAddress.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FJson.sizeInBytes);
 end;
 

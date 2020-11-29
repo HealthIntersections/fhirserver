@@ -163,7 +163,7 @@ end;
 
 function TFDBSQLiteManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
 end;
 
@@ -482,7 +482,7 @@ end;
 
 function TFDBSQLiteConnection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FColNames.sizeInBytes);
 end;
 

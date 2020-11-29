@@ -224,7 +224,7 @@ Type
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
 
-    function cacheCount : integer; virtual;
+    function cacheSize : UInt64; virtual;
   end;
 
 implementation
@@ -719,7 +719,7 @@ begin
 end;
 
 
-function TTerminologyServerStore.cacheCount: integer;
+function TTerminologyServerStore.cacheSize: UInt64;
 begin
   result := 0;
 end;

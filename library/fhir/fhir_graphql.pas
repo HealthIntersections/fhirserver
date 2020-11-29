@@ -1000,7 +1000,7 @@ end;
 
 function TFHIRGraphQLEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FFocus.sizeInBytes);
   inc(result, FOutput.sizeInBytes);
@@ -1158,7 +1158,7 @@ end;
 
 function TFHIRGraphQLSearchWrapper.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FBundle.sizeInBytes);
   inc(result, FParseMap.sizeInBytes);
@@ -1254,7 +1254,7 @@ end;
 
 function TFHIRGraphQLSearchEdge.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FEntry.sizeInBytes);
 end;

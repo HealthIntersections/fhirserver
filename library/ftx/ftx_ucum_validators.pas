@@ -173,7 +173,7 @@ End;
 
 function TUcumValidator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fmodel.sizeInBytes);
   inc(result, Fresult.sizeInBytes);
   inc(result, Fhandlers.sizeInBytes);

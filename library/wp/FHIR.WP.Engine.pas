@@ -8633,7 +8633,7 @@ end;
 
 function TWPRange.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FOperator.sizeInBytes);
   inc(result, FFont.sizeInBytes);
@@ -9464,7 +9464,7 @@ End;
 
 function TWPOperator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStyles.sizeInBytes);
   inc(result, FSpeller.sizeInBytes);
   inc(result, FDocument.sizeInBytes);
@@ -9512,7 +9512,7 @@ End;
 
 function TOperationRange.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TWPOperator.RedoType: TWPOperationType;
@@ -9871,7 +9871,7 @@ End;
 
 function TWPOperation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUndoCursor.length * sizeof(char)) + 12);
   inc(result, (FRedoCursor.length * sizeof(char)) + 12);
   inc(result, FUndoCursors.sizeInBytes);
@@ -10117,7 +10117,7 @@ End;
 
 function TWPSelection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TWPRangeManager }
@@ -10228,7 +10228,7 @@ Const
 
 function TWPRangeManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -11169,7 +11169,7 @@ end;
 
 function TWPMacro.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FActions.sizeInBytes);
 end;
 
@@ -11303,7 +11303,7 @@ end;
 
 function TWPSearchDetails.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -11330,7 +11330,7 @@ End;
 
 function TWPReplaceDetails.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FReplace.length * sizeof(char)) + 12);
 end;
 
@@ -11471,7 +11471,7 @@ End;
 
 function TWPSearchIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FCurrent.sizeInBytes);
 end;
@@ -11621,7 +11621,7 @@ End;
 
 function TWPSearch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FSelection.sizeInBytes);
   inc(result, FSearchDetails.sizeInBytes);
@@ -11629,12 +11629,12 @@ end;
 
 function TWPSpeechMagicInsertOptions.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 function TWPAction.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSelection.length * sizeof(char)) + 12);
   inc(result, (FDetails.length * sizeof(char)) + 12);
   inc(result, (FAction.length * sizeof(char)) + 12);

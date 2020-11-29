@@ -4,8 +4,8 @@ object MainConsoleForm: TMainConsoleForm
   Top = 124
   Width = 899
   Caption = 'FHIRServer Console'
-  ClientHeight = 673
-  ClientWidth = 899
+  ClientHeight = 0
+  ClientWidth = 0
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy

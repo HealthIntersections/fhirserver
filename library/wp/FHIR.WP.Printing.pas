@@ -341,7 +341,7 @@ End;
 
 function TWPPaginator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOperator.sizeInBytes);
   inc(result, FDocument.sizeInBytes);
   inc(result, FPrinter.sizeInBytes);
@@ -984,7 +984,7 @@ end;
 
 function TWPPrintRenderer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPrinterCanvas.sizeInBytes);
   inc(result, FPages.sizeInBytes);
   inc(result, FPageLayoutController.sizeInBytes);
@@ -1272,7 +1272,7 @@ end;
 
 function TWPPrintCanvas.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCanvas.sizeInBytes);
 end;
 

@@ -437,7 +437,7 @@ End;
 
 function TWPReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStream.sizeInBytes);
   inc(result, FStyles.sizeInBytes);
   inc(result, FFont.sizeInBytes);
@@ -913,7 +913,7 @@ end;
 
 function TWPWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStyles.sizeInBytes);
   inc(result, FStream.sizeInBytes);
   inc(result, FImageContext.sizeInBytes);

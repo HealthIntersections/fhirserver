@@ -759,7 +759,7 @@ end;
 
 function TJWK.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FObj.sizeInBytes);
 end;
 
@@ -2033,7 +2033,7 @@ end;
 
 function TDigitalSignatureReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, FTransforms.sizeInBytes);
 end;

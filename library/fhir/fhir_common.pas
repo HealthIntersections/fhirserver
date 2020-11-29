@@ -1360,7 +1360,7 @@ end;
 
 function TFHIRXVersionResourceWrapper.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRes.sizeInBytes);
 end;
 
@@ -1441,7 +1441,7 @@ end;
 
 function TFhirParametersParameterW.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -1575,7 +1575,7 @@ end;
 
 function TFHIRParametersW.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -1645,7 +1645,7 @@ end;
 
 function TFhirCodeSystemW.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConceptList.sizeInBytes);
 end;
 
@@ -1664,7 +1664,7 @@ end;
 
 function TFhirCodeSystemConceptW.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConceptList.sizeInBytes);
 end;
 
@@ -1702,7 +1702,7 @@ end;
 
 function TFHIRXVersionOperationWrapper.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOp.sizeInBytes);
 end;
 
@@ -1971,7 +1971,7 @@ end;
 
 function TFHIRXVersionOperationObjectWrapper.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FObj.sizeInBytes);
 end;
 

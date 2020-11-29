@@ -282,7 +282,7 @@ end;
 
 function TFHIRCodeGenerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FResource.sizeInBytes);
   inc(result, FContext.sizeInBytes);
   inc(result, lines.sizeInBytes);
@@ -562,7 +562,7 @@ end;
 
 function TFHIRCodeGeneratorJavaRI.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, imports.sizeInBytes);
 end;
 
@@ -846,7 +846,7 @@ end;
 
 function TFHIRCodeGeneratorPascal.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, units.sizeInBytes);
 end;
 

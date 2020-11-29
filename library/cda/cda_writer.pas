@@ -5064,7 +5064,7 @@ end;
 
 function TCDAWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 End.

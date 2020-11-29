@@ -841,7 +841,7 @@ end;
 
 function TFHIRNamedValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
@@ -897,7 +897,7 @@ end;
 
 function TFHIRLocatedNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProp.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -1364,7 +1364,7 @@ end;
 
 function TFHIRObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTags.sizeInBytes);
   inc(result, FTag.sizeInBytes);
   inc(result, FLocationData.sizeInBytes);
@@ -1482,7 +1482,7 @@ end;
 
 function TFHIRObjectText.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -1582,7 +1582,7 @@ end;
 
 function TFHIRObjectList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTags.sizeInBytes);
   inc(result, FLocationData.sizeInBytes);
 end;
@@ -1698,7 +1698,7 @@ end;
 
 function TFHIRProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOwner.sizeInBytes);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
@@ -1803,7 +1803,7 @@ end;
 
 function TFHIRPropertyIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFocus.sizeInBytes);
   inc(result, FProperties.sizeInBytes);
 end;
@@ -2074,7 +2074,7 @@ end;
 
 function TFHIRSelection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
 end;
@@ -2172,7 +2172,7 @@ end;
 
 function TFHIRSelectionList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 class function TFHIRSelectionList.compareDeep(e1, e2: TFHIRSelectionList; allowNull: boolean): boolean;
@@ -2291,7 +2291,7 @@ end;
 
 function TValidationResult.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeof(char)) + 12);
   inc(result, (FDisplay.length * sizeof(char)) + 12);
 end;
@@ -2387,7 +2387,7 @@ end;
 
 function TFHIRSystemString.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2487,7 +2487,7 @@ end;
 
 function TFHIRSystemTuple.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFields.sizeInBytes);
 end;
 
@@ -2606,7 +2606,7 @@ end;
 
 function TFHIRMessage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMessages.sizeInBytes);
 end;
 

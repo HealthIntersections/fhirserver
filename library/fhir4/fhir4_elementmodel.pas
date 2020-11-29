@@ -812,7 +812,7 @@ end;
 
 function TFHIRMMProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContext.sizeInBytes);
   inc(result, FDefinition.sizeInBytes);
   inc(result, FStructure.sizeInBytes);
@@ -1222,7 +1222,7 @@ end;
 
 function TFHIRMMElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FComments.sizeInBytes);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
@@ -1509,7 +1509,7 @@ end;
 
 function TFHIRMMParserBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContext.sizeInBytes);
   inc(result, FErrors.sizeInBytes);
 end;
@@ -2614,7 +2614,7 @@ end;
 
 function TFHIRMMJsonParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, json.sizeInBytes);
 end;
 
@@ -2740,7 +2740,7 @@ end;
 
 function TFHIRCustomResource.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRoot.sizeInBytes);
 end;
 
@@ -2888,7 +2888,7 @@ end;
 
 function TProfileUsages.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEntries.sizeInBytes);
 end;
 
@@ -2913,7 +2913,7 @@ end;
 
 function TProfileUsage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefn.sizeInBytes);
 end;
 

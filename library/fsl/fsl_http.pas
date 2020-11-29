@@ -510,7 +510,7 @@ end;
 
 function TMultiValList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, fItemList.sizeInBytes);
   inc(result, (FSource.length * sizeof(char)) + 12);
 end;
@@ -704,7 +704,7 @@ end;
 
 function TMimeContentType.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, FParams.sizeInBytes);
   inc(result, (FBase.length * sizeof(char)) + 12);
@@ -787,7 +787,7 @@ type
 
 function TLanguageSpec.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;
 

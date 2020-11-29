@@ -190,7 +190,7 @@ end;
 
 function TFHIRPackageClient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FAddress.length * sizeof(char)) + 12);
 end;
 
@@ -342,7 +342,7 @@ end;
 
 function TFHIRPackageInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FFhirVersion.length * sizeof(char)) + 12);

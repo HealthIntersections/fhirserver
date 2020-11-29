@@ -2054,7 +2054,7 @@ End;
 
 function TWPOdtReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOdtAdapter.sizeInBytes);
   inc(result, FFontDecls.sizeInBytes);
   inc(result, FDefaultStyles.sizeInBytes);
@@ -2843,7 +2843,7 @@ End;
 
 function TWPOdtWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOdtAdapter.sizeInBytes);
   inc(result, FFormatter.sizeInBytes);
   inc(result, FFontDecls.sizeInBytes);
@@ -2874,7 +2874,7 @@ End;
 
 function TWPOpenDocPackagePart.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMimeType.length * sizeof(char)) + 12);
 end;
 
@@ -3065,7 +3065,7 @@ End;
 
 function TOdtReaderAdapter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FMediaType.length * sizeof(char)) + 12);
   inc(result, FPackage.sizeInBytes);
@@ -3301,7 +3301,7 @@ End;
 
 function TOdtWriterAdapter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPackage.sizeInBytes);
 end;
 
@@ -3658,7 +3658,7 @@ End;
 
 function TOdtTextFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFamily.length * sizeof(char)) + 12);
   inc(result, (FSize.length * sizeof(char)) + 12);
@@ -3813,7 +3813,7 @@ End;
 
 function TOdtParagraphFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTextAlign.length * sizeof(char)) + 12);
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
@@ -4044,7 +4044,7 @@ End;
 
 function TOdtStyle.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FTextFormat.sizeInBytes);
   inc(result, FParagraphFormat.sizeInBytes);
@@ -4260,7 +4260,7 @@ End;
 
 function TOdtListLevelFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FNumberStyle.length * sizeof(char)) + 12);
   inc(result, (FNumberFormat.length * sizeof(char)) + 12);
   inc(result, (FStartValue.length * sizeof(char)) + 12);
@@ -4350,7 +4350,7 @@ End;
 
 function TOdtListFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -4488,7 +4488,7 @@ End;
 
 function TOdtTableFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
   inc(result, (FMarginTop.length * sizeof(char)) + 12);
@@ -4667,7 +4667,7 @@ End;
 
 function TOdtTableCellFormat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FBorderTop.length * sizeof(char)) + 12);
   inc(result, ( FBorderBottom.length * sizeof(char)) + 12);
   inc(result, (FBorderLeft.length * sizeof(char)) + 12);

@@ -2265,7 +2265,7 @@ end;
 
 function TDicomDictionaryParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSource.sizeInBytes);
   inc(result, FDictionary.sizeInBytes);
   inc(result, FCmdElementCache.sizeInBytes);
@@ -2291,7 +2291,7 @@ end;
 
 function TDicomDictionaryEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUID.length * sizeof(char)) + 12);
 end;
 
@@ -2495,7 +2495,7 @@ End;
 
 function TDicomDictionaryTransferSyntax.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FProperties.sizeInBytes);
 end;
@@ -3050,7 +3050,7 @@ end;
 
 function TDicomDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSectionReferences.sizeInBytes);
   inc(result, FTransferSyntaxes.sizeInBytes);
@@ -3107,7 +3107,7 @@ End;
 
 function TDicomDictionaryVR.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FDoco.length * sizeof(char)) + 12);
@@ -3287,7 +3287,7 @@ End;
 
 function TDicomDictionaryElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FGroupId.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);
   inc(result, (FGroupName.length * sizeof(char)) + 12);
@@ -3337,7 +3337,7 @@ End;
 
 function TDicomPresentationContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FAbstractSyntaxUID.length * sizeof(char)) + 12);
   inc(result, FTransferSyntaxList.sizeInBytes);
 end;
@@ -3405,7 +3405,7 @@ End;
 
 function TDicomDimseMessage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FParams.sizeInBytes);
 end;
@@ -3526,7 +3526,7 @@ End;
 
 function TDicomInfoEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FChildren.sizeInBytes);
   inc(result, (FComment.length * sizeof(char)) + 12);
@@ -3605,7 +3605,7 @@ End;
 
 function TDicomInfoEntryReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FRefId.length * sizeof(char)) + 12);
   inc(result, FRefEntry.sizeInBytes);
   inc(result, (FContextId.length * sizeof(char)) + 12);
@@ -3652,7 +3652,7 @@ End;
 
 function TDicomInfoEntryAttr.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTag.length * sizeof(char)) + 12);
   inc(result, FRefElement.sizeInBytes);
 end;
@@ -3700,7 +3700,7 @@ End;
 
 function TDicomInfoGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FComment.length * sizeof(char)) + 12);
@@ -3819,7 +3819,7 @@ End;
 
 function TDicomModuleReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, FRefEntry.sizeInBytes);
@@ -3893,7 +3893,7 @@ End;
 
 function TDicomIOD.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, FModules.sizeInBytes);
@@ -4003,7 +4003,7 @@ end;
 
 function TDicomDictionarySOP.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FStatedIOD.length * sizeof(char)) + 12);
   inc(result, (FIODRef.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -4137,7 +4137,7 @@ End;
 
 function TDicomDimseParam.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFixedValue.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);

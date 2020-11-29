@@ -359,7 +359,7 @@ end;
 
 function TFHIRClientRegistry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, copy.sizeInBytes);
   inc(result, json.sizeInBytes);

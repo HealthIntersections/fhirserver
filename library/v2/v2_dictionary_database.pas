@@ -1436,7 +1436,7 @@ end;
 
 function THL7V2AccessDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FManager.sizeInBytes);
   inc(result, FStmt.sizeInBytes);
 end;

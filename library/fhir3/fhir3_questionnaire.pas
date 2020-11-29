@@ -1627,7 +1627,7 @@ end;
 
 function TQuestionnaireBuilder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProfiles.sizeInBytes);
   inc(result, FResource.sizeInBytes);
   inc(result, FProfile.sizeInBytes);

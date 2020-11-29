@@ -752,7 +752,7 @@ End;
 
 function TFslWinInetClient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUserAgent.length * sizeof(char)) + 12);
   inc(result, (FRequestType.length * sizeof(char)) + 12);
   inc(result, (FResponseCode.length * sizeof(char)) + 12);

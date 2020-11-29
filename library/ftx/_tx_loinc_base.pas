@@ -92,7 +92,7 @@ end;
 
 function TLOINCCode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDisplayName.length * sizeof(char)) + 12);
 end;
 

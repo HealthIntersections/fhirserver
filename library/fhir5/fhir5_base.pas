@@ -204,7 +204,7 @@ end;
 
 function TFHIRTuple5.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProperties.sizeInBytes);
 end;
 

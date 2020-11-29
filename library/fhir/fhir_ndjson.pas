@@ -131,7 +131,7 @@ end;
 
 function TFHIRNDJsonComposer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
 end;
 

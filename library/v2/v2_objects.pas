@@ -1847,7 +1847,7 @@ end;
 
 function THL7V2DecodingOptions.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FVersionOverride.length * sizeof(char)) + 12);
 end;
 
@@ -1984,7 +1984,7 @@ End;
 
 function THL7V2Delimiters.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { THL7V2Contents }
@@ -2023,7 +2023,7 @@ end;
 
 function THL7V2Contents.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPath.length * sizeof(char)) + 12);
 end;
 
@@ -2113,7 +2113,7 @@ end;
 
 function THL7V2ContentText.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -2223,7 +2223,7 @@ end;
 
 function THL7V2ContentBinary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FBinary.length * sizeof(char)) + 12);
 end;
 
@@ -2258,7 +2258,7 @@ end;
 
 function THL7V2ContentEscape.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FEscape.length * sizeof(char)) + 12);
 end;
 
@@ -2996,7 +2996,7 @@ end;
 
 function THL7V2Cell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContents.sizeInBytes);
 end;
 
@@ -3202,7 +3202,7 @@ end;
 
 function THL7V2Component.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
 end;
 
@@ -3653,7 +3653,7 @@ end;
 
 function THL7V2DataElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
   inc(result, (FSpecifiedDataType.length * sizeof(char)) + 12);
   inc(result, FRepeats.sizeInBytes);
@@ -4190,7 +4190,7 @@ end;
 
 function THL7V2Segment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, FDefinition.sizeInBytes);
 end;
@@ -4400,7 +4400,7 @@ end;
 
 function THL7V2SegmentGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSegments.sizeInBytes);
 end;
@@ -5346,7 +5346,7 @@ end;
 
 function THL7V2Message.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
   inc(result, FSegmentMap.sizeInBytes);
   inc(result, (FEvent.length * sizeof(char)) + 12);
@@ -5743,7 +5743,7 @@ end;
 
 function THL7V2BatchMessage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FContent));
   inc(result, FMessage.sizeInBytes);
   inc(result, (FId.length * sizeof(char)) + 12);
@@ -5874,7 +5874,7 @@ end;
 
 function THL7V2Batch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDelimiters.sizeInBytes);
   inc(result, FHeader.sizeInBytes);
   inc(result, FTrailer.sizeInBytes);
@@ -6104,7 +6104,7 @@ end;
 
 function THL7V2File.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDelimiters.sizeInBytes);
   inc(result, FHeader.sizeInBytes);
   inc(result, FTrailer.sizeInBytes);
@@ -6285,7 +6285,7 @@ End;
 
 function THL7V2BatchIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBatch.sizeInBytes);
   inc(result, FCurrent.sizeInBytes);
 end;
@@ -6598,7 +6598,7 @@ end;
 
 function THL7V2ParsedQuery.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSegQuery.length * sizeof(char)) + 12);
   inc(result, FSegIndex.sizeInBytes);
   inc(result, FDE.sizeInBytes);
@@ -6711,7 +6711,7 @@ end;
 
 function THL7V2QueryParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -6725,7 +6725,7 @@ end;
 
 function THL7V2QueryNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
 end;
 
@@ -6761,7 +6761,7 @@ end;
 
 function THL7V2QueryStringConstant.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -6815,7 +6815,7 @@ end;
 
 function THL7V2QueryNestedQuery.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FQuery.sizeInBytes);
 end;
 
@@ -7022,7 +7022,7 @@ end;
 
 function THL7V2QueryConditional.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLeft.sizeInBytes);
   inc(result, FRight.sizeInBytes);
 end;
@@ -7288,7 +7288,7 @@ end;
 
 function THL7V2QueryCondition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConditions.sizeInBytes);
 end;
 
@@ -7433,7 +7433,7 @@ end;
 
 function THL7V2Query.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSegCode.length * sizeof(char)) + 12);
   inc(result, FSegCondition.sizeInBytes);
   inc(result, (FFieldId.length * sizeof(char)) + 12);
@@ -7894,7 +7894,7 @@ end;
 
 function THL7V2ModelProvider.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
   inc(result, FModel.sizeInBytes);
 end;
@@ -8544,7 +8544,7 @@ end;
 
 function THL7V2ER7Decoder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDecodingOptions.sizeInBytes);
   inc(result, FDelimiters.sizeInBytes);
 end;
@@ -8843,7 +8843,7 @@ end;
 
 function THL7V2ER7Encoder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEncodingOptions.sizeInBytes);
   inc(result, FDelimiters.sizeInBytes);
 end;
@@ -9151,7 +9151,7 @@ end;
 
 function THL7V2XMLDecoder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOptions.sizeInBytes);
 end;
 
@@ -9368,7 +9368,7 @@ End;
 
 function THL7V2XMLEncoder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOptions.sizeInBytes);
 end;
 
@@ -9550,7 +9550,7 @@ End;
 
 function THL7V2ValidationError.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FElement.sizeInBytes);
 end;
 

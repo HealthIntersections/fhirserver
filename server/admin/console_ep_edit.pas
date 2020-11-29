@@ -100,6 +100,7 @@ end;
 procedure TEditEPForm.FormDestroy(Sender: TObject);
 begin
   FEP.Free;
+  FCfg.Free;
 end;
 
 procedure TEditEPForm.FormResize(Sender: TObject);

@@ -293,7 +293,7 @@ end;
 
 function TFHIRLiquidEngineContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FExternalContext.sizeInBytes);
   inc(result, FVars.sizeInBytes);
   inc(result, FEngine.sizeInBytes);
@@ -355,7 +355,7 @@ end;
 
 function TFHIRLiquidConstant.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FConstant.length * sizeof(char)) + 12);
 end;
 
@@ -391,7 +391,7 @@ end;
 
 function TFHIRLiquidStatement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FStatement.length * sizeof(char)) + 12);
   inc(result, FCompiled.sizeInBytes);
 end;
@@ -464,7 +464,7 @@ end;
 
 function TFHIRLiquidIf.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCondition.length * sizeof(char)) + 12);
   inc(result, FCompiled.sizeInBytes);
   inc(result, FThenBody.sizeInBytes);
@@ -534,7 +534,7 @@ end;
 
 function TFHIRLiquidLoop.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FVarName.length * sizeof(char)) + 12);
   inc(result, (FCondition.length * sizeof(char)) + 12);
   inc(result, FCompiled.sizeInBytes);
@@ -577,7 +577,7 @@ end;
 
 function TFHIRLiquidDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBody.sizeInBytes);
   inc(result, (FSource.length * sizeof(char)) + 12);
 end;
@@ -825,7 +825,7 @@ end;
 
 function TFHIRLiquidParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (source.length * sizeof(char)) + 12);
   inc(result, fpe.sizeInBytes);
   inc(result, (FSourceName.length * sizeof(char)) + 12);
@@ -979,7 +979,7 @@ end;
 
 function TFHIRLiquidEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEngine.sizeInBytes);
 end;
 
@@ -1052,7 +1052,7 @@ end;
 
 function TFHIRLiquidInclude.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPage.length * sizeof(char)) + 12);
   inc(result, FParams.sizeInBytes);
 end;
@@ -1107,7 +1107,7 @@ end;
 
 function TFHIRLiquidComment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBody.sizeInBytes);
 end;
 

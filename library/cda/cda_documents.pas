@@ -843,7 +843,7 @@ end;
 
 function TCDADocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDom.sizeInBytes);
   inc(result, FRoot.sizeInBytes);
   inc(result, FAttachments.sizeInBytes);
@@ -896,7 +896,7 @@ end;
 
 function TCDAAttachment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FBuffer.sizeInBytes);
 end;

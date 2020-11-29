@@ -4250,7 +4250,7 @@ end;
 
 function TFhirExpansionProfile.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FdisplayLanguage.length * sizeof(char)) + 12);
   inc(result, FcodeSystemList.sizeInBytes);
 end;
@@ -5258,7 +5258,7 @@ end;
 
 function TFhirExpansionProfileFixedVersion.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FSystem.length * sizeof(char)) + 12);
 end;

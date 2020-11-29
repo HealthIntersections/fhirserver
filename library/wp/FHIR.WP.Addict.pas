@@ -248,7 +248,7 @@ End;
 
 function TWPAddictSpeller.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 
@@ -401,7 +401,7 @@ end;
 
 function TWPAddictDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAddict.sizeInBytes);
   inc(result, (FFolder.length * sizeof(char)) + 12);
   inc(result, FOnLoadDictionary.sizeInBytes);
@@ -470,7 +470,7 @@ End;
 
 function TWPCustomAddictDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOnLoadDictionary.sizeInBytes);
   inc(result, FOnAddWord.sizeInBytes);
 end;
@@ -692,7 +692,7 @@ End;
 
 function TWPAddictParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSpeller.sizeInBytes);
   inc(result, FWordProcessor.sizeInBytes);
 end;

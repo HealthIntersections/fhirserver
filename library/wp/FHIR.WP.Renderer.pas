@@ -1266,7 +1266,7 @@ End;
 
 function TWPRendererTableColumnSizeCalculator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTable.sizeInBytes);
   inc(result, FColumns.sizeInBytes);
 end;
@@ -1508,7 +1508,7 @@ End;
 
 function TWPCanvas.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFont.sizeInBytes);
 end;
 
@@ -1552,7 +1552,7 @@ End;
 
 function TWPRendererState.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FForeHotspot.sizeInBytes);
   inc(result, FBackHotspot.sizeInBytes);
 end;
@@ -1739,7 +1739,7 @@ End;
 
 function TWPRendererStates.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSettings.sizeInBytes);
 end;
 
@@ -2086,7 +2086,7 @@ end;
 
 function TWPRendererParagraphContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContainer.sizeInBytes);
   inc(result, FStateStack.sizeInBytes);
   inc(result, FBuffer.sizeInBytes);
@@ -5117,7 +5117,7 @@ end;
 
 function TWPRenderer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FSelection.sizeInBytes);
   inc(result, FMap.sizeInBytes);
@@ -6408,7 +6408,7 @@ End;
 
 function TWPScreenRenderer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOperator.sizeInBytes);
 end;
 
@@ -7258,7 +7258,7 @@ End;
 
 function TWPPage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
 end;
 

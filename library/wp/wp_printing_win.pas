@@ -1941,7 +1941,7 @@ End;
 
 function TFslPrinter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
   inc(result, FFontList.sizeInBytes);
   inc(result, FPaperSizeList.sizeInBytes);
@@ -2181,7 +2181,7 @@ End;
 
 function TFslPrinterDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPort.length * sizeof(char)) + 12);
   inc(result, (FDriver.length * sizeof(char)) + 12);
 end;
@@ -2263,7 +2263,7 @@ End;
 
 function TFslPrinterFont.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslPrinterFontList.Add(Const sName : String; aPitch : TFslFontPitch; aTypes : TFslFontTypeSet);
@@ -2498,7 +2498,7 @@ End;
 
 function TFslPrinterTray.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -3018,7 +3018,7 @@ End;
 
 function TFslPrinterSettings.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
 end;
 
@@ -3131,7 +3131,7 @@ End;
 
 function TFslJobSettings.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslPrinterJob.InitialiseDC;
@@ -3425,7 +3425,7 @@ End;
 
 function TFslRenderJob.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCanvas.sizeInBytes);
   inc(result, FSettings.sizeInBytes);
   inc(result, (FTitle.length * sizeof(char)) + 12);
@@ -4310,7 +4310,7 @@ End;
 
 function TFslPrinterCanvas.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPen.sizeInBytes);
   inc(result, FBrush.sizeInBytes);
   inc(result, FFont.sizeInBytes);
@@ -4697,7 +4697,7 @@ End;
 
 function TFslPrinterPreviewJob.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPages.sizeInBytes);
   inc(result, FActivePage.sizeInBytes);
 end;
@@ -4924,7 +4924,7 @@ End;
 
 function TFslPrinterManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinitionList.sizeInBytes);
   inc(result, FDefaultDefinition.sizeInBytes);
 end;

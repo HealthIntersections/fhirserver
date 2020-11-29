@@ -199,7 +199,7 @@ type
     function makeFactory : TFHIRFactory;
     function makeServerFactory : TFHIRServerFactory;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
@@ -211,6 +211,8 @@ type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
@@ -1231,9 +1233,19 @@ end;
 
 { TTerminologyServerEndPoint }
 
-constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TTerminologyServerEndPoint.cacheSize: Int64;
 begin
-  inherited Create(config, settings, db, telnet, common);
+  result := inherited cacheSize;
+end;
+
+procedure TTerminologyServerEndPoint.clearCache;
+begin
+  inherited;
+end;
+
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited Create(config, settings, db, common);
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
@@ -1270,6 +1282,7 @@ var
 begin
   wep := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
   wep.FEndPoint := self;
+  WebEndPoint := wep;
   result := wep;
 end;
 
@@ -1280,7 +1293,6 @@ begin
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
-  Telnet.addContext(FServerContext);
   FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
   FStore.loadPackage(FStore.factory.corePackage, false);
   if UTGFolder <> '' then
@@ -1296,8 +1308,6 @@ end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
-  telnet.removeContext(FServerContext);
-
   FServerContext.Free;
   FServerContext := nil;
   FStore.Free;

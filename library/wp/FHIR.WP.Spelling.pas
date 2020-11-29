@@ -125,7 +125,7 @@ end;
 
 function TWPSpeller.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAllowedWords.sizeInBytes);
 end;
 

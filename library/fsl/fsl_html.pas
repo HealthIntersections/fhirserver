@@ -2679,7 +2679,7 @@ end;
 
 function TFslHTMLParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAttributes.sizeInBytes);
   inc(result, (FNextTagOpen.length * sizeof(char)) + 12);
   inc(result, (FNextTagClose.length * sizeof(char)) + 12);
@@ -2725,7 +2725,7 @@ End;
 
 function TFslCSSFragment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FValues.sizeInBytes);
 end;
 
@@ -2763,7 +2763,7 @@ End;
 
 function TFslCSSStyle.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2837,7 +2837,7 @@ End;
 
 function TFslHTMLElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTitleAttribute.length * sizeof(char)) + 12);
 end;
 
@@ -2917,7 +2917,7 @@ End;
 
 function TFslHTMLItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, FClasses.sizeInBytes);
   inc(result, FStyle.sizeInBytes);
@@ -2963,7 +2963,7 @@ End;
 
 function TFslHTMLComment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -2991,7 +2991,7 @@ End;
 
 function TFslHTMLTextFragment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -3019,7 +3019,7 @@ End;
 
 function TFslHTMLEntity.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FEntity.length * sizeof(char)) + 12);
 end;
 
@@ -3056,7 +3056,7 @@ End;
 
 function TFslHTMLImage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FHorizontalSpace.length * sizeof(char)) + 12);
   inc(result, (FAlternative.length * sizeof(char)) + 12);
   inc(result, (FLongDescription.length * sizeof(char)) + 12);
@@ -3094,7 +3094,7 @@ End;
 
 function TFslHTMLAnchor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FAccessKey.length * sizeof(char)) + 12);
@@ -3172,7 +3172,7 @@ End;
 
 function TFslHTMLSection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItems.sizeInBytes);
 end;
 
@@ -3496,7 +3496,7 @@ End;
 
 function TFslHTMLFont.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FFace.length * sizeof(char)) + 12);
 end;
@@ -3592,7 +3592,7 @@ End;
 
 function TFslHTMLHorizontalRule.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
 end;
@@ -3707,7 +3707,7 @@ End;
 
 function TFslHTMLListItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TFslHTMLListItems.GetListItem(iIndex: Integer): TFslHTMLListItem;
@@ -3764,7 +3764,7 @@ End;
 
 function TFslHTMLListElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -3855,7 +3855,7 @@ End;
 
 function TFslHTMLDefinitionListItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTerm.sizeInBytes);
 end;
 
@@ -3912,7 +3912,7 @@ End;
 
 function TFslHTMLDefinitionList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FListItems.sizeInBytes);
 end;
 
@@ -3948,7 +3948,7 @@ End;
 
 function TFslHTMLTableCell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FRowspan.length * sizeof(char)) + 12);
   inc(result, (FColspan.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
@@ -4011,7 +4011,7 @@ End;
 
 function TFslHTMLTableRow.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCells.sizeInBytes);
 end;
 
@@ -4073,7 +4073,7 @@ End;
 
 function TFslHTMLTableSection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRows.sizeInBytes);
 end;
 
@@ -4116,7 +4116,7 @@ End;
 
 function TFslHTMLTableCaption.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslHTMLTable.Assign(oSource: TFslObject);
@@ -4196,7 +4196,7 @@ End;
 
 function TFslHTMLTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSummary.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
   inc(result, (FCellpadding.length * sizeof(char)) + 12);
@@ -4239,7 +4239,7 @@ End;
 
 function TFslHTMLFormControl.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTabIndex.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -4282,7 +4282,7 @@ End;
 
 function TFslHTMLInput.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FAccept.length * sizeof(char)) + 12);
   inc(result, (FSource.length * sizeof(char)) + 12);
@@ -4319,7 +4319,7 @@ End;
 
 function TFslHTMLButton.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslHTMLOptionItem.Assign(oSource: TFslObject);
@@ -4352,7 +4352,7 @@ End;
 
 function TFslHTMLOptionItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCaption.length * sizeof(char)) + 12);
 end;
 
@@ -4419,7 +4419,7 @@ End;
 
 function TFslHTMLOptGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOptions.sizeInBytes);
 end;
 
@@ -4452,7 +4452,7 @@ End;
 
 function TFslHTMLOption.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -4519,7 +4519,7 @@ End;
 
 function TFslHTMLSelect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, FAllOptions.sizeInBytes);
   inc(result, FOptions.sizeInBytes);
@@ -4556,7 +4556,7 @@ End;
 
 function TFslHTMLTextArea.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslHTMLForm.Assign(oSource: TFslObject);
@@ -4591,7 +4591,7 @@ End;
 
 function TFslHTMLForm.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FAction.length * sizeof(char)) + 12);
   inc(result, (FEncType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -4627,7 +4627,7 @@ End;
 
 function TFslHTMLBody.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Procedure TFslHTMLMetaEntry.Assign(oSource: TFslObject);
@@ -4656,7 +4656,7 @@ End;
 
 function TFslHTMLMetaEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FHttpEquiv.length * sizeof(char)) + 12);
   inc(result, (FContent.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -4696,7 +4696,7 @@ End;
 
 function TFslHTMLHead.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMeta.sizeInBytes);
   inc(result, FStyles.sizeInBytes);
   inc(result, (FTitle.length * sizeof(char)) + 12);
@@ -4828,7 +4828,7 @@ End;
 
 function TFslHtmlDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDTD.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, FStyles.sizeInBytes);
@@ -5086,7 +5086,7 @@ End;
 
 function TFslHTMLLexer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCurrentValue.length * sizeof(char)) + 12);
 end;
 
@@ -5586,7 +5586,7 @@ End;
 
 function TFslHTMLFormatter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAdapter.sizeInBytes);
 end;
 

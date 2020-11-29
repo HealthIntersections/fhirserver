@@ -299,7 +299,7 @@ end;
 
 function TNpmPackageIndexBuilder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, index.sizeInBytes);
   inc(result, files.sizeInBytes);
 end;
@@ -422,7 +422,7 @@ end;
 
 function TNpmPackageFolder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFolder.length * sizeof(char)) + 12);
   inc(result, FContent.sizeInBytes);
@@ -482,7 +482,7 @@ end;
 
 function TNpmPackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, FNpm.sizeInBytes);
   inc(result, FFolders.sizeInBytes);
@@ -1096,7 +1096,7 @@ end;
 
 function TNpmPackageResource.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
   inc(result, (FId.length * sizeof(char)) + 12);

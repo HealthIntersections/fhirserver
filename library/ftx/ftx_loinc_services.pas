@@ -593,7 +593,7 @@ end;
 
 function TLoincStrings.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -666,7 +666,7 @@ end;
 
 function TLOINCReferences.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -735,7 +735,7 @@ end;
 
 function TLOINCConcepts.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRefs.sizeInBytes);
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
@@ -929,7 +929,7 @@ end;
 
 function TLOINCCodeList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRefs.sizeInBytes);
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
@@ -1654,7 +1654,7 @@ end;
 
 function TLOINCServices.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLang.sizeInBytes);
   inc(result, FDesc.sizeInBytes);
   inc(result, FCode.sizeInBytes);
@@ -1739,7 +1739,7 @@ end;
 
 function TLOINCServiceList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefinition.sizeInBytes);
 end;
 
@@ -1788,7 +1788,7 @@ end;
 
 function TLoincWords.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -1834,7 +1834,7 @@ end;
 
 function TLoincStems.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -2771,7 +2771,7 @@ end;
 
 function TLOINCHeirarchyEntryList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -2849,7 +2849,7 @@ end;
 
 function TLOINCAnswersList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;
@@ -2919,7 +2919,7 @@ end;
 
 function TLoincLanguages.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, length(FMaster));
   inc(result, FBuilder.sizeInBytes);
 end;

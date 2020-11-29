@@ -626,6 +626,7 @@
         <DCCReference Include="endpoint_bridge.pas"/>
         <DCCReference Include="endpoint_txsvr.pas"/>
         <DCCReference Include="endpoint_full.pas"/>
+        <DCCReference Include="endpoint.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

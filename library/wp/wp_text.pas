@@ -532,7 +532,7 @@ End;
 
 function TWPTextReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TWPTextModelPieces.GetPiece(iIndex : Integer) : TWPTextModelPiece;
@@ -549,7 +549,7 @@ End;
 
 function TWPTextModelPieces.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TWPTextModelCells.GetCell(iIndex : Integer) : TWPTextModelCell;
@@ -567,7 +567,7 @@ End;
 
 function TWPTextModelCell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPieces.sizeInBytes);
 end;
 
@@ -619,7 +619,7 @@ End;
 
 function TWPTextModelRow.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCells.sizeInBytes);
 end;
 
@@ -639,7 +639,7 @@ End;
 
 function TWPTextModelTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRows.sizeInBytes);
 end;
 
@@ -781,7 +781,7 @@ End;
 
 function TWPTextModelParagraphPiece.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFragments.sizeInBytes);
   inc(result, FLines.sizeInBytes);
 end;
@@ -800,7 +800,7 @@ End;
 
 function TWPTextModelExpandingPiece.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -947,7 +947,7 @@ End;
 
 function TWPTextFragment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
   inc(result, (FFormatBefore.length * sizeof(char)) + 12);
   inc(result, (FFormatAfter.length * sizeof(char)) + 12);
@@ -1324,7 +1324,7 @@ End;
 
 function TWPTextWriterModelWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FEoln.length * sizeof(char)) + 12);
 end;
 
@@ -1599,7 +1599,7 @@ End;
 
 function TWPTextWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPieces.sizeInBytes);
   inc(result, FWorkingPieces.sizeInBytes);
   inc(result, FCurrentTable.sizeInBytes);
@@ -2030,7 +2030,7 @@ End;
 
 function TWPTextWriterTableColumnSizeCalculator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTable.sizeInBytes);
   inc(result, FColumns.sizeInBytes);
 end;
@@ -2154,7 +2154,7 @@ End;
 
 function TWPPITWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FForeground.length * sizeof(char)) + 12);
   inc(result, (FBackground.length * sizeof(char)) + 12);
 end;

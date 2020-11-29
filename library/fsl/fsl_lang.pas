@@ -100,7 +100,7 @@ end;
 
 function TIso4217Currency.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDisplay.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FSymbol.length * sizeof(char)) + 12);
@@ -332,7 +332,7 @@ end;
 
 function TIso4217CurrencySet.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCodes.sizeInBytes);
   inc(result, FMap.sizeInBytes);
 end;

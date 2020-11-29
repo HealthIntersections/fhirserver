@@ -1061,7 +1061,7 @@ End;
 
 function TFslResourceStream.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FResourceName.length * sizeof(char)) + 12);
 end;
@@ -1362,7 +1362,7 @@ End;
 
 function TFslVCLGraphic.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBuffer.sizeInBytes);
 end;
 
@@ -1849,7 +1849,7 @@ End;
 
 function TFslGraphicObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCapability.sizeInBytes);
 end;
 
@@ -2024,7 +2024,7 @@ End;
 
 function TFslBrush.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBitmap.sizeInBytes);
 end;
 
@@ -2444,7 +2444,7 @@ Type
 
 function TFslFont.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 

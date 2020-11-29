@@ -1604,7 +1604,7 @@ end;
 
 function TsnBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FstyleCode.sizeInBytes);
 end;
 
@@ -1693,7 +1693,7 @@ end;
 
 function TsnText.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FstyleCode.sizeInBytes);
   inc(result, Fparts.sizeInBytes);
 end;
@@ -1783,7 +1783,7 @@ end;
 
 function TsnTitle.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FstyleCode.sizeInBytes);
   inc(result, Fparts.sizeInBytes);
 end;
@@ -1900,7 +1900,7 @@ end;
 
 function TsnCMFootnotes.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Ftext.sizeInBytes);
   inc(result, Fentity.sizeInBytes);
   inc(result, Ffootnote.sizeInBytes);
@@ -2015,7 +2015,7 @@ end;
 
 function TsnCMInline.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fsub.sizeInBytes);
   inc(result, Fsup.sizeInBytes);
   inc(result, FlinkHtml.sizeInBytes);
@@ -2216,7 +2216,7 @@ end;
 
 function TsnCMTitle.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fbr.sizeInBytes);
   inc(result, Ftext.sizeInBytes);
   inc(result, FfootnoteRef.sizeInBytes);
@@ -2334,7 +2334,7 @@ end;
 
 function TsnCMContent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fbr.sizeInBytes);
   inc(result, Fcontent.sizeInBytes);
   inc(result, FrenderMultiMedia.sizeInBytes);
@@ -2447,7 +2447,7 @@ end;
 
 function TsnCMGeneral.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Flist.sizeInBytes);
   inc(result, Fparagraph.sizeInBytes);
   inc(result, Ftable.sizeInBytes);
@@ -2534,7 +2534,7 @@ end;
 
 function TsnRenderMultiMedia.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FreferencedObject.sizeInBytes);
   inc(result, Fcaption.sizeInBytes);
 end;
@@ -2635,7 +2635,7 @@ end;
 
 function TsnLinkHtml.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -2707,7 +2707,7 @@ end;
 
 function TsnFootnote.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -2779,7 +2779,7 @@ end;
 
 function TsnTitleFootnote.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -2878,7 +2878,7 @@ end;
 
 function TsnCaption.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -2955,7 +2955,7 @@ end;
 
 function TsnContent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -3033,7 +3033,7 @@ end;
 
 function TsnCaptioned.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcaption.sizeInBytes);
 end;
 
@@ -3135,7 +3135,7 @@ end;
 
 function TsnParagraph.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -3211,7 +3211,7 @@ end;
 
 function TsnItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -3287,7 +3287,7 @@ end;
 
 function TsnList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fitem.sizeInBytes);
 end;
 
@@ -3482,7 +3482,7 @@ end;
 
 function TsnColGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcol.sizeInBytes);
 end;
 
@@ -3567,7 +3567,7 @@ end;
 
 function TsnTCell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fheaders.sizeInBytes);
   inc(result, Fparts.sizeInBytes);
 end;
@@ -3785,7 +3785,7 @@ end;
 
 function TsnTRow.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fparts.sizeInBytes);
 end;
 
@@ -3859,7 +3859,7 @@ end;
 
 function TsnTRowGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Ftr.sizeInBytes);
 end;
 
@@ -4013,7 +4013,7 @@ end;
 
 function TsnTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Ftfoot.sizeInBytes);
   inc(result, Fthead.sizeInBytes);
   inc(result, Fcolgroup.sizeInBytes);
@@ -5112,7 +5112,7 @@ end;
 
 function TsnTRowPart {Choice}.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fth.sizeInBytes);
   inc(result, Ftd.sizeInBytes);
 end;

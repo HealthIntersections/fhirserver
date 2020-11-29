@@ -294,7 +294,7 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRPathTests);
 function TFHIRPathTest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, engine.sizeInBytes);
 end;
 

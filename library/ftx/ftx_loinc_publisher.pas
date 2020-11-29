@@ -982,7 +982,7 @@ end;
 
 function TloincPublisher.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSearchCache.sizeInBytes);
   inc(result, FLoinc.sizeInBytes);
   inc(result, (FFHIRPath.length * sizeof(char)) + 12);

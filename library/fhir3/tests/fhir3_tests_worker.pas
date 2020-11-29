@@ -85,7 +85,7 @@ var
 
 function TTestingWorkerContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, class function Use.sizeInBytes);
 end;
 

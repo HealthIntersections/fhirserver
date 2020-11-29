@@ -349,7 +349,7 @@ end;
 
 function TV2Location.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FComponent.sizeInBytes);
   inc(result, FElement.sizeInBytes);
   inc(result, FField.sizeInBytes);
@@ -428,7 +428,7 @@ end;
 
 function TV2Object.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
 end;
 
@@ -478,7 +478,7 @@ end;
 
 function TV2Content.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -601,7 +601,7 @@ end;
 
 function TV2Cell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContentList.sizeInBytes);
   inc(result, FComponentList.sizeInBytes);
 end;
@@ -672,7 +672,7 @@ end;
 
 function TV2Field.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FElementList.sizeInBytes);
 end;
 
@@ -756,7 +756,7 @@ end;
 
 function TV2Segment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFieldList.sizeInBytes);
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;
@@ -889,7 +889,7 @@ end;
 
 function TV2Message.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSegmentList.sizeInBytes);
 end;
 

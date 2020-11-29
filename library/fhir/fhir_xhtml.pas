@@ -548,7 +548,7 @@ end;
 
 function TFHIRAttribute.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
@@ -1038,7 +1038,7 @@ end;
 
 function TFhirXHtmlNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FAttributes.sizeInBytes);
   inc(result, FChildNodes.sizeInBytes);
@@ -1886,13 +1886,13 @@ end;
 
 function TFHIRAttributeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
 function TFHIRXhtmlNodeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 

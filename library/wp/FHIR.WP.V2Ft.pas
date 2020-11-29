@@ -861,7 +861,7 @@ Const
 
 function TWPHL7FTReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHL7Font.sizeInBytes);
   inc(result, FHL7Para.sizeInBytes);
   inc(result, (FText.length * sizeof(char)) + 12);
@@ -971,7 +971,7 @@ End;
 
 function TWPHL7FTWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 End.

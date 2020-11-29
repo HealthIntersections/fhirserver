@@ -429,7 +429,7 @@ end;
 
 function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FSearchParameters.sizeInBytes);
   inc(result, FDefinition.sizeInBytes);
@@ -437,7 +437,7 @@ end;
 
 function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
   inc(result, FList.sizeInBytes);
 end;

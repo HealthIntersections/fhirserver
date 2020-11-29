@@ -113,7 +113,7 @@ end;
 
 function TFHIRTag.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
 
@@ -315,7 +315,7 @@ end;
 
 function TFHIRTagList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 

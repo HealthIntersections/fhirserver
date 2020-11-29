@@ -46,10 +46,11 @@ Uses
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
   fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
 
-  server_constants, server_config, utilities, {$IFNDEF NO_JS}server_javascript, {$ENDIF}
+  server_constants, server_config, utilities, server_context,
+  {$IFNDEF NO_JS}server_javascript, {$ENDIF}
   tx_manager, telnet_server, web_source, web_server,
   server_testing,
-  endpoint, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
+  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
 
 
 // how the kernel works:
@@ -107,6 +108,7 @@ type
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
     function command(cmd: String): boolean;
+    function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   protected
     FStartTime : cardinal;
   public
@@ -317,6 +319,7 @@ begin
   for ep in FEndPoints do
   begin
     Logging.log('Load End Point '+ep.config.name+': '+ep.summary);
+    FTelnet.addEndPoint(ep);
     {$IFNDEF NO_JS}
     ep.OnRegisterJs := registerJs;
     {$ENDIF}
@@ -366,7 +369,10 @@ var
   ep : TFHIRServerEndPoint;
 begin
   for ep in FEndPoints do
+  begin
+    FTelnet.removeEndPoint(ep);
     ep.Unload;
+  end;
   FEndpoints.free;
   FEndpoints := nil;
 end;
@@ -461,20 +467,34 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
   else if config['type'].value = 'loinc' then
-    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Telnet.Link, Terminologies.link)
+    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link)
   else if config['type'].value = 'snomed' then
-    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Telnet.Link, Terminologies.link)
+    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
   else if config['type'].value = 'full' then
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Telnet.Link, Terminologies.link)
+  begin
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link);
+    TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
+  end
   else
     raise Exception.Create('Unknown server type "' +config['type'].value+'"');
 end;
+
+function TFHIRServiceKernel.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
+var
+  t : TFHIRServerEndPoint;
+begin
+  result := nil;
+  for t in FEndPoints do
+    if (t.Config.name = name) and (t is TStorageEndPoint) then
+      exit((t as TStorageEndPoint).ServerContext);
+end;
+
 
 { === Core ====================================================================}
 
@@ -649,6 +669,7 @@ begin
     end;
   end;
 end;
+
 
 end.
 

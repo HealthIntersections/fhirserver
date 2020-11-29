@@ -526,7 +526,7 @@ end;
 
 function Tv3DataTypePropertyIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFocus.sizeInBytes);
   inc(result, FProperties.sizeInBytes);
 end;
@@ -678,7 +678,7 @@ end;
 
 function Tv3Base.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fcomments.sizeInBytes);
   inc(result, FElement.sizeInBytes);
   inc(result, (FPath.length * sizeof(char)) + 12);
@@ -929,7 +929,7 @@ end;
 (*
 function Tv3PropertyDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FOwner.sizeInBytes);
   inc(result, FValueType.sizeInBytes);
@@ -1324,7 +1324,7 @@ end;
 
 function Tv3Extension.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FText.length * sizeof(char)) + 12);

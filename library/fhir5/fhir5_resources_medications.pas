@@ -11513,7 +11513,7 @@ end;
 
 function TFhirAdministrableProductDefinitionProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -11547,7 +11547,7 @@ end;
 
 function TFhirAdministrableProductDefinitionPropertyListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -11922,7 +11922,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministration.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FFirstDose.sizeInBytes);
   inc(result, FMaxSingleDose.sizeInBytes);
@@ -11960,7 +11960,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministrationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -12226,7 +12226,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FwithdrawalPeriodList.sizeInBytes);
 end;
@@ -12259,7 +12259,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -12548,7 +12548,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTissue.sizeInBytes);
   inc(result, FValue.sizeInBytes);
   inc(result, FSupportingInformation.sizeInBytes);
@@ -12582,7 +12582,7 @@ end;
 
 function TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriodListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -13113,7 +13113,7 @@ end;
 
 function TFhirAdministrableProductDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FsubjectList.sizeInBytes);
   inc(result, FAdministrableDoseForm.sizeInBytes);
@@ -13153,7 +13153,7 @@ end;
 
 function TFhirAdministrableProductDefinitionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -13421,7 +13421,7 @@ end;
 
 function TFhirIngredientSubstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FstrengthList.sizeInBytes);
 end;
@@ -13454,7 +13454,7 @@ end;
 
 function TFhirIngredientSubstanceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -13950,7 +13950,7 @@ end;
 
 function TFhirIngredientSubstanceStrength.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPresentation.sizeInBytes);
   inc(result, FPresentationHighLimit.sizeInBytes);
   inc(result, FPresentationText.sizeInBytes);
@@ -13990,7 +13990,7 @@ end;
 
 function TFhirIngredientSubstanceStrengthListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -14341,7 +14341,7 @@ end;
 
 function TFhirIngredientSubstanceStrengthReferenceStrength.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubstance.sizeInBytes);
   inc(result, FStrength.sizeInBytes);
   inc(result, FStrengthHighLimit.sizeInBytes);
@@ -14377,7 +14377,7 @@ end;
 
 function TFhirIngredientSubstanceStrengthReferenceStrengthListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -14686,7 +14686,7 @@ end;
 
 function TFhirIngredientSpecifiedSubstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FGroup.sizeInBytes);
   inc(result, FConfidentiality.sizeInBytes);
@@ -14721,7 +14721,7 @@ end;
 
 function TFhirIngredientSpecifiedSubstanceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -15193,7 +15193,7 @@ end;
 
 function TFhirIngredient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FRole.sizeInBytes);
   inc(result, Ffunction_List.sizeInBytes);
@@ -15232,7 +15232,7 @@ end;
 
 function TFhirIngredientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -15481,7 +15481,7 @@ end;
 
 function TFhirManufacturedItemDefinitionProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -15514,7 +15514,7 @@ end;
 
 function TFhirManufacturedItemDefinitionPropertyListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -15926,7 +15926,7 @@ end;
 
 function TFhirManufacturedItemDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FManufacturedDoseForm.sizeInBytes);
   inc(result, FUnitOfPresentation.sizeInBytes);
@@ -15963,7 +15963,7 @@ end;
 
 function TFhirManufacturedItemDefinitionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -16249,7 +16249,7 @@ end;
 
 function TFhirMedicationIngredient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
   inc(result, FIsActive.sizeInBytes);
   inc(result, FStrength.sizeInBytes);
@@ -16283,7 +16283,7 @@ end;
 
 function TFhirMedicationIngredientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -16565,7 +16565,7 @@ end;
 
 function TFhirMedicationBatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLotNumber.sizeInBytes);
   inc(result, FExpirationDate.sizeInBytes);
 end;
@@ -16598,7 +16598,7 @@ end;
 
 function TFhirMedicationBatchListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -17032,7 +17032,7 @@ end;
 
 function TFhirMedication.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FCode.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -17071,7 +17071,7 @@ end;
 
 function TFhirMedicationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -17339,7 +17339,7 @@ end;
 
 function TFhirMedicationKnowledgeRelatedMedicationKnowledge.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FreferenceList.sizeInBytes);
 end;
@@ -17372,7 +17372,7 @@ end;
 
 function TFhirMedicationKnowledgeRelatedMedicationKnowledgeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -17619,7 +17619,7 @@ end;
 
 function TFhirMedicationKnowledgeMonograph.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FSource.sizeInBytes);
 end;
@@ -17652,7 +17652,7 @@ end;
 
 function TFhirMedicationKnowledgeMonographListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -17936,7 +17936,7 @@ end;
 
 function TFhirMedicationKnowledgeIngredient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
   inc(result, FIsActive.sizeInBytes);
   inc(result, FStrength.sizeInBytes);
@@ -17970,7 +17970,7 @@ end;
 
 function TFhirMedicationKnowledgeIngredientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -18299,7 +18299,7 @@ end;
 
 function TFhirMedicationKnowledgeCost.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FeffectiveDateList.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FSource.sizeInBytes);
@@ -18334,7 +18334,7 @@ end;
 
 function TFhirMedicationKnowledgeCostListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -18601,7 +18601,7 @@ end;
 
 function TFhirMedicationKnowledgeMonitoringProgram.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FName.sizeInBytes);
 end;
@@ -18634,7 +18634,7 @@ end;
 
 function TFhirMedicationKnowledgeMonitoringProgramListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -18940,7 +18940,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuideline.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FdosageList.sizeInBytes);
   inc(result, FIndication.sizeInBytes);
   inc(result, FpatientCharacteristicList.sizeInBytes);
@@ -18974,7 +18974,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuidelineListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -19240,7 +19240,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuidelineDosage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FdosageList.sizeInBytes);
 end;
@@ -19273,7 +19273,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuidelineDosageListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -19520,7 +19520,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuidelinePatientCharacteristic.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -19553,7 +19553,7 @@ end;
 
 function TFhirMedicationKnowledgeAdministrationGuidelinePatientCharacteristicListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -19819,7 +19819,7 @@ end;
 
 function TFhirMedicationKnowledgeMedicineClassification.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FclassificationList.sizeInBytes);
 end;
@@ -19852,7 +19852,7 @@ end;
 
 function TFhirMedicationKnowledgeMedicineClassificationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -20226,7 +20226,7 @@ end;
 
 function TFhirMedicationKnowledgePackaging.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FCost.sizeInBytes);
   inc(result, FType_.sizeInBytes);
@@ -20264,7 +20264,7 @@ end;
 
 function TFhirMedicationKnowledgePackagingListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -20511,7 +20511,7 @@ end;
 
 function TFhirMedicationKnowledgeDrugCharacteristic.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -20544,7 +20544,7 @@ end;
 
 function TFhirMedicationKnowledgeDrugCharacteristicListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -20872,7 +20872,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatory.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRegulatoryAuthority.sizeInBytes);
   inc(result, FsubstitutionList.sizeInBytes);
   inc(result, FscheduleList.sizeInBytes);
@@ -20907,7 +20907,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatoryListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -21169,7 +21169,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatorySubstitution.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FAllowed.sizeInBytes);
 end;
@@ -21202,7 +21202,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatorySubstitutionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -21449,7 +21449,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatoryMaxDispense.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FQuantity.sizeInBytes);
   inc(result, FPeriod.sizeInBytes);
 end;
@@ -21482,7 +21482,7 @@ end;
 
 function TFhirMedicationKnowledgeRegulatoryMaxDispenseListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -21729,7 +21729,7 @@ end;
 
 function TFhirMedicationKnowledgeKineticCharacteristic.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -21762,7 +21762,7 @@ end;
 
 function TFhirMedicationKnowledgeKineticCharacteristicListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -22893,7 +22893,7 @@ end;
 
 function TFhirMedicationKnowledge.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FCode.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -22950,7 +22950,7 @@ end;
 
 function TFhirMedicationKnowledgeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -23199,7 +23199,7 @@ end;
 
 function TFhirMedicinalProductDefinitionContact.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FContact.sizeInBytes);
 end;
@@ -23232,7 +23232,7 @@ end;
 
 function TFhirMedicinalProductDefinitionContactListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -23579,7 +23579,7 @@ end;
 
 function TFhirMedicinalProductDefinitionName.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProductName.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FnamePartList.sizeInBytes);
@@ -23614,7 +23614,7 @@ end;
 
 function TFhirMedicinalProductDefinitionNameListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -23881,7 +23881,7 @@ end;
 
 function TFhirMedicinalProductDefinitionNameNamePart.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPart.sizeInBytes);
   inc(result, FType_.sizeInBytes);
 end;
@@ -23914,7 +23914,7 @@ end;
 
 function TFhirMedicinalProductDefinitionNameNamePartListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -24183,7 +24183,7 @@ end;
 
 function TFhirMedicinalProductDefinitionNameCountryLanguage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCountry.sizeInBytes);
   inc(result, FJurisdiction.sizeInBytes);
   inc(result, FLanguage.sizeInBytes);
@@ -24217,7 +24217,7 @@ end;
 
 function TFhirMedicinalProductDefinitionNameCountryLanguageListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -24464,7 +24464,7 @@ end;
 
 function TFhirMedicinalProductDefinitionCrossReference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProduct.sizeInBytes);
   inc(result, FType_.sizeInBytes);
 end;
@@ -24497,7 +24497,7 @@ end;
 
 function TFhirMedicinalProductDefinitionCrossReferenceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -24828,7 +24828,7 @@ end;
 
 function TFhirMedicinalProductDefinitionManufacturingBusinessOperation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FEffectiveDate.sizeInBytes);
   inc(result, FmanufacturerList.sizeInBytes);
@@ -24864,7 +24864,7 @@ end;
 
 function TFhirMedicinalProductDefinitionManufacturingBusinessOperationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -26019,7 +26019,7 @@ end;
 
 function TFhirMedicinalProductDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FDomain.sizeInBytes);
@@ -26077,7 +26077,7 @@ end;
 
 function TFhirMedicinalProductDefinitionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -26345,7 +26345,7 @@ end;
 
 function TFhirNutritionProductNutrient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
   inc(result, FamountList.sizeInBytes);
 end;
@@ -26378,7 +26378,7 @@ end;
 
 function TFhirNutritionProductNutrientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -26644,7 +26644,7 @@ end;
 
 function TFhirNutritionProductIngredient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
   inc(result, FamountList.sizeInBytes);
 end;
@@ -26677,7 +26677,7 @@ end;
 
 function TFhirNutritionProductIngredientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -26924,7 +26924,7 @@ end;
 
 function TFhirNutritionProductProductCharacteristic.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -26957,7 +26957,7 @@ end;
 
 function TFhirNutritionProductProductCharacteristicListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -27338,7 +27338,7 @@ end;
 
 function TFhirNutritionProductInstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FQuantity.sizeInBytes);
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FLotNumber.sizeInBytes);
@@ -27374,7 +27374,7 @@ end;
 
 function TFhirNutritionProductInstanceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -27941,7 +27941,7 @@ end;
 
 function TFhirNutritionProduct.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStatus.sizeInBytes);
   inc(result, FcategoryList.sizeInBytes);
   inc(result, FCode.sizeInBytes);
@@ -27982,7 +27982,7 @@ end;
 
 function TFhirNutritionProductListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -28232,7 +28232,7 @@ end;
 
 function TFhirPackagedProductDefinitionBatchIdentifier.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOuterPackaging.sizeInBytes);
   inc(result, FImmediatePackaging.sizeInBytes);
 end;
@@ -28265,7 +28265,7 @@ end;
 
 function TFhirPackagedProductDefinitionBatchIdentifierListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -28849,7 +28849,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FQuantity.sizeInBytes);
@@ -28890,7 +28890,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackageListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -29137,7 +29137,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackageProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FValue.sizeInBytes);
 end;
@@ -29170,7 +29170,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackagePropertyListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -29436,7 +29436,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackageContainedItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FitemList.sizeInBytes);
   inc(result, FAmount.sizeInBytes);
 end;
@@ -29469,7 +29469,7 @@ end;
 
 function TFhirPackagedProductDefinitionPackageContainedItemListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -30199,7 +30199,7 @@ end;
 
 function TFhirPackagedProductDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FName.sizeInBytes);
   inc(result, FType_.sizeInBytes);
@@ -30245,7 +30245,7 @@ end;
 
 function TFhirPackagedProductDefinitionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -30494,7 +30494,7 @@ end;
 
 function TFhirRegulatedAuthorizationRelatedDate.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDate.sizeInBytes);
   inc(result, FType_.sizeInBytes);
 end;
@@ -30527,7 +30527,7 @@ end;
 
 function TFhirRegulatedAuthorizationRelatedDateListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -30858,7 +30858,7 @@ end;
 
 function TFhirRegulatedAuthorizationCase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -30894,7 +30894,7 @@ end;
 
 function TFhirRegulatedAuthorizationCaseListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -31574,7 +31574,7 @@ end;
 
 function TFhirRegulatedAuthorization.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FSubject.sizeInBytes);
   inc(result, FType_.sizeInBytes);
@@ -31621,7 +31621,7 @@ end;
 
 function TFhirRegulatedAuthorizationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -31907,7 +31907,7 @@ end;
 
 function TFhirSubstanceInstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FExpiry.sizeInBytes);
   inc(result, FQuantity.sizeInBytes);
@@ -31941,7 +31941,7 @@ end;
 
 function TFhirSubstanceInstanceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -32188,7 +32188,7 @@ end;
 
 function TFhirSubstanceIngredient.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FQuantity.sizeInBytes);
   inc(result, FSubstance.sizeInBytes);
 end;
@@ -32221,7 +32221,7 @@ end;
 
 function TFhirSubstanceIngredientListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -32690,7 +32690,7 @@ end;
 
 function TFhirSubstance.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidentifierList.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
   inc(result, FcategoryList.sizeInBytes);
@@ -32728,7 +32728,7 @@ end;
 
 function TFhirSubstanceListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -33146,7 +33146,7 @@ end;
 
 function TFhirSubstanceDefinitionMoiety.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRole.sizeInBytes);
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FName.sizeInBytes);
@@ -33185,7 +33185,7 @@ end;
 
 function TFhirSubstanceDefinitionMoietyListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -33579,7 +33579,7 @@ end;
 
 function TFhirSubstanceDefinitionProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCategory.sizeInBytes);
   inc(result, FCode.sizeInBytes);
   inc(result, FParameters.sizeInBytes);
@@ -33617,7 +33617,7 @@ end;
 
 function TFhirSubstanceDefinitionPropertyListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -34129,7 +34129,7 @@ end;
 
 function TFhirSubstanceDefinitionStructure.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStereochemistry.sizeInBytes);
   inc(result, FOpticalActivity.sizeInBytes);
   inc(result, FMolecularFormula.sizeInBytes);
@@ -34169,7 +34169,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -34481,7 +34481,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureIsotope.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FName.sizeInBytes);
   inc(result, FSubstitution.sizeInBytes);
@@ -34517,7 +34517,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureIsotopeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -34786,7 +34786,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureIsotopeMolecularWeight.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMethod.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FAmount.sizeInBytes);
@@ -34820,7 +34820,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureIsotopeMolecularWeightListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -35130,7 +35130,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureRepresentation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FRepresentation.sizeInBytes);
   inc(result, FFormat.sizeInBytes);
@@ -35165,7 +35165,7 @@ end;
 
 function TFhirSubstanceDefinitionStructureRepresentationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -35529,7 +35529,7 @@ end;
 
 function TFhirSubstanceDefinitionCode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
   inc(result, FStatusDate.sizeInBytes);
@@ -35565,7 +35565,7 @@ end;
 
 function TFhirSubstanceDefinitionCodeListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -36168,7 +36168,7 @@ end;
 
 function TFhirSubstanceDefinitionName.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FName.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -36210,7 +36210,7 @@ end;
 
 function TFhirSubstanceDefinitionNameListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -36494,7 +36494,7 @@ end;
 
 function TFhirSubstanceDefinitionNameOfficial.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAuthority.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
   inc(result, FDate.sizeInBytes);
@@ -36528,7 +36528,7 @@ end;
 
 function TFhirSubstanceDefinitionNameOfficialListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -36917,7 +36917,7 @@ end;
 
 function TFhirSubstanceDefinitionRelationship.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubstanceDefinition.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FIsDefining.sizeInBytes);
@@ -36955,7 +36955,7 @@ end;
 
 function TFhirSubstanceDefinitionRelationshipListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -37898,7 +37898,7 @@ end;
 
 function TFhirSubstanceDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FVersion.sizeInBytes);
   inc(result, FStatus.sizeInBytes);
@@ -37952,7 +37952,7 @@ end;
 
 function TFhirSubstanceDefinitionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -38427,7 +38427,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubunit.sizeInBytes);
   inc(result, FSequence.sizeInBytes);
   inc(result, FLength.sizeInBytes);
@@ -38466,7 +38466,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunitListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -38817,7 +38817,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunitLinkage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConnectivity.sizeInBytes);
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FName.sizeInBytes);
@@ -38852,7 +38852,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunitLinkageListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -39161,7 +39161,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunitSugar.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FName.sizeInBytes);
   inc(result, FResidueSite.sizeInBytes);
@@ -39195,7 +39195,7 @@ end;
 
 function TFhirSubstanceNucleicAcidSubunitSugarListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -39572,7 +39572,7 @@ end;
 
 function TFhirSubstanceNucleicAcid.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSequenceType.sizeInBytes);
   inc(result, FNumberOfSubunits.sizeInBytes);
   inc(result, FAreaOfHybridisation.sizeInBytes);
@@ -39608,7 +39608,7 @@ end;
 
 function TFhirSubstanceNucleicAcidListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -39876,7 +39876,7 @@ end;
 
 function TFhirSubstancePolymerMonomerSet.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FRatioType.sizeInBytes);
   inc(result, FstartingMaterialList.sizeInBytes);
 end;
@@ -39909,7 +39909,7 @@ end;
 
 function TFhirSubstancePolymerMonomerSetListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -40214,7 +40214,7 @@ end;
 
 function TFhirSubstancePolymerMonomerSetStartingMaterial.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCode.sizeInBytes);
   inc(result, FCategory.sizeInBytes);
   inc(result, FIsDefining.sizeInBytes);
@@ -40249,7 +40249,7 @@ end;
 
 function TFhirSubstancePolymerMonomerSetStartingMaterialListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -40558,7 +40558,7 @@ end;
 
 function TFhirSubstancePolymerRepeat.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAverageMolecularFormula.sizeInBytes);
   inc(result, FRepeatUnitAmountType.sizeInBytes);
   inc(result, FrepeatUnitList.sizeInBytes);
@@ -40592,7 +40592,7 @@ end;
 
 function TFhirSubstancePolymerRepeatListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -40981,7 +40981,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FUnit_.sizeInBytes);
   inc(result, FOrientation.sizeInBytes);
   inc(result, FAmount.sizeInBytes);
@@ -41017,7 +41017,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnitListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -41367,7 +41367,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FAverage.sizeInBytes);
   inc(result, FLow.sizeInBytes);
@@ -41402,7 +41402,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -41712,7 +41712,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnitStructuralRepresentation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FRepresentation.sizeInBytes);
   inc(result, FFormat.sizeInBytes);
@@ -41747,7 +41747,7 @@ end;
 
 function TFhirSubstancePolymerRepeatRepeatUnitStructuralRepresentationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -42182,7 +42182,7 @@ end;
 
 function TFhirSubstancePolymer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FIdentifier.sizeInBytes);
   inc(result, FClass_.sizeInBytes);
   inc(result, FGeometry.sizeInBytes);
@@ -42220,7 +42220,7 @@ end;
 
 function TFhirSubstancePolymerListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -42700,7 +42700,7 @@ end;
 
 function TFhirSubstanceProteinSubunit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubunit.sizeInBytes);
   inc(result, FSequence.sizeInBytes);
   inc(result, FLength.sizeInBytes);
@@ -42739,7 +42739,7 @@ end;
 
 function TFhirSubstanceProteinSubunitListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -43092,7 +43092,7 @@ end;
 
 function TFhirSubstanceProtein.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSequenceType.sizeInBytes);
   inc(result, FNumberOfSubunits.sizeInBytes);
   inc(result, FdisulfideLinkageList.sizeInBytes);
@@ -43127,7 +43127,7 @@ end;
 
 function TFhirSubstanceProteinListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -43417,7 +43417,7 @@ end;
 
 function TFhirSubstanceReferenceInformationGene.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FGeneSequenceOrigin.sizeInBytes);
   inc(result, FGene.sizeInBytes);
   inc(result, FsourceList.sizeInBytes);
@@ -43451,7 +43451,7 @@ end;
 
 function TFhirSubstanceReferenceInformationGeneListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -43739,7 +43739,7 @@ end;
 
 function TFhirSubstanceReferenceInformationGeneElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FType_.sizeInBytes);
   inc(result, FElement.sizeInBytes);
   inc(result, FsourceList.sizeInBytes);
@@ -43773,7 +43773,7 @@ end;
 
 function TFhirSubstanceReferenceInformationGeneElementListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -44168,7 +44168,7 @@ end;
 
 function TFhirSubstanceReferenceInformationTarget.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTarget.sizeInBytes);
   inc(result, FType_.sizeInBytes);
   inc(result, FInteraction.sizeInBytes);
@@ -44207,7 +44207,7 @@ end;
 
 function TFhirSubstanceReferenceInformationTargetListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -44577,7 +44577,7 @@ end;
 
 function TFhirSubstanceReferenceInformation.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FComment.sizeInBytes);
   inc(result, FgeneList.sizeInBytes);
   inc(result, FgeneElementList.sizeInBytes);
@@ -44612,7 +44612,7 @@ end;
 
 function TFhirSubstanceReferenceInformationListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -44881,7 +44881,7 @@ end;
 
 function TFhirSubstanceSourceMaterialFractionDescription.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFraction.sizeInBytes);
   inc(result, FMaterialType.sizeInBytes);
 end;
@@ -44914,7 +44914,7 @@ end;
 
 function TFhirSubstanceSourceMaterialFractionDescriptionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -45330,7 +45330,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganism.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFamily.sizeInBytes);
   inc(result, FGenus.sizeInBytes);
   inc(result, FSpecies.sizeInBytes);
@@ -45369,7 +45369,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -45636,7 +45636,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismAuthor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAuthorType.sizeInBytes);
   inc(result, FAuthorDescription.sizeInBytes);
 end;
@@ -45669,7 +45669,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismAuthorListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -46063,7 +46063,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismHybrid.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMaternalOrganismId.sizeInBytes);
   inc(result, FMaternalOrganismName.sizeInBytes);
   inc(result, FPaternalOrganismId.sizeInBytes);
@@ -46099,7 +46099,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismHybridListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -46389,7 +46389,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismOrganismGeneral.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FKingdom.sizeInBytes);
   inc(result, FPhylum.sizeInBytes);
   inc(result, FClass_.sizeInBytes);
@@ -46424,7 +46424,7 @@ end;
 
 function TFhirSubstanceSourceMaterialOrganismOrganismGeneralListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -46671,7 +46671,7 @@ end;
 
 function TFhirSubstanceSourceMaterialPartDescription.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPart.sizeInBytes);
   inc(result, FPartLocation.sizeInBytes);
 end;
@@ -46704,7 +46704,7 @@ end;
 
 function TFhirSubstanceSourceMaterialPartDescriptionListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 
@@ -47323,7 +47323,7 @@ end;
 
 function TFhirSubstanceSourceMaterial.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSourceMaterialClass.sizeInBytes);
   inc(result, FSourceMaterialType.sizeInBytes);
   inc(result, FSourceMaterialState.sizeInBytes);
@@ -47367,7 +47367,7 @@ end;
 
 function TFhirSubstanceSourceMaterialListEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FList.sizeInBytes);
 end;
 

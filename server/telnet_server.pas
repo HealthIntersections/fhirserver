@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
   fsl_base, fsl_utilities, fsl_threads, fsl_logging,
-  server_context;
+  endpoint;
 
 type
   TFHIRTelnetServer = class;
@@ -71,7 +71,7 @@ type
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
-    FContexts : TFslList<TFHIRServerContext>;
+    FEndPoints : TFslList<TFHIRServerEndPoint>;
     FPassword : String;
     FLog : TStringList;
     FWelcomeMsg : String;
@@ -88,19 +88,13 @@ type
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
 
-    procedure addContext(ctxt : TFHIRServerContext);
-    procedure removeContext(ctxt : TFHIRServerContext);
-    function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
+    procedure addEndPoint(ep : TFHIRServerEndPoint);
+    procedure removeEndPoint(ep : TFHIRServerEndPoint);
   end;
 
 implementation
 
 { TFHIRTelnetServer }
-
-procedure TFHIRTelnetServer.addContext(ctxt: TFHIRServerContext);
-begin
-  FContexts.Add(ctxt.Link);
-end;
 
 constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg : String);
 begin
@@ -108,7 +102,7 @@ begin
   FWelcomeMsg := WelcomeMsg;
   FLock := TFslLock.Create('TelnetServer');
   FClients := TFslList<TTelnetThreadHelper>.create;
-  FContexts := TFslList<TFHIRServerContext>.create;
+  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
 
   FLog := TStringList.Create;
 
@@ -135,23 +129,13 @@ begin
     FServer.Active := false;
     FServer.Free;
     FClients.Free;
-    FContexts.Free;
+    FEndPoints.Free;
   except
     // not interested
   end;
   FLog.Free;
   FLock.Free;
   inherited;
-end;
-
-function TFHIRTelnetServer.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
-var
-  t : TFHIRServerContext;
-begin
-  result := nil;
-  for t in FContexts do
-    if t.Name = name then
-      exit(t);
 end;
 
 procedure TFHIRTelnetServer.Log(const msg: String);
@@ -206,9 +190,14 @@ begin
   result := TFHIRTelnetServer(inherited Link);
 end;
 
-procedure TFHIRTelnetServer.removeContext(ctxt: TFHIRServerContext);
+procedure TFHIRTelnetServer.addEndPoint(ep: TFHIRServerEndPoint);
 begin
-  FContexts.remove(ctxt);
+  FEndPoints.Add(ep.Link);
+end;
+
+procedure TFHIRTelnetServer.removeEndPoint(ep: TFHIRServerEndPoint);
+begin
+  FEndPoints.remove(ep);
 end;
 
 procedure TFHIRTelnetServer.TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
@@ -291,24 +280,24 @@ end;
 
 procedure TTelnetThreadHelper.ping;
 var
-  count : integer;
-  ctxt : TFHIRServerContext;
+  mem : int64;
+  ep : TFHIRServerEndPoint;
 begin
   if (now > FNextPing) then
   begin
-    count := 0;
-    for ctxt in FServer.FContexts do
+    mem := 0;
+    for ep in FServer.FEndPoints do
     begin
-      count := count + ctxt.cacheCount;
+      mem := mem + ep.cacheSize;
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+inttostr(count)+' Objects cached');
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+DescribeBytes(mem)+' MB cached');
     FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
 var
-  ctxt : TFHIRServerContext;
+  ep : TFHIRServerEndPoint;
 begin
   if (s = '@console') then
     FEnhanced := true
@@ -320,8 +309,8 @@ begin
     send('$@classes: '+TFslObject.getReport('|', true))
   else if (s = '@cache') then
   begin
-    for ctxt in FServer.FContexts do
-      ctxt.clearCache;
+    for ep in FServer.FEndPoints do
+      ep.clearCache;
     ping;
   end
   else

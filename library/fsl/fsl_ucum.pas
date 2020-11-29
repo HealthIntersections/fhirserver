@@ -77,7 +77,7 @@ end;
 
 function TUcumPair.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUnitCode.length * sizeof(char)) + 12);
 end;
 

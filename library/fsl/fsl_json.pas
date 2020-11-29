@@ -835,7 +835,7 @@ end;
 
 function TJSONWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBuilder.sizeInBytes);
 end;
 
@@ -1249,7 +1249,7 @@ end;
 
 function TJsonWriterDirect.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FCache.length * sizeof(char)) + 12);
 end;
@@ -1464,7 +1464,7 @@ end;
 
 function TJSONLexer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPeek.length * sizeof(char)) + 12);
   inc(result, FStates.sizeInBytes);
 end;
@@ -1583,7 +1583,7 @@ end;
 
 function TJSONParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLex.sizeInBytes);
   inc(result, (FItemName.length * sizeof(char)) + 12);
   inc(result, (FItemValue.length * sizeof(char)) + 12);
@@ -2205,7 +2205,7 @@ end;
 
 function TJsonArray.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItems.sizeInBytes);
 end;
 
@@ -2250,7 +2250,7 @@ end;
 
 function TJsonString.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2295,7 +2295,7 @@ end;
 
 function TJsonNumber.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2625,7 +2625,7 @@ end;
 
 function TJsonObject.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FProperties.sizeInBytes);
 end;
@@ -2696,7 +2696,7 @@ end;
 
 function TJsonBoolean.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TJsonArrayEnumerator }
@@ -2721,7 +2721,7 @@ end;
 
 function TJsonArrayEnumerator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FArray.sizeInBytes);
 end;
 
@@ -2729,7 +2729,7 @@ end;
 
 function TJsonPatchEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPatch.sizeInBytes);
   inc(result, FTarget.sizeInBytes);
 end;
@@ -3036,7 +3036,7 @@ end;
 
 function TJsonPointerMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FNode.sizeInBytes);
 end;
@@ -3144,7 +3144,7 @@ end;
 
 function TJsonPointerQuery.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMatches.sizeInBytes);
 end;
 
@@ -3336,7 +3336,7 @@ end;
 
 function TJsonWriterCanonical.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FObject.sizeInBytes);
   inc(result, FStack.sizeInBytes);
 end;
@@ -3364,7 +3364,7 @@ end;
 
 function TCanonicalJsonNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, FChildren.sizeInBytes);
@@ -3749,7 +3749,7 @@ end;
 
 function TJWT.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHeader.sizeInBytes);
   inc(result, FPayLoad.sizeInBytes);
   inc(result, (FOriginalSource.length * sizeof(char)) + 12);

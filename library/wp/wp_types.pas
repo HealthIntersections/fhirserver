@@ -2065,7 +2065,7 @@ End;
 
 function TWPSFontDetails.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2637,7 +2637,7 @@ End;
 
 function TWPStyle.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFont.sizeInBytes);
   inc(result, FParagraph.sizeInBytes);
 end;
@@ -2754,7 +2754,7 @@ End;
 
 function TWPStyles.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDefaultStyle.sizeInBytes);
 end;
 
@@ -3254,7 +3254,7 @@ End;
 
 function TWPBorder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBrushImage.sizeInBytes);
 end;
 
@@ -3597,7 +3597,7 @@ End;
 
 function TWPHotspot.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, (FTitle.length * sizeof(char)) + 12);
@@ -3762,7 +3762,7 @@ End;
 
 function TWPImageMap.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAreas.sizeInBytes);
 end;
 
@@ -3803,7 +3803,7 @@ End;
 
 function TWPImageMapArea.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCoordinates.sizeInBytes);
 end;
 
@@ -3893,7 +3893,7 @@ End;
 
 function TWPCoordinate.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 function TWPCoordinateList.LastIs(iX, iY: Integer): Boolean;
@@ -4035,7 +4035,7 @@ end;
 
 function TWPDocumentImageAdornment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FId.length * sizeof(char)) + 12);
   inc(result, FCoordinates.sizeInBytes);
   inc(result, FCaptionPoint.sizeInBytes);
@@ -4393,7 +4393,7 @@ end;
 
 function TWPMouseInfo.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHotspot.sizeInBytes);
   inc(result, FSubject.sizeInBytes);
   inc(result, FAdornment.sizeInBytes);
@@ -4456,7 +4456,7 @@ End;
 
 function TWPWordIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -4510,7 +4510,7 @@ End;
 
 function TWPLineIterator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -4846,7 +4846,7 @@ End;
 
 function TWPProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FChildren.sizeInBytes);
@@ -5138,7 +5138,7 @@ End;
 
 function TWPSortDetail.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TWPSortDetailList }
@@ -5292,7 +5292,7 @@ End;
 
 function TWPRendererTableColumnMetric.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDeadLefts.sizeInBytes);
   inc(result, FDeadRights.sizeInBytes);
 end;
@@ -5380,7 +5380,7 @@ End;
 
 function TWPFieldModel.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, FEntries.sizeInBytes);
 end;
@@ -5410,7 +5410,7 @@ end;
 
 function TWPFieldEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;

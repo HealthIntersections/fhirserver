@@ -76,7 +76,7 @@ end;
 
 function TNdcImporter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, FDatabase.sizeInBytes);
 end;

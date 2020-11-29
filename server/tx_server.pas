@@ -119,7 +119,7 @@ Type
     // database maintenance
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
-    function cacheCount : integer; override;
+    function cacheSize : UInt64; override;
     procedure clearCache;
   end;
 
@@ -548,13 +548,13 @@ begin
   result := getProvider(url, version, params, nullOk);
 end;
 
-function TTerminologyServer.cacheCount : integer;
+function TTerminologyServer.cacheSize : UInt64;
 begin
-  result := inherited cacheCount;
+  result := inherited cacheSize;
   FLock.Lock;
   try
-    result := result + FExpansions.Count;
-    result := result + FDependencies.Count;
+    result := result + FExpansions.sizeInBytes;
+    result := result + FDependencies.sizeInBytes;
   finally
     FLock.Unlock;
   end;

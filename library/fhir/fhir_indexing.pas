@@ -233,7 +233,7 @@ end;
 
 function TFhirIndex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -339,7 +339,7 @@ end;
 
 function TFhirIndexList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
 end;
 
@@ -381,7 +381,7 @@ end;
 
 function TFhirComposite.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FComponents.sizeInBytes);
@@ -527,7 +527,7 @@ end;
 
 function TFHIRCompartmentList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPatientCompartment.sizeInBytes);
   inc(result, FPractitionerCompartment.sizeInBytes);
   inc(result, FEncounterCompartment.sizeInBytes);

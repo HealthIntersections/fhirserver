@@ -600,7 +600,7 @@ end;
 
 function TRegisteredFHIRServer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, (FfhirEndpoint.length * sizeof(char)) + 12);
   inc(result, (Fclientid.length * sizeof(char)) + 12);
@@ -646,7 +646,7 @@ end;
 
 function TRegisteredCDSHook.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, FpreFetch.sizeInBytes);
   inc(result, (FHook.length * sizeof(char)) + 12);
@@ -964,7 +964,7 @@ end;
 
 function TSmartAppLaunchLogin.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Ftoken.sizeInBytes);
   inc(result, Fserver.sizeInBytes);
   inc(result, (FFinalState.length * sizeof(char)) + 12);

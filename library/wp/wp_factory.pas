@@ -585,7 +585,7 @@ End;
 
 function TWPFormatConvertor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSourceDocument.sizeInBytes);
   inc(result, FSourceStream.sizeInBytes);
   inc(result, FDestinationDocument.sizeInBytes);

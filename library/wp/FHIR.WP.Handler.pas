@@ -1390,7 +1390,7 @@ end;
 
 function TWPDocumentHandler.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSettings.sizeInBytes);
 end;
 

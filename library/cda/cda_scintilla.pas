@@ -510,7 +510,7 @@ end;
 
 function TCDAStyler.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDoc.sizeInBytes);
   inc(result, FLastType.sizeInBytes);
   inc(result, FLastCategory.sizeInBytes);

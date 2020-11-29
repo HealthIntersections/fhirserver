@@ -935,7 +935,7 @@ end;
 
 function TMXmlAttribute.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -959,7 +959,7 @@ end;
 
 function TMXmlNamedNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FNamespaceURI.length * sizeof(char)) + 12);
   inc(result, (FLocalName.length * sizeof(char)) + 12);
@@ -982,7 +982,7 @@ end;
 
 function TMXmlElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAttributes.sizeInBytes);
   inc(result, FChildren.sizeInBytes);
   inc(result, (FText.length * sizeof(char)) + 12);
@@ -1542,7 +1542,7 @@ end;
 
 function TMXmlParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, reader.sizeInBytes);
 end;
 
@@ -2621,7 +2621,7 @@ end;
 
 function TMXPathExpressionNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, FFilters.sizeInBytes);
   inc(result, FNext.sizeInBytes);
@@ -3874,7 +3874,7 @@ end;
 
 function TMXmlDocument.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FNamespaceAbbreviations.sizeInBytes);
 end;
 
@@ -3905,7 +3905,7 @@ end;
 
 function TMXmlBoolean.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TMXmlNumber }
@@ -3923,7 +3923,7 @@ end;
 
 function TMXmlNumber.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TXPathVariables }
@@ -3973,7 +3973,7 @@ end;
 
 function TXPathVariables.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
 end;
 
@@ -3992,7 +3992,7 @@ end;
 
 function TMXmlString.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -4252,7 +4252,7 @@ end;
 
 function TFslXmlBuilder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, mem.sizeInBytes);
   inc(result, buf.sizeInBytes);
   inc(result, xml.sizeInBytes);
@@ -4299,7 +4299,7 @@ end;
 
 function TXmlBuilderNamespaceList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDefaultNS.length * sizeof(char)) + 12);
   inc(result, FNew.sizeInBytes);
 end;
@@ -4864,7 +4864,7 @@ end;
 
 function TFslXMLFormatter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FAttributes.sizeInBytes);
   inc(result, FBuilder.sizeInBytes);
   inc(result, (FPending.length * sizeof(char)) + 12);
@@ -4901,7 +4901,7 @@ End;
 
 function TFslXMLAttribute.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -5261,7 +5261,7 @@ End;
 
 function TFslXMLNamespaceEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, FValues.sizeInBytes);
 end;
@@ -5324,7 +5324,7 @@ End;
 
 function TFslXMLNamespaceLevel.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEntryList.sizeInBytes);
 end;
 
@@ -5534,7 +5534,7 @@ End;
 
 function TFslXMLNamespaceManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FEntryList.sizeInBytes);
   inc(result, FLevelList.sizeInBytes);
 end;
@@ -5814,7 +5814,7 @@ end;
 
 function TMXmlBuilder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStack.sizeInBytes);
   inc(result, FDoc.sizeInBytes);
   inc(result, FAttributes.sizeInBytes);
@@ -6359,7 +6359,7 @@ end;
 
 function TFslXMLExtractor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FElement.length * sizeof(char)) + 12);
   inc(result, FAttributes.sizeInBytes);
   inc(result, FNamespaceManager.sizeInBytes);

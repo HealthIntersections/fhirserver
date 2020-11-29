@@ -366,6 +366,8 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; virtual; abstract;
     function fetchLoadedPackage(id : String) : TBytes; virtual; abstract;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
+    function cacheSize : Int64; virtual;
+    procedure clearCache; virtual;
   end;
 
 
@@ -375,6 +377,16 @@ uses
   server_context;
 
 { TFHIRStorageService }
+
+function TFHIRStorageService.cacheSize: Int64;
+begin
+  result := 0;
+end;
+
+procedure TFHIRStorageService.clearCache;
+begin
+  // nothing
+end;
 
 constructor TFHIRStorageService.Create(factory : TFHIRFactory);
 begin

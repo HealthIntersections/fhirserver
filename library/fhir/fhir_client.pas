@@ -336,7 +336,7 @@ end;
 
 function TFHIRClientCommunicator.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FClient.sizeInBytes);
 end;
 
@@ -579,7 +579,7 @@ end;
 
 function TClientAccessToken.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FidToken.sizeInBytes);
   inc(result, (Fscopes.length * sizeof(char)) + 12);
   inc(result, (FaccessToken.length * sizeof(char)) + 12);

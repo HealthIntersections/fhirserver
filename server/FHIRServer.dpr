@@ -515,7 +515,8 @@ uses
   internal_client in 'internal_client.pas',
   endpoint_bridge in 'endpoint_bridge.pas',
   endpoint_txsvr in 'endpoint_txsvr.pas',
-  endpoint_full in 'endpoint_full.pas';
+  endpoint_full in 'endpoint_full.pas',
+  endpoint in 'endpoint.pas';
 
 begin
   ExecuteFhirServer;

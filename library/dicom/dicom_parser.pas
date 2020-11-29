@@ -308,7 +308,7 @@ End;
 (*
 function TDicomParserContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FInput.sizeInBytes);
   inc(result, FDictionary.sizeInBytes);
   inc(result, FMap.sizeInBytes);
@@ -412,7 +412,7 @@ end;
 
 function TDicomParserBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContext.sizeInBytes);
 end;
 
@@ -1308,7 +1308,7 @@ end;
 
 function TDicomPDUDecoder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TDicomFileDecoder }

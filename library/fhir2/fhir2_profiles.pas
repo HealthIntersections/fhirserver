@@ -1489,7 +1489,7 @@ end;
 
 function TProfileUtilities.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, context.sizeInBytes);
   inc(result, messages.sizeInBytes);
 end;
@@ -2077,7 +2077,7 @@ end;
 
 function TProfileManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProfilesById.sizeInBytes);
   inc(result, FProfilesByURL.sizeInBytes);
 end;
@@ -2200,7 +2200,7 @@ end;
 
 function TProfileDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProfiles.sizeInBytes);
   inc(result, FProfile.sizeInBytes);
   inc(result, FElement.sizeInBytes);

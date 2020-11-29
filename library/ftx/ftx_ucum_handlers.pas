@@ -133,7 +133,7 @@ end;
 
 function TUcumUnitHandler.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FUnits.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;

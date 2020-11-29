@@ -252,7 +252,7 @@ end;
 
 function TUcumFactor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FAnnotation.length * sizeof(char)) + 12);
 end;
 
@@ -302,7 +302,7 @@ end;
 
 function TUcumSymbol.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPrefix.sizeInBytes);
   inc(result, FUnit_.sizeInBytes);
 end;
@@ -349,7 +349,7 @@ end;
 
 function TUcumTerm.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FComponent.sizeInBytes);
   inc(result, FTerm.sizeInBytes);
 end;
@@ -358,7 +358,7 @@ end;
 
 function TUcumExpressionParser.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FModel.sizeInBytes);
   inc(result, FLexer.sizeInBytes);
 end;
@@ -697,7 +697,7 @@ End;
 
 function TUcumLexer.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FSourceString.length * sizeof(char)) + 12);
   inc(result, length(Fsource) * Sizeof(UnicodeChar));
   inc(result, (Ftoken.length * sizeof(char)) + 12);
@@ -1023,7 +1023,7 @@ end;
 
 function TUcumConverter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, Fmodel.sizeInBytes);
   inc(result, Fhandlers.sizeInBytes);
   inc(result, Fone.sizeInBytes);
@@ -1072,7 +1072,7 @@ end;
 
 function TUcumCanonical.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FUnits.sizeInBytes);
 end;
 
@@ -1173,7 +1173,7 @@ end;
 
 function TUcumCanonicalUnit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBase.sizeInBytes);
 end;
 

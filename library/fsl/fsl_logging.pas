@@ -198,7 +198,7 @@ end;
 
 function TLoggerPolicy.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FHeader.length * sizeof(char)) + 12);
 end;
@@ -412,7 +412,7 @@ end;
 
 function TLogger.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, FPolicy.sizeInBytes);
   inc(result, (FOpenName.length * sizeof(char)) + 12);
@@ -742,7 +742,7 @@ end;
 
 function TLogging.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFileLogger.sizeInBytes);
   inc(result, FListeners.sizeInBytes);
   inc(result, (FWorkingLine.length * sizeof(char)) + 12);

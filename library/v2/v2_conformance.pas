@@ -839,7 +839,7 @@ End;
 
 function THCPValidateEvent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMsg.length * sizeof(char)) + 12);
 end;
 
@@ -899,7 +899,7 @@ End;
 
 function THCPValidateEvents.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FContext.sizeInBytes);
   inc(result, FHL7Message.sizeInBytes);
   inc(result, FErrorCollector.sizeInBytes);
@@ -947,7 +947,7 @@ End;
 
 function THCPProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOwner.sizeInBytes);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -1006,7 +1006,7 @@ End;
 
 function THCPProperties.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FPropList.sizeInBytes);
 end;
 
@@ -1108,7 +1108,7 @@ End;
 
 function THCPPropertyElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProperties.sizeInBytes);
 end;
 
@@ -1123,7 +1123,7 @@ End;
 
 function THCPNode.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPath.length * sizeof(char)) + 12);
 end;
 
@@ -1191,7 +1191,7 @@ End;
 
 function THCPTableItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FInstruction.length * sizeof(char)) + 12);
   inc(result, (FDisplayName.length * sizeof(char)) + 12);
@@ -1314,7 +1314,7 @@ End;
 
 function THCPTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FTableType.length * sizeof(char)) + 12);
   inc(result, (FCodeSys.length * sizeof(char)) + 12);
   inc(result, (FId.length * sizeof(char)) + 12);
@@ -1592,7 +1592,7 @@ End;
 
 function THCPCell.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FDatatype.length * sizeof(char)) + 12);
   inc(result, (FTable.length * sizeof(char)) + 12);
@@ -1777,7 +1777,7 @@ End;
 
 function THCPComponent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSubComponents.sizeInBytes);
 end;
 
@@ -2004,7 +2004,7 @@ End;
 
 function THCPField.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FItemNo.length * sizeof(char)) + 12);
   inc(result, FComponents.sizeInBytes);
 end;
@@ -2194,7 +2194,7 @@ End;
 
 function THCPSegmentBase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOwnerGroup.sizeInBytes);
   inc(result, (FPredicate.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
@@ -2339,7 +2339,7 @@ End;
 
 function THCPSegment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFields.sizeInBytes);
 end;
 
@@ -2390,7 +2390,7 @@ End;
 
 function THCPSegGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSegments.sizeInBytes);
 end;
 
@@ -2431,7 +2431,7 @@ End;
 
 function THCPMetaData.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FOrgName.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
@@ -2811,7 +2811,7 @@ End;
 
 function THCPStaticDef.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMsgType.length * sizeof(char)) + 12);
   inc(result, (FEventType.length * sizeof(char)) + 12);
   inc(result, (FMsgStructID.length * sizeof(char)) + 12);
@@ -2930,7 +2930,7 @@ End;
 
 function THCPDynamicDef.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FStaticDefs.sizeInBytes);
 end;
 
@@ -3109,7 +3109,7 @@ End;
 
 function THCPSpecification.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMetaData.sizeInBytes);
   inc(result, FUseCase.sizeInBytes);
   inc(result, FEncodings.sizeInBytes);
@@ -3213,7 +3213,7 @@ End;
 
 function THCPUseCase.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPurpose.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, FElements.sizeInBytes);
@@ -3236,7 +3236,7 @@ End;
 
 function THCPUseCaseElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 

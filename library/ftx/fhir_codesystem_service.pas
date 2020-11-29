@@ -239,7 +239,7 @@ end;
 
 function TFhirCodeSystemProviderContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, context.sizeInBytes);
 end;
 
@@ -260,7 +260,7 @@ end;
 
 function TFhirCodeSystemConceptMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FItem.sizeInBytes);
 end;
 
@@ -324,7 +324,7 @@ end;
 
 function TFHIRCodeSystemEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCodeSystem.sizeInBytes);
   inc(result, FSupplements.sizeInBytes);
 end;
@@ -368,7 +368,7 @@ end;
 
 function TFhirCodeSystemProviderFilterContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, concepts.sizeInBytes);
 end;
 
@@ -388,7 +388,7 @@ end;
 
 function TCodeSystemAdornment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
 end;
 
@@ -1228,7 +1228,7 @@ end;
 
 function TFhirCodeSystemProvider.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCs.sizeInBytes);
   inc(result, FMap.sizeInBytes);
   inc(result, FFactory.sizeInBytes);
@@ -1509,7 +1509,7 @@ end;
 
 function TFHIRCodeSystemManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
   inc(result, FList.sizeInBytes);
 end;

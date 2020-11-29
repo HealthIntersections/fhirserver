@@ -158,7 +158,7 @@ end;
 
 function TDifference.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FValue.sizeInBytes);
@@ -235,7 +235,7 @@ end;
 
 function TDifferenceMatch.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TDifferenceMatchList }
@@ -940,7 +940,7 @@ end;
 
 function TDifferenceEngine.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFactory.sizeInBytes);
   inc(result, FContext.sizeInBytes);
   inc(result, fpe.sizeInBytes);
@@ -1002,7 +1002,7 @@ end;
 
 function TOffset.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 end.

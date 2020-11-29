@@ -289,7 +289,7 @@ initialization
 {$ENDIF}
 function TDifferenceEngineTest.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, tests.sizeInBytes);
 end;
 

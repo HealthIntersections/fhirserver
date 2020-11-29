@@ -212,7 +212,7 @@ end;
 
 function TUcumConcept.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fcode.length * sizeof(char)) + 12);
   inc(result, (FcodeUC.length * sizeof(char)) + 12);
   inc(result, (FprintSymbol.length * sizeof(char)) + 12);
@@ -240,7 +240,7 @@ end;
 
 function TUcumPrefix.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TUcumUnit }
@@ -252,7 +252,7 @@ end;
 
 function TUcumUnit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FProperty.length * sizeof(char)) + 12);
 end;
 
@@ -271,7 +271,7 @@ end;
 
 function TUcumBaseUnit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 { TUcumValue }
@@ -289,7 +289,7 @@ end;
 
 function TUcumValue.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Funit.length * sizeof(char)) + 12);
   inc(result, (FunitUC.length * sizeof(char)) + 12);
   inc(result, (Ftext.length * sizeof(char)) + 12);
@@ -321,7 +321,7 @@ end;
 
 function TUcumDefinedUnit.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (Fclass_.length * sizeof(char)) + 12);
   inc(result, Fvalue.sizeInBytes);
 end;
@@ -372,7 +372,7 @@ end;
 
 function TUcumModel.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FProperties.sizeInBytes);
   inc(result, Fprefixes.sizeInBytes);
   inc(result, FbaseUnits.sizeInBytes);
@@ -402,7 +402,7 @@ end;
 
 function TUcumProperty.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FCommonUnits.sizeInBytes);
 end;
 

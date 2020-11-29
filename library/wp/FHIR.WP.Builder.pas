@@ -401,7 +401,7 @@ End;
 
 function TWPDocumentBuilderScope.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FObject.sizeInBytes);
 end;
 
@@ -1889,7 +1889,7 @@ End;
 
 function TWPDocumentBuilder.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDocument.sizeInBytes);
   inc(result, FScopeList.sizeInBytes);
   inc(result, FIterator.sizeInBytes);

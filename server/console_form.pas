@@ -622,8 +622,10 @@ end;
 
 procedure TMainConsoleForm.FormDestroy(Sender: TObject);
 begin
+  GBackgroundTasks.stopAll;
   FThread.StopAndWait(40);
   FThread.Free;
+  GBackgroundTasks.Wait(2000);
   FPackageThread.Stop;
   FPackageThread.Free;
   FTxManager.Free;

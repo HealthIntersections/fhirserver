@@ -1933,7 +1933,7 @@ End;
 
 function TWPRTFReader.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FColours.sizeInBytes);
   inc(result, FFonts.sizeInBytes);
   inc(result, FLists.sizeInBytes);
@@ -2823,7 +2823,7 @@ End;
 
 function TWPRTFWriter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FFonts.sizeInBytes);
   inc(result, FContexts.sizeInBytes);
   inc(result, FRTF.sizeInBytes);
@@ -2888,7 +2888,7 @@ End;
 
 function TWPRTFContext.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFontName.length * sizeof(char)) + 12);
   inc(result, (FStyle.length * sizeof(char)) + 12);
 end;
@@ -3019,7 +3019,7 @@ End;
 
 function TWPRTFListDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FLevels.sizeInBytes);
 end;
@@ -3118,7 +3118,7 @@ End;
 
 function TWPRTFListLevelDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TWPRTFListLevelDefinitions.Link : TWPRTFListLevelDefinitions;
@@ -3200,7 +3200,7 @@ End;
 
 function TWPRTFListLevelOverrideDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 Function TWPRTFListLevelOverrideDefinitions.Link : TWPRTFListLevelOverrideDefinitions;
@@ -3283,7 +3283,7 @@ End;
 
 function TWPRTFListOverrideDefinition.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FLevels.sizeInBytes);
 end;
 
@@ -3526,7 +3526,7 @@ End;
 
 function TFslRTFExtractor.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FControl.length * sizeof(char)) + 12);
 end;
 
@@ -3621,7 +3621,7 @@ End;
 
 function TFslRTFFormatter.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
 end;
 
 End.

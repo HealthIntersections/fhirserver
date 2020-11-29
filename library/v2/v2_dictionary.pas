@@ -1439,7 +1439,7 @@ End;
 
 function THL7V2ModelDataType.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1617,7 +1617,7 @@ End;
 
 function THL7V2ModelTableItem.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1829,7 +1829,7 @@ End;
 
 function THL7V2ModelTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, FItems.sizeInBytes);
 end;
@@ -2026,7 +2026,7 @@ End;
 
 function THL7V2ModelComponent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
   inc(result, FRefTable.sizeInBytes);
@@ -2299,7 +2299,7 @@ End;
 
 function THL7V2ModelStructure.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
@@ -2576,7 +2576,7 @@ End;
 
 function THL7V2ModelDataElement.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FLength_Conf.length * sizeof(char)) + 12);
@@ -3114,7 +3114,7 @@ End;
 
 function THL7V2ModelSegment.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, FFields.sizeInBytes);
@@ -3301,7 +3301,7 @@ End;
 
 function THL7V2ModelSegmentGroup.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, FChildren.sizeInBytes);
 end;
@@ -3464,7 +3464,7 @@ End;
 
 function THL7V2ModelMessageStructure.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FExampleEvent.length * sizeOf(char)) + 12);
@@ -3785,7 +3785,7 @@ End;
 
 function THL7V2ModelEventMessage.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FMessage.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FReply.length * sizeOf(char)) + 12);
@@ -4057,7 +4057,7 @@ End;
 
 function THL7V2ModelEvent.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, FMessages.sizeInBytes);
@@ -4382,7 +4382,7 @@ end;
 
 function THL7V2Model.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTables.sizeInBytes);
   inc(result, FComponents.sizeInBytes);
   inc(result, FDataElements.sizeInBytes);
@@ -4463,7 +4463,7 @@ end;
 
 function THL7V2SchemaStoreCacheEntry.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FMap.sizeInBytes);
 end;
 
@@ -4862,7 +4862,7 @@ End;
 
 function THL7V2SchemaStore.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FFolder.length * sizeof(char)) + 12);
   inc(result, FCache.sizeInBytes);
@@ -5261,7 +5261,7 @@ end;
 
 function THL7V2Dictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FSchemaStore.sizeInBytes);
 end;
 
@@ -6150,7 +6150,7 @@ end;
 
 function THL7V2BinaryDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FBuffers.sizeInBytes);
   inc(result, FContexts.sizeInBytes);
 end;
@@ -6189,7 +6189,7 @@ end;
 
 function THL7V2FileDictionary.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFileName.length * sizeof(char)) + 12);
 end;
 
@@ -6221,7 +6221,7 @@ end;
 
 function THL7V2DictionaryProvider.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FDictionary.sizeInBytes);
 end;
 

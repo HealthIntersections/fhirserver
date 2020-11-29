@@ -383,7 +383,7 @@ end;
 
 function TSearchFilterText.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FFilter.length * sizeof(char)) + 12);
   inc(result, FStems.sizeInBytes);
   inc(result, FStemmer.sizeInBytes);

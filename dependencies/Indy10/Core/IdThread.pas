@@ -309,7 +309,7 @@ var
   // finalization can run and thus when the finalization accesses GThreadCount
   // in TerminateAll an error occurs. Moving this declaration to the interface
   // "fixes" it.
-  GThreadCount: TIdThreadSafeInteger = nil{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
+  GThreadCount: TIdThreadSafeInteger = nil;
 
 // FHIR Server Additions
 type

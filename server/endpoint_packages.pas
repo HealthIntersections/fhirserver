@@ -79,7 +79,7 @@ type
     FPackageServer : TFHIRPackageWebServer;
     FUpdater : TPackageUpdaterThread;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -91,13 +91,25 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
+    function cacheSize : Int64; override;
+    procedure clearCache; override;
   end;
 
 implementation
 
-constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; telnet : TFHIRTelnetServer; common : TCommonTerminologies);
+function TPackageServerEndPoint.cacheSize: Int64;
 begin
-  inherited create(config, settings, db, telnet, common);
+  result := inherited cacheSize;
+end;
+
+procedure TPackageServerEndPoint.clearCache;
+begin
+  inherited;
+end;
+
+constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+begin
+  inherited create(config, settings, db, common);
 end;
 
 destructor TPackageServerEndPoint.Destroy;
@@ -182,6 +194,7 @@ begin
   FPackageServer := TFHIRPackageWebServer.Create(config.name, config['path'].value, common);
   FPackageServer.DB := Database.Link;
   FPackageServer.NextScan := FUpdater.FNextRun;
+  WebEndPoint := FPackageServer;
   result := FPackageServer.link;
 end;
 

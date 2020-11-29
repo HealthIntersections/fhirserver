@@ -1302,7 +1302,7 @@ End;
 
 function TFDBConnection.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FOwner.sizeInBytes);
   inc(result, FBoundItems.sizeInBytes);
   inc(result, (FUsage.length * sizeof(char)) + 12);
@@ -1731,7 +1731,7 @@ end;
 
 function TFDBManager.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FConnections.sizeInBytes);
   inc(result, FAvail.sizeInBytes);
   inc(result, FInUse.sizeInBytes);
@@ -1844,7 +1844,7 @@ end;
 
 function TFDBManagerList.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FHooks.sizeInBytes);
 end;
 
@@ -1859,7 +1859,7 @@ end;
 
 function TFDBHook.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -1921,7 +1921,7 @@ end;
 
 function TFDBColumn.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -1956,7 +1956,7 @@ end;
 
 function TFDBIndex.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FColumns.sizeInBytes);
 end;
@@ -1968,7 +1968,7 @@ End;
 
 function TFDBRelationship.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FColumn.length * sizeof(char)) + 12);
   inc(result, (FDestTable.length * sizeof(char)) + 12);
   inc(result, (FDestColumn.length * sizeof(char)) + 12);
@@ -2008,7 +2008,7 @@ end;
 
 function TFDBTable.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, FColumns.sizeInBytes);
   inc(result, FIndexes.sizeInBytes);
@@ -2057,7 +2057,7 @@ end;
 
 function TFDBMetaData.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FTables.sizeInBytes);
   inc(result, FProcedures.sizeInBytes);
 end;

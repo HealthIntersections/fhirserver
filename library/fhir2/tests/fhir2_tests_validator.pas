@@ -509,7 +509,7 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
 function TFHIRValidatorTests.sizeInBytesV : cardinal;
 begin
-  result := inherited sizeInBytes;
+  result := inherited sizeInBytesV;
   inc(result, FServices.sizeInBytes);
 end;
 
