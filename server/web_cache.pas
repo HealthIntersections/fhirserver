@@ -55,8 +55,7 @@ begin
   FLock := TFslLock.Create('HTTP.Cache');
   FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
   FSize := 0;
-  FMaxSize := 1024 * 1024{ * 1024};
-  FMaxSize := FMaxSize * 2;   // 2GB
+  FMaxSize := 1024 * 1024 * 1024; // 1 GB
 end;
 
 destructor THTTPCacheManager.Destroy;
