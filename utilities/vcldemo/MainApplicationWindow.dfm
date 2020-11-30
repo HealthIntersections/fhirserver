@@ -252,11 +252,7 @@ object MainWindowForm: TMainWindowForm
           Font.Name = 'DejaVu Sans Mono'
           Font.Style = []
           Header.AutoSizeIndex = 0
-          Header.Font.Charset = DEFAULT_CHARSET
-          Header.Font.Color = clWindowText
-          Header.Font.Height = -11
-          Header.Font.Name = 'Tahoma'
-          Header.Font.Style = []
+          Header.Height = 22
           Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
           Header.SortColumn = 0
           HintMode = hmHint
@@ -274,38 +270,38 @@ object MainWindowForm: TMainWindowForm
           Columns = <
             item
               Position = 0
+              Text = 'Onset'
               Width = 70
-              WideText = 'Onset'
             end
             item
               Position = 1
+              Text = 'Status'
               Width = 80
-              WideText = 'Status'
             end
             item
               Position = 2
+              Text = 'Criticality'
               Width = 80
-              WideText = 'Criticality'
             end
             item
               Position = 3
+              Text = 'Category'
               Width = 80
-              WideText = 'Category'
             end
             item
               Position = 4
+              Text = 'Substance'
               Width = 150
-              WideText = 'Substance'
             end
             item
               Position = 5
+              Text = 'Manifestation'
               Width = 150
-              WideText = 'Manifestation'
             end
             item
               Position = 6
+              Text = 'Recorded'
               Width = 80
-              WideText = 'Recorded'
             end>
         end
       end
@@ -357,11 +353,7 @@ object MainWindowForm: TMainWindowForm
           Font.Name = 'DejaVu Sans Mono'
           Font.Style = []
           Header.AutoSizeIndex = 0
-          Header.Font.Charset = DEFAULT_CHARSET
-          Header.Font.Color = clWindowText
-          Header.Font.Height = -11
-          Header.Font.Name = 'Tahoma'
-          Header.Font.Style = []
+          Header.Height = 22
           Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
           Header.SortColumn = 0
           HintMode = hmHint
@@ -379,42 +371,42 @@ object MainWindowForm: TMainWindowForm
           Columns = <
             item
               Position = 0
+              Text = 'Type'
               Width = 70
-              WideText = 'Type'
             end
             item
               Position = 1
+              Text = 'Date'
               Width = 80
-              WideText = 'Date'
             end
             item
               Position = 2
+              Text = 'End Date'
               Width = 80
-              WideText = 'End Date'
             end
             item
               Position = 3
+              Text = 'Status'
               Width = 80
-              WideText = 'Status'
             end
             item
               Position = 4
+              Text = 'Medication'
               Width = 150
-              WideText = 'Medication'
             end
             item
               Position = 5
+              Text = 'Not Taken'
               Width = 150
-              WideText = 'Not Taken'
             end
             item
               Position = 6
+              Text = 'Source'
               Width = 80
-              WideText = 'Source'
             end
             item
               Position = 7
-              WideText = 'Reason'
+              Text = 'Reason'
             end>
         end
       end
@@ -476,12 +468,7 @@ object MainWindowForm: TMainWindowForm
             Font.Name = 'DejaVu Sans Mono'
             Font.Style = []
             Header.AutoSizeIndex = 1
-            Header.Font.Charset = DEFAULT_CHARSET
-            Header.Font.Color = clWindowText
-            Header.Font.Height = -11
-            Header.Font.Name = 'Tahoma'
-            Header.Font.Style = []
-            Header.Height = 17
+            Header.Height = 22
             Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
             NodeDataSize = 8
             ParentFont = False
@@ -493,13 +480,13 @@ object MainWindowForm: TMainWindowForm
                 Color = clInfoBk
                 Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coResizable, coShowDropMark, coVisible, coAllowFocus, coEditable]
                 Position = 0
+                Text = 'Name'
                 Width = 120
-                WideText = 'Name'
               end
               item
                 Position = 1
+                Text = 'Value'
                 Width = 266
-                WideText = 'Value'
               end>
           end
         end

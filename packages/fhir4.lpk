@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir4"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\fhir4"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_adaptor.pas"/>
+        <UnitName Value="fhir4_adaptor"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_authmap.pas"/>
+        <UnitName Value="fhir4_authmap"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_base.pas"/>
+        <UnitName Value="fhir4_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_client.pas"/>
+        <UnitName Value="fhir4_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_common.pas"/>
+        <UnitName Value="fhir4_common"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_constants.pas"/>
+        <UnitName Value="fhir4_constants"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_context.pas"/>
+        <UnitName Value="fhir4_context"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_elementmodel.pas"/>
+        <UnitName Value="fhir4_elementmodel"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_factory.pas"/>
+        <UnitName Value="fhir4_factory"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_graphdefinition.pas"/>
+        <UnitName Value="fhir4_graphdefinition"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_indexinfo.pas"/>
+        <UnitName Value="fhir4_indexinfo"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_javascript.pas"/>
+        <UnitName Value="fhir4_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_json.pas"/>
+        <UnitName Value="fhir4_json"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_liquid.pas"/>
+        <UnitName Value="fhir4_liquid"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_maputils.pas"/>
+        <UnitName Value="fhir4_maputils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_opbase.pas"/>
+        <UnitName Value="fhir4_opbase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_operations.pas"/>
+        <UnitName Value="fhir4_operations"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_organiser.pas"/>
+        <UnitName Value="fhir4_organiser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_parser.pas"/>
+        <UnitName Value="fhir4_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_parserbase.pas"/>
+        <UnitName Value="fhir4_parserBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_patch.pas"/>
+        <UnitName Value="fhir4_patch"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_pathengine.pas"/>
+        <UnitName Value="fhir4_pathengine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_pathnode.pas"/>
+        <UnitName Value="fhir4_pathnode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_profiles.pas"/>
+        <UnitName Value="fhir4_profiles"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources.pas"/>
+        <UnitName Value="fhir4_resources"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_admin.pas"/>
+        <UnitName Value="fhir4_resources_admin"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_base.pas"/>
+        <UnitName Value="fhir4_resources_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_canonical.pas"/>
+        <UnitName Value="fhir4_resources_canonical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_clinical.pas"/>
+        <UnitName Value="fhir4_resources_clinical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_financial.pas"/>
+        <UnitName Value="fhir4_resources_financial"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_medications.pas"/>
+        <UnitName Value="fhir4_resources_medications"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_resources_other.pas"/>
+        <UnitName Value="fhir4_resources_other"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_tags.pas"/>
+        <UnitName Value="fhir4_tags"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_turtle.pas"/>
+        <UnitName Value="fhir4_turtle"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_types.pas"/>
+        <UnitName Value="fhir4_types"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_utilities.pas"/>
+        <UnitName Value="fhir4_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_xml.pas"/>
+        <UnitName Value="fhir4_xml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_questionnaire.pas"/>
+        <UnitName Value="fhir4_questionnaire"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

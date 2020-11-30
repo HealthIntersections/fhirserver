@@ -36,8 +36,8 @@ uses
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,FMX.WebBrowser,
   System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Ui.Fmx,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  fsl_base, fsl_utilities, fsl_stream, FHIR.Ui.Fmx,
+  fhir_objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, fhir_indexing, FHIR.Version.IndexInfo,
   FHIR.Version.Questionnaire2,
   BaseResourceFrame,
   ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog, UsageContextForm, QuestionnaireContextDialog;
@@ -1264,11 +1264,11 @@ result :=
 '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
 ' <style>'+#13#10+
 '  body { background-color: rgb(255, 254, 245);'+#13#10+
-'	margin: 0px;'+#13#10+
-'	padding: 0px;'+#13#10+
-'	height: 100%;'+#13#10+
-'	font-size: 12px;'+#13#10+
-'	font-family: verdana;'+#13#10+
+'  margin: 0px;'+#13#10+
+'  padding: 0px;'+#13#10+
+'  height: 100%;'+#13#10+
+'  font-size: 12px;'+#13#10+
+'  font-family: verdana;'+#13#10+
 '}'+#13#10+
 ' </style>'+#13#10+
 '</head>'+#13#10+

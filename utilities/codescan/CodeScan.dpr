@@ -36,12 +36,12 @@ POSSIBILITY OF SUCH DAMAGE.
 uses
   System.SysUtils,
   IOUtils,
-  FHIR.Support.Collections in '..\..\library\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Base in '..\..\library\support\FHIR.Support.Base.pas',
-  FHIR.Support.Utilities in '..\..\library\support\FHIR.Support.Utilities.pas',
-  FHIR.Support.Fpc in '..\..\library\support\FHIR.Support.Fpc.pas',
-  FHIR.Support.Shell in '..\..\library\support\FHIR.Support.Shell.pas',
-  FHIR.Support.Stream in '..\..\library\support\FHIR.Support.Stream.pas';
+  fsl_collections in '..\..\library\support\fsl_collections.pas',
+  fsl_base in '..\..\library\support\fsl_base.pas',
+  fsl_utilities in '..\..\library\support\fsl_utilities.pas',
+  fsl_fpc in '..\..\library\support\fsl_fpc.pas',
+  fsl_shell in '..\..\library\support\fsl_shell.pas',
+  fsl_stream in '..\..\library\support\fsl_stream.pas';
 
 function isExemptUnit(s : String) : boolean;
 begin
@@ -69,10 +69,10 @@ begin
       'DropPIDLSource',
       'DropBMPSource',
       'FHIR.Java.JNI',
-      'FHIR.Database.SQLite3.Wrapper',
-      'FHIR.Database.SQLite3.Utilities',
-      'FHIR.Database.SQLite3.Objects',
-      'FHIR.Database.ODBC.Headers'
+      'fdb_sqlite3_wrapper',
+      'fdb_sqlite3_utilities',
+      'fdb_sqlite3_objects',
+      'fdb_odbc_headers'
   ], s);
 end;
 

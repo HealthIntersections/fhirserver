@@ -33,9 +33,9 @@ Interface
 
 Uses
   SysUtils, Graphics,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Dicom.Dictionary,
-  FHIR.WP.Types, FHIR.WP.Definers;
+  fsl_utilities, fsl_base,
+  dicom_Dictionary,
+  wp_types, wp_definers;
 
 
 Type
@@ -174,6 +174,8 @@ Type
       procedure SetFieldHints(const Value: Boolean);
       procedure SetTouchMode(const Value: TWPSettingsTouchMode);
       procedure SetDicomDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -355,6 +357,7 @@ Type
       Function GetSettings : TWPSettings;
     Protected
       Procedure SetSettings(Const Value : TWPSettings); Virtual;
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1043,6 +1046,17 @@ end;
 
 
 
+function TWPSettings.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FFieldDefinitions.sizeInBytes);
+  inc(result, FAnnotationDefinitions.sizeInBytes);
+  inc(result, (FSnapshotEmail.length * sizeof(char)) + 12);
+  inc(result, (FAutosavePath.length * sizeof(char)) + 12);
+  inc(result, (FAutosaveId.length * sizeof(char)) + 12);
+  inc(result, FDicomDictionary.sizeInBytes);
+end;
+
 Constructor TWPSettable.Create;
 Begin
   Inherited;
@@ -1069,5 +1083,11 @@ Begin
   FSettings := Value;
 End;
 
+
+function TWPSettable.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FSettings.sizeInBytes);
+end;
 
 End.

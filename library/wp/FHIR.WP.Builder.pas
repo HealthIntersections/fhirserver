@@ -31,9 +31,10 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics, FHIR.Support.Collections,
-  FHIR.Dicom.Dictionary,
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Format, FHIR.WP.Working, FHIR.WP.Definers;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections,
+  dicom_Dictionary,
+  wp_graphics,
+  wp_types, wp_document, wp_format, wp_working, wp_definers;
  
 Type
   TWPDocumentBuilderScopeAllowedItem = (aisSection, aisParaStart, aisTableStart, aisRowStart, aisCellStart, aisImage, aisFieldStart,
@@ -55,6 +56,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -176,6 +178,8 @@ Type
       Function ProcessSection(oStack : TFslStringList; oSection : TWPDocumentSection; oList : TWPDocumentBlocks; iIndex : Integer) : Integer; Overload;
       Function ProcessField(oField : TWPDocumentField; oList : TWPDocumentContents; iIndex : Integer) : Integer; Overload;
     procedure SetDicomDictionary(const Value: TDicomDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       constructor Create(oDocument : TWPDocument); Overload; Virtual;
@@ -335,7 +339,7 @@ Implementation
 
 
 Uses
-  FHIR.WP.Imaging, FHIR.WP.Text, FHIR.WP.Native;
+  wp_imaging, wp_text, wp_native;
 
 
 
@@ -394,6 +398,12 @@ Begin
   FObject := Value;
 End;
 
+
+function TWPDocumentBuilderScope.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FObject.sizeInBytes);
+end;
 
 Function TWPDocumentBuilderScopes.Link : TWPDocumentBuilderScopes;
 Begin
@@ -1876,6 +1886,17 @@ Begin
   End;
 End;
 
+
+function TWPDocumentBuilder.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FScopeList.sizeInBytes);
+  inc(result, FIterator.sizeInBytes);
+  inc(result, FFocus.sizeInBytes);
+  inc(result, FFieldValueProviders.sizeInBytes);
+  inc(result, FDicomDictionary.sizeInBytes);
+end;
 
 { TWPFieldValueProviderList }
 

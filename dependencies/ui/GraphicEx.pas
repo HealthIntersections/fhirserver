@@ -3144,7 +3144,7 @@ Type
   TEPSHeader = Packed Record
     Code: Cardinal;   // alway $C6D3D0C5, if not there then this is not an EPS or it is not a binary EPS
     PSStart,          // Offset PostScript-Code
-    PSLen,	          // length of PostScript-Code
+    PSLen,            // length of PostScript-Code
     MetaPos,          // position of a WMF
     MetaLen,          // length of a WMF 
     TiffPos,          // position of TIFF (preview images should be either WMF or TIF but not both)
@@ -4939,8 +4939,8 @@ Type
 
   TImageDescriptor = Packed Record
     //Separator: Byte; // leave that out since we always read one bye ahead
-    Left: Word;		 // X position of image with respect to logical screen
-    Top: Word;		 // Y position
+    Left: Word;     // X position of image with respect to logical screen
+    Top: Word;     // Y position
     Width: Word;
     Height: Word;
     PackedFields: Byte;
@@ -6021,12 +6021,12 @@ Const
     PSP_JPEG_BLOCK = 18;                 // JPEG Image Block (sub)
 
   // bitmap types
-	PSP_DIB_IMAGE = 0;            // Layer color bitmap
-	PSP_DIB_TRANS_MASK = 1;       // Layer transparency mask bitmap
-	PSP_DIB_USER_MASK = 2;        // Layer user mask bitmap
-	PSP_DIB_SELECTION= 3;         // Selection mask bitmap
-	PSP_DIB_ALPHA_MASK = 4;       // Alpha channel mask bitmap
-	PSP_DIB_THUMBNAIL = 5;        // Thumbnail bitmap
+  PSP_DIB_IMAGE = 0;            // Layer color bitmap
+  PSP_DIB_TRANS_MASK = 1;       // Layer transparency mask bitmap
+  PSP_DIB_USER_MASK = 2;        // Layer user mask bitmap
+  PSP_DIB_SELECTION= 3;         // Selection mask bitmap
+  PSP_DIB_ALPHA_MASK = 4;       // Alpha channel mask bitmap
+  PSP_DIB_THUMBNAIL = 5;        // Thumbnail bitmap
   PSP_DIB_THUMBNAIL_TRANS_MASK = 6; // Thumbnail transparency mask
   PSP_DIB_ADJUSTMENT_LAYER = 7; // Adjustment layer bitmap
   PSP_DIB_COMPOSITE = 8;        // Composite image bitmap
@@ -6056,8 +6056,8 @@ Const
   PSP_STYLE_UNDERLINED = 4;     // Underlined property bit
 
   // layer flags
-	PSP_LAYER_VISIBLEFLAG = 1;    // Layer is visible
-	PSP_LAYER_MASKPRESENCEFLAG = 2; // Layer has a mask
+  PSP_LAYER_VISIBLEFLAG = 1;    // Layer is visible
+  PSP_LAYER_MASKPRESENCEFLAG = 2; // Layer has a mask
 
   // Shape property flags
   PSP_SHAPE_ANTIALIASED = 1;    // Shape is anti-aliased
@@ -6076,7 +6076,7 @@ Const
   PSP_NODE_CLOSED = 128;        // Node is closed (PSP doc says 0x128 here)
 
   // Blend modes
-	LAYER_BLEND_NORMAL = 0;
+  LAYER_BLEND_NORMAL = 0;
   LAYER_BLEND_DARKEN = 1;
   LAYER_BLEND_LIGHTEN = 2;
   LAYER_BLEND_HUE = 3;
@@ -6131,49 +6131,49 @@ Const
   PSP_STYLE_GRADIENT = 2;       // Paint using gradient
 
   // Channel types
-	PSP_CHANNEL_COMPOSITE = 0;    // Channel of single channel bitmap
-	PSP_CHANNEL_RED = 1;          // Red channel of 24 bit bitmap
-	PSP_CHANNEL_GREEN = 2;        // Green channel of 24 bit bitmap
-	PSP_CHANNEL_BLUE = 3;         // Blue channel of 24 bit bitmap
+  PSP_CHANNEL_COMPOSITE = 0;    // Channel of single channel bitmap
+  PSP_CHANNEL_RED = 1;          // Red channel of 24 bit bitmap
+  PSP_CHANNEL_GREEN = 2;        // Green channel of 24 bit bitmap
+  PSP_CHANNEL_BLUE = 3;         // Blue channel of 24 bit bitmap
 
   // Resolution metrics
-  PSP_METRIC_UNDEFINED = 0;	    // Metric unknown
+  PSP_METRIC_UNDEFINED = 0;      // Metric unknown
   PSP_METRIC_INCH = 1;          // Resolution is in inches
   PSP_METRIC_CM = 2;            // Resolution is in centimeters
 
   // Compression types
-	PSP_COMP_NONE = 0;            // No compression
-	PSP_COMP_RLE = 1;             // RLE compression
-	PSP_COMP_LZ77 = 2;            // LZ77 compression
+  PSP_COMP_NONE = 0;            // No compression
+  PSP_COMP_RLE = 1;             // RLE compression
+  PSP_COMP_LZ77 = 2;            // LZ77 compression
   PSP_COMP_JPEG = 3;            // JPEG compression (only used by thumbnail and composite image)
 
   // Picture tube placement mode
-	PSP_TPM_Random = 0;           // Place tube images in random intervals
-	PSPS_TPM_Constant = 1;        // Place tube images in constant intervals
+  PSP_TPM_Random = 0;           // Place tube images in random intervals
+  PSPS_TPM_Constant = 1;        // Place tube images in constant intervals
 
   // Tube selection mode
-	PSP_TSM_RANDOM =0;            // Randomly select the next image in tube to display
-	PSP_TSM_INCREMENTAL = 1;     // Select each tube image in turn
-	PSP_TSM_ANGULAR = 2;          // Select image based on cursor direction
-	PSP_TSM_PRESSURE = 3;         // Select image based on pressure (from pressure-sensitive pad)
-	PSP_TSM_VELOCITY = 4;         // Select image based on cursor speed
+  PSP_TSM_RANDOM =0;            // Randomly select the next image in tube to display
+  PSP_TSM_INCREMENTAL = 1;     // Select each tube image in turn
+  PSP_TSM_ANGULAR = 2;          // Select image based on cursor direction
+  PSP_TSM_PRESSURE = 3;         // Select image based on pressure (from pressure-sensitive pad)
+  PSP_TSM_VELOCITY = 4;         // Select image based on cursor speed
 
   // Extended data field types
   PSP_XDATA_TRNS_INDEX = 0;     // Transparency index field
 
   // Creator field types
-	PSP_CRTR_FLD_TITLE = 0;       // Image document title field
-	PSP_CRTR_FLD_CRT_DATE = 1;    // Creation date field
-	PSP_CRTR_FLD_MOD_DATE = 2;    // Modification date field
-	PSP_CRTR_FLD_ARTIST = 3;      // Artist name field
-	PSP_CRTR_FLD_CPYRGHT = 4;     // Copyright holder name field
-	PSP_CRTR_FLD_DESC = 5;        // Image document description field
-	PSP_CRTR_FLD_APP_ID = 6;      // Creating app id field
-	PSP_CRTR_FLD_APP_VER = 7;     // Creating app version field
+  PSP_CRTR_FLD_TITLE = 0;       // Image document title field
+  PSP_CRTR_FLD_CRT_DATE = 1;    // Creation date field
+  PSP_CRTR_FLD_MOD_DATE = 2;    // Modification date field
+  PSP_CRTR_FLD_ARTIST = 3;      // Artist name field
+  PSP_CRTR_FLD_CPYRGHT = 4;     // Copyright holder name field
+  PSP_CRTR_FLD_DESC = 5;        // Image document description field
+  PSP_CRTR_FLD_APP_ID = 6;      // Creating app id field
+  PSP_CRTR_FLD_APP_VER = 7;     // Creating app version field
 
   // Creator application identifier
-	PSP_CREATOR_APP_UNKNOWN = 0;  // Creator application unknown
-	PSP_CREATOR_APP_PAINT_SHOP_PRO = 1; // Creator is Paint Shop Pro
+  PSP_CREATOR_APP_UNKNOWN = 0;  // Creator application unknown
+  PSP_CREATOR_APP_PAINT_SHOP_PRO = 1; // Creator is Paint Shop Pro
 
   // Layer types (file version 3)
   PSP_LAYER_NORMAL = 0;         // Normal layer

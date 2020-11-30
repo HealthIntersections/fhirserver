@@ -33,8 +33,8 @@ Interface
 Uses
   SysUtils, Classes, Controls,
   Ad3SpellBase, ad3Spell, ad3ParserBase, ad3CustomDictionary, ad3Configuration, ad3ConfigurationDialogCtrl,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.WP.Spelling, FHIR.WP.Working, FHIR.WP.Control;
+  fsl_base, fsl_utilities, fsl_collections,
+  FHIR.WP.Spelling, wp_working, FHIR.WP.Control;
 
 Type
   TLoadCustomDictionaryEvent = Procedure (oWords : TFslStringList; Var bLoaded : Boolean) Of Object;
@@ -48,6 +48,7 @@ Type
     Protected
       Function Load : Boolean; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       Function AddIgnore(Const sWord : String) : Boolean; Override;
 
@@ -82,6 +83,8 @@ Type
 
       Procedure AdWordCheck(Sender:TObject; Const Word:String; Var CheckType : Ad3SpellBase.TWordCheckType; Var Replacement:String);
       Procedure AdAllowWord(Sender:TObject; Const Word:String);
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(bCheckUppercase : Boolean); Overload;
       constructor Create(Const sFolder : String; bCheckUppercase : Boolean); Overload; Virtual;
@@ -107,12 +110,14 @@ Type
   End;
 
 Type
-  TWPWorkingDocumentSpellCheckingState = FHIR.WP.Working.TWPWorkingDocumentSpellCheckingState;
+  TWPWorkingDocumentSpellCheckingState = wp_working.TWPWorkingDocumentSpellCheckingState;
 
   TWPAddictSpeller = Class (TWPSpeller)
   Private
     FDictionary : TWPAddictDictionary;
     Procedure SetDictionary(Value : TWPAddictDictionary);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oDictionary : TWPAddictDictionary); Overload; Virtual;
     destructor Destroy; Override;
@@ -134,6 +139,8 @@ Type
       FWordProcessor : TWordProcessor;
       FPosition : Integer;
       FEndPosition : Integer;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       Procedure Connect(oSpell : TWPAddictSpeller; oWP : TObject);
       Procedure Initialize(aEditControl : Pointer); Override;
@@ -160,8 +167,8 @@ Implementation
 
 Uses
   IOUtils,
-  FHIR.Uix.Base,
-  FHIR.WP.Types;
+  fui_vclx_Base,
+  wp_types;
 
 { TWPAddictSpeller }
 
@@ -238,6 +245,12 @@ Begin
   FDictionary := Value;
 End;
 
+
+function TWPAddictSpeller.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FDictionary.sizeInBytes);
+end;
 
 { TWPAddictSpell3 }
 
@@ -386,6 +399,17 @@ begin
   FOnAllowWord := Value;
 end;
 
+function TWPAddictDictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FAddict.sizeInBytes);
+  inc(result, (FFolder.length * sizeof(char)) + 12);
+  inc(result, FOnLoadDictionary.sizeInBytes);
+  inc(result, FOnAddWord.sizeInBytes);
+  inc(result, FOnAllowWord.sizeInBytes);
+  inc(result, FOnCheckWord.sizeInBytes);
+end;
+
 Procedure TWPCustomAddictDictionary.Clear;
 Begin
   Loaded := False;
@@ -443,6 +467,13 @@ Begin
     Result := Inherited AddIgnore(sWord);
 End;
 
+
+function TWPCustomAddictDictionary.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FOnLoadDictionary.sizeInBytes);
+  inc(result, FOnAddWord.sizeInBytes);
+end;
 
 Procedure TWPAddictParser.Connect(oSpell : TWPAddictSpeller; oWP : TObject);
 Begin
@@ -658,5 +689,12 @@ Begin
       Result := TControl(Result).Parent;
   End;
 End;
+
+function TWPAddictParser.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FSpeller.sizeInBytes);
+  inc(result, FWordProcessor.sizeInBytes);
+end;
 
 End.

@@ -29,10 +29,21 @@
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
-  {$DEFINE NO_JS} // still working on getting this compiling
+  {$IFNDEF WINDOWS}
+    {$DEFINE NO_JS} // still working on getting this compiling
+  {$ENDIF}
 {$ELSE}
   {$IFNDEF MSWINDOWS}
     only windows is supported under delphi
   {$ENDIF}
   {$DEFINE WINDOWS}
-{$ENDIF} 
+  {$DEFINE DELPHI}
+{$ENDIF}
+
+{
+The base class TFslObject can track all instantiated objects.
+Doing so it useflu for leak hunting in production, but is also
+costly. Enable it with this define
+}
+{$DEFINE OBJECT_TRACKING}
+

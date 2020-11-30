@@ -35,8 +35,8 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
   FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
-  FHIR.Support.Utilities, FHIR.Ui.Fmx,
-  FHIR.Support.Base, FHIR.Base.Objects,
+  fsl_utilities, FHIR.Ui.Fmx,
+  fsl_base, fhir_objects,
   FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Version.Types,
   BaseFrame, DocumentGenerationForm, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ScrollBox;

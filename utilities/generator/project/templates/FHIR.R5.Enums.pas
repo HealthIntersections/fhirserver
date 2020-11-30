@@ -1,6 +1,6 @@
-unit FHIR.R5.Enums;
+unit fhir5_enums;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,9 +37,9 @@ interface
 
 uses
   Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
-  FHIR.R5.Base;
+  fsl_base, fsl_utilities, FHIR.Support.Signatures, fsl_stream, 
+  fhir_objects, fhir_xhtml,  
+  fhir5_base;
 
 type
 

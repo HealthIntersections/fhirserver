@@ -36,10 +36,10 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.Client.Base, FHIR.Client.Threaded;
+  fsl_base, fsl_stream,
+  fsl_ucum,
+  fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_xhtml, fhir_common, 
+  fhir_client, fhir_client_threaded;
 
 type
   TFHIRFactoryR{{v}} = class (TFHIRFactory)
@@ -119,7 +119,7 @@ implementation
 
 uses
   Soap.EncdDecd,
-  FHIR.Client.HTTP,
+  fhir_client_http,
   FHIR.R{{v}}.Types, FHIR.R{{v}}.Resources, FHIR.R{{v}}.Parser, FHIR.R{{v}}.Context, FHIR.R{{v}}.Validator, FHIR.R{{v}}.Profiles, FHIR.R{{v}}.Operations,
   FHIR.R{{v}}.Narrative, FHIR.R{{v}}.PathEngine, FHIR.R{{v}}.Constants, FHIR.R{{v}}.Client, FHIR.R{{v}}.Common, FHIR.R{{v}}.Utilities, FHIR.R{{v}}.AuthMap;
 

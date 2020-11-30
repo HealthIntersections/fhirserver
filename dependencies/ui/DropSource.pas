@@ -182,7 +182,7 @@ uses
   ClipBrd;
 
 // -----------------------------------------------------------------------------
-//			Miscellaneous functions.
+//      Miscellaneous functions.
 // -----------------------------------------------------------------------------
 
 function GetSizeOfPidl(pidl: pItemIDList): integer;
@@ -324,7 +324,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TInterfacedComponent
+//      TInterfacedComponent
 // -----------------------------------------------------------------------------
 
 function TInterfacedComponent.QueryInterface(const IID: TGuid; out Obj): HRESULT;
@@ -347,7 +347,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TEnumFormatEtc
+//      TEnumFormatEtc
 // -----------------------------------------------------------------------------
 
 type
@@ -425,7 +425,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropSource
+//      TDropSource
 // -----------------------------------------------------------------------------
 
 constructor TDropSource.Create(aOwner: TComponent);
@@ -736,7 +736,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropTextSource
+//      TDropTextSource
 // -----------------------------------------------------------------------------
 
 constructor TDropTextSource.Create(aOwner: TComponent);
@@ -830,7 +830,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropFileSource
+//      TDropFileSource
 // -----------------------------------------------------------------------------
 
 constructor TDropFileSource.Create(aOwner: TComponent);

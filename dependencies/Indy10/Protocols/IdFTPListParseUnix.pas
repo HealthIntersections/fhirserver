@@ -656,7 +656,7 @@ begin
         DeleteSUffix(LTmp,JapaneseYear);
         // Not time info, scan year
         if IndyPos(':', LTmp) = 0 then begin   {Do not Localize}
-	        wYear := IndyStrToInt(LTmp, wYear);
+          wYear := IndyStrToInt(LTmp, wYear);
           // Set time info to 00:00:00.999
           wHour := 0;
           wMin := 0;

@@ -3497,21 +3497,21 @@ var
 //=============================================================
 
 {
-	WS2TCPIP.H - WinSock2 Extension for TCP/IP protocols
+  WS2TCPIP.H - WinSock2 Extension for TCP/IP protocols
 
-	This file contains TCP/IP specific information for use
-	by WinSock2 compatible applications.
+  This file contains TCP/IP specific information for use
+  by WinSock2 compatible applications.
 
-	Copyright (c) 1995-1999  Microsoft Corporation
+  Copyright (c) 1995-1999  Microsoft Corporation
 
-	To provide the backward compatibility, all the TCP/IP
-	specific definitions that were included in the WINSOCK.H
-	file are now included in WINSOCK2.H file. WS2TCPIP.H
-	file includes only the definitions  introduced in the
-	"WinSock 2 Protocol-Specific Annex" document.
+  To provide the backward compatibility, all the TCP/IP
+  specific definitions that were included in the WINSOCK.H
+  file are now included in WINSOCK2.H file. WS2TCPIP.H
+  file includes only the definitions  introduced in the
+  "WinSock 2 Protocol-Specific Annex" document.
 
-	Rev 0.3	Nov 13, 1995
-	Rev 0.4	Dec 15, 1996
+  Rev 0.3  Nov 13, 1995
+  Rev 0.4  Dec 15, 1996
 }
 
 type
@@ -3751,15 +3751,15 @@ const
   {$EXTERNALSYM TCP_STDURG}
   TCP_STDURG            = 6;
   {$EXTERNALSYM TCP_NOURG}
-  TCP_NOURG           	= 7;
+  TCP_NOURG             = 7;
   {$EXTERNALSYM TCP_ATMARK}
-  TCP_ATMARK          	= 8;
+  TCP_ATMARK            = 8;
   {$EXTERNALSYM TCP_NOSYNRETRIES}
-  TCP_NOSYNRETRIES    	= 9;
+  TCP_NOSYNRETRIES      = 9;
   {$EXTERNALSYM TCP_TIMESTAMPS}
-  TCP_TIMESTAMPS      	= 10;
+  TCP_TIMESTAMPS        = 10;
   {$EXTERNALSYM TCP_OFFLOAD_PREFERENCE}
-  TCP_OFFLOAD_PREFERENCE	 = 11;
+  TCP_OFFLOAD_PREFERENCE   = 11;
   {$EXTERNALSYM TCP_CONGESTION_ALGORITHM}
   TCP_CONGESTION_ALGORITHM = 12;
   {$EXTERNALSYM TCP_DELAY_FIN_ACK}
@@ -4583,34 +4583,34 @@ var
 //=============================================================
 
 {
-	wsipx.h
+  wsipx.h
 
-	Microsoft Windows
-	Copyright (C) Microsoft Corporation, 1992-1999.
+  Microsoft Windows
+  Copyright (C) Microsoft Corporation, 1992-1999.
 
-	Windows Sockets include file for IPX/SPX.  This file contains all
-	standardized IPX/SPX information.  Include this header file after
-	winsock.h.
+  Windows Sockets include file for IPX/SPX.  This file contains all
+  standardized IPX/SPX information.  Include this header file after
+  winsock.h.
 
-	To open an IPX socket, call socket() with an address family of
-	AF_IPX, a socket type of SOCK_DGRAM, and protocol NSPROTO_IPX.
-	Note that the protocol value must be specified, it cannot be 0.
-	All IPX packets are sent with the packet type field of the IPX
-	header set to 0.
+  To open an IPX socket, call socket() with an address family of
+  AF_IPX, a socket type of SOCK_DGRAM, and protocol NSPROTO_IPX.
+  Note that the protocol value must be specified, it cannot be 0.
+  All IPX packets are sent with the packet type field of the IPX
+  header set to 0.
 
-	To open an SPX or SPXII socket, call socket() with an address
-	family of AF_IPX, socket type of SOCK_SEQPACKET or SOCK_STREAM,
-	and protocol of NSPROTO_SPX or NSPROTO_SPXII.  If SOCK_SEQPACKET
-	is specified, then the end of message bit is respected, and
-	recv() calls are not completed until a packet is received with
-	the end of message bit set.  If SOCK_STREAM is specified, then
-	the end of message bit is not respected, and recv() completes
-	as soon as any data is received, regardless of the setting of the
-	end of message bit.  Send coalescing is never performed, and sends
-	smaller than a single packet are always sent with the end of
-	message bit set.  Sends larger than a single packet are packetized
-	with the end of message bit set on only the last packet of the
-	send.
+  To open an SPX or SPXII socket, call socket() with an address
+  family of AF_IPX, socket type of SOCK_SEQPACKET or SOCK_STREAM,
+  and protocol of NSPROTO_SPX or NSPROTO_SPXII.  If SOCK_SEQPACKET
+  is specified, then the end of message bit is respected, and
+  recv() calls are not completed until a packet is received with
+  the end of message bit set.  If SOCK_STREAM is specified, then
+  the end of message bit is not respected, and recv() completes
+  as soon as any data is received, regardless of the setting of the
+  end of message bit.  Send coalescing is never performed, and sends
+  smaller than a single packet are always sent with the end of
+  message bit set.  Sends larger than a single packet are packetized
+  with the end of message bit set on only the last packet of the
+  send.
 }
 
 // This is the structure of the SOCKADDR structure for IPX and SPX.
@@ -4644,25 +4644,25 @@ const
 //=============================================================
 
 {
-	wsnwlink.h
+  wsnwlink.h
 
-	Microsoft Windows
-	Copyright (C) Microsoft Corporation, 1992-1999.
-		Microsoft-specific extensions to the Windows NT IPX/SPX Windows
-		Sockets interface.  These extensions are provided for use as
-		necessary for compatibility with existing applications.  They are
-		otherwise not recommended for use, as they are only guaranteed to
-		work     over the Microsoft IPX/SPX stack.  An application which
-		uses these     extensions may not work over other IPX/SPX
-		implementations.  Include this header file after winsock.h and
-		wsipx.h.
+  Microsoft Windows
+  Copyright (C) Microsoft Corporation, 1992-1999.
+    Microsoft-specific extensions to the Windows NT IPX/SPX Windows
+    Sockets interface.  These extensions are provided for use as
+    necessary for compatibility with existing applications.  They are
+    otherwise not recommended for use, as they are only guaranteed to
+    work     over the Microsoft IPX/SPX stack.  An application which
+    uses these     extensions may not work over other IPX/SPX
+    implementations.  Include this header file after winsock.h and
+    wsipx.h.
 
-		To open an IPX socket where a particular packet type is sent in
-		the IPX header, specify NSPROTO_IPX + n as the protocol parameter
-		of the socket() API.  For example, to open an IPX socket that
-		sets the packet type to 34, use the following socket() call:
+    To open an IPX socket where a particular packet type is sent in
+    the IPX header, specify NSPROTO_IPX + n as the protocol parameter
+    of the socket() API.  For example, to open an IPX socket that
+    sets the packet type to 34, use the following socket() call:
 
-			s = socket(AF_IPX, SOCK_DGRAM, NSPROTO_IPX + 34);
+      s = socket(AF_IPX, SOCK_DGRAM, NSPROTO_IPX + 34);
 }
 
 // Below are socket option that may be set or retrieved by specifying
@@ -4671,59 +4671,59 @@ const
 // call.
 const
 
-//	Set/get the IPX packet type.  The value specified in the
-//	optval argument will be set as the packet type on every IPX
-//	packet sent from this socket.  The optval parameter of
-//	getsockopt()/setsockopt() points to an int.
+//  Set/get the IPX packet type.  The value specified in the
+//  optval argument will be set as the packet type on every IPX
+//  packet sent from this socket.  The optval parameter of
+//  getsockopt()/setsockopt() points to an int.
   {$EXTERNALSYM IPX_PTYPE}
   IPX_PTYPE = $4000;
 
-//	Set/get the receive filter packet type.  Only IPX packets with
-//	a packet type equal to the value specified in the optval
-//	argument will be returned; packets with a packet type that
-//	does not match are discarded.  optval points to an int.
+//  Set/get the receive filter packet type.  Only IPX packets with
+//  a packet type equal to the value specified in the optval
+//  argument will be returned; packets with a packet type that
+//  does not match are discarded.  optval points to an int.
   {$EXTERNALSYM IPX_FILTERPTYPE}
   IPX_FILTERPTYPE = $4001;
 
-//	Stop filtering on packet type set with IPX_FILTERPTYPE.
+//  Stop filtering on packet type set with IPX_FILTERPTYPE.
   {$EXTERNALSYM IPX_STOPFILTERPTYPE}
   IPX_STOPFILTERPTYPE = $4003;
 
-//	Set/get the value of the datastream field in the SPX header on
-//	every packet sent.  optval points to an int.
+//  Set/get the value of the datastream field in the SPX header on
+//  every packet sent.  optval points to an int.
   {$EXTERNALSYM IPX_DSTYPE}
   IPX_DSTYPE = $4002;
 
-//	Enable extended addressing.  On sends, adds the element
-//	"unsigned char sa_ptype" to the SOCKADDR_IPX structure,
-//	making the total length 15 bytes.  On receives, add both
-//	the sa_ptype and "unsigned char sa_flags" to the SOCKADDR_IPX
-//	structure, making the total length 16 bytes.  The current
-//	bits defined in sa_flags are:
-//		0x01 - the received frame was sent as a broadcast
-//		0x02 - the received frame was sent from this machine
-//	optval points to a BOOL.
+//  Enable extended addressing.  On sends, adds the element
+//  "unsigned char sa_ptype" to the SOCKADDR_IPX structure,
+//  making the total length 15 bytes.  On receives, add both
+//  the sa_ptype and "unsigned char sa_flags" to the SOCKADDR_IPX
+//  structure, making the total length 16 bytes.  The current
+//  bits defined in sa_flags are:
+//    0x01 - the received frame was sent as a broadcast
+//    0x02 - the received frame was sent from this machine
+//  optval points to a BOOL.
   {$EXTERNALSYM IPX_EXTENDED_ADDRESS}
   IPX_EXTENDED_ADDRESS = $4004;
 
-//	Send protocol header up on all receive packets.  optval points
-//	to a BOOL.
+//  Send protocol header up on all receive packets.  optval points
+//  to a BOOL.
   {$EXTERNALSYM IPX_RECVHDR}
   IPX_RECVHDR = $4005;
 
-//	Get the maximum data size that can be sent.  Not valid with
-//	setsockopt().  optval points to an int where the value is
-//	returned.
+//  Get the maximum data size that can be sent.  Not valid with
+//  setsockopt().  optval points to an int where the value is
+//  returned.
   {$EXTERNALSYM IPX_MAXSIZE}
   IPX_MAXSIZE = $4006;
 
-//	Query information about a specific adapter that IPX is bound
-//	to.  In a system with n adapters they are numbered 0 through n-1.
-//	Callers can issue the IPX_MAX_ADAPTER_NUM getsockopt() to find
-//	out the number of adapters present, or call IPX_ADDRESS with
-//	increasing values of adapternum until it fails.  Not valid
-//	with setsockopt().  optval points to an instance of the
-//	IPX_ADDRESS_DATA structure with the adapternum filled in.
+//  Query information about a specific adapter that IPX is bound
+//  to.  In a system with n adapters they are numbered 0 through n-1.
+//  Callers can issue the IPX_MAX_ADAPTER_NUM getsockopt() to find
+//  out the number of adapters present, or call IPX_ADDRESS with
+//  increasing values of adapternum until it fails.  Not valid
+//  with setsockopt().  optval points to an instance of the
+//  IPX_ADDRESS_DATA structure with the adapternum filled in.
   {$EXTERNALSYM IPX_ADDRESS}
   IPX_ADDRESS = $4007;
 
@@ -4746,11 +4746,11 @@ type
   PIPX_ADDRESS_DATA = PIPXAddressData;
 
 const
-//	Query information about a specific IPX network number.  If the
-//	network is in IPX's cache it will return the information directly,    {Do not Localize}
-//	otherwise it will issue RIP requests to find it.  Not valid with
-//	setsockopt().  optval points to an instance of the IPX_NETNUM_DATA
-//	structure with the netnum filled in.
+//  Query information about a specific IPX network number.  If the
+//  network is in IPX's cache it will return the information directly,    {Do not Localize}
+//  otherwise it will issue RIP requests to find it.  Not valid with
+//  setsockopt().  optval points to an instance of the IPX_NETNUM_DATA
+//  structure with the netnum filled in.
   {$EXTERNALSYM IPX_GETNETINFO}
   IPX_GETNETINFO = $4008;
 
@@ -4773,16 +4773,16 @@ type
   PIPX_NETNUM_DATA = PIPXNetNumData;
 
 const
-//	Like IPX_GETNETINFO except it  does not  issue RIP requests. If the
-//	network is in IPX's cache it will return the information, otherwise    {Do not Localize}
-//	it will fail (see also IPX_RERIPNETNUMBER which  always  forces a
-//	re-RIP). Not valid with setsockopt().  optval points to an instance of
-//	the IPX_NETNUM_DATA structure with the netnum filled in.
+//  Like IPX_GETNETINFO except it  does not  issue RIP requests. If the
+//  network is in IPX's cache it will return the information, otherwise    {Do not Localize}
+//  it will fail (see also IPX_RERIPNETNUMBER which  always  forces a
+//  re-RIP). Not valid with setsockopt().  optval points to an instance of
+//  the IPX_NETNUM_DATA structure with the netnum filled in.
   {$EXTERNALSYM IPX_GETNETINFO_NORIP}
   IPX_GETNETINFO_NORIP = $4009;
 
-//	Get information on a connected SPX socket.  optval points
-//	to an instance of the IPX_SPXCONNSTATUS_DATA structure.
+//  Get information on a connected SPX socket.  optval points
+//  to an instance of the IPX_SPXCONNSTATUS_DATA structure.
 //  *** All numbers are in Novell (high-low) order. ***
   {$EXTERNALSYM IPX_SPXGETCONNECTIONSTATUS}
   IPX_SPXGETCONNECTIONSTATUS = $400B;
@@ -4817,85 +4817,85 @@ type
   PIPX_SPXCONNSTATUS_DATA = PIPXSPXConnStatusData;
 
 const
-//	Get notification when the status of an adapter that IPX is
-//	bound to changes.  Typically this will happen when a wan line
-//	goes up or down.  Not valid with setsockopt().  optval points
-//	to a buffer which contains an IPX_ADDRESS_DATA structure
-//	followed immediately by a HANDLE to an unsignaled event.
+//  Get notification when the status of an adapter that IPX is
+//  bound to changes.  Typically this will happen when a wan line
+//  goes up or down.  Not valid with setsockopt().  optval points
+//  to a buffer which contains an IPX_ADDRESS_DATA structure
+//  followed immediately by a HANDLE to an unsignaled event.
 //
-//	When the getsockopt() query is submitted, it will complete
-//	successfully.  However, the IPX_ADDRESS_DATA pointed to by
-//	optval will not be updated at that point.  Instead the
-//	request is queued internally inside the transport.
+//  When the getsockopt() query is submitted, it will complete
+//  successfully.  However, the IPX_ADDRESS_DATA pointed to by
+//  optval will not be updated at that point.  Instead the
+//  request is queued internally inside the transport.
 //
-//	When the status of an adapter changes, IPX will locate a
-//	queued getsockopt() query and fill in all the fields in the
-//	IPX_ADDRESS_DATA structure.  It will then signal the event
-//	pointed to by the HANDLE in the optval buffer.  This handle
-//	should be obtained before calling getsockopt() by calling
-//	CreateEvent().  If multiple getsockopts() are submitted at
-//	once, different events must be used.
+//  When the status of an adapter changes, IPX will locate a
+//  queued getsockopt() query and fill in all the fields in the
+//  IPX_ADDRESS_DATA structure.  It will then signal the event
+//  pointed to by the HANDLE in the optval buffer.  This handle
+//  should be obtained before calling getsockopt() by calling
+//  CreateEvent().  If multiple getsockopts() are submitted at
+//  once, different events must be used.
 //
-//	The event is used because the call needs to be asynchronous
-//	but currently getsockopt() does not support this.
+//  The event is used because the call needs to be asynchronous
+//  but currently getsockopt() does not support this.
 //
-//	WARNING: In the current implementation, the transport will
-//	only signal one queued query for each status change.  Therefore
-//	only one service which uses this query should be running at
-//	once.
+//  WARNING: In the current implementation, the transport will
+//  only signal one queued query for each status change.  Therefore
+//  only one service which uses this query should be running at
+//  once.
   {$EXTERNALSYM IPX_ADDRESS_NOTIFY}
   IPX_ADDRESS_NOTIFY = $400C;
 
-//	Get the maximum number of adapters present.  If this call returns
-//	n then the adapters are numbered 0 through n-1.  Not valid
-//	with setsockopt().  optval points to an int where the value
-//	is returned.
+//  Get the maximum number of adapters present.  If this call returns
+//  n then the adapters are numbered 0 through n-1.  Not valid
+//  with setsockopt().  optval points to an int where the value
+//  is returned.
   {$EXTERNALSYM IPX_MAX_ADAPTER_NUM}
   IPX_MAX_ADAPTER_NUM = $400D;
 
-//	Like IPX_GETNETINFO except it forces IPX to re-RIP even if the
-//	network is in its cache (but not if it is directly attached to).
-//	Not valid with setsockopt().  optval points to an instance of
-//	the IPX_NETNUM_DATA structure with the netnum filled in.
+//  Like IPX_GETNETINFO except it forces IPX to re-RIP even if the
+//  network is in its cache (but not if it is directly attached to).
+//  Not valid with setsockopt().  optval points to an instance of
+//  the IPX_NETNUM_DATA structure with the netnum filled in.
   {$EXTERNALSYM IPX_RERIPNETNUMBER}
   IPX_RERIPNETNUMBER = $400E;
 
-//	A hint that broadcast packets may be received.  The default is
-//	TRUE.  Applications that do not need to receive broadcast packets
-//	should set this sockopt to FALSE which may cause better system
-//	performance (note that it does not necessarily cause broadcasts
-//	to be filtered for the application).  Not valid with getsockopt().
-//	optval points to a BOOL.
+//  A hint that broadcast packets may be received.  The default is
+//  TRUE.  Applications that do not need to receive broadcast packets
+//  should set this sockopt to FALSE which may cause better system
+//  performance (note that it does not necessarily cause broadcasts
+//  to be filtered for the application).  Not valid with getsockopt().
+//  optval points to a BOOL.
   {$EXTERNALSYM IPX_RECEIVE_BROADCAST}
   IPX_RECEIVE_BROADCAST = $400F;
 
-//	On SPX connections, don't delay before sending ack.  Applications    {Do not Localize}
-//	that do not tend to have back-and-forth traffic over SPX should
-//	set this; it will increase the number of acks sent but will remove
-//	delays in sending acks.  optval points to a BOOL.
+//  On SPX connections, don't delay before sending ack.  Applications    {Do not Localize}
+//  that do not tend to have back-and-forth traffic over SPX should
+//  set this; it will increase the number of acks sent but will remove
+//  delays in sending acks.  optval points to a BOOL.
   {$EXTERNALSYM IPX_IMMEDIATESPXACK}
   IPX_IMMEDIATESPXACK = $4010;
 
 
 //=============================================================
 
-//	wsnetbs.h
-//	Copyright (c) 1994-1999, Microsoft Corp. All rights reserved.
+//  wsnetbs.h
+//  Copyright (c) 1994-1999, Microsoft Corp. All rights reserved.
 //
-//	Windows Sockets include file for NETBIOS.  This file contains all
-//	standardized NETBIOS information.  Include this header file after
-//	winsock.h.
+//  Windows Sockets include file for NETBIOS.  This file contains all
+//  standardized NETBIOS information.  Include this header file after
+//  winsock.h.
 
-//	To open a NetBIOS socket, call the socket() function as follows:
+//  To open a NetBIOS socket, call the socket() function as follows:
 //
-//		s = socket( AF_NETBIOS, {SOCK_SEQPACKET|SOCK_DGRAM}, -Lana );
+//    s = socket( AF_NETBIOS, {SOCK_SEQPACKET|SOCK_DGRAM}, -Lana );
 //
-//	where Lana is the NetBIOS Lana number of interest.  For example, to
-//	open a socket for Lana 2, specify -2 as the "protocol" parameter
-//	to the socket() function.
+//  where Lana is the NetBIOS Lana number of interest.  For example, to
+//  open a socket for Lana 2, specify -2 as the "protocol" parameter
+//  to the socket() function.
 
 
-//	This is the structure of the SOCKADDR structure for NETBIOS.
+//  This is the structure of the SOCKADDR structure for NETBIOS.
 
 const
   {$EXTERNALSYM NETBIOS_NAME_LENGTH}
@@ -4917,7 +4917,7 @@ type
   {$EXTERNALSYM LPSOCKADDR_NB}
   LPSOCKADDR_NB = PSOCKADDR_NB;
 
-//	Bit values for the snb_type field of SOCKADDR_NB.
+//  Bit values for the snb_type field of SOCKADDR_NB.
 const
   {$EXTERNALSYM NETBIOS_UNIQUE_NAME}
   NETBIOS_UNIQUE_NAME       = $0000;
@@ -4928,7 +4928,7 @@ const
   {$EXTERNALSYM NETBIOS_TYPE_QUICK_GROUP}
   NETBIOS_TYPE_QUICK_GROUP  = $0003;
 
-//	A macro convenient for setting up NETBIOS SOCKADDRs.
+//  A macro convenient for setting up NETBIOS SOCKADDRs.
 {$EXTERNALSYM SET_NETBIOS_SOCKADDR}
 procedure SET_NETBIOS_SOCKADDR(snb : PSockAddrNB; const SnbType : Word; const Name : PIdAnsiChar; const Port : TIdAnsiChar);
 
@@ -4939,11 +4939,11 @@ procedure SET_NETBIOS_SOCKADDR(snb : PSockAddrNB; const SnbType : Word; const Na
 //
 //  Module Name:
 //
-//  	ws2atm.h
+//    ws2atm.h
 //
 //  Abstract:
 //
-//  	Winsock 2 ATM Annex definitions.
+//    Winsock 2 ATM Annex definitions.
 
 const
   {$EXTERNALSYM ATMPROTO_AALUSER}

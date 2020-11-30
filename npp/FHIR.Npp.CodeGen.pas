@@ -33,8 +33,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
   FHIR.Npp.Form,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Lang,
-  FHIR.Tools.CodeGen;
+  fhir_objects, fhir_factory, 
+  fhir_codegen;
 
 type
   TCodeGeneratorForm = class(TNppForm)

@@ -92,7 +92,7 @@ type
     procedure Button10Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure SetupIGPublisherFiles;
+    Procedure SetUpIGPublisherFiles;
     procedure Button11Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
@@ -145,7 +145,7 @@ implementation
 {$R *.fmx}
 
 uses
-  FHIR.Support.Base,
+  fsl_base,
   ImplementationGuideEditor;
 
 

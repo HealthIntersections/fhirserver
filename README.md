@@ -58,10 +58,21 @@ The open source FHIR Server includes delphi/pascal implementations of:
 
 ## Projects
 
-* \server\FHIRServer.dproj (delphi)  or \server\FHIRServerFPC.lpi (FPC) - the main server
-* \server\FHIRConsole.lpi (FPC only): management utility for the server 
+FPC:
+* /server/fhirserver.lpi - the FHIR server (win64, win32, linux64, osx64)
+* /server/fhirconsole.lpi - management utility for the server  (win64, win32, linux64, osx64)
+* /toolkit2/fhirtoolkit.lpi - ToolKit for FHIR developers (win64, win32, linux64, osx64)
 
-+ others - still be documented.
+Delphi:
+
+* \server\FHIRServer.dproj - the FHIR server (win64 or win32)
+* \utilities\vcldemo\FhirVclDemo.dproj - a demonstration of a working standalone client for Cerner and Epic
+* \utilities\nppformats\formatUtils.dproj - useful utility extensions for Notepad++
+* \utilities\cde\ClinicalDocumentEditor.dproj - word processor demo + CDA editor. Planned to be moved to FPC/Lazarus 
+* \toolkit\FHIRToolkitR3.dproj and \toolkit\FHIRToolkitR4.dproj - win/osx - deprecated for fhirtoolkit.lpi - see above
+* \transformer\FHIRTransformer.dproj - Prototype transform tool - deprecated for fhirtoolkit.lpi - see above
+* \npp\fhirnpp.dproj - Notepad++ extensions for FHIR - deprecated for fhirtoolkit.lpi - see above
+* \utilities\publisher\IGPublisher.dproj - not sure what this is
 
 ## Folders
 
@@ -101,6 +112,10 @@ recent bug fixes so older versions are probably not supported.
 The FhirServer depends on the following other GitHub repositories:
 * https://github.com/dezlov/PascalTZ
 * https://github.com/grahamegrieve/delphi-markdown
+
+The toolkit also depends on these repositories:
+* https://github.com/mriscoc/extrasyn
+* https://github.com/BerndGabriel/HtmlViewer
 
 Get a local copy of these, and install their packages. 
 

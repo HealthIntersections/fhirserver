@@ -18,7 +18,7 @@ interface
 uses
   DropSource,
   Windows, ActiveX, Classes, Controls, CommCtrl, ExtCtrls,
-  FHIR.Support.Base;
+  fsl_base;
 
 {$include DragDrop.inc}
 
@@ -171,7 +171,7 @@ type
   TDummyWinControl = Class(TWinControl);
 
 // -----------------------------------------------------------------------------
-//			Miscellaneous functions ...
+//      Miscellaneous functions ...
 // -----------------------------------------------------------------------------
 
 function ClientPtToWindowPt(Handle: HWND; pt: TPoint): TPoint;
@@ -266,7 +266,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropTarget
+//      TDropTarget
 // -----------------------------------------------------------------------------
 
 function TDropTarget.GetTarget(pt: TPoint): TWinControl;
@@ -649,7 +649,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropFileTarget
+//      TDropFileTarget
 // -----------------------------------------------------------------------------
 
 constructor TDropFileTarget.Create( AOwner: TComponent );
@@ -787,7 +787,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropTextTarget
+//      TDropTextTarget
 // -----------------------------------------------------------------------------
 
 function TDropTextTarget.PasteFromClipboard: longint;
@@ -842,7 +842,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------------
-//			TDropDummy
+//      TDropDummy
 //      This component is designed just to display drag images over the
 //      registered TWincontrol but where no drop is desired (eg a TForm).
 // -----------------------------------------------------------------------------

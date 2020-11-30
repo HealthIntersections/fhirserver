@@ -35,9 +35,10 @@ Interface
 Uses
   Windows, SysUtils, Classes, Vcl.Graphics, Vcl.Imaging.PNGImage,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Threads, FHIR.Support.Collections, FHIR.Support.Printing,
+  fsl_base, fsl_utilities, fsl_threads, fsl_collections,
 
-  FHIR.WP.Types, FHIR.WP.Working, FHIR.WP.Icons, FHIR.WP.Engine, FHIR.WP.Settings, FHIR.WP.Definers;
+  wp_graphics, wp_printing_win,
+  wp_types, wp_working, FHIR.WP.Icons, FHIR.WP.Engine, FHIR.WP.Settings, wp_definers;
 
 Const
   CHAR_BULLETS : Array [TWPSParagraphBulletType] Of Char = ('l', 'l', #161, 'n');
@@ -66,6 +67,8 @@ Type
       Procedure SetForeHotspot(Const Value: TWPHotspot);
       Procedure SetBackHotspot(Const Value: TWPHotspot);
 
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -99,6 +102,7 @@ Type
 
       Function Get(Const aValue : TColour) : TWPRendererState; Reintroduce; Overload; Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -174,6 +178,7 @@ Type
 
       Function MakePenHandle(oPen : TPen; aEndStyle : TFslPenEndStyle; aJoinStyle : TFslPenJoinStyle): HPEN;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -236,6 +241,8 @@ Type
     Procedure AddPiecePartToRow(oItem : TWPMapItem; oPiece : TWPWorkingDocumentPiece; Var iCursor : Integer);
     Function GetContainer : TWPMapContainer;
     procedure SetStateStack(const Value: TWPRendererStates);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create(oContainer : TWPMapContainer; oStateStack : TWPRendererStates); Overload; Virtual;
     destructor Destroy; Override;
@@ -426,6 +433,7 @@ Type
 
     Function Printing : Boolean; Overload; Virtual;
     Function ApplyOutputColourRules(bBackground : Boolean; aColour : TColour) : TColour; Overload; Virtual;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -615,6 +623,7 @@ Type
     Procedure DoUpdate; Overload; Override;
     Procedure BuildMetrics; Override;
     Function WantFastDrawing : Boolean; Override;
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -707,6 +716,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -879,6 +889,8 @@ Type
       Procedure AllocateExtra(oColumns : TWPTableColumnMetrics);
       Function GetColumns : TWPTableColumnMetrics;
       Function GetTable : TWPWorkingDocumentTableStartPiece;
+  protected
+    function sizeInBytesV : cardinal; override;
     Public
       constructor Create(oTable : TWPWorkingDocumentTableStartPiece; oColumns : TWPTableColumnMetrics; iFPointSize, iWidth : Integer); Overload; Virtual;
       destructor Destroy; Override;
@@ -1252,6 +1264,13 @@ End;
 
 
 
+function TWPRendererTableColumnSizeCalculator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FTable.sizeInBytes);
+  inc(result, FColumns.sizeInBytes);
+end;
+
 Constructor TWPCanvas.Create;
 Begin
   Inherited;
@@ -1487,6 +1506,12 @@ Begin
 End;
 
 
+function TWPCanvas.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FFont.sizeInBytes);
+end;
+
 Constructor TWPRendererState.Create;
 Begin
   Inherited;
@@ -1524,6 +1549,13 @@ Begin
 End;
 
 
+
+function TWPRendererState.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FForeHotspot.sizeInBytes);
+  inc(result, FBackHotspot.sizeInBytes);
+end;
 
 Destructor TWPRendererStates.Destroy;
 Begin
@@ -1704,6 +1736,12 @@ Begin
   End;
 End;
 
+
+function TWPRendererStates.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FSettings.sizeInBytes);
+end;
 
 Procedure TWPRendererState.SetForeHotspot(Const Value: TWPHotspot);
 Begin
@@ -2044,6 +2082,15 @@ procedure TWPRendererParagraphContext.Finish;
 begin
   If FBuffer.Count > 0 Then
     AddBufferToRow;
+end;
+
+function TWPRendererParagraphContext.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FContainer.sizeInBytes);
+  inc(result, FStateStack.sizeInBytes);
+  inc(result, FBuffer.sizeInBytes);
+  inc(result, FRow.sizeInBytes);
 end;
 
 { TWPRenderer }
@@ -5068,6 +5115,20 @@ begin
   end;
 end;
 
+function TWPRenderer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FDocument.sizeInBytes);
+  inc(result, FSelection.sizeInBytes);
+  inc(result, FMap.sizeInBytes);
+  inc(result, FStyles.sizeInBytes);
+  inc(result, FCanvas.sizeInBytes);
+  inc(result, FStateStack.sizeInBytes);
+  inc(result, FDefaultTableBorder.sizeInBytes);
+  inc(result, FCurrentHotspot.sizeInBytes);
+  inc(result, FCurrentButton.sizeInBytes);
+end;
+
 Constructor TWPScreenRenderer.Create;
 Begin
   Inherited;
@@ -6345,6 +6406,12 @@ End;
 
 //-- Administration ------------------------------------------------------------
 
+function TWPScreenRenderer.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FOperator.sizeInBytes);
+end;
+
 Constructor TWPScreenCanvas.Create;
 Begin
   Inherited;
@@ -7039,7 +7106,6 @@ Begin
   FImage.Canvas.RoundRect(iLeft, iTop - FInternalTop, iRight, iBottom - FInternalTop, iRadius, iRadius);
 End;
 
-
 Constructor TWPPageLayoutController.Create(aSpanPolicy : TWPSpanPolicy);
 Begin
   Create;
@@ -7128,8 +7194,6 @@ Begin
   FSpanPolicy := spTruncate;
 End;
 
-
-
 Constructor TWPPage.Create;
 Begin
   Inherited;
@@ -7191,6 +7255,12 @@ Begin
   Result := FCursor + iHeight < Map.Bottom;
 End;
 
+
+function TWPPage.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FMap.sizeInBytes);
+end;
 
 Function TWPPages.Link : TWPPages;
 Begin

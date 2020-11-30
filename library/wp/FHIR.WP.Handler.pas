@@ -32,17 +32,17 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml,
 
-  FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Types,
-  FHIR.WP.Format, FHIR.WP.Native, FHIR.WP.Html, FHIR.WP.Rtf, FHIR.WP.Text, FHIR.WP.Odt, FHIR.WP.Cda, FHIR.WP.V2Ft,
+  wp_document, wp_working, wp_types,
+  wp_format, wp_native, wp_html, wp_rtf, wp_text, wp_odt, FHIR.WP.Cda, FHIR.WP.V2Ft,
   FHIR.WP.Settings;
 
 
 Type
   TWPDocumentEvent = Procedure (oSender : TObject; oDocument : TWPDocument) Of Object;
-  TWPSaveImageEvent = FHIR.WP.Format.TWPSaveImageEvent;
-  TWPLoadImageEvent = FHIR.WP.Format.TWPLoadImageEvent;
+  TWPSaveImageEvent = wp_format.TWPSaveImageEvent;
+  TWPLoadImageEvent = wp_format.TWPLoadImageEvent;
 
   TWPDocumentHandler = Class (TFslObject)
     Private
@@ -71,6 +71,7 @@ Type
       Function GetHostDocument : TWPWorkingDocument; Virtual;
       Procedure SetHostDocument(Const oDocument : TWPWorkingDocument; oStyles : TWPStyles); Virtual;
 
+    function sizeInBytesV : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -1386,5 +1387,11 @@ begin
 
 end;
 
+
+function TWPDocumentHandler.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FSettings.sizeInBytes);
+end;
 
 End.

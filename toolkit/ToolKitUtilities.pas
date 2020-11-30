@@ -34,9 +34,9 @@ uses
   IdHTTP, IdSSLOpenSSL, IdComponent,
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
-  FHIR.Support.Base, FHIR.Support.Threads,
-  FHIR.Npm.Cache,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
+  fsl_base, fsl_threads,
+  fsl_npm_cache,
+  fhir_objects, fhir_parser, fhir_factory, fhir_utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
 function checkSSL : boolean;

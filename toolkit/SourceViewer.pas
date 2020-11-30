@@ -33,8 +33,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ScrollBox, FMX.Memo, FMX.TabControl, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Web.Parsers,
-  FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.DiffEngine;
+  fhir_objects, fhir_factory, fhir_common, fsl_http,
+  FHIR.Version.Resources, FHIR.Version.Parser, fhir_diff;
 
 type
   TSourceViewerForm = class(TForm)

@@ -40,10 +40,10 @@ uses
 
   FHIR.Npp.Base, FHIR.Npp.DockingForm,
 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_shell,
 
-  FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  fhir_objects, fhir_pathengine, fhir_common, 
+  fhir_oauth, fhir_cdshooks, FHIR.CdsHooks.Client,
   FHIRPathDocumentation, FHIR.Npp.Utilities, CDSBrowserForm;
 
 const

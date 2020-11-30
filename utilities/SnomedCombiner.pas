@@ -33,8 +33,8 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Snomed.Services;
+  fsl_base, fsl_utilities,
+  ftx_sct_services;
 
 Type
   TTabWriter = class (TFslObject)

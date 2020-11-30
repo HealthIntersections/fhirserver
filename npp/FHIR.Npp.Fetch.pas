@@ -40,9 +40,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Samples.Spin,
   VirtualTrees,
   FHIR.Npp.Form,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.PathEngine, FHIR.Base.Utilities,
-  FHIR.Smart.Utilities,
+  fsl_base, fsl_utilities, fsl_http,
+  fhir_objects, fhir_common, fhir_client, fhir_pathengine, fhir_utilities,
+  fhir_oauth,
   FHIR.Npp.Context, FHIR.Npp.Settings;
 
 const
@@ -154,7 +154,7 @@ type
     function asURL : String;
     procedure readURL(pm : THTTPParameters);
 
-    procedure setUpColumns;
+    Procedure SetUpColumns;
     procedure AddColumn(name, path : String);
     function ignoreColumn(st : TFhirStructureDefinitionW; ed : TFhirElementDefinitionW) : boolean;
     procedure clearColumns;

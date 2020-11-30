@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>[%title%] - FHIR Server [%id%] Version [%ver%]</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="http://hl7.org/fhir" name="author"/>
+  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <link rel="stylesheet" href="/fhir.css"/>
+
+
+    <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>
+
+    <!-- Project extras -->
+  <link rel="stylesheet" href="/assets/css/project.css"/>
+  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>
+	<link rel="stylesheet" href="/assets/css/jquery-ui.css"/>
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- [if lt IE 9]>
+  <script src="/assets/js/html5shiv.js"></script>
+  <script src="/assets/js/respond.min.js"></script>
+  <![endif] -->
+
+    <!-- Favicons -->
+  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>
+  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>
+  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>
+  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>
+  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>
+<script type="text/javascript" src="/js/json2.js"></script>
+<script type="text/javascript" src="/js/statuspage.js"></script>
+<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="stylesheet" href="/css/jquery.ui.all.css">
+<script src="/js/jquery-1.6.2.js"></script>
+<script src="/js/jquery.ui.core.js"></script>
+<script src="/js/jquery.ui.widget.js"></script>
+<script src="/js/jquery.ui.mouse.js"></script>
+<script src="/js/jquery.ui.resizable.js"></script>
+<script src="/js/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="/js/jtip.js"></script>
+<script type="text/javascript" src="/js/jcookie.js"></script>
+<script type="text/javascript" src="/js/hl7connect.js"></script>
+<script type="text/javascript" src="/js/fhir-gw.js"></script>
+</head>
+
+<body>
+
+	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->
+		<div id="stripe"> </div>
+		<div class="container">  <!-- container -->
+		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->
+  <a href="http://www.hl7.org/fhir" style="color: gold" title="Fast Healthcare Interoperability Resources - Home Page"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>
+
+  &copy; HL7.org
+  &nbsp;|&nbsp;
+  <a href="/" style="color: gold">Server Home</a>   &nbsp;|&nbsp;
+  <a href="http://www.healthintersections.com.au" style="color: gold">[%id%]</a> FHIR Server
+  &nbsp;|&nbsp;
+  <a href="[%specurl%]" style="color: gold">FHIR Version [%ver%]</a>
+  &nbsp;[%logout%]
+		</div>  <!-- /container -->
+		</div>  <!-- /container -->
+</div>
+
+	<!-- /segment-breadcrumb -->
+
+	<div id="segment-content" class="segment">  <!-- segment-content -->
+	<div class="container">  <!-- container -->
+            <div class="row">
+            	<div class="inner-wrapper">
+ <div class="col-9">
+
+[%content%]
+
+ </div>
+
+
+				</div>  <!-- /inner-wrapper -->
+            </div>  <!-- /row -->
+        </div>  <!-- /container -->
+    </div>  <!-- /segment-content -->
+
+
+	<div id="segment-footer" class="segment">  <!-- segment-footer -->
+		<div class="container">  <!-- container -->
+			<div class="inner-wrapper">
+				<p>
+        <a href="/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; Server Provided by Health Intersections Pty Ltd based on version <a href="[%specurl%]" style="color: gold">[%ver%]</a>
+        </span>
+        </p>
+			</div>  <!-- /inner-wrapper -->
+		</div>  <!-- /container -->
+	</div>  <!-- /segment-footer -->
+
+
+	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->
+		<div class="container">  <!-- container -->
+		</div>  <!-- /container -->
+	</div>  <!-- /segment-post-footer -->
+
+
+
+
+
+      <!-- JS and analytics only. -->
+      <!-- Bootstrap core JavaScript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+<script src="/assets/js/jquery.js"/>
+<script src="/dist/js/bootstrap.min.js"/>
+<script src="/assets/js/respond.min.js"/>
+
+<script src="/assets/js/fhir.js"/>
+
+  <!-- Analytics Below
+================================================== -->
+
+
+
+<script src="external/jquery/jquery.js"> </script>
+<script src="jquery-ui.min.js"> </script>
+<script>
+try {
+  var currentTabIndex = sessionStorage.getItem('fhir-tx-tab-index');
+}
+catch(exception){
+}
+
+if (!currentTabIndex)
+  currentTabIndex = '0';
+
+$( '#tabs' ).tabs({
+         active: currentTabIndex,
+         activate: function( event, ui ) {
+             var active = $('.selector').tabs('option', 'active');
+             currentTabIndex = ui.newTab.index();
+             document.activeElement.blur();
+             try {
+               sessionStorage.setItem('fhir-tx-tab-index', currentTabIndex);
+             }
+             catch(exception){
+             }
+         }
+     });
+</script>
+
+</body>
+</html>

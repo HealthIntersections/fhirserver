@@ -7,15 +7,10 @@
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
-        <TargetedPlatforms>4098</TargetedPlatforms>
+        <TargetedPlatforms>2</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='OSX64' and '$(Base)'=='true') or '$(Base_OSX64)'!=''">
-        <Base_OSX64>true</Base_OSX64>
-        <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
@@ -31,12 +26,6 @@
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
         <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='OSX64' and '$(Cfg_1)'=='true') or '$(Cfg_1_OSX64)'!=''">
-        <Cfg_1_OSX64>true</Cfg_1_OSX64>
-        <CfgParent>Cfg_1</CfgParent>
-        <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
@@ -82,11 +71,6 @@
         <DCC_K>false</DCC_K>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_OSX64)'!=''">
-        <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=$(MSBuildProjectName);CFBundleIdentifier=$(MSBuildProjectName);CFBundleVersion=1.0.0;CFBundleShortVersionString=1.0.0;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSLocationUsageDescription=The reason for accessing the location information of the user;NSContactsUsageDescription=The reason for accessing the contacts;NSCalendarsUsageDescription=The reason for accessing the calendar data;NSRemindersUsageDescription=The reason for accessing the reminders;NSCameraUsageDescription=The reason for accessing the camera;NSMicrophoneUsageDescription=The reason for accessing the microphone;NSMotionUsageDescription=The reason for accessing the accelerometer;NSDesktopFolderUsageDescription=The reason for accessing the Desktop folder;NSDocumentsFolderUsageDescription=The reason for accessing the Documents folder;NSDownloadsFolderUsageDescription=The reason for accessing the Downloads folder;NSNetworkVolumesUsageDescription=The reason for accessing files on a network volume;NSRemovableVolumesUsageDescription=The reason for accessing files on a removable volume;NSSpeechRecognitionUsageDescription=The reason for requesting to send user data to Apple&apos;s speech recognition servers</VerInfo_Keys>
-        <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -115,19 +99,6 @@
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_1_OSX64)'!=''">
-        <DCC_Define>FHIR3;FMX;$(DCC_Define)</DCC_Define>
-        <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <Manifest_File>(None)</Manifest_File>
-        <DCC_UnitAlias>HIR.Version.AuthMap=FHIR.R3.AuthMap;FHIR.Version.Constants=FHIR.R3.Constants;FHIR.Version.Context=FHIR.R3.Context;FHIR.Version.IndexInfo=FHIR.R3.IndexInfo;FHIR.Version.Javascript=FHIR.R3.Javascript;FHIR.Version.ElementModel=FHIR.R3.ElementModel;FHIR.Version.Narrative=FHIR.R3.Narrative;FHIR.Version.Operations=FHIR.R3.Operations;FHIR.Version.Json=FHIR.R3.Json;FHIR.Version.Turtle=FHIR.R3.Turtle;FHIR.Version.Xml=FHIR.R3.Xml;FHIR.Version.PathNode=FHIR.R3.PathNode;FHIR.Version.Profiles=FHIR.R3.Profiles;FHIR.Version.Resources=FHIR.R3.Resources;FHIR.Version.MapUtilities=FHIR.R3.MapUtilities;FHIR.Version.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Version.Types=FHIR.R3.Types;FHIR.Version.Utilities=FHIR.R3.Utilities;FHIR.Version.Validator=FHIR.R3.Validator;FHIR.Version.OpBase=FHIR.R3.OpBase;FHIR.Version.PathEngine=FHIR.R3.PathEngine;FHIR.Version.Narrative2=FHIR.R3.Narrative2;FHIR.Version.Questionnaire=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R3.Questionnaire2;FHIR.Version.Factory=FHIR.R3.Factory;FHIR.Version.Common=FHIR.R3.Common;FHIR.Version.Organiser=FHIR.R3.Organiser;$(DCC_UnitAlias)</DCC_UnitAlias>
-        <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r3osx</DCC_DcuOutput>
-        <PF_AppleID>phase.of.matter@gmail.com</PF_AppleID>
-        <PF_AppSpecificPassword>852A47C85F930785CF3CE525A4567BA5E44E080C7EB9ECB09F050FFA8E613CC1DB2AA38CE3111C2FC1E2573AFACFC36BBAE83658042922D216784587E5FC22A2C924F30FD545FA8FBFBBAF5307131D6A921D3E581DAE0939E3EC6E7C124EECEA1B7D6453BE81</PF_AppSpecificPassword>
-        <PF_DeveloperIDCert>Developer ID Application: Pascal Pfiffner (BEMCDL5LRF)</PF_DeveloperIDCert>
-        <PF_StapleTicket>true</PF_StapleTicket>
-        <BT_BuildType>DeveloperID</BT_BuildType>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -146,7 +117,7 @@
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R3.AuthMap;FHIR.Version.Constants=FHIR.R3.Constants;FHIR.Version.Context=FHIR.R3.Context;FHIR.Version.IndexInfo=FHIR.R3.IndexInfo;FHIR.Version.Javascript=FHIR.R3.Javascript;FHIR.Version.ElementModel=FHIR.R3.ElementModel;FHIR.Version.Narrative=FHIR.R3.Narrative;FHIR.Version.Operations=FHIR.R3.Operations;FHIR.Version.Json=FHIR.R3.Json;FHIR.Version.Turtle=FHIR.R3.Turtle;FHIR.Version.Xml=FHIR.R3.Xml;FHIR.Version.PathNode=FHIR.R3.PathNode;FHIR.Version.Profiles=FHIR.R3.Profiles;FHIR.Version.Resources=FHIR.R3.Resources;FHIR.Version.MapUtilities=FHIR.R3.MapUtilities;FHIR.Version.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Version.Types=FHIR.R3.Types;FHIR.Version.Utilities=FHIR.R3.Utilities;FHIR.Version.Validator=FHIR.R3.Validator;FHIR.Version.OpBase=FHIR.R3.OpBase;FHIR.Version.PathEngine=FHIR.R3.PathEngine;FHIR.Version.Narrative2=FHIR.R3.Narrative2;FHIR.Version.Questionnaire=FHIR.R3.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R3.Questionnaire2;FHIR.Version.Factory=FHIR.R3.Factory;FHIR.Version.Common=FHIR.R3.Common;FHIR.Version.Organiser=FHIR.R3.Organiser;FHIR.Version.Resources.Base=FHIR.R3.Resources.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\r364\</DCC_DcuOutput>
         <DCC_UseMSBuildExternally>true</DCC_UseMSBuildExternally>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
     </PropertyGroup>
@@ -173,85 +144,80 @@
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Osx.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.MXml.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Turtle.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Logging.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\library\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\library\support\FHIR.Support.Threads.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.Parsers.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.WinInet.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.HtmlGen.pas"/>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Cache.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Parser.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Objects.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Scim.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Factory.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Common.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.PathEngine.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Narrative.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.Utilities.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\library\ucum\FHIR.Ucum.IFace.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Xml.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Utilities.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Context.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Types.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Constants.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Tags.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Json.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Turtle.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.ElementModel.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Profiles.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.PathEngine.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.IndexInfo.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.PathNode.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Questionnaire2.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Base.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.ParserBase.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Parser.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Client.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Common.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Factory.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Narrative.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Validator.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Operations.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.OpBase.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.AuthMap.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Threaded.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\library\smart\FHIR.Smart.Utilities.pas"/>
-        <DCCReference Include="..\library\smart\FHIR.Smart.Login.pas"/>
-        <DCCReference Include="..\library\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="..\library\tools\FHIR.Tools.DiffEngine.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_base.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_stream.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_collections.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_utilities.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_xml.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_turtle.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_json.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_crypto.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_logging.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_fpc.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_threads.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_http.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_fetcher.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_wininet.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_npm_cache.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_parser.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_objects.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_htmlgen.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_scim.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_xhtml.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_factory.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_validator.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_common.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_pathengine.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_narrative.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_utilities.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_client.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_ucum.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_xml.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_utilities.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_context.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_types.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_constants.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_tags.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_json.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_turtle.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_elementmodel.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_profiles.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_pathengine.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_indexinfo.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_pathnode.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_questionnaire2.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_base.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_parserBase.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_parser.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_client.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_common.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_factory.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_narrative.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_validator.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_operations.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_opbase.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_authmap.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_client_threaded.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_client_http.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_oauth.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_indexing.pas"/>
+        <DCCReference Include="..\library\tools\fhir_diff.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ValidationWrapper.pas"/>
         <DCCReference Include="..\library\version\FHIR.Version.Client.pas"/>
         <DCCReference Include="..\library\version\FHIR.Version.Parser.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Registry.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.ServerDialogFMX.pas">
+        <DCCReference Include="..\library\fhir\fhir_client_registry.pas"/>
+        <DCCReference Include="..\library\fhir\FHIR.Client.ServerDialogFMX.pas">
             <Form>EditRegisteredServerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\client\FHIR.Client.ClientDialogFMX.pas">
+        <DCCReference Include="..\library\fhir\FHIR.Client.ClientDialogFMX.pas">
             <Form>RegisterClientForm</Form>
         </DCCReference>
-        <DCCReference Include="..\library\cdshooks\FHIR.CdsHooks.Utilities.pas"/>
+        <DCCReference Include="..\library\cdshooks\fhir_cdshooks.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.OSX.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.ComboFMX.pas"/>
-        <DCCReference Include="..\library\web\FHIR.Web.GraphQL.pas"/>
-        <DCCReference Include="..\library\client\FHIR.Client.Async.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_graphql.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_client_async.pas"/>
         <DCCReference Include="BaseFrame.pas"/>
         <DCCReference Include="BaseResourceFrame.pas"/>
         <DCCReference Include="BaseServerFrame.pas"/>
@@ -373,19 +339,21 @@
         </DCCReference>
         <DCCReference Include="..\library\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\library\tools\FHIR.Tools.ObsGraph.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.OIDs.pas"/>
-        <DCCReference Include="..\library\base\FHIR.Base.ElementModel.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_oids.pas"/>
+        <DCCReference Include="..\library\fhir\fhir_elementmodel.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownHTMLEntities.pas"/>
         <DCCReference Include="..\library\ui\FHIR.Ui.Fmx.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Organiser.pas"/>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Package.pas"/>
-        <DCCReference Include="..\library\npm\FHIR.Npm.Client.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Admin.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Other.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Clinical.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Canonical.pas"/>
-        <DCCReference Include="..\library\r3\FHIR.R3.Resources.Base.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_organiser.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_npm.pas"/>
+        <DCCReference Include="..\library\fsl\FHIR.Npm.Client.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources_admin.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources_other.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources_clinical.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources_canonical.pas"/>
+        <DCCReference Include="..\library\fhir3\fhir3_resources_base.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_openssl.pas"/>
+        <DCCReference Include="..\library\fsl\fsl_npm_client.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -468,15 +436,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkitR3</RemoteName>
+                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="OSX32">
-                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <RemoteName>FHIRToolkitR3</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -486,9 +454,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Exec\64\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
+                <DeployFile LocalName="q.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1521,7 +1489,6 @@
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
-                <Platform value="OSX64">True</Platform>
                 <Platform value="Win32">False</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

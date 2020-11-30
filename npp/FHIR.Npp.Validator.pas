@@ -33,105 +33,105 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  FHIR.Support.Utilities, FHIR.Support.Base,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.Tx.Service,
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Resources.Base, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Resources.Base, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Resources.Base, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client,
-  FHIR.Tools.ValueSets;
+  fsl_utilities, fsl_base,
+  fhir_objects, fhir_factory, fhir_client, fhir_common, 
+  ftx_service,
+  fhir2_types, fhir2_resources, fhir2_resources_base, fhir2_context, fhir2_profiles, fhir2_client,
+  fhir3_types, fhir3_resources, fhir3_resources_base, fhir3_context, fhir3_profiles, fhir3_client,
+  fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_context, fhir4_profiles, fhir4_client,
+  fhir_valuesets.pas;
 
 Type
   TFHIRPluginValidatorContextR2 = class (TBaseWorkerContextR2)
   private
     FUrl : String;
-    FServer : FHIR.R2.Client.TFhirClient2;
-    FCapabilityStatement : FHIR.R2.Resources.TFhirConformance;
-    FValueSets : TFslMap<FHIR.R2.Resources.TFHIRValueSet>;
-    FCodeSystems : TFslMap<FHIR.R2.Resources.TFHIRValueSet>;
+    FServer : fhir2_client.TFhirClient2;
+    FCapabilityStatement : fhir2_resources.TFhirConformance;
+    FValueSets : TFslMap<fhir2_resources.TFHIRValueSet>;
+    FCodeSystems : TFslMap<fhir2_resources.TFHIRValueSet>;
     procedure checkClient;
-    function  findCode(list : FHIR.R2.Resources.TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
-    function validateInternally(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function  findCode(list : fhir2_resources.TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : fhir2_resources.TFhirValueSetCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: fhir2_resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   protected
-    procedure SeeResource(r : FHIR.R2.Resources.TFhirResource); override;
+    procedure SeeResource(r : fhir2_resources.TFhirResource); override;
   public
     constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR2; overload;
 
-    function fetchResource(t : FHIR.R2.Resources.TFhirResourceType; url : String) : FHIR.R2.Resources.TFhirResource; override;
+    function fetchResource(t : fhir2_resources.TFhirResourceType; url : String) : fhir2_resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R2.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R2.Resources.TFHIRValueSet; override;
+    function expand(vs : fhir2_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : fhir2_resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
-    function validateCode(system, version, code : String; vs : FHIR.R2.Resources.TFHIRValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R2.Types.TFHIRCoding; vs : FHIR.R2.Resources.TFhirValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R2.Types.TFHIRCodeableConcept; vs : FHIR.R2.Resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(system, version, code : String; vs : fhir2_resources.TFHIRValueSet) : TValidationResult; override;
+    function validateCode(code : fhir2_types.TFHIRCoding; vs : fhir2_resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(code : fhir2_types.TFHIRCodeableConcept; vs : fhir2_resources.TFhirValueSet) : TValidationResult; override;
     function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
   end;
 
   TFHIRPluginValidatorContextR3 = class (TBaseWorkerContextR3)
   private
     FUrl : String;
-    FServer : FHIR.R3.Client.TFhirClient3;
-    FCapabilityStatement : FHIR.R3.Resources.TFHIRCapabilityStatement;
-    FValueSets : TFslMap<FHIR.R3.Resources.TFHIRValueSet>;
-    FCodeSystems : TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>;
+    FServer : fhir3_client.TFhirClient3;
+    FCapabilityStatement : fhir3_resources.TFHIRCapabilityStatement;
+    FValueSets : TFslMap<fhir3_resources.TFHIRValueSet>;
+    FCodeSystems : TFslMap<fhir3_resources.TFHIRCodeSystem>;
     procedure checkClient;
-    function  findCode(list : FHIR.R3.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R3.Resources.TFhirCodeSystemConcept;
-    function validateInternally(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function  findCode(list : fhir3_resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : fhir3_resources.TFhirCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: fhir3_resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   protected
-    procedure SeeResource(r : FHIR.R3.Resources.TFhirResource); override;
+    procedure SeeResource(r : fhir3_resources.TFhirResource); override;
   public
     constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR3; overload;
 
-    function fetchResource(t : FHIR.R3.Resources.TFhirResourceType; url : String) : FHIR.R3.Resources.TFhirResource; override;
+    function fetchResource(t : fhir3_resources.TFhirResourceType; url : String) : fhir3_resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R3.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R3.Resources.TFHIRValueSet; override;
+    function expand(vs : fhir3_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : fhir3_resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
-    function validateCode(system, version, code : String; vs : FHIR.R3.Resources.TFHIRValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R3.Types.TFHIRCoding; vs : FHIR.R3.Resources.TFhirValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R3.Types.TFHIRCodeableConcept; vs : FHIR.R3.Resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(system, version, code : String; vs : fhir3_resources.TFHIRValueSet) : TValidationResult; override;
+    function validateCode(code : fhir3_types.TFHIRCoding; vs : fhir3_resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(code : fhir3_types.TFHIRCodeableConcept; vs : fhir3_resources.TFhirValueSet) : TValidationResult; override;
     function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
   end;
 
   TFHIRPluginValidatorContextR4 = class (TBaseWorkerContextR4)
   private
     FUrl : String;
-    FServer : FHIR.R4.Client.TFhirClient4;
-    FCapabilityStatement : FHIR.R4.Resources.TFHIRCapabilityStatement;
-    FValueSets : TFslMap<FHIR.R4.Resources.TFHIRValueSet>;
-    FCodeSystems : TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>;
+    FServer : fhir4_client.TFhirClient4;
+    FCapabilityStatement : fhir4_resources.TFHIRCapabilityStatement;
+    FValueSets : TFslMap<fhir4_resources.TFHIRValueSet>;
+    FCodeSystems : TFslMap<fhir4_resources.TFHIRCodeSystem>;
     procedure checkClient;
-    function findCode(list : FHIR.R4.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R4.Resources.TFhirCodeSystemConcept;
-    function validateInternally(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function findCode(list : fhir4_resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : fhir4_resources.TFhirCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: fhir4_resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
     function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
   protected
-    procedure SeeResource(r : FHIR.R4.Resources.TFhirResource); override;
+    procedure SeeResource(r : fhir4_resources.TFhirResource); override;
   public
     constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR4; overload;
 
-    function fetchResource(t : FHIR.R4.Resources.TFhirResourceType; url : String) : FHIR.R4.Resources.TFhirResource; override;
+    function fetchResource(t : fhir4_resources.TFhirResourceType; url : String) : fhir4_resources.TFhirResource; override;
 
-    function expand(vs : FHIR.R4.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : FHIR.R4.Resources.TFHIRValueSet; override;
+    function expand(vs : fhir4_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []) : fhir4_resources.TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
-    function validateCode(system, version, code : String; vs : FHIR.R4.Resources.TFHIRValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R4.Types.TFHIRCoding; vs : FHIR.R4.Resources.TFhirValueSet) : TValidationResult; override;
-    function validateCode(code : FHIR.R4.Types.TFHIRCodeableConcept; vs : FHIR.R4.Resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(system, version, code : String; vs : fhir4_resources.TFHIRValueSet) : TValidationResult; override;
+    function validateCode(code : fhir4_types.TFHIRCoding; vs : fhir4_resources.TFhirValueSet) : TValidationResult; override;
+    function validateCode(code : fhir4_types.TFHIRCodeableConcept; vs : fhir4_resources.TFhirValueSet) : TValidationResult; override;
     function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
   end;
 
@@ -143,10 +143,10 @@ Type
 implementation
 
 uses
-  FHIR.Tools.CodeSystemProvider,
-  FHIR.R2.Constants, FHIR.R2.Utilities,
-  FHIR.R3.Constants, FHIR.R3.Utilities,
-  FHIR.R4.Constants, FHIR.R4.Utilities;
+  fhir_codesystem_service,
+  fhir2_constants, fhir2_utilities,
+  fhir3_constants, fhir3_utilities,
+  fhir4_constants, fhir4_utilities;
 
 { TFHIRPluginValidatorContextR2 }
 
@@ -156,18 +156,18 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R2.Client.TFhirClient2;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir2_client.TFhirClient2;
     FCapabilityStatement := FServer.conformance(true);
-    if FCapabilityStatement.fhirVersion <> FHIR.R2.Constants.FHIR_GENERATED_VERSION then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R2.Constants.FHIR_GENERATED_VERSION+')');
+    if FCapabilityStatement.fhirVersion <> fhir2_constants.FHIR_GENERATED_VERSION then
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir2_constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
 constructor TFHIRPluginValidatorContextR2.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create('ValueSets');
-  FCodeSystems := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create('CodeSystems');
+  FValueSets := TFslMap<fhir2_resources.TFHIRValueSet>.create('ValueSets');
+  FCodeSystems := TFslMap<fhir2_resources.TFHIRValueSet>.create('CodeSystems');
   FUrl := TerminologyServer;
 end;
 
@@ -182,7 +182,7 @@ end;
 
 function TFHIRPluginValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
 var
-  cs : FHIR.R2.Resources.TFHIRValueSet;
+  cs : fhir2_resources.TFHIRValueSet;
 begin
   cs := FCodeSystems[url];
   if cs = nil then
@@ -192,7 +192,7 @@ end;
 
 function TFHIRPluginValidatorContextR2.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
 var
-  vs : FHIR.R2.Resources.TFhirValueSet;
+  vs : fhir2_resources.TFhirValueSet;
 begin
   vs := FValueSets[url];
   if vs = nil then
@@ -200,34 +200,34 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR2.expand(vs: FHIR.R2.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R2.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR2.expand(vs: fhir2_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): fhir2_resources.TFHIRValueSet;
 var
-  pIn : FHIR.R2.Resources.TFhirParameters;
+  pIn : fhir2_resources.TFhirParameters;
 begin
   CheckClient;
-  pIn := FHIR.R2.Resources.TFhirParameters.Create;
+  pIn := fhir2_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('valueSet', vs.Link);
     pIn.AddParameter('_incomplete', true);
     pIn.AddParameter('_limit', '10');
-    result := FServer.operation(FHIR.R2.Resources.Base.frtValueSet, 'expand', pIn) as FHIR.R2.Resources.TFhirValueSet;
+    result := FServer.operation(fhir2_resources_base.frtValueSet, 'expand', pIn) as fhir2_resources.TFhirValueSet;
   finally
     pIn.Free;
   end;
 
 end;
 
-function TFHIRPluginValidatorContextR2.fetchResource(t: FHIR.R2.Resources.TFhirResourceType; url: String): FHIR.R2.Resources.TFhirResource;
+function TFHIRPluginValidatorContextR2.fetchResource(t: fhir2_resources.TFhirResourceType; url: String): fhir2_resources.TFhirResource;
 begin
-  if (t = FHIR.R2.Resources.Base.frtValueSet) then
+  if (t = fhir2_resources_base.frtValueSet) then
     result := FValueSets[url].link
   else
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRPluginValidatorContextR2.findCode(list: FHIR.R2.Resources.TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
+function TFHIRPluginValidatorContextR2.findCode(list: fhir2_resources.TFhirValueSetCodeSystemConceptList; code: String; caseSensitive : boolean): fhir2_resources.TFhirValueSetCodeSystemConcept;
 var
-  d, d1 : FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
+  d, d1 : fhir2_resources.TFhirValueSetCodeSystemConcept;
 begin
   result := nil;
   for d in list do
@@ -258,13 +258,13 @@ begin
   result := TFHIRPluginValidatorContextR2(inherited Link);
 end;
 
-procedure TFHIRPluginValidatorContextR2.SeeResource(r: FHIR.R2.Resources.TFhirResource);
+procedure TFHIRPluginValidatorContextR2.SeeResource(r: fhir2_resources.TFhirResource);
 var
-  vs : FHIR.R2.Resources.TFhirValueset;
+  vs : fhir2_resources.TFhirValueset;
 begin
-  if (r.ResourceType = FHIR.R2.Resources.Base.frtNull) then
+  if (r.ResourceType = fhir2_resources_base.frtNull) then
   begin
-    vs := (r as FHIR.R2.Resources.TFHIRValueSet);
+    vs := (r as fhir2_resources.TFHIRValueSet);
     FValueSets.Add(vs.url, vs.Link);
     if (vs.codeSystem <> nil) then
       FCodeSystems.Add(vs.codeSystem.system, vs.Link)
@@ -275,21 +275,21 @@ end;
 
 function TFHIRPluginValidatorContextR2.supportsSystem(system, version: string): boolean;
 var
-  ex : FHIR.R2.Types.TFhirExtension;
+  ex : fhir2_types.TFhirExtension;
 begin
   CheckClient;
   result := FCodeSystems.ContainsKey(system);
   if (not result) then
     for ex in FCapabilityStatement.extensionList do
-      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is FHIR.R2.Types.TFHIRString) and (FHIR.R2.Types.TFHIRString(ex.value).value = system) then
+      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is fhir2_types.TFHIRString) and (fhir2_types.TFHIRString(ex.value).value = system) then
         result := true;
 end;
 
 function TFHIRPluginValidatorContextR2.validateCode(system, version, code, display: String): TValidationResult;
 var
-  pIn, pOut : FHIR.R2.Resources.TFhirParameters;
-  cs : FHIR.R2.Resources.TFHIRValueSet;
-  def : FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
+  pIn, pOut : fhir2_resources.TFhirParameters;
+  cs : fhir2_resources.TFHIRValueSet;
+  def : fhir2_resources.TFhirValueSetCodeSystemConcept;
 begin
   if FCodeSystems.ContainsKey(system) then
   begin
@@ -303,12 +303,12 @@ begin
   else
   begin
     checkClient;
-    pIn := FHIR.R2.Resources.TFhirParameters.Create;
+    pIn := fhir2_resources.TFhirParameters.Create;
     try
       pIn.AddParameter('system', system);
       pIn.AddParameter('code', code);
       pIn.AddParameter('display', display);
-      pOut := FServer.operation(FHIR.R2.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R2.Resources.TFhirParameters;
+      pOut := FServer.operation(fhir2_resources_base.frtValueSet, 'validate-code', pIn) as fhir2_resources.TFhirParameters;
       try
         if pOut.bool['result'] then
           result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -323,21 +323,21 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR2.validateCode(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR2.validateCode(system, version, code: String; vs: fhir2_resources.TFHIRValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R2.Resources.TFhirParameters;
+  pIn, pOut : fhir2_resources.TFhirParameters;
 begin
   if validateInternally(system, version, code, vs, result) then
     exit;
 
   checkClient;
-  pIn := FHIR.R2.Resources.TFhirParameters.Create;
+  pIn := fhir2_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('system', system);
     pIn.AddParameter('code', code);
     pIn.AddParameter('version', version);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R2.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R2.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir2_resources_base.frtValueSet, 'validate-code', pIn) as fhir2_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -351,16 +351,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR2.validateCode(code: FHIR.R2.Types.TFHIRCodeableConcept; vs: FHIR.R2.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR2.validateCode(code: fhir2_types.TFHIRCodeableConcept; vs: fhir2_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R2.Resources.TFhirParameters;
+  pIn, pOut : fhir2_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R2.Resources.TFhirParameters.Create;
+  pIn := fhir2_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('codeableConcept', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R2.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R2.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir2_resources_base.frtValueSet, 'validate-code', pIn) as fhir2_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -374,7 +374,7 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR2.validateInternally(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+function TFHIRPluginValidatorContextR2.validateInternally(system, version, code: String; vs: fhir2_resources.TFHIRValueSet; var res: TValidationResult): boolean;
 var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
@@ -417,16 +417,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR2.validateCode(code: FHIR.R2.Types.TFHIRCoding; vs: FHIR.R2.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR2.validateCode(code: fhir2_types.TFHIRCoding; vs: fhir2_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R2.Resources.TFhirParameters;
+  pIn, pOut : fhir2_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R2.Resources.TFhirParameters.Create;
+  pIn := fhir2_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('coding', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R2.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R2.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir2_resources_base.frtValueSet, 'validate-code', pIn) as fhir2_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -448,18 +448,18 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R3.Client.TFhirClient3;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir3_client.TFhirClient3;
     FCapabilityStatement := FServer.conformance(true);
-    if FCapabilityStatement.fhirVersion <> FHIR.R3.Constants.FHIR_GENERATED_VERSION then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R3.Constants.FHIR_GENERATED_VERSION+')');
+    if FCapabilityStatement.fhirVersion <> fhir3_constants.FHIR_GENERATED_VERSION then
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir3_constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
 constructor TFHIRPluginValidatorContextR3.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R3.Resources.TFHIRValueSet>.create('Value Sets');
-  FCodeSystems := TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>.create('Code Systems');
+  FValueSets := TFslMap<fhir3_resources.TFHIRValueSet>.create('Value Sets');
+  FCodeSystems := TFslMap<fhir3_resources.TFHIRCodeSystem>.create('Code Systems');
   FUrl := TerminologyServer;
 end;
 
@@ -474,7 +474,7 @@ end;
 
 function TFHIRPluginValidatorContextR3.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
 var
-  cs : FHIR.R3.Resources.TFHIRCodeSystem;
+  cs : fhir3_resources.TFHIRCodeSystem;
 begin
   cs := FCodeSystems[url];
   if cs = nil then
@@ -484,7 +484,7 @@ end;
 
 function TFHIRPluginValidatorContextR3.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
 var
-  vs : FHIR.R3.Resources.TFhirValueSet;
+  vs : fhir3_resources.TFhirValueSet;
 begin
   vs := FValueSets[url];
   if vs = nil then
@@ -492,34 +492,34 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR3.expand(vs: FHIR.R3.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R3.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR3.expand(vs: fhir3_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): fhir3_resources.TFHIRValueSet;
 var
-  pIn : FHIR.R3.Resources.TFhirParameters;
+  pIn : fhir3_resources.TFhirParameters;
 begin
   CheckClient;
-  pIn := FHIR.R3.Resources.TFhirParameters.Create;
+  pIn := fhir3_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('valueSet', vs.Link);
     pIn.AddParameter('_incomplete', true);
     pIn.AddParameter('_limit', '10');
-    result := FServer.operation(FHIR.R3.Resources.Base.frtValueSet, 'expand', pIn) as FHIR.R3.Resources.TFhirValueSet;
+    result := FServer.operation(fhir3_resources_base.frtValueSet, 'expand', pIn) as fhir3_resources.TFhirValueSet;
   finally
     pIn.Free;
   end;
 
 end;
 
-function TFHIRPluginValidatorContextR3.fetchResource(t: FHIR.R3.Resources.TFhirResourceType; url: String): FHIR.R3.Resources.TFhirResource;
+function TFHIRPluginValidatorContextR3.fetchResource(t: fhir3_resources.TFhirResourceType; url: String): fhir3_resources.TFhirResource;
 begin
-  if (t = FHIR.R3.Resources.Base.frtValueSet) then
+  if (t = fhir3_resources_base.frtValueSet) then
     result := FValueSets[url].link
   else
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRPluginValidatorContextR3.findCode(list: FHIR.R3.Resources.TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): FHIR.R3.Resources.TFhirCodeSystemConcept;
+function TFHIRPluginValidatorContextR3.findCode(list: fhir3_resources.TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): fhir3_resources.TFhirCodeSystemConcept;
 var
-  d, d1 : FHIR.R3.Resources.TFhirCodeSystemConcept;
+  d, d1 : fhir3_resources.TFhirCodeSystemConcept;
 begin
   result := nil;
   for d in list do
@@ -550,38 +550,38 @@ begin
   result := TFHIRPluginValidatorContextR3(inherited Link);
 end;
 
-procedure TFHIRPluginValidatorContextR3.SeeResource(r: FHIR.R3.Resources.TFhirResource);
+procedure TFHIRPluginValidatorContextR3.SeeResource(r: fhir3_resources.TFhirResource);
 var
-  vs : FHIR.R3.Resources.TFhirValueset;
+  vs : fhir3_resources.TFhirValueset;
 begin
-  if (r.ResourceType = FHIR.R3.Resources.Base.frtValueSet) then
+  if (r.ResourceType = fhir3_resources_base.frtValueSet) then
   begin
-    vs := (r as FHIR.R3.Resources.TFHIRValueSet);
+    vs := (r as fhir3_resources.TFHIRValueSet);
     FValueSets.Add(vs.url, vs.Link);
   end
-  else if (r.ResourceType = FHIR.R3.Resources.Base.frtCodeSystem) then
-    FCodeSystems.Add(FHIR.R3.Resources.TFHIRCodeSystem(r).url, FHIR.R3.Resources.TFHIRCodeSystem(r).Link)
+  else if (r.ResourceType = fhir3_resources_base.frtCodeSystem) then
+    FCodeSystems.Add(fhir3_resources.TFHIRCodeSystem(r).url, fhir3_resources.TFHIRCodeSystem(r).Link)
   else
     inherited;
 end;
 
 function TFHIRPluginValidatorContextR3.supportsSystem(system, version: string): boolean;
 var
-  ex : FHIR.R3.Types.TFhirExtension;
+  ex : fhir3_types.TFhirExtension;
 begin
   CheckClient;
   result := FCodeSystems.ContainsKey(system);
   if (not result) then
     for ex in FCapabilityStatement.extensionList do
-      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is FHIR.R3.Types.TFHIRString) and (FHIR.R3.Types.TFHIRString(ex.value).value = system) then
+      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is fhir3_types.TFHIRString) and (fhir3_types.TFHIRString(ex.value).value = system) then
         result := true;
 end;
 
 function TFHIRPluginValidatorContextR3.validateCode(system, version, code, display: String): TValidationResult;
 var
-  pIn, pOut : FHIR.R3.Resources.TFhirParameters;
-  cs : FHIR.R3.Resources.TFHIRCodeSystem;
-  def : FHIR.R3.Resources.TFhirCodeSystemConcept;
+  pIn, pOut : fhir3_resources.TFhirParameters;
+  cs : fhir3_resources.TFHIRCodeSystem;
+  def : fhir3_resources.TFhirCodeSystemConcept;
 begin
   if FCodeSystems.ContainsKey(system) then
   begin
@@ -595,12 +595,12 @@ begin
   else
   begin
     checkClient;
-    pIn := FHIR.R3.Resources.TFhirParameters.Create;
+    pIn := fhir3_resources.TFhirParameters.Create;
     try
       pIn.AddParameter('system', system);
       pIn.AddParameter('code', code);
       pIn.AddParameter('display', display);
-      pOut := FServer.operation(FHIR.R3.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R3.Resources.TFhirParameters;
+      pOut := FServer.operation(fhir3_resources_base.frtValueSet, 'validate-code', pIn) as fhir3_resources.TFhirParameters;
       try
         if pOut.bool['result'] then
           result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -615,22 +615,22 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR3.validateCode(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR3.validateCode(system, version, code: String; vs: fhir3_resources.TFHIRValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R3.Resources.TFhirParameters;
+  pIn, pOut : fhir3_resources.TFhirParameters;
   def : TFhirCodeSystemConcept;
 begin
   if validateInternally(system, version, code, vs, result) then
     exit;
 
   checkClient;
-  pIn := FHIR.R3.Resources.TFhirParameters.Create;
+  pIn := fhir3_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('system', system);
     pIn.AddParameter('code', code);
     pIn.AddParameter('version', version);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R3.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R3.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir3_resources_base.frtValueSet, 'validate-code', pIn) as fhir3_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -644,16 +644,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR3.validateCode(code: FHIR.R3.Types.TFHIRCodeableConcept; vs: FHIR.R3.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR3.validateCode(code: fhir3_types.TFHIRCodeableConcept; vs: fhir3_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R3.Resources.TFhirParameters;
+  pIn, pOut : fhir3_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R3.Resources.TFhirParameters.Create;
+  pIn := fhir3_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('codeableConcept', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R3.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R3.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir3_resources_base.frtValueSet, 'validate-code', pIn) as fhir3_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -667,7 +667,7 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR3.validateInternally(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+function TFHIRPluginValidatorContextR3.validateInternally(system, version, code: String; vs: fhir3_resources.TFHIRValueSet; var res: TValidationResult): boolean;
 var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
@@ -710,16 +710,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR3.validateCode(code: FHIR.R3.Types.TFHIRCoding; vs: FHIR.R3.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR3.validateCode(code: fhir3_types.TFHIRCoding; vs: fhir3_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R3.Resources.TFhirParameters;
+  pIn, pOut : fhir3_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R3.Resources.TFhirParameters.Create;
+  pIn := fhir3_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('coding', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R3.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R3.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir3_resources_base.frtValueSet, 'validate-code', pIn) as fhir3_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -741,7 +741,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R4.Client.TFhirClient4;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir4_client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_ENUM_VERSIONS[factory.version] then
       raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
@@ -751,8 +751,8 @@ end;
 constructor TFHIRPluginValidatorContextR4.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create('R4.ValueSets');
-  FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create('R4.CodeSystems');
+  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.create('R4.ValueSets');
+  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.create('R4.CodeSystems');
   FUrl := TerminologyServer;
 end;
 
@@ -767,7 +767,7 @@ end;
 
 function TFHIRPluginValidatorContextR4.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
 var
-  cs : FHIR.R4.Resources.TFHIRCodeSystem;
+  cs : fhir4_resources.TFHIRCodeSystem;
 begin
   cs := FCodeSystems[url];
   if cs = nil then
@@ -777,7 +777,7 @@ end;
 
 function TFHIRPluginValidatorContextR4.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
 var
-  vs : FHIR.R4.Resources.TFhirValueSet;
+  vs : fhir4_resources.TFhirValueSet;
 begin
   vs := FValueSets[url];
   if vs = nil then
@@ -785,34 +785,34 @@ begin
   result := Factory.wrapValueSet(vs.link);
 end;
 
-function TFHIRPluginValidatorContextR4.expand(vs: FHIR.R4.Resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): FHIR.R4.Resources.TFHIRValueSet;
+function TFHIRPluginValidatorContextR4.expand(vs: fhir4_resources.TFhirValueSet; options : TExpansionOperationOptionSet = []): fhir4_resources.TFHIRValueSet;
 var
-  pIn : FHIR.R4.Resources.TFhirParameters;
+  pIn : fhir4_resources.TFhirParameters;
 begin
   CheckClient;
-  pIn := FHIR.R4.Resources.TFhirParameters.Create;
+  pIn := fhir4_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('valueSet', vs.Link);
     pIn.AddParameter('_incomplete', true);
     pIn.AddParameter('_limit', '10');
-    result := FServer.operation(FHIR.R4.Resources.Base.frtValueSet, 'expand', pIn) as FHIR.R4.Resources.TFhirValueSet;
+    result := FServer.operation(fhir4_resources_base.frtValueSet, 'expand', pIn) as fhir4_resources.TFhirValueSet;
   finally
     pIn.Free;
   end;
 
 end;
 
-function TFHIRPluginValidatorContextR4.fetchResource(t: FHIR.R4.Resources.TFhirResourceType; url: String): FHIR.R4.Resources.TFhirResource;
+function TFHIRPluginValidatorContextR4.fetchResource(t: fhir4_resources.TFhirResourceType; url: String): fhir4_resources.TFhirResource;
 begin
-  if (t = FHIR.R4.Resources.Base.frtValueSet) then
+  if (t = fhir4_resources_base.frtValueSet) then
     result := FValueSets[url].link
   else
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRPluginValidatorContextR4.findCode(list: FHIR.R4.Resources.TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): FHIR.R4.Resources.TFhirCodeSystemConcept;
+function TFHIRPluginValidatorContextR4.findCode(list: fhir4_resources.TFhirCodeSystemConceptList; code: String; caseSensitive : boolean): fhir4_resources.TFhirCodeSystemConcept;
 var
-  d, d1 : FHIR.R4.Resources.TFhirCodeSystemConcept;
+  d, d1 : fhir4_resources.TFhirCodeSystemConcept;
 begin
   result := nil;
   for d in list do
@@ -843,38 +843,38 @@ begin
   result := TFHIRPluginValidatorContextR4(inherited Link);
 end;
 
-procedure TFHIRPluginValidatorContextR4.SeeResource(r: FHIR.R4.Resources.TFhirResource);
+procedure TFHIRPluginValidatorContextR4.SeeResource(r: fhir4_resources.TFhirResource);
 var
-  vs : FHIR.R4.Resources.TFhirValueset;
+  vs : fhir4_resources.TFhirValueset;
 begin
-  if (r.ResourceType = FHIR.R4.Resources.Base.frtValueSet) then
+  if (r.ResourceType = fhir4_resources_base.frtValueSet) then
   begin
-    vs := (r as FHIR.R4.Resources.TFHIRValueSet);
+    vs := (r as fhir4_resources.TFHIRValueSet);
     FValueSets.Add(vs.url, vs.Link);
   end
-  else if (r.ResourceType = FHIR.R4.Resources.Base.frtCodeSystem) then
-    FCodeSystems.Add(FHIR.R4.Resources.TFHIRCodeSystem(r).url, FHIR.R4.Resources.TFHIRCodeSystem(r).Link)
+  else if (r.ResourceType = fhir4_resources_base.frtCodeSystem) then
+    FCodeSystems.Add(fhir4_resources.TFHIRCodeSystem(r).url, fhir4_resources.TFHIRCodeSystem(r).Link)
   else
     inherited;
 end;
 
 function TFHIRPluginValidatorContextR4.supportsSystem(system, version: string): boolean;
 var
-  ex : FHIR.R4.Types.TFhirExtension;
+  ex : fhir4_types.TFhirExtension;
 begin
   CheckClient;
   result := FCodeSystems.ContainsKey(system);
   if (not result) then
     for ex in FCapabilityStatement.extensionList do
-      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is FHIR.R4.Types.TFHIRString) and (FHIR.R4.Types.TFHIRString(ex.value).value = system) then
+      if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is fhir4_types.TFHIRString) and (fhir4_types.TFHIRString(ex.value).value = system) then
         result := true;
 end;
 
 function TFHIRPluginValidatorContextR4.validateCode(system, version, code, display: String): TValidationResult;
 var
-  pIn, pOut : FHIR.R4.Resources.TFhirParameters;
-  cs : FHIR.R4.Resources.TFHIRCodeSystem;
-  def : FHIR.R4.Resources.TFhirCodeSystemConcept;
+  pIn, pOut : fhir4_resources.TFhirParameters;
+  cs : fhir4_resources.TFHIRCodeSystem;
+  def : fhir4_resources.TFhirCodeSystemConcept;
 begin
   if FCodeSystems.ContainsKey(system) then
   begin
@@ -888,12 +888,12 @@ begin
   else
   begin
     checkClient;
-    pIn := FHIR.R4.Resources.TFhirParameters.Create;
+    pIn := fhir4_resources.TFhirParameters.Create;
     try
       pIn.AddParameter('system', system);
       pIn.AddParameter('code', code);
       pIn.AddParameter('display', display);
-      pOut := FServer.operation(FHIR.R4.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R4.Resources.TFhirParameters;
+      pOut := FServer.operation(fhir4_resources_base.frtValueSet, 'validate-code', pIn) as fhir4_resources.TFhirParameters;
       try
         if pOut.bool['result'] then
           result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -908,22 +908,22 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR4.validateCode(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR4.validateCode(system, version, code: String; vs: fhir4_resources.TFHIRValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R4.Resources.TFhirParameters;
+  pIn, pOut : fhir4_resources.TFhirParameters;
   def : TFhirCodeSystemConcept;
 begin
   if validateInternally(system, version, code, vs, result) then
     exit;
 
   checkClient;
-  pIn := FHIR.R4.Resources.TFhirParameters.Create;
+  pIn := fhir4_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('system', system);
     pIn.AddParameter('code', code);
     pIn.AddParameter('version', version);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R4.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R4.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir4_resources_base.frtValueSet, 'validate-code', pIn) as fhir4_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -937,16 +937,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR4.validateCode(code: FHIR.R4.Types.TFHIRCodeableConcept; vs: FHIR.R4.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR4.validateCode(code: fhir4_types.TFHIRCodeableConcept; vs: fhir4_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R4.Resources.TFhirParameters;
+  pIn, pOut : fhir4_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R4.Resources.TFhirParameters.Create;
+  pIn := fhir4_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('codeableConcept', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R4.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R4.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir4_resources_base.frtValueSet, 'validate-code', pIn) as fhir4_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])
@@ -960,7 +960,7 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR4.validateInternally(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+function TFHIRPluginValidatorContextR4.validateInternally(system, version, code: String; vs: fhir4_resources.TFHIRValueSet; var res: TValidationResult): boolean;
 var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
@@ -1003,16 +1003,16 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContextR4.validateCode(code: FHIR.R4.Types.TFHIRCoding; vs: FHIR.R4.Resources.TFhirValueSet): TValidationResult;
+function TFHIRPluginValidatorContextR4.validateCode(code: fhir4_types.TFHIRCoding; vs: fhir4_resources.TFhirValueSet): TValidationResult;
 var
-  pIn, pOut : FHIR.R4.Resources.TFhirParameters;
+  pIn, pOut : fhir4_resources.TFhirParameters;
 begin
   checkClient;
-  pIn := FHIR.R4.Resources.TFhirParameters.Create;
+  pIn := fhir4_resources.TFhirParameters.Create;
   try
     pIn.AddParameter('coding', code.Link);
     pIn.AddParameter('valueSet', vs.Link);
-    pOut := FServer.operation(FHIR.R4.Resources.Base.frtValueSet, 'validate-code', pIn) as FHIR.R4.Resources.TFhirParameters;
+    pOut := FServer.operation(fhir4_resources_base.frtValueSet, 'validate-code', pIn) as fhir4_resources.TFhirParameters;
     try
       if pOut.bool['result'] then
         result := TValidationResult.Create(isInformation, pOut.str['message'])

@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics,
+  Windows, Messages, SysUtils, Classes, Graphics, IniFiles,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  FHIR.Support.Printing, IniFiles,
+  wp_printing_win,
   FHIR.WP.Control, FHIR.WP.Settings;
 
 type
@@ -89,7 +89,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 
 { TForm1 }
@@ -128,9 +128,13 @@ begin
       manager.CompilePrinterList(printers);
       for i := 0 to printers.Count - 1 do
       begin
-        printers[i].open;
-        if printers[i].Settings.Definition.Name = s then
-          WP.Printer := printers[i].Link;
+        try
+          printers[i].open;
+          if printers[i].Settings.Definition.Name = s then
+            WP.Printer := printers[i].Link;
+        except
+          // nothing, for now
+        end;
       end;
     finally
       manager.free;

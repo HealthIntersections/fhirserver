@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir3"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\fhir3"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_authmap.pas"/>
+        <UnitName Value="fhir3_authmap"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_base.pas"/>
+        <UnitName Value="fhir3_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_client.pas"/>
+        <UnitName Value="fhir3_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_common.pas"/>
+        <UnitName Value="fhir3_common"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_constants.pas"/>
+        <UnitName Value="fhir3_constants"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_context.pas"/>
+        <UnitName Value="fhir3_context"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_elementmodel.pas"/>
+        <UnitName Value="fhir3_elementmodel"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_factory.pas"/>
+        <UnitName Value="fhir3_factory"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_indexinfo.pas"/>
+        <UnitName Value="fhir3_indexinfo"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_javascript.pas"/>
+        <UnitName Value="fhir3_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_json.pas"/>
+        <UnitName Value="fhir3_json"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_liquid.pas"/>
+        <UnitName Value="fhir3_liquid"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_maputils.pas"/>
+        <UnitName Value="fhir3_maputils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_opbase.pas"/>
+        <UnitName Value="fhir3_opbase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_operations.pas"/>
+        <UnitName Value="fhir3_operations"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_organiser.pas"/>
+        <UnitName Value="fhir3_organiser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_parser.pas"/>
+        <UnitName Value="fhir3_parser"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_parserbase.pas"/>
+        <UnitName Value="fhir3_parserBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_patch.pas"/>
+        <UnitName Value="fhir3_patch"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_pathengine.pas"/>
+        <UnitName Value="fhir3_pathengine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_pathnode.pas"/>
+        <UnitName Value="fhir3_pathnode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_profiles.pas"/>
+        <UnitName Value="fhir3_profiles"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources.pas"/>
+        <UnitName Value="fhir3_resources"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources_admin.pas"/>
+        <UnitName Value="fhir3_resources_admin"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources_base.pas"/>
+        <UnitName Value="fhir3_resources_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources_canonical.pas"/>
+        <UnitName Value="fhir3_resources_canonical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources_clinical.pas"/>
+        <UnitName Value="fhir3_resources_clinical"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_resources_other.pas"/>
+        <UnitName Value="fhir3_resources_other"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_tags.pas"/>
+        <UnitName Value="fhir3_tags"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_turtle.pas"/>
+        <UnitName Value="fhir3_turtle"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_types.pas"/>
+        <UnitName Value="fhir3_types"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_utilities.pas"/>
+        <UnitName Value="fhir3_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_xml.pas"/>
+        <UnitName Value="fhir3_xml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir3\fhir3_questionnaire.pas"/>
+        <UnitName Value="fhir3_questionnaire"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

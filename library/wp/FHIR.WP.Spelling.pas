@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-   FHIR.Support.Collections,
-  FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
+   fsl_collections,
+  FHIR.WP.Settings, wp_types, wp_working;
 
 Type
   EWordIsBanned = Class (EWPException);
@@ -44,6 +44,8 @@ Type
   Private
     FAllowedWords : TFslStringList;
     procedure SetAllowedWords(const Value: TFslStringList);
+  protected
+    function sizeInBytesV : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -119,6 +121,12 @@ procedure TWPSpeller.SetAllowedWords(const Value: TFslStringList);
 begin
   FAllowedWords.Free;
   FAllowedWords := Value;
+end;
+
+function TWPSpeller.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FAllowedWords.sizeInBytes);
 end;
 
 End.

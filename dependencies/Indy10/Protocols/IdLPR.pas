@@ -100,13 +100,13 @@ const
 type
   TIdLPRControlFile = class(TPersistent)
   protected
-    FBannerClass: String;			// 'C'    {Do not Localize}
-    FHostName: String;				// 'H'    {Do not Localize}
-    FIndentCount: Integer;		// 'I'    {Do not Localize}
-    FJobName: String;					// 'J'    {Do not Localize}
-    FBannerPage: Boolean;			// 'L'    {Do not Localize}
-    FUserName: String;					// 'P'    {Do not Localize}
-    FOutputWidth: Integer;		// 'W'    {Do not Localize}
+    FBannerClass: String;      // 'C'    {Do not Localize}
+    FHostName: String;        // 'H'    {Do not Localize}
+    FIndentCount: Integer;    // 'I'    {Do not Localize}
+    FJobName: String;          // 'J'    {Do not Localize}
+    FBannerPage: Boolean;      // 'L'    {Do not Localize}
+    FUserName: String;          // 'P'    {Do not Localize}
+    FOutputWidth: Integer;    // 'W'    {Do not Localize}
 
     FFileFormat : TIdLPRFileFormat;
     FTroffRomanFont : String; //substitue the Roman font with the font in file
@@ -348,7 +348,7 @@ begin
     IOHandler.Write(#0);
     CheckReply;
     // Send data file
-    IOHandler.Write(#03 + IntToStr(Data.Size) +	' dfA'  + JobId + ControlFile.HostName + LF);   {Do not Localize}
+    IOHandler.Write(#03 + IntToStr(Data.Size) +  ' dfA'  + JobId + ControlFile.HostName + LF);   {Do not Localize}
     CheckReply;
     // Send data
     IOHandler.Write(Data);

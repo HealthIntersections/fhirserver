@@ -34,8 +34,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.Utilities, Inifiles, FHIR.Support.Shell,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry, FHIR.Npm.CacheDialog;
+  Vcl.ExtCtrls, Vcl.ImgList, fsl_utilities, Inifiles, fsl_shell,
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, fhir_diff, Registry, fsl_npm_cacheDialog;
 
 type
   TForm4 = class(TForm)
@@ -206,9 +206,9 @@ implementation
 {$R *.dfm}
 
 Uses
-  FHIR.Database.Manager, FHIR.Database.ODBC,
-  FHIR.Snomed.Importer, SnomedCombiner, FHIR.Snomed.Services,
-  FHIR.Loinc.Importer, FHIR.Tx.RxNorm;
+  fdb_manager, fdb_odbc,
+  ftx_sct_importer, SnomedCombiner, ftx_sct_services,
+  ftx_loinc_importer, FHIR.Tx.RxNorm;
 
 procedure TForm4.FormCreate(Sender: TObject);
 var
@@ -684,7 +684,7 @@ end;
 
 procedure TForm4.btnProcessUMLSClick(Sender: TObject);
 var
-  db : TFslDBManager;
+  db : TFDBManager;
   start : TDateTime;
 begin
   if cbUMLSDriver.Text = '' then
@@ -716,7 +716,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TFslDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;

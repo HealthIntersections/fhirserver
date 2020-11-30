@@ -1,0 +1,187 @@
+## FHIRServer Config File
+
+databases
+  rxn
+    type: mssql
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: rxnorm
+  dbr4
+    type: mssql
+    when-testing: true
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: fhir4
+  dbr2
+    type: mssql
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: fhir2
+  dbr3
+    type: mssql
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: fhir3
+  dbr5
+    type: mssql
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: fhir5
+  package-server
+    type: mssql
+    server: (local)
+    driver: SQL Server Native Client 11.0
+    database: packageserver
+
+# 
+terminologies
+  s-can
+    type: snomed
+    source: C:\ProgramData\FHIRServer\snomed_20161031_ca.cache
+  icd10cm
+    type: icd10
+    source: C:\ProgramData\fhirserver\icd10cm.txt
+  ndc
+    type: ndc
+    version: 20190317
+    database: rxn
+  unii
+    type: unii
+    database: dbr3
+  sintl2
+    type: snomed
+    source: C:\ProgramData\FHIRServer\snomed_20200131_intl.cache
+    default: true
+  scomb
+    type: snomed
+    source: C:\ProgramData\fhirserver\snomed_20170306_combined.cache
+    when-testing: true
+  loinc
+    type: loinc
+    source: C:\ProgramData\fhirserver\loinc-2.68.cache
+    when-testing: true
+  lang
+    type: lang
+    source: C:\ProgramData\fhirserver\lang.txt
+  icd10
+    type: icd10
+    source: C:\ProgramData\fhirserver\icd10.txt
+  rxnorm
+    type: rxnorm
+    database: rxn
+  s-usa
+    type: snomed
+    source: C:\ProgramData\fhirserver\snomed_20160901_us.cache
+  sintl
+    type: snomed
+    source: C:\ProgramData\fhirserver\snomed_20190731_intl.cache
+  s-aus
+    type: snomed
+    source: C:\ProgramData\fhirserver\snomed_20161031_au.cache
+  icd10vn
+    type: icd10
+    source: C:\ProgramData\fhirserver\icd10vn.txt
+  ucum
+    type: ucum
+    source: C:\work\fhirserver\Exec\64\ucum-essence.xml
+    when-testing: true
+
+# 
+endpoints
+  packages
+    type: package
+    path: /package
+    database: package-server
+  r4
+    type: r4
+    path: /r4
+    mode: general
+    security: open
+    version: r4
+    database: dbr4
+    validate: true
+    when-testing: true
+    packages: hl7.fhir.r4.examples # 4.0.1
+  r2
+    type: r2
+    path: /r2
+    mode: general
+    security: certificate
+    version: r2
+    database: dbr2
+    validate: true
+    packages: fhir.argonaut.r2 # 1.0.0
+  r3
+    type: r3
+    path: /r3
+    mode: terminology
+    security: read-only
+    version: r3
+    database: dbr3
+    packages: hl7.fhir.r3.elements # 3.0.2
+
+# 
+destinations
+  email
+    host: smtp.gmail.com
+    port: 587
+    secure: true
+    username: fhir-server@healthintersections.com.au
+    password: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    sender: fhir-server@healthintersections.com.au
+  direct
+    host: smtp10.phimail-dev.com
+    port: 587
+    pop-host: smtp11.phimail-dev.com
+    pop-port: 110
+    secure: 1
+    username: grahame@test.directproject.net
+    password: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    sender: grahame@test.directproject.net
+  sms
+    account: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    from: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# 
+identity-providers
+  hl7.org
+    app-id: HL7HealthIntersections
+    app-secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  facebook.com
+    app-id: 355752811191794
+    app-secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    like: 1
+  google.com
+    app-id: 940006310138.apps.googleusercontent.com
+    app-secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    api-key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# 
+web
+  host: local.fhir.org
+  http: 960
+  https: 961
+  certname: C:\work\RDPs\certificates\new\fhir.org.crt
+  cacertname: C:\work\RDPs\certificates\new\fhir.org.int.crt
+  password: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  oauth: true
+  googleid: UA-88535340-3
+  folder: C:\work\fhirserver\server\web
+  no-cert: true
+  package-server: dbr5
+  key: C:\work\RDPs\certificates\new\fhir.org.crt
+  plain-mode: serve
+  certkey: C:\work\RDPs\certificates\new\fhir.org.key
+# 
+admin
+  username: g
+  email: grahame@healthintersections.com.au
+  owner-sms: 
+  ownername: Health Intersections
+  scim-salt: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  default-rights: openid,profile,user/*.*
+  twilio: fhir4
+# 
+service
+  run-number: 0

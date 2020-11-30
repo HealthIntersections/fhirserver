@@ -46,8 +46,8 @@ Interface
 
 Uses
   Windows, SysUtils, Messages, IniFiles, Classes, ComCtrls, Graphics, Controls, commctrl,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
-  FHIR.Uix.Images, FHIR.Uix.Forms, FHIR.Uix.Controls,
+  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_stream,
+  fui_vclx_Images, fui_vclx_Forms, fui_vclx_Controls,
   FHIR.WP.Control;
 
  const

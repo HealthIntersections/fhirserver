@@ -121,7 +121,7 @@
         <DCC_ExeOutput>C:\Program Files\Notepad++\plugins\FormatUtils</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\d64\debug;C:\work\fhirserver\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\library\fsl;..\..\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -131,14 +131,6 @@
         <DCCReference Include="..\..\dependencies\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="npplib\FHIR.Npp.BaseFU.pas"/>
         <DCCReference Include="npplib\FHIR.Npp.ScintillaFU.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Base.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\..\library\Support\FHIR.Support.Fpc.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\..\library\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="FHIR.Npp.FormatUtilities.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>

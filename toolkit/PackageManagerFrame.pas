@@ -37,8 +37,8 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   FMX.Memo, FMX.TreeView,
   BaseFrame,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
-  FHIR.Npm.Package, FHIR.Npm.Cache, PackageEditorFrame;
+  fsl_base, fsl_utilities, fsl_stream, fsl_fetcher, FHIR.Support.Osx, FHIR.Ui.Fmx,
+  fsl_npm, fsl_npm_cache, PackageEditorFrame;
 
 const
   PCMode_User = true;

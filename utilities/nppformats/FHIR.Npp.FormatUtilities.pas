@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX, Vcl.Clipbrd,
   MarkdownProcessor,
   FHIR.Npp.BaseFU, FHIR.Npp.ScintillaFU,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Json;
+  fsl_base, fsl_utilities, fsl_stream, fsl_xml, fsl_json;
 
 
 type
@@ -258,7 +258,7 @@ begin
     on e : EParserException do
     begin
       // goto location....
-      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.location.Line-1, e.location.Col-1);
       SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
       ShowMessage('Parser Exception: '+e.Message);
     end;
@@ -326,7 +326,7 @@ begin
     on e : EParserException do
     begin
       // goto location....
-      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.Line-1, e.Col-1);
+      sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, e.location.Line-1, e.location.Col-1);
       SendMessage(NppData.ScintillaMainHandle, SCI_SETSEL, sp, sp);
       ShowMessage('Parser Exception: '+e.Message);
     end;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir_fui"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library"/>
+        <OtherUnitFiles Value="..\library\fui"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_cache.pas"/>
+        <UnitName Value="fui_lcl_cache"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_managers.pas"/>
+        <UnitName Value="fui_lcl_managers"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_progress.pas"/>
+        <UnitName Value="fui_lcl_progress"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_registry.pas"/>
+        <UnitName Value="fui_lcl_registry"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_widgets.pas"/>
+        <UnitName Value="fui_lcl_widgets"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_syn_hl7.pas"/>
+        <UnitName Value="fui_syn_hl7"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir"/>
+      </Item>
+      <Item>
+        <PackageName Value="SynEdit"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

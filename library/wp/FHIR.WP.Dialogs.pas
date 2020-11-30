@@ -32,11 +32,11 @@ Interface
 
 Uses
   Windows, SysUtils, Graphics, Controls, Classes, Forms, StdCtrls, ExtCtrls, Spin, Math, ComCtrls, Dialogs, Contnrs,
-  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Graphics,
-  FHIR.Ui.GdiPlus,
-  FHIR.Uix.Base, FHIR.Uix.Controls, FHIR.Uix.Forms, FHIR.Uix.Images, FHIR.Uix.Advanced, FHIR.Uix.Dialogs,
+  fsl_utilities, fsl_collections, wp_graphics,
+  fui_vclx_Base, fui_vclx_Controls, fui_vclx_Forms, fui_vclx_Images, fui_vclx_Advanced, fui_vclx_Dialogs,
 
-  FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Settings, FHIR.WP.Icons, FHIR.WP.Working, FHIR.WP.Engine, FHIR.WP.Control, FHIR.WP.Format;
+  wp_gdiplus, wp_clipboard,
+  wp_types, wp_document, FHIR.WP.Settings, FHIR.WP.Icons, wp_working, FHIR.WP.Engine, FHIR.WP.Control, wp_format;
 
 
 Type

@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="fhir_fsl"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\jcl"/>
+        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\FMMAVX"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <IncludeAssertionCode Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraCommon.pas"/>
+        <UnitName Value="ChakraCommon"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraCore.pas"/>
+        <UnitName Value="ChakraCore"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreClasses.pas"/>
+        <UnitName Value="ChakraCoreClasses"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreUtils.pas"/>
+        <UnitName Value="ChakraCoreUtils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraCoreVersion.pas"/>
+        <UnitName Value="ChakraCoreVersion"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\ChakraDebug.pas"/>
+        <UnitName Value="ChakraDebug"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\chakracore-delphi\Compat.pas"/>
+        <UnitName Value="Compat"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHeaderList.pas"/>
+        <UnitName Value="IdHeaderList"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\System\IdStreamVCL.pas"/>
+        <UnitName Value="IdStreamVCL"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\System\IdCTypes.pas"/>
+        <UnitName Value="IdCTypes"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHMAC.pas"/>
+        <UnitName Value="IdHMAC"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHashSHA.pas"/>
+        <UnitName Value="IdHashSHA"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHMACSHA1.pas"/>
+        <UnitName Value="IdHMACSHA1"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ossl_typ.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ossl_typ"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_aes.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_aes"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_asn1"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1_mac.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_asn1_mac"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1err.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_asn1err"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asn1t.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_asn1t"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_async.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_async"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_asyncerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_asyncerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bio.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_bio"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bioerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_bioerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_blowfish.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_blowfish"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bn.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_bn"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_bnerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_bnerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_buffer.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_buffer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_buffererr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_buffererr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_camellia.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_camellia"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cast.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cast"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cmac.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cmac"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cms.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cms"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cmserr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cmserr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_comp.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_comp"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_comperr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_comperr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conf.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_conf"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conf_api.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_conf_api"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_conferr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_conferr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_crypto.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_crypto"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cryptoerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cryptoerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_cterr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_cterr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dh.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_dh"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dherr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_dherr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dsa.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_dsa"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_dsaerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_dsaerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ebcdic.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ebcdic"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ec.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ec"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ecerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ecerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_engine.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_engine"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_engineerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_engineerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_err.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_err"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_evp.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_evp"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_evperr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_evperr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_hmac.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_hmac"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_idea.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_idea"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_kdferr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_kdferr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_obj_mac.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_obj_mac"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_objects.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_objects"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_objectserr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_objectserr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ocsperr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ocsperr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pem.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_pem"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pemerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_pemerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pkcs7.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_pkcs7"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_pkcs7err.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_pkcs7err"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rand.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_rand"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_randerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_randerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rsa.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_rsa"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_rsaerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_rsaerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_sha.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_sha"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_srtp.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_srtp"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ssl.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ssl"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ssl3.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ssl3"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_sslerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_sslerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_storeerr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_storeerr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_tls1.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_tls1"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ts.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ts"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_tserr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_tserr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_txt_db.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_txt_db"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_ui.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_ui"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_uierr.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_uierr"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_whrlpool.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_whrlpool"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_x509"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509_vfy.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_x509_vfy"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509err.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_x509err"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\dynamic\IdOpenSSLHeaders_x509v3.pas"/>
+        <UnitName Value="IdOpenSSLHeaders_x509v3"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLConsts.pas"/>
+        <UnitName Value="IdOpenSSLConsts"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContext.pas"/>
+        <UnitName Value="IdOpenSSLContext"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContextClient.pas"/>
+        <UnitName Value="IdOpenSSLContextClient"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLContextServer.pas"/>
+        <UnitName Value="IdOpenSSLContextServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLExceptionResourcestrings.pas"/>
+        <UnitName Value="IdOpenSSLExceptionResourcestrings"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLExceptions.pas"/>
+        <UnitName Value="IdOpenSSLExceptions"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClient.pas"/>
+        <UnitName Value="IdOpenSSLIOHandlerClient"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClientBase.pas"/>
+        <UnitName Value="IdOpenSSLIOHandlerClientBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerClientServer.pas"/>
+        <UnitName Value="IdOpenSSLIOHandlerClientServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLIOHandlerServer.pas"/>
+        <UnitName Value="IdOpenSSLIOHandlerServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLLoader.pas"/>
+        <UnitName Value="IdOpenSSLLoader"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptions.pas"/>
+        <UnitName Value="IdOpenSSLOptions"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptionsClient.pas"/>
+        <UnitName Value="IdOpenSSLOptionsClient"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLOptionsServer.pas"/>
+        <UnitName Value="IdOpenSSLOptionsServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLPersistent.pas"/>
+        <UnitName Value="IdOpenSSLPersistent"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocket.pas"/>
+        <UnitName Value="IdOpenSSLSocket"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocketClient.pas"/>
+        <UnitName Value="IdOpenSSLSocketClient"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLSocketServer.pas"/>
+        <UnitName Value="IdOpenSSLSocketServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLTypes.pas"/>
+        <UnitName Value="IdOpenSSLTypes"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLUtils.pas"/>
+        <UnitName Value="IdOpenSSLUtils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLVersion.pas"/>
+        <UnitName Value="IdOpenSSLVersion"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\OpenSSL\IdOpenSSLX509.pas"/>
+        <UnitName Value="IdOpenSSLX509"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdFTP.pas"/>
+        <UnitName Value="IdFTP"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHTTP.pas"/>
+        <UnitName Value="IdHTTP"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdCustomHTTPServer.pas"/>
+        <UnitName Value="IdCustomHTTPServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdHTTPServer.pas"/>
+        <UnitName Value="IdHTTPServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdTelnet.pas"/>
+        <UnitName Value="IdTelnet"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\System\IdStream.pas"/>
+        <UnitName Value="IdStream"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdSMTP.pas"/>
+        <UnitName Value="IdSMTP"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdCompressorZLib.pas"/>
+        <UnitName Value="IdCompressorZLib"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Core\IdScheduler.pas"/>
+        <UnitName Value="IdScheduler"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Core\IdSchedulerOfThread.pas"/>
+        <UnitName Value="IdSchedulerOfThread"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Core\IdSchedulerOfThreadPool.pas"/>
+        <UnitName Value="IdSchedulerOfThreadPool"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdPOP3.pas"/>
+        <UnitName Value="IdPOP3"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdMessage.pas"/>
+        <UnitName Value="IdMessage"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdMessageParts.pas"/>
+        <UnitName Value="IdMessageParts"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdExplicitTLSClientServerBase.pas"/>
+        <UnitName Value="IdExplicitTLSClientServerBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdTelnetServer.pas"/>
+        <UnitName Value="IdTelnetServer"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_base.pas"/>
+        <UnitName Value="fsl_base"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_collections.pas"/>
+        <UnitName Value="fsl_collections"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_comparisons.pas"/>
+        <UnitName Value="fsl_comparisons"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_crypto.pas"/>
+        <UnitName Value="fsl_crypto"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_fetcher.pas"/>
+        <UnitName Value="fsl_fetcher"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_fpc.pas"/>
+        <UnitName Value="fsl_fpc"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_graphql.pas"/>
+        <UnitName Value="fsl_graphql"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_html.pas"/>
+        <UnitName Value="fsl_html"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_http.pas"/>
+        <UnitName Value="fsl_http"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_java_jni.pas"/>
+        <UnitName Value="fsl_java_jni"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_java_runtime.pas"/>
+        <UnitName Value="fsl_java_runtime"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_java_strings.pas"/>
+        <UnitName Value="fsl_java_strings"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_java_utilities.pas"/>
+        <UnitName Value="fsl_java_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_java_wrapper.pas"/>
+        <UnitName Value="fsl_java_wrapper"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_javascript.pas"/>
+        <UnitName Value="fsl_javascript"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_json.pas"/>
+        <UnitName Value="fsl_json"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_lang.pas"/>
+        <UnitName Value="fsl_lang"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_logging.pas"/>
+        <UnitName Value="fsl_logging"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_msxml.pas"/>
+        <UnitName Value="fsl_msxml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_npm.pas"/>
+        <UnitName Value="fsl_npm"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_npm_cache.pas"/>
+        <UnitName Value="fsl_npm_cache"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_npm_client.pas"/>
+        <UnitName Value="fsl_npm_client"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_oauth.pas"/>
+        <UnitName Value="fsl_oauth"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_openssl.pas"/>
+        <UnitName Value="fsl_openssl"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_rdf.pas"/>
+        <UnitName Value="fsl_rdf"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_scim.pas"/>
+        <UnitName Value="fsl_scim"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_scrypt.pas"/>
+        <UnitName Value="fsl_scrypt"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_service.pas"/>
+        <UnitName Value="fsl_service"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_service_win.pas"/>
+        <UnitName Value="fsl_service_win"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_shell.pas"/>
+        <UnitName Value="fsl_shell"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_stream.pas"/>
+        <UnitName Value="fsl_stream"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_threads.pas"/>
+        <UnitName Value="fsl_threads"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_turtle.pas"/>
+        <UnitName Value="fsl_turtle"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_twilio.pas"/>
+        <UnitName Value="fsl_twilio"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_utilities.pas"/>
+        <UnitName Value="fsl_utilities"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_websocket.pas"/>
+        <UnitName Value="fsl_websocket"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_wininet.pas"/>
+        <UnitName Value="fsl_wininet"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_xml.pas"/>
+        <UnitName Value="fsl_xml"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_ucum.pas"/>
+        <UnitName Value="fsl_ucum"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Core\IdLogDebug.pas"/>
+        <UnitName Value="IdLogDebug"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\Indy10\Protocols\IdServerInterceptLogFile.pas"/>
+        <UnitName Value="IdServerInterceptLogFile"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_htmlgen.pas"/>
+        <UnitName Value="fsl_htmlgen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
+        <UnitName Value="FastMM4"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="MarkdownEngine"/>
+      </Item>
+      <Item>
+        <PackageName Value="PascalTZ"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

@@ -101,13 +101,13 @@ uses
   {$ENDIF}
   {$IFDEF UNIX}
     {$IFDEF USE_VCL_POSIX}
-	{
-	IMPORTANT!!!
-	
-	The new Posix units have platform specific stuff.  Since this code and 
-	the definitions are not intented to be compiled in non-Unix-like operating
-	systems, platform warnings are not going to be too helpful.
-	}
+  {
+  IMPORTANT!!!
+  
+  The new Posix units have platform specific stuff.  Since this code and 
+  the definitions are not intented to be compiled in non-Unix-like operating
+  systems, platform warnings are not going to be too helpful.
+  }
       {$I IdSymbolPlatformOff.inc}
       IdVCLPosixSupplemental,
       Posix.Errno,Posix.NetDB, Posix.NetinetIn, Posix.SysSocket;
@@ -392,7 +392,7 @@ const
   Id_SO_DONTROUTE        =  SO_DONTROUTE;
   Id_SO_ERROR            =  SO_ERROR;
   Id_SO_KEEPALIVE        =  SO_KEEPALIVE;
-  Id_SO_LINGER	         =  SO_LINGER;
+  Id_SO_LINGER           =  SO_LINGER;
   Id_SO_OOBINLINE        =  SO_OOBINLINE;
   Id_SO_RCVBUF           =  SO_RCVBUF;
   Id_SO_REUSEADDR        =  SO_REUSEADDR;
@@ -537,15 +537,15 @@ SocketOptionName.UseLoopback;//  Bypass hardware when possible.
   Id_SD_Both = 2{SHUT_RDWR};
   //
   //Temp defines.  They should be in Delphi's Posix.Errno.pas
-  ESOCKTNOSUPPORT	= 44;		//* Socket type not supported */
+  ESOCKTNOSUPPORT  = 44;    //* Socket type not supported */
   {$EXTERNALSYM ESOCKTNOSUPPORT}
-  EPFNOSUPPORT = 46;		//* Protocol family not supported */
+  EPFNOSUPPORT = 46;    //* Protocol family not supported */
   {$EXTERNALSYM EPFNOSUPPORT}
-  ESHUTDOWN = 58;		//* Can't send after socket shutdown */
+  ESHUTDOWN = 58;    //* Can't send after socket shutdown */
   {$EXTERNALSYM ESHUTDOWN}
-  ETOOMANYREFS = 59;		//* Too many references: can't splice */
+  ETOOMANYREFS = 59;    //* Too many references: can't splice */
   {$EXTERNALSYM ETOOMANYREFS}
-  EHOSTDOWN = 64;		//* Host is down */
+  EHOSTDOWN = 64;    //* Host is down */
   {$EXTERNALSYM EHOSTDOWN}
   //
   Id_WSAEINTR           = EINTR;

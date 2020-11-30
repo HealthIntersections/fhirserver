@@ -33,7 +33,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FHIR.Npp.Form, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Utilities,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FHIR.Npp.Form, Vcl.StdCtrls, Vcl.ExtCtrls, fsl_utilities,
   Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage, FHIR.Npp.Base, shellapi;
 
 type

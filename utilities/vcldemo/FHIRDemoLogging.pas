@@ -41,9 +41,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Logging,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Smart.Utilities,
-  FHIR.Version.Types, FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Utilities;
+  fsl_utilities, fsl_json, fsl_logging,
+  fhir_objects,  fhir_oauth, fhir_client, fhir_factory;
 
 type
   TLoggingService = class abstract
@@ -61,53 +60,53 @@ type
 
     procedure recordLogin; virtual;
     procedure recordLogout; virtual;
-    procedure recordResourceReadSuccess(logId : String; resourceType : TFhirResourceType; id : string; r : TFHIRResource); virtual;
-    procedure recordResourceReadFail(logId : String; resourceType : TFhirResourceType; id : string; e : exception = nil); virtual;
-    procedure recordResourceSearchSuccess(logId : String; resourceType : TFhirResourceType; params : TStringList; bnd : TFHIRBundle); virtual;
-    procedure recordResourceSearchFail(logId : String; resourceType : TFhirResourceType; params : TStringList; e : exception = nil); virtual;
+    procedure recordResourceReadSuccess(logId : String; resourceType : String; id : string; r : TFHIRResourceV); virtual;
+    procedure recordResourceReadFail(logId : String; resourceType : String; id : string; e : exception = nil); virtual;
+    procedure recordResourceSearchSuccess(logId : String; resourceType : String; params : TStringList; bnd : TFHIRResourceV); virtual;
+    procedure recordResourceSearchFail(logId : String; resourceType : String; params : TStringList; e : exception = nil); virtual;
   end;
 
   TDemoHttpLogger = class (TFHIRClientLogger)
   private
     FLog : TLogger;
-    function toChars(s : TStream) : string;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream); override;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TBytes); override;
   end;
 
   TFileLoggingService = class (TLoggingService)
   private
     FFile : TStream;
     procedure log(s : String);
+    function resourceToString(r : TFHIRResourceV) : String;
   public
     constructor Create(filename : String);
     destructor Destroy; override;
 
     procedure recordLogin; override;
     procedure recordLogout; override;
-    procedure recordResourceReadSuccess(logId : String; resourceType : TFhirResourceType; id : string; r : TFHIRResource); override;
-    procedure recordResourceReadFail(logId : String; resourceType : TFhirResourceType; id : string; e : exception = nil); override;
-    procedure recordResourceSearchSuccess(logId : String; resourceType : TFhirResourceType; params : TStringList; bnd : TFHIRBundle); override;
-    procedure recordResourceSearchFail(logId : String; resourceType : TFhirResourceType; params : TStringList; e : exception = nil); override;
+    procedure recordResourceReadSuccess(logId : String; resourceType : String; id : string; r : TFHIRResourceV); override;
+    procedure recordResourceReadFail(logId : String; resourceType : String; id : string; e : exception = nil); override;
+    procedure recordResourceSearchSuccess(logId : String; resourceType : String; params : TStringList; bnd : TFHIRResourceV); override;
+    procedure recordResourceSearchFail(logId : String; resourceType : String; params : TStringList; e : exception = nil); override;
   end;
 
   TAuditEventLoggingService = class (TLoggingService)
   private
-    FClient : TFhirClient;
-    procedure log(ae : TFhirAuditEvent);
+    FClient : TFhirClientV;
+//    procedure log(ae : TFhirAuditEvent);
   public
-    constructor Create(client : TFHIRClient);
+    constructor Create(client : TFHIRClientV);
     destructor Destroy; override;
 
     procedure recordLogin; override;
     procedure recordLogout; override;
-    procedure recordResourceReadSuccess(logId : String; resourceType : TFhirResourceType; id : string; r : TFHIRResource); override;
-    procedure recordResourceReadFail(logId : String; resourceType : TFhirResourceType; id : string; e : exception = nil); override;
-    procedure recordResourceSearchSuccess(logId : String; resourceType : TFhirResourceType; params : TStringList; bnd : TFHIRBundle); override;
-    procedure recordResourceSearchFail(logId : String; resourceType : TFhirResourceType; params : TStringList; e : exception = nil); override;
+    procedure recordResourceReadSuccess(logId : String; resourceType : String; id : string; r : TFHIRResourceV); override;
+    procedure recordResourceReadFail(logId : String; resourceType : String; id : string; e : exception = nil); override;
+    procedure recordResourceSearchSuccess(logId : String; resourceType : String; params : TStringList; bnd : TFHIRResourceV); override;
+    procedure recordResourceSearchFail(logId : String; resourceType : String; params : TStringList; e : exception = nil); override;
   end;
 
 implementation
@@ -121,22 +120,22 @@ begin
   inherited;
 end;
 
-procedure TLoggingService.recordResourceReadFail(logId : String; resourceType: TFhirResourceType; id: string; e: exception);
+procedure TLoggingService.recordResourceReadFail(logId : String; resourceType: String; id: string; e: exception);
 begin
   raise EFHIRException.create('Need to override recordResourceReadFail in ' + className);
 end;
 
-procedure TLoggingService.recordResourceReadSuccess(logId : String; resourceType: TFhirResourceType; id: string; r : TFHIRResource);
+procedure TLoggingService.recordResourceReadSuccess(logId : String; resourceType: String; id: string; r : TFHIRResourceV);
 begin
   raise EFHIRException.create('Need to override recordResourceReadSuccess in ' + className);
 end;
 
-procedure TLoggingService.recordResourceSearchFail(logId : String; resourceType: TFhirResourceType; params: TStringList; e : exception = nil);
+procedure TLoggingService.recordResourceSearchFail(logId : String; resourceType: String; params: TStringList; e : exception = nil);
 begin
   raise EFHIRException.create('Need to override recordResourceSearchFail in ' + className);
 end;
 
-procedure TLoggingService.recordResourceSearchSuccess(logId : String; resourceType: TFhirResourceType; params: TStringList; bnd: TFHIRBundle);
+procedure TLoggingService.recordResourceSearchSuccess(logId : String; resourceType: String; params: TStringList; bnd: TFHIRResourceV);
 begin
   raise EFHIRException.create('Need to override recordResourceSearchSuccess in ' + className);
 end;
@@ -204,42 +203,47 @@ begin
   FFile.Write(b[0], length(b));
 end;
 
-procedure TFileLoggingService.recordResourceReadFail(logId : String; resourceType: TFhirResourceType; id: string; e : exception);
+procedure TFileLoggingService.recordResourceReadFail(logId : String; resourceType: String; id: string; e : exception);
 begin
   if openIdToken = nil then
-    log('Read Resource ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '/' + id + ': error = ' + e.Message + ', id = ' + logid)
+    log('Read Resource ' + Server.fhirEndpoint + '/' + resourceType + '/' + id + ': error = ' + e.Message + ', id = ' + logid)
   else
-    log('Read Resource ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '/' + id + ' by ' + openIdToken.id + ': error = ' + e.Message + ', id = ' + logid)
+    log('Read Resource ' + Server.fhirEndpoint + '/' + resourceType + '/' + id + ' by ' + openIdToken.id + ': error = ' + e.Message + ', id = ' + logid)
 end;
 
-procedure TFileLoggingService.recordResourceReadSuccess(logId : String; resourceType: TFhirResourceType; id: string; r: TFHIRResource);
+procedure TFileLoggingService.recordResourceReadSuccess(logId : String; resourceType: String; id: string; r: TFHIRResourceV);
 begin
   if openIdToken = nil then
-    log('Read Resource ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '/' + id + ', id = ' + logid)
+    log('Read Resource ' + Server.fhirEndpoint + '/' + resourceType + '/' + id + ', id = ' + logid)
   else
-    log('Read Resource ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '/' + id + ' by ' + openIdToken.id + ', id = ' + logid);
+    log('Read Resource ' + Server.fhirEndpoint + '/' + resourceType + '/' + id + ' by ' + openIdToken.id + ', id = ' + logid);
   log('== Content: ==');
-  log(resourceToString(r, ffJson));
+  log(resourceToString(r));
   log('===============');
 end;
 
-procedure TFileLoggingService.recordResourceSearchFail(logId : String; resourceType: TFhirResourceType; params: TStringList; e : exception);
+procedure TFileLoggingService.recordResourceSearchFail(logId : String; resourceType: String; params: TStringList; e : exception);
 begin
   if openIdToken = nil then
-    log('Search Resources ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '?' + encodeParams(params) + ': error = ' + e.Message + ', id = ' + logid)
+    log('Search Resources ' + Server.fhirEndpoint + '/' + resourceType + '?' + encodeParams(params) + ': error = ' + e.Message + ', id = ' + logid)
   else
-    log('Search Resources ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '?' + encodeParams(params) + ' by ' + openIdToken.id + ': error = ' + e.Message + ', id = ' + logid)
+    log('Search Resources ' + Server.fhirEndpoint + '/' + resourceType + '?' + encodeParams(params) + ' by ' + openIdToken.id + ': error = ' + e.Message + ', id = ' + logid)
 end;
 
-procedure TFileLoggingService.recordResourceSearchSuccess(logId : String; resourceType: TFhirResourceType; params: TStringList; bnd: TFHIRBundle);
+procedure TFileLoggingService.recordResourceSearchSuccess(logId : String; resourceType: String; params: TStringList; bnd: TFHIRResourceV);
 begin
   if openIdToken = nil then
-    log('Search Resources ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '?' + encodeParams(params) + ', id = ' + logid)
+    log('Search Resources ' + Server.fhirEndpoint + '/' + resourceType + '?' + encodeParams(params) + ', id = ' + logid)
   else
-    log('Search Resources ' + Server.fhirEndpoint + '/' + CODES_TFHIRResourceType[resourceType] + '?' + encodeParams(params) + ' by ' + openIdToken.id + ', id = ' + logid);
+    log('Search Resources ' + Server.fhirEndpoint + '/' + resourceType + '?' + encodeParams(params) + ' by ' + openIdToken.id + ', id = ' + logid);
   log('== Content: ==');
-  log(resourceToString(bnd, ffJson));
+  log(resourceToString(bnd));
   log('===============');
+end;
+
+function TFileLoggingService.resourceToString(r: TFHIRResourceV): String;
+begin
+  result := 'todo';
 end;
 
 procedure TFileLoggingService.recordLogin;
@@ -263,7 +267,7 @@ end;
 
 { TAuditEventLoggingService }
 
-constructor TAuditEventLoggingService.Create(client: TFHIRClient);
+constructor TAuditEventLoggingService.Create(client: TFHIRClientV);
 begin
   inherited Create;
   FClient := client;
@@ -275,343 +279,343 @@ begin
   inherited;
 end;
 
-procedure TAuditEventLoggingService.log(ae: TFhirAuditEvent);
-var
-  id : string;
+//procedure TAuditEventLoggingService.log(ae: TFhirAuditEvent);
+//var
+//  id : string;
+//begin
+//  FClient.createResource(ae, id);
+//end;
+//
+procedure TAuditEventLoggingService.recordResourceReadFail(logId : String; resourceType: String; id: string; e : exception);
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
+//  o : TFhirAuditEventObject;
 begin
-  FClient.createResource(ae, id);
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := 'rest';
+//    C.system := 'http://hl7.org/fhir/security-event-type';
+//    C.Display := 'Restful Operation';
+//    C := se.event.subtypeList.append;
+//    C.code := 'read';
+//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.Display := 'Read';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome8;
+//    se.event.outcomeDesc := e.Message;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.event.id := logId;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    // participant - the web browser / user proxy
+//    if openIdToken = nil then
+//    begin
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//
+//    o := se.object_List.Append;
+//    o.reference := TFhirReference.create;
+//    o.reference.reference := resourceType + '/' + id;
+//    o.type_ := TFhirCoding.Create;
+//    o.type_.system := 'http://hl7.org/fhir/security-source-type';
+//    o.type_.code := '2';
+//    o.lifecycle := TFhirCoding.Create;
+//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.code := '6';
+//
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
-procedure TAuditEventLoggingService.recordResourceReadFail(logId : String; resourceType: TFhirResourceType; id: string; e : exception);
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
-  o : TFhirAuditEventObject;
+
+procedure TAuditEventLoggingService.recordResourceReadSuccess(logId : String; resourceType: String; id: string; r: TFHIRResourceV);
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
+//  o : TFhirAuditEventObject;
 begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := 'rest';
-    C.system := 'http://hl7.org/fhir/security-event-type';
-    C.Display := 'Restful Operation';
-    C := se.event.subtypeList.append;
-    C.code := 'read';
-    C.system := 'http://hl7.org/fhir/restful-operation';
-    C.Display := 'Read';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome8;
-    se.event.outcomeDesc := e.Message;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.event.id := logId;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    // participant - the web browser / user proxy
-    if openIdToken = nil then
-    begin
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-
-    o := se.object_List.Append;
-    o.reference := TFhirReference.create;
-    o.reference.reference := CODES_TFhirResourceType[resourceType] + '/' + id;
-    o.type_ := TFhirCoding.Create;
-    o.type_.system := 'http://hl7.org/fhir/security-source-type';
-    o.type_.code := '2';
-    o.lifecycle := TFhirCoding.Create;
-    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
-    o.lifecycle.code := '6';
-
-    log(se);
-  finally
-    se.free;
-  end;
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := 'rest';
+//    C.system := 'http://hl7.org/fhir/security-event-type';
+//    C.Display := 'Restful Operation';
+//    C := se.event.subtypeList.append;
+//    C.code := 'read';
+//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.Display := 'Read';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome0;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.event.id := logId;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    if openIdToken = nil then
+//    begin
+//      // participant - the web browser / user proxy
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//
+//    o := se.object_List.Append;
+//    o.reference := TFhirReference.create;
+//    o.reference.reference := resourceType + '/' + id;
+//    o.type_ := TFhirCoding.Create;
+//    o.type_.system := 'http://hl7.org/fhir/security-source-type';
+//    o.type_.code := '2';
+//    o.lifecycle := TFhirCoding.Create;
+//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.code := '6';
+//    o.detailList.Append.value := resourceToBytes(r, ffJson);
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
-
-procedure TAuditEventLoggingService.recordResourceReadSuccess(logId : String; resourceType: TFhirResourceType; id: string; r: TFHIRResource);
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
-  o : TFhirAuditEventObject;
+procedure TAuditEventLoggingService.recordResourceSearchFail(logId : String; resourceType: String; params: TStringList; e : exception);
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
+//  o : TFhirAuditEventObject;
 begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := 'rest';
-    C.system := 'http://hl7.org/fhir/security-event-type';
-    C.Display := 'Restful Operation';
-    C := se.event.subtypeList.append;
-    C.code := 'read';
-    C.system := 'http://hl7.org/fhir/restful-operation';
-    C.Display := 'Read';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.event.id := logId;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    if openIdToken = nil then
-    begin
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-
-    o := se.object_List.Append;
-    o.reference := TFhirReference.create;
-    o.reference.reference := CODES_TFhirResourceType[resourceType] + '/' + id;
-    o.type_ := TFhirCoding.Create;
-    o.type_.system := 'http://hl7.org/fhir/security-source-type';
-    o.type_.code := '2';
-    o.lifecycle := TFhirCoding.Create;
-    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
-    o.lifecycle.code := '6';
-    o.detailList.Append.value := resourceToBytes(r, ffJson);
-    log(se);
-  finally
-    se.free;
-  end;
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := 'rest';
+//    C.system := 'http://hl7.org/fhir/security-event-type';
+//    C.Display := 'Restful Operation';
+//    C := se.event.subtypeList.append;
+//    C.code := 'read';
+//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.Display := 'Read';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome8;
+//    se.event.outcomeDesc := e.Message;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.event.id := logId;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    if openIdToken = nil then
+//    begin
+//      // participant - the web browser / user proxy
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//
+//    o := se.object_List.Append;
+//    o.reference := TFhirReference.create;
+//    o.reference.reference := resourceType;
+//    o.type_ := TFhirCoding.Create;
+//    o.type_.system := 'http://hl7.org/fhir/security-source-type';
+//    o.type_.code := '2';
+//    o.lifecycle := TFhirCoding.Create;
+//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.code := '6';
+//    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
-procedure TAuditEventLoggingService.recordResourceSearchFail(logId : String; resourceType: TFhirResourceType; params: TStringList; e : exception);
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
-  o : TFhirAuditEventObject;
+procedure TAuditEventLoggingService.recordResourceSearchSuccess(logId : String; resourceType: String; params: TStringList; bnd: TFHIRResourceV);
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
+//  o : TFhirAuditEventObject;
 begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := 'rest';
-    C.system := 'http://hl7.org/fhir/security-event-type';
-    C.Display := 'Restful Operation';
-    C := se.event.subtypeList.append;
-    C.code := 'read';
-    C.system := 'http://hl7.org/fhir/restful-operation';
-    C.Display := 'Read';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome8;
-    se.event.outcomeDesc := e.Message;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.event.id := logId;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    if openIdToken = nil then
-    begin
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-
-    o := se.object_List.Append;
-    o.reference := TFhirReference.create;
-    o.reference.reference := CODES_TFhirResourceType[resourceType];
-    o.type_ := TFhirCoding.Create;
-    o.type_.system := 'http://hl7.org/fhir/security-source-type';
-    o.type_.code := '2';
-    o.lifecycle := TFhirCoding.Create;
-    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
-    o.lifecycle.code := '6';
-    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
-    log(se);
-  finally
-    se.free;
-  end;
-end;
-
-procedure TAuditEventLoggingService.recordResourceSearchSuccess(logId : String; resourceType: TFhirResourceType; params: TStringList; bnd: TFHIRBundle);
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
-  o : TFhirAuditEventObject;
-begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := 'rest';
-    C.system := 'http://hl7.org/fhir/security-event-type';
-    C.Display := 'Restful Operation';
-    C := se.event.subtypeList.append;
-    C.code := 'read';
-    C.system := 'http://hl7.org/fhir/restful-operation';
-    C.Display := 'Read';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.event.id := logId;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    if openIdToken = nil then
-    begin
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-
-    o := se.object_List.Append;
-    o.reference := TFhirReference.create;
-    o.reference.reference := CODES_TFhirResourceType[resourceType];
-    o.type_ := TFhirCoding.Create;
-    o.type_.system := 'http://hl7.org/fhir/security-source-type';
-    o.type_.code := '2';
-    o.lifecycle := TFhirCoding.Create;
-    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
-    o.lifecycle.code := '6';
-    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
-    o.detailList.Append.value := resourceToBytes(bnd, ffJson);
-    log(se);
-  finally
-    se.free;
-  end;
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := 'rest';
+//    C.system := 'http://hl7.org/fhir/security-event-type';
+//    C.Display := 'Restful Operation';
+//    C := se.event.subtypeList.append;
+//    C.code := 'read';
+//    C.system := 'http://hl7.org/fhir/restful-operation';
+//    C.Display := 'Read';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome0;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.event.id := logId;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    if openIdToken = nil then
+//    begin
+//      // participant - the web browser / user proxy
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//
+//    o := se.object_List.Append;
+//    o.reference := TFhirReference.create;
+//    o.reference.reference := resourceType;
+//    o.type_ := TFhirCoding.Create;
+//    o.type_.system := 'http://hl7.org/fhir/security-source-type';
+//    o.type_.code := '2';
+//    o.lifecycle := TFhirCoding.Create;
+//    o.lifecycle.system := 'http://hl7.org/fhir/object-lifecycle';
+//    o.lifecycle.code := '6';
+//    o.query := TEncoding.UTF8.GetBytes(encodeParams(params));
+//    o.detailList.Append.value := resourceToBytes(bnd, ffJson);
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
 procedure TAuditEventLoggingService.recordLogin;
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
 begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := '110114';
-    C.system := 'http://nema.org/dicom/dcid';
-    C.Display := 'User Authentication';
-    C := se.event.subtypeList.append;
-    C.code := '110122';
-    C.system := 'http://nema.org/dicom/dcid';
-    C.Display := 'Login';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    if openIdToken = nil then
-    begin
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-    log(se);
-  finally
-    se.free;
-  end;
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := '110114';
+//    C.system := 'http://nema.org/dicom/dcid';
+//    C.Display := 'User Authentication';
+//    C := se.event.subtypeList.append;
+//    C.code := '110122';
+//    C.system := 'http://nema.org/dicom/dcid';
+//    C.Display := 'Login';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome0;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    if openIdToken = nil then
+//    begin
+//      // participant - the web browser / user proxy
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
 procedure TAuditEventLoggingService.recordLogout;
-var
-  se: TFhirAuditEvent;
-  C: TFHIRCoding;
-  p: TFhirAuditEventParticipant;
+//var
+//  se: TFhirAuditEvent;
+//  C: TFHIRCoding;
+//  p: TFhirAuditEventParticipant;
 begin
-  se := TFhirAuditEvent.Create;
-  try
-    se.event := TFhirAuditEventEvent.Create;
-    se.event.type_ := TFHIRCoding.Create;
-    C := se.event.type_;
-    C.code := '110114';
-    C.system := 'http://nema.org/dicom/dcid';
-    C.Display := 'User Authentication';
-    C := se.event.subtypeList.append;
-    C.code := '110123';
-    C.system := 'http://nema.org/dicom/dcid';
-    C.Display := 'Logout';
-    se.event.action := AuditEventActionE;
-    se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := TFslDateTime.makeUTC;
-    se.source := TFhirAuditEventSource.Create;
-    se.source.site := Server.name;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := Server.fhirEndpoint;
-    C := se.source.type_List.append;
-    C.code := '3';
-    C.Display := 'Web Server';
-    C.system := 'http://hl7.org/fhir/security-source-type';
-
-    if openIdToken = nil then
-    begin
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.userId := TFhirIdentifier.Create;
-      p.userId.system := Server.fhirEndpoint;
-      p.userId.value := openIdToken.id;
-      p.name := openIdToken.name;
-    end;
-    log(se);
-  finally
-    se.free;
-  end;
+//  se := TFhirAuditEvent.Create;
+//  try
+//    se.event := TFhirAuditEventEvent.Create;
+//    se.event.type_ := TFHIRCoding.Create;
+//    C := se.event.type_;
+//    C.code := '110114';
+//    C.system := 'http://nema.org/dicom/dcid';
+//    C.Display := 'User Authentication';
+//    C := se.event.subtypeList.append;
+//    C.code := '110123';
+//    C.system := 'http://nema.org/dicom/dcid';
+//    C.Display := 'Logout';
+//    se.event.action := AuditEventActionE;
+//    se.event.outcome := AuditEventOutcome0;
+//    se.event.dateTime := TFslDateTime.makeUTC;
+//    se.source := TFhirAuditEventSource.Create;
+//    se.source.site := Server.name;
+//    se.source.identifier := TFhirIdentifier.Create;
+//    se.source.identifier.system := 'urn:ietf:rfc:3986';
+//    se.source.identifier.value := Server.fhirEndpoint;
+//    C := se.source.type_List.append;
+//    C.code := '3';
+//    C.Display := 'Web Server';
+//    C.system := 'http://hl7.org/fhir/security-source-type';
+//
+//    if openIdToken = nil then
+//    begin
+//      // participant - the web browser / user proxy
+//      p := se.participantList.append;
+//      p.userId := TFhirIdentifier.Create;
+//      p.userId.system := Server.fhirEndpoint;
+//      p.userId.value := openIdToken.id;
+//      p.name := openIdToken.name;
+//    end;
+//    log(se);
+//  finally
+//    se.free;
+//  end;
 end;
 
 { TDemoHttpLogger }
@@ -632,29 +636,24 @@ begin
   inherited;
 end;
 
-procedure TDemoHttpLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
+procedure TDemoHttpLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes);
 begin
   FLog.WriteToLog('=================================='#13#10);
   FLog.WriteToLog(verb+' '+url+' HTTP/1.0'#13#10);
   FLog.WriteToLog(requestHeaders+#13#10);
   if request <> nil then
-    Flog.WriteToLog(toChars(request)+#13#10);
+  begin
+    Flog.WriteToLog(request);
+    Flog.WriteToLog(#13#10);
+  end;
   FLog.WriteToLog('----------------------------------'#13#10);
   FLog.WriteToLog(status+' HTTP/1.0'#13#10);
   FLog.WriteToLog(responseHeaders+#13#10);
   if response <> nil then
-    Flog.WriteToLog(toChars(response)+#13#10);
-end;
-
-function TDemoHttpLogger.toChars(s: TStream): string;
-var
-  b : TBytes;
-begin
-  s.Position := 0;
-  setLength(b, s.Size);
-  s.Read(b[0], s.Size);
-  s.Position := 0;
-  result := TEncoding.ANSI.GetString(b);
+  begin
+    Flog.WriteToLog(response);
+    Flog.WriteToLog(#13#10);
+  end;
 end;
 
 end.

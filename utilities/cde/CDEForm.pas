@@ -39,16 +39,17 @@ Uses
 
   ScintInt, ScintEdit, ScintCDA,
 
-  FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.Utilities, FHIR.Support.Shell, FHIR.Support.Graphics,
-  FHIR.Dicom.Dictionary,
-  FHIR.Cda.Documents, FHIR.Cda.Objects,
+  fsl_stream, fsl_utilities, fsl_shell,
+  dicom_Dictionary,
+  cda_documents, cda_objects,
 
-  FHIR.Uix.Forms, FHIR.Uix.Controls,
+  fui_vclx_forms, fui_vclx_controls,
+  wp_graphics, wp_printing_win, wp_clipboard,
 
-  FHIR.WP.Document, FHIR.WP.Builder, FHIR.WP.Control, FHIR.WP.Toolbar, FHIR.WP.Format, FHIR.WP.Dialogs,
-  FHIR.WP.Types, FHIR.WP.Definers, FHIR.WP.Renderer, FHIR.WP.Widgets, FHIR.WP.Snomed, FHIR.WP.Settings,
+  wp_document, FHIR.WP.Builder, FHIR.WP.Control, FHIR.WP.Toolbar, wp_format, FHIR.WP.Dialogs,
+  wp_types, wp_definers, FHIR.WP.Renderer, FHIR.WP.Widgets, FHIR.WP.Snomed, FHIR.WP.Settings,
   {$IFDEF ADDICT} FHIR.WP.Addict, {$ENDIF}
-  FHIR.WP.Working, FHIR.WP.V2Ft,
+  wp_working, FHIR.WP.V2Ft,
 
   CDEOptions, OidFetcher, CdaheaderForm;
 
@@ -435,8 +436,8 @@ var
 Implementation
 
 Uses
-  FHIR.Support.Collections,
-  FHIR.Uix.Base,
+  fsl_collections,
+  fui_vclx_Base,
   FHIR.WP.FieldDefiners, FHIR.WP.AnnotationDefiners;
 
 
@@ -1047,7 +1048,6 @@ Begin
   edtSource.Font.Size := 10;
   edtSource.ShowHint := True;
 
-  edtSource.Styler := sciCDA;
   edtSource.PopupMenu := TWordProcessorFormMemoPopupMenu.Create(Self);
   edtSource.OnChange := SourceChange;
   // sciMemo.OnCharAdded := MemoCharAdded;
@@ -1060,6 +1060,7 @@ Begin
   // sciMemo.OnUpdateUI := MemoUpdateUI;
   edtSource.parent := pnlViewSource;
   edtSource.LineNumbers := True;
+  edtSource.Styler := sciCDA;
 
 {$ELSE}
   synXml := TSynXMLSyn.Create(pgWP);

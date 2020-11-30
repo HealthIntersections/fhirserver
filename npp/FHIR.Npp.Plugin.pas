@@ -68,15 +68,15 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Web.WinInet, FHIR.Support.MXml, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Common,
+  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_wininet, fsl_xml, fsl_json,
+  fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_common, 
+  fhir4_constants, fhir4_types, fhir4_resources, fhir4_common,
   FHIR.Npp.Context,
-  FHIR.Npp.Settings, FHIR.Npp.Validator, FHIR.Base.Xhtml,
-  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Npp.Version, FHIR.Npp.Utilities,
+  FHIR.Npp.Settings, FHIR.Npp.Validator, fhir_xhtml,
+  fhir_oauth, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Npp.Version, FHIR.Npp.Utilities,
   FHIR.Npp.Toolbox, FHIR.Npp.About, FHIR.Npp.Configuration, FHIR.Npp.Make, FHIR.Npp.Fetch, PathDialogForms, ValidationOutcomes, FHIR.Npp.CodeGen,
-  FHIR.Npm.Manager, FHIR.Npm.Cache,
-  FHIR.Npp.Visualiser, FHIR.Base.PathDebugger, FHIR.Npp.Welcome, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm, FHIR.Npp.SaveAs;
+  FHIR.Npm.Manager, fsl_npm_cache,
+  FHIR.Npp.Visualiser, FHIR.Base.PathDebugger, FHIR.Npp.Welcome, UpgradePrompt, fhir_diff, ResDisplayForm, FHIR.Npp.SaveAs;
 
 const
   INDIC_INFORMATION = 21;
@@ -200,7 +200,7 @@ type
     FUpgradeTask : integer;
 
     // Scintilla control
-    procedure setUpSquiggles;
+    Procedure SetUpSquiggles;
     procedure squiggle(level : integer; line, start, length : integer; annotation : boolean; message : String);
     procedure clearSquiggle(level : integer; line, start, length : integer);
 
@@ -320,9 +320,9 @@ implementation
 
 uses
   IdSSLOpenSSLHeaders,
-  FHIR.R2.Factory,
-  FHIR.R3.Factory,
-  FHIR.R4.Factory;
+  fhir2_factory,
+  fhir3_factory,
+  fhir4_factory;
 
 var
   ms : String;
@@ -2300,7 +2300,7 @@ procedure TBackgroundValidatorEngine.execute;
 var
   ctxt: TFHIRValidatorContext;
   val : TFHIRValidatorV;
-  op : FHIR.R4.Resources.TFhirOperationOutcomeIssue; // version doesn't matter
+  op : fhir4_resources.TFhirOperationOutcomeIssue; // version doesn't matter
 begin
 //  if not FNpp.waitForContext(input.Version, false) then
 //    exit;

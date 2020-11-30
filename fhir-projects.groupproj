@@ -1,0 +1,132 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="server\fhirserver.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\vcldemo\FhirVclDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="toolkit\FHIRToolkitR3.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="toolkit\FHIRToolkitR4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="transformer\FHIRTransformer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\cde\ClinicalDocumentEditor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\nppformats\formatUtils.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utilities\publisher\IGPublisher.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="fhirserver">
+        <MSBuild Projects="server\fhirserver.dproj"/>
+    </Target>
+    <Target Name="fhirserver:Clean">
+        <MSBuild Projects="server\fhirserver.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirserver:Make">
+        <MSBuild Projects="server\fhirserver.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FhirVclDemo">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj"/>
+    </Target>
+    <Target Name="FhirVclDemo:Clean">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FhirVclDemo:Make">
+        <MSBuild Projects="utilities\vcldemo\FhirVclDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRToolkitR3">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj"/>
+    </Target>
+    <Target Name="FHIRToolkitR3:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRToolkitR3:Make">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRToolkitR4">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj"/>
+    </Target>
+    <Target Name="FHIRToolkitR4:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRToolkitR4:Make">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRTransformer">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj"/>
+    </Target>
+    <Target Name="FHIRTransformer:Clean">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRTransformer:Make">
+        <MSBuild Projects="transformer\FHIRTransformer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor:Clean">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClinicalDocumentEditor:Make">
+        <MSBuild Projects="utilities\cde\ClinicalDocumentEditor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="formatUtils">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj"/>
+    </Target>
+    <Target Name="formatUtils:Clean">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="formatUtils:Make">
+        <MSBuild Projects="utilities\nppformats\formatUtils.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IGPublisher">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj"/>
+    </Target>
+    <Target Name="IGPublisher:Clean">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IGPublisher:Make">
+        <MSBuild Projects="utilities\publisher\IGPublisher.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="fhirserver;FhirVclDemo;FHIRToolkitR3;FHIRToolkitR4;FHIRTransformer;ClinicalDocumentEditor;formatUtils;fhirnpp;IGPublisher"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="fhirserver:Clean;FhirVclDemo:Clean;FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FHIRTransformer:Clean;ClinicalDocumentEditor:Clean;formatUtils:Clean;fhirnpp:Clean;IGPublisher:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="fhirserver:Make;FhirVclDemo:Make;FHIRToolkitR3:Make;FHIRToolkitR4:Make;FHIRTransformer:Make;ClinicalDocumentEditor:Make;formatUtils:Make;fhirnpp:Make;IGPublisher:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

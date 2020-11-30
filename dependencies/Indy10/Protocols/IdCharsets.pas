@@ -92,10 +92,10 @@ unit IdCharsets;
 
     Assigned MIB enum Numbers
     -------------------------
-    0-2		Reserved
-    3-999		Set By Standards Organizations
-    1000-1999	Unicode / 10646
-    2000-2999	Vendor
+    0-2    Reserved
+    3-999    Set By Standards Organizations
+    1000-1999  Unicode / 10646
+    2000-2999  Vendor
 
   The aliases that start with "cs" have been added for use with the
   IANA-CHARSET-MIB as originally defined in RFC3808, and as currently

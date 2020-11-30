@@ -34,8 +34,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
   FMX.Memo, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
   FMX.ListBox,
-  FHIR.Support.Base, FHIR.Ui.Fmx,
-  FHIR.Base.Objects, FHIR.Base.Lang,
+  fsl_base, FHIR.Ui.Fmx,
+  fhir_objects, 
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitUtilities, ListSelector;
 

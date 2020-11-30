@@ -31,8 +31,8 @@ Interface
 
 Uses
   Windows, Graphics,
-  FHIR.Support.Utilities,
-  FHIR.WP.Control, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Definers, FHIR.WP.Snomed, FHIR.WP.Icons;
+  fsl_utilities,
+  FHIR.WP.Control, wp_types, wp_document, wp_definers, FHIR.WP.Snomed, FHIR.WP.Icons;
 
 Type
   TWPAnnotationLinkedDefinitionProvider = Class (TWPAnnotationDefinitionProvider)

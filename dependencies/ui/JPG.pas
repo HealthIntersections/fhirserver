@@ -6,7 +6,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics,
-  FHIR.Support.Utilities;
+  fsl_utilities;
 
 type
   TJPGColorDepth = (jpgAuto, jpgGray, jpg8Bit, jpg24Bit);
@@ -74,7 +74,7 @@ const
   JMSG_STR_PARM_MAX = 80;
 
   JPOOL_PERMANENT = 0;  // lasts until master record is destroyed
-  JPOOL_IMAGE	    = 1;	 // lasts until done with image/datastream
+  JPOOL_IMAGE      = 1;   // lasts until done with image/datastream
 
 type
   JSAMPLE = byte;
@@ -113,19 +113,19 @@ type
 { Known color spaces. }
 
   J_COLOR_SPACE = (
-	JCS_UNKNOWN,            { error/unspecified }
-	JCS_GRAYSCALE,          { monochrome }
-	JCS_RGB,                { red/green/blue }
-	JCS_YCbCr,              { Y/Cb/Cr (also known as YUV) }
-	JCS_CMYK,               { C/M/Y/K }
-	JCS_YCCK                { Y/Cb/Cr/K }
+  JCS_UNKNOWN,            { error/unspecified }
+  JCS_GRAYSCALE,          { monochrome }
+  JCS_RGB,                { red/green/blue }
+  JCS_YCbCr,              { Y/Cb/Cr (also known as YUV) }
+  JCS_CMYK,               { C/M/Y/K }
+  JCS_YCCK                { Y/Cb/Cr/K }
                   );
 
 { DCT/IDCT algorithm options. }
   J_DCT_METHOD = (
-	JDCT_ISLOW,		{ slow but accurate integer algorithm }
-	JDCT_IFAST,		{ faster, less accurate integer method }
-	JDCT_FLOAT		{ floating-point: accurate, fast on fast HW (Pentium)}
+  JDCT_ISLOW,    { slow but accurate integer algorithm }
+  JDCT_IFAST,    { faster, less accurate integer method }
+  JDCT_FLOAT    { floating-point: accurate, fast on fast HW (Pentium)}
                  );
 
 { Dithering options for decompression. }
@@ -331,7 +331,7 @@ type
     progress_monitor : procedure(const cinfo : jpeg_common_struct);
     pass_counter : Integer;     { work units completed in this pass }
     pass_limit : Integer;       { total number of work units in this pass }
-    completed_passes : Integer;	{ passes completed so far }
+    completed_passes : Integer;  { passes completed so far }
     total_passes : Integer;     { total number of passes expected }
     // extra Delphi info, kann je nach Nutzer ein TJPGDecoder oder eine TJPGGraphic sein
     instance: TPersistent;       // zum Reinzwiebeln des Objekts bei Callbacks
@@ -541,7 +541,7 @@ type
     arith_dc_L : Array[0..NUM_ARITH_TBLS-1] of UINT8; { L values for DC arith-coding tables }
     arith_dc_U : Array[0..NUM_ARITH_TBLS-1] of UINT8; { U values for DC arith-coding tables }
     arith_ac_K : Array[0..NUM_ARITH_TBLS-1] of UINT8; { Kx values for AC arith-coding tables }
-    num_scans : Integer;		 { # of entries in scan_info array }
+    num_scans : Integer;     { # of entries in scan_info array }
     scan_info : Pointer;     { script for multi-scan file, or NIL }
     raw_data_in : LongBool;        { TRUE=caller supplies downsampled data }
     arith_code : LongBool;         { TRUE=arithmetic coding, FALSE=Huffman }

@@ -108,9 +108,9 @@ uses
 function CompareUInt16(const AWord1, AWord2 : UInt16) : Integer;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 {
-AWord1 > AWord2	> 0
-AWord1 < AWord2	< 0
-AWord1 = AWord2	= 0
+AWord1 > AWord2  > 0
+AWord1 < AWord2  < 0
+AWord1 = AWord2  = 0
 }
 begin
   if AWord1 > AWord2 then begin
@@ -125,9 +125,9 @@ end;
 function CompareUInt32(const ACard1, ACard2 : UInt32) : Integer;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 {
-ACard1 > ACard2	> 0
-ACard1 < ACard2	< 0
-ACard1 = ACard2	= 0
+ACard1 > ACard2  > 0
+ACard1 < ACard2  < 0
+ACard1 = ACard2  = 0
 }
 begin
   if ACard1 > ACard2 then begin
@@ -147,9 +147,9 @@ var
   i : Integer;
 {
 Note that the IP address in the object is S1.
-S1 > S2	> 0
-S1 < S2	< 0
-S1 = S2	= 0
+S1 > S2  > 0
+S1 < S2  < 0
+S1 = S2  = 0
 }
 begin
   Result := 0;

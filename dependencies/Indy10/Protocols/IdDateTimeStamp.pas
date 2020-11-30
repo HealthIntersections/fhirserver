@@ -1093,7 +1093,7 @@ begin
             end;
           end;
         end
-	else if i > 0 then
+  else if i > 0 then
         begin
           // Calender format
           s := Trim(Copy(AString, 1, i - 1));

@@ -3,16 +3,15 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=FHRServer v1.0.362
+AppVerName=FHRServer v1.9.362
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirserver-1.0.362
+OutputBaseFilename=fhirserver-1.9.362
 Compression=lzma2/ultra64
 
 ; 64 bit
 ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x86 x64
 
 ; we might be creating a service so we do need this privilege
 PrivilegesRequired=admin
@@ -35,22 +34,15 @@ UninstallFilesDir={app}\uninstall
 ; win2000+ add/remove programs support
 AppPublisher=Health Intersections P/L
 AppPublisherURL=http://www.healthintersections.com.au
-AppVersion=0.01
+AppVersion=1.9.362
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
-AppCopyright=Copyright � Health Intersections Pty Ltd 2011+
-VersionInfoVersion=0.0.0.1
+AppCopyright=Copyright (c) Health Intersections Pty Ltd 2011+
+VersionInfoVersion=1.9.362.0
 
 ; dialog support
 LicenseFile=..\license
 InfoBeforeFile=..\install\readme.rtf
-
-; directories
-;  {app}  - executable, ini file
-;  {app}\web - FHIR server specific web content
-;  {app}\spec - FHIR specification itself
-;
-;  {store}\data - terminology caches
 
 ; #include <idp.iss>
 
@@ -99,30 +91,18 @@ Name: firewall;  Description: "Allow FHIR Server through the Firewall"
 Name: envPath;   Description: "Add FHIR Server to the system path"
 
 [Files]
-; 1. 64bit Application executables & Dlls
+; 1. Application executables & Dlls
 Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\64\FHIRConsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-;Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";       DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode 
+Source: "..\exec\64\fhirconsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";        DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\pack\w64\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\exec\pack\w64\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\exec\pack\w64\libcrypto-1_1-x64.dll";             DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\exec\pack\w64\libssl-1_1-x64.dll";                DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 
-; 2. 32 Application executables & Dlls
-Source: "..\exec\32\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\32\FHIRConsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-;Source: "..\exec\pack\w32\FastMM_FullDebugMode.dll";         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "..\exec\pack\w32\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\ssleay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\libeay32.dll";                      DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\threadtracker.dll";                 DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\exec\pack\w32\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion; Check: not Is64BitInstallMode
-
 ; 3. Data Files
-Source: "..\exec\pack\fhirserver.ini";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
+Source: "..\exec\pack\fhirserver.cfg";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
 Source: "..\exec\pack\fhirserver.web";                        DestDir: "{app}";       Flags: ignoreversion 
 Source: "..\exec\pack\ucum-essence.xml";                      DestDir: "{app}";       Flags: ignoreversion 
 Source: "..\exec\pack\lang.txt";                              DestDir: "{app}";       Flags: ignoreversion 
@@ -133,29 +113,26 @@ Source: "..\exec\pack\translations.xml";                      DestDir: "{app}"; 
 Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";
 Source: "..\readme.md";                                       DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "readme.txt";
 Source: "readme.rtf";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "installation-documentation.rtf";
-Source: "..\resources\sql\rxnorm_import.sql";                 DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "rxnorm_import.sql";
 
 ; utilities files - put in app dir because these may be different to ones already on the machine.
-Source: "..\exec\pack\w32\openssl.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "..\exec\pack\w32\sqldiff.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "..\exec\pack\w32\sqlite3.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: not Is64BitInstallMode 
-Source: "..\exec\pack\w32\sqlite3_analyzer.exe";              DestDir: "{app}\utils"; Flags: ignoreversion; Check: not Is64BitInstallMode 
 Source: "..\exec\pack\w64\openssl.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\sqldiff.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\sqlite3.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\sqlite3_analyzer.exe";              DestDir: "{app}\utils"; Flags: ignoreversion; Check: Is64BitInstallMode 
 
 [Icons]
-Name: "{group}\FHIR Server Manager";         Filename: "{app}\FHIRConsole.exe";                      WorkingDir: "{app}"    
+Name: "{group}\FHIR Server Manager";         Filename: "{app}\fhirconsole.exe";                      WorkingDir: "{app}"    
 Name: "{group}\Installation Documentation";  Filename: "{app}\doco\installation-documentation.rtf";         
+
+[Run]
+Filename: "{app}\fhirconsole.exe"; Parameters: "-installer {app}\fhirserver.cfg"; Description: "Configure the server"; WorkingDir: "{app}"; Flags: postinstall shellexec skipifsilent
 
 [Code]
 const
   MB_ICONINFORMATION = $40;
 
 var
-  
-  DependenciesPage : TWizardPage;
+    DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
 

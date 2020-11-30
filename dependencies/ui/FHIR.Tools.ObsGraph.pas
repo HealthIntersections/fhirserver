@@ -4,10 +4,10 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Math,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
+  fsl_base, fsl_utilities, fsl_threads,
   FHIR.Ui.Graph,
-  FHIR.Base.Objects, FHIR.Client.Base,
-  FHIR.Smart.Utilities,
+  fhir_objects, fhir_client,
+  fhir_oauth,
   FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities;
 
 type

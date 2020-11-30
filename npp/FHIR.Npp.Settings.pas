@@ -33,8 +33,8 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
+  fsl_base, fsl_json,
+  fhir_oauth, fhir_cdshooks, fhir_client_registry;
 
 const
   DEF_ActivePage = 0;
@@ -85,7 +85,7 @@ type
     procedure SetBackgroundValidation(const Value: boolean);
     procedure SetNoWelcomeForm(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
-    procedure SetUpdateResourceOnSend(const Value: boolean);
+    Procedure SetUpdateResourceOnSend(const Value: boolean);
     procedure SetValidationAnnotations(const Value: boolean);
 
     function GetLoadR2: boolean;

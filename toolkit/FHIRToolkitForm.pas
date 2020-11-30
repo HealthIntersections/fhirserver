@@ -47,13 +47,13 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders,
-  FHIR.Support.Certs, FHIR.Support.Threads, FHIR.Support.Base, FHIR.Ui.FMX,
-  FHIR.Support.Logging,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
-  FHIR.Web.Fetcher,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
-  FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Npm.Cache,
-  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
+  FHIR.Support.Certs, fsl_threads, fsl_base, FHIR.Ui.FMX,
+  fsl_logging,
+  fhir_objects, fhir_factory, fhir_client, fhir_common, 
+  fsl_fetcher,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Resources.Base, FHIR.Version.Client, FHIR.Version.Utilities, fhir_indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
+  FHIR.Version.Context, FHIR.Version.Profiles, fsl_utilities, fsl_stream, fsl_npm_cache,
+  fhir_oauth, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, NamingSystemEditor, HelpContexts, ProcessForm, SettingsDialog,
 {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
   AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
@@ -280,8 +280,8 @@ implementation
 {$R *.fmx}
 
 uses
-{$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
-{$IFDEF FHIR4} FHIR.R4.Factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE} IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
+{$IFDEF FHIR3} fhir3_factory; {$ENDIF}
+{$IFDEF FHIR4} fhir4_factory, ProjectFilesDialog, {$IFDEF IMPLEMENTATIONGUIDE} IGPublishSettings, {$ENDIF} FDownloadForm, ScenarioRendering; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -1784,8 +1784,8 @@ end;
 function template(fragment: String): String;
 begin
   result := '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">' + #13#10 + '<head>' + #13#10 + '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 +
-    ' <style>' + #13#10 + '  body { background-color: rgb(255, 254, 245);' + #13#10 + '	margin: 0px;' + #13#10 + '	padding: 0px;' + #13#10 + '	height: 100%;' + #13#10 + '	font-size: 10px;' + #13#10
-    + '	font-family: verdana;' + #13#10 + '}' + #13#10 + ' </style>' + #13#10 + '</head>' + #13#10 + fragment + #13#10 + '<body>' + #13#10 + '' + #13#10 + '</body>' + #13#10 + '</html>' + #13#10;
+    ' <style>' + #13#10 + '  body { background-color: rgb(255, 254, 245);' + #13#10 + '  margin: 0px;' + #13#10 + '  padding: 0px;' + #13#10 + '  height: 100%;' + #13#10 + '  font-size: 10px;' + #13#10
+    + '  font-family: verdana;' + #13#10 + '}' + #13#10 + ' </style>' + #13#10 + '</head>' + #13#10 + fragment + #13#10 + '<body>' + #13#10 + '' + #13#10 + '</body>' + #13#10 + '</html>' + #13#10;
 end;
 
 procedure TMasterToolsForm.updateHelpStatus;

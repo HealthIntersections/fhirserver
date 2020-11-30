@@ -1,6 +1,6 @@
-unit FHIR.R5.Types;
+unit fhir5_types;
 
-{$I FHIR.R5.inc}
+{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,9 +37,9 @@ interface
 
 uses
   Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Signatures, FHIR.Support.Stream, 
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, 
-  FHIR.R5.Base, FHIR.R5.Enums;
+  fsl_base, fsl_utilities, FHIR.Support.Signatures, fsl_stream, 
+  fhir_objects, fhir_xhtml,  
+  fhir5_base, fhir5_enums;
 
 type
 {{type.abstract.fwds}}
@@ -2112,7 +2112,7 @@ function asInteger64(obj : TFHIRObject) : TFhirInteger64;
 implementation
 
 uses
-  FHIR.R5.ElementModel, FHIR.R5.Utilities;
+  fhir5_elementmodel, fhir5_utilities;
 
 {{type.abstract.impl}}
 

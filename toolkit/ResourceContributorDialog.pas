@@ -37,7 +37,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   System.ImageList, FMX.ImgList, FMX.ScrollBox, FMX.Memo, FMX.Edit,
   FMX.DateTimeCtrls, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Support.Utilities,
+  fsl_utilities,
   FHIR.Version.Types, FHIR.Version.Utilities;
 
 type

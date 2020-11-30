@@ -43,36 +43,36 @@ type
   uptr_t = ULONG_PTR; // Longword;
   sptr_t = LONG_PTR; // Longint;
   TNotifyHeader = record
-	  hwndFrom : Pointer;
-	  idFrom : uptr_t;
-	  code : uptr_t;
+    hwndFrom : Pointer;
+    idFrom : uptr_t;
+    code : uptr_t;
   end;
   PSCNotification = ^TSCNotification;
   TSCNotification = record
-    nmhdr 		    : TNotifyHeader;
-    position    	    : Integer;		// SCN_STYLENEEDED, SCN_MODIFIED
-    ch 			    : Integer;		// SCN_CHARADDED, SCN_KEY
-    modifiers		    : Integer;		// SCN_KEY
-    modificationType	    : Integer;		// SCN_MODIFIED
-    text		    : PChar;			// SCN_MODIFIED
-    length		    : Integer;		// SCN_MODIFIED
-    linesAdded		    : Integer;		// SCN_MODIFIED
+    nmhdr         : TNotifyHeader;
+    position          : Integer;    // SCN_STYLENEEDED, SCN_MODIFIED
+    ch           : Integer;    // SCN_CHARADDED, SCN_KEY
+    modifiers        : Integer;    // SCN_KEY
+    modificationType      : Integer;    // SCN_MODIFIED
+    text        : PChar;      // SCN_MODIFIED
+    length        : Integer;    // SCN_MODIFIED
+    linesAdded        : Integer;    // SCN_MODIFIED
 {$ifdef MACRO_SUPPORT}
-    message		    : Integer;		// SCN_MACRORECORD
-    wParam		    : uptr_t;		// SCN_MACRORECORD
-    lParam		    : sptr_t;			// SCN_MACRORECORD
+    message        : Integer;    // SCN_MACRORECORD
+    wParam        : uptr_t;    // SCN_MACRORECORD
+    lParam        : sptr_t;      // SCN_MACRORECORD
 {$endif}
-    line		    : Integer;		// SCN_MODIFIED
-    foldLevelNow	    : Integer;		// SCN_MODIFIED
-    foldLevelPrev	    : Integer;		// SCN_MODIFIED
-    margin		    : Integer;		// SCN_MARGINCLICK
-    listType		    : Integer;		// SCN_USERLISTSELECTION
+    line        : Integer;    // SCN_MODIFIED
+    foldLevelNow      : Integer;    // SCN_MODIFIED
+    foldLevelPrev      : Integer;    // SCN_MODIFIED
+    margin        : Integer;    // SCN_MARGINCLICK
+    listType        : Integer;    // SCN_USERLISTSELECTION
     x                       : Integer;          // SCN_DWELLSTART, SCN_DWELLEND
     y                       : Integer;          // SCN_DWELLSTART, SCN_DWELLEND
   end;
   TCharacterRange = Record
     cpMin : Longint;
-	  cpMax : Longint;
+    cpMax : Longint;
   end;
   PTextRange = ^TTextRange;
   TTextRange = Record
@@ -82,8 +82,8 @@ type
   PTextToFind = ^TTextToFind;
   TTextToFind  = Record
     chrg : TCharacterRange;
-	  lpstrText : LPSTR;
-	  chrgText : TCharacterRange;
+    lpstrText : LPSTR;
+    chrgText : TCharacterRange;
   end;
 
 const
