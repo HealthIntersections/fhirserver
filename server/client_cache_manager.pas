@@ -46,6 +46,7 @@ type
     FCacheId : String;
     FLastTouched : TDateTime;
     FList : TFslMetadataResourceList;
+    FSize : Integer;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -100,10 +101,17 @@ begin
     begin
       for j in FList do
         if (i.url = j.url) and (i.version = j.version) then
+        begin
+          FSize := FSize - j.sizeInBytes;
           remove.Add(j.link);
-      FList.Add(i.link);
+        end;
     end;
     FList.RemoveAll(remove);
+    for i in list do
+    begin
+      FSize := FSize + i.sizeInBytes;
+      FList.Add(i.link);
+    end;
   finally
     remove.Free;
   end;
@@ -119,7 +127,7 @@ begin
   try
     result := 0;
     for item in FList do
-      result := result + item.FList.sizeInBytes;
+      result := result + item.FSize;
   finally
     FLock.Unlock;
   end;
@@ -165,7 +173,8 @@ begin
         if i.FLastTouched + DWELL_TIME < n then
           list.Add(i.Link);
       end;
-      FList.RemoveAll(list);
+      if list.count > 0 then
+        FList.RemoveAll(list);
     finally
       FLock.Unlock;
     end;
@@ -181,30 +190,30 @@ var
 begin
   result := TFslMetadataResourceList.create;
   try
-  FLock.Lock('cache='+cacheId);
-  try
-    f := nil;
-    for i in FList do
-    begin
-      if i.FCacheId = cacheId then
+    FLock.Lock('cache='+cacheId);
+    try
+      f := nil;
+      for i in FList do
       begin
-        f := i;
-        break;
+        if i.FCacheId = cacheId then
+        begin
+          f := i;
+          break;
+        end;
       end;
-    end;
-    if (f = nil) then
-    begin
-      f := TClientCacheManagerEntry.Create;
-      FList.Add(f);
-      f.FCacheId := cacheId;
-    end;
-    f.FLastTouched := now;
-    f.update(list);
+      if (f = nil) then
+      begin
+        f := TClientCacheManagerEntry.Create;
+        FList.Add(f);
+        f.FCacheId := cacheId;
+      end;
+      f.FLastTouched := now;
+      f.update(list);
       for o in f.FList do
         result.Add(o.link);
-  finally
-    FLock.Unlock;
-  end;
+    finally
+      FLock.Unlock;
+    end;
     result.link;
   finally
     result.Free;

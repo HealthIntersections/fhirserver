@@ -1152,7 +1152,7 @@ Function Bit(iFlags : Word; aFlag : TZipFlag) : Boolean;
 Function TimeAndDateToDateTime(iDate, iTime : Word) : TDateTime;
 Procedure DateTimeToTimeAndDate(aValue : TDateTime; Out iDate, iTime : Word);
 
-Function GetCRC(oBuffer : TFslBuffer) : LongWord;
+Function GetCRC(bytes : TBytes) : LongWord;
 
 type
     TFslZipPart = Class(TFslNameBuffer)
@@ -2038,135 +2038,6 @@ Begin
   Result := iCount;
 End;
 
-(*
-function TVCLStream.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
-end;
-
-Procedure TFslStreamFilerReferenceHashEntry.Assign(oSource: TFslObject);
-Begin
-  Inherited;
-
-  Key := TFslStreamFilerReferenceHashEntry(oSource).Key;
-  Value := TFslStreamFilerReferenceHashEntry(oSource).Value;
-End;
-
-
-Function TFslStreamFilerReferenceHashTable.Equal(oA, oB: TFslHashEntry): Integer;
-Begin
-  Result := Inherited Equal(oA, oB);
-
-  If Result = 0 Then
-    Result := IntegerCompare(Integer(TFslStreamFilerReferenceHashEntry(oA).Key), Integer(TFslStreamFilerReferenceHashEntry(oB).Key));
-End;
-
-
-Function TFslStreamFilerReferenceHashTable.ItemClass: TFslHashEntryClass;
-Begin
-  Result := TFslStreamFilerReferenceHashEntry;
-End;
-
-
-Procedure TFslStreamFilerReferenceHashEntry.Generate;
-Begin
-  Inherited;
-
-  Code := HashIntegerToCode32(Integer(FKey));
-End;
-
-
-Procedure TFslStreamFilerReferenceHashEntry.SetKey(Const Value: Pointer);
-Begin
-  If FKey <> Value Then
-  Begin
-    FKey := Value;
-    Generate;
-  End;
-End;
-
-
-Constructor TFslStreamFilerReferenceManager.Create;
-Begin
-  Inherited;
-
-  FHashTable := TFslStreamFilerReferenceHashTable.Create;
-  FHashTable.Capacity := 47;
-
-  FLookupHashEntry := TFslStreamFilerReferenceHashEntry.Create;
-End;
-
-
-Destructor TFslStreamFilerReferenceManager.Destroy;
-Begin
-  FHashTable.Free;
-  FLookupHashEntry.Free;
-
-  Inherited;
-End;
-
-
-Function TFslStreamFilerReferenceManager.Link: TFslStreamFilerReferenceManager;
-Begin
-  Result := TFslStreamFilerReferenceManager(Inherited Link);
-End;
-
-
-Procedure TFslStreamFilerReferenceManager.Clear;
-Begin
-  FHashTable.Clear;
-End;
-
-
-Procedure TFslStreamFilerReferenceManager.Bind(oKey, oValue: TFslObject);
-Var
-  oHashEntry : TFslStreamFilerReferenceHashEntry;
-Begin
-  If Assigned(oKey) Then
-  Begin
-    oHashEntry := TFslStreamFilerReferenceHashEntry.Create;
-    oHashEntry.Key := Pointer(oKey);
-    oHashEntry.Value := Pointer(oValue);
-    FHashTable.Add(oHashEntry);
-  End;
-End;
-
-
-Function TFslStreamFilerReferenceManager.Get(oKey : TFslObject): TFslObject;
-Var
-  oHashEntry : TFslStreamFilerReferenceHashEntry;
-Begin
-  FLookupHashEntry.Key := Pointer(oKey);
-
-  oHashEntry := TFslStreamFilerReferenceHashEntry(FHashTable.Get(FLookupHashEntry));
-
-  If Assigned(oHashEntry) Then
-    Result := TFslObject(oHashEntry.Value)
-  Else
-    Result := Nil;
-End;
-
-
-Function TFslStreamFilerReferenceManager.Exists(oKey: TFslObject): Boolean;
-Begin
-  FLookupHashEntry.Key := Pointer(oKey);
-
-  Result := FHashTable.Exists(FLookupHashEntry);
-End;
-
-
-Procedure TFslStreamFilerResourceManager.Clear;
-Begin
-End;
-
-
-Function TFslStreamFilerResourceManager.Link : TFslStreamFilerResourceManager;
-Begin
-  Result := TFslStreamFilerResourceManager(Inherited Link);
-End;
-*)
-
 
 Constructor TFslBuffer.Create;
 Begin
@@ -2347,7 +2218,7 @@ Procedure TFslBuffer.SetOwned(Const Value: Boolean);
 Begin 
 
   FOwned := Value;
-End;  
+End;
 
 
 Function TFslBuffer.GetAsText : AnsiString;
@@ -5583,7 +5454,7 @@ Begin
     DateTimeToTimeAndDate(oPart.TimeStamp, oInfo.FDate, oInfo.FTime);
     WriteWord(oInfo.FTime);      // last mod file time              2 bytes
     WriteWord(oInfo.FDate);      // last mod file date              2 bytes
-    oInfo.FCrc := GetCRC(oPart);
+    oInfo.FCrc := GetCRC(oPart.AsBytes);
     WriteLongWord(oInfo.FCrc);     // crc-32
 
     oCompressed := TFslBuffer.Create;
@@ -5668,7 +5539,7 @@ Begin
     WriteWord(0);
   WriteWord(oInfo.FTime);      // last mod file time              2 bytes
   WriteWord(oInfo.FDate);      // last mod file date              2 bytes
-  WriteLongWord(GetCRC(oPart));     // crc-32  TODO: cache this?
+  WriteLongWord(GetCRC(oPart.AsBytes));     // crc-32  TODO: cache this?
   WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
   WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
   WriteWord(Length(oPart.Name));    // filename length                 2 bytes
@@ -5721,7 +5592,7 @@ Begin
   iDate := LongRec(iCombined).Hi;
 End;
 
-Function GetCRC(oBuffer : TFslBuffer) : LongWord;
+Function GetCRC(bytes : TBytes) : LongWord;
 Const
   CRCtable: Array[0..255] Of LongWord = (
     $00000000, $77073096, $EE0E612C, $990951BA, $076DC419, $706AF48F, $E963A535,
@@ -5777,15 +5648,10 @@ Const
     $5D681B02, $2A6F2B94, $B40BBE37, $C30C8EA1, $5A05DF1B, $2D02EF8D);
 Var
   iLoop : Integer;
-  pData : pAnsiChar;
 Begin
   Result := $FFFFFFFF;
-  pData := oBuffer.Data;
-  For iLoop := 0 To oBuffer.Capacity - 1 Do
-  Begin
-    Result := (Result Shr 8) Xor (CRCtable[Byte(Result) Xor Ord(pData^)]);
-    Inc(pData);
-  End;
+  For iLoop := 0 To length(bytes) - 1 Do
+    Result := (Result Shr 8) Xor (CRCtable[Byte(Result) Xor Ord(bytes[iLoop])]);
   Result := Result Xor $FFFFFFFF;
 End;
 

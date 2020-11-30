@@ -48,7 +48,7 @@ Uses
 
   server_constants, server_config, utilities, server_context,
   {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  tx_manager, telnet_server, web_source, web_server,
+  tx_manager, telnet_server, web_source, web_server, web_cache,
   server_testing,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
 
@@ -178,6 +178,8 @@ begin
               ep.internalThread;
           if not Terminated then
             FKernel.FTerminologies.sweepSnomed;
+          if not Terminated then
+            FKernel.WebServer.Common.cache.Trim;
         except
         end;
       end;
@@ -332,6 +334,7 @@ var
   ep : TFHIRServerEndPoint;
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, Telnet.Link, DisplayName);
+  FWebServer.Common.cache := THTTPCacheManager.Create;
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
   {$ENDIF}

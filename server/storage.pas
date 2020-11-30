@@ -216,7 +216,7 @@ type
     procedure ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
-    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
@@ -644,11 +644,7 @@ begin
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
         fcmdMetadata : ExecuteMetadata(context, request, response);
-        fcmdTransaction :
-          begin
-          result := 'Transaction';
-          ExecuteTransaction(context, request, response);
-          end;
+        fcmdTransaction : result := ExecuteTransaction(context, request, response);
         fcmdBatch :
           begin
           result := 'Batch';
@@ -1145,7 +1141,7 @@ begin
 
 end;
 
-procedure TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 begin
   raise EFHIRException.create('This server does not implement the "Transaction" function');
 end;

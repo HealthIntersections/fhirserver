@@ -86,7 +86,7 @@ type
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
-    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override ;
 
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   public
@@ -185,6 +185,8 @@ type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
     Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
+
+    function AutoCache : boolean; override;
   public
     destructor Destroy; override;
     function link : TTerminologyServerWebServer; overload;
@@ -596,85 +598,104 @@ begin
   end;
 end;
 
-procedure TTerminologyServerOperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TTerminologyServerOperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   req, resp : TFHIRBundleW;
   src, dest : TFHIRBundleEntryW;
   url : String;
   dummy : integer;
+  oplist : TStringList;
+  s : String;
+  i : integer;
 begin
-  // since we're not making any changes, this is pretty straight forward
+  opList := TStringList.create;
   try
-    if check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
-    begin
-      req := factory.wrapBundle(request.resource.Link);
-      resp := factory.wrapBundle(factory.makeResource('Bundle'));
-      try
-        resp.type_ := btBatchResponse;
-        resp.id := NewGuidId;
-        for src in req.entries.forEnum do
-        begin
-          dest := resp.addEntry;
-          try
+    // since we're not making any changes, this is pretty straight forward
+    try
+      if check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
+      begin
+        req := factory.wrapBundle(request.resource.Link);
+        resp := factory.wrapBundle(factory.makeResource('Bundle'));
+        try
+          resp.type_ := btBatchResponse;
+          resp.id := NewGuidId;
+          for src in req.entries.forEnum do
+          begin
+            dest := resp.addEntry;
             try
-              if (resp.type_ = btBatch) and (src.requestMethod = '') then
-                raise EFHIRException.create('No request details');
-              if (src.requestMethod = '') then
-              begin
-                src.requestMethod := 'GET';
-                src.requestUrl := src.resource.fhirType+'/'+src.resource.id;
+              try
+                if (resp.type_ = btBatch) and (src.requestMethod = '') then
+                  raise EFHIRException.create('No request details');
+                if (src.requestMethod = '') then
+                begin
+                  src.requestMethod := 'GET';
+                  src.requestUrl := src.resource.fhirType+'/'+src.resource.id;
+                end;
+                request.reset;
+                url := request.preAnalyse(src.requestUrl);
+                request.analyse(src.requestMethod, url, dummy, nil);
+                request.IfNoneMatch := src.requestifNoneMatch;
+                if src.requestIfModifiedSince.notNull then
+                  request.IfModifiedSince := src.requestIfModifiedSince.UTC.DateTime;
+                request.IfMatch := src.requestIfMatch;
+                request.IfNoneExist := src.requestIfNoneExist;
+                request.resource := src.resource.link;
+                s := Execute(context, request, response);
+                if s.contains('#') then
+                  s := s.substring(0, s.indexof('#'));
+                i := oplist.IndexOf(s);
+                if i = -1 then
+                  oplist.Add(s)
+                else
+                  oplist.Objects[i] := TObject(integer(oplist.Objects[i])+1);
+                dest.responseStatus := inttostr(response.HTTPCode);
+                dest.responseLocation := response.Location;
+                dest.responseEtag := 'W/'+response.versionId;
+                dest.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
+                dest.resource := response.resource.link;
+              except
+                on e : ERestfulException do
+                begin
+                  if req.type_ = btTransaction then
+                    raise;
+                  dest.responseStatus := inttostr(e.Status);
+                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                end;
+                on e : Exception do
+                begin
+                  if req.type_ = btTransaction then
+                    raise;
+                  dest.responseStatus := '500';
+                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                end;
               end;
-              request.reset;
-              url := request.preAnalyse(src.requestUrl);
-              request.analyse(src.requestMethod, url, dummy, nil);
-              request.IfNoneMatch := src.requestifNoneMatch;
-              if src.requestIfModifiedSince.notNull then
-                request.IfModifiedSince := src.requestIfModifiedSince.UTC.DateTime;
-              request.IfMatch := src.requestIfMatch;
-              request.IfNoneExist := src.requestIfNoneExist;
-              request.resource := src.resource.link;
-              Execute(context, request, response);
-              dest.responseStatus := inttostr(response.HTTPCode);
-              dest.responseLocation := response.Location;
-              dest.responseEtag := 'W/'+response.versionId;
-              dest.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
-              dest.resource := response.resource.link;
-            except
-              on e : ERestfulException do
-              begin
-                if req.type_ = btTransaction then
-                  raise;
-                dest.responseStatus := inttostr(e.Status);
-                dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
-              end;
-              on e : Exception do
-              begin
-                if req.type_ = btTransaction then
-                  raise;
-                dest.responseStatus := '500';
-                dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
-              end;
+            finally
+              dest.free;
             end;
-          finally
-            dest.free;
           end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.resource := resp.Resource.Link;
+        finally
+          req.free;
+          resp.free;
         end;
-        response.HTTPCode := 200;
-        response.Message := 'OK';
-        response.resource := resp.Resource.Link;
-      finally
-        req.free;
-        resp.free;
+      end;
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
+    except
+      on e: exception do
+      begin
+        AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message, []);
+        recordStack(e);
+        raise;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, 500, '', e.message, []);
-      recordStack(e);
-      raise;
-    end;
+    result := '';
+    for i := 0 to oplist.Count - 1 do
+      CommaAdd(result, opList[i]+'*'+inttostr(integer(opList.Objects[i])+1));
+    result := ' Transaction ('+result+')';
+  finally
+    oplist.free;
   end;
 end;
 
@@ -1403,6 +1424,11 @@ end;
 function TTerminologyServerWebServer.link: TTerminologyServerWebServer;
 begin
   result := TTerminologyServerWebServer(inherited link);
+end;
+
+function TTerminologyServerWebServer.AutoCache: boolean;
+begin
+  result := true;
 end;
 
 function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;

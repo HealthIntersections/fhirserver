@@ -118,6 +118,7 @@ Type
   TGetValueSetEvent = function (sender : TObject; url : String) : TFHIRValueSetW of object;
   TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider of object;
   TGetExpansionEvent = function (sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW of object;
+  TCheckCanExpandEvent = procedure (sender : TObject; url : String; params : TFHIRExpansionParams) of object;
 
   TValueSetWorker = class (TFslObject)
   private
@@ -173,6 +174,7 @@ Type
     FCount : integer;
     FOffset : integer;
     FOnGetExpansion : TGetExpansionEvent;
+    FOnCheckCanExpand : TCheckCanExpandEvent;
 
     procedure processCodeAndDescendants(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; params : TFHIRExpansionParams; importHash : TStringList);
 
@@ -193,8 +195,10 @@ Type
     function chooseDisplay(c: TFhirValueSetComposeIncludeConceptW;  params : TFHIRExpansionParams): String; overload;
     function expandValueSet(uri, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     function canonical(system, version: String): String;
+    procedure checkSource(cset: TFhirValueSetComposeIncludeW; filter : TSearchFilterText);
+    procedure checkCanExpandValueset(uri: String);
   public
-    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion : TGetExpansionEvent); overload;
+    constructor Create(factory : TFHIRFactory; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion : TGetExpansionEvent; checkExpand : TCheckCanExpandEvent); overload;
 
     function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSetW;
   end;
@@ -1307,6 +1311,11 @@ begin
   end;
 
   for c in source.includes.forEnum do
+    checkSource(c, filter);
+  for c in source.excludes.forEnum do
+    checkSource(c, filter);
+
+  for c in source.includes.forEnum do
     processCodes(false, list, map, c, filter, dependencies, expansion, params, notClosed);
   for c in source.excludes.forEnum do
     processCodes(true, list, map, c, filter, dependencies, expansion, params, notClosed);
@@ -1355,10 +1364,11 @@ begin
       result := ccd.value;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion: TGetExpansionEvent);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; txResources : TFslMetadataResourceList; getExpansion: TGetExpansionEvent; checkExpand : TCheckCanExpandEvent);
 begin
   inherited create(factory, getVS, getCS, txResources);
   FOnGetExpansion := getExpansion;
+  FOnCheckCanExpand := checkExpand;
 end;
 
 procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystemW; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; system: string; c: TFhirCodeSystemConceptW; params : TFHIRExpansionParams; importHash : TStringList);
@@ -1440,6 +1450,11 @@ begin
   end;
 end;
 
+procedure TFHIRValueSetExpander.checkCanExpandValueset(uri: String);
+begin
+  FOnCheckCanExpand(self, uri, FParams);
+end;
+
 function TFHIRValueSetExpander.expandValueSet(uri: String; filter : String; dependencies : TStringList; var notClosed : boolean) : TFHIRValueSetW;
 var
   dep : TStringList;
@@ -1476,6 +1491,58 @@ begin
     begin
       list.add(c.link);
       map.add(s, c.link);
+    end;
+  end;
+end;
+
+procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; filter : TSearchFilterText);
+var
+  cs : TCodeSystemProvider;
+  s : string;
+  imp : boolean;
+begin
+  FFactory.checkNoModifiers(cset,'ValueSetExpander.processCodes', 'set');
+  imp := false;
+  for s in cset.valueSets do
+  begin
+    checkCanExpandValueset(s);
+    imp := true;
+  end;
+
+  if cset.systemUri <> '' then
+  begin
+    cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+    try
+      if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+        begin
+          s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+          if not cs.hasSupplement(s) then
+            raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
+        end;
+
+      if (not cset.hasConcepts) and (not cset.hasFilters) then
+      begin
+        if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion then
+        begin
+          checkCanExpandValueSet(cs.SpecialEnumeration);
+        end
+        else if filter.Null then // special case - add all the code system
+        begin
+          if cs.isNotClosed(filter) then
+            if cs.SpecialEnumeration <> '' then
+              raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+            else  if (cs.systemUri(nil) = ALL_CODE_CS) then
+              raise ETooCostly.create('Cannot filter across all code Systems known to the server')
+            else
+              raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
+
+          if not imp and (cs.TotalCount > FLimit) and not (FParams.limitedExpansion) then
+            raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
+        end
+      end;
+
+    finally
+      cs.free;
     end;
   end;
 end;

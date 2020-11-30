@@ -21,7 +21,7 @@ uses
   storage, user_manager, session, auth_manager, server_context, server_constants,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   tx_manager, tx_webserver, telnet_server,
-  web_base, endpoint;
+  web_base, web_cache, endpoint;
 
 type
   TStorageEndPoint = class;
@@ -129,7 +129,7 @@ type
     function BuildRequest(const lang : THTTPLanguages; sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509): TFHIRRequest;
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean);
+    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; const lang : THTTPLanguages; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
     function processProvenanceHeader(header : String; const lang : THTTPLanguages): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
@@ -161,6 +161,8 @@ type
     function processContent(path: String; secure : boolean; title, content : String) : String;
     procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
+
+    function AutoCache : boolean; virtual;
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon; endPoint : TStorageEndPoint);
     destructor Destroy; override;
@@ -1170,7 +1172,7 @@ Begin
                   sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length + 1);
               end;
 
-              if not FCache.respond(request, response) then
+              if not Common.Cache.respond(code, request, response, result) then
               begin
                 sBearer := sCookie;
                 oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
@@ -1262,6 +1264,8 @@ Begin
                     try
                       Context := TOperationContext.Create;
                       try
+                        if AutoCache then
+                          Context.CacheResponse := true;
                         Context.mode := mode;
                         checkRequestByJs(context, oRequest);
                         if (oRequest.CommandType = fcmdOperation) then
@@ -1301,7 +1305,7 @@ Begin
                     end;
                     cacheResponse(response, oResponse.CacheControl);
                     self.Context.Storage.RecordExchange(oRequest, oResponse, nil);
-                    ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache);
+                    ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'), cache, result);
                     // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                     // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                     if oResponse.versionId <> '' then
@@ -1867,7 +1871,7 @@ begin
 end;
 
 Procedure TStorageWebEndpoint.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean);
+  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
 var
   oComp: TFHIRComposer;
   b: TBytes;
@@ -2021,7 +2025,7 @@ begin
       ownsStream := false;
     end;
     if (cache) then
-      FCache.recordResponse(request, response);
+      Common.Cache.recordResponse(code, request, response, summary);
   finally
     if ownsStream then
       stream.Free;
@@ -2329,6 +2333,11 @@ type
 function TPackageListSorter.compare(const l, r : TFHIRPackageInfo) : integer;
 begin
   result := CompareText(l.id, r.id);
+end;
+
+function TStorageWebEndpoint.AutoCache: boolean;
+begin
+  result := false;
 end;
 
 function TStorageWebEndpoint.buildPackageList: String;

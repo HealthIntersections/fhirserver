@@ -74,6 +74,7 @@ Type
     function workerGetDefinition(sender : TObject; url : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function workerGetExpansion(sender : TObject; url, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; limit : integer) : TFHIRValueSetW;
+    procedure workerCanExpand(sender : TObject; url : String; params : TFHIRExpansionParams);
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -295,7 +296,8 @@ begin
 end;
 
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList;
+    limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
 var
   s, d : String;
   p : TArray<String>;
@@ -320,7 +322,7 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, workerGetExpansion);
+    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, workerGetExpansion, workerCanExpand);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
       if (dependencies.Count > 0) and (cacheId <> '') then
@@ -532,6 +534,19 @@ begin
   end;
 end;
 
+
+procedure TTerminologyServer.workerCanExpand(sender: TObject; url: String; params: TFHIRExpansionParams);
+var
+  vs : TFHIRValueSetW;
+begin
+  vs := getValueSetByUrl(url);
+  try
+    if vs = nil then
+      raise ETerminologyError.create('Unable to find value set "'+url+'"');
+  finally
+    vs.Free;
+  end;
+end;
 
 function TTerminologyServer.workerGetDefinition(sender: TObject; url: String): TFHIRValueSetW;
 begin

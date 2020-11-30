@@ -607,10 +607,13 @@ begin
         begin
           ok := true;
           summ := ep.PlainRequest(AContext, request, response, id);
+          break;
         end else if (request.Document = ep.PathNoSlash) then
         begin
           ok := true;
           response.Redirect(request.Document+'/');
+          summ := '--> redirect to '+request.Document+'/';
+          break;
         end;
 
       if not ok then

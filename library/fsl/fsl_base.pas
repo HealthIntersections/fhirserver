@@ -501,6 +501,7 @@ Type
 
     procedure Add(const Key: String; const Value: T);
     procedure Remove(const Key: String);
+    procedure RemoveKeys(const keyList : TStringList);
     procedure Clear;
     procedure TrimExcess;
     function TryGetValue(const Key: String; out Value: T): Boolean;
@@ -2473,6 +2474,14 @@ end;
 procedure TFslMap<T>.Remove(const Key: String);
 begin
   TFslObject(DoRemove(Key, Hash(Key), cnRemoved)).Free;
+end;
+
+procedure TFslMap<T>.RemoveKeys(const keyList: TStringList);
+var
+  key : String;
+begin
+  for key in KeyList do
+    Remove(key);
 end;
 
 procedure TFslMap<T>.Clear;

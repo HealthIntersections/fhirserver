@@ -3193,6 +3193,7 @@ begin
   else
     result := 'Other';
 end;
+
 function TFhirValueSetHelper.source: string;
 var
   b : TFslStringBuilder;
@@ -3203,7 +3204,7 @@ begin
     if (compose <> nil) then
       for comp in compose.includeList do
         if comp.system <> '' then
-        b.Append(csName(comp.system));
+          b.Append(csName(comp.system));
     result := b.AsString;
   finally
     b.Free;

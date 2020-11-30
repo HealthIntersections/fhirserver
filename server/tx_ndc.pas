@@ -818,10 +818,13 @@ var
   conn : TFDBConnection;
 begin
   c := nil;
-  conn := FDB.getconnection('getDisplay');
+  conn := FDB.getconnection('locate');
   try
-    k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+''' or code11 = '''+SQLWrapString(code)+'''');
-    if k <> 0 then
+    if code.contains('-') then
+      k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+'''')
+    else
+      k := conn.CountSQL('Select NDCKey from NDCPackages where code11 = '''+SQLWrapString(code)+'''');
+    if (k <> 0) or not code.contains('-') then
       c := TNDCProviderContext.create(true, k)
     else
     begin

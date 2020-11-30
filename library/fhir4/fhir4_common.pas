@@ -1697,7 +1697,10 @@ end;
 
 function TFhirParametersParameter4.valueString: String;
 begin
-  result := parameter.value.primitiveValue;
+  if parameter.value = nil then
+    result := ''
+  else
+    result := parameter.value.primitiveValue;
 end;
 
 { TFHIRParameters4 }

@@ -12,7 +12,7 @@ Uses
   fhir_objects,
   server_config, utilities, session, tx_manager,
   {$IFNDEF NO_JS} server_javascript, {$ENDIF}
-  web_event, web_base;
+  web_event, web_base, web_cache;
 
 type
   TFHIRWebServerClientInfo = class(TFslObject)
@@ -44,27 +44,6 @@ type
     procedure clear;
   end;
 
-  TCachedHTTPResponse = class (TFslBuffer)
-  private
-    FContentType: String;
-  public
-    function Link : TCachedHTTPResponse; overload;
-    property ContentType : String read FContentType write FContentType;
-  end;
-
-  THTTPCacheManager = class (TFslObject)
-  private
-    FLock : TFslLock;
-    FCache : TFslMap<TCachedHTTPResponse>;
-    function generateKey(req : TIdHTTPRequestInfo) : String;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function respond(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : boolean;
-    procedure recordResponse(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure Clear;
-  end;
-
   TFhirWebServerEndpoint = class abstract (TFHIRWebServerBase)
   private
     FCode : String;
@@ -75,7 +54,6 @@ type
     function EndPointDesc(secure: boolean): String;
   protected
     FTokenRedirects : TTokenRedirectManager;
-    FCache : THTTPCacheManager;
 
     function OAuthPath(secure: boolean): String;
     function AbsoluteURL(secure: boolean) : String;
@@ -160,93 +138,6 @@ begin
   FSession := Value;
 end;
 
-{ TCachedHTTPResponse }
-
-function TCachedHTTPResponse.Link: TCachedHTTPResponse;
-begin
-  result := TCachedHTTPResponse(inherited Link);
-end;
-
-{ THTTPCacheManager }
-
-procedure THTTPCacheManager.Clear;
-begin
-  FLock.Lock;
-  try
-    FCache.Clear;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-constructor THTTPCacheManager.Create;
-begin
-  inherited;
-  FLock := TFslLock.Create('HTTP.Cache');
-  FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
-end;
-
-destructor THTTPCacheManager.Destroy;
-begin
-  FCache.Free;
-  FLock.Free;
-  inherited;
-end;
-
-function THTTPCacheManager.generateKey(req: TIdHTTPRequestInfo): String;
-begin
-  result := req.RawHTTPCommand+'|'+req.Accept+'|'+req.AuthUsername;
-end;
-
-procedure THTTPCacheManager.recordResponse(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-var
-  key : String;
-  pos : integer;
-  co : TCachedHTTPResponse;
-begin
-  pos := response.ContentStream.Position;
-  key := generateKey(request);
-  co := TCachedHTTPResponse.Create;
-  try
-    co.ContentType := response.ContentType;
-    co.LoadFromStream(response.ContentStream);
-    FLock.Lock;
-    try
-      FCache.AddOrSetValue(key, co.Link);
-    finally
-      FLock.Unlock;
-    end;
-  finally
-    co.Free;
-  end;
-  response.ContentStream.Position := pos;
-end;
-
-function THTTPCacheManager.respond(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): boolean;
-var
-  co : TCachedHTTPResponse;
-begin
-  FLock.Lock;
-  try
-    result := FCache.TryGetValue(generateKey(request), co);
-    if result then
-      co.Link;
-  finally
-    FLock.Unlock;
-  end;
-  if result then
-  begin
-    try
-      response.ContentStream := TMemoryStream.create;
-      co.SaveToStream(response.ContentStream);
-      response.ContentStream.Position := 0;
-      response.ContentType := co.ContentType;
-    finally
-      co.Free;
-    end;
-  end;
-end;
-
 { TTokenRedirectManager }
 
 procedure TTokenRedirectManager.clear;
@@ -310,12 +201,10 @@ begin
     FPathWithSlash := path+'/';
   end;
   FTokenRedirects := TTokenRedirectManager.create;
-  FCache := THTTPCacheManager.create;
 end;
 
 destructor TFhirWebServerEndpoint.Destroy;
 begin
-  FCache.free;
   FTokenRedirects.Free;
   inherited;
 end;
@@ -434,7 +323,7 @@ end;
 function TFHIRServerEndPoint.cacheSize: Int64;
 begin
   if WebEndPoint <> nil then
-    result := WebEndPoint.FTokenRedirects.sizeInBytes + WebEndPoint.FCache.sizeInBytes
+    result := WebEndPoint.FTokenRedirects.sizeInBytes + WebEndPoint.Common.cache.sizeInBytes
   else
     result := 0;
 end;
@@ -444,7 +333,7 @@ begin
   if WebEndPoint <> nil then
   begin
     WebEndPoint.FTokenRedirects.clear;
-    WebEndPoint.FCache.Clear;
+    WebEndPoint.Common.Cache.Clear;
   end;
 end;
 

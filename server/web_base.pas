@@ -39,7 +39,7 @@ uses
   fhir_objects,
   session, {$IFNDEF NO_JS} server_javascript, {$ENDIF}
   storage,
-  web_source, web_event, analytics;
+  web_source, web_event, web_cache, analytics;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -94,8 +94,10 @@ type
     FLock: TFslLock;
     {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
+    FCache: THTTPCacheManager;
     {$ENDIF}
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
+    procedure SetCache(const Value: THTTPCacheManager);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -112,6 +114,7 @@ type
     property Google : TGoogleAnalyticsProvider read FGoogle;
     Property Stats : TFHIRWebServerStats read FStats;
     property Lock : TFslLock read FLock;
+    property cache : THTTPCacheManager read FCache write SetCache;
 
     {$IFNDEF NO_JS}
     property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
@@ -478,6 +481,7 @@ end;
 
 destructor TFHIRWebServerCommon.Destroy;
 begin
+  FCache.Free;
   FLock.Free;
   FStats.Free;
   FSourceProvider.Free;
@@ -488,6 +492,12 @@ end;
 function TFHIRWebServerCommon.link: TFHIRWebServerCommon;
 begin
   result := TFHIRWebServerCommon(inherited link);
+end;
+
+procedure TFHIRWebServerCommon.SetCache(const Value: THTTPCacheManager);
+begin
+  FCache.Free;
+  FCache := Value;
 end;
 
 procedure TFHIRWebServerCommon.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);

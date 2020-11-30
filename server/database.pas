@@ -210,7 +210,7 @@ type
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
-    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
@@ -3716,7 +3716,7 @@ begin
 end;
 
 
-procedure TFHIRNativeOperationEngine.ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIRNativeOperationEngine.ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
 //  match : boolean;
   i : integer;
@@ -3743,6 +3743,7 @@ var
     end;
   end;
 begin
+  result := 'Transaction';
   try
     ok := true;
     if not check(response, ServerContext.SupportTransaction, 405, lang, 'Transaction Operations not allowed', itNotSupported) then

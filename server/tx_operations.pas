@@ -47,7 +47,7 @@ type
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
     function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
-    function processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
+    function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     destructor Destroy; override;
@@ -238,7 +238,7 @@ begin
           else if params.has('url') then
           begin
             url := params.str('url');
-            txResources := processAdditionalResources(manager, nil, params);
+            txResources := processAdditionalResources(context, manager, nil, params);
             for mr in txResources do
               if (mr.url = url) and (mr is TFHIRValueSetW) then
               begin
@@ -271,12 +271,12 @@ begin
           else if params.has('valueSet') then
           begin
             vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
-            txResources := processAdditionalResources(manager, vs, params);
+            txResources := processAdditionalResources(context, manager, vs, params);
           end
           else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
           begin
             vs := FFactory.wrapValueSet(request.Resource.Link);
-            txResources := processAdditionalResources(manager, vs, params);
+            txResources := processAdditionalResources(context, manager, vs, params);
           end
           else if params.has('context') then
           begin
@@ -292,7 +292,12 @@ begin
           else
             raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 
-          result := 'Expand ValueSet '+vs.getId;
+          if vs.getId <> '' then
+            result := 'Expand ValueSet '+vs.getId+' on '+vs.source
+          else if vs.url <> '' then
+            result := 'Expand ValueSet '+vs.url+' on '+vs.source
+          else
+            result := 'Expand ValueSet  on '+vs.source;
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
           FFactory.checkNoModifiers(vs.Resource, 'ExpandValueSet', 'ValueSet');
 
@@ -305,7 +310,7 @@ begin
             if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
             if (txResources = nil) then
-              txResources := processAdditionalResources(manager, nil, params);
+              txResources := processAdditionalResources(context, manager, nil, params);
             dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
             try
               response.HTTPCode := 200;
@@ -416,7 +421,7 @@ begin
                 else if params.has('url') then
                 begin
                   url := params.str('url');
-                  txResources := processAdditionalResources(manager, nil, params);
+                  txResources := processAdditionalResources(context, manager, nil, params);
                   for mr in txResources do
                     if (mr.vurl = url) and (mr is TFHIRValueSetW) then
                     begin
@@ -437,12 +442,12 @@ begin
                   if not (params.obj('valueSet') is TFHIRResourceV) then
                     raise ETerminologyError.create('Error with valueSet parameter');
                   vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
-                  txResources := processAdditionalResources(manager, vs, params);
+                  txResources := processAdditionalResources(context, manager, vs, params);
                 end
                 else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
                 begin
                   vs := FFactory.wrapValueSet(request.Resource.Link);
-                  txResources := processAdditionalResources(manager, vs, params);
+                  txResources := processAdditionalResources(context, manager, vs, params);
                 end
                 else
                   vs := nil;
@@ -460,7 +465,7 @@ begin
                   FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
                 end;
                 if txResources = nil then
-                  txResources := processAdditionalResources(manager, nil, params);
+                  txResources := processAdditionalResources(context, manager, nil, params);
 
                 profile := buildExpansionParams(request, manager, params);
                 if profile.displayLanguage.header = '' then
@@ -1122,7 +1127,7 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.processAdditionalResources(manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslMetadataResourceList;
+function TFhirTerminologyOperation.processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslMetadataResourceList;
 var
   p : TFhirParametersParameterW;
   list : TFslMetadataResourceList;
@@ -1157,6 +1162,7 @@ begin
     end
     else
     begin
+      context.CacheResponse := false; // no point caching these, they'll never be seen again
       result := manager.clientCacheManager.processResources(cacheId, list);
     end;
   finally
