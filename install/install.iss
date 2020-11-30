@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=FHRServer v1.9.362
+AppVerName=FHRServer v1.0.363
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirserver-1.9.362
+OutputBaseFilename=fhirserver-1.0.363
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -93,6 +93,7 @@ Name: envPath;   Description: "Add FHIR Server to the system path"
 [Files]
 ; 1. Application executables & Dlls
 Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\exec\64\FHIRServer.debug.exe";                    DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\64\fhirconsole.exe";                         DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";        DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode 
 Source: "..\exec\pack\w64\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion; Check: Is64BitInstallMode

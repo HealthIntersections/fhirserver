@@ -1,4 +1,4 @@
-   <td>v0.0.362</td>
-   <td>2020-10-23</td>
-   <td><a title="more thread tracking" href="http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.362.exe"><img src="windows.ico"> Install</a></td>
+   <td>v0.0.363</td>
+   <td>2020-11-30</td>
+   <td><a title="rework server - v2 finally coming soon" href="http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.363.exe"><img src="windows.ico"> Install</a></td>
    <td></td>

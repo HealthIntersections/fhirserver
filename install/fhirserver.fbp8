@@ -159,6 +159,14 @@ begin
           filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.exe
           id = {5A08D7F1-55CA-4A06-964A-58237EE2EC9D}
         end
+        action.files.delete
+        begin
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.debug.exe
+          id = {02F402E2-61F8-4C83-A2F9-3BBEDEC14758}
+        end
         action.delphi.build
         begin
           allowimplicitimport = true
@@ -174,7 +182,138 @@ begin
           configname = Release
           debugversionnumbers = false
           delphiversion = Delphi10_3
-          description = "Compile the Server (64bit)"
+          description = "Compile the Server (Debug)"
+          enabletimeout = false
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          id = {ED475C18-990A-49AC-9969-7C435A672685}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 3081
+          majorversion = 0
+          minorversion = 0
+          platform = Win64
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          ridloutputsamefolder = true
+          startingdir = C:\\work\\fhirserver\\Server\\
+          timeoutlength = 1
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          usefastdcccompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
+          begin
+            alwaysuseconditionalsfromdof = false
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = true
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
+                               ""
+            consoleapp = true
+            debuginfo = true
+            definitionsonly = true
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = true
+            frameworktype = None
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64;C:\\work\\markdown\\source;C:\\work\\fhirserver\\dependencies\\d64\\debug;C:\\work\\fhirserver\\library;C:\\work\\fhirserver\\dependencies\\Testing"
+            linkeroutput = 0
+            localsymbols = true
+            mapfile = 3
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+            openstrings = true
+            optimisation = false
+            outputdir = C:\\work\\fhirserver\\Exec\\64
+            overflowchecking = true
+            rangechecking = true
+            recordfieldalign = fa8
+            referenceinfo = false
+            safedivide = false
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
+            usedebugdcu = false
+            usepackages = false
+            varstringchecks = true
+          end
+        end
+        action.directory.rename
+        begin
+          id = {BA628613-75EA-4253-A440-81003D006F5E}
+          newdirname = C:\\work\\fhirserver\\exec\\64\\FHIRServer.debug.exe
+          overwriteexisting = false
+          renamedir = false
+          sourcefile = C:\\work\\fhirserver\\exec\\64\\FHIRServer.exe
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = true
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10_3
+          description = "Compile the Server (Production)"
           enabletimeout = false
           eurekalogverboselogging = false
           frameworktype = VCL
@@ -269,7 +408,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source
             showhints = true
             showwarnings = true
             stackframes = false
@@ -378,7 +517,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer.debug.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
