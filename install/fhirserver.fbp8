@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix thread leak"
+        as.returnvalue = "more thread tracking"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -446,7 +446,6 @@ begin
       action.group
       begin
         description = "Build Install"
-        enabled = false
         id = {D4582147-49FC-42EF-8D85-74B4A37ABBB7}
         action.ini.write
         begin
