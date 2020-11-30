@@ -42,8 +42,10 @@
 
 {
 The base class TFslObject can track all instantiated objects.
-Doing so it useflu for leak hunting in production, but is also
+Doing so it useful for leak hunting in production, but is also
 costly. Enable it with this define
 }
+{$IFOPT D+}
 {$DEFINE OBJECT_TRACKING}
+{$ENDIF}
 

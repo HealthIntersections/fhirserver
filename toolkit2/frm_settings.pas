@@ -49,21 +49,6 @@ implementation
 
 function describeFont(font : TFont) : String;
 begin
-  //font
-  //font style
-  //size
-  //color
-  // charest
-
-  //
-  //color
-  //height
-  //name
-  //orientation
-  //pitch
-  //quality
-  //size
-  //style
   if font.name = '' then
     result := '(default)'
   else

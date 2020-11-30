@@ -1266,8 +1266,12 @@ end;
 function TFslObject.sizeInBytesV : cardinal;
 begin
   result := sizeof(self);
+  {$IFOPT D+}
   inc(result, (FNamedClass.length*2)+12);
+  {$ENDIF}
+  {$IFDEF OBJECT_TRACKING}
   inc(result, length(FThreadName)+12);
+  {$ENDIF}
 end;
 
 { TFslEnumerable<T> }
