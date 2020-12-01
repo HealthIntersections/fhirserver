@@ -1823,6 +1823,20 @@ var
   sn: TSnomedServices;
 //  def : boolean;
   icdX: TICD10Provider;
+  function fixFile(fn : String) : String;
+  begin
+    if FileExists(fn) then
+      result := fn
+    else if FileExists(Path([fn])) then
+      result := Path([fn])
+    else if FileExists(Path(['[exe]', fn])) then
+      result := Path(['[exe]', fn])
+    else if FileExists(Path(['[curr]', fn])) then
+      result := Path(['[curr]', fn])
+    else
+      raise Exception.Create('Unable to find the file '+fn);
+  end;
+
 begin
   Logging.log('Load Common Terminologies');
 
@@ -1842,7 +1856,7 @@ begin
       if tx['type'].value = 'icd10' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        icdX := TICD10Provider.Create(true, tx['source'].value);
+        icdX := TICD10Provider.Create(true, fixFile(tx['source'].value));
         try
           add(icdX);
           icd10.Add(icdX.link);
@@ -1855,7 +1869,7 @@ begin
         Logging.log('load '+s+' from '+tx['source'].value);
         sn := TSnomedServices.Create;
         try
-          sn.Load(tx['source'].value, tx['default'].value = 'true');
+          sn.Load(fixFile(tx['source'].value), tx['default'].value = 'true');
           add(sn, tx['default'].readAsBool);
           if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
             FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
@@ -1871,13 +1885,13 @@ begin
         Logging.log('load '+s+' from '+tx['source'].value);
         Loinc := TLoincServices.Create;
         add(Loinc);
-        Loinc.Load(tx['source'].value);
+        Loinc.Load(fixFile(tx['source'].value));
       end
       else if tx['type'].value = 'ucum' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
         Ucum := TUcumServices.Create;
-        Ucum.Import(tx['source'].value);
+        Ucum.Import(fixFile(tx['source'].value));
       end
       else if tx['type'].value = 'rxnorm' then
       begin
@@ -1907,7 +1921,7 @@ begin
       else if tx['type'].value = 'lang' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        add(TIETFLanguageCodeServices.Create(tx['source'].value)).free;
+        add(TIETFLanguageCodeServices.Create(fixFile(tx['source'].value))).free;
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);

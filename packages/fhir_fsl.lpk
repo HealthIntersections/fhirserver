@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\jcl"/>
-        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl;..\dependencies\FMMAVX"/>
+        <OtherUnitFiles Value="..\library\fsl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\chakracore-delphi;..\dependencies\jcl"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -678,10 +678,6 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_htmlgen.pas"/>
         <UnitName Value="fsl_htmlgen"/>
-      </Item>
-      <Item>
-        <Filename Value="..\dependencies\FMMAVX\FastMM4.pas"/>
-        <UnitName Value="FastMM4"/>
       </Item>
     </Files>
     <RequiredPkgs>

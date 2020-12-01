@@ -38,6 +38,12 @@
   {$ENDIF}
   {$DEFINE WINDOWS}
   {$DEFINE DELPHI}
+  {$IFDEF CPUX64}
+    {$DEFINE CPU64}
+  {$ELSE}
+    {$DEFINE CPU32}
+  {$ENDIF}
+
 {$ENDIF}
 
 {

@@ -63,6 +63,8 @@ function GetSSLErrorMessage: string;
 function idb(b : TIdBytes) : TBytes; overload;
 function idb(b : TBytes) : TIdBytes; overload;
 
+procedure InitOpenSSL;
+
 implementation
 
 function BN_num_bytes(const a: pBIGNUM): integer;
@@ -404,8 +406,11 @@ begin
   FinalHMACInst := OpenSSLFinalHMACInst;
 end;
 
-initialization
+procedure InitOpenSSL;
+begin
   if not GetOpenSSLLoader.Load then
     raise Exception.create('open SSL failed to load');
   InstallIndyRoutines;
+end;
+
 end.

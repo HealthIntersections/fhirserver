@@ -3000,6 +3000,14 @@ begin
       else
         result := SystemTemp();
     end
+    else if s = '[exe]' then
+    begin
+      result := ExtractFilePath(ParamStr(0));
+    end
+    else if s = '[curr]' then
+    begin
+      result := GetCurrentDir;
+    end
     else if result = '' then
       result := s
     else if not result.EndsWith(psc) and not s.startsWith(psc) then

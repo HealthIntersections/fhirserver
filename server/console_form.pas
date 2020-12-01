@@ -33,13 +33,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS}FastMM4, Windows, {$ENDIF}
+  {$IFDEF WINDOWS}Windows, {$ENDIF}
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, Registry, Types,
   ExtCtrls, Menus, ActnList, StdActns, Buttons, DateTimePicker, Interfaces,
   IniFiles, Math,
   IdTelnet, IdGlobal,
-  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client,
-  fdb_manager, fdb_odbc, fdb_dialects,
+  fsl_base, fsl_threads, fsl_fpc,  fsl_utilities, fsl_logging, fsl_npm_client, fsl_openssl,
+  fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   fui_lcl_managers,
   server_config,

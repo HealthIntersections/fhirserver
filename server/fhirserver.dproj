@@ -156,7 +156,6 @@
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
         <DCC_Optimize>true</DCC_Optimize>
-        <DCC_DebugInformation>0</DCC_DebugInformation>
         <DCC_IOChecking>false</DCC_IOChecking>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -690,8 +689,8 @@
                     <Source Name="MainSource">FHIRServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

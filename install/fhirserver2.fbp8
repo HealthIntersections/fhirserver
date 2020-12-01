@@ -314,7 +314,7 @@ begin
         description = "Set AppVerName in Inno Script"
         id = {65390809-00BE-4438-AAFE-E3C27A4F4177}
         inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        newvalue = "1.9.%BuildCount% (FHIR Version %FhirVersion%)"
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -326,7 +326,7 @@ begin
         description = "Set OutputFilename in Inno Script"
         id = {15C08B77-3163-47F9-B471-664C5CD23E97}
         inifile = C:\\work\\fhirserver\\install\\install.iss
-        newvalue = fhirserver-1.0.%BuildCount%
+        newvalue = fhirserver-1.9.%BuildCount%
         section = Setup
         valuename = OutputBaseFilename
         valuetype = vtString
@@ -356,7 +356,7 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
+        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.9.%BuildCount%.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -395,13 +395,13 @@ begin
         connectionname = HealthIntersections
         detailedlogging = false
         enabletimeout = false
-        filespec = fhirserver-1.0.%BuildCount%.exe
+        filespec = fhirserver-1.9.%BuildCount%.exe
         forcenextclockskewupdate = true
         gaplength = 5
         id = {D39D7CF3-7021-424E-8AD7-112C4AE57185}
         localdir = C:\\work\\fhirserver\\install\\build
         recursive = false
-        remotefile = public_html/FhirServer/fhirserver-1.0.%BuildCount%.exe
+        remotefile = public_html/FhirServer/fhirserver-1.9.%BuildCount%.exe
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
@@ -423,9 +423,9 @@ begin
         insertatxpath = /rss/channel/link
         nodename = item
         nodetext = "" +
-                   "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU2.1)</title>" +
-                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.0.%BuildCount%.exe</link>" +
-                   "      <description>DSTU2.1. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                   "      <title>FHIRServer release 1.9.%BuildCount% %BuildDate% (DSTU2.1)</title>" +
+                   "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver-1.9.%BuildCount%.exe</link>" +
+                   "      <description>DSTU2.1. %BuildDate% (v1.9.%BuildCount%): %purpose%</description>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML

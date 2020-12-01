@@ -39,7 +39,7 @@ Uses
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
@@ -526,13 +526,6 @@ var
   svc : TFHIRServiceKernel;
   logMsg : String;
 begin
-  {$IFDEF WINDOWS}
-  SetConsoleTitle('FHIR Server');
-  {$ENDIF}
-
-  // 1. logging.
-  if getCommandLineParam('log', fn) then
-    Logging.logToFile(fn);
 
   // if we're running the test or gui, go do that
   if (hasCommandLineParam('tests') or hasCommandLineParam('-tests')) then
@@ -549,20 +542,6 @@ begin
   end
   else
   begin
-    // if there's no parameters, then we don't log to the screen
-    // if the cmd parameter is 'console' or 'exec' then we also log to the
-    if Logging.FileLog = nil then
-    begin
-      if (FileExists('c:\temp')) then
-        Logging.logToFile('c:\temp\fhirserver.log')
-      else
-        Logging.logToFile(tempFile('fhirserver.log'));
-    end;
-    if ParamCount > 0 then
-      Logging.LogToConsole := true;
-
-    Logging.log(commandLineAsString);
-
     if not getCommandLineParam('name', svcName) then
       if ini.service['name'].value <> '' then
         svcName := ini.service['name'].value
@@ -577,15 +556,11 @@ begin
 
     {$IFDEF WINDOWS}
     if JclExceptionTrackingActive then
-      logMsg := 'FHIR Server '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName+' (+stack dumps)'
+      logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
-      logMsg := 'FHIR Server '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'. Using ini file '+ini.FileName;
-    if Logging.FileLog <> nil then
-      logMsg := logMsg + '. Log File = '+Logging.FileLog.filename;
-
+      logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
-    dispName := dispName + ' '+SERVER_FULL_VERSION+' '+Logging.buildDetails+'';
 
     svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
     try
@@ -617,21 +592,83 @@ begin
   end;
 end;
 
+procedure logCompileInfo;
+var
+  compiler, os, cpu, assertions, debug : String;
+begin
+  {$IFDEF FPC}
+  compiler := '/FreePascal';
+  {$ELSE}
+  compiler := '/Delphi';
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  os := 'Windows';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  os := 'Linux';
+  {$ENDIF}
+  {$IFDEF OSX}
+  os := 'OSX';
+  {$ENDIF}
+  {$IFDEF CPU64}
+  cpu := '-64';
+  {$ELSE}
+  cpu := '-32';
+  {$ENDIF}
+
+  assertions := '';
+  debug := '';
+  {$IFOPT C+}
+  assertions := ' +Assertions';
+  {$ENDIF}
+
+  {$IFOPT D+}
+  assertions := ' +Debug';
+  {$ENDIF}
+
+  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+os+cpu+compiler+debug+assertions);
+end;
+
 procedure ExecuteFhirServer;
 var
   cfg : TFHIRServerConfigFile;
   cfgName : String;
+  fn : String;
 begin
   {$IFDEF WINDOWS}
-  JclStartExceptionTracking;
-  GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+  SetConsoleTitle('FHIR Server');
   {$ENDIF}
+
+  if getCommandLineParam('log', fn) then
+    Logging.logToFile(fn)
+  else if (FolderExists('c:\temp')) then
+    Logging.logToFile('c:\temp\fhirserver.log')
+  else
+    Logging.logToFile(tempFile('fhirserver.log'));
+
+
+  // if there's no parameters, then we don't log to the screen
+  // if the cmd parameter is 'console' or 'exec' then we also log to the screen
+  if ParamCount > 0 then
+    Logging.LogToConsole := true;
+
+  logCompileInfo;
+
+  if ParamCount = 0 then
+    Logging.log('FHIR Server running as a Service')
+  else
+    Logging.log(commandLineAsString);
+
   try
+    Logging.Log('Loading Dependencies');
+    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    InitOpenSSL;
+    {$IFDEF WINDOWS}
+    JclStartExceptionTracking;
+    CoInitialize(nil);
+    {$ENDIF}
     {$IFDEF FPC}
     initialiseTZData(partnerFile('tzdata.tar.gz'));
-    {$ENDIF}
-    {$IFDEF WINDOWS}
-    CoInitialize(nil);
     {$ENDIF}
     try
       {$IFNDEF NO_JS}

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, FastMM4, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
   fsl_threads, fsl_base, fsl_utilities, fsl_collections;
 
@@ -167,7 +167,6 @@ Type
 
     Function DescribeSize(b, min: Cardinal): String;
     function MemoryStatus : String;
-    function buildDetails : String;
   end;
 
 var
@@ -535,15 +534,15 @@ begin
 end;
 
 function intMem : Uint64;
-{$IFDEF WINDOWS}
+{$IFDEF DELPHI}
 var
   st : TMemoryManagerUsageSummary;
+{$ENDIF}
 begin
+result := 0;
+{$IFDEF DELPHI}
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
-{$ELSE}
-begin
-  result := 0;
 {$ENDIF}
 end;
 
@@ -557,31 +556,6 @@ begin
     result := memToMB(intMem) + ' / '+memToMB(os)
   else
     result := memToMB(intMem);
-end;
-
-function TLogging.buildDetails: String;
-begin
-  {$IFDEF WINDOWS}
-  result := 'Win';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  result := 'Linux';
-  {$ENDIF}
-  {$IFDEF OSX}
-  result := 'OSX';
-  {$ENDIF}
-
-  {$IFDEF CPUX64}
-  result := result + '64';
-  {$ELSE}
-  result := result + '32';
-  {$ENDIF}
-
-  {$IFDEF FPC}
-  result := result + ':F';
-  {$ELSE}
-  result := result + ':D';
-  {$ENDIF}
 end;
 
 procedure TLogging.checkDay;

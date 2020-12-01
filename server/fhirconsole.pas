@@ -6,25 +6,41 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
-  {$IFDEF WINDOWS}
-  FastMM4,
-  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, datetimectrls, fsl_base, fsl_fpc, fsl_utilities, fdb_odbc_fpc,
+  SysUtils, Forms, Dialogs, datetimectrls,
+  IdOpenSSLLoader,
+  fsl_base, fsl_fpc, fsl_utilities, fsl_openssl,
+  fdb_odbc_fpc,
   console_form,
   console_tx_edit, console_ep_edit, install_form, install_log, installer;
 
 {$R *.res}
 
+var
+  ok : boolean;
 begin
-  initialiseTZData(partnerFile('tzdata.tar.gz'));
-  InitialiseODBC;
+  try
+    initialiseTZData(partnerFile('tzdata.tar.gz'));
+    InitialiseODBC;
+    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    InitOpenSSL;
+    ok := true;
+  except
+    on e : Exception do
+    begin
+      MessageDlg('Initialization failure', e.message, mtError, [mbClose], 0);
+      ok := false;
+    end;
+  end;
 
-  RequireDerivedFormResource:=True;
-  Application.Scaled:=True;
+  if ok then
+  begin
+    RequireDerivedFormResource:=True;
+    Application.Scaled:=True;
 
-  Application.Initialize;
-  Application.CreateForm(TMainConsoleForm, MainConsoleForm);
-  Application.Run;
+    Application.Initialize;
+    Application.CreateForm(TMainConsoleForm, MainConsoleForm);
+    Application.Run;
+  end;
 end.
 

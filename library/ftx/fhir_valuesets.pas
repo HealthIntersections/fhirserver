@@ -41,7 +41,7 @@ todo:
 uses
   SysUtils, Classes,
   fsl_base, fsl_collections, fsl_utilities, fsl_http,
-  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, 
+  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml,
   fhir_codesystem_service;
 
 {  SysUtils, Classes, fsl_utilities, fsl_utilities,
@@ -392,7 +392,7 @@ begin
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   FFactory.checkNoModifiers(vs, 'ValueSetChecker.prepare', 'ValueSet');
   if (vs = nil) then
-
+    raise Exception.Create('Error Error: vs = nil')
   else
   begin
     FValueSet := vs.link;
@@ -549,7 +549,8 @@ var
 begin
 //  result := false;
   {special case:}
-  if (FValueSet.url = ANY_CODE_VS) then
+  s := FValueSet.url;
+  if (s = ANY_CODE_VS) then
   begin
     cs := findCodeSystem(system, version, FParams, true);
     try
@@ -685,7 +686,10 @@ begin
         for s in cc.valueSets do
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause);
+          if checker <> nil then
+            result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause)
+          else
+            raise Exception.Create('No Match for '+s);
         end;
         if result then
           break;
