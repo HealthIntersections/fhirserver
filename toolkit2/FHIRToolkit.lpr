@@ -6,9 +6,6 @@ uses
   {$IFDEF UNIX}
   cthreads, cmem,
   {$ENDIF}
-  {$IFDEF WINDOWS}
-  FastMM4,
-  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frm_main,
   { you can add units after this }
