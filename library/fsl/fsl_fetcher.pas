@@ -148,7 +148,9 @@ begin
               oHTTP.Request.UserAgent := UserAgent;
             oHTTP.URL.URI := url;
             if FTimeout > 0 then
-              oHTTP.ReadTimeout := FTimeout;
+              oHTTP.ReadTimeout := FTimeout
+            else
+              oHTTP.ReadTimeout := 30000;
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then

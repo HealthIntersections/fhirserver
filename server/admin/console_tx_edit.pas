@@ -94,34 +94,38 @@ end;
 
 procedure TEditTxForm.cbxTypeChange(Sender: TObject);
 begin
-  if isDatabase(Tx['type'].value) then
+  if cbxType.itemIndex > -1 then
   begin
-    edtFile.enabled := false;
-    btnSource.enabled := false;
-    rbMSSQL.Enabled := true;
-    rbMySQL.Enabled := true;
-    cbxDriver.Enabled := true;
-    edtServer.Enabled := true;
-    edtDBName.Enabled := true;
-    edtUsername.Enabled := true;
-    edtPassword.Enabled := true;
-    btnDBTest.enabled := true;
-  end
-  else
-  begin
-    edtFile.enabled := true;
-    btnSource.enabled := true;
-    rbMSSQL.Enabled := false;
-    rbMySQL.Enabled := false;
-    cbxDriver.Enabled := false;
-    edtServer.Enabled := false;
-    edtDBName.Enabled := false;
-    edtUsername.Enabled := false;
-    edtPassword.Enabled := false;
-    btnDBTest.enabled := false;
+    Tx['type'].value := cbxType.items[cbxType.itemIndex];
+    if isDatabase(Tx['type'].value) then
+    begin
+      edtFile.enabled := false;
+      btnSource.enabled := false;
+      rbMSSQL.Enabled := true;
+      rbMySQL.Enabled := true;
+      cbxDriver.Enabled := true;
+      edtServer.Enabled := true;
+      edtDBName.Enabled := true;
+      edtUsername.Enabled := true;
+      edtPassword.Enabled := true;
+      btnDBTest.enabled := true;
+    end
+    else
+    begin
+      edtFile.enabled := true;
+      btnSource.enabled := true;
+      rbMSSQL.Enabled := false;
+      rbMySQL.Enabled := false;
+      cbxDriver.Enabled := false;
+      edtServer.Enabled := false;
+      edtDBName.Enabled := false;
+      edtUsername.Enabled := false;
+      edtPassword.Enabled := false;
+      btnDBTest.enabled := false;
+    end;
+    edtVersion.enabled := Tx['type'].value = 'ndc';
+    chkDefault.Enabled := Tx['type'].value = 'snomed';
   end;
-  edtVersion.enabled := Tx['type'].value = 'ndc';
-  chkDefault.Enabled := Tx['type'].value = 'snomed';
 end;
 
 procedure TEditTxForm.btnSourceClick(Sender: TObject);

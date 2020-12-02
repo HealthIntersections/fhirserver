@@ -295,6 +295,7 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
+    Splitter5: TSplitter;
     tbWebSettings: TTabSheet;
     tbUserAdmin: TTabSheet;
     tbEndPoints: TTabSheet;

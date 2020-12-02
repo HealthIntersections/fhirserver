@@ -4,8 +4,8 @@ object MainConsoleForm: TMainConsoleForm
   Top = 124
   Width = 899
   Caption = 'FHIRServer Console'
-  ClientHeight = 0
-  ClientWidth = 0
+  ClientHeight = 673
+  ClientWidth = 899
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -318,14 +318,14 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pgManage: TPageControl
             Left = 1
-            Height = 515
+            Height = 509
             Top = 40
             Width = 882
-            ActivePage = tbUserAdmin
+            ActivePage = tbTermload
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 1
+            TabIndex = 2
             TabOrder = 1
             object tbWebSettings: TTabSheet
               Caption = 'Web Settings'
@@ -706,7 +706,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbUserAdmin: TTabSheet
               Caption = 'User Admin'
-              ClientHeight = 487
+              ClientHeight = 481
               ClientWidth = 874
               ImageIndex = 8
               ParentFont = False
@@ -804,12 +804,12 @@ object MainConsoleForm: TMainConsoleForm
               end
               object GroupBox6: TGroupBox
                 Left = 0
-                Height = 333
+                Height = 327
                 Top = 154
                 Width = 874
                 Align = alClient
                 Caption = '  Identity Providers  '
-                ClientHeight = 313
+                ClientHeight = 307
                 ClientWidth = 870
                 ParentFont = False
                 TabOrder = 1
@@ -916,7 +916,7 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object lvID: TListView
                   Left = 0
-                  Height = 279
+                  Height = 273
                   Top = 34
                   Width = 870
                   Align = alClient
@@ -946,7 +946,7 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbTermload: TTabSheet
               Caption = 'Terminologies'
-              ClientHeight = 487
+              ClientHeight = 481
               ClientWidth = 874
               ImageIndex = 7
               ParentFont = False
@@ -1098,7 +1098,7 @@ object MainConsoleForm: TMainConsoleForm
               end
               object lvTx: TListView
                 Left = 0
-                Height = 453
+                Height = 447
                 Top = 34
                 Width = 874
                 Align = alClient
@@ -1416,6 +1416,15 @@ object MainConsoleForm: TMainConsoleForm
                 WordWrap = True
               end
             end
+          end
+          object Splitter5: TSplitter
+            Cursor = crVSplit
+            Left = 1
+            Height = 6
+            Top = 549
+            Width = 882
+            Align = alBottom
+            ResizeAnchor = akBottom
           end
         end
       end

@@ -321,7 +321,10 @@ procedure TTelnetThreadHelper.send(s: String);
 begin
   if FEnhanced or not s.StartsWith('$@') then
   begin
-    FContext.Connection.Socket.WriteLn(s);
+    try
+      FContext.Connection.Socket.WriteLn(s);
+    except
+    end;
     FHasSent := true;
   end;
 end;

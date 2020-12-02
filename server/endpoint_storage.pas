@@ -894,7 +894,7 @@ begin
       // actually, in this place, we ignore check.  we just established the session
     end;
 
-    if request.Document.StartsWith(FAuthServer.path) then
+    if (FAuthServer <> nil) and request.Document.StartsWith(FAuthServer.path) then
     begin
       result := 'OAuth';
       FAuthServer.HandleRequest(AContext, request, Session, response, true)
@@ -925,7 +925,7 @@ begin
       ProcessScimRequest(AContext, request, response, PathNoSlash)
     end
     else if request.Document.StartsWith(PathNoSlash, false) then
-      result := HandleRequest(AContext, request, response, true, true, PathNoSlash, id, Session, cert)
+      result := HandleRequest(AContext, request, response, true, FAuthServer <> nil, PathNoSlash, id, Session, cert)
     else if OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([PathNoSlash, OWIN_TOKEN_PATH]))) then
     begin
       response.ResponseNo := 401;
