@@ -256,7 +256,7 @@ function THGVSProvider.locate(code: String; var message: String): TCodeSystemPro
 var
   json, o : TJsonObject;
 begin
-  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code);
+  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
   try
     if json.bool['valid'] then
     begin

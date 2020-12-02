@@ -55,6 +55,7 @@ Type
     FBytesToTransfer: Int64;
     FOnProgress: TProgressEvent;
     FAccept: String;
+    FTimeout: cardinal;
 
     procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
@@ -83,10 +84,11 @@ Type
     Property Method : TInternetFetcherMethod read FMethod write FMethod;
     Property ContentType : String read FContentType;
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
+    property Timeout : cardinal read FTimeout write FTimeout;
 
-    class function fetchUrl(url : String) : TBytes;
-    class function fetchJson(url : String) : TJsonObject;
-    class function fetchJsonArray(url : String) : TJsonArray;
+    class function fetchUrl(url : String; timeout : cardinal = 0) : TBytes;
+    class function fetchJson(url : String; timeout : cardinal = 0) : TJsonObject;
+    class function fetchJsonArray(url : String; timeout : cardinal = 0) : TJsonArray;
   End;
 
 Implementation
@@ -145,6 +147,8 @@ begin
             if (UserAgent <> '') then
               oHTTP.Request.UserAgent := UserAgent;
             oHTTP.URL.URI := url;
+            if FTimeout > 0 then
+              oHTTP.ReadTimeout := FTimeout;
             oMem := TMemoryStream.Create;
             try
               if FMethod = imfPost then
@@ -211,13 +215,14 @@ begin
   inc(result, (FAccept.length * sizeof(char)) + 12);
 end;
 
-class function TInternetFetcher.fetchUrl(url : String) : TBytes;
+class function TInternetFetcher.fetchUrl(url : String; timeout : cardinal = 0) : TBytes;
 var
   this : TInternetFetcher;
 begin
   this := TInternetFetcher.Create;
   try
     this.URL := url;
+    this.timeout := timeout;
     this.Fetch;
     result := this.Buffer.AsBytes;
   finally
@@ -225,14 +230,14 @@ begin
   end;
 end;
 
-class function TInternetFetcher.fetchJson(url : String) : TJsonObject;
+class function TInternetFetcher.fetchJson(url : String; timeout : cardinal = 0) : TJsonObject;
 begin
-  result := TJSONParser.Parse(fetchUrl(url));
+  result := TJSONParser.Parse(fetchUrl(url, timeout));
 end;
 
-class function TInternetFetcher.fetchJsonArray(url : String) : TJsonArray;
+class function TInternetFetcher.fetchJsonArray(url : String; timeout : cardinal = 0) : TJsonArray;
 begin
-  result := TJSONParser.ParseNode(fetchUrl(url)) as TJsonArray;
+  result := TJSONParser.ParseNode(fetchUrl(url, timeout)) as TJsonArray;
 end;
 
 
