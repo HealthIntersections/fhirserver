@@ -2145,11 +2145,11 @@ begin
       end;
     lpckPart:
       begin
-      FAnswerLists.GetEntry(ctxt.index, iCode, iDescription, iOther)
+      FEntries.GetEntry(ctxt.index, iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
       end;
     lpckAnswer:
       begin
-      FEntries.GetEntry(ctxt.index, iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
+      FAnswerLists.GetEntry(ctxt.index, iCode, iDescription, iOther)
       end;
   end;
   result := Desc.GetEntry(iDescription, ilang);

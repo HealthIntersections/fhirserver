@@ -154,9 +154,8 @@
         <Debugger_CWD>C:\work\fhirserver\exec\64</Debugger_CWD>
         <Icon_MainIcon>fhirserver_Icon.ico</Icon_MainIcon>
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
-        <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
-        <DCC_Optimize>true</DCC_Optimize>
-        <DCC_IOChecking>false</DCC_IOChecking>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>

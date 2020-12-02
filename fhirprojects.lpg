@@ -25,6 +25,15 @@
           <Mode Name="Default"/>
         </BuildModes>
       </Target>
+      <Target FileName="packages\fhir.lpk"/>
+      <Target FileName="packages\fhir_fsl.lpk"/>
+      <Target FileName="packages\fhir_fui.lpk"/>
+      <Target FileName="packages\fhir_wp.lpk"/>
+      <Target FileName="packages\fhir_xver.lpk"/>
+      <Target FileName="packages\fhir2.lpk"/>
+      <Target FileName="packages\fhir3.lpk"/>
+      <Target FileName="packages\fhir4.lpk"/>
+      <Target FileName="packages\fhir5.lpk"/>
     </Targets>
   </ProjectGroup>
 </CONFIG>

@@ -265,3 +265,4 @@ packages/lib/x86_64-darwin/
 /server/admin/backup
 /Exec/fhir.dev.local.cfg
 /packages/lib/i386-win32
+/Exec/certs

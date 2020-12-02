@@ -148,7 +148,7 @@ Type
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String; var cause : TFhirIssueType) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
-    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
+    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
     function getName: String;
   protected
     function sizeInBytesV : cardinal; override;
@@ -380,7 +380,6 @@ end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
 var
-  cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
   checker : TValueSetChecker;
@@ -430,23 +429,21 @@ begin
         end;
       end;
 
-      if (cs <> nil) then
-      begin
-        for cc in FValueSet.includes.forEnum do
-          prepareConceptSet('include', cc, cs);
-        for cc in FValueSet.excludes.forEnum do
-          prepareConceptSet('exclude', cc, cs);
-      end;
+      for cc in FValueSet.includes.forEnum do
+        prepareConceptSet('include', cc);
+      for cc in FValueSet.excludes.forEnum do
+        prepareConceptSet('exclude', cc);
     end;
   end;
 end;
 
-procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
+procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
 var
   other: TFhirValueSetW;
   checker: TValueSetChecker;
   s : string;
   ccf: TFhirValueSetComposeIncludeFilterW;
+  cs: TCodeSystemProvider;
 begin
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
   for s in cc.valueSets do
@@ -469,8 +466,6 @@ begin
   if not FOthers.ExistsByKey(cc.systemUri) then
     FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
-  if (cs = nil) and (FParams.valueSetMode <> vsvmNoMembership) then
-    raise ETerminologyError.Create('CodeSystem uri '''+cc.systemUri+''' is unknown');
   FNoValueSetExpansion := cs = nil;
   if cs <> nil then
   begin
@@ -584,7 +579,7 @@ begin
       cs.Free;
     end;
   end
-  else if FNoValueSetExpansion or (FParams.valueSetMode = vsvmNoMembership) then // first can only be true if second is?
+  else if FNoValueSetExpansion or (FParams.valueSetMode = vsvmNoMembership) then
   begin
     // anyhow, we ignore the value set (at least for now)
     cs := findCodeSystem(system, version, FParams, true);
@@ -689,7 +684,7 @@ begin
           if checker <> nil then
             result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message, cause)
           else
-            raise Exception.Create('No Match for '+s);
+            raise ETerminologyError.Create('No Match for '+s);
         end;
         if result then
           break;
