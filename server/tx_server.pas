@@ -436,6 +436,9 @@ var
   sn : TSnomedServices;
 begin
   vs := nil;
+  if id.Contains('|') then
+    id := id.Substring(0, id.IndexOf('|'));
+
   if id.StartsWith('http://snomed.info/') then
   begin
     vs := CommonTerminologies.DefSnomed.buildValueSet(Factory, id);
