@@ -7,6 +7,7 @@ object ProgressForm: TProgressForm
   BorderStyle = bsSingle
   ClientHeight = 67
   ClientWidth = 387
+  OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object ProgressBar1: TProgressBar
@@ -166,6 +167,7 @@ object ProgressForm: TProgressForm
     TabOrder = 1
   end
   object Timer1: TTimer
+    Enabled = False
     Interval = 50
     OnTimer = Timer1Timer
     Left = 96

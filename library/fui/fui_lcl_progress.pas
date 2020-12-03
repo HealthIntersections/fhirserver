@@ -20,6 +20,7 @@ type
     ProgressBar1: TProgressBar;
     Timer1: TTimer;
     procedure BitBtn1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     taskid : integer;
@@ -138,6 +139,11 @@ begin
   begin
     stopped := true;
   end;
+end;
+
+procedure TProgressForm.FormShow(Sender: TObject);
+begin
+  Timer1.Enabled := true;
 end;
 
 end.

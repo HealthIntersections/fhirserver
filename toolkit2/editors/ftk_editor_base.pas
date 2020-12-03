@@ -989,7 +989,7 @@ begin
 
   // create the side by side
   FTextPanelBase := TPanel.create(tab);
-  FTextPanelBase.BevelWidth := 0;
+  FTextPanelBase.BevelWidth := 1;
   FTextPanelBase.BorderWidth := 2;
   FTextPanelBase.Align := alLeft;
   FTextPanelBase.Width := (tab.width div 2) - 4;
@@ -1000,7 +1000,7 @@ begin
   FSplitter.Align := alLeft;
   FSplitter.ResizeControl := FTextPanelBase;
   FDesignerPanelBase := TPanel.create(tab);
-  FDesignerPanelBase.BevelWidth := 0;
+  FDesignerPanelBase.BevelWidth := 1;
   FDesignerPanelBase.BorderWidth := 2;
   FDesignerPanelBase.Align := alClient;
   FDesignerPanelBase.Color := clGray;
@@ -1011,14 +1011,14 @@ begin
   if hasTextTab then
   begin
     FTextPanelWork := TPanel.create(tab);
-    FTextPanelWork.BevelWidth := 0;
+    FTextPanelWork.BevelWidth := 1;
     FTextPanelWork.Align := alClient;
     FTextPanelWork.Color := clBtnFace;
   end;
   if hasDesigner then
   begin
     FDesignerPanelWork := TPanel.create(tab);
-    FDesignerPanelWork.BevelWidth := 0;
+    FDesignerPanelWork.BevelWidth := 1;
     FDesignerPanelWork.Align := alClient;
     FDesignerPanelWork.Color := clBtnFace;
   end;

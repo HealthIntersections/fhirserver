@@ -325,6 +325,15 @@ Type
     procedure performUIInteraction(request : TBackgroundTaskUIRequest; response : TBackgroundTaskUIResponse); virtual;
   end;
 
+  { TNullTaskEngine }
+
+  TNullTaskEngine = class (TBackgroundTaskEngine)
+  private
+  public
+    function name : String; override;
+    procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
+  end;
+
   { TBackgroundTaskManager }
 
   TBackgroundTaskManager = class (TFslObject)
@@ -634,6 +643,18 @@ begin
   GThreadList.Free;
   GBackgroundTasks.Free;
   DeleteCriticalSection(GCritSct);
+end;
+
+{ TNullTaskEngine }
+
+function TNullTaskEngine.name: String;
+begin
+  result := 'Idle Task';
+end;
+
+procedure TNullTaskEngine.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
+begin
+  // nothing
 end;
 
 { TBackgroundTaskPackagePair }
@@ -1217,6 +1238,7 @@ begin
   FLock := TFslLock.create('BackgroundTaskManager');
   FEngines := TFslList<TBackgroundTaskEngine>.create;
   FStart := now;
+  registerTaskEngine(TNullTaskEngine.create); // the main reason for this is so that no real engine has a task id of 0
 end;
 
 destructor TBackgroundTaskManager.Destroy;
