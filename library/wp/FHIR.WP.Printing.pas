@@ -298,7 +298,7 @@ Function TWPPaginator.CheckContinue(oPrinter: TWPPrintRenderer): Boolean;
 Begin
   // strictly this isn't thread safe, but since all we are
   // doing is checking identity, it doesn't matter
-  Result := Active And (FOperator.LastAction = FVersionTimestamp);
+  Result := not Terminated And (FOperator.LastAction = FVersionTimestamp);
 End;
 
 Function TWPPaginator.CheckRequirements: Boolean;

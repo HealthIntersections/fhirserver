@@ -33,7 +33,7 @@ Interface
 
 
 Uses
-  Windows, SysUtils, Classes, Vcl.Graphics, Vcl.Imaging.PNGImage,
+  Windows, SysUtils, Classes, Vcl.Graphics, Vcl.Imaging.PNGImage, System.UITypes,
 
   fsl_base, fsl_utilities, fsl_threads, fsl_collections,
 

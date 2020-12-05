@@ -41,7 +41,7 @@ uses
   {$IFDEF FPC}
   XGuiTestRunner, fsl_tests_console,
   {$ENDIF}
-  fsl_utilities, fsl_testing,
+  fsl_utilities, fsl_testing, fsl_logging,
   server_config,
   test_registry;
 
@@ -62,6 +62,7 @@ end;
 
 procedure runTestInsight;
 begin
+  Logging.Log('Run Tests (TestInsight)');
   test_registry.registerTests;
   {$IFDEF FPC}
   raise Exception.create('This is not supported in FPC');
@@ -72,6 +73,7 @@ end;
 
 procedure RunTestGui(ini : TFHIRServerConfigFile);
 begin
+  Logging.Log('Run Tests (GUI)');
   {$IFDEF WINDOWS}
   FreeConsole;
   {$ENDIF}
@@ -90,6 +92,7 @@ procedure RunTestConsole(ini : TFHIRServerConfigFile);
 var
   app : TFHIRTestRunner;
 begin
+  Logging.Log('Run Tests (Console)');
   app := TFHIRTestRunner.Create(nil);
   app.Initialize;
   app.Title := 'FPCUnit Console test runner';

@@ -2147,7 +2147,7 @@ Begin
   If (FPaginator <> Nil) Then
   Begin
     FPaginator.Stop;
-    FPaginator.WaitTimeout(1000);
+    FPaginator.Wait;
     FPaginator.Free;
   End;
 
@@ -5081,7 +5081,7 @@ Begin
       oPaginator.Printer := FPrinter.Link;
       oPaginator.PageLayoutController := FPageLayoutController.Link;
       FPaginator := oPaginator.Link;
-      oPaginator.Open;
+      oPaginator.Start;
     Finally
       oPaginator.Free;
     End;
@@ -5090,7 +5090,7 @@ End;
 
 Procedure TWordProcessor.FinishPagination;
 Begin
-  If Not FPaginator.Active Then
+  If FPaginator.Terminated Then
   Begin
     If FPaginator.Completed Then
     Begin

@@ -20,6 +20,14 @@ type
 
   { TMainToolkitForm }
   TMainToolkitForm = class(TForm)
+    actExecuteRun: TAction;
+    actExecuteDebug: TAction;
+    actExecuteParameters: TAction;
+    actExecuteStep: TAction;
+    actExecuteStepInto: TAction;
+    actExecuteStepOut: TAction;
+    actExecuteStop: TAction;
+    actExecuteFinish: TAction;
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
     actionEditFind: TAction;
@@ -134,6 +142,16 @@ type
     MenuItem4: TMenuItem;
     MenuItem59: TMenuItem;
     MenuItem60: TMenuItem;
+    MenuItem61: TMenuItem;
+    MenuItem85: TMenuItem;
+    MenuItem86: TMenuItem;
+    MenuItem87: TMenuItem;
+    MenuItem88: TMenuItem;
+    MenuItem89: TMenuItem;
+    MenuItem90: TMenuItem;
+    MenuItem91: TMenuItem;
+    MenuItem92: TMenuItem;
+    N11: TMenuItem;
     N10: TMenuItem;
     MenuItem82: TMenuItem;
     MenuItem83: TMenuItem;
@@ -270,6 +288,8 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
+    procedure actExecuteFinishExecute(Sender: TObject);
+    procedure actExecuteStepExecute(Sender: TObject);
     procedure actionEditBeginEndExecute(Sender: TObject);
     procedure actionEditFindExecute(Sender: TObject);
     procedure actionEditFindNextExecute(Sender: TObject);
@@ -1443,6 +1463,16 @@ end;
 procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
 begin
   Context.Focus.BeginEndSelect;
+end;
+
+procedure TMainToolkitForm.actExecuteStepExecute(Sender: TObject);
+begin
+
+end;
+
+procedure TMainToolkitForm.actExecuteFinishExecute(Sender: TObject);
+begin
+
 end;
 
 procedure TMainToolkitForm.actionEditFindExecute(Sender: TObject);
