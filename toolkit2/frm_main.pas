@@ -386,6 +386,7 @@ type
     FScale : integer;
     FSearchTask : integer;
     FSearch : TFslList<TToolkitSearchMatch>;
+    FShuttingDown : boolean;
     function checkDoSave(editor : TToolkitEditor): boolean;
     procedure copyFonts;
     procedure loadFont(font: TFont; sname: String);
@@ -465,6 +466,8 @@ end;
 
 procedure TMainToolkitForm.FormDestroy(Sender: TObject);
 begin
+  FShuttingDown := true;
+  Timer1.Enabled := false;
   FSearch.Free;
   FFactory.free;
   FFileSystem.Free;
@@ -797,7 +800,7 @@ procedure TMainToolkitForm.checkActiveTabCurrency;
 var
   loaded : TLoadedBytes;
 begin
-  if FFinishedLoading and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes then
+  if FFinishedLoading and not FShuttingDown and Context.hasFocus and Context.focus.hasStore and Context.focus.Store.CheckTimes then
   begin
     loaded := Context.focus.Store.load(Context.focus.session.address);
     if loaded.timestamp <> Context.focus.session.Timestamp then
@@ -1211,7 +1214,7 @@ begin
   actionFileManageDelete.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageReload.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileSaveAs1.enabled := context.hasFocus and context.Focus.CanBeSaved;
-  actionEditReview := context.hasFocus;
+  actionEditReview.enabled := context.hasFocus;
 
   actionPagesCloseAll.enabled := context.hasFocus and (context.Editors.count > 0);
   actionPagesCloseLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
@@ -1473,6 +1476,7 @@ begin
   frm := TEditChangeReviewForm.create(self);
   try
     frm.editor := Context.Focus.link;
+    frm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
     frm.ShowModal;
   finally
     frm.Free;
@@ -1733,6 +1737,7 @@ begin
     ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
     ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
+    ToolkitSettingsForm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
       SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
@@ -1742,6 +1747,7 @@ begin
       actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
       Context.SideBySide := actionToolsSideBySideMode.Checked;
       FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
+      FIni.WriteString('Tools', 'Diff', ToolkitSettingsForm.DiffTool);
       copyFonts;
       saveLayout;
     end;

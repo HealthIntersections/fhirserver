@@ -1,95 +1,152 @@
 object EditChangeReviewForm: TEditChangeReviewForm
-  Left = 841
-  Height = 1294
-  Top = 366
-  Width = 1688
+  Left = 710
+  Height = 739
+  Top = 177
+  Width = 965
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Editor Change Review'
-  ClientHeight = 1294
-  ClientWidth = 1688
-  DesignTimePPI = 168
+  ClientHeight = 739
+  ClientWidth = 965
   OnDestroy = FormDestroy
   OnShow = FormShow
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 80
-    Top = 1214
-    Width = 1688
+    Height = 46
+    Top = 693
+    Width = 965
     Align = alBottom
-    ClientHeight = 80
-    ClientWidth = 1688
+    ClientHeight = 46
+    ClientWidth = 965
+    ParentFont = False
     TabOrder = 0
     object btnCancel: TButton
-      Left = 1541
-      Height = 44
-      Top = 23
-      Width = 131
+      Left = 881
+      Height = 25
+      Top = 13
+      Width = 75
       Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Close'
       Default = True
       ModalResult = 11
+      ParentFont = False
       TabOrder = 0
+    end
+    object btnExternalDiff: TButton
+      Left = 6
+      Height = 25
+      Top = 12
+      Width = 179
+      Caption = 'External Diff'
+      OnClick = btnExternalDiffClick
+      TabOrder = 1
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 88
+    Height = 50
     Top = 0
-    Width = 1688
+    Width = 965
     Align = alTop
-    ClientHeight = 88
-    ClientWidth = 1688
+    ClientHeight = 50
+    ClientWidth = 965
+    ParentFont = False
     TabOrder = 1
-    object Label1: TLabel
-      Left = 24
-      Height = 30
-      Top = 27
-      Width = 1645
+    object lblSummary: TLabel
+      Left = 14
+      Height = 17
+      Top = 15
+      Width = 940
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
-      Caption = 'Label1'
+      Caption = 'lblSummary'
       ParentColor = False
+      ParentFont = False
     end
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 1126
-    Top = 88
-    Width = 1688
+    Height = 643
+    Top = 50
+    Width = 965
     ActivePage = TabSheet1
     Align = alClient
+    ParentFont = False
     TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Text Diff'
-      ClientHeight = 1083
-      ClientWidth = 1680
-      object Memo1: TMemo
+      ClientHeight = 615
+      ClientWidth = 957
+      OnResize = TabSheet1Resize
+      ParentFont = False
+      object pnlTextLeft: TPanel
         Left = 0
-        Height = 1083
+        Height = 615
         Top = 0
-        Width = 775
+        Width = 380
         Align = alLeft
-        Lines.Strings = (
-          'Memo1'
-        )
+        ClientHeight = 615
+        ClientWidth = 380
         TabOrder = 0
+        object pnlLeftSummary: TPanel
+          Left = 1
+          Height = 28
+          Top = 1
+          Width = 378
+          Align = alTop
+          Caption = 'pnlLeftSummary'
+          TabOrder = 0
+        end
+        object mBase: TMemo
+          Left = 1
+          Height = 585
+          Top = 29
+          Width = 378
+          Align = alClient
+          Lines.Strings = (
+            'Memo1'
+          )
+          ParentFont = False
+          TabOrder = 1
+        end
       end
-      object Memo2: TMemo
-        Left = 775
-        Height = 1083
+      object pnlTextRight: TPanel
+        Left = 380
+        Height = 615
         Top = 0
-        Width = 905
+        Width = 577
         Align = alClient
-        Lines.Strings = (
-          'Memo2'
-        )
+        ClientHeight = 615
+        ClientWidth = 577
         TabOrder = 1
+        object pnlRightSummary: TPanel
+          Left = 1
+          Height = 28
+          Top = 1
+          Width = 575
+          Align = alTop
+          Caption = 'pnlRightSummary'
+          TabOrder = 0
+        end
+        object mCurr: TMemo
+          Left = 1
+          Height = 585
+          Top = 29
+          Width = 575
+          Align = alClient
+          Lines.Strings = (
+            'Memo2'
+          )
+          ParentFont = False
+          TabOrder = 1
+        end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
+      ParentFont = False
     end
   end
 end

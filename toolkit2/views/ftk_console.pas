@@ -81,7 +81,6 @@ begin
   inherited Create;
   FLock := TFslLock.create('console');
   FLines := TStringList.create;
-  Logging.addListener(self);
 end;
 
 destructor TToolkitConsole.Destroy;

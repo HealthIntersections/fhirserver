@@ -55,14 +55,15 @@ type
 
   TConnectingThread = class (TFslThread)
   protected
-    procedure execute; override;
+    procedure Initialise; override;
+    procedure Execute; override;
   end;
 
   { TPackageClientThread }
 
   TPackageClientThread = class (TFslThread)
   protected
-    procedure execute; override;
+    procedure Execute; override;
   end;
 
   { TServerSession }
@@ -438,7 +439,7 @@ uses
 
 { TPackageClientThread }
 
-procedure TPackageClientThread.execute;
+procedure TPackageClientThread.Execute;
 var
   client : TFHIRPackageClient;
   list : TFslList<TFHIRPackageInfo>;
@@ -546,15 +547,16 @@ end;
 
 { TConnectingThread }
 
-procedure TConnectingThread.execute;
+procedure TConnectingThread.Initialise;
 begin
-  while not Terminated do
-  begin
-    try
-      MainConsoleForm.Connect;
-    except
-    end;
-    sleep(50);
+  TimePeriod := 50;
+end;
+
+procedure TConnectingThread.Execute;
+begin
+  try
+    MainConsoleForm.Connect;
+  except
   end;
 end;
 

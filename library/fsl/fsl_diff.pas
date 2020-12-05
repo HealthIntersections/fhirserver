@@ -658,7 +658,7 @@ var
 
     while Line2 < Upto do
     begin
-      Output2.Add(Format(Fmt, [Line2 + 1]) + FSource1[Line2]);
+      Output2.Add(Format(Fmt, [Line2 + 1]) + FSource2[Line2]);
       inc(Line2);
     end;
 
@@ -681,14 +681,10 @@ begin
     Output1.Clear;
     Output2.Clear;
 
-    Output1.Add(Format('Source: %s', [SourceName1]));
     Output1.Add(Format('Lines: %d', [FSource1.Count]));
-    Output1.Add(Format('Differences: %d', [Count]));
     Output1.Add('');
 
-    Output2.Add(Format('Source: %s', [SourceName2]));
     Output2.Add(Format('Lines: %d', [FSource2.Count]));
-    Output2.Add(Format('Differences: %d', [Count]));
     Output2.Add('');
 
     Line1 := FSource1.Count;
@@ -701,7 +697,7 @@ begin
       Line2 := Line2 div 10;
     end;
 
-    Fmt := Format('%%%d.%dd| ', [idx, idx]);
+    Fmt := Format('%%%d.%dd: ', [idx, idx]);
 
     Line1 := 0;
     Line2 := 0;

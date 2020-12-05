@@ -78,12 +78,18 @@ Type
 
   TFhirServerEmailThread = class (TFHIRServerThread)
   protected
+    function ThreadName : String; override;
+    procedure Initialise; override;
     procedure Execute; override;
+    procedure Finalise; override;
   end;
 
   TFhirServerSubscriptionThread = class(TFHIRServerThread)
   protected
+    function ThreadName : String; override;
+    procedure Initialise; override;
     procedure Execute; override;
+    procedure Finalise; override;
   end;
 
   TFHIRWebServerPatientViewContext = class(TFslObject)
@@ -303,95 +309,73 @@ end;
 
 { TFhirServerSubscriptionThread }
 
-procedure TFhirServerSubscriptionThread.Execute;
-var
-  ep : TFhirWebServerEndpoint;
+function TFhirServerSubscriptionThread.ThreadName: String;
 begin
-  SetThreadName('Server Subscription Thread');
-  SetThreadStatus('Working');
+  result := 'Server Subscription Thread';
+end;
+
+procedure TFhirServerSubscriptionThread.Initialise;
+begin
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  Logging.log('Starting TFhirServerSubscriptionThread');
+  TimePeriod := 1000;
+end;
+
+procedure TFhirServerSubscriptionThread.Execute;
+begin
+  FServer.FStore.ProcessSubscriptions;
+end;
+
+procedure TFhirServerSubscriptionThread.Finalise;
+begin
+  Logging.log('Close TFhirServerSubscriptionThread');
   try
-    setThreadStatus('starting');
-    repeat
-      setThreadStatus('sleeping');
-      sleep(1000);
-      setThreadStatus('processing subscriptions');
-      FServer.FStore.ProcessSubscriptions;
-    until terminated;
-    try
-      setThreadStatus('dead');
-    except
-    end;
-    try
-      FServer.FSubscriptionThread := nil;
-    except
-    end;
-    Logging.log('Ending TFhirServerSubscriptionThread');
+    FServer.FSubscriptionThread := nil;
   except
-    Logging.log('Failing TFhirServerSubscriptionThread');
   end;
   {$IFNDEF NO_JS}
   GJsHost.Free;
   GJsHost := nil;
   {$ENDIF}
-  SetThreadStatus('Done');
-  closeThread;
 end;
 
 { TFhirServerEmailThread }
 
-procedure TFhirServerEmailThread.Execute;
-var
-  i: integer;
-  ep : TFhirWebServerEndpoint;
+function TFhirServerEmailThread.ThreadName: String;
 begin
-  SetThreadName('Server Email Thread');
-  SetThreadStatus('Working');
+  result := 'Server Email Thread';
+end;
+
+procedure TFhirServerEmailThread.Initialise;
+begin
   {$IFNDEF NO_JS}
   GJsHost := TJsHost.Create;
   FServer.OnRegisterJs(self, GJsHost);
   {$ENDIF}
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   Logging.log('Starting TFhirServerEmailThread');
+  TimePeriod := 60000;
+end;
+
+procedure TFhirServerEmailThread.Execute;
+begin
+  setThreadStatus('processing Emails');
+  FServer.FStore.ProcessEmails;
+end;
+
+procedure TFhirServerEmailThread.Finalise;
+begin
   try
-    setThreadStatus('starting');
-    repeat
-      setThreadStatus('sleeping');
-      i := 0;
-      while not terminated and (i < 60) do
-      begin
-        sleep(1000);
-        inc(i);
-      end;
-      if not terminated then
-      begin
-        setThreadStatus('processing Emails');
-        FServer.FStore.ProcessEmails;
-      end;
-    until terminated;
-    try
-      setThreadStatus('dead');
-    except
-    end;
-    try
-      FServer.FEmailThread := nil;
-    except
-    end;
-    Logging.log('Ending TFhirServerEmailThread');
+    FServer.FEmailThread := nil;
   except
-    Logging.log('Failing TFhirServerEmailThread');
   end;
   {$IFNDEF NO_JS}
   GJsHost.Free;
   GJsHost := nil;
   {$ENDIF}
-  SetThreadStatus('Done');
-  closeThread;
 end;
 
 { TFHIRServerThread }

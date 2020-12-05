@@ -73,10 +73,12 @@ type
 
   TFhirServerMaintenanceThread = class (TFslThread)
   private
-    FLastSweep: TDateTime;
     FKernel : TFHIRServiceKernel;
   protected
+    function threadName : String; override;
+    procedure Initialise; override;
     procedure Execute; override;
+    procedure Finalise; override;
   public
     constructor Create(kernel : TFHIRServiceKernel);
     destructor Destroy; override;
@@ -142,7 +144,6 @@ uses
 constructor TFhirServerMaintenanceThread.Create(kernel : TFHIRServiceKernel);
 begin
   inherited Create();
-  FLastSweep := Now;
   FKernel := kernel;
 end;
 
@@ -151,57 +152,48 @@ begin
   inherited;
 end;
 
+procedure TFhirServerMaintenanceThread.Initialise;
+begin
+  {$IFDEF WINDOWS}
+  CoInitialize(nil);
+  {$ENDIF}
+  {$IFNDEF NO_JS}
+  GJsHost := TJsHost.Create;
+  //  todo, once eventing is sorted out  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
+  {$ENDIF}
+  TimePeriod := 5000;
+end;
+
+function TFhirServerMaintenanceThread.threadName: String;
+begin
+  result := 'Server Maintenance Thread';
+end;
+
 procedure TFhirServerMaintenanceThread.Execute;
 var
   ep : TFhirServerEndpoint;
 begin
-  SetThreadName('Server Maintenance Thread');
-  SetThreadStatus('Working');
-  Logging.log('Starting TFhirServerMaintenanceThread');
   try
-{$IFDEF WINDOWS}
-    CoInitialize(nil);
-{$ENDIF}
-    {$IFNDEF NO_JS}
-    GJsHost := TJsHost.Create;
-    {$ENDIF}
-//  todo, once eventing is sorted out  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-
-    repeat
-      setThreadStatus('sleeping');
-      sleep(10);
-      if not Terminated and (FLastSweep < Now - (DATETIME_SECOND_ONE * 5)) then
-      begin
-        try
-          for ep in FKernel.FEndPoints do
-            if not Terminated then
-              ep.internalThread;
-          if not Terminated then
-            FKernel.FTerminologies.sweepSnomed;
-          if not Terminated then
-            FKernel.WebServer.Common.cache.Trim;
-        except
-        end;
-      end;
-      FLastSweep := Now;
-    until Terminated;
-    try
-      setThreadStatus('dead');
-    except
-    end;
-    {$IFNDEF NO_JS}
-    GJsHost.Free;
-    GJsHost := nil;
-    {$ENDIF}
-{$IFDEF WINDOWS}
-    CoUninitialize;
-{$ENDIF}
-    Logging.log('Ending TFhirServerMaintenanceThread');
+    for ep in FKernel.FEndPoints do
+      if not Terminated then
+        ep.internalThread;
+    if not Terminated then
+      FKernel.FTerminologies.sweepSnomed;
+    if not Terminated then
+      FKernel.WebServer.Common.cache.Trim;
   except
-    Logging.log('Failing TFhirServerMaintenanceThread');
   end;
-  SetThreadStatus('Done');
-  closeThread;
+end;
+
+procedure TFhirServerMaintenanceThread.Finalise;
+begin
+  {$IFNDEF NO_JS}
+  GJsHost.Free;
+  GJsHost := nil;
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  CoUninitialize;
+  {$ENDIF}
 end;
 
 { TFHIRServiceKernel }
@@ -303,6 +295,7 @@ end;
 
 procedure TFHIRServiceKernel.loadTerminologies;
 begin
+  Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
   FTerminologies.load(Ini['terminologies'], false);
 end;
@@ -312,6 +305,7 @@ var
   section : TFHIRServerConfigSection;
   ep : TFHIRServerEndPoint;
 begin
+  Logging.log('Load End Points');
   for section in FIni['endpoints'].sections do
   begin
     if section['active'].valueBool then

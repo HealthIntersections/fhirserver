@@ -63,6 +63,7 @@ type
   private
     FServer : TFHIRTelnetServer;
   protected
+    function threadName : String; Override;
     Procedure Execute; override;
   end;
 
@@ -115,6 +116,7 @@ begin
 
   FThread := TFHIRTelnetServerThread.Create;
   FThread.FServer := self;
+  FThread.TimePeriod := 50;
   FThread.Start;
   Logging.addListener(self);
   sleep(500); // allow console to connect early
@@ -333,17 +335,16 @@ end;
 
 procedure TFHIRTelnetServerThread.Execute;
 begin
-  SetThreadName('Telnet Server');
-  while Not Terminated do
-  begin
-    try
-      FServer.internalThread;
-    except
-      // nothing.
-    end;
-    sleep(50);
+  try
+    FServer.internalThread;
+  except
+    // nothing.
   end;
-  closeThread;
+end;
+
+function TFHIRTelnetServerThread.threadName: String;
+begin
+  result := 'Telnet Server';
 end;
 
 end.

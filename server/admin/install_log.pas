@@ -22,7 +22,7 @@ type
     process : TProcess;
     procedure processOutput(text : String);
   protected
-    procedure execute; override;
+    procedure Execute; override;
   end;
 
   { TInstallProgressForm }
@@ -149,7 +149,7 @@ begin
   FCarry := curr;
 end;
 
-procedure TInstallerThread.execute;
+procedure TInstallerThread.Execute;
 var
   BytesRead    : longint;
   Buffer       : TBytes;

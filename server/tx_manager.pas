@@ -1838,8 +1838,6 @@ var
   end;
 
 begin
-  Logging.log('Load Common Terminologies');
-
   add(TACIRServices.Create).free;
   add(TAreaCodeServices.Create).free;
   add(TIso4217Services.Create).free;

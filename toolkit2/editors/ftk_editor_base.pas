@@ -578,12 +578,13 @@ begin
         end;
       b.append(s);
     end;
+    s := b.toString;
     case Session.Encoding of
-      senASCII : result := TEncoding.ASCII.GetBytes(b.toString);
-      senUTF16BE : result := TEncoding.BigEndianUnicode.GetBytes(b.toString);
-      senUTF16LE : result := TEncoding.Unicode.GetBytes(b.toString);
+      senASCII : result := TEncoding.ASCII.GetBytes(s);
+      senUTF16BE : result := TEncoding.BigEndianUnicode.GetBytes(s);
+      senUTF16LE : result := TEncoding.Unicode.GetBytes(s);
     else
-      result := TEncoding.UTF8.GetBytes(b.toString);
+      result := TEncoding.UTF8.GetBytes(s);
     end;
   finally
     b.free;
@@ -650,7 +651,7 @@ end;
 procedure TBaseEditor.LoadBytes(bytes: TBytes);
 var
   encoding: TEncoding;
-  start : integer;
+  start, len : integer;
   src : String;
   b : TBytes;
   lf, cr, crlf : boolean;
@@ -729,13 +730,14 @@ begin
     FContent.clear;
     lineStart := 1;
     Cursor := 1;
-    while (Cursor <= length(src)) do
+    len := length(src);
+    while (Cursor <= len) do
     begin
       ch := src[Cursor];
       if (ch in [#13,#10]) then
       begin
         FContent.add(copy(src, lineStart, cursor-linestart));
-        if (Cursor < length(src)) and (ch = #13) and (src[Cursor+1] = #10) then
+        if (Cursor < len) and (ch = #13) and (src[Cursor+1] = #10) then
         begin
           crlf := true;
           inc(cursor, 2);
@@ -751,7 +753,7 @@ begin
       else
         inc(cursor);
     end;
-    if (LineStart < length(src)) then
+    if (LineStart <= len) then
       FContent.add(copy(src, lineStart, cursor-linestart))
     else
       FContent.add('');

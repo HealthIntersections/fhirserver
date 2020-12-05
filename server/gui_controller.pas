@@ -52,7 +52,7 @@ type
     FController : TFHIRServerController;
     FStopped : boolean;
   protected
-    procedure execute; override;
+    procedure Execute; override;
   public
     constructor Create(controller : TFHIRServerController);
   end;
@@ -352,7 +352,7 @@ begin
   inherited create;
 end;
 
-procedure TFHIRServerControllerThread.execute;
+procedure TFHIRServerControllerThread.Execute;
 //var
 //  svc : TFHIRServiceTxServer;
 //  s : String;

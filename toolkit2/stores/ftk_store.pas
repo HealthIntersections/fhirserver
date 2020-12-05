@@ -36,6 +36,7 @@ type
 
      function CaptionForAddress(address : String) : String; virtual; abstract;
      function describe(address : String) : String; virtual; abstract;
+     function MakeFilename(address : String) : String; virtual; abstract;
 
      function load(address : String) : TLoadedBytes; virtual; abstract;
      function save(address : String; bytes : TBytes) : TDateTime; virtual; abstract;

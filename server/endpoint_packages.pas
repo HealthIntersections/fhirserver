@@ -28,6 +28,8 @@ type
     FLastEmail : TDateTime;
     procedure RunUpdater;
   protected
+    function threadName : String; override;
+    procedure Initialise; override;
     procedure Execute; override;
   public
     constructor Create(db : TFDBManager; endPoint : TPackageServerEndPoint);
@@ -226,20 +228,18 @@ end;
 
 procedure TPackageUpdaterThread.Execute;
 begin
-  repeat
-    sleep(50);
-    if not Terminated and (now > FNextRun) and (FNextRun > 0) then
-    begin
-      FEndPoint.FPackageServer.scanning := true;
-      try
-        RunUpdater;
-      finally
-        FEndPoint.FPackageServer.scanning := false;
-      end;
-      FNextRun := now + 1/24;
-      FEndPoint.FPackageServer.NextScan := FNextRun;
-    end;
-  until (Terminated);
+  FEndPoint.FPackageServer.scanning := true;
+  try
+    RunUpdater;
+  finally
+    FEndPoint.FPackageServer.scanning := false;
+  end;
+  FEndPoint.FPackageServer.NextScan := now + 1/24;
+end;
+
+procedure TPackageUpdaterThread.Initialise;
+begin
+  TimePeriod := 60 * 60 * 1000;
 end;
 
 procedure TPackageUpdaterThread.RunUpdater;
@@ -276,6 +276,11 @@ begin
       raise;
     end;
   end;
+end;
+
+function TPackageUpdaterThread.threadName: String;
+begin
+  result := 'Package Updater';
 end;
 
 function readSort(sort : String) : TMatchTableSort;

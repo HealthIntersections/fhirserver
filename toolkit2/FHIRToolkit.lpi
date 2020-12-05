@@ -161,6 +161,7 @@
         <Filename Value="frm_edit_changes.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditChangeReviewForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

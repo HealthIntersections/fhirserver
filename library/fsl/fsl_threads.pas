@@ -140,35 +140,38 @@ Type
   { TFslThread }
 
   TFslThread = Class abstract (TFslObject)
-    Private
-      FAutoFree: boolean;
-      FInternal : TThread; // Handle to the Windows thread.
-      FRunning : Boolean;          // Run thread has finished.
+  Private
+    FAutoFree: boolean;
+    FInternal : TThread;
+    FRunning : Boolean;
+    FTimePeriod: cardinal;
 
-    Protected
-      Procedure Execute; Virtual; abstract;
+    procedure InternalExecute;
+  Protected
+    function ThreadName : String; Virtual;
+    procedure Initialise; Virtual;
+    Procedure Execute; Virtual; Abstract;
+    procedure Finalise; Virtual;
 
-      Procedure Sleep(Const iTimeout : Cardinal);
+    Procedure Sleep(Const iTimeout : Cardinal);
 
-    Public
-      constructor Create; Override;
-      destructor Destroy; Override;
+  Public
+    constructor Create; Override;
+    destructor Destroy; Override;
 
-      Function Link : TFslThread;
+    Function Link : TFslThread;
 
-      Procedure Start;
-      Procedure Stop;
-      procedure StopAndWait(ms : Cardinal);
-      Procedure Wait;
-//      Function WaitTimeout(iTimeout : Cardinal) : Boolean;
-      Procedure Kill;
+    Procedure Start;
+    Procedure Stop;
+    procedure StopAndWait(ms : Cardinal);
+    Procedure Wait;
+    Procedure Kill;
 
-      function Terminated : boolean;
-      Property Running : Boolean read FRunning;
+    function Terminated : boolean;
+    Property Running : Boolean read FRunning;
 
-//      Property ID : TFslThreadID Read FID Write FID;
-//      Property Delegate : TFslThreadDelegate Read FDelegate Write FDelegate;
-      Property AutoFree : boolean read FAutoFree write FAutoFree;
+    Property AutoFree : boolean read FAutoFree write FAutoFree;
+    Property TimePeriod : cardinal read FTimePeriod write FTimePeriod; // milliseconds. If this is >0, execute will called after TimePeriod delay until Stopped
   End;
 
   TFslThreadClass = Class Of TFslThread;
@@ -370,6 +373,9 @@ var
   GBackgroundTasks : TBackgroundTaskManager;
 
 implementation
+
+uses
+  fsl_logging; // but don't use at start up
 
 var
   GHaveCritSect : Boolean = False;
@@ -978,6 +984,59 @@ Begin
   Inherited;
 End;
 
+procedure TFslThread.Initialise;
+begin
+ // nothing
+end;
+
+procedure TFslThread.Finalise;
+begin
+ // nothing
+end;
+
+procedure TFslThread.InternalExecute;
+var
+  et : UInt64;
+begin
+  SetThreadName(ThreadName);
+  setThreadStatus('Initialising');
+  Logging.log('Start '+threadName);
+  initialise;
+  try
+    if FTimePeriod > 0 then
+    begin
+      while not Terminated do
+      begin
+        SetThreadStatus('Working');
+        Execute;
+
+        setThreadStatus('Sleeping');
+        et := GetTickCount64 + TimePeriod;
+        repeat
+          sleep(50);
+        until GetTickCount64 >= et;
+      end;
+    end
+    else
+    begin
+      SetThreadStatus('Executing');
+      Execute;
+    end;
+  except
+    on e : Exception do
+      Logging.log('Unhandled Exception in '+threadName+': '+e.message);
+  end;
+  try
+    setThreadStatus('Finalising');
+    finalise;
+  except
+    on e : Exception do
+      Logging.log('Unhandled Exception closing '+threadName+': '+e.message);
+  end;
+  Logging.log('Finish '+threadName);
+  SetThreadStatus('Done');
+  closeThread;
+end;
 
 function TFslThread.Link: TFslThread;
 Begin
@@ -1026,6 +1085,11 @@ begin
     result := FInternal.CheckTerminated;
 end;
 
+function TFslThread.ThreadName: String;
+begin
+  result := ClassName;
+end;
+
 procedure TFslThread.Wait;
 Begin
   FInternal.WaitFor;
@@ -1048,7 +1112,7 @@ procedure TInternalThread.execute;
 begin
   SetThreadName(FOwner.ClassName);
   Try
-    FOwner.Execute;
+    FOwner.InternalExecute;
   Except
     // ignore any further exceptions
   End;
