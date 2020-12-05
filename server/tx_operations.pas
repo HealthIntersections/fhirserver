@@ -434,7 +434,7 @@ begin
                     if not FServer.isKnownValueSet(url, vs) then
                       vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, params.str('version'), false, needSecure));
                   if vs = nil then
-                    raise ETerminologySetup.Create('Unable to resolve value set');
+                    raise ETerminologySetup.Create('Unable to resolve value set "'+url+'"');
                   cacheId := vs.url;
                 end
                 else if params.has('valueSet') then

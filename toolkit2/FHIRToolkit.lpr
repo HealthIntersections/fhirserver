@@ -20,7 +20,7 @@ uses
   ftk_editor_xml, ftk_factory, ftk_editor_json, ftk_editor_base,
   ftk_editor_html, ftk_editor_js, frm_settings, ftk_editor_hl7, ftk_editor_fhir,
   ftk_editor_md, ftk_search, ftk_frame_codesystem, ftk_frame_resource,
-frm_about, ftk_version;
+frm_about, ftk_version, frm_edit_changes;
 
 {$R *.res}
 
@@ -30,6 +30,7 @@ begin
   Application.Initialize;
   Application.CreateForm(TMainToolkitForm, MainToolkitForm);
   Application.CreateForm(TToolkitAboutForm, ToolkitAboutForm);
+  Application.CreateForm(TEditChangeReviewForm, EditChangeReviewForm);
   Application.Run;
 end.
 

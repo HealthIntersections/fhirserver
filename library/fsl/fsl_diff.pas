@@ -2,6 +2,8 @@ unit fsl_diff;
 
 // adapted from http://flocke.vssd.de/prog/code/pascal/pasdiff/cur/Diff.pas.html
 
+{$i fhir.inc}
+
 interface
 
 uses

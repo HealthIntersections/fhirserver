@@ -1,0 +1,95 @@
+object EditChangeReviewForm: TEditChangeReviewForm
+  Left = 841
+  Height = 1294
+  Top = 366
+  Width = 1688
+  Caption = 'Editor Change Review'
+  ClientHeight = 1294
+  ClientWidth = 1688
+  DesignTimePPI = 168
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  LCLVersion = '2.1.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 80
+    Top = 1214
+    Width = 1688
+    Align = alBottom
+    ClientHeight = 80
+    ClientWidth = 1688
+    TabOrder = 0
+    object btnCancel: TButton
+      Left = 1541
+      Height = 44
+      Top = 23
+      Width = 131
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Close'
+      Default = True
+      ModalResult = 11
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 88
+    Top = 0
+    Width = 1688
+    Align = alTop
+    ClientHeight = 88
+    ClientWidth = 1688
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 24
+      Height = 30
+      Top = 27
+      Width = 1645
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'Label1'
+      ParentColor = False
+    end
+  end
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 1126
+    Top = 88
+    Width = 1688
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 2
+    object TabSheet1: TTabSheet
+      Caption = 'Text Diff'
+      ClientHeight = 1083
+      ClientWidth = 1680
+      object Memo1: TMemo
+        Left = 0
+        Height = 1083
+        Top = 0
+        Width = 775
+        Align = alLeft
+        Lines.Strings = (
+          'Memo1'
+        )
+        TabOrder = 0
+      end
+      object Memo2: TMemo
+        Left = 775
+        Height = 1083
+        Top = 0
+        Width = 905
+        Align = alClient
+        Lines.Strings = (
+          'Memo2'
+        )
+        TabOrder = 1
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+    end
+  end
+end

@@ -14,12 +14,21 @@ uses
   ftk_store, ftk_store_files,
   ftk_factory, ftk_search,
 
-  fui_lcl_cache, frm_file_format, frm_settings, frm_about;
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes;
 
 type
   { TMainToolkitForm }
 
   TMainToolkitForm = class(TForm)
+    actExecuteDebug: TAction;
+    actExecuteFinish: TAction;
+    actExecuteParameters: TAction;
+    actExecuteRun: TAction;
+    actExecuteStep: TAction;
+    actExecuteStepInto: TAction;
+    actExecuteStepOut: TAction;
+    actExecuteStop: TAction;
+    actionEditReview: TAction;
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
     actionEditFind: TAction;
@@ -135,6 +144,16 @@ type
     MenuItem59: TMenuItem;
     MenuItem60: TMenuItem;
     MenuItem61: TMenuItem;
+    MenuItem85: TMenuItem;
+    MenuItem86: TMenuItem;
+    MenuItem87: TMenuItem;
+    MenuItem88: TMenuItem;
+    MenuItem89: TMenuItem;
+    MenuItem90: TMenuItem;
+    MenuItem91: TMenuItem;
+    MenuItem92: TMenuItem;
+    N12: TMenuItem;
+    MenuItem94: TMenuItem;
     N10: TMenuItem;
     MenuItem82: TMenuItem;
     MenuItem83: TMenuItem;
@@ -184,6 +203,7 @@ type
     MenuItem77: TMenuItem;
     MenuItem78: TMenuItem;
     MenuItem79: TMenuItem;
+    N11: TMenuItem;
     N9: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -272,10 +292,12 @@ type
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
     procedure actionEditBeginEndExecute(Sender: TObject);
+    procedure actionEditCopyExecute(Sender: TObject);
     procedure actionEditFindExecute(Sender: TObject);
     procedure actionEditFindNextExecute(Sender: TObject);
     procedure actionEditFindPrevExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
+    procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
     procedure actionFileManageDeleteExecute(Sender: TObject);
@@ -1189,6 +1211,7 @@ begin
   actionFileManageDelete.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageReload.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileSaveAs1.enabled := context.hasFocus and context.Focus.CanBeSaved;
+  actionEditReview := context.hasFocus;
 
   actionPagesCloseAll.enabled := context.hasFocus and (context.Editors.count > 0);
   actionPagesCloseLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
@@ -1443,9 +1466,27 @@ begin
   Context.focus.redo;
 end;
 
+procedure TMainToolkitForm.actionEditReviewExecute(Sender: TObject);
+var
+  frm : TEditChangeReviewForm;
+begin
+  frm := TEditChangeReviewForm.create(self);
+  try
+    frm.editor := Context.Focus.link;
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
 begin
   Context.Focus.BeginEndSelect;
+end;
+
+procedure TMainToolkitForm.actionEditCopyExecute(Sender: TObject);
+begin
+
 end;
 
 procedure TMainToolkitForm.actionEditFindExecute(Sender: TObject);
