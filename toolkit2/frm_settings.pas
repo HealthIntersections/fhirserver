@@ -18,7 +18,9 @@ type
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
+    chkSideBySide: TCheckBox;
     dlgFont: TFontDialog;
+    GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
     lblEditorFont: TLabel;

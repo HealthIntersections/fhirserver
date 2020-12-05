@@ -14,11 +14,11 @@ uses
   ftk_store, ftk_store_files,
   ftk_factory, ftk_search,
 
-  fui_lcl_cache, frm_file_format, frm_settings;
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about;
 
 type
-
   { TMainToolkitForm }
+
   TMainToolkitForm = class(TForm)
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
@@ -134,6 +134,7 @@ type
     MenuItem4: TMenuItem;
     MenuItem59: TMenuItem;
     MenuItem60: TMenuItem;
+    MenuItem61: TMenuItem;
     N10: TMenuItem;
     MenuItem82: TMenuItem;
     MenuItem83: TMenuItem;
@@ -287,6 +288,7 @@ type
     procedure actionFileSaveAllExecute(Sender: TObject);
     procedure actionFileSaveAs1Execute(Sender: TObject);
     procedure actionFileSaveExecute(Sender: TObject);
+    procedure actionhelpAboutExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
     procedure actionPagesCloseAllExecute(Sender: TObject);
@@ -493,6 +495,7 @@ begin
     FContext.focus.getFocus(mnuContent);
     updateActionStatus(editor);
   end;
+  FContext.ToolBarHeight := ToolBar1.Height;
 end;
 
 procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
@@ -1578,6 +1581,18 @@ begin
       actionFileSaveAs1Execute(sender);
 end;
 
+procedure TMainToolkitForm.actionhelpAboutExecute(Sender: TObject);
+var
+  frm : TToolkitAboutForm;
+begin
+  frm := TToolkitAboutForm.create(self);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainToolkitForm.SaveFile(editor : TToolkitEditor; address : String; updateStatus : boolean);
 var
   store : TStorageService;
@@ -1599,12 +1614,12 @@ end;
 
 procedure TMainToolkitForm.actionHelpCheckUpgradeExecute(Sender: TObject);
 begin
-
+  ShowMessage('Not implemented until there''s a release');
 end;
 
 procedure TMainToolkitForm.actionHelpContentExecute(Sender: TObject);
 begin
-
+  ShowMessage('Not implemented yet');
 end;
 
 procedure TMainToolkitForm.actionPagesCloseAllExecute(Sender: TObject);
@@ -1676,12 +1691,16 @@ begin
     ToolkitSettingsForm.lblEditorFont.Font.assign(SynEdit1.font);
     ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
+    ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
       SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
       Context.updateFont;
       mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
       lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
+      actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
+      Context.SideBySide := actionToolsSideBySideMode.Checked;
+      FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
       copyFonts;
       saveLayout;
     end;

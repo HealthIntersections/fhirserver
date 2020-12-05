@@ -1,5 +1,7 @@
 unit web_cache;
 
+{$i fhir.inc}
+
 interface
 
 Uses

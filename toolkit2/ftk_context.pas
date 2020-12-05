@@ -183,6 +183,7 @@ type
     procedure BeginEndSelect; virtual; abstract;
     procedure updateFont; virtual; abstract;
     function getSource : String; virtual; abstract;
+    procedure resizeControls; virtual; abstract;
 
     // status for actions
     property CanBeSaved : boolean read GetCanBeSaved;
@@ -260,10 +261,12 @@ type
     FOnUpdateActions: TNotifyEvent;
     FSideBySide: boolean;
     FStorages: TFslList<TStorageService>;
+    FToolBarHeight: integer;
     function GetFocus: TToolkitEditor;
     function GetHasFocus: boolean;
     procedure SetFocus(AValue: TToolkitEditor);
     procedure SetSideBySide(AValue: boolean);
+    procedure SetToolBarHeight(AValue: integer);
   public
     constructor Create(images : TImageList; actions : TActionList);
     destructor Destroy; override;
@@ -275,6 +278,7 @@ type
     function locateOnScreen(x, y : Integer) : TPoint;
     property Font : TFont read FFont write FFont;
     procedure updateFont;
+    property ToolBarHeight : integer read FToolBarHeight write SetToolBarHeight;
 
     property hasFocus : boolean read GetHasFocus;
     property focus : TToolkitEditor read FFocus write SetFocus;
@@ -596,6 +600,16 @@ begin
     for editor in Editors do
       editor.ChangeSideBySideMode;
   end;
+end;
+
+procedure TToolkitContext.SetToolBarHeight(AValue: integer);
+var
+ editor : TToolkitEditor;
+begin
+  if FToolBarHeight=AValue then Exit;
+  FToolBarHeight:=AValue;
+  for editor in FEditors do
+    editor.resizeControls;
 end;
 
 constructor TToolkitContext.Create(images: TImageList; actions : TActionList);

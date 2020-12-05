@@ -42,7 +42,8 @@ uses
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
   MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas';
+  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  fsl_service_win in '..\..\library\fsl\fsl_service_win.pas';
 
 {$R *.res}
 
