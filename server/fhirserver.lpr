@@ -32,8 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 uses
   {$IFDEF WINDOWS}
-  FastMM4,
-  FastMM4Messages,
   Windows,
   {$ENDIF}
   {$IFDEF LINUX}

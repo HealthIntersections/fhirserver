@@ -64,6 +64,7 @@ type
 
     procedure DoReceiveMessage(AMsg : Integer); virtual;
     function CheckClose(var s: String): Boolean; Virtual;
+    function command(cmd: String): boolean; virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
     destructor Destroy; override;
@@ -185,6 +186,25 @@ function TSystemService.CheckClose(var s: String): Boolean;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CheckDebugClose';
 begin
   result := false;
+end;
+
+function TSystemService.command(cmd: String): boolean;
+begin
+  result := true;
+  if cmd = 'install' then
+    CommandInstall
+  else if cmd = 'start' then
+    CommandStart
+  else if cmd = 'stop' then
+    CommandStop
+  else if cmd = 'remove' then
+    CommandRemove
+  else if cmd = 'send' then
+    CommandSend
+  else if cmd = 'status' then
+    CommandStatus
+  else
+    result := false;
 end;
 
 destructor TSystemService.Destroy;

@@ -516,7 +516,8 @@ uses
   endpoint_txsvr in 'endpoint_txsvr.pas',
   endpoint_full in 'endpoint_full.pas',
   endpoint in 'endpoint.pas',
-  web_cache in 'web_cache.pas';
+  web_cache in 'web_cache.pas',
+  fsl_diff in '..\library\fsl\fsl_diff.pas';
 
 begin
   ExecuteFhirServer;

@@ -134,6 +134,8 @@ type
     actFormat : TContentAction;
 
 
+    TextToolbar : TToolBar;
+    DesignerToolbar : TToolbar;
     TextEditor : TSynEdit;
     HighLighter : TSynCustomHighlighter;
     FEditorPopup : TPopupMenu;
@@ -196,6 +198,7 @@ type
     procedure BeginEndSelect; override;
     procedure updateFont; override;
     function getSource : String; override;
+    procedure resizeControls; override;
   end;
 
 implementation
@@ -1063,7 +1066,6 @@ end;
 
 procedure TBaseEditor.makeTextTab;
 var
-  tb : TToolBar;
   mnu : TMenuItem;
 begin
   FEditorPopup := TPopupMenu.create(tab);
@@ -1085,40 +1087,41 @@ begin
   mnu.Action := Context.actions.ActionByName('actionEditPaste');
   FEditorPopup.Items.Add(mnu);
 
-  tb := TToolBar.create(tab);
-  tb.parent := FTextPanelWork;
-  tb.align := alTop;
-  tb.Images := Context.Images;
+  TextToolbar := TToolBar.create(tab);
+  TextToolbar.parent := FTextPanelWork;
+  TextToolbar.align := alTop;
+  TextToolbar.Images := Context.Images;
+  TextToolbar.Height := Context.ToolBarHeight;
 
   if (hasDesigner) then
     if Context.SideBySide then
-      actViewDesigner := makeAction(tb, '&Activate', 77, 0, DoShowTextTab, true)
+      actViewDesigner := makeAction(TextToolbar, '&Activate', 77, 0, DoShowTextTab, true)
     else
-      actViewDesigner := makeAction(tb, '&Designer', 76, 0, DoShowDesigner, true);
-  actNavigate := makeAction(tb, '&Navigate', 63);
+      actViewDesigner := makeAction(TextToolbar, '&Designer', 76, 0, DoShowDesigner, true);
+  actNavigate := makeAction(TextToolbar, '&Navigate', 63);
   actNavigate.OnPopulate := MakeNavigationItems;
-  makeDivider(tb);
-  if AddActions(tb) then
-    makeDivider(tb);
+  makeDivider(TextToolbar);
+  if AddActions(TextToolbar) then
+    makeDivider(TextToolbar);
 
   if (hasFormatCommands) then
   begin
-    actFormat := makeAction(tb, 'Format', 86);
+    actFormat := makeAction(TextToolbar, 'Format', 86);
     actFormat.OnShow := DoMnuFormat;
   end;
 
-  actEncoding := makeAction(tb, 'Encoding', 0);
+  actEncoding := makeAction(TextToolbar, 'Encoding', 0);
   makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
   makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
   makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
   makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
 
-  actLineMarkers := makeAction(tb, 'End of Lines', 4);
+  actLineMarkers := makeAction(TextToolbar, 'End of Lines', 4);
   makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
   makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
   makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
 
-  actBOM := makeAction(tb, 'Byte Order Mark', 10);
+  actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
   makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
   makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
 
@@ -1135,19 +1138,18 @@ begin
 end;
 
 procedure TBaseEditor.makeDesigner;
-var
-  tb : TToolBar;
 begin
-  tb := TToolBar.create(tab);
-  tb.parent := FDesignerPanelWork;
-  tb.align := alTop;
-  tb.Images := Context.Images;
+  DesignerToolbar := TToolBar.create(tab);
+  DesignerToolbar.parent := FDesignerPanelWork;
+  DesignerToolbar.align := alTop;
+  DesignerToolbar.Images := Context.Images;
+  DesignerToolbar.Height := Context.ToolBarHeight;
 
   if (hasTextTab) then
     if Context.SideBySide then
-      actViewTextTab := makeAction(tb, '&Activate', 76, 0, DoShowDesigner, true)
+      actViewTextTab := makeAction(DesignerToolbar, '&Activate', 76, 0, DoShowDesigner, true)
     else
-      actViewTextTab := makeAction(tb, 'Text E&ditor', 77, 0, DoShowTextTab, true)
+      actViewTextTab := makeAction(DesignerToolbar, 'Text E&ditor', 77, 0, DoShowTextTab, true)
 end;
 
 procedure TBaseEditor.updateDesigner;
@@ -1367,6 +1369,13 @@ end;
 function TBaseEditor.getSource: String;
 begin
   result := TextEditor.Text;
+end;
+
+procedure TBaseEditor.resizeControls;
+begin
+  TextToolbar.Height := Context.ToolBarHeight;
+  if DesignerToolbar <> nil then
+    DesignerToolbar.Height := Context.ToolBarHeight;
 end;
 
 

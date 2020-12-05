@@ -1,11 +1,11 @@
 object ToolkitSettingsForm: TToolkitSettingsForm
   Left = 1641
-  Height = 296
+  Height = 444
   Top = 468
-  Width = 737
+  Width = 732
   Caption = 'FHIRToolkit Settings'
-  ClientHeight = 296
-  ClientWidth = 737
+  ClientHeight = 444
+  ClientWidth = 732
   DesignTimePPI = 168
   OnShow = FormShow
   Position = poOwnerFormCenter
@@ -13,15 +13,15 @@ object ToolkitSettingsForm: TToolkitSettingsForm
   object Panel1: TPanel
     Left = 0
     Height = 70
-    Top = 226
-    Width = 737
+    Top = 374
+    Width = 732
     Align = alBottom
     ClientHeight = 70
-    ClientWidth = 737
+    ClientWidth = 732
     ParentFont = False
     TabOrder = 0
     object Button1: TButton
-      Left = 443
+      Left = 438
       Height = 44
       Top = 8
       Width = 131
@@ -33,7 +33,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       TabOrder = 0
     end
     object Button2: TButton
-      Left = 583
+      Left = 578
       Height = 44
       Top = 8
       Width = 131
@@ -46,14 +46,14 @@ object ToolkitSettingsForm: TToolkitSettingsForm
     end
   end
   object Panel2: TPanel
-    Left = 14
+    Left = 16
     Height = 205
-    Top = 19
-    Width = 707
+    Top = 152
+    Width = 702
     Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvLowered
     ClientHeight = 205
-    ClientWidth = 707
+    ClientWidth = 702
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
@@ -78,7 +78,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       Left = 154
       Height = 26
       Top = 42
-      Width = 413
+      Width = 408
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'lblEditorFont'
@@ -86,7 +86,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       ParentFont = False
     end
     object Button3: TButton
-      Left = 592
+      Left = 587
       Height = 44
       Top = 33
       Width = 105
@@ -109,7 +109,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       Left = 154
       Height = 26
       Top = 93
-      Width = 413
+      Width = 408
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'lblLogFont'
@@ -117,7 +117,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       ParentFont = False
     end
     object Button4: TButton
-      Left = 592
+      Left = 587
       Height = 44
       Top = 84
       Width = 105
@@ -140,7 +140,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       Left = 154
       Height = 26
       Top = 149
-      Width = 441
+      Width = 436
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'lblViewFont'
@@ -148,7 +148,7 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       ParentFont = False
     end
     object Button5: TButton
-      Left = 592
+      Left = 587
       Height = 44
       Top = 140
       Width = 105
@@ -157,6 +157,24 @@ object ToolkitSettingsForm: TToolkitSettingsForm
       OnClick = Button5Click
       ParentFont = False
       TabOrder = 2
+    end
+  end
+  object GroupBox1: TGroupBox
+    Left = 16
+    Height = 128
+    Top = 8
+    Width = 704
+    Caption = 'View Settings'
+    ClientHeight = 93
+    ClientWidth = 700
+    TabOrder = 2
+    object chkSideBySide: TCheckBox
+      Left = 25
+      Height = 34
+      Top = 11
+      Width = 332
+      Caption = 'Side By Side (Designer and Text)'
+      TabOrder = 0
     end
   end
   object dlgFont: TFontDialog

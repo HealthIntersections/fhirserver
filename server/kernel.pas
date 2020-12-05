@@ -107,10 +107,10 @@ type
 
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
-    function command(cmd: String): boolean;
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   protected
     FStartTime : cardinal;
+    function command(cmd: String): boolean; override;
   public
     constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
     destructor Destroy; override;
@@ -463,7 +463,7 @@ begin
     end;
   end
   else
-    result := false;
+    result := inherited ;
 end;
 
 function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;

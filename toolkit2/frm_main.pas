@@ -14,20 +14,21 @@ uses
   ftk_store, ftk_store_files,
   ftk_factory, ftk_search,
 
-  fui_lcl_cache, frm_file_format, frm_settings;
+  fui_lcl_cache, frm_file_format, frm_settings, frm_about, frm_edit_changes;
 
 type
-
   { TMainToolkitForm }
+
   TMainToolkitForm = class(TForm)
-    actExecuteRun: TAction;
     actExecuteDebug: TAction;
+    actExecuteFinish: TAction;
     actExecuteParameters: TAction;
+    actExecuteRun: TAction;
     actExecuteStep: TAction;
     actExecuteStepInto: TAction;
     actExecuteStepOut: TAction;
     actExecuteStop: TAction;
-    actExecuteFinish: TAction;
+    actionEditReview: TAction;
     actionEditFindNext: TAction;
     actionEditFindPrev: TAction;
     actionEditFind: TAction;
@@ -151,7 +152,8 @@ type
     MenuItem90: TMenuItem;
     MenuItem91: TMenuItem;
     MenuItem92: TMenuItem;
-    N11: TMenuItem;
+    N12: TMenuItem;
+    MenuItem94: TMenuItem;
     N10: TMenuItem;
     MenuItem82: TMenuItem;
     MenuItem83: TMenuItem;
@@ -201,6 +203,7 @@ type
     MenuItem77: TMenuItem;
     MenuItem78: TMenuItem;
     MenuItem79: TMenuItem;
+    N11: TMenuItem;
     N9: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -288,13 +291,13 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     vlInspector: TValueListEditor;
-    procedure actExecuteFinishExecute(Sender: TObject);
-    procedure actExecuteStepExecute(Sender: TObject);
     procedure actionEditBeginEndExecute(Sender: TObject);
+    procedure actionEditCopyExecute(Sender: TObject);
     procedure actionEditFindExecute(Sender: TObject);
     procedure actionEditFindNextExecute(Sender: TObject);
     procedure actionEditFindPrevExecute(Sender: TObject);
     procedure actionEditRedoExecute(Sender: TObject);
+    procedure actionEditReviewExecute(Sender: TObject);
     procedure actionFileCloseExecute(Sender: TObject);
     procedure actionFileManageCopyExecute(Sender: TObject);
     procedure actionFileManageDeleteExecute(Sender: TObject);
@@ -307,6 +310,7 @@ type
     procedure actionFileSaveAllExecute(Sender: TObject);
     procedure actionFileSaveAs1Execute(Sender: TObject);
     procedure actionFileSaveExecute(Sender: TObject);
+    procedure actionhelpAboutExecute(Sender: TObject);
     procedure actionHelpCheckUpgradeExecute(Sender: TObject);
     procedure actionHelpContentExecute(Sender: TObject);
     procedure actionPagesCloseAllExecute(Sender: TObject);
@@ -513,6 +517,7 @@ begin
     FContext.focus.getFocus(mnuContent);
     updateActionStatus(editor);
   end;
+  FContext.ToolBarHeight := ToolBar1.Height;
 end;
 
 procedure TMainToolkitForm.lvMessagesDblClick(Sender: TObject);
@@ -1206,6 +1211,7 @@ begin
   actionFileManageDelete.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageReload.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileSaveAs1.enabled := context.hasFocus and context.Focus.CanBeSaved;
+  actionEditReview := context.hasFocus;
 
   actionPagesCloseAll.enabled := context.hasFocus and (context.Editors.count > 0);
   actionPagesCloseLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
@@ -1460,17 +1466,25 @@ begin
   Context.focus.redo;
 end;
 
+procedure TMainToolkitForm.actionEditReviewExecute(Sender: TObject);
+var
+  frm : TEditChangeReviewForm;
+begin
+  frm := TEditChangeReviewForm.create(self);
+  try
+    frm.editor := Context.Focus.link;
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainToolkitForm.actionEditBeginEndExecute(Sender: TObject);
 begin
   Context.Focus.BeginEndSelect;
 end;
 
-procedure TMainToolkitForm.actExecuteStepExecute(Sender: TObject);
-begin
-
-end;
-
-procedure TMainToolkitForm.actExecuteFinishExecute(Sender: TObject);
+procedure TMainToolkitForm.actionEditCopyExecute(Sender: TObject);
 begin
 
 end;
@@ -1608,6 +1622,18 @@ begin
       actionFileSaveAs1Execute(sender);
 end;
 
+procedure TMainToolkitForm.actionhelpAboutExecute(Sender: TObject);
+var
+  frm : TToolkitAboutForm;
+begin
+  frm := TToolkitAboutForm.create(self);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
+end;
+
 procedure TMainToolkitForm.SaveFile(editor : TToolkitEditor; address : String; updateStatus : boolean);
 var
   store : TStorageService;
@@ -1629,12 +1655,12 @@ end;
 
 procedure TMainToolkitForm.actionHelpCheckUpgradeExecute(Sender: TObject);
 begin
-
+  ShowMessage('Not implemented until there''s a release');
 end;
 
 procedure TMainToolkitForm.actionHelpContentExecute(Sender: TObject);
 begin
-
+  ShowMessage('Not implemented yet');
 end;
 
 procedure TMainToolkitForm.actionPagesCloseAllExecute(Sender: TObject);
@@ -1706,12 +1732,16 @@ begin
     ToolkitSettingsForm.lblEditorFont.Font.assign(SynEdit1.font);
     ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
     ToolkitSettingsForm.lblViewFont.Font.assign(lvMessages.Font);
+    ToolkitSettingsForm.chkSideBySide.Checked := actionToolsSideBySideMode.Checked;
     if ToolkitSettingsForm.ShowModal = mrOk then
     begin
       SynEdit1.font.assign(ToolkitSettingsForm.lblEditorFont.Font);
       Context.updateFont;
       mConsole.font.assign(ToolkitSettingsForm.lblLogFont.Font);
       lvMessages.Font.assign(ToolkitSettingsForm.lblViewFont.Font);
+      actionToolsSideBySideMode.Checked := ToolkitSettingsForm.chkSideBySide.Checked;
+      Context.SideBySide := actionToolsSideBySideMode.Checked;
+      FIni.WriteBool('Settings', 'SideBySide', Context.SideBySide);
       copyFonts;
       saveLayout;
     end;

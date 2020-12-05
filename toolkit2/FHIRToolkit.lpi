@@ -146,6 +146,23 @@
         <Filename Value="views\ftk_console.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="frm_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ToolkitAboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ftk_version.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_edit_changes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditChangeReviewForm"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -180,6 +197,11 @@
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>
