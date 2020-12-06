@@ -171,19 +171,16 @@ end;
 
 // stub virtual methods
 function TSystemService.CanInstall: boolean;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CanInstall';
 begin
   result := true;
 end;
 
 function TSystemService.CanStart: boolean;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CanStart';
 begin
   result := true;
 end;
 
 function TSystemService.CheckClose(var s: String): Boolean;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CheckDebugClose';
 begin
   result := false;
 end;
@@ -214,19 +211,16 @@ begin
 end;
 
 procedure TSystemService.DoReceiveMessage(AMsg: Integer);
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.DoReceiveMessage';
 begin
   // nothing
 end;
 
 procedure TSystemService.DoRemove;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.DoRemove';
 begin
   // nothing
 end;
 
 procedure TSystemService.DoStop;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.DoStop';
 begin
   // nothing
 end;
@@ -238,7 +232,7 @@ var
 
 function OpenThread(id : DWORD) : THandle;
 const
-  THREAD_GET_CONTEXT       = $0008;
+//  THREAD_GET_CONTEXT       = $0008;
   THREAD_QUERY_INFORMATION = $0040;
 var
   Kernel32Lib: THandle;
@@ -273,7 +267,6 @@ begin
 end;
 
 procedure TSystemService.ConsoleExecute;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.ConsoleExecute';
 begin
   SetThreadName('Service.Execute.Console');
   SetThreadStatus('Executing');
@@ -348,7 +341,6 @@ End;
 
 
 procedure TSystemService.InternalExecute;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.InternalExecute';
 var
   LMsg : string;
   LCheckTime : TDateTime;
@@ -482,7 +474,6 @@ begin
 end;
 
 procedure TSystemService.Execute;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.Execute';
 var
   LCanRun : boolean;
 begin
@@ -538,7 +529,6 @@ begin
 end;
 
 procedure TSystemService.CommandInstall;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandInstall';
 var
   LSvcMan : TServiceManagerHandle;
 begin
@@ -561,7 +551,6 @@ begin
 end;
 
 procedure TSystemService.CommandRemove;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandRemove';
 var
   LSvcMan : TServiceManagerHandle;
   LSvc : TServiceHandle;
@@ -585,7 +574,6 @@ begin
 end;
 
 procedure TSystemService.CommandSend;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandSend';
 var
   LSvcMan : TServiceManagerHandle;
   LSvc : TServiceHandle;
@@ -618,7 +606,6 @@ begin
 end;
 
 procedure TSystemService.CommandStart;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandStart';
 var
   LSvcMan : TServiceManagerHandle;
   LSvc : TServiceHandle;
@@ -666,7 +653,6 @@ begin
 end;
 
 procedure TSystemService.CommandStatus;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandStatus';
 var
   LSvcMan : TServiceManagerHandle;
   LSvc : TServiceHandle;
@@ -700,7 +686,6 @@ begin
 end;
 
 procedure TSystemService.CommandStop;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.CommandStop';
 var
   LSvcMan : TServiceManagerHandle;
   LSvc : TServiceHandle;
@@ -763,7 +748,6 @@ end;
 { TServiceManagerHandle }
 
 constructor TServiceManagerHandle.create(AMachine : String = '');
-const ASSERT_LOCATION = ASSERT_UNIT+'.TServiceManagerHandle.Create';
 begin
   inherited create;
   FMachine := AMachine;
@@ -772,7 +756,6 @@ begin
 end;
 
 destructor TServiceManagerHandle.destroy;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TServiceManagerHandle.destroy';
 begin
   if FHandle <> 0 then
     CloseServiceHandle(FHandle);
@@ -923,6 +906,7 @@ var
 begin
   if FHandle = 0 then
     raise EOSError.Create(SysErrorMessage(FHndErr));
+  LNeeded := 0;
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(LPQUERY_SERVICE_CONFIG)* 10, LNeeded) then
     RaiseLastOSError;
   p := LConfig[0].lpDependencies;
@@ -958,6 +942,7 @@ var
 begin
   if FHandle = 0 then
     raise EOSError.Create(SysErrorMessage(FHndErr));
+  LNeeded := 0;
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
     RaiseLastOSError;
   result := LConfig[0].dwStartType = SERVICE_AUTO_START;
@@ -1077,6 +1062,7 @@ var
 begin
   if FHandle = 0 then
     raise EOSError.Create(SysErrorMessage(FHndErr));
+  LNeeded := 0;
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
     RaiseLastOSError;
   result := LConfig[0].lpServiceStartName;
@@ -1089,6 +1075,7 @@ var
 begin
   if FHandle = 0 then
     raise EOSError.Create(SysErrorMessage(FHndErr));
+  LNeeded := 0;
   if not QueryServiceConfig(FHandle, @LConfig[0], sizeof(_QUERY_SERVICE_CONFIGA)* 10, LNeeded) then
     RaiseLastOSError;
   if (aUser = '') and (aPassword = '') Then

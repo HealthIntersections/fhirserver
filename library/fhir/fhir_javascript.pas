@@ -69,7 +69,7 @@ type
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
 
-    function FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+    function FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean) : TObject;
     function getFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
     procedure setFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
     function getFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -169,7 +169,7 @@ begin
   FFactories.AddOrSetValue(CODES_TFHIRVersion[version], fact);
 end;
 
-function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean) : TObject;
 var
   obj : TFHIRObject;
   prop : TJavascriptRegisteredProperty;

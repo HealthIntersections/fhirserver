@@ -87,7 +87,7 @@ type
   // callback functions registered with the engine
 
   // one parameter set that should always be supported is a single anonymous object, which is being auto-converted to the right class
-  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject of object;
+  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean) : TObject of object;
   TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef of object;
   TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef of object;
   TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue) of object;
@@ -597,6 +597,7 @@ begin
     setLength(pl, argumentCount - 1);
     for i := 0 to argumentCount - 2 do
       pl[i] := p[i+1];
+
     obj := def.FFactory(def.FJavascript, def, pl, owns);
     result := def.FJavascript.wrap(obj, def, owns);
   except

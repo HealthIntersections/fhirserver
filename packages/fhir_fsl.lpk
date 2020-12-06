@@ -17,6 +17,11 @@
           <IncludeAssertionCode Value="True"/>
         </SyntaxOptions>
       </Parsing>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx5091="True" idx5024="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>

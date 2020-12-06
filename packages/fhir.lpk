@@ -12,6 +12,11 @@
         <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx5024="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>

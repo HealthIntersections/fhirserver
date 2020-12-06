@@ -1,13 +1,13 @@
 object ToolkitAboutForm: TToolkitAboutForm
-  Left = 1337
-  Height = 427
-  Top = 645
-  Width = 999
+  Left = 1339
+  Height = 428
+  Top = 648
+  Width = 1000
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'FHIR Toolkit Information'
-  ClientHeight = 427
-  ClientWidth = 999
+  ClientHeight = 428
+  ClientWidth = 1000
   DesignTimePPI = 168
   OnShow = FormShow
   Position = poOwnerFormCenter

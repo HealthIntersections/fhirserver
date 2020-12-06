@@ -61,7 +61,7 @@ type
     procedure setContentKind(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function getContentValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     procedure setContentValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
-    function factCreateContent(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean): TObject;
+    function factCreateContent(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean): TObject;
     procedure defineContent(js : TJavascript);
 
     function getCellContents(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
@@ -70,13 +70,13 @@ type
     procedure setCellComponents(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function getCellText(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     procedure setCellText(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
-    function factCreateCell(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean): TObject;
+    function factCreateCell(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean): TObject;
     procedure defineCell(js : TJavascript);
 
     function getFieldElements(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     procedure setFieldElements(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function fnFieldElement(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
-    function factCreateField(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean): TObject;
+    function factCreateField(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean): TObject;
     procedure defineField(js : TJavascript);
 
     function getSegmentCode(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
@@ -85,14 +85,14 @@ type
     procedure setSegmentFields(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function fnSegmentElement(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function fnSegmentField(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
-    function factCreateSegment(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean): TObject;
+    function factCreateSegment(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean): TObject;
     procedure defineSegment(js : TJavascript);
 
     function getMessageSegments(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     procedure setMessageSegments(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
     function fnMessageAddSegment(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function fnMessageSegment(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
-    function factCreateMessage(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean): TObject;
+    function factCreateMessage(js: TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean): TObject;
     procedure defineMessage(js : TJavascript);
 
     function fnUtilsEncode(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
@@ -194,7 +194,7 @@ begin
   defUtils.defineRoutine('q', nil, fnUtilsQuery);
 end;
 
-function TV2JavascriptHelper.factCreateCell(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+function TV2JavascriptHelper.factCreateCell(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
 begin
   owns := true; //?
   result := TV2Cell.create;
@@ -202,7 +202,7 @@ begin
     TV2Cell(result).contentList.Add(TV2Content.Create(ckString, js.asString(params[0])));
 end;
 
-function TV2JavascriptHelper.factCreateContent(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+function TV2JavascriptHelper.factCreateContent(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
 begin
   owns := true; //?
   if length(params) = 1 then
@@ -211,7 +211,7 @@ begin
     result := TV2Cell.create;
 end;
 
-function TV2JavascriptHelper.factCreateField(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+function TV2JavascriptHelper.factCreateField(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
 begin
   owns := true; //?
   result := TV2Field.create;
@@ -222,13 +222,13 @@ begin
   end;
 end;
 
-function TV2JavascriptHelper.factCreateMessage(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+function TV2JavascriptHelper.factCreateMessage(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
 begin
   owns := true; //?
   result := TV2Message.create;
 end;
 
-function TV2JavascriptHelper.factCreateSegment(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+function TV2JavascriptHelper.factCreateSegment(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
 begin
   owns := true; //?
   if length(params) <> 1 then

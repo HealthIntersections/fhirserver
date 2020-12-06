@@ -579,7 +579,6 @@ end;
 procedure TMainToolkitForm.saveSearch;
 var
   i : integer;
-  s : String;
 begin
   FIni.writeString('Search', 'current', cbxSearch.text);
   FIni.writeInteger('Search', 'count', cbxSearch.items.count);
@@ -765,12 +764,10 @@ procedure TMainToolkitForm.updateConsole;
 var
   ts : TStringList;
   s : String;
-  l : integer;
 begin
   ts := TStringList.create;
   try
     Context.Console.GetIncoming(ts);
-    l := 0;
     if (ts.count > 0) then
     begin
       mConsole.Lines.BeginUpdate;
@@ -1214,7 +1211,7 @@ begin
   actionFileManageDelete.enabled := context.hasFocus and context.Focus.isFile;
   actionFileManageReload.enabled := context.hasFocus and context.Focus.hasAddress;
   actionFileSaveAs1.enabled := context.hasFocus and context.Focus.CanBeSaved;
-  actionEditReview.enabled := context.hasFocus;
+  actionEditReview.enabled := context.hasFocus and (Context.Focus.Store <> nil);
 
   actionPagesCloseAll.enabled := context.hasFocus and (context.Editors.count > 0);
   actionPagesCloseLeft.enabled := context.hasFocus and (pgEditors.ActivePage.PageIndex > 0);
@@ -1477,7 +1474,8 @@ begin
   try
     frm.editor := Context.Focus.link;
     frm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
-    frm.ShowModal;
+    if frm.ShowModal = mrOK then
+      Context.Focus.loadBytes(TEncoding.UTF8.getBytes(frm.mSource.Lines.Text));
   finally
     frm.Free;
   end;

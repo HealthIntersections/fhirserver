@@ -1,11 +1,11 @@
 object FileFormatChooser: TFileFormatChooser
-  Left = 598
+  Left = 600
   Height = 785
-  Top = 348
-  Width = 742
+  Top = 350
+  Width = 743
   Caption = 'FileFormatChooser'
   ClientHeight = 785
-  ClientWidth = 742
+  ClientWidth = 743
   DesignTimePPI = 168
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
@@ -13,13 +13,13 @@ object FileFormatChooser: TFileFormatChooser
     Left = 0
     Height = 80
     Top = 705
-    Width = 742
+    Width = 743
     Align = alBottom
     ClientHeight = 80
-    ClientWidth = 742
+    ClientWidth = 743
     TabOrder = 0
     object btnOk: TButton
-      Left = 448
+      Left = 449
       Height = 44
       Top = 23
       Width = 131
@@ -32,7 +32,7 @@ object FileFormatChooser: TFileFormatChooser
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 595
+      Left = 596
       Height = 44
       Top = 23
       Width = 131
@@ -48,7 +48,7 @@ object FileFormatChooser: TFileFormatChooser
     Left = 0
     Height = 705
     Top = 0
-    Width = 742
+    Width = 743
     ActivePage = TabSheet1
     Align = alClient
     ShowTabs = False
@@ -57,22 +57,22 @@ object FileFormatChooser: TFileFormatChooser
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
       ClientHeight = 697
-      ClientWidth = 734
+      ClientWidth = 735
       object Panel2: TPanel
         Left = 0
         Height = 697
         Top = 0
-        Width = 734
+        Width = 735
         Align = alClient
         BorderWidth = 6
         ClientHeight = 697
-        ClientWidth = 734
+        ClientWidth = 735
         TabOrder = 0
         object ListBox1: TListBox
           Left = 7
           Height = 683
           Top = 7
-          Width = 720
+          Width = 721
           Align = alClient
           Items.Strings = (
             'FHIR Resource'

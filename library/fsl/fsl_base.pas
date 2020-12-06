@@ -1300,6 +1300,7 @@ function TFslEnumerable<T>.ToArrayImpl(Count: Integer): TArray<T>;
 var
   x: T;
 begin
+  result := nil;
   // We assume our caller has passed correct Count
   SetLength(Result, Count);
   Count := 0;
@@ -1836,6 +1837,7 @@ begin
   if ACount = 0 then
     Exit;
 
+  oldItems := nil;
   SetLength(oldItems, ACount);
   FArrayManager.Move(FItems, oldItems, AIndex, 0, ACount);
   try
@@ -1919,7 +1921,6 @@ end;
 
 function TFslList<T>.IndexOfItem(const Value: T; Direction: TDirection): Integer;
 var
-  P: T;
   i: Integer;
 begin
   if Direction = TDirection.FromBeginning then

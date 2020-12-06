@@ -41,7 +41,7 @@ type
   TFHIRClientJSHelper = class (TFslObject)
   private
     FWorker : TFHIRWorkerContextWithFactory;
-    function CreateFHIRClientJs(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+    function CreateFHIRClientJs(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; out owns: boolean): TObject;
     function FHIRClientAddressJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientCapabilitiesJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientCreateJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
@@ -76,8 +76,9 @@ begin
   inherited;
 end;
 
-function TFHIRClientJSHelper.CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+function TFHIRClientJSHelper.CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; out owns : boolean) : TObject;
 begin
+  owns := false;
   if js.asBoolean(params[1]) then
     result := FWorker.Factory.makeClient(FWorker.link, js.asString(params[0]), ffJson)
   else
