@@ -24,6 +24,7 @@ type
     procedure delete(address : String); override;
     function openDlg(out newName : String) : boolean; override;
     function saveDlg(existing : String; suggestedExtension : String; out newName : String) : boolean; override;
+    function MakeFilename(address : String) : String; override;
   end;
 
 implementation
@@ -130,6 +131,11 @@ begin
   finally
     dlg.free;
   end;
+end;
+
+function TFileStorageService.MakeFilename(address: String): String;
+begin
+  result := ExtractFileName(address.Substring(5));
 end;
 
 end.
