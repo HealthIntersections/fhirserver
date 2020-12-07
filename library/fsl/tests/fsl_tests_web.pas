@@ -77,12 +77,12 @@ type
     {$IFDEF SSL_100_TESTS}
     FIOHandlerOld : TIdServerIOHandlerSSLOpenSSL;
     procedure startServer100;
+    procedure SSLPassword100(var Password: string);
     {$ENDIF}
+    Procedure DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure startServer110;
     procedure stopServer;
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
-    procedure SSLPassword100(var Password: string);
-    Procedure DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
   published
     procedure testWebFetcher;
@@ -161,7 +161,7 @@ var
   jwk : TJWK;
   s: String;
 begin
-  jwk := TJWTUtils.loadKeyFromRSACert(TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.crt']));
+  jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(TestSettings.serverTestFile(['testcases', 'certs', 'jwt-test.key.crt'])));
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     assertTrue(true);
@@ -372,17 +372,7 @@ begin
   VUseSSL := true;
 end;
 
-procedure TOpenSSLTests.DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-begin
-  response.ContentText := 'Response';
-end;
-
 procedure TOpenSSLTests.SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
-begin
-  Password := TestSettings.SSLPassword;
-end;
-
-procedure TOpenSSLTests.SSLPassword100(var Password: string);
 begin
   Password := TestSettings.SSLPassword;
 end;
@@ -413,7 +403,17 @@ begin
   FServer.active := true;
 end;
 
+procedure TOpenSSLTests.DoServe(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+begin
+  response.ContentText := 'Response';
+end;
+
 {$IFDEF SSL_100_TESTS}
+procedure TOpenSSLTests.SSLPassword100(var Password: string);
+begin
+  Password := TestSettings.SSLPassword;
+end;
+
 procedure TOpenSSLTests.startServer100;
 begin
   FServer := TIdHTTPServer.Create(Nil);

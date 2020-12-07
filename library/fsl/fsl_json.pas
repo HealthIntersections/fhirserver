@@ -2100,7 +2100,6 @@ end;
 
 function TJsonArray.findLocation(loc: TSourceLocation; name: String; path: TFslList<TJsonPointerMatch>): boolean;
 var
-  n : TJsonNode;
   i : integer;
 begin
   Result := inherited findLocation(loc, name, path);

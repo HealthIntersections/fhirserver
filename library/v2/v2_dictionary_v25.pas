@@ -15374,7 +15374,6 @@ Var
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
   oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('ORR_O02', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;

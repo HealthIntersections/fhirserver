@@ -270,7 +270,7 @@ end;
 
 class function TSearchParser.processParam(indexes : TFHIRIndexInformation; resourceType, name, value: String): TSearchParameter;
 var
-  l, r, n, m, p, v : String;
+  l, r, n, m : String;
   index : TFhirIndex;
 begin
   StringSplit(name, '.', l, r);

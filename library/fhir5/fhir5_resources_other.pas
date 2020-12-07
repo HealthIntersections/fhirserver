@@ -42614,7 +42614,7 @@ begin
   end
   else if (propName = 'result') then
   begin
-    Result := propValue as TFhirReference {L1199};
+    self.Result := propValue as TFhirReference {L1199};
     result := propValue;
   end
   else if (propName = 'dataRequirement') then

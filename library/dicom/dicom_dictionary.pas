@@ -1412,12 +1412,18 @@ Type
   {
   Determinine the VR matching the given VR code
   }
-    Function DetermineVRType(sCode : String) : TDicomVRType;
+    {$IFDEF DELPHI}
+    Function DetermineVRType(sCode : String) : TDicomVRType; overload;
+    {$ENDIF}
+    Function DetermineVRType(sCode : AnsiString) : TDicomVRType; overload;
 
   {
   Deterimine if the given VR code is valid
   }
-  Function isValidVRType(sCode : String) : Boolean;
+  {$IFDEF DELPHI}
+  Function isValidVRType(sCode : String) : Boolean; overload;
+  {$ENDIF}
+  Function isValidVRType(sCode : AnsiString) : Boolean; overload;
 
   {
   Find a matching element in the dictionary, giving the element tag
@@ -1592,7 +1598,9 @@ Const
     ('C-STORE', 'C-FIND', 'C-GET', 'C-MOVE', 'C-ECHO',
     'N-EVENT', 'N-GET', 'N-SET', 'N-ACTION', 'N-CREATE', 'N-DELETE');
 
-  DICOM_VR_TYPE_NAMES : Array [TDicomVRType] of String =
+  DICOM_VR_TYPE_NAMES_S : Array [TDicomVRType] of String =
+    ('CS','SH','LO','ST','LT','UT','AE','PN','UI','DA','TM','DT','AS','IS','DS','SS','US','SL','UL','AT','FL','FD','OB','OW','OF','UN');
+  DICOM_VR_TYPE_NAMES_A : Array [TDicomVRType] of AnsiString =
     ('CS','SH','LO','ST','LT','UT','AE','PN','UI','DA','TM','DT','AS','IS','DS','SS','US','SL','UL','AT','FL','FD','OB','OW','OF','UN');
 
   DICOM_VRTYPES_NOTREPEATED = [dvtSH,dvtLO,dvtST,dvtLT,dvtUT,dvtOB,dvtOW,dvtOF,dvtUN];
@@ -1649,7 +1657,7 @@ Begin
           bFirst := false
         Else
           oBuilder.Append(',');
-        oBuilder.Append(DICOM_VR_TYPE_NAMES[aLoop]);
+        oBuilder.Append(DICOM_VR_TYPE_NAMES_S[aLoop]);
       End;
     result := oBuilder.AsString;      
   Finally
@@ -1979,8 +1987,6 @@ Var
   sTemp : String;
   sLeft, sRight: String;
 Begin
-  Result := Nil;
-  
   oParam := TDicomDimseParam.Create;
   Try
     oParam.Name := oNode.attribute['name'];
@@ -2110,8 +2116,6 @@ Function TDicomDictionaryParser.ReadDicomInfoEntryAttr(Const oNode: TMXmlElement
 Var
   oAttr: TDicomInfoEntryAttr;
 Begin
-  Result := Nil;
-
   oAttr := TDicomInfoEntryAttr.Create;
   Try
     oAttr.Name := oNode.Attribute['name'];
@@ -2133,8 +2137,6 @@ Function TDicomDictionaryParser.ReadDicomInfoEntryReference(Const oNode: TMXmlEl
 Var
   oRef: TDicomInfoEntryReference;
 Begin
-  Result := Nil;
-
   oRef := TDicomInfoEntryReference.Create;
   Try
     oRef.Name := oNode.Attribute['name'];
@@ -2634,7 +2636,14 @@ begin
   FVRSet[dvtUN] := TDicomDictionaryVR.Create(dvtUN, 'UN', 0,         nfix,  nrep,  'Unknown', 'A string of bytes where the encoding of the contents is unknown.');
 end;
 
+{$IFDEF DELPHI}
 Function TDicomDictionary.isValidVRType(sCode : String) : Boolean;
+Begin
+  result := (sCode = 'CS') Or (sCode = 'SH') Or (sCode = 'LO') Or (sCode = 'ST') Or (sCode = 'LT') Or (sCode = 'UT') Or (sCode = 'AE') Or (sCode = 'PN') Or (sCode = 'UI') Or (sCode = 'DA') Or (sCode = 'TM') Or (sCode = 'DT') Or (sCode = 'AS') Or (sCode = 'IS') Or (sCode = 'DS') Or (sCode = 'SS') Or (sCode = 'US') Or (sCode = 'SL') Or (sCode = 'UL') Or (sCode = 'AT') Or (sCode = 'FL') Or (sCode = 'FD') Or (sCode = 'OB') Or (sCode = 'OW') Or (sCode = 'OF') Or (sCode = 'UN');
+End;
+{$ENDIF}
+
+Function TDicomDictionary.isValidVRType(sCode : AnsiString) : Boolean;
 Begin
   result := (sCode = 'CS') Or (sCode = 'SH') Or (sCode = 'LO') Or (sCode = 'ST') Or (sCode = 'LT') Or (sCode = 'UT') Or (sCode = 'AE') Or (sCode = 'PN') Or (sCode = 'UI') Or (sCode = 'DA') Or (sCode = 'TM') Or (sCode = 'DT') Or (sCode = 'AS') Or (sCode = 'IS') Or (sCode = 'DS') Or (sCode = 'SS') Or (sCode = 'US') Or (sCode = 'SL') Or (sCode = 'UL') Or (sCode = 'AT') Or (sCode = 'FL') Or (sCode = 'FD') Or (sCode = 'OB') Or (sCode = 'OW') Or (sCode = 'OF') Or (sCode = 'UN');
 End;
@@ -2696,6 +2705,66 @@ Begin
   else
     raise EDicomException.create('Unknown VR Type "'+sCode+'"');
 End;
+
+{$IFDEF DELPHI}
+Function TDicomDictionary.DetermineVRType(sCode : AnsiString):TDicomVRType;
+Begin
+  if sCode = 'CS' Then
+    result := dvtCS
+  else if sCode = 'SH' Then
+    result := dvtSH
+  else if sCode = 'LO' Then
+    result := dvtLO
+  else if sCode = 'ST' Then
+    result := dvtST
+  else if sCode = 'LT' Then
+    result := dvtLT
+  else if sCode = 'UT' Then
+    result := dvtUT
+  else if sCode = 'AE' Then
+    result := dvtAE
+  else if sCode = 'PN' Then
+    result := dvtPN
+  else if sCode = 'UI' Then
+    result := dvtUI
+  else if sCode = 'DA' Then
+    result := dvtDA
+  else if sCode = 'TM' Then
+    result := dvtTM
+  else if sCode = 'DT' Then
+    result := dvtDT
+  else if sCode = 'AS' Then
+    result := dvtAS
+  else if sCode = 'IS' Then
+    result := dvtIS
+  else if sCode = 'DS' Then
+    result := dvtDS
+  else if sCode = 'SS' Then
+    result := dvtSS
+  else if sCode = 'US' Then
+    result := dvtUS
+  else if sCode = 'SL' Then
+    result := dvtSL
+  else if sCode = 'UL' Then
+    result := dvtUL
+  else if sCode = 'AT' Then
+    result := dvtAT
+  else if sCode = 'FL' Then
+    result := dvtFL
+  else if sCode = 'FD' Then
+    result := dvtFD
+  else if sCode = 'OB' Then
+    result := dvtOB
+  else if sCode = 'OW' Then
+    result := dvtOW
+  else if sCode = 'OF' Then
+    result := dvtOF
+  else if sCode = 'UN' Then
+    result := dvtUN
+  else
+    raise EDicomException.create('Unknown VR Type "'+String(sCode)+'"');
+End;
+{$ENDIF}
 
 Function Matches(sPattern, sInstance : String): Boolean;
 var
@@ -2993,7 +3062,7 @@ Begin
   oCodes := TFslStringList.Create;
   Try
     For i := Low(TDicomVRType) To High(TDicomVRType) Do
-      oCodes.Add(DICOM_VR_TYPE_NAMES[i]);
+      oCodes.Add(DICOM_VR_TYPE_NAMES_S[i]);
 
     Result := oCodes.Link;
   Finally

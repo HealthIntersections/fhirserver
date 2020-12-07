@@ -76,7 +76,6 @@ type
     function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
     function matches(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
     function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
-    function Repository : TTerminologyFhirServerStorage;
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -88,7 +87,7 @@ type
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override ;
 
-    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
+    function Repository : TTerminologyFhirServerStorage; // private - hint busting
   public
     constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
     destructor Destroy; override;
@@ -99,6 +98,7 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; override;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; override;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   end;
 
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
@@ -176,7 +176,6 @@ type
     function data : TTerminologyServerData;
     function terminologies : TCommonTerminologies;
   protected
-    function description : String; override;
 
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
@@ -190,6 +189,7 @@ type
   public
     destructor Destroy; override;
     function link : TTerminologyServerWebServer; overload;
+    function description : String; override;
   end;
 
 
@@ -213,7 +213,7 @@ type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -483,7 +483,7 @@ procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest;
 var
   search : TFslList<TSearchParameter>;
   sp : TSearchParameter;
-  l, list, filtered : TFslMetadataResourceList;
+  list, filtered : TFslMetadataResourceList;
   res : TFhirMetadataResourceW;
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcomeW;
@@ -1059,10 +1059,7 @@ end;
 
 procedure TTerminologyFhirServerStorage.loadFile(factory: TFHIRFactory; name: String);
 var
-  fmt : TFHIRFormat;
-  p : TFHIRParser;
   cnt : TBytes;
-  res : TFHIRResourceV;
 begin
   if (not FileExists(name)) then
     raise EFslException.Create('Resource in "'+name+'" could not be parsed (not found)');
@@ -1254,7 +1251,7 @@ end;
 
 { TTerminologyServerEndPoint }
 
-function TTerminologyServerEndPoint.cacheSize: Int64;
+function TTerminologyServerEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
 end;
@@ -1441,7 +1438,6 @@ var
   h : THtmlPublisher;
   s : String;
   sct : TSnomedServices;
-  icd : TICD10Provider;
   p : TCodeSystemProvider;
   pl : TFslList<TCodeSystemProvider>;
 begin

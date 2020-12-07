@@ -4649,8 +4649,8 @@ begin
     begin
       if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
-    end;
       child := NextSibling(child);
+    end;
     closeOutElement(result, element);
 
     result.link;

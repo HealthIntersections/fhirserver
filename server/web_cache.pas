@@ -138,7 +138,7 @@ end;
 
 procedure THTTPCacheManager.Trim;
 var
-  i, c : integer;
+  i : cardinal;
   s : String;
   list : TStringList;
   v : TCachedHTTPResponse;

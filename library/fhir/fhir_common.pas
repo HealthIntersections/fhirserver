@@ -1254,7 +1254,9 @@ type
     FMap : TFslMap<T>;
     FList : TFslList<T>;
     procedure updateList(url, version: String);
-    function compare(sender : TObject; const l, r : T) : integer;
+    {$IFDEF FPC}
+    function Compare(sender : TObject; const l, r : T) : integer;
+    {$ENDIF}
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -2340,7 +2342,8 @@ begin
   FMap.clear();
 end;
 
-function TFHIRMetadataResourceManagerW<T>.compare(sender : TObject; const l, r : T) : integer;
+{$IFDEF FPC}
+function TFHIRMetadataResourceManagerW<T>.Compare(sender : TObject; const l, r : T) : integer;
 var
   v1, v2, mm1, mm2 : string;
 begin
@@ -2362,6 +2365,7 @@ begin
       result := CompareText(mm1, mm2);
   end;
 end;
+{$ENDIF}
 
 { TFhirEncounterW }
 

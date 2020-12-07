@@ -15596,8 +15596,6 @@ Var
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('ACK', 'Standard Acknowlegdement', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
@@ -19461,9 +19459,6 @@ Var
   oGrp2 : THL7V2ModelSegmentGroup;
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('RPR_I03', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;

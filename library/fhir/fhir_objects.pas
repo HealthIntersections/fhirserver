@@ -332,7 +332,7 @@ type
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor create; override;
+    constructor Create; override;
     constructor Create(name, type_ : String; value : TFhirObject; list : TFHIRObjectList); overload;
     destructor Destroy; override;
 
@@ -356,7 +356,7 @@ type
     FComposeFinish2: TSourceLocation;
     FComposeStart2: TSourceLocation;
   public
-    constructor create; override;
+    constructor Create; override;
     function inSpan(loc : TSourceLocation) : boolean;
     function hasLocation1 : boolean;
     function hasLocation2 : boolean;
@@ -390,7 +390,7 @@ type
   end;
 
   { TFHIRObject }
-
+  {$M+}
   TFHIRObject = class (TFslObject)
   private
     FTags : TFslStringDictionary;
@@ -517,7 +517,7 @@ type
     function isEmpty : boolean; virtual;
     procedure dropEmpty;
     function Equals(other : TObject) : boolean; override;
-  public
+  published
     {
       comments from the XML stream. No support for comments in JSON
     }
@@ -534,6 +534,7 @@ type
 
   TFHIRObjectClass = class of TFHIRObject;
 
+  {$M-}
   TFHIRObjectListEnumerator = class (TFslObject)
   private
     FIndex : integer;
@@ -2495,7 +2496,6 @@ class function TFHIRSystemTuple.fromParams(pm: THTTPParameters): TFHIRSystemTupl
 var
   this : TFHIRSystemTuple;
   i : integer;
-  s : String;
 begin
   this := TFHIRSystemTuple.Create;
   try

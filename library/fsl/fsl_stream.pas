@@ -298,15 +298,14 @@ type
   TFslBuffer = Class(TFslObject)
   Private
     FData : Pointer;
-    FCapacity : Integer;
+    FCapacity : Cardinal;
     FOwned : Boolean;
     FEncoding: TEncoding;
     FFormat: String;
     function GetAsUnicode: String;
     procedure SetAsUnicode(const Value: String);
-    Function ExtractUnicode(Const iLength : Integer) : String;
 
-    Procedure SetCapacity(Const Value : Integer);
+    Procedure SetCapacity(Const Value : cardinal);
     Procedure SetData(Const Value : Pointer);
     Procedure SetOwned(Const Value : Boolean);
 
@@ -352,13 +351,12 @@ type
 
     Function Equal(oBuffer : TFslBuffer) : Boolean;
     Procedure Copy(oBuffer : TFslBuffer);
-    Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : Integer);
+    Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : cardinal);
     Function Compare(oBuffer : TFslBuffer) : Integer;
 
-    Procedure Move(Const iSource, iTarget, iLength : Integer);
+    Procedure Move(Const iSource, iTarget, iLength : cardinal);
 
-    Function Offset(iIndex : Integer) : Pointer;
-    Function StartsWith(Const sValue : String) : Boolean;
+    Function Offset(iIndex : cardinal) : Pointer;
 
     Procedure LoadFromFile(oFile : TFslFile);
     Procedure SaveToFile(oFile : TFslFile);
@@ -368,13 +366,13 @@ type
     Procedure SaveToStream(oStream : TStream); overload;
 
     Property Data : Pointer Read FData Write SetData;
-    Property Capacity : Integer Read FCapacity Write SetCapacity;
+    Property Capacity : Cardinal Read FCapacity Write SetCapacity;
     Property Owned : Boolean Read FOwned Write SetOwned;
     Property AsText : String Read GetAsUnicode Write SetAsUnicode;
     Property Encoding : TEncoding read FEncoding write FEncoding;
     Property AsBytes : TBytes read GetAsBytes write SetAsBytes;
     Property AsAscii : AnsiString Read GetAsText Write SetAsText;
-    Property Size : Integer Read FCapacity Write SetCapacity;
+    Property Size : Cardinal Read FCapacity Write SetCapacity;
     Property Format : String read FFormat write FFormat;
     property HasFormat : boolean read GetHasFormat;
 
@@ -2113,7 +2111,7 @@ Begin
 
    i := oStream.Position;
    oStream.Write(Data^, Capacity);
-   assert(oStream.Position = i + Capacity);
+   assert(oStream.Position = i + integer(Capacity));
 End;
 
 
@@ -2187,12 +2185,10 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetCapacity(Const Value: Integer);
+Procedure TFslBuffer.SetCapacity(Const Value: cardinal);
 Begin 
   If (Value <> Capacity) Then
-  Begin 
-    Assert(CheckCondition(Value >= 0, 'SetCapacity', StringFormat('Unable to change the Capacity to %d', [Value])));
-
+  Begin
     If FOwned Then
       MemoryResize(FData, FCapacity, Value);
 
@@ -2259,32 +2255,32 @@ Begin
 End;
 
 
-Procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; Const iIndex, iLength : Integer);
+Procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; Const iIndex, iLength : cardinal);
 Begin
   Assert(Invariants('CopyRange', oBuffer, TFslBuffer, 'oBuffer'));
-  Assert(CheckCondition((iIndex >= 0) And (iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
+  Assert(CheckCondition((iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
 
   SetCapacity(iLength);
 
   MemoryMove(oBuffer.Offset(iIndex), Data, iLength);
-End;  
+End;
 
 
-Procedure TFslBuffer.Move(Const iSource, iTarget, iLength : Integer);
+Procedure TFslBuffer.Move(Const iSource, iTarget, iLength : cardinal);
 Begin
-  Assert(CheckCondition((iSource >= 0) And (iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
-  Assert(CheckCondition((iTarget >= 0) And (iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
+  Assert(CheckCondition((iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
+  Assert(CheckCondition((iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
 
   MemoryMove(Offset(iSource), Offset(iTarget), iLength);
-End;  
+End;
 
 
-Function TFslBuffer.Offset(iIndex: Integer): Pointer;
+Function TFslBuffer.Offset(iIndex: cardinal): Pointer;
 Begin 
-  Assert(CheckCondition((iIndex >= 0) And (iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
+  Assert(CheckCondition((iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
 
   Result := Pointer(NativeUInt(Data) + NativeUInt(iIndex));
-End;  
+End;
 
 
 function TFslBuffer.sizeInBytesV : cardinal;
@@ -2311,24 +2307,6 @@ Function TFslBuffer.ExtractAscii(Const iLength: Integer): AnsiString;
 Begin
   Result := MemoryToString(Data, iLength);
 End;
-
-{$IFNDEF VER130}
-Function TFslBuffer.ExtractUnicode(Const iLength: Integer): String;
-Begin
-  result := System.copy(GetAsUnicode, 1, iLength);
-End;
-{$ENDIF}
-
-
-Function TFslBuffer.StartsWith(Const sValue: String): Boolean;
-Begin
-  {$IFDEF VER130}
-  Result := (Length(sValue) <= Capacity) And StringStartsWith(ExtractAscii(Length(sValue)), sValue);
-  {$ELSE}
-  Result := (Length(sValue) <= Capacity) And StringStartsWith(ExtractUnicode(Length(sValue)), sValue);
-  {$ENDIF}
-End;
-
 
 {$IFNDEF UT}
 constructor TFslBuffer.Create(sText: String);

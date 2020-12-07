@@ -539,10 +539,11 @@ var
   st : TMemoryManagerUsageSummary;
 {$ENDIF}
 begin
-result := 0;
 {$IFDEF DELPHI}
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
+{$ELSE}
+  result := 0;
 {$ENDIF}
 end;
 
@@ -633,8 +634,6 @@ end;
 
 procedure TLogging.start(s : String);
 var
-  today : integer;
-  delta : String;
   listener : TLogListener;
 begin
   checkDay;

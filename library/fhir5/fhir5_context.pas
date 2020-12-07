@@ -62,7 +62,9 @@ type
     FMap : TFslMap<T>;
     FList : TFslList<T>;
     procedure updateList(url, version: String);
+    {$IFDEF FPC}
     function sort(sender : TObject; const L, R: T): Integer;
+    {$ENDIF}
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -391,6 +393,7 @@ begin
   end;
 end;
 
+{$IFDEF FPC}
 function TFHIRMetadataResourceManager<T>.sort(sender : TObject; const L, R: T): Integer;
 var
   v1, v2, mm1, mm2 : string;
@@ -413,6 +416,7 @@ begin
       result := CompareText(mm1, mm2);
   end;
 end;
+{$ENDIF}
 
 procedure TFHIRMetadataResourceManager<T>.updateList(url, version : String);
 var

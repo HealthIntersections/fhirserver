@@ -353,7 +353,6 @@ end;
 class function TScryptTests.StringToUtf8Bytes(const s: UnicodeString): TBytes;
 var
   strLen: Integer;
-  dw: DWORD;
 begin
   strLen := Length(s);
 
@@ -362,8 +361,8 @@ begin
     SetLength(Result, 0);
     Exit;
   end
-        else
-          result := TEncoding.UTF8.getBytes(s);
+  else
+    result := TEncoding.UTF8.getBytes(s);
 end;
 
 procedure TScryptTests.Test_JavaWgScrypt;

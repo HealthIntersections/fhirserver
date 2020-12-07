@@ -1030,10 +1030,7 @@ end;
 
 constructor TXmlParserTests.Create;
 var
-  sl : TStringlist;
   sr : TSearchRec;
-  s : String;
-  i : integer;
 begin
   inherited Create;
   if FindFirst(TestSettings.serverTestFile(['testcases', 'xml', '*.xml']), faAnyFile, SR) = 0 then
@@ -1162,12 +1159,10 @@ constructor TXPathEngineTests.Create;
 var
   tests : TMXmlDocument;
   tcase : TMXmlElement;
-  i : integer;
 begin
   inherited create;
   tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
-    i := 0;
     tcase := tests.document.firstElement;
     while tcase <> nil do
     begin
@@ -4323,19 +4318,16 @@ constructor TJsonPatchTests.Create;
 var
   tests : TJsonArray;
   test : TJsonNode;
-  i : integer;
   s : string;
 begin
   inherited create;
   tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
-    i := 0;
     for test in tests do
     begin
       s := (test as TJsonObject)['comment'];
       s := s.Substring(0, s.IndexOf(' '));
       AddTest(TJsonPatchTest.create(s));
-      inc(i);
     end;
   finally
     tests.free;

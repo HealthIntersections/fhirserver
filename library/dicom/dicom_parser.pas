@@ -100,7 +100,7 @@ Type
     FOffset : Cardinal;
     FFileBufferCutoffSize: Integer;
     Procedure SetContext(oValue : TDicomParserContext);
-    Function MakeError(iBack : cardinal; sMessage : AnsiString) : Exception;
+    Function MakeError(iBack : cardinal; sMessage : String) : Exception;
 //    Function BufferFactory(iSize : Integer): TFslBuffer;
   protected
     function sizeInBytesV : cardinal; override;
@@ -395,7 +395,7 @@ begin
   inherited;
 end;
 
-function TDicomParserBase.MakeError(iBack: Cardinal; sMessage: AnsiString): Exception;
+function TDicomParserBase.MakeError(iBack: Cardinal; sMessage: String): Exception;
 begin
   FContext.Backmark(dburError, iBack);
   FContext.ErrorMessage := sMessage;
@@ -515,7 +515,7 @@ Begin
       aTypes := oDefn.VRTypes;
       if not (aType in aTypes) and (iLength > 0) and FContext.CheckTypes Then
       Begin
-        raise MakeError(4, 'Expected type is not the same as encoded type on '+FormatTagValues(iGroupId, iElementId)+' (expected = '+DescribeTypes(aTypes)+', found = '+DICOM_VR_TYPE_NAMES[aType]);
+        raise MakeError(4, 'Expected type is not the same as encoded type on '+FormatTagValues(iGroupId, iElementId)+' (expected = '+DescribeTypes(aTypes)+', found = '+DICOM_VR_TYPE_NAMES_S[aType]);
       End;
     End;
 
@@ -732,7 +732,7 @@ Begin
     aBytes[B_0+2] := b;
     End;
   Else
-    raise EDicomException.create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES[aType]);
+    raise EDicomException.create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES_S[aType]);
   End;
 End;
 
@@ -820,12 +820,12 @@ begin
       //  ReadPair(@aBytes[(i*2)+1], dbrValue);
       if oVRDefn.Repeatable Then
       Begin
-        s := Trim(BytesAsAnsiString(aBytes));
+        s := Trim(BytesAsString(aBytes));
         while (s <> '') Do
         Begin
           // todo: mark this
           bRep := StringSplit(s, REP_CHAR, l, s);
-          oVr := oValues.Add(AnsiStringAsBytes(l));
+          oVr := oValues.Add(StringAsBytes(l));
           oVr.offSetStart := iStart;
           oVr.OffsetEnd := iStart + clength(l);
           if bRep Then
@@ -834,7 +834,7 @@ begin
       End
       else if oVRDefn.IsString Then
       Begin
-        oVr := oValues.Add(AnsiStringAsBytes(Trim(BytesAsAnsiString(aBytes))));
+        oVr := oValues.Add(StringAsBytes(Trim(BytesAsString(aBytes))));
         oVr.offSetStart := iStart;
         oVr.OffsetEnd := FOffset;
       End
@@ -928,7 +928,6 @@ function TDicomPDUDecoder.Execute: TDicomPDU;
 var
   iType : Byte;
 begin
-  result := nil;
   if FInitContext Then
     FContext.Initialise;
   Try
@@ -1353,7 +1352,7 @@ begin
     inc(FOffset, 4);
     FContext.Mark(dburMarker, 4);
     if BytesAsAnsiString(aBytes) <> 'DICM' Then
-      raise MakeError(4, 'Error. Looking for "DICM" at position 128, and found "'+EncodePercent(BytesAsAnsiString(aBytes))+'"');
+      raise MakeError(4, 'Error. Looking for "DICM" at position 128, and found "'+EncodePercent(BytesAsString(aBytes))+'"');
 
     FContext.VRRepresentation := dvrpExplicit;
     result.Header := ParseObject(0, 2);
@@ -1422,7 +1421,7 @@ begin
       oInput.Read(aBytes[B_0], b);
       inc(FOffset, b);
       FContext.Mark(dburValue, b);
-      result.AbstractSyntax := BytesAsAnsiString(aBytes);
+      result.AbstractSyntax := BytesAsString(aBytes);
 
       FContext.Input.Read(b, 1);
       Inc(FOffset, 1);
@@ -1431,10 +1430,10 @@ begin
       oInput.Read(aBytes[B_0], b);
       inc(FOffset, b);
       FContext.Mark(dburValue, b);
-      result.TransferSyntax := BytesAsAnsiString(aBytes);
+      result.TransferSyntax := BytesAsString(aBytes);
     End
     Else if BytesAsAnsiString(aBytes) <> 'KDMS' Then
-      raise MakeError(4, 'Error. Looking for "KDMS" at position 0, and found "'+EncodePercent(BytesAsAnsiString(aBytes))+'"');
+      raise MakeError(4, 'Error. Looking for "KDMS" at position 0, and found "'+EncodePercent(BytesAsString(aBytes))+'"');
 
     FContext.VRRepresentation := dvrpExplicit;
     Result.Command := ParseObject(0, $0000);

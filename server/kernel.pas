@@ -75,7 +75,7 @@ type
   private
     FKernel : TFHIRServiceKernel;
   protected
-    function threadName : String; override;
+    function ThreadName : String; override;
     procedure Initialise; override;
     procedure Execute; override;
     procedure Finalise; override;
@@ -111,7 +111,7 @@ type
 
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
   protected
-    FStartTime : cardinal;
+    FStartTime : UInt64;
     function command(cmd: String): boolean; override;
   public
     constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
@@ -200,7 +200,7 @@ end;
 
 constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
 begin
-  FStartTime := GetTickCount;
+  FStartTime := GetTickCount64;
   inherited create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
@@ -239,7 +239,7 @@ begin
 
     // post start up time.
     getReport('|', true); // base line the object counting
-    Logging.log('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
+    Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
     Logging.Starting := false;
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
   except
@@ -387,7 +387,7 @@ end;
 
 function TFHIRServiceKernel.command(cmd: String): boolean;
 var
-  name, fn : String;
+  fn : String;
   ep : TFHIRServerEndPoint;
 begin
   result := true;
@@ -516,7 +516,6 @@ var
   svcName : String;
   dispName : String;
   cmd : String;
-  fn : String;
   svc : TFHIRServiceKernel;
   logMsg : String;
 begin
@@ -588,7 +587,8 @@ end;
 
 procedure logCompileInfo;
 var
-  compiler, os, cpu, assertions, debug : String;
+  compiler, os, cpu, s : String;
+  tz : integer;
 begin
   {$IFDEF FPC}
   compiler := '/FreePascal';
@@ -610,17 +610,27 @@ begin
   cpu := '-32';
   {$ENDIF}
 
-  assertions := '';
-  debug := '';
+  s := os+cpu+compiler;
   {$IFOPT C+}
-  assertions := ' +Assertions';
+  s := s + ' +Assertions';
   {$ENDIF}
 
   {$IFOPT D+}
-  assertions := ' +Debug';
+  s := s + ' +Debug';
   {$ENDIF}
 
-  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+os+cpu+compiler+debug+assertions);
+  {$IFOPT O+}
+  s := s + ' +Optimizations';
+  {$ENDIF}
+
+  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
+  tz := TimeZoneOffset;
+  if tz = 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
+  else if tz < 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+StringPadLeft(inttostr(abs(tz) div 60), '0', 2)+':'+StringPadLeft(inttostr(abs(tz) mod 60), '0', 2))
+  else
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+StringPadLeft(inttostr(tz div 60), '0', 2)+':'+StringPadLeft(inttostr(tz mod 60), '0', 2));
 end;
 
 procedure ExecuteFhirServer;

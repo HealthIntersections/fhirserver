@@ -11642,10 +11642,6 @@ Var
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-  oGrp9 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('RDO_O01', 'Pharmacy/Treatment Order Message', 'O01', 'ORM', 'order');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;

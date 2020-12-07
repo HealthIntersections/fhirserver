@@ -15761,10 +15761,6 @@ Var
   oGrp2 : THL7V2ModelSegmentGroup;
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('ACK', 'General Acknowledgment', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
@@ -16410,9 +16406,6 @@ Var
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('CCF_I22', 'Collaborative Care Fetch', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
@@ -20365,10 +20358,6 @@ Var
   oGrp2 : THL7V2ModelSegmentGroup;
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
-  oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('RSP_Z82', 'Response Grammar:  Pharmacy Dispense Message', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;

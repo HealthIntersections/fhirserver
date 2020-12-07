@@ -143,7 +143,6 @@ end;
 function TLoggingService.encodeParams(params: TStringList): String;
 var
   i : integer;
-  s : String;
 begin
   result := '';
   for i := 0 to params.Count - 1 do

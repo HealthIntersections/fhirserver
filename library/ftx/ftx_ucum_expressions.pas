@@ -803,10 +803,10 @@ end;
 Type
   TUcumUnitSorter = class (TFslComparer<TUcumCanonicalUnit>)
   public
-    function compare(const l, r : TUcumCanonicalUnit) : integer; override;
+    function Compare(const l, r : TUcumCanonicalUnit) : integer; override;
   end;
 
-function TUcumUnitSorter.compare(const l, r : TUcumCanonicalUnit) : integer;
+function TUcumUnitSorter.Compare(const l, r : TUcumCanonicalUnit) : integer;
 begin
   result := l.Base.Code.compareTo(r.Base.Code);
 end;

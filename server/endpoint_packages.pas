@@ -28,7 +28,7 @@ type
     FLastEmail : TDateTime;
     procedure RunUpdater;
   protected
-    function threadName : String; override;
+    function ThreadName : String; override;
     procedure Initialise; override;
     procedure Execute; override;
   public
@@ -62,11 +62,10 @@ type
     procedure serveUpdates(date : TFslDateTime; response : TIdHTTPResponseInfo);
     procedure SetScanning(const Value: boolean);
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
-  protected
-    function description : String; override;
   public
     destructor Destroy; override;
     function link  : TFHIRPackageWebServer; overload;
+    function description : String; override;
 
     property DB : TFDBManager read FDB write SetDB;
     property NextScan : TDateTIme read FNextScan write FNextScan;
@@ -93,13 +92,13 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
 implementation
 
-function TPackageServerEndPoint.cacheSize: Int64;
+function TPackageServerEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
 end;
@@ -358,7 +357,7 @@ type
     factor : integer;
   public
     constructor Create(sort : TMatchTableSort; factor : integer);
-    function compare(const l, r : TJsonObject) : integer; override;
+    function Compare(const l, r : TJsonObject) : integer; override;
   end;
 
 constructor TFHIRPackageWebServerSorter.Create(sort: TMatchTableSort; factor: integer);
@@ -368,7 +367,7 @@ begin
   self.factor := factor;
 end;
 
-function TFHIRPackageWebServerSorter.compare(const l, r : TJsonObject) : integer;
+function TFHIRPackageWebServerSorter.Compare(const l, r : TJsonObject) : integer;
 begin
   case sort of
     mtsId : result := CompareText(l['name'], r['name']) * factor;
@@ -387,7 +386,6 @@ var
   b : TFslStringBuilder;
   i : TJsonObject;
   ss : String;
-  sorter : TFHIRPackageWebServerSorter;
 begin
   if inSearch then
     ss := '&sort='

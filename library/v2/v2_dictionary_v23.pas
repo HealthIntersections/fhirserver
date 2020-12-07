@@ -7694,9 +7694,6 @@ Var
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
   oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-  oGrp9 : THL7V2ModelSegmentGroup;
 Begin
   oStructures.Add('?', 'unknown', '', '', '');
   oStructures.Add('ACK', 'Standard Acknowlegdement', 'A01', 'ACK', '');

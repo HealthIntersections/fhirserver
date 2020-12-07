@@ -216,7 +216,7 @@ uses
 
 { TProfileUtilities }
 
-constructor TProfileUtilities.create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
+constructor TProfileUtilities.Create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
 begin
   inherited Create;
   self.context := context;

@@ -1954,11 +1954,11 @@ begin
     begin
       cnt := focus[0].value.primitiveValue;
       if (param = 'hex') then
-        cnt := EncodeHexadecimal(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeHexadecimal(TEncoding.UTF8.GetBytes(cnt)))
       else if (param = 'base64') then
-        cnt := EncodeBase64(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeBase64(TEncoding.UTF8.GetBytes(cnt)))
       else if (param = 'urlbase64') then
-        cnt := EncodeBase64Url(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeBase64Url(TEncoding.UTF8.GetBytes(cnt)))
       else
         raise EFHIRPath.Create('Unrecognised encode parameter "'+param+'"');
       result := TFHIRSelectionList.Create(TFHIRString.Create(cnt));
@@ -2395,8 +2395,6 @@ begin
 end;
 
 function TFHIRPathEngine.funcTrim(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
-var
-  item : TFHIRSelection;
 begin
   if focus.Count = 1 then
     result := TFHIRSelectionList.Create(TFhirString.Create(focus[0].value.primitiveValue.trim))
@@ -4853,7 +4851,6 @@ var
   d1,d2,d3 : TFslDecimal;
   s : String;
   qty, qty2 : TFHIRQuantity;
-  d : TFHIRObject;
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);

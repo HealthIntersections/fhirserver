@@ -46,7 +46,7 @@ type
     FCacheId : String;
     FLastTouched : TDateTime;
     FList : TFslMetadataResourceList;
-    FSize : Integer;
+    FSize : UInt64;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -62,7 +62,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
-    function cacheSize : integer;
+    function cacheSize : UInt64;
     procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
@@ -119,7 +119,7 @@ end;
 
 { TClientCacheManager }
 
-function TClientCacheManager.cacheSize: integer;
+function TClientCacheManager.cacheSize: UInt64;
 var
   item : TClientCacheManagerEntry;
 begin

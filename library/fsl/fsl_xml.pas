@@ -4593,8 +4593,6 @@ end;
 
 
 constructor TFslXMLFormatter.Create;
-var
-  FCol: Integer;
 Begin
   Inherited;
 

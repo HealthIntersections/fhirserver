@@ -42,11 +42,11 @@ Type
   TSingles = Array of Single;
 
   TDicomPN = Record
-    FamilyName : AnsiString;
-    GivenName : AnsiString;
-    MiddleName : AnsiString;
-    NamePrefix : AnsiString;
-    NameSuffix : AnsiString;
+    FamilyName : String;
+    GivenName : String;
+    MiddleName : String;
+    NamePrefix : String;
+    NameSuffix : String;
   End;
 
   TDicomAT = Record
@@ -69,56 +69,56 @@ Type
     Procedure MoveCheck(sType : String; iOffset : Integer; var Dest; ilength : Integer; bExact : Boolean);
     Function AsBytes(Const Src; ilength : integer) : TBytes;
 
-    Function GetAsAE: AnsiString;
-    Function GetAsAS: AnsiString;
+    Function GetAsAE: String;
+    Function GetAsAS: String;
     Function GetAsAT: TDicomAT;
-    Function GetAsCS: AnsiString;
+    Function GetAsCS: String;
     Function GetAsDA: TDateTime;
-    Function GetAsDS: AnsiString;
+    Function GetAsDS: String;
     Function GetAsDT: TDateTime;
     Function GetAsFD: Double;
     Function GetAsFL: Single;
-    Function GetAsIS: AnsiString;
-    Function GetAsLO: AnsiString;
-    Function GetAsLT: AnsiString;
+    Function GetAsIS: String;
+    Function GetAsLO: String;
+    Function GetAsLT: String;
     Function GetAsOF: TSingles;
     Function GetAsOW: TWords;
     Function GetAsPN: TDicomPN;
-    Function GetAsSH: AnsiString;
+    Function GetAsSH: String;
     Function GetAsSL: Integer;
     Function GetAsSS: ShortInt;
-    Function GetAsST: AnsiString;
+    Function GetAsST: String;
     Function GetAsTM: TDateTime;
-    Function GetAsUI: AnsiString;
+    Function GetAsUI: String;
     Function GetAsUL: Cardinal;
     Function GetAsUN: TBytes;
     Function GetAsUS: Word;
-    Function GetAsUT: AnsiString;
-    Procedure SetAsAE(const Value: AnsiString);
-    Procedure SetAsAS(const Value: AnsiString);
+    Function GetAsUT: String;
+    Procedure SetAsAE(const Value: String);
+    Procedure SetAsAS(const Value: String);
     Procedure SetAsAT(Value: TDicomAT);
-    Procedure SetAsCS(const Value: AnsiString);
+    Procedure SetAsCS(const Value: String);
     Procedure SetAsDA(const Value: TDateTime);
-    Procedure SetAsDS(const Value: AnsiString);
+    Procedure SetAsDS(const Value: String);
     Procedure SetAsDT(const Value: TDateTime);
     Procedure SetAsFD(const Value: Double);
     Procedure SetAsFL(const Value: Single);
-    Procedure SetAsIS(const Value: AnsiString);
-    Procedure SetAsLO(const Value: AnsiString);
-    Procedure SetAsLT(const Value: AnsiString);
+    Procedure SetAsIS(const Value: String);
+    Procedure SetAsLO(const Value: String);
+    Procedure SetAsLT(const Value: String);
     Procedure SetAsOF(const Value: TSingles);
     Procedure SetAsOW(const Value: TWords);
     Procedure SetAsPN(const Value: TDicomPN);
-    Procedure SetAsSH(const Value: AnsiString);
+    Procedure SetAsSH(const Value: String);
     Procedure SetAsSL(const Value: Integer);
     Procedure SetAsSS(const Value: ShortInt);
-    Procedure SetAsST(const Value: AnsiString);
+    Procedure SetAsST(const Value: String);
     Procedure SetAsTM(const Value: TDateTime);
-    Procedure SetAsUI(const Value: AnsiString);
+    Procedure SetAsUI(const Value: String);
     Procedure SetAsUL(const Value: Cardinal);
     Procedure SetAsUN(const Value: TBytes);
     Procedure SetAsUS(const Value: Word);
-    Procedure SetAsUT(const Value: AnsiString);
+    Procedure SetAsUT(const Value: String);
 
     Procedure SetDictionary(const Value: TDicomDictionary);
     Function GetAsString: String;
@@ -152,49 +152,49 @@ Type
     The value as 'Code String',
     A string of characters with leading or trailing spaces being nonsignificant
     }
-    Property AsCS : AnsiString read GetAsCS write SetAsCS;
+    Property AsCS : String read GetAsCS write SetAsCS;
 
     {
     The value as 'Short String',
     A short character string. Example: telephone numbers, IDs
     }
-    Property AsSH : AnsiString read GetAsSH write SetAsSH;
+    Property AsSH : String read GetAsSH write SetAsSH;
 
     {
     The value as 'Long String',
     A character string that may be padded with leading and/or trailing spaces
     }
-    Property AsLO : AnsiString read GetAsLO write SetAsLO;
+    Property AsLO : String read GetAsLO write SetAsLO;
 
     {
     The value as 'Short Text',
     A character string that may contain one or more paragraphs.
     }
-    Property AsST : AnsiString read GetAsST write SetAsST;
+    Property AsST : String read GetAsST write SetAsST;
 
     {
     The value as 'Long Text',
     A character string that may contain one or more paragraphs, the same as LO, but can be much longer
     }
-    Property AsLT : AnsiString read GetAsLT write SetAsLT;
+    Property AsLT : String read GetAsLT write SetAsLT;
 
     {
     The value as 'Unlimited Text',
     A character string that may contain one or more paragraphs, similar to LT.
     }
-    Property AsUT : AnsiString read GetAsUT write SetAsUT;
+    Property AsUT : String read GetAsUT write SetAsUT;
 
     {
     The value as 'Application Entity',
     A string of characters that identifies a device name with leading and trailing spaces being nonsignificant.
     }
-    Property AsAE : AnsiString read GetAsAE write SetAsAE;
+    Property AsAE : String read GetAsAE write SetAsAE;
 
     {
     The value as 'Unique Identifier (UID)',
     A character string containing a UID that is used to uniquely identify a wide variety of items
     }
-    Property AsUI : AnsiString read GetAsUI write SetAsUI;
+    Property AsUI : String read GetAsUI write SetAsUI;
 
     {
     The value as 'Date',
@@ -230,19 +230,19 @@ Type
     where nnn contains the number of days for D, weeks for W, months for M, or years for Y.
     Example: "018M" would represent an age of 18 months.
     }
-    Property AsAS : AnsiString read GetAsAS write SetAsAS;
+    Property AsAS : String read GetAsAS write SetAsAS;
 
     {
     The value as 'Integer String',
     A string of characters representing an integer. Example: -1234567.
     }
-    Property AsIS : AnsiString read GetAsIS write SetAsIS;
+    Property AsIS : String read GetAsIS write SetAsIS;
 
     {
     The value as 'Decimal String',
     A string of characters representing either a fixed point number or a floating point number
     }
-    Property AsDS : AnsiString read GetAsDS write SetAsDS;
+    Property AsDS : String read GetAsDS write SetAsDS;
 
     {
     The value as 'Signed Short',
@@ -438,8 +438,10 @@ type
   Private
     FOffsetEnd: Cardinal;
     FOffsetStart: Cardinal;
-    FValue: AnsiString;
-    function GetValue: AnsiString;
+    FValue: String;
+    function GetValue: String;
+    function GetValueA: AnsiString;
+    procedure SetValueA(const Value: AnsiString);
   Public
     constructor Create(sValue : String); Overload;
     constructor Create(iValue : Cardinal); Overload;
@@ -460,7 +462,8 @@ type
     {
     The actual string value
     }
-    Property Value : AnsiString read GetValue write FValue;
+    Property Value : String read GetValue write FValue;
+    Property ValueA : AnsiString read GetValueA write SetValueA;
   End;
 
   {
@@ -846,7 +849,7 @@ type
         UN, OB, OW: mime encoded binary
         other: as expected
     }
-    Procedure Tag(sTag : String; sValue : AnsiString);
+    Procedure Tag(sTag : String; sValue : String);
 
     {
       Tag the object: ensure that the object has an element corresponding to the tag
@@ -858,7 +861,7 @@ type
         UN, OB, OW: mime encoded binary
         other: as expected
     }
-    Procedure TagN(sTag : String; sValue : AnsiString);
+    Procedure TagN(sTag : String; sValue : String);
 
     {
       ensure that the object has an element corresponding to the tag (add it
@@ -2725,7 +2728,7 @@ begin
   result := FOffsetEnd - FOffsetStart;
 end;
 
-procedure TDicomObject.Tag(sTag: String; sValue: AnsiString);
+procedure TDicomObject.Tag(sTag: String; sValue: String);
 var
   iGroup, iElement : Word;
   iIndex : integer;
@@ -2737,7 +2740,7 @@ begin
   Elements.add(MakeElement(sTag, sValue));
 end;
 
-procedure TDicomObject.TagN(sTag: String; sValue: AnsiString);
+procedure TDicomObject.TagN(sTag: String; sValue: String);
 var
   iGroup, iElement : Word;
   iIndex : integer;
@@ -3916,10 +3919,10 @@ Begin
   Create;
   s := '    ';
   Move(iValue, s[1], 4);
-  FValue := s; 
+  FValue := String(s);
 End;
 
-Function TDicomString.GetValue: AnsiString;
+Function TDicomString.GetValue: String;
 Begin
   if self = nil then
     result := ''
@@ -3927,10 +3930,20 @@ Begin
     Result := FValue;
 End;
 
+function TDicomString.GetValueA: AnsiString;
+begin
+  result := AnsiString(Value);
+end;
+
 Function TDicomString.Link: TDicomString;
 Begin
   result := TDicomString(inherited Link);
 End;
+
+procedure TDicomString.SetValueA(const Value: AnsiString);
+begin
+  FValue := String(value);
+end;
 
 { TDicomStringList }
 
@@ -4265,7 +4278,7 @@ Begin
     For aLoop := Low(TDicomVRType) To High(TDicomVRType) Do
     Begin
       If aLoop In PossibleTypes then
-        oTypes.Add(DICOM_VR_TYPE_NAMES[aLoop]);
+        oTypes.Add(DICOM_VR_TYPE_NAMES_S[aLoop]);
     End;
 
     Result := oTypes.Link;
@@ -4387,7 +4400,7 @@ Begin
   if bExact Then
   Begin
     If length(FBytes) <> iOffset + ilength Then
-      raise EDicomException.create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES[FKnownType]+' (length is wrong)');
+      raise EDicomException.create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES_S[FKnownType]+' (length is wrong)');
   End
   Else
     if length(FBytes) < iOffset + ilength Then
@@ -4401,20 +4414,20 @@ Begin
   Move(src, result[0], ilength);
 End;
 
-Function TDicomValue.GetAsAE: AnsiString;
+Function TDicomValue.GetAsAE: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
-Function TDicomValue.GetAsAS: AnsiString;
+Function TDicomValue.GetAsAS: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsAT: TDicomAT;
@@ -4425,12 +4438,12 @@ Begin
     MoveCheck('AT', 0, result, 4, true);
 End;
 
-Function TDicomValue.GetAsCS: AnsiString;
+Function TDicomValue.GetAsCS: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsDA: TDateTime;
@@ -4438,15 +4451,15 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsString(FBytes)).DateTime;
 End;
 
-Function TDicomValue.GetAsDS: AnsiString;
+Function TDicomValue.GetAsDS: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsDT: TDateTime;
@@ -4454,7 +4467,7 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsString(FBytes)).DateTime;
 End;
 
 Function TDicomValue.GetAsFD: Double;
@@ -4473,28 +4486,28 @@ Begin
     MoveCheck('FL', 0, result, 4, true);
 End;
 
-Function TDicomValue.GetAsIS: AnsiString;
+Function TDicomValue.GetAsIS: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
-Function TDicomValue.GetAsLO: AnsiString;
+Function TDicomValue.GetAsLO: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
-Function TDicomValue.GetAsLT: AnsiString;
+Function TDicomValue.GetAsLT: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsOF: TSingles;
@@ -4534,15 +4547,15 @@ Begin
   if self = nil then
     ZeroMemory(@result, sizeof(result))
   else
-    result := ParsePN(BytesAsAnsiString(FBytes));
+    result := ParsePN(BytesAsString(FBytes));
 End;
 
-Function TDicomValue.GetAsSH: AnsiString;
+Function TDicomValue.GetAsSH: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsSL: Integer;
@@ -4561,12 +4574,12 @@ Begin
     MoveCheck('SS', 0, result, 2, true);
 End;
 
-Function TDicomValue.GetAsST: AnsiString;
+Function TDicomValue.GetAsST: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsTM: TDateTime;
@@ -4574,15 +4587,15 @@ Begin
   if self = nil then
     result := 0
   else
-    result := TFslDateTime.fromHL7(BytesAsAnsiString(FBytes)).DateTime;
+    result := TFslDateTime.fromHL7(BytesAsString(FBytes)).DateTime;
 End;
 
-Function TDicomValue.GetAsUI: AnsiString;
+Function TDicomValue.GetAsUI: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
 Function TDicomValue.GetAsUL: Cardinal;
@@ -4609,22 +4622,22 @@ Begin
     MoveCheck('US', 0, result, 2, true);
 End;
 
-Function TDicomValue.GetAsUT: AnsiString;
+Function TDicomValue.GetAsUT: String;
 Begin
   if self = nil then
     result := ''
   else
-    result := BytesAsAnsiString(FBytes);
+    result := BytesAsString(FBytes);
 End;
 
-Procedure TDicomValue.SetAsAE(const Value: AnsiString);
+Procedure TDicomValue.SetAsAE(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
-Procedure TDicomValue.SetAsAS(const Value: AnsiString);
+Procedure TDicomValue.SetAsAS(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsAT(Value: TDicomAT);
@@ -4632,24 +4645,24 @@ Begin
   FBytes := AsBytes(Value, 4);
 End;
 
-Procedure TDicomValue.SetAsCS(const Value: AnsiString);
+Procedure TDicomValue.SetAsCS(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsDA(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
+  FBytes := StringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
-Procedure TDicomValue.SetAsDS(const Value: AnsiString);
+Procedure TDicomValue.SetAsDS(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsDT(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
+  FBytes := StringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
 Procedure TDicomValue.SetAsFD(const Value: Double);
@@ -4662,19 +4675,19 @@ Begin
   FBytes := AsBytes(Value, 4);
 End;
 
-Procedure TDicomValue.SetAsIS(const Value: AnsiString);
+Procedure TDicomValue.SetAsIS(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
-Procedure TDicomValue.SetAsLO(const Value: AnsiString);
+Procedure TDicomValue.SetAsLO(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
-Procedure TDicomValue.SetAsLT(const Value: AnsiString);
+Procedure TDicomValue.SetAsLT(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsOF(const Value: TSingles);
@@ -4697,17 +4710,17 @@ End;
 
 Procedure TDicomValue.SetAsPN(const Value: TDicomPN);
 Var
-  s : AnsiString;
+  s : String;
 Begin
   s := Value.FamilyName+'^'+Value.GivenName+'^'+Value.MiddleName+'^'+Value.NamePrefix+'^'+Value.NameSuffix;
   while (s[length(s)] = '^') do
     delete(s, length(s), 1);
-  FBytes := AnsiStringAsBytes(s);
+  FBytes := StringAsBytes(s);
 End;
 
-Procedure TDicomValue.SetAsSH(const Value: AnsiString);
+Procedure TDicomValue.SetAsSH(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsSL(const Value: Integer);
@@ -4720,19 +4733,19 @@ Begin
   FBytes := AsBytes(Value, 2);
 End;
 
-Procedure TDicomValue.SetAsST(const Value: AnsiString);
+Procedure TDicomValue.SetAsST(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsTM(const Value: TDateTime);
 Begin
-  FBytes := AnsiStringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
+  FBytes := StringAsBytes(TFslDateTime.make(value, dttzUnknown).toHL7);
 End;
 
-Procedure TDicomValue.SetAsUI(const Value: AnsiString);
+Procedure TDicomValue.SetAsUI(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 Procedure TDicomValue.SetAsUL(const Value: Cardinal);
@@ -4750,9 +4763,9 @@ Begin
   FBytes := AsBytes(Value, 2);
 End;
 
-Procedure TDicomValue.SetAsUT(const Value: AnsiString);
+Procedure TDicomValue.SetAsUT(const Value: String);
 Begin
-  FBytes := AnsiStringAsBytes(Value);
+  FBytes := StringAsBytes(Value);
 End;
 
 
@@ -4779,11 +4792,11 @@ Begin
     dvtLT : result := AsLT;
     dvtUT : result := AsUT;
     dvtAE : result := AsAE;
-    dvtPN : result := BytesAsAnsiString(AsUN);
+    dvtPN : result := BytesAsString(AsUN);
     dvtUI : result := AsUI;
-    dvtDA : result := BytesAsAnsiString(AsUN);
-    dvtTM : result := BytesAsAnsiString(AsUN);
-    dvtDT : result := BytesAsAnsiString(AsUN);
+    dvtDA : result := BytesAsString(AsUN);
+    dvtTM : result := BytesAsString(AsUN);
+    dvtDT : result := BytesAsString(AsUN);
     dvtAS : result := AsAS;
     dvtIS : result := AsIS;
     dvtDS : result := AsDS;
@@ -4794,7 +4807,7 @@ Begin
     dvtAT : result := FormatTagValues(AsAT.GroupId, AsAT.ElementId);
     dvtFL : result := floatToStr(AsFL);
     dvtFD : result := floatToStr(AsFD);
-    dvtOB : result := BytesAsAnsiString(AsOB);
+    dvtOB : result := BytesAsString(AsOB);
     dvtOW :
       Begin
       aWords := AsOW;
@@ -4829,7 +4842,7 @@ Begin
         oBuilder.Free;
       End;
       End;
-    dvtUN : result := EncodePercent(BytesasAnsiString(AsUN));
+    dvtUN : result := EncodePercent(BytesAsString(AsUN));
   End;
 End;
 
@@ -4846,7 +4859,7 @@ Begin
     dvtLT : AsLT := s;
     dvtUT : AsUT := s;
     dvtAE : AsAE := s;
-    dvtPN : AsUN := AnsiStringAsBytes(s); // direct
+    dvtPN : AsUN := StringAsBytes(s); // direct
     dvtUI : AsUI := s;
     dvtDA : AsDA := TFslDateTime.fromHL7(s).DateTime;
     dvtTM : AsTM := TFslDateTime.fromHL7(s).DateTime;
@@ -4865,10 +4878,10 @@ Begin
       End;
     dvtFL : AsFL := StrToFloat(s);
     dvtFD : AsFD := StrToFloat(s);
-    dvtOB : AsUN := AnsiStringAsBytes(DecodePercent(s));
+    dvtOB : AsUN := StringAsBytes(DecodePercent(s));
     dvtOW : SetAsWords(s);
     dvtOF : raise EDicomException.create('todo'); // AsOF := s;
-    dvtUN : AsUN := AnsiStringAsBytes(DecodePercent(s));
+    dvtUN : AsUN := StringAsBytes(DecodePercent(s));
   End;
 End;
 

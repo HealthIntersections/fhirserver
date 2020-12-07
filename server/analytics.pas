@@ -67,7 +67,9 @@ type
     FServerId: String;
     FCycle : integer;
     procedure post(cnt : String);
+    {$IFDEF FPC}
     function filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
+    {$ENDIF}
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -162,10 +164,12 @@ begin
   end;
 end;
 
+{$IFDEF FPC}
 function TGoogleAnalyticsProvider.filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
 begin
   result := item.cycle = FCycle;
 end;
+{$ENDIF}
 
 procedure TGoogleAnalyticsProvider.commit;
 var

@@ -66,7 +66,7 @@ Type
     procedure clear(rtype: string; id: String); overload;
     procedure clearVS(id: string);
     procedure clear; overload;
-    function cacheSize : integer;
+    function cacheSize : UInt64;
     procedure clearCache;
   end;
 
@@ -166,7 +166,7 @@ Type
 
     procedure DoneLoading(conn : TFDBConnection);
 
-    function cacheSize : integer;
+    function cacheSize : UInt64;
     procedure clearCache;
 
     property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
@@ -195,7 +195,7 @@ begin
   inherited;
 end;
 
-function TQuestionnaireCache.cacheSize : integer;
+function TQuestionnaireCache.cacheSize : UInt64;
 begin
   FLock.Lock;
   try
@@ -342,7 +342,7 @@ end;
 
 { TFHIRServerContext }
 
-function TFHIRServerContext.cacheSize: integer;
+function TFHIRServerContext.cacheSize: UInt64;
 begin
   result := FQuestionnaireCache.cacheSize + FClientCacheManager.cacheSize;
   if FTerminologyServer <> nil then

@@ -39,7 +39,7 @@ uses
   TestInsight.DUnit, DUnitTestRunner, GUITestRunner,
   {$ENDIF}
   {$IFDEF FPC}
-  XGuiTestRunner, fsl_tests_console,
+  fui_lcl_tester, fsl_tests_console,
   {$ENDIF}
   fsl_utilities, fsl_testing, fsl_logging,
   server_config,
@@ -79,8 +79,8 @@ begin
   {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;
-  Application.CreateForm(TGuiXTestRunner, TestRunner);
-  TestRunner.FileName := TestSettings.serverTestFile(['tests.ini']);
+  Application.CreateForm(TTesterForm, TesterForm);
+//  TestRunner.FileName := TestSettings.serverTestFile(['tests.ini']);
   Application.Run;
   {$ELSE}
   TGUITestRunner.runRegisteredTests;

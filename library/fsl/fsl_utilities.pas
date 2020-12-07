@@ -3315,8 +3315,8 @@ Function SystemIsWindowsNT : Boolean;
 Begin
   {$IFDEF WINDOWS}
   Result := gOSInfo.dwPlatformId >= VER_PLATFORM_WIN32_NT;
-  Result := false;
   {$ELSE}
+  Result := false;
   {$ENDIF}
 End;
 
@@ -14351,11 +14351,7 @@ End;
 
 Function StringAsBytes(s : String):TBytes;
 Begin
-  {$IFDEF VER130}
-
-  {$ELSE}
   result := TEncoding.UTF8.GetBytes(s);
-  {$ENDIF}
 End;
 
 Function BytesAsAnsiString(a : TBytes) : AnsiString;
@@ -14547,7 +14543,7 @@ var
 begin
   if val.length > 0 then
   begin
-    v := val;
+    v := AnsiString(val);
     AddStringAnsi(v);
   end;
 end;
@@ -14762,11 +14758,11 @@ function EncodeBase64Url(const value : TBytes): AnsiString;
 var
   b64 : String;
 begin
-  b64 := EncodeBase64(value); // todo
+  b64 := String(EncodeBase64(value)); // todo
   b64 := StringReplace(b64, #13#10, '');
   b64 := StringReplace(b64, '+', '-', [rfReplaceAll]);
   b64 := StringReplace(b64, '/', '_', [rfReplaceAll]);
-  result := b64;
+  result := AnsiString(b64);
 end;
 
 function EncodeBase64(const value : TBytes): AnsiString;
@@ -16894,7 +16890,7 @@ Begin
 
   // remove trailing S/Z
   top := length(working);
-  while ((top > 0) and (working[top] in ['S', 'Z'])) do
+  while ((top > 0) and (CharInSet(working[top], ['S', 'Z']))) do
     dec(top);
   if (top = 0) then
     exit('S');
@@ -16944,9 +16940,9 @@ Begin
            else if matches('YW') then add('Y', 2)
            else add('G', 1);
      'Z': add('S', 1);
-     else if (len > 0) and (working[cursor] in ['E', 'I', 'O', 'U']) then
+     else if (len > 0) and (CharInSet(working[cursor], ['E', 'I', 'O', 'U'])) then
        add('A', 1)
-     else if (working[cursor] in ['A'..'Z', '0'..'9']) then
+     else if (CharInSet(working[cursor], ['A'..'Z', '0'..'9'])) then
       add(working[cursor], 1)
      else ;
       // else ignore any other character
@@ -17046,10 +17042,10 @@ begin
 end;
 
 function getCommandLineParam(name : String; var res : String) : boolean;
+{$IFDEF FPC}
 var
   i : integer;
 begin
-  {$IFDEF FPC}
   result := false;
   for i := 1 to paramCount - 1 do
   begin
@@ -17059,25 +17055,27 @@ begin
       exit(true);
     end;
   end;
-  {$ELSE}
+{$ELSE}
+begin
   result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
-  {$ENDIF}
+{$ENDIF}
 end;
 
 function hasCommandLineParam(name : String) : boolean;
+{$IFDEF FPC}
 var
   i : integer;
 begin
-  {$IFDEF FPC}
   result := false;
   for i := 1 to paramCount  do
   begin
     if paramStr(i) = '-'+name then
       exit(true);
   end;
-  {$ELSE}
+{$ELSE}
+begin
   result := FindCmdLineSwitch(name);
-  {$ENDIF}
+{$ENDIF}
 end;
 
 function commandLineAsString : String;

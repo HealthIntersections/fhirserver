@@ -85,11 +85,9 @@ type
     files : TFslMap<TFslFile>;
     FBundle : TFHIRBundleW;
     procedure SetRequest(const Value: TFHIRRequest);
-    procedure SetServer(const Value: TStorageWebEndpoint);
 
     procedure status(status : TAsyncTaskStatus; message : String);
     procedure details;
-    procedure callback(IntParam: Integer; StrParam: String);
 
     procedure saveOutcome(response : TFHIRResponse);
     procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder);
@@ -98,6 +96,9 @@ type
   public
     constructor Create(server: TStorageWebEndpoint);
     destructor Destroy; override;
+
+    procedure SetServer(const Value: TStorageWebEndpoint); // private (hint busting)
+    procedure callback(IntParam: Integer; StrParam: String);// private (hint busting)
 
     property Key : integer read FKey write FKey;
     property Format : TFHIRFormat read FFormat write FFormat;
@@ -190,7 +191,7 @@ type
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
     destructor Destroy; override;
     property ServerContext : TFHIRServerContext read FServerContext;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -250,7 +251,7 @@ end;
 
 { TStorageEndPoint }
 
-function TStorageEndPoint.cacheSize: Int64;
+function TStorageEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
   if WebEndPoint <> nil then
@@ -2327,10 +2328,10 @@ end;
 type
   TPackageListSorter = class (TFslComparer<TFHIRPackageInfo>)
   public
-    function compare(const l, r : TFHIRPackageInfo) : integer; override;
+    function Compare(const l, r : TFHIRPackageInfo) : integer; override;
   end;
 
-function TPackageListSorter.compare(const l, r : TFHIRPackageInfo) : integer;
+function TPackageListSorter.Compare(const l, r : TFHIRPackageInfo) : integer;
 begin
   result := CompareText(l.id, r.id);
 end;

@@ -453,7 +453,7 @@ begin
   p := 0;
   while len > 0 do
   begin
-    if not (pc^ in WhiteSpace) then
+    if not CharInSet(pc^, WhiteSpace) then
     begin
       inc(p);
       Result[p] := pc^;
@@ -483,7 +483,7 @@ begin
   sp := 0;
   while len > 0 do
   begin
-    if pc^ in WhiteSpace then
+    if CharInSet(pc^, WhiteSpace) then
       inc(sp, p)
     else
     begin

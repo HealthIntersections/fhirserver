@@ -63,8 +63,6 @@ implementation
 { TTwilioServer }
 
 constructor TTwilioServer.Create(Db : TFDBManager; response : String);
-var
-  conn : TFDBConnection;
 begin
   Inherited Create;
   FResponse := response;

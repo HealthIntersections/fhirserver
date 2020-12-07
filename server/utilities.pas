@@ -165,9 +165,9 @@ implementation
 
 function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
 var
-  s : TBytes;
-  i, j : integer;
-  ct : AnsiString;
+//  s : TBytes;
+//  i, j : integer;
+//  ct : AnsiString;
   p : TFHIRParser;
 begin
 //  s := ZDecompressBytes(b);

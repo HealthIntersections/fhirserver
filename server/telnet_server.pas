@@ -63,7 +63,7 @@ type
   private
     FServer : TFHIRTelnetServer;
   protected
-    function threadName : String; Override;
+    function ThreadName : String; Override;
     Procedure Execute; override;
   end;
 
@@ -77,7 +77,6 @@ type
     FLog : TStringList;
     FWelcomeMsg : String;
     FThread : TFHIRTelnetServerThread;
-    FLastId : integer;
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
     procedure internalThread;
@@ -282,7 +281,7 @@ end;
 
 procedure TTelnetThreadHelper.ping;
 var
-  mem : int64;
+  mem : UInt64;
   ep : TFHIRServerEndPoint;
 begin
   if (now > FNextPing) then

@@ -693,7 +693,7 @@ type
 
   TFHIRSubscriptionTopic5 = class (TFHIRSubscriptionTopicW)
   private
-    function sub : TFhirSubscriptionTopic;
+//    function sub : TFhirSubscriptionTopic;
   public
   end;
 
@@ -785,6 +785,7 @@ type
     function GetStart: TFslDateTime; override;
     procedure SetEnd(const Value: TFslDateTime); override;
     procedure SetStart(const Value: TFslDateTime); override;
+  public
     function renderText : String; override;
   end;
 
@@ -1479,8 +1480,8 @@ end;
 
 
 procedure TFHIRCapabilityStatement5.standardServer(ts, ws, pv, cv, iv: String; transactions, search, history : boolean);
-var
-  ext : TFhirExtension;
+//var
+//  ext : TFhirExtension;
 begin
   if statement.restList.isEmpty then
     statement.restList.append.mode := RestfulCapabilityModeServer;
@@ -3809,8 +3810,8 @@ begin
 end;
 
 function TFHIRSubscription5.GetSummary: String;
-var
-  s : TFhirString;
+//var
+//  s : TFhirString;
 begin
   result := 'todo';
 //  sub.channel.type_Element.value+#1+sub.channel.endpoint+#1+sub.channel.payload;
@@ -5072,9 +5073,9 @@ end;
 
 { TFHIRSubscriptionTopic5 }
 
-function TFHIRSubscriptionTopic5.sub: TFhirSubscriptionTopic;
-begin
-  result := resource as TFhirSubscriptionTopic;
-end;
-
+//function TFHIRSubscriptionTopic5.sub: TFhirSubscriptionTopic;
+//begin
+//  result := resource as TFhirSubscriptionTopic;
+//end;
+//
 end.

@@ -122,7 +122,7 @@ Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
 
 Type
-  TGetThreadNameStatus = function : AnsiString;
+  TGetThreadNameStatus = function : String;
 
 var
   GetThreadNameStatusDelegate : TGetThreadNameStatus = nil;
@@ -133,6 +133,7 @@ Type
 
   TFslReferenceCount = Integer;
 
+  {$M+}
   TFslObject = Class(TObject)
   Private
     // Reference counted using Interlocked* Windows API functions.
@@ -147,7 +148,7 @@ Type
     FTracked : boolean;
     FSerial : integer;
     FNext, FPrev : TFslObject; // same class type
-    FThreadName : AnsiString;
+    FThreadName : String;
     {$ENDIF}
 
   Protected
@@ -209,6 +210,7 @@ Type
 
     class function getReport(sep : String; full : boolean) : String;
   End;
+  {$M-}
 
   PFslObject = ^TFslObject;
 
@@ -285,7 +287,7 @@ Type
     arrayofT = array of T;
     TDefaultComparer = class (TFslComparer<T>)
     protected
-      function compare(const l, r : T) : integer; override;
+      function Compare(const l, r : T) : integer; override;
     end;
 
   var

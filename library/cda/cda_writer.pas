@@ -704,7 +704,7 @@ Begin
   if oDT.value <> '' Then
     oXml.Text(oDT.value)
   Else if oDT.data <> nil Then
-    oXml.Text(EncodeBase64(oDT.data.AsBytes))
+    oXml.Text(String(EncodeBase64(oDT.data.AsBytes)))
   Else if oDt.xml <> nil Then
     oXml.WriteXml(oDt.xml);
   oXml.Close(sName);

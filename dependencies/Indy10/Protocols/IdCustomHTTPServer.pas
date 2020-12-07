@@ -1514,7 +1514,7 @@ begin
               end;
             end;
           finally
-            LCloseConnection := LResponseInfo.CloseConnection;
+            LCloseConnection := LCloseConnection and LResponseInfo.CloseConnection;
             FreeAndNil(LResponseInfo);
           end;
         finally

@@ -175,8 +175,8 @@ interface
 {$ENDIF}
 
 uses
-  Classes,
-  IdGlobal, IdException, IdYarn, IdTask, IdThreadSafe, SysUtils;
+  SysUtils, Types, Classes,
+  IdGlobal, IdException, IdYarn, IdTask, IdThreadSafe;
 
 const
   IdWaitAllThreadsTerminatedCount = 1 * 60 * 1000;
@@ -313,7 +313,7 @@ var
 
 // FHIR Server Additions
 type
-  TThreadEvent = procedure (name : AnsiString);
+  TThreadEvent = procedure (name : String);
 
 var
   fsThreadName : TThreadEvent;
@@ -392,7 +392,7 @@ procedure TIdThread.Execute;
 begin
   // FHIR Server Modification:
   if assigned(fsThreadName) then
-    fsThreadName(className);
+    fsThreadName(ClassName);
   try
     // Must make this call from INSIDE the thread. The call in Create
     // was naming the thread that was creating this thread. :(
@@ -489,7 +489,7 @@ begin
     end;
   finally
     if (assigned(fsThreadClose)) then
-      fsThreadClose(className);
+      fsThreadClose(ClassName);
   end;
 end;
 

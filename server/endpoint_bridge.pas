@@ -177,7 +177,6 @@ Type
   private
     FBridge : TBridgeEndPoint;
   protected
-    function description : String; override;
 
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
@@ -189,6 +188,7 @@ Type
   public
     destructor Destroy; override;
     function link : TBridgeWebServer; overload;
+    function description : String; override;
   end;
 
   TBridgeEndPoint = class (TStorageEndPoint)
@@ -206,7 +206,7 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -214,7 +214,7 @@ implementation
 
 { TBridgeEndPoint }
 
-function TBridgeEndPoint.cacheSize: Int64;
+function TBridgeEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
 end;
@@ -263,7 +263,6 @@ end;
 procedure TBridgeEndPoint.InstallDatabase;
 var
   conn : TFDBConnection;
-  meta : TFDBMetaData;
 begin
   conn := Database.GetConnection('install');
   try

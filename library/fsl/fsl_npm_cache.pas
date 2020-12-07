@@ -332,9 +332,8 @@ end;
 
 procedure TFHIRPackageManager.listAllKnownPackages(list: TFslList<TFHIRPackageInfo>; ver: String);
 var
-  s, id : String;
+  s : String;
   npm : TNpmPackage;
-  pi : TFHIRPackageInfo;
   t : TFHIRPackageInfo;
   found : boolean;
 begin
@@ -557,14 +556,12 @@ var
   s : String;
   id, n, ver : String;
   npm : TNpmPackage;
-  i : integer;
 begin
   ts := TStringList.Create;
   try
     for s in TDirectory.GetDirectories(FFolder) do
       ts.Add(s);
     ts.Sort;
-    i := 0;
     for s in ts do
     begin
       work(trunc(1/ts.count * 100), false, 'Package '+ExtractFileName(s));
@@ -609,14 +606,12 @@ var
   s : String;
   id, n, ver : String;
   npm : TNpmPackage;
-  i : integer;
 begin
   ts := TStringList.Create;
   try
     for s in TDirectory.GetDirectories(FFolder) do
       ts.Add(s);
     ts.Sort;
-    i := 0;
     for s in ts do
     begin
       work(trunc(1/ts.count * 100), false, 'Package '+ExtractFileName(s));

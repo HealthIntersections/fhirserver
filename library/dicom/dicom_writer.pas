@@ -333,7 +333,7 @@ begin
     Assert(Invariants('Encode', oElement.Values, TDicomValueList, 'Value'));
     if Explicit Then
     Begin
-      s := DICOM_VR_TYPE_NAMES[oElement.Values.KnownType];
+      s := DICOM_VR_TYPE_NAMES_A[oElement.Values.KnownType];
       writePair(@s[1], false);
     End;
     EncodeValue(oElement.Values);
@@ -583,11 +583,15 @@ end;
 procedure TDicomWriter.WriteHeaderString(oValue: TDicomString; iLen: Word);
 var
   i : integer;
+  v : String;
   sValue : AnsiString;
 begin
   if oValue <> nil Then
-    sValue := oValue.Value;
-  sValue := StringPadRight(sValue, ' ', iLen);
+    v := oValue.Value
+  else
+    v := '';
+  v := StringPadRight(v, ' ', iLen);
+  sValue := AnsiString(v);
   for i := 1 to length(sValue) do
     writeByte(byte(sValue[i]));
 end;
@@ -816,11 +820,11 @@ begin
   aBytes := AnsiStringAsBytes('KDM2');
   Output.Write(aBytes[0], 4);
   inc(FOffset, 4);
-  aBytes := AnsiStringAsBytes(oMessage.AbstractSyntax);
+  aBytes := StringAsBytes(oMessage.AbstractSyntax);
   writeByte(length(aBytes));
   Output.Write(aBytes[0], length(aBytes));
   inc(FOffset, length(aBytes));
-  aBytes := AnsiStringAsBytes(oMessage.TransferSyntax);
+  aBytes := StringAsBytes(oMessage.TransferSyntax);
   writeByte(length(aBytes));
   Output.Write(aBytes[0], length(aBytes));
   inc(FOffset, length(aBytes));

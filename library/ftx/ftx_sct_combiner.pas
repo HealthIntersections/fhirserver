@@ -438,7 +438,7 @@ end;
 
 procedure TSnomedCombiner.step(desc: String);
 var
-  pct : integer;
+  pct : cardinal;
 begin
   inc(FCurrent);
   pct := trunc(FCurrent * 100 / FTotal);

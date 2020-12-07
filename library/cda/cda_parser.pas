@@ -60,17 +60,20 @@ Type
     Function GetXsiType(oElement : TMXmlElement) : String;
     Function GetXmlId(oElement : TMXmlElement) : String;
     Function TextContent(oElement : TMXmlElement; aTextAction : TTextAction) : WideString;
-    Function isXmlContent(oElement : TMXmlElement) : Boolean;
 
     Procedure AddToMap(oElement : TMXmlElement; oObject : Tv3Base);
 
-    Procedure SeeComment(oNode : TMXmlElement);
     Procedure TakeComments(oDT : Tv3Base); Overload;
     Procedure TakeComments(oDT : Tv3XP); Overload;
     Procedure TakeComments(oFocus : TcdaBase); Overload;
 
     Procedure CheckXsiType(Const sPath : String; oElement : TMXmlElement; const sType : String; bInComplete : boolean = false); Overload;
     Procedure CheckXsiType(Const sPath : String; oElement : TMXmlElement; const aTypes : array of String); Overload;
+
+    Function isXmlContent(oElement : TMXmlElement) : Boolean;
+    Procedure SeeComment(oNode : TMXmlElement);
+    Function AddNamePart(oEN : Tv3EN; Const sText : WideString; aNull : Tv3NullFlavor; aType : Tv3EntityNamePartType) : Tv3ENXP;
+    Function AddAddressPart(oAD : Tv3AD; Const sText : WideString; aNull : Tv3NullFlavor; aType : Tv3AddressPartType) : Tv3ADXP;
 
     Function ParseNullFlavor(Const sPath : String; Const sValue : WideString) : Tv3NullFlavor;
     Function ParseBoolean(Const sPath : String; Const sValue : WideString) : Boolean;
@@ -84,8 +87,6 @@ Type
     Procedure ParseANYValue(Const sPath : String; oElement : TMXmlElement; oValue : Tv3ANY);
     Procedure ParseQTYValue(Const sPath : String; oElement : TMXmlElement; oValue : Tv3QTY);
     Procedure ParseCDValue(Const sPath : String; oElement : TMXmlElement; oValue : Tv3CD);
-    Function AddNamePart(oEN : Tv3EN; Const sText : WideString; aNull : Tv3NullFlavor; aType : Tv3EntityNamePartType) : Tv3ENXP;
-    Function AddAddressPart(oAD : Tv3AD; Const sText : WideString; aNull : Tv3NullFlavor; aType : Tv3AddressPartType) : Tv3ADXP;
 
     Function ParseANY(Const sPath : String; oElement : TMXmlElement) : Tv3ANY;
     Function ParseQTY(Const sPath : String; oElement : TMXmlElement; aExpected : Tv3Datatype) : Tv3QTY;
@@ -236,6 +237,7 @@ Type
   Protected
     Function ErrorClass : EFslExceptionClass; Override;
     function sizeInBytesV : cardinal; override;
+
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1379,9 +1381,6 @@ End;
 
 Function TCDAParser.ParseED(Const sPath : String; oElement : TMXmlElement) : Tv3ED;
 var
-  oChild : TMXmlElement;
-  bIsXml : Boolean;
-  iContent : TMXmlElement;
   sRepresentation : WideString;
 Begin
   Result := Tv3ED.Create;
@@ -1575,8 +1574,7 @@ End;
 
 Function TCDAParser.ParseEN(Const sPath : String; oElement : TMXmlElement; const sFlavor : String = '') : Tv3EN;
 var
-  oNode : TMXmlElement;
-  oChild : TMXmlElement;
+  child : TMXmlElement;
   oPart : Tv3ENXP;
   aCodes : TStringArray;
   iLoop : integer;
@@ -1585,50 +1583,49 @@ Begin
   aCodes := nil;
   Result := Tv3EN.Create;
   Try
-(*    AddToMap(oElement, Result);
+    AddToMap(oElement, Result);
     TakeComments(Result);
     CheckXsiType(sPath, oElement, ['EN', 'PN', 'ON', 'TN']);
     Result.flavorId := sFlavor;
     ParseANYValue(sPath, oElement, result);
 
-    aCodes := ParseSet(sPath+'\@use', oElement.Attribute['use'));
+    aCodes := ParseSet(sPath+'\@use', oElement.Attribute['use']);
     For iLoop := Low(aCodes) To High(aCodes) Do
       Result.use := Result.use + [Tv3EntityNameUse(ParseEnum(sPath+'\@use', aCodes[iLoop], CODES_Tv3EntityNameUse))];
 
     result.part := TV3ListENXP.Create(result);
 
-    oNode := oElement.firstChild;
-    while (oNode <> Nil) Do
+    child := oElement.first;
+    while (child <> nil) Do
     Begin
-      if (oNode.nodeType = NODE_ELEMENT) Then
+      if (child.nodeType = ntElement) Then
       Begin
-        oChild := oNode as TMXmlElement;
-        aType := TypeFromNameElementName(oChild.Name);
+        aType := TypeFromNameElementName(child.Name);
         if aType = nptNull Then
-          aType := Tv3EntityNamePartType(ParseEnum(sPath+'\@type', oChild.Attribute['type'), CODES_Tv3EntityNamePartType));
-        oPart := addNamePart(Result, TextContent(oChild, ttTrim), ParseNullFlavor(sPath+'\'+oChild.Name, oChild.Attribute['nullFlavor')), aType);
-        aCodes := ParseSet(sPath+'\@qualifier', oChild.Attribute['qualifier'));
+          aType := Tv3EntityNamePartType(ParseEnum(sPath+'\@type', child.Attribute['type'], CODES_Tv3EntityNamePartType));
+        oPart := addNamePart(Result, TextContent(child, ttTrim), ParseNullFlavor(sPath+'\'+child.Name, child.Attribute['nullFlavor']), aType);
+        aCodes := ParseSet(sPath+'\@qualifier', child.Attribute['qualifier']);
         For iLoop := Low(aCodes) To High(aCodes) Do
           oPart.qualifier := oPart.qualifier + [Tv3EntityNamePartQualifier(ParseEnum(sPath+'\@qualifier', aCodes[iLoop], CODES_Tv3EntityNamePartQualifier))];
-        if oChild.Name = 'suffix' then
+        if child.Name = 'suffix' then
           oPart.qualifier := oPart.qualifier + [npqSFX];
-        if oChild.Name = 'prefix' then
+        if child.Name = 'prefix' then
           oPart.qualifier := oPart.qualifier + [npqPFX];
       End
-      Else if (oNode.nodeType = NODE_COMMENT) Then
-        SeeComment(oNode)
-      Else if (oNode.nodeType = NODE_TEXT) Then
+      Else if (child.nodeType = ntComment) Then
+        SeeComment(child)
+      Else if (child.nodeType = ntText) Then
       Begin
-        If not StringIsWhitespace(oNode.Text) Then
+        If not StringIsWhitespace(child.Text) Then
           if StripWhitespace Then
-            addNamePart(Result, Trim(oNode.text, false), nfNull, nptNull)
+            addNamePart(Result, Trim(child.text, false), nfNull, nptNull)
           else
-            addNamePart(Result, oNode.text, nfNull, nptNull);
+            addNamePart(Result, child.text, nfNull, nptNull);
       End
       Else
         ; // ignore this node
-      oNode := oNode.nextSibling;
-    End;)*)
+      child := child.next;
+    End;
     Result.Link;
   Finally
     Result.Free;
@@ -1651,51 +1648,49 @@ End;
 
 Function TCDAParser.ParseAD(Const sPath : String; oElement : TMXmlElement) : Tv3AD;
 var
-  oNode : TMXmlElement;
-  oChild : TMXmlElement;
+  child : TMXmlElement;
   aType : Tv3AddressPartType;
   aCodes : TStringArray;
   iLoop : integer;
 Begin
   Result := Tv3AD.Create;
   Try
-(*    AddToMap(oElement, Result);
+    AddToMap(oElement, Result);
     TakeComments(Result);
     CheckXsiType(sPath, oElement, 'AD');
     ParseANYValue(sPath, oElement, result);
-    if (oElement.Attribute['isNotOrdered') <> '') Then
-      Result.isNotOrdered := ParseBoolean(sPath+'\@isNotOrdered', oElement.Attribute['isNotOrdered'));
+    if (oElement.Attribute['isNotOrdered']<> '') Then
+      Result.isNotOrdered := ParseBoolean(sPath+'\@isNotOrdered', oElement.Attribute['isNotOrdered']);
 
-    aCodes := ParseSet(sPath+'\@use', oElement.Attribute['use'));
+    aCodes := ParseSet(sPath+'\@use', oElement.Attribute['use']);
     For iLoop := Low(aCodes) To High(aCodes) Do
       Result.use := Result.use + [Tv3PostalAddressUse(ParseEnum(sPath+'\@use', aCodes[iLoop], CODES_Tv3PostalAddressUse))];
 
     result.part := TV3ListADXP.Create(result);
 
-    oNode := oElement.firstChild;
-    while (oNode <> Nil) Do
+    child := oElement.first;
+    while (child <> Nil) Do
     Begin
-      if (oNode.nodeType = NODE_ELEMENT) Then
+      if (child.nodeType = ntElement) Then
       Begin
-        oChild := oNode as TMXmlElement;
-        aType := Tv3AddressPartType(ParseEnum(sPath+'\'+oChild.Name, oChild.Name, TAG_NAMES_ADDRESS));
+        aType := Tv3AddressPartType(ParseEnum(sPath+'\'+child.Name, child.Name, TAG_NAMES_ADDRESS));
         if aType = aptNull Then
-          aType := Tv3AddressPartType(ParseEnum(sPath+'\@type', oChild.Attribute['type'), CODES_Tv3AddressPartType));
-        addAddressPart(Result, TextContent(oChild, ttTrim), ParseNullFlavor(sPath+'\'+oChild.Name+'\@nullFlavor', oChild.Attribute['nullFlavor')), aType);
+          aType := Tv3AddressPartType(ParseEnum(sPath+'\@type', child.Attribute['type'], CODES_Tv3AddressPartType));
+        addAddressPart(Result, TextContent(child, ttTrim), ParseNullFlavor(sPath+'\'+child.Name+'\@nullFlavor', child.Attribute['nullFlavor']), aType);
       End
-      Else if (oNode.nodeType = NODE_COMMENT) Then
-        SeeComment(oNode)
-      Else if (oNode.nodeType = NODE_TEXT) Then
+      Else if (child.nodeType = ntComment) Then
+        SeeComment(child)
+      Else if (child.nodeType = ntText) Then
       Begin
         if StripWhitespace Then
-          addAddressPart(Result, Trim(oNode.text, false), nfNull, aptNull)
+          addAddressPart(Result, Trim(child.text, false), nfNull, aptNull)
         else
-          addAddressPart(Result, oNode.text, nfNull, aptNull);
+          addAddressPart(Result, child.text, nfNull, aptNull);
       End
       Else
         ; // ignore this node
-      oNode := oNode.nextSibling;
-    End;*)
+      child := child.next;
+    End;
     Result.Link;
   Finally
     Result.Free;
@@ -7215,10 +7210,10 @@ begin
 end;
 
 function TCDAParser.ParseExtension(offset: integer; const sPath: String; oElement: TMXmlElement): Tv3Extension;
-var
-  oChild : TMXmlElement;
-  extension : Tv3Extension;
-  i : integer;
+//var
+//  oChild : TMXmlElement;
+//  extension : Tv3Extension;
+//  i : integer;
 Begin
   Result := Tv3Extension.Create;
   Try
@@ -7228,6 +7223,7 @@ Begin
     result.Name := oElement.Name;
     result.namespace := oElement.namespaceURI;
     result.offset := offset;
+    raise Exception.Create('to do');
 (*
     for i := 0 to oElement.attributes.Count - 1 Do
     begin

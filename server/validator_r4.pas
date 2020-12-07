@@ -401,7 +401,6 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodeableConceptW;
-  msg : String;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try

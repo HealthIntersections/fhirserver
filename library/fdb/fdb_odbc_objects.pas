@@ -3013,9 +3013,6 @@ Begin
 End;
 
 Function TOdbcEnv.Init: Boolean;
-Var
-  LConnectionPooling, AConnectionPooling: SQLUINTEGER;
-  Len : integer;
 Begin
   Log(1, 'TOdbcEnv.Init');
 

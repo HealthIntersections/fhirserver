@@ -25,13 +25,10 @@ type
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
 
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
-  protected
-    function description : String; override;
-
-
   public
     destructor Destroy; override;
     function link : TLoincWebServer; overload;
+    function description : String; override;
 
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
@@ -53,7 +50,7 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -61,7 +58,7 @@ implementation
 
 { TLoincWebEndPoint }
 
-function TLoincWebEndPoint.cacheSize: Int64;
+function TLoincWebEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
 end;
@@ -146,8 +143,6 @@ var
   code, lang, country : String;
   pub : TLoincPublisher;
   html : THtmlPublisher;
-  mem : TMemoryStream;
-  op : TBytes;
   i : integer;
   st : TStringList;
 begin

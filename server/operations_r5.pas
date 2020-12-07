@@ -499,8 +499,8 @@ begin
 end;
 
 procedure TFhirNativeOperationEngineR5.checkProposedContent(session: TFhirSession; request: TFHIRRequest; resource: TFHIRResourceV; tags: TFHIRTagList);
-var
-  l, r : String;
+//var
+//  l, r : String;
 begin
   if resource is TFhirSubscription then
   begin

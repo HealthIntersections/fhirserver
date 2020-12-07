@@ -428,8 +428,6 @@ begin
 end;
 
 function TSnomedImporter.AddString(const s: String): Cardinal;
-var
-  i : Integer;
 begin
   if not FStringsTemp.tryGetValue(s, result) then
   begin
@@ -1383,7 +1381,7 @@ end;
 
 procedure TSnomedImporter.SeeWord(sDesc: String; iConceptIndex : Integer; active, FSN : boolean; stem : String);
 var
-  i, m : integer;
+  m : integer;
   oStem : TStemCache;
   oWord : TWordCache;
 begin

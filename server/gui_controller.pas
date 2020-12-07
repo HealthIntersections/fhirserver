@@ -69,10 +69,9 @@ type
     FOnLog: TLogEvent;
     FMessagesIn : TStringList;
     FMessages : TStringList;
-    FHitCount: integer;
     FStats : TFHIRWebServerStats;
 
-    procedure setStatus(st : TFHIRServerStatus);
+//    procedure setStatus(st : TFHIRServerStatus);
     procedure makeDB;
   protected
     procedure log(const msg : String); override;
@@ -196,16 +195,16 @@ begin
   FMessages.Clear;
 end;
 
-procedure TFHIRServerController.setStatus(st: TFHIRServerStatus);
-begin
-  FLock.Lock;
-  try
-    FPendingStatus := st;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
+//procedure TFHIRServerController.setStatus(st: TFHIRServerStatus);
+//begin
+//  FLock.Lock;
+//  try
+//    FPendingStatus := st;
+//  finally
+//    FLock.Unlock;
+//  end;
+//end;
+//
 function localFile(s : String) : String;
 begin
   result := Path([ExtractFilePath(ParamStr(0)), s]);

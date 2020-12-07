@@ -63,7 +63,7 @@ type
     FDesc : boolean;
     FWindow : TMainWindowForm;
   public
-    function Compare(const Left, Right: TFhirAllergyIntolerance): Integer;
+    function Compare(const Left, Right: TFhirAllergyIntolerance): Integer; override;
   end;
 
   TMedicationsComparer = class (TFslComparer<TFHIRResource>)
@@ -72,7 +72,7 @@ type
     FDesc : boolean;
     FWindow : TMainWindowForm;
   public
-    function Compare(const Left, Right: TFHIRResource): Integer;
+    function Compare(const Left, Right: TFHIRResource): Integer; override;
   end;
 
   TValueNode = class (TFslObject)
@@ -778,7 +778,6 @@ end;
 procedure TMainWindowForm.vtDisplayInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   value, v : TValueNode;
-  p, p1 : Pointer;
 begin
   if ParentNode = nil then
     value := FValues[Node.Index]

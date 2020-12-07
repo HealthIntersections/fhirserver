@@ -24,14 +24,11 @@ type
     function chooseSnomedRelease() : String;
     function processSnomedForTool(ss : TSnomedServices; code : String) : String;
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
-  protected
-    function description : String; override;
-
-
   public
     destructor Destroy; override;
     function link : TSnomedWebServer; overload;
 
+    function description : String; override;
     function PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String; override;
     function SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String) : String; override;
   end;
@@ -52,7 +49,7 @@ type
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -61,7 +58,7 @@ implementation
 
 { TSnomedWebEndPoint }
 
-function TSnomedWebEndPoint.cacheSize: Int64;
+function TSnomedWebEndPoint.cacheSize: UInt64;
 begin
   result := inherited cacheSize;
 end;

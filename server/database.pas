@@ -419,7 +419,7 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; override;
     function fetchLoadedPackage(id : String) : TBytes; override;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -6303,7 +6303,7 @@ end;
 //  conn.Terminate;
 //end;
 //
-function TFHIRNativeStorageService.cacheSize: Int64;
+function TFHIRNativeStorageService.cacheSize: UInt64;
 begin
   result := inherited cacheSize + FRegisteredValueSets.sizeInBytes + FQueue.sizeInBytes;
 end;

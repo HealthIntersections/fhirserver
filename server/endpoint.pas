@@ -51,7 +51,7 @@ type
     FPathNoSlash : String;
     FOnReturnFile : TWebReturnProcessedFileEvent;
     FOnProcessFile : TWebProcessFileEvent;
-    function EndPointDesc(secure: boolean): String;
+//    function EndPointDesc(secure: boolean): String;
   protected
     FTokenRedirects : TTokenRedirectManager;
 
@@ -110,7 +110,7 @@ type
 
     function summary : String; virtual; abstract;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; virtual; abstract;
-    function cacheSize : Int64; virtual;
+    function cacheSize : UInt64; virtual;
     procedure clearCache; virtual;
     procedure InstallDatabase; virtual;
     procedure UninstallDatabase; virtual;
@@ -296,31 +296,31 @@ begin
   end;
 end;
 
-function TFhirWebServerEndPoint.EndPointDesc(secure: boolean): String;
-begin
-  result := '';
-  if (secure) then
-  begin
-    if FPathNoSlash <> '' then
-      result := result + ' <li><a href="http://' + Common.Host + port(Common.ActualPort, 80) + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
-        '</a> - direct access with no security considerations</li>'#13#10;
-    if Common.ActualSSLPort <> 0 then
-      result := result + ' <li><a href="' + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
-        '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
-  end
-  else
-  begin
-    result := result + ' <li><a href="' + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
-        '</a> - direct access with no security considerations</li>'#13#10;
-    if FPathNoSlash <> '' then
-      result := result + ' <li><a href="https://' + Common.Host + port(Common.ActualSSLPort, 443) + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
-        '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
-  end;
-end;
+//function TFhirWebServerEndPoint.EndPointDesc(secure: boolean): String;
+//begin
+//  result := '';
+//  if (secure) then
+//  begin
+//    if FPathNoSlash <> '' then
+//      result := result + ' <li><a href="http://' + Common.Host + port(Common.ActualPort, 80) + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
+//        '</a> - direct access with no security considerations</li>'#13#10;
+//    if Common.ActualSSLPort <> 0 then
+//      result := result + ' <li><a href="' + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
+//        '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
+//  end
+//  else
+//  begin
+//    result := result + ' <li><a href="' + FPathNoSlash + '">Unsecured access at ' + FPathNoSlash +
+//        '</a> - direct access with no security considerations</li>'#13#10;
+//    if FPathNoSlash <> '' then
+//      result := result + ' <li><a href="https://' + Common.Host + port(Common.ActualSSLPort, 443) + FPathNoSlash + '">Secured access at ' + FPathNoSlash +
+//        '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
+//  end;
+//end;
 
 { TFHIRServerEndPoint }
 
-function TFHIRServerEndPoint.cacheSize: Int64;
+function TFHIRServerEndPoint.cacheSize: UInt64;
 begin
   if WebEndPoint <> nil then
     result := WebEndPoint.FTokenRedirects.sizeInBytes + WebEndPoint.Common.cache.sizeInBytes

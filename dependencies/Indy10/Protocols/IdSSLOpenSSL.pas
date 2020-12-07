@@ -1265,7 +1265,6 @@ var
 begin
   Result := 0;
   count := 0;
-  Lin := nil;
 
   if AFileName = '' then begin
     Result := 1;
@@ -1352,7 +1351,6 @@ begin
   Result := 0;
   count := 0;
   LM := nil;
-  Lin := nil;
 
   if _type <> X509_FILETYPE_PEM then begin
     Result := Indy_unicode_X509_load_cert_file(ctx, AFileName, _type);
@@ -2577,7 +2575,6 @@ function TIdServerIOHandlerSSLOpenSSL.Accept(ASocket: TIdSocketHandle;
 var
   LIO: TIdSSLIOHandlerSocketOpenSSL;
 begin
-  Result := nil;
   Assert(ASocket<>nil);
   Assert(fSSLContext<>nil);
   LIO := TIdSSLIOHandlerSocketOpenSSL.Create(nil);

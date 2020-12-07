@@ -113,8 +113,8 @@ Type
     carry: TFslZipReader; // for uploading support
     carryName: String;
     function factory : TFHIRFactory;
-    function store : TFHIRNativeStorageService;
-    function terminologies : TCommonTerminologies;
+//    function store : TFHIRNativeStorageService;
+//    function terminologies : TCommonTerminologies;
     procedure GetPatients(details : TFslStringDictionary);
     function GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String>;
     function GetResource(Session: TFHIRSession; rtype: String; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
@@ -125,9 +125,8 @@ Type
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
-    Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
+//    Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
   protected
-    function description : String; override;
 
     Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
     Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
@@ -144,6 +143,7 @@ Type
   public
     destructor Destroy; override;
     function link : TFullServerWebEndPoint; overload;
+    function description : String; override;
   end;
 
 
@@ -181,7 +181,7 @@ Type
     procedure LoadPackages(plist : String); override;
     procedure updateAdminPassword; override;
     procedure internalThread; override;
-    function cacheSize : Int64; override;
+    function cacheSize : UInt64; override;
     procedure clearCache; override;
   end;
 
@@ -543,7 +543,7 @@ begin
   FEmailThread.Start;
 end;
 
-function TFullServerEndPoint.cacheSize: Int64;
+function TFullServerEndPoint.cacheSize: UInt64;
 begin
   result := inherited CacheSize + FStore.cacheSize;
 end;
@@ -886,16 +886,16 @@ begin
   result := FEndPoint.FServerContext.Factory;
 end;
 
-function TFullServerWebEndPoint.store: TFHIRNativeStorageService;
-begin
-  result := FEndPoint.FStore;
-end;
-
-function TFullServerWebEndPoint.terminologies: TCommonTerminologies;
-begin
-  result := FEndPoint.FServerContext.TerminologyServer.CommonTerminologies;
-end;
-
+//function TFullServerWebEndPoint.store: TFHIRNativeStorageService;
+//begin
+//  result := FEndPoint.FStore;
+//end;
+//
+//function TFullServerWebEndPoint.terminologies: TCommonTerminologies;
+//begin
+//  result := FEndPoint.FServerContext.TerminologyServer.CommonTerminologies;
+//end;
+//
 function TFullServerWebEndPoint.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
 var
   authurl: string;
@@ -1673,7 +1673,7 @@ end;
 function TFullServerWebEndPoint.HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 var
   id, ver: String;
-  s, xhtml: String;
+  {s, }xhtml: String;
   patient: TFHIRPatientW;
   hookid: String;
   hooks: TFHIRWebServerPatientViewContext;
@@ -1734,12 +1734,12 @@ begin
 end;
 
 function TFullServerWebEndPoint.HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
-var
-  id, ver: String;
-  s, xhtml: String;
-  encounter: TFHIREncounterW;
-  hookid: String;
-  hooks: TFHIRWebServerPatientViewContext;
+//var
+//  id, ver: String;
+//  s, xhtml: String;
+//  encounter: TFHIREncounterW;
+//  hookid: String;
+//  hooks: TFHIRWebServerPatientViewContext;
 begin
 //  result := 0;
 //  StringSplit(request.id.Substring(10), '/', id, ver);
@@ -1798,13 +1798,12 @@ result := 0;
 end;
 
 function TFullServerWebEndPoint.HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
-var
-  id: String;
+//var
+//  id: String;
   // s, xhtml : String;
   // patient : TFHIRPatient;
   // hookid : String;
-  hooks: TFHIRWebServerPatientViewContext;
-
+//  hooks: TFHIRWebServerPatientViewContext;
 begin
 //  result := 0;
 //
@@ -1928,20 +1927,19 @@ begin
 end;
 {$ENDIF}
 
-procedure TFullServerWebEndPoint.HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
-var
-  ws: TIdWebSocket;
-begin
-  ws := TIdWebSocket.Create(nil);
-  try
-    if ws.open(AContext, request, response) then
-      self.Context.SubscriptionManager.HandleWebSocket(ws);
-  finally
-    ws.Free;
-  end;
-end;
-
-
+//procedure TFullServerWebEndPoint.HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
+//var
+//  ws: TIdWebSocket;
+//begin
+//  ws := TIdWebSocket.Create(nil);
+//  try
+//    if ws.open(AContext, request, response) then
+//      self.Context.SubscriptionManager.HandleWebSocket(ws);
+//  finally
+//    ws.Free;
+//  end;
+//end;
+//
 function TFullServerWebEndPoint.transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
 var
   xml: TFHIRComposer;

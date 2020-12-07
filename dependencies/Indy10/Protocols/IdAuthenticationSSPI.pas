@@ -1050,12 +1050,10 @@ begin
   Result := fStatus = SEC_E_OK;
 end;
 
-function TCustomSSPIConnectionContext.UpdateAndGenerateReply
-  (const aFromPeerToken: TIdBytes; var aToPeerToken: TIdBytes): Boolean;
+function TCustomSSPIConnectionContext.UpdateAndGenerateReply(const aFromPeerToken: TIdBytes; var aToPeerToken: TIdBytes): Boolean;
 var
   fOutBuff: SecBuffer;
 begin
-  Result := False;
 
   { check credentials }
   CheckCredentials;

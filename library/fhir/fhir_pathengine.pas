@@ -101,7 +101,6 @@ type
     FMarkedCurrentStartLocation : TSourceLocation;
     FMarkedLast13 : boolean;
 
-    function getLine(line : integer) : String;
     procedure nextChar;
     procedure prevChar;
   protected
@@ -860,7 +859,7 @@ begin
         FCursor := FCursor + 2;
       end
     end
-    else if (Character.isWhitespace(FPath[FCursor])) then
+    else if (TCharacter.isWhitespace(FPath[FCursor])) then
     begin
       last13 := FCurrentLocation.checkChar(FPath[cursor], last13);
       inc(fCursor);
@@ -891,11 +890,6 @@ end;
 function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
 begin
   result := location.exception('Error "'+msg+'"');
-end;
-
-function TFHIRPathLexer.getLine(line: integer): String;
-begin
-  result := FPath.Split([#10])[line-1].Trim;
 end;
 
 function TFHIRPathLexer.error(msg: String; offset: integer): Exception;

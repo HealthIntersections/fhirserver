@@ -171,7 +171,6 @@ Type
     Function GetMRN : TIdentity;
     procedure doParse(buffer : TFslBuffer);
     procedure SetRoot(const Value: TcdaClinicalDocument);
-    function extractDocumentId(buffer : TFslBuffer) : String;
     Procedure Decode(Const sSource : TBytes); Overload;
     Procedure Decode(Const sSource : TStream); Overload;
     function GetCDAPatientID(const sOid: String): TIdentity;
@@ -195,6 +194,7 @@ Type
     Property IdentifiedObjects : TFslStringObjectMatch read FIdentifiedObjects;
 
     function title : string;
+    function extractDocumentId(buffer : TFslBuffer) : String;
     function getPatientIHI : string;
     function patientName : string;
     function authorName : string;
@@ -995,7 +995,7 @@ end;
 
 Function ParseCDA(Const sSource : String; bErrors : Boolean = False) : TcdaClinicalDocument;
 begin
-  result := ParseCDA(AnsiStringAsBytes(sSource), bErrors);
+  result := ParseCDA(StringAsBytes(sSource), bErrors);
 end;
 
 Function ParseCDA(Const sSource : Tbytes; bErrors : Boolean) : TcdaClinicalDocument;

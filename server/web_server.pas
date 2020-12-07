@@ -177,7 +177,6 @@ Type
 
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
     procedure SSLPassword(Sender: TObject; var Password: string; const IsWrite: Boolean);
-    procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean);
     procedure DoQuerySSLPort(APort: TIdPort; var VUseSSL: Boolean);
 
     procedure ProcessFile(sender : TObject; session : TFhirSession; named, path: String; secure : boolean; variables: TFslMap<TFHIRObject>; var result : String);
@@ -196,6 +195,8 @@ Type
     destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerConfigFile);
     property settings : TFHIRServerSettings read FSettings;
+
+    procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean); // private (hint busting)
 
     Procedure Start; // (active, threads: boolean);
     Procedure Stop;
@@ -965,7 +966,6 @@ function TFhirWebServer.endpointList : String;
 var
   b : TStringBuilder;
   ep : TFhirWebServerEndpoint;
-  found : boolean;
 begin
   b := TStringBuilder.create;
   try

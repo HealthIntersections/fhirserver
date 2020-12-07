@@ -225,10 +225,10 @@ Type
 
   TJWTUtils = class (TFslObject)
   private
-    class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
+//    class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
+//    class function loadDSAPrivateKey(pemfile, pempassword : AnsiString) : PDSA;
     class function loadRSAPublicKey(pemfile : AnsiString) : PRSA; overload;
     class function loadRSAPublicKey(contents : TBytes) : PRSA; overload;
-//    class function loadDSAPrivateKey(pemfile, pempassword : AnsiString) : PDSA;
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
     class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
@@ -925,21 +925,21 @@ begin
   end;
 end;
 
-class function TJWTUtils.loadRSAPrivateKey(pemfile, pempassword: AnsiString): PRSA;
-var
-  bp: pBIO;
-  fn, pp: PAnsiChar;
-  pk: PRSA;
-begin
-  fn := PAnsiChar(pemfile);
-  pp := PAnsiChar(pempassword);
-  bp := BIO_new(BIO_s_file());
-  BIO_read_filename(bp, fn);
-  pk := nil;
-  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
-  if result = nil then
-    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
-end;
+//class function TJWTUtils.loadRSAPrivateKey(pemfile, pempassword: AnsiString): PRSA;
+//var
+//  bp: pBIO;
+//  fn, pp: PAnsiChar;
+//  pk: PRSA;
+//begin
+//  fn := PAnsiChar(pemfile);
+//  pp := PAnsiChar(pempassword);
+//  bp := BIO_new(BIO_s_file());
+//  BIO_read_filename(bp, fn);
+//  pk := nil;
+//  result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
+//  if result = nil then
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
+//end;
 
 class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
 var

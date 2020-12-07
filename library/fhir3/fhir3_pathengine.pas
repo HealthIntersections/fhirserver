@@ -1954,11 +1954,11 @@ begin
     begin
       cnt := focus[0].value.primitiveValue;
       if (param = 'hex') then
-        cnt := EncodeHexadecimal(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeHexadecimal(TEncoding.UTF8.GetBytes(cnt)))
       else if (param = 'base64') then
-        cnt := EncodeBase64(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeBase64(TEncoding.UTF8.GetBytes(cnt)))
       else if (param = 'urlbase64') then
-        cnt := EncodeBase64Url(TEncoding.UTF8.GetBytes(cnt))
+        cnt := string(EncodeBase64Url(TEncoding.UTF8.GetBytes(cnt)))
       else
         raise EFHIRPath.Create('Unrecognised encode parameter "'+param+'"');
       result := TFHIRSelectionList.Create(TFHIRString.Create(cnt));

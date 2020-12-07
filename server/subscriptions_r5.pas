@@ -45,7 +45,7 @@ Type
   private
     fpp : TFHIRPathParser;
     fpe : TFHIRPathEngine;
-    function MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
+//    function MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
   protected
     procedure checkAcceptable(sub : TFHIRSubscriptionW; session : TFHIRSession); override;
     function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; override;
@@ -91,42 +91,41 @@ begin
 //    result := getSubscriptionTopic(subscription.topic.reference);
 end;
 
-function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
-var
-  old : TFhirResource;
-  new : TFhirResource;
-  oldId, newId : string;
-begin
-  result := false;
-
-  new := LoadResourceFromDBByVer(conn, ResourceVersionKey, newId) as TFhirResource;
-  try
-    old := nil;
-    if ResourcePreviousKey <> 0 then
-    begin
-      old := LoadResourceFromDBByVer(conn, ResourcePreviousKey, oldId) as TFhirResource;
-      assert(newId = oldId);
-    end;
-    try
-      // todo: code and date requirements from DataRequirement
-//      if (evd.triggerList.Count = 1) and (evd.triggerList[0].condition <> nil) then
-//      begin
+//function TSubscriptionManagerR5.MeetsCriteriaEvent(evd : TFHIRSubscriptionTopic; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TFDBConnection): boolean;
+//var
+//  old : TFhirResource;
+//  new : TFhirResource;
+//  oldId, newId : string;
+//begin
 //
-//      end
-//      else
-        result := false;
-    finally
-      old.Free;
-    end;
-  finally
-    new.Free;
-  end;
-
-//  is the date criteria met?
-//  is the code criteria met?
-//  is the expression criteria met?
-//  result := false; // todo
-end;
+//  new := LoadResourceFromDBByVer(conn, ResourceVersionKey, newId) as TFhirResource;
+//  try
+//    old := nil;
+//    if ResourcePreviousKey <> 0 then
+//    begin
+//      old := LoadResourceFromDBByVer(conn, ResourcePreviousKey, oldId) as TFhirResource;
+//      assert(newId = oldId);
+//    end;
+//    try
+//      // todo: code and date requirements from DataRequirement
+////      if (evd.triggerList.Count = 1) and (evd.triggerList[0].condition <> nil) then
+////      begin
+////
+////      end
+////      else
+//        result := false;
+//    finally
+//      old.Free;
+//    end;
+//  finally
+//    new.Free;
+//  end;
+//
+////  is the date criteria met?
+////  is the code criteria met?
+////  is the expression criteria met?
+////  result := false; // todo
+//end;
 
 function TSubscriptionManagerR5.checkSubscription(sub : TFHIRResourceV): TFHIRSubscriptionW;
 var
@@ -195,7 +194,7 @@ end;
 procedure TSubscriptionManagerR5.checkAcceptable(sub: TFhirSubscriptionW; session: TFHIRSession);
 var
   ts : TStringList;
-  evd : TFHIRSubscriptionTopic;
+//  evd : TFHIRSubscriptionTopic;
   function rule(test : boolean; message : String) : boolean;
   begin
     if not test then
@@ -204,7 +203,7 @@ var
   end;
 var
   subscription: TFhirSubscription;
-  expr : TFHIRPathExpressionNode;
+//  expr : TFHIRPathExpressionNode;
 begin
   subscription := sub.Resource as TFhirSubscription;
   ts := TStringList.Create;
@@ -415,11 +414,11 @@ begin
 end;
 
 function TSubscriptionManagerR5.MeetsCriteria(sub : TFhirSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; newRes, oldRes : TFHIRResourceV; conn: TFDBConnection): boolean;
-var
-  subscription : TFhirSubscription;
-  evd : TFHIRSubscriptionTopic;
+//var
+//  subscription : TFhirSubscription;
+//  evd : TFHIRSubscriptionTopic;
 begin
-  subscription := sub.Resource as TFhirSubscription;
+//  subscription := sub.Resource as TFhirSubscription;
 //  if subscription.criteria = '*' then
 //    result := true
 //  else

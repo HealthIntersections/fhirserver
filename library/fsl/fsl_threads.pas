@@ -53,12 +53,12 @@ Function ThreadHandle : TThreadHandle; Overload;
 Procedure ThreadYield; Overload;
 Procedure ThreadBreakpoint; Overload;
 
-procedure SetThreadName(name : AnsiString);
-procedure SetThreadStatus(status : AnsiString);
-function GetThreadInfo : AnsiString;
-function GetThreadReport : AnsiString;
+procedure SetThreadName(name : String);
+procedure SetThreadStatus(status : String);
+function GetThreadInfo : String;
+function GetThreadReport : String;
 function GetThreadCount : Integer;
-function GetThreadNameStatus : AnsiString;
+function GetThreadNameStatus : String;
 procedure closeThread;
 
 type
@@ -76,14 +76,14 @@ type
     FNext, FPrev: TFslLock;
 
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
-    FCategory: String;                // category in the lock list
+    FCategory: String;               // category in the lock list
     FName: String;                   // Name of the critical section object
     FLockName: Array of String;      // Name of the current Lock (first one to grab)
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
     FUseCount: Integer;              // The amount of times there has been a succesful attempt to lock a critical section
-    FCurrLockTime: Int64;            // Time which the owning thread obtained the lock for the thread
-    FTimeLocked: Int64;              // Total length of time which the critical section has been locked for
-    FDelayTime: Int64;               // Total length of time that threads have been waiting to obtain a lock after a failed attempt
+    FCurrLockTime: UInt64;           // Time which the owning thread obtained the lock for the thread
+    FTimeLocked: UInt64;             // Total length of time which the critical section has been locked for
+    FDelayTime: UInt64;              // Total length of time that threads have been waiting to obtain a lock after a failed attempt
     FEntryCount: Integer;            // Amount of times the thread owning the critical section has called Lock without calling UnLock. Used for recursion
     FLockThread : TThreadID;
 
@@ -120,9 +120,9 @@ type
 //    property LockName: String Read FLockName;
     property DelayCount: Integer Read FDelayCount;
     property UseCount: Integer Read FUseCount;
-    property CurrLockTime: Int64 Read FCurrLockTime;
-    property TimeLocked: Int64 Read FTimeLocked;
-    property DelayTime: Int64 Read FDelayTime;
+    property CurrLockTime: UInt64 Read FCurrLockTime;
+    property TimeLocked: UInt64 Read FTimeLocked;
+    property DelayTime: UInt64 Read FDelayTime;
     property EntryCount: Integer Read FEntryCount;
     property LockThread: TThreadID Read FLockThread;
   end;
@@ -392,8 +392,8 @@ type
   TTheadRecord = record
     id : TThreadID;
     startTick : UInt64;
-    name : AnsiString;
-    state : AnsiString;
+    name : String;
+    state : String;
     stateTick : UInt64;
   end;
   PTheadRecord = ^TTheadRecord;
@@ -421,7 +421,7 @@ begin
   end;
 end;
 
-procedure SetThreadName(name : AnsiString);
+procedure SetThreadName(name : String);
 var
   id : TThreadID;
   i : integer;
@@ -449,7 +449,7 @@ begin
   end;
 end;
 
-procedure SetThreadStatus(status : AnsiString);
+procedure SetThreadStatus(status : String);
 var
   id : TThreadID;
   i : integer;
@@ -482,7 +482,7 @@ begin
   end;
 end;
 
-function age(tick : UInt64) : AnsiString;
+function age(tick : UInt64) : String;
 var
   duration : UInt64;
 begin
@@ -514,7 +514,7 @@ begin
   end;
 end;
 
-function info(p : PTheadRecord; id : boolean) : AnsiString;
+function info(p : PTheadRecord; id : boolean) : String;
 begin
   if (id) then
     result := inttohex(NativeUInt(p.id), 8)+': '
@@ -530,12 +530,12 @@ begin
     result := result + ' (born '+age(p.startTick)+')';
 end;
 
-function GetThreadNameStatus : AnsiString;
+function GetThreadNameStatus : String;
 var
   id : TThreadId;
   i : integer;
   p : PTheadRecord;
-  s : AnsiString;
+  s : String;
 begin
   s := 'Unknown thread';
   id := GetCurrentThreadId;
@@ -556,12 +556,12 @@ begin
   result := s;
 end;
 
-function GetThreadInfo : AnsiString;
+function GetThreadInfo : String;
 var
   id : TThreadId;
   i : integer;
   p : PTheadRecord;
-  s : AnsiString;
+  s : String;
 begin
   s := 'Unknown thread';
   id := GetCurrentThreadId;
@@ -592,10 +592,10 @@ begin
   end;
 end;
 
-function GetThreadReport : AnsiString;
+function GetThreadReport : String;
 var
   i : integer;
-  s : AnsiString;
+  s : String;
   p : PTheadRecord;
 begin
   s := '';
@@ -614,7 +614,7 @@ begin
   result := s;
 end;
 
-procedure CloseThreadInternal(name : AnsiString);
+procedure CloseThreadInternal(name : String);
 begin
   closeThread;
 end;
@@ -771,18 +771,21 @@ end;
 
 destructor TFslLock.Destroy;
 begin
-  EnterCriticalSection(GCritSct);
-  try
-    dec(GCount);
-    if FPrev = NIL then
-      GFirst := FNext
-    else
-      FPrev.FNext := FNext;
-    if FNext <> NIL then
-      FNext.FPrev := FPrev;
-  finally
-    LeaveCriticalSection(GCritSct);
-    end;
+  if GHaveCritSect then
+  begin
+    EnterCriticalSection(GCritSct);
+    try
+      dec(GCount);
+      if FPrev = NIL then
+        GFirst := FNext
+      else
+        FPrev.FNext := FNext;
+      if FNext <> NIL then
+        FNext.FPrev := FPrev;
+    finally
+      LeaveCriticalSection(GCritSct);
+      end;
+  end;
   DeleteCriticalSection(FCritSect);
   inherited;
 end;
@@ -841,7 +844,8 @@ begin
     LStartTime := GetTickCount64;
     EnterCriticalSection(FCritSect);
     MarkEntered;
-    FDelayTime := FDelayTime + (FCurrLockTime - LStartTime);
+    inc(FDelayTime, FCurrLockTime);
+    dec(FDelayTime, LStartTime);
     inc(FDelayCount);
     end;
 end;
@@ -1394,8 +1398,8 @@ procedure TBackgroundTaskManager.primaryThreadCheck;
 var
   e : TBackgroundTaskEngine;
   pck : TBackgroundTaskPackagePair;
-  uReq : TBackgroundTaskUIRequest;
-  uResp : TBackgroundTaskUIResponse;
+//  uReq : TBackgroundTaskUIRequest;
+//  uResp : TBackgroundTaskUIResponse;
 begin
   // first round: are any tasks complete
   for e in FEngines do

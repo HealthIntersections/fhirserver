@@ -92,7 +92,6 @@ Type
     FContent : TFslMap<TFslBuffer>;
     FResources : TFslList<TNpmPackageResource>;
     procedure readIndex(index : TJsonObject);
-    function dump : String;
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -323,11 +322,6 @@ begin
   FContent.Free;
   FResources.Free;
   inherited;
-end;
-
-function TNpmPackageFolder.dump: String;
-begin
-   result := name + ' ('+ FFolder +') '+inttostr(FResources.count)+' | '+inttostr(FContent.count);
 end;
 
 function TNpmPackageFolder.fetchFile(name: String): TBytes;
@@ -790,7 +784,7 @@ end;
 function TNpmPackage.listResources(types: TArray<String>): TArray<String>;
 var
   sl : TStringList;
-  t, s : String;
+  t : String;
   f : TNpmPackageFolder;
   r : TNpmPackageResource;
 begin
@@ -1002,21 +996,18 @@ procedure TNpmPackage.readStream(tgz: TStream; desc: String; progress: TWorkProg
 var
   z : TZDecompressionStream;
   tar : TTarArchive;
-  entry : TTarDirRec;  
-  i : integer;
+  entry : TTarDirRec;
   n : String;
   b : TBytes;
   bi : TBytesStream;
 begin
-  i := 0;
   z := TZDecompressionStream.Create(tgz, 15+16);
   try
     tar := TTarArchive.Create(z);
     try
       tar.Reset;
       while tar.FindNext(entry) do
-      begin  
-        inc(i);
+      begin
         n := String(entry.Name);
         bi := TBytesStream.Create;
         try

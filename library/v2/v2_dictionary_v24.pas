@@ -12319,8 +12319,6 @@ Var
   oGrp5 : THL7V2ModelSegmentGroup;
   oGrp6 : THL7V2ModelSegmentGroup;
   oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-  oGrp9 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('ACK', 'Standard Acknowlegdement', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
@@ -15296,10 +15294,6 @@ Var
   oGrp3 : THL7V2ModelSegmentGroup;
   oGrp4 : THL7V2ModelSegmentGroup;
   oGrp5 : THL7V2ModelSegmentGroup;
-  oGrp6 : THL7V2ModelSegmentGroup;
-  oGrp7 : THL7V2ModelSegmentGroup;
-  oGrp8 : THL7V2ModelSegmentGroup;
-  oGrp9 : THL7V2ModelSegmentGroup;
 Begin
   oStructure := oStructures.Add('RSP_Z90', '', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;

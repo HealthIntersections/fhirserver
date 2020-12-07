@@ -251,7 +251,6 @@ end;
 function TSubscriptionManagerR4.meetsQueryCriteriaParameter(name, value, resourceType: String; resource: TFHIRResource): boolean;
 var
   n, m, expr : String;
-  v : TArray<String>;
   sp : TFHIRSearchParameter;
   sl : TFHIRSelectionList;
 begin
@@ -345,7 +344,7 @@ end;
 procedure TSubscriptionManagerR4.checkAcceptable(sub: TFhirSubscriptionW; session: TFHIRSession);
 var
   ts : TStringList;
-  evd : TFHIRSubscriptionTopic;
+//  evd : TFHIRSubscriptionTopic;
   function rule(test : boolean; message : String) : boolean;
   begin
     if not test then
@@ -354,7 +353,7 @@ var
   end;
 var
   subscription: TFhirSubscription;
-  expr : TFHIRPathExpressionNode;
+//  expr : TFHIRPathExpressionNode;
 begin
   subscription := sub.Resource as TFhirSubscription;
   ts := TStringList.Create;

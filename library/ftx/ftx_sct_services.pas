@@ -308,7 +308,7 @@ Type
     procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
     Function GetParent(iIndex : Cardinal): Cardinal;
     Function GetIdentity(iIndex : Cardinal): UInt64;
-    Function Count : Integer;
+    Function Count : Cardinal;
 
     procedure SetParents(iIndex: Cardinal; const Active, Inactive: Cardinal);
     procedure SetDescriptions(iIndex: Cardinal; const Value: Cardinal);
@@ -366,7 +366,7 @@ Type
     Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
     Procedure DoneBuild;
 
-    function count : integer;
+    function count : cardinal;
   End;
 
 Type
@@ -627,7 +627,7 @@ operations
     Property RefSetIndex : TSnomedReferenceSetIndex read GetRefsetIndex;
     Property RefSetMembers : TSnomedReferenceSetMembers read GetRefsetMembers;
     Property DescRef : TSnomedDescriptionIndex read GetDescRef;
-    function ChildRelationshipCount : Integer; overload;
+    function ChildRelationshipCount : cardinal; overload;
     function RefSetCount : cardinal; overload;
 
     // low level access for service providers
@@ -1239,7 +1239,7 @@ begin
   FLength := 0;
 end;
 
-function TSnomedConceptList.Count: Integer;
+function TSnomedConceptList.Count: Cardinal;
 begin
   result := FLength div CONCEPT_SIZE;
 end;
@@ -2703,7 +2703,7 @@ begin
   End
 end;
 
-function TSnomedServices.ChildRelationshipCount: Integer;
+function TSnomedServices.ChildRelationshipCount: cardinal;
 var
   i, j : integer;
   Identity : UInt64;
@@ -2937,7 +2937,7 @@ begin
   FLength := 0;
 end;
 
-function TSnomedRelationshipList.count: integer;
+function TSnomedRelationshipList.count: cardinal;
 begin
   result := FLength div RELATIONSHIP_SIZE;
 end;

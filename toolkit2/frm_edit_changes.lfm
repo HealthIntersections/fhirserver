@@ -1,31 +1,30 @@
 object EditChangeReviewForm: TEditChangeReviewForm
-  Left = 725
-  Height = 1292
-  Top = 0
-  Width = 1689
+  Left = -1124
+  Height = 738
+  Top = -604
+  Width = 965
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Editor Change Review'
-  ClientHeight = 1292
-  ClientWidth = 1689
-  DesignTimePPI = 168
+  ClientHeight = 738
+  ClientWidth = 965
   OnDestroy = FormDestroy
   OnShow = FormShow
   LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
-    Height = 74
-    Top = 1218
-    Width = 1689
+    Height = 42
+    Top = 696
+    Width = 965
     Align = alBottom
-    ClientHeight = 74
-    ClientWidth = 1689
+    ClientHeight = 42
+    ClientWidth = 965
     ParentFont = False
     TabOrder = 0
     object btnCancel: TButton
-      Left = 1540
-      Height = 44
-      Top = 18
-      Width = 131
+      Left = 880
+      Height = 25
+      Top = 10
+      Width = 75
       Anchors = [akTop, akRight]
       Caption = 'Close'
       ModalResult = 1
@@ -34,30 +33,30 @@ object EditChangeReviewForm: TEditChangeReviewForm
       TabOrder = 0
     end
     object btnExternalDiff: TButton
-      Left = 18
-      Height = 44
-      Top = 14
-      Width = 313
+      Left = 10
+      Height = 25
+      Top = 8
+      Width = 179
       Caption = 'External Diff'
       OnClick = btnExternalDiffClick
       ParentFont = False
       TabOrder = 1
     end
     object lblStatus: TLabel
-      Left = 350
-      Height = 30
-      Top = 21
-      Width = 78
+      Left = 200
+      Height = 15
+      Top = 12
+      Width = 45
       Caption = 'lblStatus'
       ParentColor = False
       ParentFont = False
       Visible = False
     end
     object btnReplace: TButton
-      Left = 1397
-      Height = 44
-      Top = 18
-      Width = 131
+      Left = 798
+      Height = 25
+      Top = 10
+      Width = 75
       Anchors = [akTop, akRight]
       Caption = 'Replace'
       Default = True
@@ -68,19 +67,19 @@ object EditChangeReviewForm: TEditChangeReviewForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 88
+    Height = 50
     Top = 0
-    Width = 1689
+    Width = 965
     Align = alTop
-    ClientHeight = 88
-    ClientWidth = 1689
+    ClientHeight = 50
+    ClientWidth = 965
     ParentFont = False
     TabOrder = 1
     object lblSummary: TLabel
-      Left = 24
-      Height = 30
-      Top = 26
-      Width = 1646
+      Left = 14
+      Height = 17
+      Top = 15
+      Width = 940
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'lblSummary'
@@ -90,9 +89,9 @@ object EditChangeReviewForm: TEditChangeReviewForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 1130
-    Top = 88
-    Width = 1689
+    Height = 646
+    Top = 50
+    Width = 965
     ActivePage = TabSheet2
     Align = alClient
     ParentFont = False
@@ -100,23 +99,23 @@ object EditChangeReviewForm: TEditChangeReviewForm
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Source'
-      ClientHeight = 1087
-      ClientWidth = 1681
+      ClientHeight = 618
+      ClientWidth = 957
       ParentFont = False
       inline mSource: TSynEdit
         Left = 0
-        Height = 1087
+        Height = 618
         Top = 0
-        Width = 1681
+        Width = 957
         Align = alClient
-        Font.Height = -23
+        Font.Height = -13
         Font.Name = 'Courier New'
         Font.Pitch = fpFixed
         Font.Quality = fqNonAntialiased
         ParentColor = False
         ParentFont = False
         TabOrder = 0
-        Gutter.Width = 100
+        Gutter.Width = 57
         Gutter.MouseActions = <>
         RightGutter.Width = 0
         RightGutter.MouseActions = <>
@@ -573,11 +572,11 @@ object EditChangeReviewForm: TEditChangeReviewForm
         OnChange = mSourceChange
         inline SynLeftGutterPartList1: TSynGutterPartList
           object SynGutterMarks1: TSynGutterMarks
-            Width = 42
+            Width = 24
             MouseActions = <>
           end
           object SynGutterLineNumber1: TSynGutterLineNumber
-            Width = 29
+            Width = 17
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
@@ -587,19 +586,18 @@ object EditChangeReviewForm: TEditChangeReviewForm
             LeadingZeros = False
           end
           object SynGutterChanges1: TSynGutterChanges
-            Width = 7
+            Width = 4
             MouseActions = <>
             ModifiedColor = 59900
             SavedColor = clGreen
           end
           object SynGutterSeparator1: TSynGutterSeparator
-            Width = 4
+            Width = 2
             MouseActions = <>
             MarkupInfo.Background = clWhite
             MarkupInfo.Foreground = clGray
           end
           object SynGutterCodeFolding1: TSynGutterCodeFolding
-            Width = 18
             MouseActions = <>
             MarkupInfo.Background = clNone
             MarkupInfo.Foreground = clGray
@@ -619,15 +617,15 @@ object EditChangeReviewForm: TEditChangeReviewForm
         Left = 0
         Height = 619
         Top = 0
-        Width = 665
+        Width = 380
         Align = alLeft
         ClientHeight = 619
-        ClientWidth = 665
+        ClientWidth = 380
         ParentFont = False
         TabOrder = 0
         object pnlLeftSummary: TPanel
           Left = 1
-          Height = 49
+          Height = 28
           Top = 1
           Width = 378
           Align = alTop
@@ -661,7 +659,7 @@ object EditChangeReviewForm: TEditChangeReviewForm
         TabOrder = 1
         object pnlRightSummary: TPanel
           Left = 1
-          Height = 49
+          Height = 28
           Top = 1
           Width = 575
           Align = alTop
@@ -687,7 +685,7 @@ object EditChangeReviewForm: TEditChangeReviewForm
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 32
-    Top = 231
+    Left = 18
+    Top = 132
   end
 end
