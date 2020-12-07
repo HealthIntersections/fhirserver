@@ -345,6 +345,8 @@ var
   sName : string;
   exists : boolean;
 begin
+  if self = nil then
+    exit;
   If length(bytes) = 0 Then
     Exit;
   FLock.Lock;
