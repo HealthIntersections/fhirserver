@@ -60,11 +60,20 @@ Type
     property value : String read FValue write FValue;
   end;
 
+  { TFslTestCaseTests }
+
+  TFslTestCaseTests = class (TFslTestCase)
+  published
+    procedure testPass;
+    procedure testFail;
+    procedure testError;
+  end;
+
   TFslGenericsTests = class (TFslTestCase)
   private
     function doSort(sender : TObject; const left, right : TFslTestObject) : integer;
   published
-    procedure testSimple; //(obj : TFslObject);
+    procedure testSimple;
     procedure testiterate;
     procedure testRemove;
     procedure testAddAll;
@@ -676,6 +685,23 @@ Type
 procedure registerTests;
 
 implementation
+
+{ TFslTestCaseTests }
+
+procedure TFslTestCaseTests.testPass;
+begin
+  AssertTrue(true);
+end;
+
+procedure TFslTestCaseTests.testFail;
+begin
+  AssertTrue(false, 'message');
+end;
+
+procedure TFslTestCaseTests.testError;
+begin
+  raise Exception.create('Error');
+end;
 
 { TXmlParserTest2 }
 
@@ -4701,8 +4727,11 @@ begin
 end;
 
 procedure RegisterTests;
-// don't use initialization - give other code time to set up directories etc
+// don't use unit initialization - give other code time to set up directories etc
 begin
+  // These tests exist only to test the test infrastructure itself, if that's needed
+  //RegisterTest('Library.TestCase tests', TFslTestCaseTests.Suite);
+
   RegisterTest('Library.Generics Tests', TFslGenericsTests.Suite);
   RegisterTest('Library.Collection Tests', TFslCollectionsTests.Suite);
   RegisterTest('Library.XPlatform Tests', TXPlatformTests.Suite);

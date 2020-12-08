@@ -75,7 +75,7 @@ procedure RunTestGui(ini : TFHIRServerConfigFile);
 begin
   Logging.Log('Run Tests (GUI)');
   {$IFDEF WINDOWS}
-  FreeConsole;
+  //FreeConsole;
   {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;

@@ -179,46 +179,49 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="13">
+    <RequiredPackages Count="14">
       <Item1>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_xver"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir_fui"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir_fsl"/>
       </Item4>
       <Item5>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir5"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir4"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir3"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir2"/>
       </Item8>
       <Item9>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="fhir"/>
       </Item9>
       <Item10>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="PascalTZ"/>
       </Item10>
       <Item11>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownTests"/>
       </Item11>
       <Item12>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item12>
       <Item13>
-        <PackageName Value="LCL"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item13>
+      <Item14>
+        <PackageName Value="LCL"/>
+      </Item14>
     </RequiredPackages>
     <Units Count="84">
       <Unit0>

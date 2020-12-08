@@ -1,12 +1,11 @@
 object TesterForm: TTesterForm
-  Left = 1297
-  Height = 1164
-  Top = 735
-  Width = 1108
+  Left = 1303
+  Height = 694
+  Top = 63
+  Width = 439
   Caption = 'FPC Test Runner'
-  ClientHeight = 1164
-  ClientWidth = 1108
-  DesignTimePPI = 168
+  ClientHeight = 694
+  ClientWidth = 439
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -14,20 +13,29 @@ object TesterForm: TTesterForm
   LCLVersion = '2.1.0.0'
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 43
-    Top = 1121
-    Width = 1108
-    Panels = <>
+    Height = 23
+    Top = 671
+    Width = 439
+    Panels = <    
+      item
+        Width = 150
+      end    
+      item
+        Width = 400
+      end>
     ParentFont = False
+    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
-    Height = 46
+    Height = 26
     Top = 0
-    Width = 1108
+    Width = 439
     Caption = 'ToolBar1'
     Images = ilMain
     ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 1
     object ToolButton1: TToolButton
       Left = 1
@@ -35,115 +43,100 @@ object TesterForm: TTesterForm
       Action = actTestRunAll1
     end
     object ToolButton2: TToolButton
-      Left = 41
+      Left = 24
       Top = 2
       Action = actTestRunSelected
     end
     object ToolButton3: TToolButton
-      Left = 81
+      Left = 47
       Top = 2
       Action = actionTestRunFailed
     end
     object ToolButton4: TToolButton
-      Left = 121
+      Left = 70
       Top = 2
       Action = actionTestStop
     end
     object ToolButton5: TToolButton
-      Left = 161
-      Height = 39
+      Left = 93
+      Height = 22
       Top = 2
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton6: TToolButton
-      Left = 175
+      Left = 101
       Top = 2
       Action = actionTestCopy
     end
     object ToolButton7: TToolButton
-      Left = 215
+      Left = 124
       Top = 2
       Action = actionTestReset
     end
     object ToolButton8: TToolButton
-      Left = 255
-      Height = 39
+      Left = 147
+      Height = 22
       Top = 2
       Caption = 'ToolButton8'
       Style = tbsSeparator
     end
     object ToolButton9: TToolButton
-      Left = 269
+      Left = 155
       Top = 2
       Action = actionTestSelectAll
     end
     object ToolButton10: TToolButton
-      Left = 309
+      Left = 178
       Top = 2
       Action = actionTestUnselectAll
     end
   end
-  object tvTests: TTreeView
-    Left = 0
-    Height = 1026
-    Top = 95
-    Width = 425
-    Align = alLeft
-    ParentFont = False
-    PopupMenu = pmTests
-    ReadOnly = True
-    RightClickSelect = True
-    RowSelect = True
-    ScrollBars = ssAutoVertical
-    StateImages = ilNodeStates
-    TabOrder = 2
-    OnClick = tvTestsClick
-    Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw, tvoEmptySpaceUnselect]
-  end
-  object Splitter1: TSplitter
-    Left = 425
-    Height = 1026
-    Top = 95
-    Width = 9
-  end
-  object Memo1: TMemo
-    Left = 434
-    Height = 1026
-    Top = 95
-    Width = 674
-    Align = alClient
-    Lines.Strings = (
-      'Memo1'
-    )
-    ParentFont = False
-    TabOrder = 4
-  end
   object Panel1: TPanel
     Left = 0
-    Height = 49
-    Top = 46
-    Width = 1108
+    Height = 30
+    Top = 26
+    Width = 439
     Align = alTop
     BevelOuter = bvNone
     BorderWidth = 4
-    ClientHeight = 49
-    ClientWidth = 1108
+    ClientHeight = 30
+    ClientWidth = 439
     ParentFont = False
-    TabOrder = 5
-    object ProgressBar1: TProgressBar
+    TabOrder = 2
+    object pbBar: TPaintBox
       Left = 4
-      Height = 41
+      Height = 22
       Top = 4
-      Width = 1100
+      Width = 431
       Align = alClient
-      ParentFont = False
-      TabOrder = 0
+      OnPaint = pbBarPaint
     end
   end
+  object tvTests: TLazVirtualStringTree
+    Left = 0
+    Height = 615
+    Top = 56
+    Width = 439
+    Align = alClient
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <>
+    Header.MainColumn = -1
+    Images = ilOutcomes
+    PopupMenu = pmTests
+    TabOrder = 3
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+    TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+    OnAddToSelection = tvTestsAddToSelection
+    OnChecked = tvTestsChecked
+    OnGetText = tvTestsGetText
+    OnGetImageIndex = tvTestsGetImageIndex
+    OnRemoveFromSelection = tvTestsRemoveFromSelection
+  end
   object ilMain: TImageList
-    Left = 56
-    Top = 116
+    Left = 32
+    Top = 66
     Bitmap = {
       4C7A0E0000001000000010000000C80C00000000000078DAED9A095454471686
       3B086A488C33670C200413130DC615718D8910088AFB8E8A12312E51710B8220
@@ -252,81 +245,163 @@ object TesterForm: TTesterForm
   end
   object ActionList1: TActionList
     Images = ilMain
-    Left = 56
-    Top = 214
+    Left = 32
+    Top = 122
     object actTestRunAll1: TAction
       Category = 'Testing'
-      Caption = 'Run All Tests'
+      Caption = 'Run All Checked Tests'
+      Hint = 'Run All Checked Tests'
       ImageIndex = 0
       OnExecute = actTestRunAll1Execute
     end
     object actTestRunSelected: TAction
       Category = 'Testing'
-      Caption = 'Run Selected Tests'
+      Caption = 'Run Selected tests'
+      Hint = 'Run Selected test + children'
       ImageIndex = 1
       OnExecute = actTestRunSelectedExecute
     end
     object actionTestRunFailed: TAction
       Category = 'Testing'
       Caption = 'Run Failed Tests'
+      Hint = 'Re run all failed tests'
       ImageIndex = 2
       OnExecute = actionTestRunFailedExecute
     end
     object actionTestStop: TAction
       Category = 'Testing'
-      Caption = '&Stop'
+      Caption = 'Stop'
+      Hint = 'Stop running tests'
       ImageIndex = 3
       OnExecute = actionTestStopExecute
     end
     object actionTestReset: TAction
       Category = 'Testing'
-      Caption = 'Reset'
+      Caption = 'Clear Test Results'
+      Hint = 'Clear All Test Results'
       ImageIndex = 5
       OnExecute = actionTestResetExecute
     end
     object actionTestCopy: TAction
       Category = 'Testing'
-      Caption = 'Copy'
+      Caption = 'Copy Results to Clipboard'
+      Hint = 'Copy Results to Clipboard'
       ImageIndex = 4
       OnExecute = actionTestCopyExecute
     end
     object actionTestSelectAll: TAction
       Category = 'Testing'
-      Caption = 'Select All'
+      Caption = 'Check these tests'
+      Hint = 'Check selected tests'
       ImageIndex = 12
       OnExecute = actionTestSelectAllExecute
     end
     object actionTestUnselectAll: TAction
       Category = 'Testing'
-      Caption = 'actionTestUnselectAll'
+      Caption = 'Uncheck these tests'
+      Hint = 'Uncheck selected Tests'
       ImageIndex = 13
       OnExecute = actionTestUnselectAllExecute
     end
   end
-  object ilNodeStates: TImageList
-    Left = 151
-    Top = 112
-    Bitmap = {
-      4C7A030000001000000010000000070100000000000078DAED933D0B83400C86
-      FBF3053771F0033F261D14FC4D4E0E2A3AF83128BE6D8E52ACA877572DEDE00B
-      E102E68949EE027CAEDB43CF53DABEC10BD67CF117FF57EFF7C8FE1D15AEFD17
-      E2678C34BF6076F9659E959EB9FCD29FE714E5D758D1FEB75899F96DCDF3DAFF
-      73F77F1C47F47D2F6DC4114FBEAEEBD246DCD97CD7759BF5364DC3BEEFF1E4AF
-      699A26589685AAAAB83C19C5CF594551E0791EF23CE7D6EFFB3E8AA278F19AA6
-      2149120441802CCBB83CC551AD94C3300C388EC3FE5D9625DAB6E5D61F862133
-      D3341145115CD7459AA6AC8F65EC1A4F71B66D238E6376D2CC866160BD88F024
-      EA535555D475FD760F3C7EEFFEC978F7FF8BF77B74FF8EEA0EA639A494
-    }
-  end
   object pmTests: TPopupMenu
     Images = ilMain
-    Left = 151
-    Top = 214
+    Left = 86
+    Top = 122
+    object MenuItem3: TMenuItem
+      Action = actTestRunSelected
+    end
     object MenuItem1: TMenuItem
       Action = actionTestSelectAll
     end
     object MenuItem2: TMenuItem
       Action = actionTestUnselectAll
     end
+    object MenuItem4: TMenuItem
+      Action = actionTestCopy
+    end
+  end
+  object ilOutcomes: TImageList
+    Left = 88
+    Top = 70
+    Bitmap = {
+      4C7A0800000010000000100000009C0800000000000078DAED986D6C53E715C7
+      9F186C96561D934AD2569AA67D99B4D27D9A56F169850642A0A55D3394565BF9
+      40F70155DAC4D60D46D7ADD484144C47810089E3049210929057E795B78C2821
+      6F849037525A120A29CAC8ABF362FBDA899D849C9DF35C5FFBDAF73A71CC3A69
+      D3AEF4D7BD7E9EF33BE73CE7394F62DF5DBB76B1CECECEE1AEAE2E8B9A706EA4
+      BDBDFDC7BBD02E98BABBBB1D369B0DD48473D0D1D1615FCC07C6119C4E27A8E9
+      CE9D3BDC07F2C2AD5BB7547DA07FC1E17040636323D4D6D6C2A54B97A0A0A000
+      68ACB7B797FB401B40DEA1C6936FB29D9C9C84898909181F1F87B1B131CECB75
+      F3E64D50E3D1AF60B7DB79FCFAFA7A9EC3D5AB57791E959595505C5C0C34DFDA
+      DAAACAB7B5B5719EE25A2C16AF2807D2E8E828E76FDCB8A1CA635E02D57AB1F8
+      34DFD2D2A2CA635E82D56AF5C6936292464646A8F69CBD7EFD3AE7CBCBCB77A2
+      EF0ABC76D367CC4B989A9A0A1A1FEDF8F8C58B17A1A4A4E4308E8FD0679CAB24
+      1E7D0B547B29DEF0F0B0574343437CEFAE5CB902D7AE5D83CB972FCFD31D7318
+      282A2A8A25BEB9B959A07DA3F8757575505353C363A10DDF4F128D575757134F
+      F9B8B13F764BEB6F6A6A12A8F6F298A4C1C141BE27B76FDFE66BA8AAAAE23EE9
+      8EB1BFC9CFCFFF29F1E8FB71434383104CA5A5A5F365656550585808B9B9B9A9
+      B81F93F419F96AE2B15E3F5C4C79797988E57660CE3BC83E2727E7B738D684F7
+      C4C5CE65280ABC7E7EA21A48AF9CA884578E57C0FA6365B0FEF352D870B4185E
+      FD7B21BCFAD905883992073186F3B0F1F03950E3E767DD2169D3A12C054F31E7
+      DD33F07EF656B83FD4C39F832936E98C825FFFB919E6671C223FD8C59F8369F3
+      419382DF70B404E6A6ED9CFFFA51A7423427DD37271A153CD568CE61E5BC9AA4
+      39BAC7E94F2BF89823F9302B4C721BBA2FA62D9F242B79432ECCDA2C9CBFF7B0
+      55219A93EE5BF71F53F0B4A7B3D6D1A0F94B73747FEDE3A30A7ED3A14C704F0E
+      731BBA2FA6D7FF7A44C1C72665807BE211E7FB1E342A4473D27DDB4787143CED
+      A9CB3210347F698EEEDB3E4C52F0710752C135F63024BDB1EF8082DFA23FC5F7
+      65EBFEE3B0F5E363F0DADF8EA23EC3B51A78BEDBFE92046F7C98086FEED3C39B
+      7FDEAFE0FF972E5D8AF08E2EC5BEA03B6D073FA5D8079762BF734A88D19A0467
+      84E5313000AE88C179D09AEC0E9A5B8CD5A6D85ED6A11DD92F975D956CFB11DA
+      4D691ECE2D9B8D3C39FD7D6D9A30AAB93BFB78B92C33D9D7E84CC2C08A2EF7BC
+      C492B4D98E3945FD3CD29EB6FF4664879ED2A50B3D2B6EB8DC72564D118E05D0
+      E6391D589F1C66022DD3834E9B2E34ACAC9D995E92C5BDD09E753875465B92B7
+      D69843B0FC347766BDACA67F6E81EAA04BB5BFB564E31C83485D9A5D88B0897B
+      4F35D1A6D927B5A7AC3F0BA5EFB429F69D2BCBA7ED6C01D93AD70CAEB53F3279
+      F20721F76D86D0ABF97A0E56564C3BB1364DCC34B93A5496F79E5198D3E6609D
+      4CF64CACEFCA659D9974A190D74F56E365F1A9F6FB21D5F85BBE220E440C333D
+      DB10B6033D03CD418D336C1FC8AFBDBC56F211130EBFAE755DF83E3C7CD83E64
+      7C583E0278D28B975E147D24B2754FC03BC2E179FE49C88691FFB2D9C0FD5B2E
+      2BEF9F70585FFF3AC2EDDF273E3F4F721D67DF6346B69DA5B00FB8E899C696BA
+      32D873CCC4CEA3BD8BE5302B2B60B3AC10958DCF3466C251238B56658DEC272C
+      8D59D0DECD6A19B0FA00D15801CE99D818B7F567A3395BC916145CA02AD0867C
+      9C6451BEFFBD9833C55D847BBAF169DF67CAC388ABF2D5CAA59AB34751CD51D0
+      E3E801C380C1B716B11EAB796DCF315BB058D1CDD1F085E30BA08BEEDE39628C
+      2C1EF7670FAFB3C75EFF500F779D77E1859617BC71E9A2B1E75B9EF75F432AFB
+      23FAF8137FF6C495C7923F531E7EEB2246EC8F5FCAF397E71B9495E7AF523F29
+      6F45CEF25E90EA27EE5F8EB406791EAA714985C8A6B12CBFFEA19EA808B17FD2
+      D828DAAF51F42FF92858B47F5D9C3DCD5E523D03D493D457B4B66CCFF929909D
+      1FCA3930AEEA7749DE57F1B2F31BEFAD554857169EF5A278C64A768BA2E7ACA5
+      CF3F33476B586956042B7568D9B5A948D6321BC99A67E999C634CC9C89BEA2D4
+      D99297D0661819F7B36C00D6B0213FD118CD4530F310D9FAB34551C43EC36E2F
+      0472817A86F52C883EAABC75A49CC9B764931037A1E0E463B82637AEE5AC542B
+      5A9B94F3DB5B2678DFA71D7778EDE9992E9A93D6420CE6BD9A6AAB65FFB0CA63
+      9D382C787D9C34080A7F242DABB13256FC0BACC507F2DC037DA8B1E21A5ADC18
+      FBF7E8E30F6A7CB2C19F8F8A08E49BDD626F14BE15987FB22C67F95AE43E7CF9
+      3F69FD68FFCC99CBDBBF26173219FEFD631EA2DE08B17FF0F7ABF95965FF9A87
+      A82EC1FBB7C925B2456BD5CF40D51AEA2BDFF9697693B0BED2F9C950C655BBA8
+      2EBC373CE7979E8B56FF67BE3CC0731A0D1CD1E9A01FEF6E123E3FC0BB01E7A2
+      9760DF413B675C1CB8333301F2F345D1736C2CB857AC0027DA24046357AD82E9
+      B367B177D200DE7D17202141143DD3D899330064A3F4C1737612BB678F8FBB77
+      0FA0AFCFF799E63232F037A59887F7EF18AD9772A618922DC9E512251F4B4F07
+      D8B489D7E5B0F737A316FA29B63C67D2F83880C5E23FB66387B80EAAA92CBEEB
+      C2057F3B527FBFA8C071B2256629BEBD1DA0AD2D283F23CBFF815AFEEFBD272A
+      48FEF765F10D9B372BEBD7DB8BDF5BEE2AEBB77123B890F954B67FD1B427B437
+      F2FD23F6ABAF7C9FF7EE1579B4C5BF1D10F07F1412A837689E245F0BE52C8D7B
+      FA677B901E4CA03C687FA91E52FFD27A6362C0E589BB7D89331045BD41F5A17D
+      21799E3F55E6FCEFBFFEFFFEFFBFEFFDFFEB991A08D4F6F3DFE5F750DEFF93DD
+      859B06AF2ABA52606EDECD7D84F2FE9FF873CD7AAEECA64FA07BA00EFE39D1C7
+      E387F2FE9FECCE5CFF084C757B21BD7E1F385C56A8EC34723E94F7FFF1E79E02
+      A7CB06590DFBE14A4F36C6BE07276B7EC7F950DEFF935D535F39DC1FE98631FB
+      23A8E83082A16A27E74379FF4F7607CB7E0D5F3E6A856FC6BE8444F3AF405FFA
+      36E74379FFAFB67F92BEEDF3FE2FAD3F7095
+    }
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 50
+    OnTimer = Timer1Timer
+    Left = 30
+    Top = 182
   end
 end
