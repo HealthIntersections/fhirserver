@@ -107,7 +107,9 @@ type
     ActionList1: TActionList;
     ilMain: TImageList;
     ilOutcomes: TImageList;
+    lblStatus: TLabel;
     MenuItem4: TMenuItem;
+    Panel2: TPanel;
     Timer1: TTimer;
     tvTests: TLazVirtualStringTree;
     MenuItem3: TMenuItem;
@@ -116,7 +118,6 @@ type
     pbBar: TPaintBox;
     Panel1: TPanel;
     pmTests: TPopupMenu;
-    StatusBar1: TStatusBar;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
@@ -136,6 +137,7 @@ type
     procedure actionTestUnselectAllExecute(Sender: TObject);
     procedure actTestRunAll1Execute(Sender: TObject);
     procedure actTestRunSelectedExecute(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -156,6 +158,7 @@ type
     FTestResult : TTestResult;
     FLock : TFslLock;
     FIncoming : TTestEventQueue;
+    FShuttingDown : boolean;
 
     procedure LoadTree;
     procedure BuildTree(rootTest: TTestNode; aSuite: TTestSuite);
@@ -416,6 +419,7 @@ end;
 
 procedure TTesterForm.FormDestroy(Sender: TObject);
 begin
+  FShuttingDown := true;
   saveState;
   FIni.Free;
   FTestInfo.Free;
@@ -454,21 +458,28 @@ end;
 
 procedure TTesterForm.UpdateTotals;
 var
-  tc, ec, fc, nr : cardinal;
+  tc, pc, ec, fc, nr, cc : cardinal;
   tn : TTestNode;
   s : String;
 begin
+  if ((FRunningTest <> nil) or FShuttingDown) then
+    exit;
+
   tc := 0;
   ec := 0;
   fc := 0;
   nr := 0;
+  cc := 0;
+  pc := 0;
   for tn in FTestInfo do
   begin
     if tn.test is TTestCase then
     begin
       inc(tc);
+      if tn.checkState = tcsChecked then
+        inc(cc);
       case tn.outcome of
-        toPass : ;
+        toPass : inc(pc);
         toFail : inc(ec);
         toError : inc(fc);
       else //  toNotRun
@@ -476,16 +487,19 @@ begin
       end;
     end;
   end;
-  s := ''+inttostr(tc)+'T';
+
+  s := inttostr(tc)+ ' Tests: ';
+  s := s + inttostr(FTestInfo.count)+ ' checked';
+  s := s + ', '+inttostr(pc)+' passed';
+  if (fc + ec > 0) then
+    s := s + ', '+inttostr(fc+ec)+' failed';
   if (ec > 0) then
-    s := s + ', '+inttostr(ec)+'E';
-  if (fc > 0) then
-    s := s + ', '+inttostr(fc)+'F';
+    s := s + ' ('+inttostr(ec)+' errors)';
   if (nr > 0) then
-    s := s + ', '+inttostr(nr)+'?';
+    s := s + ', '+inttostr(nr)+' not run';
   if (ec + fc + nr = 0) then
-    s := s + ' - all good';
-  StatusBar1.Panels[0].Text := s;
+    s := s + ' - All OK✓';
+  lblStatus.caption := s;
 end;
 
 procedure TTesterForm.tvTestsGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
@@ -580,6 +594,7 @@ begin
     actionTestCopy.hint := 'Copy results to clipboard for selected tests';
     actTestRunSelected.caption := 'Run Selected Test + children';
   end;
+  UpdateTotals;
 end;
 
 procedure TTesterForm.tvTestsChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -589,6 +604,7 @@ end;
 procedure TTesterForm.tvTestsRemoveFromSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   FSelectedNode := nil;
+  UpdateTotals;
 end;
 
 
@@ -684,6 +700,7 @@ begin
     setTestState(node, tcsChecked);
     checkStateOfChildren(node.Parent);
   end;
+  UpdateTotals;
 end;
 
 procedure TTesterForm.actionTestUnselectAllExecute(Sender: TObject);
@@ -696,6 +713,7 @@ begin
     setTestState(node, tcsUnchecked);
     checkStateOfChildren(node.Parent);
   end;
+  UpdateTotals;
 end;
 
 // ---- Test Execution Control -------------------------------------------------
@@ -744,6 +762,11 @@ begin
   end;
 end;
 
+procedure TTesterForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := FRunningTest = nil;
+end;
+
 procedure TTesterForm.actionTestRunFailedExecute(Sender: TObject);
 var
   ti : TTestNode;
@@ -779,6 +802,7 @@ begin
     if ti.outcome <> toNotRun then
       ti.outcome := toNotRun;
   end;
+  UpdateTotals;
 end;
 
 procedure TTesterForm.actionTestStopExecute(Sender: TObject);
@@ -877,14 +901,14 @@ begin
           begin
             ev.node.outcome := toRunning;
             ev.node.parent.outcome := toChildRunning;
-            StatusBar1.Panels[1].Text := ev.node.test.testName;
+            lblStatus.caption := 'Running Test '+ev.node.test.testName;
           end;
         tekEnd:
           begin
             if (ev.node.outcome = toRunning) then
               ev.node.outcome := toPass;
             Inc(FTestsCount);
-            StatusBar1.Panels[1].Text := '';
+            lblStatus.caption := '';
           end;
         tekFail:
           begin
@@ -892,7 +916,7 @@ begin
             ev.node.ExceptionClassName := ev.excClass;
             ev.node.outcome := toFail;
             Inc(FFailCount);
-            StatusBar1.Panels[1].Text := '';
+            lblStatus.caption := '';
           end;
         tekError:
           begin
@@ -900,7 +924,7 @@ begin
             ev.node.ExceptionClassName := ev.excClass;
             ev.node.outcome := toError;
             Inc(FErrorCount);
-            StatusBar1.Panels[1].Text := '';
+            lblStatus.caption := '';
           end;
         tekEndRun:
           begin

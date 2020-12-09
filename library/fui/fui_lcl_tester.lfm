@@ -6,26 +6,12 @@ object TesterForm: TTesterForm
   Caption = 'FPC Test Runner'
   ClientHeight = 694
   ClientWidth = 439
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.1.0.0'
-  object StatusBar1: TStatusBar
-    Left = 0
-    Height = 23
-    Top = 671
-    Width = 439
-    Panels = <    
-      item
-        Width = 150
-      end    
-      item
-        Width = 400
-      end>
-    ParentFont = False
-    SimplePanel = False
-  end
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -36,7 +22,7 @@ object TesterForm: TTesterForm
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 1
+    TabOrder = 0
     object ToolButton1: TToolButton
       Left = 1
       Top = 2
@@ -94,19 +80,19 @@ object TesterForm: TTesterForm
   end
   object Panel1: TPanel
     Left = 0
-    Height = 30
+    Height = 28
     Top = 26
     Width = 439
     Align = alTop
     BevelOuter = bvNone
     BorderWidth = 4
-    ClientHeight = 30
+    ClientHeight = 28
     ClientWidth = 439
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     object pbBar: TPaintBox
       Left = 4
-      Height = 22
+      Height = 20
       Top = 4
       Width = 431
       Align = alClient
@@ -115,8 +101,8 @@ object TesterForm: TTesterForm
   end
   object tvTests: TLazVirtualStringTree
     Left = 0
-    Height = 615
-    Top = 56
+    Height = 618
+    Top = 54
     Width = 439
     Align = alClient
     DefaultText = 'Node'
@@ -125,7 +111,7 @@ object TesterForm: TTesterForm
     Header.MainColumn = -1
     Images = ilOutcomes
     PopupMenu = pmTests
-    TabOrder = 3
+    TabOrder = 2
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
     TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
     OnAddToSelection = tvTestsAddToSelection
@@ -133,6 +119,24 @@ object TesterForm: TTesterForm
     OnGetText = tvTestsGetText
     OnGetImageIndex = tvTestsGetImageIndex
     OnRemoveFromSelection = tvTestsRemoveFromSelection
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 22
+    Top = 672
+    Width = 439
+    Align = alBottom
+    ClientHeight = 22
+    ClientWidth = 439
+    TabOrder = 3
+    object lblStatus: TLabel
+      Left = 4
+      Height = 15
+      Top = 4
+      Width = 45
+      Caption = 'lblStatus'
+      ParentColor = False
+    end
   end
   object ilMain: TImageList
     Left = 32
