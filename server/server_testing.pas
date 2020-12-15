@@ -39,7 +39,7 @@ uses
   TestInsight.DUnit, DUnitTestRunner, GUITestRunner,
   {$ENDIF}
   {$IFDEF FPC}
-  fui_lcl_tester, fsl_tests_console,
+  idetester_form, fsl_tests_console,
   {$ENDIF}
   fsl_utilities, fsl_testing, fsl_logging,
   server_config,

@@ -3717,7 +3717,7 @@ Begin
   While FParams <> Nil Do
   Begin
     temp:= FParams^.Next;
-    FreeMem(FParams^.FSize, FParams^.FCount*SizeOf(SQLINTEGER));
+    FreeMem(FParams^.FSize); // , FParams^.FCount*SizeOf(SQLINTEGER));
     Dispose(FParams);
     FParams:= temp;
   End;

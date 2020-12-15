@@ -60,13 +60,11 @@ Type
     property value : String read FValue write FValue;
   end;
 
-  { TFslTestCaseTests }
+  { TFslUtilitiesTestCases }
 
-  TFslTestCaseTests = class (TFslTestCase)
+  TFslUtilitiesTestCases = class (TFslTestCase)
   published
-    procedure testPass;
-    procedure testFail;
-    procedure testError;
+    procedure testSemVer;
   end;
 
   TFslGenericsTests = class (TFslTestCase)
@@ -686,21 +684,11 @@ procedure registerTests;
 
 implementation
 
-{ TFslTestCaseTests }
+{ TFslUtilitiesTestCases }
 
-procedure TFslTestCaseTests.testPass;
+procedure TFslUtilitiesTestCases.testSemVer;
 begin
-  AssertTrue(true);
-end;
-
-procedure TFslTestCaseTests.testFail;
-begin
-  AssertTrue(false, 'message');
-end;
-
-procedure TFslTestCaseTests.testError;
-begin
-  raise Exception.create('Error');
+  AssertTrue(TSemVer.isMoreRecent('0.10.0', '0.2.0'));
 end;
 
 { TXmlParserTest2 }
@@ -4730,13 +4718,13 @@ procedure RegisterTests;
 // don't use unit initialization - give other code time to set up directories etc
 begin
   // These tests exist only to test the test infrastructure itself, if that's needed
-  //RegisterTest('Library.TestCase tests', TFslTestCaseTests.Suite);
 
   RegisterTest('Library.Generics Tests', TFslGenericsTests.Suite);
   RegisterTest('Library.Collection Tests', TFslCollectionsTests.Suite);
   RegisterTest('Library.XPlatform Tests', TXPlatformTests.Suite);
   RegisterTest('Library.Decimal Tests', TDecimalTests.Suite);
   RegisterTest('Library.TarGz Tests', TTarGZParserTests.Suite);
+  RegisterTest('Library.Utilities tests', TFslUtilitiesTestCases.Suite);
   {$IFDEF FPC}
   RegisterTest('Library.Regex Test', TFslRegexTests.Suite);
   {$ENDIF}

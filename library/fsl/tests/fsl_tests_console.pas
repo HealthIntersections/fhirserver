@@ -37,11 +37,6 @@ uses
   fpcunit, testutils, testregistry, testdecorator,
   fpcunitreport, latextestreport, xmltestreport, plaintestreport;
 
-//uses
-//  custapp, Classes, SysUtils, fpcunit, testregistry, testutils,
-//  ,
-//  ;
-
 type
   TFormat = (fPlain, fLatex, fXML, fPlainNoTiming);
 

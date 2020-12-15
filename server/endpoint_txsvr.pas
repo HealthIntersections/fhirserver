@@ -984,9 +984,19 @@ begin
         inc(i);
         if (i mod 100 = 0) then
           Logging.continue('.');
-        res := p.parseResource(npm.loadBytes(s));
         try
-          loadResource(res, ignoreEmptyCodeSystems);
+          res := p.parseResource(npm.loadBytes(s));
+        except
+          on e : Exception do
+            raise EFHIRException.Create('Error Parsing '+s+': '+e.Message);
+        end;
+        try
+          try
+            loadResource(res, ignoreEmptyCodeSystems);
+          except
+            on e : Exception do
+              raise EFHIRException.Create('Error Loading '+s+': '+e.Message);
+          end;
         finally
           res.Free;
         end;

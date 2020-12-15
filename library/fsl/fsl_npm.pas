@@ -1082,7 +1082,10 @@ end;
 
 function isMoreRecentVersion(test, base : String) : boolean;
 begin
-  result := test > base;
+  if isValidSemVer(test) and isValidSemVer(base) then
+    result := TSemVer.isMoreRecent(test, base)
+  else
+    result := test > base;
 end;
 
 function TNpmPackageResource.sizeInBytesV : cardinal;

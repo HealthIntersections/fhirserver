@@ -1983,6 +1983,7 @@ type
   TSemVer = class (TFslObject)
   public
     class function matches(v1, v2 : String) : boolean;
+    class function isMoreRecent(v1, v2 : String) : boolean;
     class function getMajMin(v : String) : String; overload;
   end;
 
@@ -17130,6 +17131,25 @@ begin
   end
   else
     result := '';
+end;
+
+class function TSemVer.isMoreRecent(v1, v2: String): boolean;
+var
+  p1, p2 : TArray<String>;
+  i, i1, i2 : integer;
+begin
+  p1 := v1.split(['.']);
+  p2 := v2.split(['.']);
+  for i := 0 to IntegerMin(length(p1), length(p2)) - 1 do
+  begin
+    i1 := StrToIntDef(p1[i], 0);
+    i2 := StrToIntDef(p2[i], 0);
+    if i1 < i2 then
+      exit(false)
+    else if (i1 > i2) then
+      exit(true)
+  end;
+  result := length(p1) > length(p2);
 end;
 
 class function TSemVer.matches(v1, v2 : String) : boolean;

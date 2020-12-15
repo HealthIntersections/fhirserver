@@ -29,13 +29,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
+            <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
             <Libraries Value="..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fui"/>
-            <UnitOutputDirectory Value="r:\units\$(TargetCPU)-$(TargetOS)"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\..\idetester\source"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -85,7 +85,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\library\fui"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\..\idetester\source"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -137,7 +137,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\library\fui"/>
+            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\..\idetester\source"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -179,51 +179,54 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="14">
+    <RequiredPackages Count="15">
       <Item1>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="idetester"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir_xver"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir_fui"/>
       </Item4>
       <Item5>
-        <PackageName Value="fhir5"/>
+        <PackageName Value="fhir_fsl"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fhir5"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir3"/>
+        <PackageName Value="fhir4"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir3"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir2"/>
       </Item9>
       <Item10>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="fhir"/>
       </Item10>
       <Item11>
-        <PackageName Value="MarkdownTests"/>
+        <PackageName Value="PascalTZ"/>
       </Item11>
       <Item12>
-        <PackageName Value="fpcunittestrunner"/>
+        <PackageName Value="MarkdownTests"/>
       </Item12>
       <Item13>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fpcunittestrunner"/>
       </Item13>
       <Item14>
-        <PackageName Value="LCL"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item14>
+      <Item15>
+        <PackageName Value="LCL"/>
+      </Item15>
     </RequiredPackages>
-    <Units Count="84">
+    <Units Count="83">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -559,13 +562,6 @@
         <Filename Value="endpoint_txsvr.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit82>
-      <Unit83>
-        <Filename Value="..\library\fui\fui_lcl_tester.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="TesterForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit83>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -576,7 +572,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="tests;admin;..\library\fui"/>
+      <OtherUnitFiles Value="tests;admin;..\..\idetester\source"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

@@ -155,7 +155,6 @@ Type
 
     // operational fields
     FUsageServer : TUsageStatsServer;
-    FTelnet : TFHIRTelnetServer;
     FPlainServer: TIdHTTPServer;
     FSSLServer: TIdHTTPServer;
     FIOHandler: TIdOpenSSLIOHandlerServer {TIdServerIOHandlerSSLOpenSSL};
@@ -191,7 +190,7 @@ Type
     Procedure StartServer();
     Procedure StopServer;
   Public
-    constructor Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
+    constructor Create(settings : TFHIRServerSettings; name: String);
     destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerConfigFile);
     property settings : TFHIRServerSettings read FSettings;
@@ -227,10 +226,9 @@ begin
     result := 'http://'+common.host+HTTPPort+'/'
 end;
 
-Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; telnet : TFHIRTelnetServer; name: String);
+Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
 Begin
   Inherited Create(nil);
-  FTelnet := telnet;
   FEndPoints := TFslList<TFhirWebServerEndpoint>.create;
   self.Common.Name := Name;
   FInLog := nil;
@@ -241,7 +239,6 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
-  FTelnet.Free;
   FUsageServer.Free;
   FEndPoints.Free;
   FSettings.Free;

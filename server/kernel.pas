@@ -123,7 +123,6 @@ type
     procedure dump; override;
 
 //    property loadStore : boolean read FLoadStore write FLoadStore;
-    property Telnet : TFHIRTelnetServer read FTelnet;
     property Ini : TFHIRServerConfigFile read FIni;
     property Settings : TFHIRServerSettings read FSettings;
     property WebServer : TFhirWebServer read FWebServer;
@@ -205,6 +204,7 @@ begin
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
   FTelnet.Password := FIni.web['telnet-password'].value;
+  Logging.addListener(FTelnet);
 
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not hasCommandLineParam('noload');
@@ -215,6 +215,7 @@ end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  Logging.removeListener(FTelnet);
   FEndPoints.Free;
   FIni.Free;
   FSettings.Free;
@@ -327,7 +328,7 @@ procedure TFHIRServiceKernel.StartWebServer;
 var
   ep : TFHIRServerEndPoint;
 begin
-  FWebServer := TFhirWebServer.create(Settings.Link, Telnet.Link, DisplayName);
+  FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create;
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;

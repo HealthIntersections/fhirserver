@@ -117,13 +117,11 @@ begin
   FThread.FServer := self;
   FThread.TimePeriod := 50;
   FThread.Start;
-  Logging.addListener(self);
   sleep(500); // allow console to connect early
 end;
 
 destructor TFHIRTelnetServer.Destroy;
 begin
-  Logging.removeListener(self);
   try
     FThread.StopAndWait(100);
     FThread.Free;
