@@ -67,6 +67,7 @@ begin
   {$IFDEF FPC}
   raise Exception.create('This is not supported in FPC');
   {$ELSE}
+  FreeConsole;
   TestInsight.DUnit.RunRegisteredTests;
   {$ENDIF}
 end;
@@ -75,7 +76,7 @@ procedure RunTestGui(ini : TFHIRServerConfigFile);
 begin
   Logging.Log('Run Tests (GUI)');
   {$IFDEF WINDOWS}
-  //FreeConsole;
+  FreeConsole;
   {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;

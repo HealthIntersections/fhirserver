@@ -38,11 +38,11 @@ uses
   FHIR.Npp.BaseFU in 'npplib\FHIR.Npp.BaseFU.pas',
   FHIR.Npp.ScintillaFU in 'npplib\FHIR.Npp.ScintillaFU.pas',
   FHIR.Npp.FormatUtilities in 'FHIR.Npp.FormatUtilities.pas',
-  MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
-  MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
-  MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
-  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
-  MarkdownUnicodeUtils in '..\..\..\markdown\source\MarkdownUnicodeUtils.pas',
+  MarkdownDaringFireball in '..\..\..\pascal\markdown\source\MarkdownDaringFireball.pas',
+  MarkdownProcessor in '..\..\..\pascal\markdown\source\MarkdownProcessor.pas',
+  MarkdownCommonMark in '..\..\..\pascal\markdown\source\MarkdownCommonMark.pas',
+  MarkdownHTMLEntities in '..\..\..\pascal\markdown\source\MarkdownHTMLEntities.pas',
+  MarkdownUnicodeUtils in '..\..\..\pascal\markdown\source\MarkdownUnicodeUtils.pas',
   fsl_service_win in '..\..\library\fsl\fsl_service_win.pas';
 
 {$R *.res}

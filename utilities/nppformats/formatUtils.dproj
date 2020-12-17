@@ -120,7 +120,7 @@
         <Manifest_File>(None)</Manifest_File>
         <DCC_ExeOutput>C:\Program Files\Notepad++\plugins\FormatUtils</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
-        <DCC_UnitSearchPath>..\..\library\fsl;..\..\library;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\library\fsl;..\..\library;C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_RangeChecking>true</DCC_RangeChecking>
@@ -134,11 +134,11 @@
         <DCCReference Include="npplib\FHIR.Npp.BaseFU.pas"/>
         <DCCReference Include="npplib\FHIR.Npp.ScintillaFU.pas"/>
         <DCCReference Include="FHIR.Npp.FormatUtilities.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownHTMLEntities.pas"/>
-        <DCCReference Include="..\..\..\markdown\source\MarkdownUnicodeUtils.pas"/>
+        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownDaringFireball.pas"/>
+        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownProcessor.pas"/>
+        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownHTMLEntities.pas"/>
+        <DCCReference Include="..\..\..\pascal\markdown\source\MarkdownUnicodeUtils.pas"/>
         <DCCReference Include="..\..\library\fsl\fsl_service_win.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
@@ -164,12 +164,11 @@
                     <Source Name="MainSource">formatUtils.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="OSX64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
