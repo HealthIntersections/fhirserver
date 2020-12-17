@@ -80,18 +80,20 @@ Type
     destructor Destroy; Override;
   end;
 
+  { THeirarchyEntry }
+
   THeirarchyEntry = class (TDescribed)
   private
     FCode : String;
     FText : String;
-    FParent : THeirarchyEntry;
+    FParents : THeirarchyEntryList;
     FChildren : THeirarchyEntryList;
-    FDescendants : THeirarchyEntryList;
     FConcepts : TCodeList;
     FDescendentConcepts : TCodeList;
   public
     constructor Create; Override;
     destructor Destroy; Override;
+    function link : THeirarchyEntry;
   End;
 
   THeirarchyEntryList = class (TFslObjectList)
@@ -115,6 +117,8 @@ Type
     Property Entries[iIndex : Integer] : THeirarchyEntry Read GetEntry; Default;
   end;
 
+  { TCode }
+
   TCode = class (TDescribed)
   Private
     Code : String;
@@ -128,9 +132,10 @@ Type
     Method : TConceptArray;
     Class_ : TConceptArray;
     Flags : byte;
-    entry : THeirarchyEntry;
+    entries : TFslList<THeirarchyEntry>;
   public
     constructor Create(langCount : integer);
+    destructor Destroy; override;
     Function Compare(pA, pB : Pointer) : Integer;
   End;
 
@@ -229,6 +234,8 @@ Type
     Property Codes : TFslMap<TLoincLanguageCodes> read FCodes;
   end;
 
+  { TLoincImporter }
+
   TLoincImporter = class (TFslObject)
   private
     callback : TInstallerCallback;
@@ -259,9 +266,11 @@ Type
     FOutputFile: String;
     FDate: String;
 
+    procedure AddToDescendentConcepts(oHeirarchy: THeirarchyEntryList;  entry: TCode; path: String);
     procedure SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
     procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
     function listConcepts(arr : TConceptArray) : TCardinalArray;
+    procedure registerParents(oHeirarchy : THeirarchyEntryList; entry : THeirarchyEntry; path : String);
 
     Function AddDescription(lang : byte; s : String):Cardinal;
     procedure readLanguage(i : integer; index : String; lang : TLoincLanguage);
@@ -330,7 +339,7 @@ end;
 
 
 
-Function TCode.Compare(pA, pB : Pointer) : Integer;
+function TCode.Compare(pA, pB: Pointer): Integer;
 begin
   result := CompareStr(TCode(pA).Code, TCode(pB).Code);
 End;
@@ -393,38 +402,33 @@ End;
 
 procedure TLoincImporter.StoreHeirarchyEntry(entry: THeirarchyEntry);
 var
-  parent, children, descendants, concepts, descendentConcepts: Cardinal;
+  parents, children, concepts, descendentConcepts: Cardinal;
   refs : TCardinalArray;
   i : integer;
 begin
   setLength(refs, entry.FChildren.Count);
   for i := 0 to entry.FChildren.Count - 1 do
     refs[i] := entry.FChildren[i].index;
-  children := FRefs.AddCardinals(refs);
-
-  setLength(refs, entry.FDescendants.Count);
-  for i := 0 to entry.FDescendants.Count - 1 do
-    refs[i] := entry.FDescendants[i].index;
-  descendants := FRefs.AddCardinals(refs);
+  children := FRefs.AddRefs(refs);
 
   setLength(refs, entry.FConcepts.Count);
   entry.FConcepts.SortedByCode;
   for i := 0 to entry.FConcepts.Count - 1 do
     refs[i] := TCode(entry.FConcepts[i]).index;
-  concepts := FRefs.AddCardinals(refs);
+  concepts := FRefs.AddRefs(refs);
 
   setLength(refs, entry.FDescendentConcepts.Count);
   entry.FDescendentConcepts.SortedByCode;
   for i := 0 to entry.FDescendentConcepts.Count - 1 do
     refs[i] := TCode(entry.FDescendentConcepts[i]).index;
-  descendentConcepts := FRefs.AddCardinals(refs);
+  descendentConcepts := FRefs.AddRefs(refs);
 
-  if entry.FParent <> nil then
-    parent := entry.FParent.index
-  else
-    parent := NO_PARENT;
+  setLength(refs, entry.FParents.Count);
+  for i := 0 to entry.FParents.Count - 1 do
+    refs[i] := entry.FParents[i].index;
+  parents := FRefs.AddRefs(refs);
 
-  if FEntries.AddEntry(AddDescription(0, entry.FCode), AddDescription(0, entry.FText), parent, children, descendants, concepts, descendentConcepts) <> entry.index then
+  if FEntries.AddEntry(AddDescription(0, entry.FCode), AddDescription(0, entry.FText), parents, children, concepts, descendentConcepts) <> entry.index then
     raise ETerminologySetup.create('Out of order');
 end;
 
@@ -693,7 +697,7 @@ begin
                   Else
                     aNames[iLoop] := 0;
 
-                oCode.Names := FRefs.AddCardinals(aNames);
+                oCode.Names := FRefs.AddRefs(aNames);
               End;
             Finally
               oNames.Free;
@@ -760,7 +764,7 @@ begin
       CloseFile(ma);
     end;
 
-    Progress(6, 0, 'Build Cache');
+    Progress(6, 0, 'Index Codes');
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       oCode := TCode(oCodes[iLoop]);
@@ -777,10 +781,10 @@ begin
       inc(iCount);
       oCode := TCode(oCodes[iLoop]);
       Try
-        if oCode.entry <> nil then
-          e := oCode.entry.index
-        else
-          e := 0;
+        SetLength(aCardinals, oCode.entries.Count);
+        for i := 0 to oCode.entries.count - 1 do
+          aCardinals[i] := oCode.entries[i].index;
+        e := FRefs.AddRefs(aCardinals);
 
         SetLength(aNames, FLanguages.Count);
         aNames[0] := AddDescription(0, oCode.Display);
@@ -791,7 +795,7 @@ begin
           else
             aNames[iLang] := 0;
         end;
-        oCode.Index := FCode.AddCode(oCode.Code, FRefs.AddCardinals(aNames), oCode.Names, e, oCode.Flags);
+        oCode.Index := FCode.AddCode(oCode.Code, FRefs.AddRefs(aNames), oCode.Names, e, oCode.Flags);
       Except
         on E:Exception Do
         Begin
@@ -817,7 +821,7 @@ begin
     aConcepts[5] := Props[lptMethods];
     Props[lptClasses] := oClass.Store(FLanguages.Count, 0, 'Classes', self);
     aConcepts[6] := Props[lptClasses];
-    result := FConcepts.AddConcept(AddDescription(0, 'LOINC Definitions'), false, FRefs.AddCardinals(aConcepts), 0);
+    result := FConcepts.AddConcept(AddDescription(0, 'LOINC Definitions'), false, FRefs.AddRefs(aConcepts), 0);
     FCode.donebuild;
 
     Progress(7, 0, 'Storing Heirachy');
@@ -829,7 +833,7 @@ begin
       if iCount mod STEP_COUNT = 0 then
         Progress(7, i / oHeirarchy.Count, '');
       inc(iCount);
-      if oHeirarchy[i].FParent = nil then
+      if oHeirarchy[i].FParents.Count = 0 then
       begin
         SetLength(roots, Length(roots)+1);
         roots[Length(roots)-1] := oHeirarchy[i].index;
@@ -843,7 +847,7 @@ begin
       setLength(aCardinals, oSubsets[a].Count);
       for i := 0 to oSubsets[a].Count - 1 do
         aCardinals[i] := oSubsets[a][i].Index;
-      subsets[a] := FRefs.AddCardinals(aCardinals);
+      subsets[a] := FRefs.AddRefs(aCardinals);
     end;
 
     Progress(8, 0, 'Processing Answer Lists');
@@ -874,7 +878,7 @@ begin
         SetLength(aCardinals, answer.FParents.Count);
         for j := 0 to answer.FParents.Count - 1 do
           aCardinals[j] := answer.FParents[j].FIndex;
-        answer.Index := FAnswers.AddEntry(AddDescription(0, answer.Code), AddDescription(0, answer.FDescription), FRefs.AddCardinals(aCardinals));
+        answer.Index := FAnswers.AddEntry(AddDescription(0, answer.Code), AddDescription(0, answer.FDescription), FRefs.AddRefs(aCardinals));
       end;
       for i := 0 to st.Count - 1 do
       begin
@@ -884,7 +888,7 @@ begin
         SetLength(aCardinals, answerlist.FAnswers.Count);
         for j := 0 to answerlist.FAnswers.Count - 1 do
           aCardinals[j] := answerlist.FAnswers[j].FIndex;
-        j := FAnswers.AddEntry(AddDescription(0, answerlist.Code), AddDescription(0, answerlist.FDescription), FRefs.AddCardinals(aCardinals));
+        j := FAnswers.AddEntry(AddDescription(0, answerlist.Code), AddDescription(0, answerlist.FDescription), FRefs.AddRefs(aCardinals));
         if (j <> answerlist.FIndex) then
           raise ETerminologySetup.create('Error Message');
       end;
@@ -930,7 +934,7 @@ begin
       SetLength(aCardinals, oCode.Stems.Count);
       for j := 0 to oCode.Stems.Count - 1 do
         aCardinals[j] := oCode.Stems[j];
-      FCode.SetStems(oCode.Index, FRefs.AddCardinals(aCardinals));
+      FCode.SetStems(oCode.Index, FRefs.AddRefs(aCardinals));
     End;
     For i := 0 to oHeirarchy.Count - 1 Do
     Begin
@@ -940,7 +944,7 @@ begin
       SetLength(aCardinals, oEntry.Stems.Count);
       for j := 0 to oEntry.Stems.Count - 1 do
         aCardinals[j] := oEntry.Stems[j];
-      FEntries.SetStems(oEntry.Index, FRefs.AddCardinals(aCardinals));
+      FEntries.SetStems(oEntry.Index, FRefs.AddRefs(aCardinals));
     End;
 
     Progress(14, 0, 'Cross-Linking');
@@ -950,19 +954,19 @@ begin
         Progress(14, iLoop / oCodes.Count, '');
       oCode := TCode(oCodes[iLoop]);
       if oCode.Comps <> nil Then
-        FCode.SetComponents(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Comps)));
+        FCode.SetComponents(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Comps)));
       if oCode.Props <> nil Then
-        FCode.SetPropertys(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Props)));
+        FCode.SetPropertys(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Props)));
       if oCode.Time <> nil Then
-        FCode.SetTimeAspects(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Time)));
+        FCode.SetTimeAspects(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Time)));
       if oCode.System <> nil Then
-        FCode.SetSystems(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.System)));
+        FCode.SetSystems(oCode.Index, FRefs.AddRefs(listConcepts(oCode.System)));
       if oCode.Scale <> nil Then
-        FCode.SetScales(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Scale)));
+        FCode.SetScales(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Scale)));
       if oCode.Method <> nil Then
-        FCode.SetMethods(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Method)));
+        FCode.SetMethods(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Method)));
       if oCode.Class_ <> nil Then
-        FCode.SetClasses(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Class_)));
+        FCode.SetClasses(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Class_)));
     End;
 
     TotalConcepts := oCodes.Count;
@@ -1240,11 +1244,46 @@ begin
   end;
 end;
 
+procedure TLoincImporter.AddToDescendentConcepts(oHeirarchy : THeirarchyEntryList; entry : TCode; path : String);
+var
+  p : string;
+  parent : THeirarchyEntry;
+begin
+  StringSplit(path, '.', p, path);
+  parent := oHeirarchy.getByCode(p);
+  if parent = nil then
+    raise ETerminologySetup.create('Unable to find entry '+p);
+  if (not parent.FDescendentConcepts.ExistsByReference(entry)) then
+    parent.FDescendentConcepts.add(entry.link);
+  if (path <> '') then
+    AddToDescendentConcepts(oHeirarchy, entry, path);
+end;
+
+procedure TLoincImporter.registerParents(oHeirarchy : THeirarchyEntryList; entry : THeirarchyEntry; path : String);
+var
+  p : string;
+  parent : THeirarchyEntry;
+begin
+  StringSplit(path, '.', p, path);
+  parent := oHeirarchy.getByCode(p);
+  if parent = nil then
+    raise ETerminologySetup.create('Unable to find entry '+p);
+  if (not parent.FChildren.ExistsByReference(entry)) then
+    parent.FChildren.Add(entry.Link);
+  if (not entry.FParents.ExistsByReference(parent)) then
+  begin
+    entry.FParents.add(parent.link);
+  end;
+  if path <> '' then
+    registerParents(oHeirarchy, parent, path);
+end;
+
 procedure TLoincImporter.ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
 var
-  PATH_TO_ROOT, SEQUENCE, IMMEDIATE_PARENT, CODE, CODE_TEXT : String;
+  PATH_TO_ROOT, SEQUENCE, IMMEDIATE_PARENT, CODE, CODE_TEXT, p : String;
   entry, parent : THeirarchyEntry;
   oCode : TCode;
+  i : integer;
 begin
   StringSplit(ln, ',', PATH_TO_ROOT, ln);
   StringSplit(ln, ',', SEQUENCE, ln);
@@ -1253,43 +1292,35 @@ begin
 
   if (CODE.StartsWith('LP')) then
   begin
-    entry := THeirarchyEntry.Create;
-    try
+    entry := oHeirarchy.getByCode(CODE);
+    if (entry = nil) then
+    begin
+      entry := THeirarchyEntry.Create;
       entry.FCode := CODE;
       entry.FText := CODE_TEXT;
-      if (IMMEDIATE_PARENT <> '') then
-      begin
-        entry.FParent := oHeirarchy.getByCode(IMMEDIATE_PARENT);
-        entry.FParent.FChildren.Add(entry.Link);
-        parent := entry.FParent;
-        while (parent <> nil) do
-        begin
-          parent.FDescendants.Add(entry.Link);
-          parent := parent.FParent;
-        end;
-      end;
-      oHeirarchy.Add(entry.Link);
+      oHeirarchy.Add(entry);
       SeeDesc(entry.FText, entry, FLAG_LONG_COMMON);
-    finally
-      entry.Free;
     end;
+
+    if PATH_TO_ROOT <> '' then
+      registerParents(oHeirarchy, entry, PATH_TO_ROOT);
+
+    if (IMMEDIATE_PARENT <> '') then
+      registerParents(oHeirarchy, entry, IMMEDIATE_PARENT);
   end
   else
   begin
     oCode := oCodes.getByCode(CODE);
+    IF (CODE = '10565-0') then
+      code := '10565-0';
     if (oCode = nil) then
       raise ETerminologySetup.create('Unable to find code '+CODE);
-    oCode.entry := oHeirarchy.getByCode(IMMEDIATE_PARENT);
-    if (oCode.entry = nil) then
+    entry := oHeirarchy.getByCode(IMMEDIATE_PARENT);
+    if (entry = nil) then
       raise ETerminologySetup.create('Unable to find ma code '+IMMEDIATE_PARENT);
-    oCode.entry.FConcepts.Add(oCode.Link);
-    parent := oCode.entry;
-    while (parent <> nil) do
-    begin
-      if not parent.FDescendentConcepts.ExistsByReference(oCode) then
-        parent.FDescendentConcepts.Add(oCode.Link);
-          parent := parent.FParent;
-    end;
+    entry.FConcepts.Add(oCode.Link);
+    AddToDescendentConcepts(oHeirarchy, oCode, PATH_TO_ROOT);
+    oCode.entries.add(entry.link);
   end;
 end;
 
@@ -1432,7 +1463,7 @@ begin
     SetLength(aConcepts, oConcept.Codes.Count);
     For j := 0 to oConcept.Codes.Count - 1 do
       aConcepts[j] := TCode(oConcept.Codes[j]).Index;
-    oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddCardinals(aConcepts));
+    oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
     aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
     inc(counter[oConcept.Flang]);
   End;
@@ -1445,12 +1476,12 @@ begin
     for i := 0 to langCount - 1 do
     begin
       SetLength(aChildren[i], counter[i]);
-      childLangList[i] := oImp.FRefs.AddCardinals(aChildren[i]);
+      childLangList[i] := oImp.FRefs.AddRefs(aChildren[i]);
     end;
-    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), true, oImp.FRefs.AddCardinals(childLangList), 0);
+    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), true, oImp.FRefs.AddRefs(childLangList), 0);
   end
   else
-    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), false, oImp.FRefs.AddCardinals(aChildren[0]), 0);
+    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), false, oImp.FRefs.AddRefs(aChildren[0]), 0);
 end;
 
 function TLoincImporter.AddDescription(lang : byte; s: String): Cardinal;
@@ -1476,7 +1507,7 @@ constructor THeirarchyEntry.Create;
 begin
   inherited;
   FChildren := THeirarchyEntryList.create;
-  FDescendants := THeirarchyEntryList.create;
+  FParents := THeirarchyEntryList.create;
   FConcepts := TCodeList.Create;
   FDescendentConcepts := TCodeList.Create;
 end;
@@ -1485,9 +1516,14 @@ destructor THeirarchyEntry.Destroy;
 begin
   FConcepts.Free;
   FChildren.free;
-  FDescendants.free;
   FDescendentConcepts.free;
+  FParents.Free;
   inherited;
+end;
+
+function THeirarchyEntry.link: THeirarchyEntry;
+begin
+  result := THeirarchyEntry(inherited link);
 end;
 
 { THeirarchyEntryList }
@@ -1737,6 +1773,7 @@ end;
 constructor TCode.Create(langCount: integer);
 begin
   inherited Create;
+  entries := TFslList<THeirarchyEntry>.create;
   SetLength(Comps, langCount);
   SetLength(Props, langCount);
   SetLength(Time, langCount);
@@ -1744,6 +1781,12 @@ begin
   SetLength(Scale, langCount);
   SetLength(Method, langCount);
   SetLength(Class_, langCount);
+end;
+
+destructor TCode.Destroy;
+begin
+  entries.free;
+  inherited Destroy;
 end;
 
 End.
