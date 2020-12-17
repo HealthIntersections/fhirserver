@@ -5631,16 +5631,11 @@ end;
 
 procedure TFslObjectList.InternalExchange(iA, iB: integer);
 var
-  iTemp: integer;
-  pA: Pointer;
-  pB: Pointer;
+  pTemp: TFslObject;
 begin
-  pA := @FObjectArray^[iA];
-  pB := @FObjectArray^[iB];
-
-  iTemp := integer(pA^);
-  integer(pA^) := integer(pB^);
-  integer(pB^) := iTemp;
+  pTemp := FObjectArray[iA];
+  FObjectArray[iA] := FObjectArray[iB];
+  FObjectArray[iB] := pTemp;
 end;
 
 

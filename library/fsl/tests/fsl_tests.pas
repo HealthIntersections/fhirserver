@@ -80,12 +80,23 @@ Type
     procedure testSort;
   end;
 
+  { TFslTestObjectList }
+
   TFslTestObjectList = class (TFslObjectList)
   private
+    function GetEntry(iIndex: Integer): TFslTestObject;
+    Function FindByValue(entry : TFslTestObject; Out iIndex: Integer): Boolean; Overload;
   protected
     function ItemClass : TFslObjectClass; override;
+    Function CompareByValue(pA, pB: Pointer): Integer; Virtual;
   public
+    Property Entries[iIndex : Integer] : TFslTestObject Read GetEntry; Default;
+    Procedure SortedByValue;
+    Function FindByValue(value: String; Out iIndex: Integer): Boolean; Overload;
+    Function getByValue(value: String): TFslTestObject; Overload;
   end;
+
+  { TFslCollectionsTests }
 
   TFslCollectionsTests = class (TFslTestCase)
   private
@@ -94,6 +105,8 @@ Type
   published
     procedure testAdd;
     procedure testAddFail;
+    procedure testSort;
+    procedure testSort2;
   end;
 
   {$IFDEF FPC}
@@ -4528,9 +4541,53 @@ end;
 
 { TFslTestObjectList }
 
-function TFslTestObjectList.itemClass: TFslObjectClass;
+function TFslTestObjectList.GetEntry(iIndex: Integer): TFslTestObject;
+begin
+  result := TFslTestObject(ObjectByIndex[iIndex]);
+end;
+
+function TFslTestObjectList.FindByValue(entry: TFslTestObject; out iIndex: Integer): Boolean;
+begin
+  Result := Find(entry, iIndex, CompareByValue);
+end;
+
+function TFslTestObjectList.ItemClass: TFslObjectClass;
 begin
   result := TFslTestObject;
+end;
+
+function TFslTestObjectList.CompareByValue(pA, pB: Pointer): Integer;
+begin
+  Result := StringCompare(TFslTestObject(pA).Value, TFslTestObject(pB).Value);
+end;
+
+procedure TFslTestObjectList.SortedByValue;
+begin
+  SortedBy(CompareByValue);
+end;
+
+function TFslTestObjectList.FindByValue(value: String; out iIndex: Integer): Boolean;
+Var
+  entry : TFslTestObject;
+Begin
+  entry := TFslTestObject(ItemNew);
+  Try
+    entry.value := value;
+
+    Result := FindByValue(entry, iIndex);
+  Finally
+    entry.Free;
+  End;
+end;
+
+function TFslTestObjectList.getByValue(value: String): TFslTestObject;
+Var
+  iIndex : Integer;
+Begin
+  If FindByValue(value, iIndex) Then
+    Result := Entries[iIndex]
+  Else
+    Result := Nil;
 end;
 
 { TFslCollectionsTests }
@@ -4557,6 +4614,41 @@ begin
   try
     assertWillRaise(executeFail, EFslInvariant, '');
     assertTrue(list.Count = 0);
+  finally
+    list.Free;
+  end;
+end;
+
+procedure TFslCollectionsTests.testSort;
+begin
+  list := TFslTestObjectList.create;
+  try
+    list.Add(TFslTestObject.create('B'));
+    list.Add(TFslTestObject.create('D'));
+    list.Add(TFslTestObject.create('C'));
+    list.Add(TFslTestObject.create('A'));
+    list.sortedByValue;
+    assertTrue(list[0].Value = 'A');
+    assertTrue(list[1].Value = 'B');
+    assertTrue(list[2].Value = 'C');
+    assertTrue(list[3].Value = 'D');
+  finally
+    list.Free;
+  end;
+end;
+
+procedure TFslCollectionsTests.testSort2;
+begin
+  list := TFslTestObjectList.create;
+  try
+    list.sortedByValue;
+    list.Add(TFslTestObject.create('A'));
+    list.Add(TFslTestObject.create('B'));
+    assertTrue(list[0].Value = 'A');
+    assertTrue(list[1].Value = 'B');
+    assertTrue(list.getByValue('A') <> nil);
+    assertTrue(list.getByValue('B') <> nil);
+    assertTrue(list.getByValue('C') = nil);
   finally
     list.Free;
   end;
