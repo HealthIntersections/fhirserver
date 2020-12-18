@@ -542,36 +542,43 @@ end;
 function TLoincStrings.GetEntry(iIndex: Cardinal; var lang : byte): String;
 var
   l : word;
+  b : TBytes;
 begin
   result := '';
   if iIndex > 0 Then
   begin
     if (iIndex > FLength) then
       Raise ETerminologyError.Create('Wrong length index getting LOINC name');
-    l := Word(FMaster[iIndex]);
+    move(FMaster[iIndex], l, 2);
     if (iIndex + 3 + (l * 2) > FLength) then
       raise ETerminologyError.create('Wrong length index getting LOINC name (2)');
+    lang := FMaster[iIndex+2];
     if l > 0 Then
     begin
-      lang := FMaster[iIndex+2];
-      result := memU8ToString(FMaster, iIndex+3, l);
-    end;
+      b := copy(FMaster, iIndex+3, l);
+      try
+        result := TEncoding.UTF8.getString(b);
+      except
+        raise Exception.Create('Unable to Read LOINC source String @'+inttostr(iIndex+3)+'+'+inttostr(l));
+      end;
+    end;  
   end;
 end;
 
 function TLoincStrings.AddEntry(lang : byte; const s: String): Cardinal;
+var
+  i : word;
+  b : TBytes;
 begin
-  if Length(s) > 65535 Then
-    raise ETerminologyError.create('LOINC Description too long: '+inttostr(s.length));
   result := FBuilder.Length;
-  FBuilder.AddWord(Length(s));
-  if (length(s) > 0) then
-  begin
-    FBuilder.Append(lang);
-    if (s[1] < ' ') and DebugConsoleMessages then
-      writeln('error');
-    FBuilder.AddString1Byte(s);
-  end;
+  b := TEncoding.UTF8.GetBytes(s);
+  if Length(b) > 65535 Then
+    raise ETerminologyError.create('LOINC Description too long: '+inttostr(s.length));
+  i := length(b);
+  FBuilder.AddWord(i);
+  FBuilder.Append(lang);
+  if (i > 0) then
+    FBuilder.Append(b);
 end;
 
 procedure TLoincStrings.DoneBuild;
