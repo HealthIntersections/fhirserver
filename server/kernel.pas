@@ -589,7 +589,6 @@ end;
 procedure logCompileInfo;
 var
   compiler, os, cpu, s : String;
-  tz : integer;
 begin
   {$IFDEF FPC}
   compiler := '/FreePascal';
@@ -625,13 +624,6 @@ begin
   {$ENDIF}
 
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
-  tz := TimeZoneOffset;
-  if tz = 0 then
-    Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
-  else if tz < 0 then
-    Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+StringPadLeft(inttostr(abs(tz) div 60), '0', 2)+':'+StringPadLeft(inttostr(abs(tz) mod 60), '0', 2))
-  else
-    Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+StringPadLeft(inttostr(tz div 60), '0', 2)+':'+StringPadLeft(inttostr(tz mod 60), '0', 2));
 end;
 
 procedure ExecuteFhirServer;
@@ -639,6 +631,7 @@ var
   cfg : TFHIRServerConfigFile;
   cfgName : String;
   fn : String;
+  tz : TDateTime;
 begin
   {$IFDEF WINDOWS}
   SetConsoleTitle('FHIR Server');
@@ -675,6 +668,14 @@ begin
     {$IFDEF FPC}
     initialiseTZData(partnerFile('tzdata.tar.gz'));
     {$ENDIF}
+    tz := TimeZoneBias;
+    if tz = 0 then
+      Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
+    else if tz < 0 then
+      Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+FormatDateTime('hh:nn', tz))
+    else
+      Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
+
     try
       {$IFNDEF NO_JS}
       GJsHost := TJsHost.Create;

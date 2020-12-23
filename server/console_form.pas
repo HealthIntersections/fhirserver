@@ -769,11 +769,16 @@ begin
     pwd := FIni.ReadString('servers', FAddress, '');
   if (pwd = '') then
   begin
-    ServerConnectionForm.edtServer.Text := server;
-    ServerConnectionForm.edtServer.ReadOnly:= true;
-    ServerConnectionForm.edtPassword.Text := pwd;
-    if ServerConnectionForm.ShowModal = mrOk then
-      pwd := ServerConnectionForm.edtPassword.Text
+    ServerConnectionForm := TServerConnectionForm.create(self);
+    try
+      ServerConnectionForm.edtServer.Text := server;
+      ServerConnectionForm.edtServer.ReadOnly:= true;
+      ServerConnectionForm.edtPassword.Text := pwd;
+      if ServerConnectionForm.ShowModal = mrOk then
+        pwd := ServerConnectionForm.edtPassword.Text
+    finally
+      FreeAndNil(ServerConnectionForm);
+    end;
   end;
   if pwd <> '' then
   begin
