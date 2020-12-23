@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, Registry,
+  SysUtils, Classes, Registry,
   IdContext, IdCustomHTTPServer,
   fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
   fhir_objects,
@@ -94,8 +94,8 @@ type
     FLock: TFslLock;
     {$IFNDEF NO_JS}
     FOnRegisterJs: TRegisterJavascriptEvent;
-    FCache: THTTPCacheManager;
     {$ENDIF}
+    FCache: THTTPCacheManager;
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure SetCache(const Value: THTTPCacheManager);
   public

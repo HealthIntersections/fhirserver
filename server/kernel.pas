@@ -135,8 +135,10 @@ procedure ExecuteFhirServer; overload;
 
 implementation
 
+{$IFDEF WINDOWS}
 uses
-  {$IFDEF WINDOWS} JclDebug {$ENDIF};
+  JclDebug;
+{$ENDIF}
 
 { TFhirServerMaintenanceThread }
 
@@ -339,6 +341,11 @@ begin
     Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
   end
+  else if FolderExists('..\..\server\web') then
+  begin
+    Logging.log('Web source from ..\..\server\web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('..\..\server\web')
+  end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
     Logging.log('Web source from '+partnerFile('fhirserver.web'));
@@ -520,7 +527,6 @@ var
   svc : TFHIRServiceKernel;
   logMsg : String;
 begin
-
   // if we're running the test or gui, go do that
   if (hasCommandLineParam('tests') or hasCommandLineParam('-tests')) then
     RunTests(ini)
@@ -659,7 +665,9 @@ begin
 
   try
     Logging.Log('Loading Dependencies');
+    {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    {$ENDIF}
     InitOpenSSL;
     {$IFDEF WINDOWS}
     JclStartExceptionTracking;

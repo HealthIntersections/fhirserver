@@ -59,6 +59,7 @@ type
 
     procedure dump; virtual;
     function CheckClose(var s: String): Boolean; Virtual;
+    function command(cmd: String): boolean; virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
     property DebugMode : Boolean read FDebugMode write FDebugMode;
@@ -104,6 +105,11 @@ begin
 end;
 
 function TSystemService.CheckClose(var s: String): Boolean;
+begin
+  result := false;
+end;
+
+function TSystemService.command(cmd: String): boolean;
 begin
   result := false;
 end;
