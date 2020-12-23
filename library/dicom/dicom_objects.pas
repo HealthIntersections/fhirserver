@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Windows,
+  SysUtils,
   fsl_base, fsl_utilities, fsl_stream, fsl_collections,
   dicom_dictionary;
 
@@ -4433,7 +4433,7 @@ End;
 Function TDicomValue.GetAsAT: TDicomAT;
 Begin
   if self = nil then
-    ZeroMemory(@result, sizeof(result))
+    FillChar(result, sizeof(result), #0)
   else
     MoveCheck('AT', 0, result, 4, true);
 End;
@@ -4545,7 +4545,7 @@ End;
 Function TDicomValue.GetAsPN: TDicomPN;
 Begin
   if self = nil then
-    ZeroMemory(@result, sizeof(result))
+    FillChar(result, sizeof(result), 0)
   else
     result := ParsePN(BytesAsString(FBytes));
 End;

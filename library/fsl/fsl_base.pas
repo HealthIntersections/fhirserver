@@ -30,10 +30,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
-Interface
+interface
 
-Uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF}
+uses
+  {$IFDEF WINDOWS}
+  Windows,
+  {$ELSE}
+  LCLType, Dialogs,
+  {$ENDIF}
   SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections, fsl_fpc;
 
 const
@@ -692,7 +696,7 @@ Type
     property Items[const Key: String]: String read GetItem write SetItem; default;
   end;
 
-Implementation
+implementation
 
 type
   TClassTrackingType = class (TObject)
@@ -738,7 +742,13 @@ begin
       t.Free;
     end;
     if i > 0 then
+    begin
+      {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
+      {$ELSE}
+      DefaultMessageBox('Object Leaks', pchar(s), MB_OK);
+      {$ENDIF}
+    end;
   end;
   GClassTracker.Free;
   DeleteCriticalSection(GLock);

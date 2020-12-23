@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+{$IFDEF WINDOWS}
 uses
   {$IFNDEF FPC}
 //  FastMM4,
@@ -144,8 +145,11 @@ type
 
 function DescribeServiceStatus(ACode: DWord): String;
 
+{$ENDIF}
+
 implementation
 
+{$IFDEF WINDOWS}
 uses
   fsl_threads,
   fsl_logging;
@@ -1091,5 +1095,8 @@ begin
       RaiseLastOSError;
   End;
 end;
+
+{$ENDIF}
+
 end.
 

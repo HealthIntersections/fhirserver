@@ -22,7 +22,9 @@ begin
   try
     initialiseTZData(partnerFile('tzdata.tar.gz'));
     InitialiseODBC;
+    {$IFDEF WINDOWS}
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
+    {$ENDIF}
     InitOpenSSL;
     ok := true;
   except

@@ -1,4 +1,4 @@
-program FHIRToolkit;
+program fhirtoolkit;
 
 {$mode objfpc}{$H+}
 
