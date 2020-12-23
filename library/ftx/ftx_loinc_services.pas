@@ -2722,7 +2722,9 @@ begin
       Move(FMaster[i*28], d, 4);
       s := Strings.GetEntry(d, lang);
       C := CompareStr(s, sCode);
-      if C < 0 then L := I + 1 else
+      if C < 0 then
+        L := I + 1 
+      else
       begin
         if i = 0 then
           break;

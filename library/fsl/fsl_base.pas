@@ -126,6 +126,7 @@ Type
 
 var
   GetThreadNameStatusDelegate : TGetThreadNameStatus = nil;
+  ShowObjectLeaks : boolean;
 
 Type
   TFslObjectClass = Class Of TFslObject;
@@ -714,6 +715,7 @@ begin
     InitializeCriticalSection(GLock);
     GClassTracker := TDictionary<String, TClassTrackingType>.create;
     GInited := true;
+    ShowObjectLeaks := true;
   end;
 end;
 
@@ -723,18 +725,21 @@ var
   n, s : String;
   i : integer;
 begin
-  s := '';
-  i := 0;
-  for n in GClassTracker.Keys do
+  if ShowObjectLeaks then
   begin
-    t := GClassTracker[n];
-    i := i + t.count;
-    if t.count > 0 then
-      s := s + n+': '+inttostr(t.count)+#13#10;
-    t.Free;
+    s := '';
+    i := 0;
+    for n in GClassTracker.Keys do
+    begin
+      t := GClassTracker[n];
+      i := i + t.count;
+      if t.count > 0 then
+        s := s + n+': '+inttostr(t.count)+#13#10;
+      t.Free;
+    end;
+    if i > 0 then
+      messagebox(0, pchar(s), 'Object Leaks', MB_OK);
   end;
-  if i > 0 then
-    messagebox(0, pchar(s), 'Object Leaks', MB_OK);
   GClassTracker.Free;
   DeleteCriticalSection(GLock);
   GInited := false;

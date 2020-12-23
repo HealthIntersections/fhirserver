@@ -39,9 +39,9 @@ uses
   TestInsight.DUnit, DUnitTestRunner, GUITestRunner,
   {$ENDIF}
   {$IFDEF FPC}
-  idetester_form, fsl_tests_console,
+  idetester_form, idetester_runtime, idetester_console,
   {$ENDIF}
-  fsl_utilities, fsl_testing, fsl_logging,
+  fsl_base, fsl_utilities, fsl_testing, fsl_logging,
   server_config,
   test_registry;
 
@@ -80,7 +80,7 @@ begin
   {$ENDIF}
   {$IFDEF FPC}
   Application.Initialize;
-  Application.CreateForm(TTesterForm, TesterForm);
+  Application.CreateForm(TIdeTesterForm, IdeTesterForm);
 //  TestRunner.FileName := TestSettings.serverTestFile(['tests.ini']);
   Application.Run;
   {$ELSE}
@@ -91,10 +91,10 @@ end;
 procedure RunTestConsole(ini : TFHIRServerConfigFile);
 {$IFDEF FPC}
 var
-  app : TFHIRTestRunner;
+  app : TIdeTesterConsoleRunner;
 begin
   Logging.Log('Run Tests (Console)');
-  app := TFHIRTestRunner.Create(nil);
+  app := TIdeTesterConsoleRunner.Create(nil);
   app.Initialize;
   app.Title := 'FPCUnit Console test runner';
   app.showProgress := true;
@@ -117,6 +117,13 @@ begin
   test_registry.registerTests;
   if hasCommandLineParam('gui') then
     RunTestGui(ini)
+  {$IFDEF FPC}
+  else if IsRunningIDETests then
+  begin
+    ShowObjectLeaks := false;
+    RunIDETests;
+  {$ENDIF}
+  end
   else
     RunTestConsole(ini);
 end;
