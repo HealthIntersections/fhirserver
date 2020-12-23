@@ -359,6 +359,7 @@ Type
     procedure queueTask(id : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage; onNotify : TBackgroundTaskEvent); overload;
     procedure killTask(id : integer);
 
+    procedure start;
     procedure stopAll; // shut down preparation
     procedure wait(grace : cardinal);
 
@@ -1329,7 +1330,6 @@ begin
   finally
     FLock.Unlock;
   end;
-  engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>);
@@ -1386,6 +1386,14 @@ procedure TBackgroundTaskManager.killTask(id: integer);
 begin
   log('kill '+FEngines[id].name);
   FEngines[id].break;
+end;
+
+procedure TBackgroundTaskManager.start;
+var
+  engine : TBackgroundTaskEngine;
+begin
+  for engine in FEngines do
+    engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.log(s : String);

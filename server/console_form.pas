@@ -567,6 +567,8 @@ procedure TMainConsoleForm.FormCreate(Sender: TObject);
 var
   s : String;
 begin
+  GBackgroundTasks.start;
+
   s := getAppConfigDir(false);
   FIni := TIniFile.create(path([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');

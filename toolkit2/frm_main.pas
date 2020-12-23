@@ -440,6 +440,7 @@ begin
   Application.OnException := DoAppException;
   initialiseTZData(partnerFile('tzdata.tar.gz'));
 
+  GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
   FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FTempStore := TFHIRToolkitTemporaryStorage.create;
