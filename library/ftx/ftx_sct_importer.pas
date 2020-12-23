@@ -36,8 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Inifiles, Generics.Collections,
   fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc,
-  ftx_loinc_services, ftx_sct_services, ftx_sct_expressions,
-  fdb_manager, fdb_dialects;
+  ftx_loinc_services, ftx_sct_services, ftx_sct_expressions;
 
 //Const
 //  TrackConceptDuplicates = false; // much slower, but only if you aren't reading a snapshot

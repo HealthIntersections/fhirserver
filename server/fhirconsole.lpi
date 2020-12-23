@@ -78,8 +78,8 @@
             <Filename Value="..\exec\64\fhirconsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;admin"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="..\library\fdb;admin"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -224,9 +224,8 @@
     </RequiredPackages>
     <Units Count="12">
       <Unit0>
-        <Filename Value="FHIRConsole.pas"/>
+        <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fhirconsole"/>
       </Unit0>
       <Unit1>
         <Filename Value="console_form.pas"/>

@@ -79,6 +79,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+{$IFDEF WINDOWS}
 uses
   Windows, ActiveX, {$IFDEF UNICODE}Vcl.OLEServer{$ELSE} OLEServer {$ENDIF} {$IFNDEF VER130}, Variants {$ENDIF},
   SysUtils, Classes, ComObj, Generics.Collections,
@@ -7716,7 +7717,11 @@ Var
   GMsXmlProgId_XSLP : String;
   GMsXmlProgId_SAX : String;
 
+{$ENDIF}
+
 implementation
+
+{$IFDEF WINDOWS}
 
 uses
   fsl_wininet;
@@ -15895,4 +15900,5 @@ end;
 
 Initialization
   DetermineMsXmlProgId;
+{$ENDIF}
 end.

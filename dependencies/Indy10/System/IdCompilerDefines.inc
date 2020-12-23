@@ -1375,7 +1375,7 @@
 {$ENDIF}
 
 {$IFDEF FPC}
-  {$DEFINE USE_INLINE}
+  {.$.DEFINE USE_INLINE}
   {$DEFINE USE_CLASSINLINE}
   {$DEFINE USE_TBitBtn} //use Bit Buttons instead of Buttons
   {$DEFINE FPC_REINTRODUCE_BUG}

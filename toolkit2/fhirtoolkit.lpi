@@ -55,7 +55,7 @@
     </RequiredPackages>
     <Units>
       <Unit>
-        <Filename Value="FHIRToolkit.lpr"/>
+        <Filename Value="fhirtoolkit.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>

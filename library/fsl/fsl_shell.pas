@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Interface
 
+{$IFDEF WINDOWS}
 
 Uses
   SysUtils, Messages, Windows, ShellAPI, ShlObj, MultiMon,
@@ -116,9 +117,11 @@ Procedure FilesClose(hDrop : THandle); Overload;
 // Window of class sForm is active in the system.
 Function IsRunning(Const sForm : String) : Boolean; Overload;
 
+{$ENDIF}
 
 Implementation
 
+{$IFDEF WINDOWS}
 
 Type
   TUnicodeString = Record
@@ -735,6 +738,7 @@ Begin
   End;
 End;
 
+{$ENDIF}
 
 End.
 

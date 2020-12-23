@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils,
+  SysUtils,
   dicom_dictionary;
 
 
