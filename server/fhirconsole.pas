@@ -1,7 +1,6 @@
 program fhirconsole;
 
-{$mode objfpc}{$H+}
-
+{$i fhir.inc}
 uses
   {$IFDEF UNIX}
   cthreads,

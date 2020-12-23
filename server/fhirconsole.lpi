@@ -109,8 +109,8 @@
             <Filename Value="..\exec\64\fhirconsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library;..\dependencies\Indy10\System"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Protocols;..\dependencies\Indy10\System;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;..\dependencies\Indy10\Core;..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;admin"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="admin"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>

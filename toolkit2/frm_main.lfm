@@ -1,12 +1,11 @@
 object MainToolkitForm: TMainToolkitForm
   Left = 566
-  Height = 1396
+  Height = 798
   Top = 17
-  Width = 2255
+  Width = 1289
   Caption = 'FHIR Toolkit'
-  ClientHeight = 1362
-  ClientWidth = 2255
-  DesignTimePPI = 168
+  ClientHeight = 778
+  ClientWidth = 1289
   Icon.Data = {
     F68E010000000100060080800000010020002808010066000000404000000100
     2000284200008E0801003030000001002000A8250000B64A0100202000000100
@@ -3211,21 +3210,21 @@ object MainToolkitForm: TMainToolkitForm
   LCLVersion = '2.1.0.0'
   object pnlBottom: TPanel
     Left = 0
-    Height = 248
-    Top = 1071
-    Width = 2255
+    Height = 142
+    Top = 613
+    Width = 1289
     Align = alBottom
     Caption = 'pnlBottom'
-    ClientHeight = 248
-    ClientWidth = 2255
-    Constraints.MinHeight = 100
+    ClientHeight = 142
+    ClientWidth = 1289
+    Constraints.MinHeight = 57
     ParentFont = False
     TabOrder = 0
     object pgBottom: TPageControl
       Left = 1
-      Height = 246
+      Height = 140
       Top = 1
-      Width = 2253
+      Width = 1287
       ActivePage = tbExpression
       Align = alClient
       Images = imgMain
@@ -3234,25 +3233,25 @@ object MainToolkitForm: TMainToolkitForm
       TabOrder = 0
       object tbMessages: TTabSheet
         Caption = 'Messages'
-        ClientHeight = 97
-        ClientWidth = 1278
+        ClientHeight = 218
+        ClientWidth = 2245
         ImageIndex = 44
         ParentFont = False
         object Panel4: TPanel
           Left = 0
           Height = 203
           Top = 0
-          Width = 56
+          Width = 32
           Align = alLeft
           ClientHeight = 203
-          ClientWidth = 56
+          ClientWidth = 32
           ParentFont = False
           TabOrder = 0
           object chkCurrrentFileOnly: TCheckBox
-            Left = 14
+            Left = 8
             Height = 33
             Hint = 'Only from Current File'
-            Top = 14
+            Top = 8
             Width = 34
             OnChange = updateMessages
             ParentFont = False
@@ -3261,10 +3260,10 @@ object MainToolkitForm: TMainToolkitForm
             TabOrder = 0
           end
           object chkhideHintsAndWarnings: TCheckBox
-            Left = 14
+            Left = 8
             Height = 33
             Hint = 'Hide Hints and Warnings'
-            Top = 56
+            Top = 32
             Width = 34
             OnChange = updateMessages
             ParentFont = False
@@ -3284,19 +3283,19 @@ object MainToolkitForm: TMainToolkitForm
           Columns = <          
             item
               Caption = 'Source File'
-              Width = 350
+              Width = 200
             end          
             item
               Caption = 'Type'
-              Width = 262
+              Width = 150
             end          
             item
               Caption = 'Location'
-              Width = 70
+              Width = 40
             end          
             item
               Caption = 'Details'
-              Width = 1502
+              Width = 858
             end>
           ParentFont = False
           PopupMenu = pmMessageView
@@ -3309,8 +3308,8 @@ object MainToolkitForm: TMainToolkitForm
       end
       object tbLog: TTabSheet
         Caption = 'Log'
-        ClientHeight = 97
-        ClientWidth = 1278
+        ClientHeight = 218
+        ClientWidth = 2245
         ImageIndex = 45
         OnShow = tbLogShow
         ParentFont = False
@@ -3318,17 +3317,17 @@ object MainToolkitForm: TMainToolkitForm
           Left = 0
           Height = 203
           Top = 0
-          Width = 63
+          Width = 36
           Align = alLeft
           ClientHeight = 203
-          ClientWidth = 63
+          ClientWidth = 36
           ParentFont = False
           TabOrder = 0
           object SpeedButton2: TSpeedButton
-            Left = 7
-            Height = 46
-            Top = 7
-            Width = 46
+            Left = 4
+            Height = 26
+            Top = 4
+            Width = 26
             Action = actionViewsClearLog
             ShowCaption = False
             ParentFont = False
@@ -3347,18 +3346,18 @@ object MainToolkitForm: TMainToolkitForm
       end
       object tbSearch: TTabSheet
         Caption = 'Search'
-        ClientHeight = 97
-        ClientWidth = 1278
+        ClientHeight = 218
+        ClientWidth = 2245
         ImageIndex = 43
         ParentFont = False
         object Panel5: TPanel
           Left = 0
-          Height = 56
+          Height = 32
           Top = 0
           Width = 1278
           Align = alTop
           Caption = 'Panel5'
-          ClientHeight = 56
+          ClientHeight = 32
           ClientWidth = 1278
           ParentFont = False
           TabOrder = 0
@@ -3366,26 +3365,26 @@ object MainToolkitForm: TMainToolkitForm
             Left = 1
             Height = 30
             Top = 1
-            Width = 1034
+            Width = 591
             Align = alLeft
             BevelOuter = bvNone
             ClientHeight = 30
-            ClientWidth = 1034
+            ClientWidth = 591
             ParentFont = False
             TabOrder = 0
             object Label1: TLabel
               Left = 0
               Height = 15
-              Top = 14
+              Top = 8
               Width = 38
               Caption = 'Search:'
               ParentColor = False
               ParentFont = False
             end
             object chkCase: TCheckBox
-              Left = 604
+              Left = 748
               Height = 19
-              Top = 10
+              Top = 6
               Width = 94
               Anchors = [akTop, akRight]
               Caption = '&Case Sensitive'
@@ -3393,9 +3392,9 @@ object MainToolkitForm: TMainToolkitForm
               TabOrder = 0
             end
             object chkWholeWord: TCheckBox
-              Left = 798
+              Left = 860
               Height = 19
-              Top = 10
+              Top = 6
               Width = 91
               Anchors = [akTop, akRight]
               Caption = '&Whole Words'
@@ -3403,12 +3402,12 @@ object MainToolkitForm: TMainToolkitForm
               TabOrder = 1
             end
             object cbxSearch: TComboBox
-              Left = 74
-              Height = 38
-              Top = 7
-              Width = 431
+              Left = 42
+              Height = 23
+              Top = 4
+              Width = 690
               Anchors = [akTop, akLeft, akRight]
-              ItemHeight = 30
+              ItemHeight = 15
               OnEditingDone = cbxSearchEditingDone
               ParentFont = False
               TabOrder = 2
@@ -3426,20 +3425,20 @@ object MainToolkitForm: TMainToolkitForm
             ParentFont = False
             TabOrder = 1
             object Label2: TLabel
-              Left = 16
+              Left = 9
               Height = 15
-              Top = 14
+              Top = 8
               Width = 13
               Caption = 'In:'
               ParentColor = False
               ParentFont = False
             end
             object cbxSearchType: TComboBox
-              Left = 56
-              Height = 38
-              Top = 7
-              Width = 308
-              ItemHeight = 30
+              Left = 32
+              Height = 23
+              Top = 4
+              Width = 176
+              ItemHeight = 15
               Items.Strings = (
                 'Current File'
                 'Open Files'
@@ -3453,10 +3452,10 @@ object MainToolkitForm: TMainToolkitForm
               TabOrder = 0
             end
             object btnSearch: TBitBtn
-              Left = 536
-              Height = 42
-              Top = 5
-              Width = 131
+              Left = 600
+              Height = 24
+              Top = 3
+              Width = 75
               Anchors = [akTop, akRight]
               Caption = '&Go'
               Glyph.Data = {
@@ -3500,20 +3499,20 @@ object MainToolkitForm: TMainToolkitForm
               TabOrder = 1
             end
             object cbxSearchScope: TComboBox
-              Left = 378
-              Height = 38
-              Top = 7
-              Width = 95
+              Left = 216
+              Height = 23
+              Top = 4
+              Width = 348
               Anchors = [akTop, akLeft, akRight]
-              ItemHeight = 30
+              ItemHeight = 15
               ParentFont = False
               TabOrder = 2
             end
             object btnSearchFolder: TSpeedButton
-              Left = 477
-              Height = 42
-              Top = 5
-              Width = 40
+              Left = 566
+              Height = 24
+              Top = 3
+              Width = 23
               Anchors = [akTop, akRight]
               Enabled = False
               Images = imgMain
@@ -3534,15 +3533,15 @@ object MainToolkitForm: TMainToolkitForm
           Columns = <          
             item
               Caption = 'Filename'
-              Width = 525
+              Width = 300
             end          
             item
               Caption = 'Line'
-              Width = 105
+              Width = 60
             end          
             item
               Caption = 'Fragment'
-              Width = 1600
+              Width = 914
             end>
           ParentFont = False
           ReadOnly = True
@@ -3562,25 +3561,25 @@ object MainToolkitForm: TMainToolkitForm
       object tbTasks: TTabSheet
         BorderWidth = 4
         Caption = 'Tasks'
-        ClientHeight = 97
-        ClientWidth = 1278
+        ClientHeight = 218
+        ClientWidth = 2245
         ImageIndex = 46
         ParentFont = False
         object Panel1: TPanel
           Left = 0
           Height = 203
           Top = 0
-          Width = 56
+          Width = 32
           Align = alLeft
           ClientHeight = 203
-          ClientWidth = 56
+          ClientWidth = 32
           ParentFont = False
           TabOrder = 0
           object chkTaskInactive: TCheckBox
-            Left = 14
+            Left = 8
             Height = 33
             Hint = 'Show Inactive Tasks'
-            Top = 14
+            Top = 8
             Width = 34
             ParentFont = False
             ParentShowHint = False
@@ -3589,20 +3588,20 @@ object MainToolkitForm: TMainToolkitForm
           end
         end
         object Panel3: TPanel
-          Left = 2178
+          Left = 2206
           Height = 203
           Top = 0
-          Width = 66
+          Width = 38
           Align = alRight
           ClientHeight = 203
-          ClientWidth = 66
+          ClientWidth = 38
           ParentFont = False
           TabOrder = 1
           object SpeedButton1: TSpeedButton
-            Left = 14
-            Height = 42
-            Top = 14
-            Width = 42
+            Left = 8
+            Height = 24
+            Top = 8
+            Width = 24
             Glyph.Data = {
               36030000424D3603000000000000360000002800000010000000100000000100
               18000000000000000000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -3645,19 +3644,19 @@ object MainToolkitForm: TMainToolkitForm
           Columns = <          
             item
               Caption = 'Name'
-              Width = 350
+              Width = 200
             end          
             item
               Caption = 'Status'
-              Width = 262
+              Width = 150
             end          
             item
               Caption = '%'
-              Width = 70
+              Width = 40
             end          
             item
               Caption = 'Message'
-              Width = 1437
+              Width = 821
             end>
           ParentFont = False
           TabOrder = 2
@@ -3679,37 +3678,37 @@ object MainToolkitForm: TMainToolkitForm
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0
-    Height = 9
-    Top = 1062
-    Width = 2255
+    Height = 5
+    Top = 608
+    Width = 1289
     Align = alBottom
     OnMoved = Splitter1Moved
     ResizeAnchor = akBottom
   end
   object pnlMain: TPanel
     Left = 0
-    Height = 1016
-    Top = 46
-    Width = 2255
+    Height = 582
+    Top = 26
+    Width = 1289
     Align = alClient
     Caption = 'pnlMain'
-    ClientHeight = 1016
-    ClientWidth = 2255
+    ClientHeight = 582
+    ClientWidth = 1289
     ParentFont = False
     TabOrder = 2
     inline SynEdit1: TSynEdit
-      Left = 1102
-      Height = 262
-      Top = 290
-      Width = 350
-      Font.Height = -23
+      Left = 630
+      Height = 150
+      Top = 166
+      Width = 200
+      Font.Height = -13
       Font.Name = 'Courier New'
       Font.Pitch = fpFixed
       Font.Quality = fqNonAntialiased
       ParentColor = False
       ParentFont = False
       TabOrder = 5
-      Gutter.Width = 100
+      Gutter.Width = 57
       Gutter.MouseActions = <>
       RightGutter.Width = 0
       RightGutter.MouseActions = <>
@@ -4165,11 +4164,11 @@ object MainToolkitForm: TMainToolkitForm
       LineHighlightColor.Foreground = clNone
       inline SynLeftGutterPartList1: TSynGutterPartList
         object SynGutterMarks1: TSynGutterMarks
-          Width = 42
+          Width = 24
           MouseActions = <>
         end
         object SynGutterLineNumber1: TSynGutterLineNumber
-          Width = 29
+          Width = 17
           MouseActions = <>
           MarkupInfo.Background = clBtnFace
           MarkupInfo.Foreground = clNone
@@ -4179,19 +4178,18 @@ object MainToolkitForm: TMainToolkitForm
           LeadingZeros = False
         end
         object SynGutterChanges1: TSynGutterChanges
-          Width = 7
+          Width = 4
           MouseActions = <>
           ModifiedColor = 59900
           SavedColor = clGreen
         end
         object SynGutterSeparator1: TSynGutterSeparator
-          Width = 4
+          Width = 2
           MouseActions = <>
           MarkupInfo.Background = clWhite
           MarkupInfo.Foreground = clGray
         end
         object SynGutterCodeFolding1: TSynGutterCodeFolding
-          Width = 18
           MouseActions = <>
           MarkupInfo.Background = clNone
           MarkupInfo.Foreground = clGray
@@ -4202,21 +4200,21 @@ object MainToolkitForm: TMainToolkitForm
     end
     object pnlLeft: TPanel
       Left = 1
-      Height = 1014
+      Height = 580
       Top = 1
-      Width = 298
+      Width = 170
       Align = alLeft
       Caption = 'pnlLeft'
-      ClientHeight = 1014
-      ClientWidth = 298
-      Constraints.MinWidth = 100
+      ClientHeight = 580
+      ClientWidth = 170
+      Constraints.MinWidth = 57
       ParentFont = False
       TabOrder = 0
       object pgLeft: TPageControl
         Left = 1
-        Height = 1012
+        Height = 578
         Top = 1
-        Width = 296
+        Width = 168
         ActivePage = tbProjects
         Align = alClient
         Images = imgMain
@@ -4236,21 +4234,21 @@ object MainToolkitForm: TMainToolkitForm
       end
     end
     object pnlRight: TPanel
-      Left = 1852
-      Height = 1014
+      Left = 1058
+      Height = 580
       Top = 1
-      Width = 402
+      Width = 230
       Align = alRight
-      ClientHeight = 1014
-      ClientWidth = 402
-      Constraints.MinWidth = 100
+      ClientHeight = 580
+      ClientWidth = 230
+      Constraints.MinWidth = 57
       ParentFont = False
       TabOrder = 1
       object pgRight: TPageControl
         Left = 1
-        Height = 1012
+        Height = 578
         Top = 1
-        Width = 400
+        Width = 228
         ActivePage = tbInspector
         Align = alClient
         Images = imgMain
@@ -4259,15 +4257,15 @@ object MainToolkitForm: TMainToolkitForm
         TabOrder = 0
         object tbInspector: TTabSheet
           Caption = 'Inspector'
-          ClientHeight = 969
-          ClientWidth = 392
+          ClientHeight = 550
+          ClientWidth = 220
           ImageIndex = 49
           ParentFont = False
           object vlInspector: TValueListEditor
             Left = 0
-            Height = 969
+            Height = 550
             Top = 0
-            Width = 392
+            Width = 220
             Align = alClient
             AutoEdit = False
             FixedCols = 0
@@ -4276,8 +4274,8 @@ object MainToolkitForm: TMainToolkitForm
             TabOrder = 0
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
             ColWidths = (
-              112
-              276
+              64
+              152
             )
           end
         end
@@ -4294,26 +4292,26 @@ object MainToolkitForm: TMainToolkitForm
       end
     end
     object Splitter2: TSplitter
-      Left = 1843
-      Height = 1014
+      Left = 1053
+      Height = 580
       Top = 1
-      Width = 9
+      Width = 5
       Align = alRight
       OnMoved = Splitter2Moved
       ResizeAnchor = akRight
     end
     object Splitter3: TSplitter
-      Left = 299
-      Height = 1014
+      Left = 171
+      Height = 580
       Top = 1
-      Width = 9
+      Width = 5
       OnMoved = Splitter3Moved
     end
     object pgEditors: TPageControl
-      Left = 308
-      Height = 1014
+      Left = 176
+      Height = 580
       Top = 1
-      Width = 1535
+      Width = 877
       Align = alClient
       ParentFont = False
       ParentShowHint = False
@@ -4327,39 +4325,39 @@ object MainToolkitForm: TMainToolkitForm
   end
   object pnlStatus: TStatusBar
     Left = 0
-    Height = 43
-    Top = 1319
-    Width = 2255
+    Height = 23
+    Top = 755
+    Width = 1289
     Panels = <    
       item
-        Width = 175
+        Width = 100
       end    
       item
-        Width = 175
+        Width = 100
       end    
       item
-        Width = 88
+        Width = 50
       end    
       item
-        Width = 88
+        Width = 50
       end    
       item
-        Width = 350
+        Width = 200
       end    
       item
-        Width = 88
+        Width = 50
       end    
       item
-        Width = 350
+        Width = 200
       end>
     ParentFont = False
     SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
-    Height = 46
+    Height = 26
     Top = 0
-    Width = 2255
+    Width = 1289
     Caption = 'ToolBar1'
     Images = imgMain
     ParentFont = False
@@ -4375,162 +4373,162 @@ object MainToolkitForm: TMainToolkitForm
       OnClick = ToolButton1Click
     end
     object ToolButton2: TToolButton
-      Left = 41
+      Left = 24
       Top = 2
       Action = actionFileOpen
       OnClick = ToolButton2Click
     end
     object ToolButton3: TToolButton
-      Left = 81
+      Left = 47
       Top = 2
       Action = actionFileOpenUrl
     end
     object ToolButton4: TToolButton
-      Left = 121
+      Left = 70
       Top = 2
       Action = actionFileSave
     end
     object ToolButton5: TToolButton
-      Left = 161
+      Left = 93
       Top = 2
       Action = actionFileClose
     end
     object ToolButton6: TToolButton
-      Left = 201
-      Height = 39
+      Left = 116
+      Height = 22
       Top = 2
       Caption = 'ToolButton6'
       Style = tbsSeparator
     end
     object ToolButton7: TToolButton
-      Left = 215
+      Left = 121
       Top = 2
       Action = actionEditUndo
     end
     object ToolButton8: TToolButton
-      Left = 255
+      Left = 144
       Top = 2
       Action = actionEditRedo
     end
     object ToolButton9: TToolButton
-      Left = 295
+      Left = 167
       Top = 2
       Action = actionEditCut
     end
     object ToolButton10: TToolButton
-      Left = 335
+      Left = 190
       Top = 2
       Action = actionEditCopy
     end
     object ToolButton11: TToolButton
-      Left = 375
+      Left = 213
       Top = 2
       Action = actionEditPaste
     end
     object ToolButton12: TToolButton
-      Left = 415
-      Height = 39
+      Left = 236
+      Height = 22
       Top = 2
       Caption = 'ToolButton12'
       Style = tbsSeparator
     end
     object ToolButton13: TToolButton
-      Left = 429
+      Left = 241
       Top = 2
       Action = actionZoomIn
     end
     object ToolButton14: TToolButton
-      Left = 469
+      Left = 264
       Top = 2
       Action = actionZoomOut
     end
     object ToolButton15: TToolButton
-      Left = 509
+      Left = 287
       Top = 2
       Action = actionViewEditor
     end
     object ToolButton16: TToolButton
-      Left = 549
+      Left = 310
       Top = 2
       Action = actionViewProjectManager
     end
     object ToolButton17: TToolButton
-      Left = 589
+      Left = 333
       Top = 2
       Action = actionViewServers
     end
     object ToolButton18: TToolButton
-      Left = 629
+      Left = 356
       Top = 2
       Action = actionViewSearch
     end
     object ToolButton19: TToolButton
-      Left = 669
+      Left = 379
       Top = 2
       Action = actionViewMessages
     end
     object ToolButton20: TToolButton
-      Left = 709
+      Left = 402
       Top = 2
       Action = actionViewLog
     end
     object ToolButton21: TToolButton
-      Left = 749
+      Left = 425
       Top = 2
       Action = actionViewStack
     end
     object ToolButton22: TToolButton
-      Left = 789
+      Left = 448
       Top = 2
       Action = actionViewVariables
     end
     object ToolButton23: TToolButton
-      Left = 829
+      Left = 471
       Top = 2
       Action = actionViewInspector
     end
     object ToolButton24: TToolButton
-      Left = 869
+      Left = 494
       Top = 2
       Action = actionViewPackages
     end
     object ToolButton25: TToolButton
-      Left = 909
+      Left = 517
       Top = 2
       Action = actionViewTasks
     end
     object ToolButton26: TToolButton
-      Left = 949
+      Left = 540
       Top = 2
       Action = actionViewExpressionEditor
     end
     object ToolButton27: TToolButton
-      Left = 989
-      Height = 39
+      Left = 563
+      Height = 22
       Top = 2
       Caption = 'ToolButton27'
       Style = tbsSeparator
     end
     object ToolButton28: TToolButton
-      Left = 1003
+      Left = 568
       Top = 2
       Action = actionHelpContent
     end
     object ToolButton29: TToolButton
-      Left = 1043
+      Left = 591
       Top = 2
       Action = actionToolsPackageManager
     end
     object ToolButton30: TToolButton
-      Left = 1083
+      Left = 614
       Top = 2
       Action = actionToolsSideBySideMode
     end
   end
   object MainMenu1: TMainMenu
     Images = imgMain
-    Left = 350
-    Top = 84
+    Left = 200
+    Top = 48
     object MenuItem1: TMenuItem
       Caption = '&File'
       object MenuItem6: TMenuItem
@@ -4793,8 +4791,8 @@ object MainToolkitForm: TMainToolkitForm
   end
   object imgMain: TImageList
     Scaled = True
-    Left = 350
-    Top = 193
+    Left = 200
+    Top = 110
     Bitmap = {
       4C7A660000001000000010000000499F00000000000078DAECBD057814C9FAF6
       3D67CF9E73F6AC3B0B6BECA28BC3A28B5B08C11282C5D100811809102C214E12
@@ -6075,8 +6073,8 @@ object MainToolkitForm: TMainToolkitForm
   end
   object actList: TActionList
     Images = imgMain
-    Left = 350
-    Top = 305
+    Left = 200
+    Top = 174
     object actionEditUndo: TEditUndo
       Category = 'Edit'
       Caption = '&Undo'
@@ -6574,12 +6572,12 @@ object MainToolkitForm: TMainToolkitForm
   object Timer1: TTimer
     Interval = 100
     OnTimer = Timer1Timer
-    Left = 350
-    Top = 406
+    Left = 200
+    Top = 232
   end
   object pmNew: TPopupMenu
-    Left = 352
-    Top = 509
+    Left = 201
+    Top = 291
     object MenuItem67: TMenuItem
       Tag = 1
       Caption = '&Resource'
@@ -6649,8 +6647,8 @@ object MainToolkitForm: TMainToolkitForm
   object pmPages: TPopupMenu
     Images = imgMain
     OnPopup = pmPagesPopup
-    Left = 355
-    Top = 625
+    Left = 203
+    Top = 357
     object MenuItem54: TMenuItem
       Action = actionFileClose
     end
@@ -6682,8 +6680,8 @@ object MainToolkitForm: TMainToolkitForm
   object pmMessageView: TPopupMenu
     Images = imgMain
     OnPopup = pmMessageViewPopup
-    Left = 355
-    Top = 728
+    Left = 203
+    Top = 416
     object mnuLVGo: TMenuItem
       Caption = 'Go to Source'
       ImageIndex = 71
@@ -6702,8 +6700,8 @@ object MainToolkitForm: TMainToolkitForm
   end
   object pmSearch: TPopupMenu
     Images = imgMain
-    Left = 355
-    Top = 838
+    Left = 203
+    Top = 479
     object mnuSearchGo: TMenuItem
       Caption = '&Go to Source'
       ImageIndex = 71
@@ -6716,7 +6714,7 @@ object MainToolkitForm: TMainToolkitForm
   end
   object dlgFolder: TSelectDirectoryDialog
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    Left = 355
-    Top = 952
+    Left = 203
+    Top = 544
   end
 end

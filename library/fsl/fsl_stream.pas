@@ -261,6 +261,8 @@ type
       Property Bytes : TBytes Read GetBytes Write SetBytes;
   End;
 
+  { TFslFile }
+
   TFslFile = Class(TFslAccessStream)
   Private
     FStream : TFileStream;
