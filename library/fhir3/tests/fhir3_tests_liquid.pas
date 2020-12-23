@@ -167,17 +167,18 @@ begin
   end;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TLiquidEngineTest);
-finalization
-  gTestDoc.Free;
-  gResources.Free;
 function TLiquidEngineTest.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytesV;
   inc(result, engine.sizeInBytes);
   inc(result, test.sizeInBytes);
 end;
+
+initialization
+  TDUnitX.RegisterTestFixture(TLiquidEngineTest);
+finalization
+  gTestDoc.Free;
+  gResources.Free;
 
 end.
 

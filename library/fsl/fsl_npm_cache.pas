@@ -305,7 +305,7 @@ begin
     FFolder := path([ProgData, '.fhir', 'packages']);
   {$ELSE}
   if FUser then
-    FFolder := '~/.fhir/packages'
+    FFolder := '/~/.fhir/packages'
   else
     FFolder := '/var/lib/.fhir/packages';
   {$ENDIF}
