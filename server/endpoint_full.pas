@@ -5,7 +5,10 @@ unit endpoint_full;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Classes, IniFiles, Generics.Collections, ActiveX, ComObj,
+  SysUtils, StrUtils, Classes, IniFiles, Generics.Collections,
+  {$IFDEF WINDOWS}
+  ActiveX, ComObj,
+  {$ENDIF}
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer, IdTCPServer, IdContext, IdHTTP, IdCookie, IdZLibCompressorBase, IdSSL, IdSMTP,
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
@@ -118,13 +121,16 @@ Type
     procedure GetPatients(details : TFslStringDictionary);
     function GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String>;
     function GetResource(Session: TFHIRSession; rtype: String; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
-   {$IFDEF WINDOWS}
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
-    {$ENDIF}
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebEncounter(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+    {$IFDEF WINDOWS}
     function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
+    function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
+    function HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
+    function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
+    {$ENDIF}
 //    Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
   protected
 
@@ -134,9 +140,6 @@ Type
     function HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
     function HandleWebPost(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
-    function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
-    function HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
-    function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
     Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
     function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
@@ -1263,16 +1266,16 @@ begin
     result := HandleWebEdit(request, response)
   else if request.id.EndsWith('$post') then
     result := HandleWebPost(request, response)
-{$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   else if request.id.EndsWith('$qa-edit') then
     result := HandleWebQuestionnaireInstance(request, response)
   else if request.id.StartsWith('Questionnaire/') then
     result := HandleWebQuestionnaire(request, response)
   else if request.id.StartsWith('StructureDefinition/') then
     result := HandleWebProfile(request, response)
+  {$ENDIF}
   else if request.id = 'Create' then
     result := HandleWebCreate(request, response)
-{$ENDIF}
   else if request.id.StartsWith('PatientHooks/') then
     result := HandleWebPatientHooks(request, response, secure)
   else if request.id.StartsWith('Patient/') then
@@ -1940,6 +1943,7 @@ end;
 //  end;
 //end;
 //
+{$IFDEF WINDOWS}
 function TFullServerWebEndPoint.transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
 var
   xml: TFHIRComposer;
@@ -2006,7 +2010,7 @@ begin
   proc.Transform;
   result := proc.Output;
 end;
-
+{$ENDIF}
 
 end.
 

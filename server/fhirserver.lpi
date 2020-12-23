@@ -81,11 +81,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
+            <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\dependencies\Indy10\Core;..\dependencies\Indy10\Protocols;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\..\idetester\source"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\exec\pack\linux"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\..\idetester\source"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -113,6 +114,9 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -136,8 +140,8 @@
             <Filename Value="C:\work\fhirserver\Exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\dependencies\Indy10\System;..\library"/>
-            <OtherUnitFiles Value="..\dependencies\Indy10\Core;..\dependencies\Indy10\System;..\dependencies\Indy10\Protocols;..\dependencies\Indy10\OpenSSL;..\dependencies\Indy10\OpenSSL\dynamic;tests;admin;..\..\idetester\source"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\..\idetester\source"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -226,7 +230,7 @@
         <PackageName Value="LCL"/>
       </Item15>
     </RequiredPackages>
-    <Units Count="84">
+    <Units Count="83">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -488,84 +492,80 @@
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Modules\FHIR.Server.Covid.pas"/>
+        <Filename Value="twilio.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit65>
       <Unit66>
-        <Filename Value="twilio.pas"/>
+        <Filename Value="web_base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit66>
       <Unit67>
-        <Filename Value="web_base.pas"/>
+        <Filename Value="client_cache_manager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit67>
       <Unit68>
-        <Filename Value="client_cache_manager.pas"/>
+        <Filename Value="tx_hgvs.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit68>
       <Unit69>
-        <Filename Value="tx_hgvs.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit69>
-      <Unit70>
         <Filename Value="gui_lcl.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ServerGUI"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit69>
+      <Unit70>
+        <Filename Value="test_registry.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit70>
       <Unit71>
-        <Filename Value="test_registry.pas"/>
+        <Filename Value="tests\tests_search_syntax.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit71>
       <Unit72>
-        <Filename Value="tests\tests_search_syntax.pas"/>
+        <Filename Value="admin\server_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
       <Unit73>
-        <Filename Value="admin\server_config.pas"/>
+        <Filename Value="endpoint.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
       <Unit74>
-        <Filename Value="endpoint.pas"/>
+        <Filename Value="endpoint_bridge.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit74>
       <Unit75>
-        <Filename Value="endpoint_bridge.pas"/>
+        <Filename Value="endpoint_full.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="endpoint_full.pas"/>
+        <Filename Value="endpoint_loinc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
       <Unit77>
-        <Filename Value="endpoint_loinc.pas"/>
+        <Filename Value="endpoint_packages.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit77>
       <Unit78>
-        <Filename Value="endpoint_packages.pas"/>
+        <Filename Value="endpoint_snomed.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
       <Unit79>
-        <Filename Value="endpoint_snomed.pas"/>
+        <Filename Value="endpoint_storage.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit79>
       <Unit80>
-        <Filename Value="endpoint_storage.pas"/>
+        <Filename Value="endpoint_twilio.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
-        <Filename Value="endpoint_twilio.pas"/>
+        <Filename Value="endpoint_txsvr.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit81>
       <Unit82>
-        <Filename Value="endpoint_txsvr.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit82>
-      <Unit83>
         <Filename Value="server_testing.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit83>
+      </Unit82>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
