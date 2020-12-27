@@ -40,6 +40,7 @@ unit fsl_java_utilities;
 interface
    
 uses
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   Classes,
   fsl_java_strings;
 
