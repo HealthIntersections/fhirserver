@@ -267,3 +267,4 @@ packages/lib/x86_64-darwin/
 /packages/lib/i386-win32
 /Exec/certs
 /toolkit2/views/backup
+/server/fhirserver.testing.ini

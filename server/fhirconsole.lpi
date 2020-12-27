@@ -260,7 +260,9 @@
       <Unit6>
         <Filename Value="admin\console_server_form.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServerConnectionForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit6>
       <Unit7>
         <Filename Value="admin\console_tx_edit.pas"/>
