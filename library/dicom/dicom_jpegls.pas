@@ -38,6 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils,
   dicom_dictionary;
 

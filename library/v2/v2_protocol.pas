@@ -1186,7 +1186,7 @@ Constructor Tv2ProtocolClientThread.Create(aOwner: Tv2Protocol);
 Begin
   Assert(Assigned(AOwner));
   FOwner := aOwner;
-  FCloseEvent := TIdLocalEvent.Create(True, False);
+  FCloseEvent := TIdLocalEvent.Create(false, False);
   FreeOnTerminate := True;
   Inherited Create(False);
 End;

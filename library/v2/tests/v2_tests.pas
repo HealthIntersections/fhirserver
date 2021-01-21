@@ -410,6 +410,7 @@ begin
     LIn.IsListener := True;
     LIn.OnReceiveMessage := MessageReply;
     LIn.Start;
+    sleep(200);
     LOut := Tv2Protocol.Create(NIL);
     try
       LOut.CommunicationMode := cmSynchronous;

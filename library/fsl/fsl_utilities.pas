@@ -1604,7 +1604,11 @@ Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInforma
 function TimeZoneIANAName : String;
 function DateTimeToUnix(ConvDate: TDateTime): Longint;
 function UnixToDateTime(USec: Longint): TDateTime;
-  
+
+{$IFDEF DELPHI}
+function GetTickCount64 : UInt64;
+{$ENDIF}
+
 Const
   INTEGER_PRECISION = 24;
   
@@ -17219,6 +17223,13 @@ begin
 
 
 end;
+
+{$IFDEF DELPHI}
+function GetTickCount64 : UInt64;
+begin
+  result := windows.GetTickCount64;
+end;
+{$ENDIF}
 
 Initialization
   init;

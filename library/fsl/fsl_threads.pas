@@ -392,6 +392,7 @@ var
 type
   TTheadRecord = record
     id : TThreadID;
+    obj : TThread; // the tthread (if it's known)
     startTick : UInt64;
     name : String;
     state : String;
@@ -437,6 +438,9 @@ begin
       if (p.id = id) then
       begin
         p.name := name;
+        {$IFDEF FPC}
+        TThread.NameThreadForDebugging(name, p.id);
+        {$ENDIF}
         exit;
       end;
     end;
@@ -444,6 +448,10 @@ begin
     p.startTick := GetTickCount64;
     p.id := id;
     p.name := name;
+    {$IFDEF FPC}
+    TThread.NameThreadForDebugging(name, p.id);
+    {$ENDIF}
+
     GThreadList.Add(p);
   finally
     LeaveCriticalSection(GCritSct);
@@ -1005,7 +1013,7 @@ var
 begin
   SetThreadName(ThreadName);
   setThreadStatus('Initialising');
-  Logging.log('Start '+threadName);
+  Logging.log('Start thread '+threadName);
   initialise;
   try
     if FTimePeriod > 0 then
