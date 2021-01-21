@@ -542,11 +542,20 @@ type
     procedure setDisplay(Value: String); override;
   end;
 
+  TFhirConceptMapGroupElementDependsOn2 = class (TFhirConceptMapGroupElementDependsOnW)
+  public
+    function property_ : String; override;
+    function system_ : String; override;
+    function value : String; override;
+    function display : String; override;
+  end;
+
   TFhirConceptMapGroupElementTarget2 = class (TFhirConceptMapGroupElementTargetW)
   public
     function code: String; override;
     function equivalence : TFHIRConceptEquivalence; override;
     function comments : String; override;
+    function products : TFslList<TFhirConceptMapGroupElementDependsOnW>; override;
   end;
 
   TFhirConceptMapGroupElement2 = class (TFhirConceptMapGroupElementW)
@@ -3229,6 +3238,15 @@ begin
   result := MAP_TFHIRConceptEquivalence[(Element as TFhirConceptMapGroupElementTarget).equivalence];
 end;
 
+function TFhirConceptMapGroupElementTarget2.products: TFslList<TFhirConceptMapGroupElementDependsOnW>;
+var
+  i : TFhirConceptMapElementTargetDependsOn;
+begin
+  result := TFslList<TFhirConceptMapGroupElementDependsOnW>.create;
+  for i in (Element as TFhirConceptMapGroupElementTarget).productList do
+    result.Add(TFhirConceptMapGroupElementDependsOn2.Create(i.link));
+end;
+
 { TFhirConceptMapGroupElement2 }
 
 function TFhirConceptMapGroupElement2.addTarget(code: String; eq: TFHIRConceptEquivalence): TFhirConceptMapGroupElementTargetW;
@@ -4734,6 +4752,28 @@ end;
 function TFhirProvenance2.p: TFhirProvenance;
 begin
   result := (Fres as TFhirProvenance);
+end;
+
+{ TFhirConceptMapGroupElementDependsOn2 }
+
+function TFhirConceptMapGroupElementDependsOn2.display: String;
+begin
+  result := '';
+end;
+
+function TFhirConceptMapGroupElementDependsOn2.property_: String;
+begin
+  result := (Element as TFhirConceptMapElementTargetDependsOn).element;
+end;
+
+function TFhirConceptMapGroupElementDependsOn2.system_: String;
+begin
+  result := (Element as TFhirConceptMapElementTargetDependsOn).codeSystem;
+end;
+
+function TFhirConceptMapGroupElementDependsOn2.value: String;
+begin
+  result := (Element as TFhirConceptMapElementTargetDependsOn).code;
 end;
 
 end.

@@ -1333,7 +1333,9 @@ var
   em : TFhirConceptMapGroupElementW;
   map : TFhirConceptMapGroupElementTargetW;
   outcome : TFHIRCodingW;
-  p :  TFhirParametersParameterW;
+  p, pp :  TFhirParametersParameterW;
+  prod : TFhirConceptMapGroupElementDependsOnW;
+  added : boolean;
 begin
   op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
   try
@@ -1361,11 +1363,13 @@ begin
       try
         if em.targetCount = 0 then
           raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri);
+        added := false;
         for map in em.targets.forEnum do
         begin
           if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
           begin
             result.AddParamBool('result', true);
+            added := true;
             outcome := Factory.wrapCoding(factory.makeByName('Coding'));
             try
               p := result.AddParam('match');
@@ -1375,14 +1379,23 @@ begin
               p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
               if (map.comments <> '') then
                 p.addParamStr('message', map.comments);
+              for prod in map.products.forEnum do
+              begin
+                pp := p.addParam('product');
+                pp.addParamStr('element', prod.property_);
+                pp.addParam('concept').value := Factory.makeCoding(prod.system_, prod.value);
+              end;
             finally
               outcome.free;
             end;
             break;
           end;
         end;
-        result.AddParamBool('result', false);
-        result.AddParamStr('message', 'no match found');
+        if not added then
+        begin
+          result.AddParamBool('result', false);
+          result.AddParamStr('message', 'no match found');
+        end;
       finally
         em.free;
         g.free;

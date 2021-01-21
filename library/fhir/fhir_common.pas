@@ -940,12 +940,21 @@ const
   ALL_TFHIRConceptEquivalence = [cmeNull..cmeDisjoint];
 
 type
+  TFhirConceptMapGroupElementDependsOnW = class (TFHIRXVersionElementWrapper)
+  public
+    function property_ : String; virtual; abstract;
+    function system_ : String; virtual; abstract;
+    function value : String; virtual; abstract;
+    function display : String; virtual; abstract;
+  end;
+
   TFhirConceptMapGroupElementTargetW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirConceptMapGroupElementTargetW; overload;
     function code: String; virtual; abstract;
     function equivalence : TFHIRConceptEquivalence; virtual; abstract;
     function comments : String; virtual; abstract;
+    function products : TFslList<TFhirConceptMapGroupElementDependsOnW>; virtual; abstract;
   end;
 
   TFhirConceptMapGroupElementW = class (TFHIRXVersionElementWrapper)

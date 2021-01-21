@@ -46,7 +46,7 @@ type
     FServer : TTerminologyServer;
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
-    function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
+    function loadCoded(request : TFHIRRequest; isValueSet : boolean) : TFhirCodeableConceptW;
     function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
@@ -389,11 +389,13 @@ var
 //  coding : TFhirCodingW;
   abstractOk, implySystem : boolean;
   params, pout : TFhirParametersW;
-  needSecure : boolean;
+  needSecure, isValueSet : boolean;
   profile : TFhirExpansionParams;
   txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
 begin
+  isValueSet := request.ResourceName = 'ValueSet';
+
   result := 'Validate Code';
   try
     manager.NotFound(request, response);
@@ -408,50 +410,52 @@ begin
           txResources := nil;
           profile := nil;
           try
-            coded := loadCoded(request);
+            coded := loadCoded(request, isValueSet);
             try
               try
                 result := 'Validate Code '+coded.renderText;
-                // first, we have to identify the value set.
-                if request.Id <> '' then // and it must exist, because of the check above
+                if isValueSet then
                 begin
-                  vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
-                  cacheId := vs.url;
-                end
-                else if params.has('url') then
-                begin
-                  url := params.str('url');
-                  txResources := processAdditionalResources(context, manager, nil, params);
-                  for mr in txResources do
-                    if (mr.vurl = url) and (mr is TFHIRValueSetW) then
-                    begin
-                      vs := (mr as TFHIRValueSetW).link;
-                      break;
-                    end;
-                  if vs = nil then
-                    vs := FServer.getValueSetByUrl(url);
-                  if vs = nil then
-                    if not FServer.isKnownValueSet(url, vs) then
-                      vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, params.str('version'), false, needSecure));
-                  if vs = nil then
-                    raise ETerminologySetup.Create('Unable to resolve value set "'+url+'"');
-                  cacheId := vs.url;
-                end
-                else if params.has('valueSet') then
-                begin
-                  if not (params.obj('valueSet') is TFHIRResourceV) then
-                    raise ETerminologyError.create('Error with valueSet parameter');
-                  vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
-                  txResources := processAdditionalResources(context, manager, vs, params);
-                end
-                else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
-                begin
-                  vs := FFactory.wrapValueSet(request.Resource.Link);
-                  txResources := processAdditionalResources(context, manager, vs, params);
-                end
-                else
-                  vs := nil;
+                  // first, we have to identify the value set.
+                  if request.Id <> '' then // and it must exist, because of the check above
+                  begin
+                    vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
+                    cacheId := vs.url;
+                  end
+                  else if params.has('url')  then
+                  begin
+                    url := params.str('url');
+                    txResources := processAdditionalResources(context, manager, nil, params);
+                    for mr in txResources do
+                      if (mr.vurl = url) and (mr is TFHIRValueSetW) then
+                      begin
+                        vs := (mr as TFHIRValueSetW).link;
+                        break;
+                      end;
+                    if vs = nil then
+                      vs := FServer.getValueSetByUrl(url);
+                    if vs = nil then
+                      if not FServer.isKnownValueSet(url, vs) then
+                        vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, params.str('version'), false, needSecure));
+                    if vs = nil then
+                      raise ETerminologySetup.Create('Unable to resolve value set "'+url+'"');
+                    cacheId := vs.url;
+                  end
+                  else if params.has('valueSet') then
+                  begin
+                    if not (params.obj('valueSet') is TFHIRResourceV) then
+                      raise ETerminologyError.create('Error with valueSet parameter');
+                    vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+                    txResources := processAdditionalResources(context, manager, vs, params);
+                  end
+                  else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
+                  begin
+                    vs := FFactory.wrapValueSet(request.Resource.Link);
+                    txResources := processAdditionalResources(context, manager, vs, params);
+                  end
+                  // else
                   // raise ETerminologyError.create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
+                end;
 
                 abstractOk := params.str('abstract') = 'true';
                 implySystem := params.str('implySystem') = 'true';
@@ -672,7 +676,7 @@ begin
             raise ETerminologyError.create('Unable to find concept map to use');
           try
             // ok, now we need to find the source code to validate
-            coded := loadCoded(request);
+            coded := loadCoded(request, true);
 (*            if params.has('coding') then
             begin
               coded := TFhirCodeableConcept.Create;
@@ -1255,7 +1259,7 @@ begin
   inherited;
 end;
 
-function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest): TFhirCodeableConceptW;
+function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest; isValueSet : boolean): TFhirCodeableConceptW;
 var
   coding : TFhirCodingW;
   params : TFhirParametersW;
@@ -1298,12 +1302,27 @@ begin
       end
       else if params.has('codeableConcept') then
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link)
-      else if params.has('code') and params.has('system') then
+      else if isValueSet and (params.has('code') and params.has('system')) then
       begin
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
           coding.systemUri := params.str('system');
+          if params.has('version') then
+            coding.version := params.str('version');
+          coding.code := params.str('code');
+          if params.has('display') then
+            coding.display := params.str('display');
+        finally
+          coding.free;
+        end;
+      end
+      else if not isValueSet and (params.has('code') and params.has('url')) then
+      begin
+        result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+        coding := result.addCoding;
+        try
+          coding.systemUri := params.str('url');
           if params.has('version') then
             coding.version := params.str('version');
           coding.code := params.str('code');
