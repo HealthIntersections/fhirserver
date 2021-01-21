@@ -299,11 +299,6 @@ begin
   resources.Free;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRPathTests);
-  TDUnitX.RegisterTestFixture(TFHIRPathTests);
-finalization
-  gTests.Free;
 function TFHIRPathTests.sizeInBytesV : cardinal;
 begin
   result := inherited sizeInBytesV;
@@ -312,4 +307,9 @@ begin
   inc(result, ucum.sizeInBytes);
 end;
 
+initialization
+  TDUnitX.RegisterTestFixture(TFHIRPathTests);
+  TDUnitX.RegisterTestFixture(TFHIRPathTests);
+finalization
+  gTests.Free;
 end.

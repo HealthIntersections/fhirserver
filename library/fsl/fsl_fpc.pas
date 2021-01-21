@@ -249,16 +249,16 @@ type
   { TDirectory }
 
   TDirectory = record
-    class function GetFiles(const Path: string): TStringDynArray; overload; inline; static;
-    class function GetFiles(const Path, Mask: string): TStringDynArray; overload; inline; static;
-    class function getDirectories(const Path: string): TStringDynArray; overload; inline; static;
+    class function GetFiles(const Path: string): TStringDynArray; overload;  static;
+    class function GetFiles(const Path, Mask: string): TStringDynArray; overload;  static;
+    class function getDirectories(const Path: string): TStringDynArray; overload;  static;
   end;
 
   { TFile }
 
   TFile = record
-    class procedure copy(src, dest : String; dummy : boolean); overload; inline; static;
-    class procedure delete(path : String); overload; inline; static;
+    class procedure copy(src, dest : String; dummy : boolean); overload;  static;
+    class procedure delete(path : String); overload;  static;
   end;
 
 {$ENDIF}

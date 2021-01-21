@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$ELSE} LazFileUtils, {$ENDIF}
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads,
   fsl_stream, fsl_fetcher,
@@ -305,7 +305,7 @@ begin
     FFolder := path([ProgData, '.fhir', 'packages']);
   {$ELSE}
   if FUser then
-    FFolder := '~/.fhir/packages'
+    FFolder := ExpandFileNameUTF8('~/.fhir/packages')
   else
     FFolder := '/var/lib/.fhir/packages';
   {$ENDIF}

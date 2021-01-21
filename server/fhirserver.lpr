@@ -35,7 +35,7 @@ uses
   Windows,
   {$ENDIF}
   {$IFDEF LINUX}
-  cthreads, cmem,
+  cmem, cthreads,
   {$ENDIF}
   Classes, SysUtils,
   Interfaces,

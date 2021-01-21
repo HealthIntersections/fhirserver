@@ -95,7 +95,7 @@ begin
   ts := TStringList.create;
   try
     FCache.ListPackageIds(ts);
-    AssertTrue(ts.count = 0);
+    AssertTrue(ts.count = 0, 'Should be no packages left, but found '+ts.commaText);
   finally
     ts.free;
   end;
