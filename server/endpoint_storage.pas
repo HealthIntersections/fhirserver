@@ -515,7 +515,7 @@ procedure TAsyncTaskThread.Execute;
 var
   response : TFHIRResponse;
   op: TFHIROperationEngine;
-  t: cardinal;
+  t: UInt64;
   us, cs: String;
   ctxt : TOperationContext;
 begin
@@ -537,7 +537,7 @@ begin
       response.format := FFormat;
       response.OnCreateBuilder := doGetBundleBuilder;
 
-      t := GetTickCount;
+      t := GetTickCount64;
       if request.Session = nil then // during OAuth only
         us := 'user=(in-oauth)'
       else
@@ -568,7 +568,7 @@ begin
       details;
       saveOutcome(response);
       status(atsComplete, 'Complete');
-      t := GetTickCount - t;
+      t := GetTickCount64 - t;
       Logging.log('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms');
     finally
       response.Free;
@@ -1547,11 +1547,11 @@ end;
 function TStorageWebEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   op: TFHIROperationEngine;
-  t: cardinal;
+  t: UInt64;
   us, cs: String;
 begin
   Common.stats.restStart;
-  t := GetTickCount;
+  t := GetTickCount64;
   if request.internalRequestId = '' then
     request.internalRequestId := self.Context.Globals.nextRequestId;
 
@@ -1567,7 +1567,7 @@ begin
       raise;
     end;
   end;
-  Common.Stats.restFinish(GetTickCount - t);
+  Common.Stats.restFinish(GetTickCount64 - t);
   if request.Session = nil then // during OAuth only
     us := 'user=(in-oauth)'
   else

@@ -430,7 +430,7 @@ var
   resp: TFHIRResponse;
   Context: TOperationContext;
   op: TFHIROperationEngine;
-  t: cardinal;
+  t: UInt64;
 begin
   Context := TOperationContext.Create(mode, logLevel);
   try
@@ -447,7 +447,7 @@ begin
       resp := TFHIRResponse.Create(FServerContext.ValidatorContext.link);
       try
         resp.OnCreateBuilder := doGetBundleBuilder;
-        t := GetTickCount;
+        t := GetTickCount64;
         req.internalRequestId := FServerContext.Globals.nextRequestId;
         op := FStore.createOperationContext(req.lang);
         try
@@ -460,7 +460,7 @@ begin
             raise;
           end;
         end;
-        Logging.log('Upload took '+inttostr((GetTickCount - t) div 1000)+' seconds');
+        Logging.log('Upload took '+inttostr((GetTickCount64 - t) div 1000)+' seconds');
       finally
         resp.Free;
       end;

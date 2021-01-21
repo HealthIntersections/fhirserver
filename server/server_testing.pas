@@ -122,8 +122,8 @@ begin
   begin
     ShowObjectLeaks := false;
     RunIDETests;
-  {$ENDIF}
   end
+  {$ENDIF}
   else
     RunTestConsole(ini);
 end;

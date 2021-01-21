@@ -33,6 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Registry,
   IdContext, IdCustomHTTPServer,
   fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
@@ -52,7 +53,7 @@ type
     FLock : TFslLock;
     FRestCount: integer;
     FRestTime: integer;
-    FStartTime: cardinal;
+    FStartTime: UInt64;
     FTotalCount: integer;
     FTotalTime: integer;
 
@@ -65,7 +66,7 @@ type
     destructor Destroy; override;
     function link : TFHIRWebServerStats; overload;
 
-    property StartTime : cardinal read FStartTime;
+    property StartTime : UInt64 read FStartTime;
     property TotalCount : integer read GetTotalCount;
     property TotalTime : integer read GetTotalTime;
     property RestCount : integer read GetRestCount;
@@ -251,7 +252,7 @@ begin
   finally
     Flock.Unlock;
   end;
-  result := 'Up '+DescribePeriodMS(GetTickCount - FStartTime);
+  result := 'Up '+DescribePeriodMS(GetTickCount64 - FStartTime);
   if rc > 0 then
     result := result + '. '+inttostr(rc) + ' Ops at '+FloatToStrF(rt / rc, ffFixed, 1, 0)+' ms/hit'
   else
@@ -270,7 +271,7 @@ end;
 
 procedure TFHIRWebServerStats.start;
 begin
-  FStartTime := GetTickCount
+  FStartTime := GetTickCount64
 end;
 
 procedure TFHIRWebServerStats.totalStart;
