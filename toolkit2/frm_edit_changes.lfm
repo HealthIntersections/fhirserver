@@ -1,7 +1,7 @@
 object EditChangeReviewForm: TEditChangeReviewForm
-  Left = -1124
+  Left = -1151
   Height = 738
-  Top = -604
+  Top = -489
   Width = 965
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Editor Change Review'
