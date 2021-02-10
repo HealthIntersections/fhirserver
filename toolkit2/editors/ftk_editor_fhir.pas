@@ -333,7 +333,7 @@ end;
 
 function TFHIREditor.hasDesigner: boolean;
 begin
-  Result := false;
+  Result := true;
 end;
 
 procedure TFHIREditor.makeDesigner;

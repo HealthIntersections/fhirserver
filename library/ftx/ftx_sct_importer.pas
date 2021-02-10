@@ -70,9 +70,9 @@ Type
 
   TRelationship = record
     relationship : Cardinal;
-    characteristic : Integer;
-    Refinability : Integer;
-    Group : Integer;
+    //rf.f characteristic : Integer;
+    //Refinability : Integer;
+    //Group : Integer;
   End;
 
   TRelationshipArray = array of TRelationship;
@@ -770,11 +770,12 @@ begin
       iDescId := StrToUInt64(memU8toString(s, iStart, (iId - iStart)));
 
       cid := StrToUInt64(memU8toString(s, iConceptStart+1, (iConcept - iConceptStart)-1));
+
       oConcept := GetConcept(cid, iConceptIndex);
       if oConcept = nil then
         raise ETerminologySetup.create('unable to find Concept '+IntToStr(cid)+' in desc file (descid = '+inttostr(iDescId)+')');
 
-      memU8toString(s, iType+1, (iTerm - iType) - 1);
+//      memU8toString(s, iType+1, (iTerm - iType) - 1);
       if not FConcept.FindConcept(StrtoUInt64(memU8toString(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
         raise ETerminologySetup.create('Unable to find desc module '+memU8toString(s, iStatus+1, (iModuleId - iStatus) - 1));
       lang := readLang(memU8toString(s, iConcept+1, (iLang - iConcept) - 1));
@@ -792,6 +793,7 @@ begin
 
       sDesc := memU8toString(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, active, iKind = RF2_MAGIC_FSN);
+
 
       iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, caps, active, lang);
       if oConcept.descCount = length(oConcept.FDescriptions) then
@@ -950,6 +952,7 @@ Begin
       iCursor := Next(13);  // modifierId
       iRef := iCursor;
 
+
       iRel := StrToUInt64(memU8toString(s, iStart, iRelid - iStart));
       date := ReadDate(memU8toString(s, iRelId+1, (iDate - iRelId) - 1));
       active := memU8toString(s, iDate+1, iStatus - iDate-1) = '1';
@@ -990,14 +993,14 @@ Begin
         i_r := 0; // todo
         SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
         oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
-        oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
-        oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
-        oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
+        //oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
+        //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
+        //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
         SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
         oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
-        oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
-        oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
-        oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
+        //oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
+        //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
+        //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
       End;
       inc(iCursor, 2);
       inc(OverallCount);
@@ -1034,12 +1037,12 @@ end;
 Function SortRelationshipArray(a : TRelationshipArray):TCardinalArray;
   Function Compare(const a, b: TRelationship) : Integer;
   Begin
-    result := a.characteristic - b.characteristic;
-    if result = 0 then
-      result := a.Group - b.group;
-    if result = 0 then
-      result := a.Refinability - b.Refinability;
-    if result = 0 then
+    //rf.f  result := a.characteristic - b.characteristic;
+    //if result = 0 then
+    //  result := a.Group - b.group;
+    //if result = 0 then
+    //  result := a.Refinability - b.Refinability;
+    //if result = 0 then
       result := integer(a.relationship) - integer(b.relationship)
   End;
 
@@ -1372,8 +1375,8 @@ begin
     if (s <> '') And not StringIsInteger32(s) and (s.length > 2) Then
     begin
       stem := FStemmer.Stem(s);
-      if (stem <> '') then
-        SeeWord(s, iConceptIndex, active, fsn, stem);
+      //if (stem <> '') then
+      //  SeeWord(s, iConceptIndex, active, fsn, stem);
     end;
   End;
 end;
