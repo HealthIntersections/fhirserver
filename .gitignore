@@ -268,3 +268,11 @@ packages/lib/x86_64-darwin/
 /Exec/certs
 /toolkit2/views/backup
 /server/fhirserver.testing.ini
+
+*.rsj
+
+*.compiled
+
+packages/lib/aarch64-darwin/
+
+toolkit2/lib/aarch64-darwin/

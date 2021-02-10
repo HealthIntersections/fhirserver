@@ -38,6 +38,10 @@
         <Filename Value="..\library\fui\fui_syn_hl7.pas"/>
         <UnitName Value="fui_syn_hl7"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_lcl_utilities.pas"/>
+        <UnitName Value="fui_lcl_utilities"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
