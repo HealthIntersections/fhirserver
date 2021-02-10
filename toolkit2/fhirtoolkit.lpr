@@ -4,7 +4,7 @@ program fhirtoolkit;
 
 uses
   {$IFDEF UNIX}
-  cthreads, cmem,
+  cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frm_main,
@@ -26,6 +26,7 @@ frm_about, ftk_version, frm_edit_changes;
 
 begin
   RequireDerivedFormResource:=True;
+  Application.Title:='FHIRToolkit';
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TMainToolkitForm, MainToolkitForm);

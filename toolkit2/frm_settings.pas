@@ -6,15 +6,16 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  fsl_utilities;
+  fsl_utilities,
+  fui_lcl_utilities;
 
 type
 
   { TToolkitSettingsForm }
 
   TToolkitSettingsForm = class(TForm)
-    Button1: TButton;
-    Button2: TButton;
+    btnOk: TButton;
+    btnCancel: TButton;
     btnEditorFont: TButton;
     btnLogFont: TButton;
     btnViewFont: TButton;
@@ -39,6 +40,7 @@ type
     procedure btnLogFontClick(Sender: TObject);
     procedure btnViewFontClick(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FDiffTool : String;
@@ -119,6 +121,11 @@ begin
     FDiffTool := dlgExe.filename;
     lblDiff.caption := ExtractFileName(FDiffTool);
   end;
+end;
+
+procedure TToolkitSettingsForm.FormCreate(Sender: TObject);
+begin
+  setForOs(btnOk, btnCancel);
 end;
 
 end.

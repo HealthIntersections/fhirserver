@@ -152,6 +152,9 @@ type
     MenuItem90: TMenuItem;
     MenuItem91: TMenuItem;
     MenuItem92: TMenuItem;
+    MenuItem93: TMenuItem;
+    mnuApple: TMenuItem;
+    MenuItem95: TMenuItem;
     N12: TMenuItem;
     MenuItem94: TMenuItem;
     N10: TMenuItem;
@@ -438,6 +441,12 @@ procedure TMainToolkitForm.FormCreate(Sender: TObject);
 begin
   Application.OnActivate := DoAppActivate;
   Application.OnException := DoAppException;
+  {$IFDEF OSX}
+  mnuApple.caption := #$EF#$A3#$BF;
+  actionToolsOptions.caption := 'Preferences...';
+  {$ELSE}
+  mnuApple.Visible := false;
+  {$ENDIF}
   initialiseTZData(partnerFile('tzdata.tar.gz'));
 
   GBackgroundTasks.start;

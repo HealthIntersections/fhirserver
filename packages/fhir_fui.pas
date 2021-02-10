@@ -9,7 +9,7 @@ interface
 
 uses
   fui_lcl_cache, fui_lcl_managers, fui_lcl_progress, fui_lcl_registry, 
-  fui_lcl_widgets, fui_syn_hl7, LazarusPackageIntf;
+  fui_lcl_widgets, fui_syn_hl7, fui_lcl_utilities, LazarusPackageIntf;
 
 implementation
 
