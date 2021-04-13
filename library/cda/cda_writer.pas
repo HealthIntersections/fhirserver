@@ -4598,6 +4598,7 @@ begin
   writeSNBase(sPath, oXml, oFocus);
   Attribute(sPath, oXml, 'listType', CODES_TsnListType[oFocus.listType], true);
   oFocus.sourcelocation := oXml.Open('list');
+  WriteSNCaption(sPath+'\caption', oXml, oFocus.caption);
   for iLoop := 0 to oFocus.item.Count - 1 Do
     WriteSNListItem(sPath+'\item', oXml, oFocus.item[iLoop]);
   oXml.Close('list');
