@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
-  ftx_loinc_services;
+  ftx_loinc_services, regexpr;
 
 Const
   FLAG_LONG_COMMON = 1;
@@ -449,8 +449,8 @@ Const
   FLD_CONSUMER_NAME =                         FLD_STATUS + 1;
   FLD_CLASSTYPE =                             FLD_CONSUMER_NAME + 1;
   FLD_FORMULA =                               FLD_CLASSTYPE + 1;
-  FLD_SPECIES =                               FLD_FORMULA + 1;
-  FLD_EXMPL_ANSWERS =                         FLD_SPECIES + 1;
+//  FLD_SPECIES =                               FLD_FORMULA + 1;
+  FLD_EXMPL_ANSWERS =                         FLD_FORMULA + 1;
   FLD_SURVEY_QUEST_TEXT =                     FLD_EXMPL_ANSWERS + 1;
   FLD_SURVEY_QUEST_SRC =                      FLD_SURVEY_QUEST_TEXT + 1;
   FLD_UNITSREQUIRED =                         FLD_SURVEY_QUEST_SRC + 1;
@@ -464,8 +464,8 @@ Const
   FLD_EXAMPLE_UNITS =                         FLD_EXTERNAL_COPYRIGHT_NOTICE + 1;
   FLD_LONG_COMMON_NAME =                      FLD_EXAMPLE_UNITS + 1;
   FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
-  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
-  FLD_EXAMPLE_UCUM_UNITS =                    FLD_DOCUMENT_SECTION + 1;
+//  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
+  FLD_EXAMPLE_UCUM_UNITS =                    FLD_UnitsAndRange + 1;
   FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
   FLD_STATUS_REASON =                         FLD_EXAMPLE_SI_UCUM_UNITS + 1;
   FLD_STATUS_TEXT =                           FLD_STATUS_REASON + 1;
@@ -478,6 +478,9 @@ Const
   FLD_PanelType =                             FLD_EXTERNAL_COPYRIGHT_LINK + 1;
   FLD_AskAtOrderEntry =                       FLD_PanelType + 1;
   FLD_AssociatedObservations =                FLD_AskAtOrderEntry + 1;
+  FLD_VersionFirstReleased =                  FLD_AssociatedObservations + 1;
+  FLD_ValidHL7AttachmentRequest =             FLD_VersionFirstReleased + 1;
+  FLD_DisplayName =                           FLD_ValidHL7AttachmentRequest + 1;
 
 
 Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
@@ -1289,6 +1292,17 @@ begin
   StringSplit(ln, ',', SEQUENCE, ln);
   StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
   StringSplit(ln, ',', CODE, CODE_TEXT);
+
+  PATH_TO_ROOT := ReplaceRegExpr('^"', PATH_TO_ROOT, '', TRUE);
+  PATH_TO_ROOT := ReplaceRegExpr('"$', PATH_TO_ROOT, '', TRUE);
+  SEQUENCE := ReplaceRegExpr('^"', SEQUENCE, '', TRUE);
+  SEQUENCE := ReplaceRegExpr('"$', SEQUENCE, '', TRUE);
+  IMMEDIATE_PARENT := ReplaceRegExpr('^"', IMMEDIATE_PARENT, '', TRUE);
+  IMMEDIATE_PARENT := ReplaceRegExpr('"$', IMMEDIATE_PARENT, '', TRUE);
+  CODE := ReplaceRegExpr('^"', CODE, '', TRUE);
+  CODE := ReplaceRegExpr('"$', CODE, '', TRUE);
+  CODE_TEXT := ReplaceRegExpr('^"', CODE_TEXT, '', TRUE);
+  CODE_TEXT := ReplaceRegExpr('"$', CODE_TEXT, '', TRUE);
 
   if (CODE.StartsWith('LP')) then
   begin
