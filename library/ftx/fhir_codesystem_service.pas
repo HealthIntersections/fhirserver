@@ -1275,6 +1275,9 @@ end;
 
 procedure TFHIRCodeSystemManager.see(r : TFHIRCodeSystemEntry);
 begin
+  if r.url = 'http://hl7.org/fhir/sid/cvx' then
+    r.id := r.id;
+
   if (r.id = '') then
     r.id := newGUIDId;
   if (FMap.containsKey(r.id)) then
