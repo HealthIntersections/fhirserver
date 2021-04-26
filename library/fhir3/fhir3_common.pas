@@ -1521,7 +1521,8 @@ begin
     statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
   statement.text := TFhirNarrative.create;
   statement.text.status := NarrativeStatusGenerated;
-  statement.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
+  if (ts <> '') then
+    statement.instantiatesList.AddItem(TFHIRUri.Create(ts));
   // commented out until we sort out cds-hooks
 //  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
 //  ext.addExtension('name', 'Fetch Patient Alerts');
