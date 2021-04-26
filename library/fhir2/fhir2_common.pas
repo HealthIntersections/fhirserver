@@ -2172,9 +2172,14 @@ function TFHIRValueSet2.excludes: TFslList<TFhirValueSetComposeIncludeW>;
 var
   c : TFhirValueSetComposeInclude;
 begin
-  result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.excludeList.Count);
-  for c in vs.compose.excludeList do
-    result.Add(TFhirValueSetComposeInclude2.Create(c.Link));
+  if vs.compose = nil then
+    result := TFslList<TFhirValueSetComposeIncludeW>.create
+  else
+  begin
+    result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.excludeList.Count);
+    for c in vs.compose.excludeList do
+      result.Add(TFhirValueSetComposeInclude2.Create(c.Link));
+  end;
 end;
 
 function TFHIRValueSet2.expansion: TFhirValueSetExpansionW;
@@ -2223,9 +2228,14 @@ function TFHIRValueSet2.includes: TFslList<TFhirValueSetComposeIncludeW>;
 var
   c : TFhirValueSetComposeInclude;
 begin
-  result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.includeList.Count);
-  for c in vs.compose.includeList do
-    result.Add(TFhirValueSetComposeInclude2.Create(c.Link));
+  if vs.compose = nil then
+    result := TFslList<TFhirValueSetComposeIncludeW>.create
+  else
+  begin
+    result := TFslList<TFhirValueSetComposeIncludeW>.create(vs.compose.includeList.Count);
+    for c in vs.compose.includeList do
+      result.Add(TFhirValueSetComposeInclude2.Create(c.Link));
+  end;
 end;
 
 function TFHIRValueSet2.inlineCS: TFHIRValueSetCodeSystemW;
