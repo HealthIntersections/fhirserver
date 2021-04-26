@@ -42,7 +42,7 @@ uses
   fdb_odbc_fpc, fdb_manager, fdb_odbc, fdb_dialects,
   ftx_sct_combiner, ftx_sct_services, ftx_sct_importer, ftx_loinc_importer, tx_ndc, tx_rxnorm,
   fui_lcl_managers,
-  server_config,
+  server_config, server_constants,
   console_managers;
 
 const
@@ -1656,7 +1656,7 @@ end;
 procedure TMainConsoleForm.Timer1Timer(Sender: TObject);
 var
   ts, tsl, tsd, tsth : TStringList;
-  s, ss, rs : String;
+  s, ss, rs, base : String;
   st : TConnectionStatus;
   id : String;
   session : TServerSession;
@@ -1688,29 +1688,30 @@ begin
     finally
       FLock.Unlock;
     end;
+    base := 'FHIR Console '+SERVER_FULL_VERSION;
     case st of
       csDiconnected :
         begin
           mConsole.Color := $00EFEFEF;
-          Caption := 'FHIR Console - Connecting to '+FAddress;
+          Caption := base + ' - Connecting to '+FAddress;
           sBar.Panels[0].Text := 'Connecting';
         end;
       csUsername :
         begin
           mConsole.Color := $00EFFFEF;
-          Caption := 'FHIR Console - Authenticating to '+FAddress;
+          Caption := base + ' - Authenticating to '+FAddress;
           sBar.Panels[0].Text := 'Authenticating (U)';
         end;
       csPassword :
         begin
           mConsole.Color := $00EFFFFF;
-          Caption := 'FHIR Console - Authenticating to '+FAddress;
+          Caption := base + ' - Authenticating to '+FAddress;
           sBar.Panels[0].Text := 'Authenticating (P)';
         end;
       csConnected, csEnhanced:
         begin
           mConsole.Color := $00FFFFFF;
-          Caption := 'FHIR Console - Connected to '+FAddress;
+          Caption := base + ' - Connected to '+FAddress;
           sBar.Panels[0].Text := 'Connected';
           if not FTelnet.connected then
           begin

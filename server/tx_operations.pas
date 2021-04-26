@@ -380,6 +380,24 @@ begin
   result := nil;
 end;
 
+function camonicalMatches(mr : TFHIRMetadataResourceW; canonical : String) : boolean;
+var
+  l, r : String;
+begin
+  if mr.url = canonical then
+    result := true
+  else if not canonical.Contains('|') then
+    result := false
+  else
+  begin
+    StringSplit(canonical, '|', l, r);
+    if (l <> mr.url) then
+      result := false
+    else
+      result := (r = '') or (r = mr.version);
+  end;
+end;
+
 function TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   vs : TFHIRValueSetW;
@@ -421,13 +439,15 @@ begin
                   begin
                     vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
                     cacheId := vs.url;
+                    result := result+' in vs '+request.id;
                   end
                   else if params.has('url')  then
                   begin
                     url := params.str('url');
+                    result := result+' in vs '+url+' (ref)';
                     txResources := processAdditionalResources(context, manager, nil, params);
                     for mr in txResources do
-                      if (mr.vurl = url) and (mr is TFHIRValueSetW) then
+                      if (camonicalMatches(mr, url)) and (mr is TFHIRValueSetW) then
                       begin
                         vs := (mr as TFHIRValueSetW).link;
                         break;
@@ -446,11 +466,13 @@ begin
                     if not (params.obj('valueSet') is TFHIRResourceV) then
                       raise ETerminologyError.create('Error with valueSet parameter');
                     vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+                    result := result+' in vs '+vs.url+' (param)';
                     txResources := processAdditionalResources(context, manager, vs, params);
                   end
                   else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
                   begin
                     vs := FFactory.wrapValueSet(request.Resource.Link);
+                    result := result+' in vs '+vs.url+' (res)';
                     txResources := processAdditionalResources(context, manager, vs, params);
                   end
                   // else

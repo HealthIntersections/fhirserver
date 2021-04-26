@@ -1,10 +1,10 @@
 object MainToolkitForm: TMainToolkitForm
-  Left = 75
+  Left = 184
   Height = 771
-  Top = 27
+  Top = -928
   Width = 1289
   Caption = 'FHIR Toolkit'
-  ClientHeight = 771
+  ClientHeight = 751
   ClientWidth = 1289
   Icon.Data = {
     F68E010000000100060080800000010020002808010066000000404000000100
@@ -3211,7 +3211,7 @@ object MainToolkitForm: TMainToolkitForm
   object pnlBottom: TPanel
     Left = 0
     Height = 142
-    Top = 611
+    Top = 586
     Width = 1289
     Align = alBottom
     Caption = 'pnlBottom'
@@ -3233,26 +3233,26 @@ object MainToolkitForm: TMainToolkitForm
       TabOrder = 0
       object tbMessages: TTabSheet
         Caption = 'Messages'
-        ClientHeight = 110
-        ClientWidth = 1281
+        ClientHeight = 112
+        ClientWidth = 1279
         ImageIndex = 44
         ParentFont = False
         object Panel4: TPanel
           Left = 0
-          Height = 110
+          Height = 112
           Top = 0
           Width = 32
           Align = alLeft
-          ClientHeight = 110
+          ClientHeight = 112
           ClientWidth = 32
           ParentFont = False
           TabOrder = 0
           object chkCurrrentFileOnly: TCheckBox
             Left = 8
-            Height = 18
+            Height = 19
             Hint = 'Only from Current File'
             Top = 8
-            Width = 18
+            Width = 20
             OnChange = updateMessages
             ParentFont = False
             ParentShowHint = False
@@ -3261,10 +3261,10 @@ object MainToolkitForm: TMainToolkitForm
           end
           object chkhideHintsAndWarnings: TCheckBox
             Left = 8
-            Height = 18
+            Height = 19
             Hint = 'Hide Hints and Warnings'
             Top = 32
-            Width = 18
+            Width = 20
             OnChange = updateMessages
             ParentFont = False
             ParentShowHint = False
@@ -3274,9 +3274,9 @@ object MainToolkitForm: TMainToolkitForm
         end
         object lvMessages: TListView
           Left = 32
-          Height = 110
+          Height = 112
           Top = 0
-          Width = 1249
+          Width = 1247
           Align = alClient
           AutoSort = False
           AutoWidthLastColumn = True
@@ -3295,7 +3295,7 @@ object MainToolkitForm: TMainToolkitForm
             end          
             item
               Caption = 'Details'
-              Width = 859
+              Width = 853
             end>
           ParentFont = False
           PopupMenu = pmMessageView
@@ -3402,11 +3402,11 @@ object MainToolkitForm: TMainToolkitForm
             end
             object cbxSearch: TComboBox
               Left = 42
-              Height = 20
+              Height = 23
               Top = 4
               Width = 690
               Anchors = [akTop, akLeft, akRight]
-              ItemHeight = 19
+              ItemHeight = 15
               OnEditingDone = cbxSearchEditingDone
               ParentFont = False
               TabOrder = 2
@@ -3434,10 +3434,10 @@ object MainToolkitForm: TMainToolkitForm
             end
             object cbxSearchType: TComboBox
               Left = 32
-              Height = 20
+              Height = 23
               Top = 4
               Width = 176
-              ItemHeight = 26
+              ItemHeight = 15
               ItemIndex = 0
               Items.Strings = (
                 'Current File'
@@ -3501,11 +3501,11 @@ object MainToolkitForm: TMainToolkitForm
             end
             object cbxSearchScope: TComboBox
               Left = 216
-              Height = 20
+              Height = 23
               Top = 4
               Width = 351
               Anchors = [akTop, akLeft, akRight]
-              ItemHeight = 19
+              ItemHeight = 15
               ParentFont = False
               TabOrder = 2
             end
@@ -3680,7 +3680,7 @@ object MainToolkitForm: TMainToolkitForm
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 606
+    Top = 581
     Width = 1289
     Align = alBottom
     OnMoved = Splitter1Moved
@@ -3688,11 +3688,11 @@ object MainToolkitForm: TMainToolkitForm
   end
   object pnlMain: TPanel
     Left = 0
-    Height = 580
+    Height = 555
     Top = 26
     Width = 1289
     Align = alClient
-    ClientHeight = 580
+    ClientHeight = 555
     ClientWidth = 1289
     ParentFont = False
     TabOrder = 2
@@ -4201,18 +4201,18 @@ object MainToolkitForm: TMainToolkitForm
     end
     object pnlLeft: TPanel
       Left = 1
-      Height = 578
+      Height = 553
       Top = 1
       Width = 170
       Align = alLeft
-      ClientHeight = 578
+      ClientHeight = 553
       ClientWidth = 170
       Constraints.MinWidth = 57
       ParentFont = False
       TabOrder = 0
       object pgLeft: TPageControl
         Left = 1
-        Height = 576
+        Height = 551
         Top = 1
         Width = 168
         ActivePage = tbProjects
@@ -4235,18 +4235,18 @@ object MainToolkitForm: TMainToolkitForm
     end
     object pnlRight: TPanel
       Left = 1058
-      Height = 578
+      Height = 553
       Top = 1
       Width = 230
       Align = alRight
-      ClientHeight = 578
+      ClientHeight = 553
       ClientWidth = 230
       Constraints.MinWidth = 57
       ParentFont = False
       TabOrder = 1
       object pgRight: TPageControl
         Left = 1
-        Height = 576
+        Height = 551
         Top = 1
         Width = 228
         ActivePage = tbInspector
@@ -4257,15 +4257,15 @@ object MainToolkitForm: TMainToolkitForm
         TabOrder = 0
         object tbInspector: TTabSheet
           Caption = 'Inspector'
-          ClientHeight = 546
-          ClientWidth = 222
+          ClientHeight = 523
+          ClientWidth = 220
           ImageIndex = 49
           ParentFont = False
           object vlInspector: TValueListEditor
             Left = 0
-            Height = 546
+            Height = 523
             Top = 0
-            Width = 222
+            Width = 220
             Align = alClient
             AutoEdit = False
             FixedCols = 0
@@ -4275,7 +4275,7 @@ object MainToolkitForm: TMainToolkitForm
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goAlwaysShowEditor, goThumbTracking]
             ColWidths = (
               64
-              156
+              152
             )
           end
         end
@@ -4293,7 +4293,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object Splitter2: TSplitter
       Left = 1053
-      Height = 578
+      Height = 553
       Top = 1
       Width = 5
       Align = alRight
@@ -4302,14 +4302,14 @@ object MainToolkitForm: TMainToolkitForm
     end
     object Splitter3: TSplitter
       Left = 171
-      Height = 578
+      Height = 553
       Top = 1
       Width = 5
       OnMoved = Splitter3Moved
     end
     object pgEditors: TPageControl
       Left = 176
-      Height = 578
+      Height = 553
       Top = 1
       Width = 877
       Align = alClient
@@ -4325,8 +4325,8 @@ object MainToolkitForm: TMainToolkitForm
   end
   object pnlStatus: TStatusBar
     Left = 0
-    Height = 18
-    Top = 753
+    Height = 23
+    Top = 728
     Width = 1289
     Panels = <    
       item

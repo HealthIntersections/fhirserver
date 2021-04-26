@@ -1,7 +1,7 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 599
+  Left = 514
   Height = 693
-  Top = 174
+  Top = -926
   Width = 899
   Caption = 'FHIRServer Console'
   ClientHeight = 673
@@ -58,15 +58,15 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 892
-      ActivePage = tbTerminologies
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
-        ClientHeight = 612
-        ClientWidth = 882
+        ClientHeight = 615
+        ClientWidth = 884
         OnContextPopup = tbConsoleContextPopup
         ParentFont = False
         object mConsole: TMemo
@@ -99,13 +99,13 @@ object MainConsoleForm: TMainConsoleForm
           end
           object ToolButton2: TToolButton
             Left = 24
-            Height = 8
+            Height = 22
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
           end
           object edtFilter: TEdit
-            Left = 29
+            Left = 32
             Height = 23
             Hint = 'Filter what you see in the log'
             Top = 2
@@ -119,8 +119,8 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbThreads: TTabSheet
         Caption = 'Status'
-        ClientHeight = 612
-        ClientWidth = 882
+        ClientHeight = 615
+        ClientWidth = 884
         ParentFont = False
         object Panel29: TPanel
           Left = 0
@@ -186,8 +186,8 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbStatistics: TTabSheet
         Caption = 'Statistics'
-        ClientHeight = 612
-        ClientWidth = 882
+        ClientHeight = 615
+        ClientWidth = 884
         ParentFont = False
         object mStats: TMemo
           Left = 296
@@ -222,18 +222,18 @@ object MainConsoleForm: TMainConsoleForm
       end
       object tbManage: TTabSheet
         Caption = 'Manage Server'
-        ClientHeight = 612
-        ClientWidth = 882
+        ClientHeight = 615
+        ClientWidth = 884
         ParentFont = False
         object Panel1: TPanel
           Left = 0
-          Height = 612
+          Height = 615
           Top = 0
-          Width = 882
+          Width = 884
           Align = alClient
           Caption = 'Panel1'
-          ClientHeight = 612
-          ClientWidth = 882
+          ClientHeight = 615
+          ClientWidth = 884
           ParentBackground = False
           ParentFont = False
           TabOrder = 0
@@ -241,27 +241,27 @@ object MainConsoleForm: TMainConsoleForm
             Left = 1
             Height = 39
             Top = 1
-            Width = 880
+            Width = 882
             Align = alTop
             Caption = 'Panel30'
             ClientHeight = 39
-            ClientWidth = 880
+            ClientWidth = 882
             ParentFont = False
             TabOrder = 0
             object Label28: TLabel
               Left = 8
-              Height = 17
+              Height = 15
               Top = 8
-              Width = 119
+              Width = 95
               Caption = 'Configuration File'
               ParentColor = False
               ParentFont = False
             end
             object edtConfigFile: TEdit
               Left = 120
-              Height = 33
+              Height = 23
               Top = 6
-              Width = 670
+              Width = 672
               Anchors = [akTop, akLeft, akRight]
               OnChange = edtConfigFileChange
               ParentFont = False
@@ -269,7 +269,7 @@ object MainConsoleForm: TMainConsoleForm
               TabOrder = 0
             end
             object BitBtn1: TBitBtn
-              Left = 798
+              Left = 800
               Height = 26
               Top = 6
               Width = 75
@@ -318,9 +318,9 @@ object MainConsoleForm: TMainConsoleForm
           end
           object pgManage: TPageControl
             Left = 1
-            Height = 506
+            Height = 509
             Top = 40
-            Width = 880
+            Width = 882
             ActivePage = tbWebSettings
             Align = alClient
             Images = ImageList1
@@ -329,35 +329,35 @@ object MainConsoleForm: TMainConsoleForm
             TabOrder = 1
             object tbWebSettings: TTabSheet
               Caption = 'Web Settings'
-              ClientHeight = 475
-              ClientWidth = 870
+              ClientHeight = 481
+              ClientWidth = 874
               ImageIndex = 9
               ParentFont = False
               object GroupBox1: TGroupBox
                 Left = 0
                 Height = 112
                 Top = 0
-                Width = 870
+                Width = 874
                 Align = alTop
                 Caption = '  Web Host  '
                 ClientHeight = 92
-                ClientWidth = 866
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 0
                 object Label34: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 4
-                  Width = 75
+                  Width = 60
                   Caption = 'Host Name'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtHostName: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 0
-                  Width = 742
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtHostNameChange
                   ParentFont = False
@@ -366,18 +366,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label35: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 34
-                  Width = 69
+                  Width = 53
                   Caption = 'HTTP Port'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtWebPort: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 32
-                  Width = 742
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtWebPortChange
                   ParentFont = False
@@ -386,18 +386,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label36: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 65
-                  Width = 72
+                  Width = 58
                   Caption = 'Web Mode'
                   ParentColor = False
                   ParentFont = False
                 end
                 object chkWebMode: TCheckBox
                   Left = 112
-                  Height = 23
+                  Height = 19
                   Top = 65
-                  Width = 317
+                  Width = 245
                   Caption = 'Just redirect to SSL instead of serving HTTP'
                   OnChange = chkWebModeChange
                   ParentFont = False
@@ -408,18 +408,18 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 0
                 Height = 184
                 Top = 112
-                Width = 870
+                Width = 874
                 Align = alTop
                 Caption = '  SSL  '
                 ClientHeight = 164
-                ClientWidth = 866
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 1
                 object edtSSLPort: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 0
-                  Width = 744
+                  Width = 748
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPortChange
                   ParentFont = False
@@ -428,27 +428,27 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label29: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 4
-                  Width = 30
+                  Width = 22
                   Caption = 'Port'
                   ParentColor = False
                   ParentFont = False
                 end
                 object Label30: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 35
-                  Width = 71
+                  Width = 54
                   Caption = 'Certificate'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtSSLCert: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 32
-                  Width = 712
+                  Width = 716
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLCertChange
                   ParentFont = False
@@ -457,18 +457,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label31: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 66
-                  Width = 51
+                  Width = 41
                   Caption = 'CA Cert'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtCACert: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 64
-                  Width = 712
+                  Width = 716
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtCACertChange
                   ParentFont = False
@@ -477,18 +477,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label32: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 97
-                  Width = 75
+                  Width = 58
                   Caption = 'Private Key'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtPrivateKey: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 96
-                  Width = 712
+                  Width = 716
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtPrivateKeyChange
                   ParentFont = False
@@ -497,18 +497,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label33: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 128
-                  Width = 66
+                  Width = 50
                   Caption = 'Password'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtSSLPassword: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 128
-                  Width = 743
+                  Width = 747
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtSSLPasswordChange
                   ParentFont = False
@@ -516,7 +516,7 @@ object MainConsoleForm: TMainConsoleForm
                   Text = 'edtSSLPassword'
                 end
                 object btnCert: TSpeedButton
-                  Left = 833
+                  Left = 837
                   Height = 22
                   Top = 32
                   Width = 23
@@ -561,7 +561,7 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCACert: TSpeedButton
-                  Left = 833
+                  Left = 837
                   Height = 22
                   Top = 65
                   Width = 23
@@ -606,7 +606,7 @@ object MainConsoleForm: TMainConsoleForm
                   ParentFont = False
                 end
                 object btnCertKey: TSpeedButton
-                  Left = 833
+                  Left = 837
                   Height = 22
                   Top = 96
                   Width = 23
@@ -655,27 +655,27 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 0
                 Height = 93
                 Top = 296
-                Width = 870
+                Width = 874
                 Align = alTop
                 Caption = '  Misc  '
                 ClientHeight = 73
-                ClientWidth = 866
+                ClientWidth = 870
                 ParentFont = False
                 TabOrder = 2
                 object Label37: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 4
-                  Width = 64
+                  Width = 51
                   Caption = 'Google Id'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtGoogleId: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 0
-                  Width = 742
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtGoogleIdChange
                   ParentFont = False
@@ -684,18 +684,18 @@ object MainConsoleForm: TMainConsoleForm
                 end
                 object Label42: TLabel
                   Left = 8
-                  Height = 17
+                  Height = 15
                   Top = 36
-                  Width = 73
+                  Width = 57
                   Caption = 'Telnet Pwd'
                   ParentColor = False
                   ParentFont = False
                 end
                 object edtTelnetPassword: TEdit
                   Left = 112
-                  Height = 33
+                  Height = 23
                   Top = 32
-                  Width = 742
+                  Width = 746
                   Anchors = [akTop, akLeft, akRight]
                   OnChange = edtTelnetPasswordChange
                   ParentFont = False
@@ -1382,25 +1382,25 @@ object MainConsoleForm: TMainConsoleForm
           object Panel17: TPanel
             Left = 1
             Height = 59
-            Top = 552
-            Width = 880
+            Top = 555
+            Width = 882
             Align = alBottom
             BorderWidth = 6
             Caption = 'Panel17'
             ClientHeight = 59
-            ClientWidth = 880
+            ClientWidth = 882
             ParentFont = False
             TabOrder = 2
             object Panel18: TPanel
               Left = 7
               Height = 45
               Top = 7
-              Width = 866
+              Width = 868
               Align = alClient
               BevelOuter = bvLowered
               BorderWidth = 10
               ClientHeight = 45
-              ClientWidth = 866
+              ClientWidth = 868
               Color = 15269887
               ParentColor = False
               ParentFont = False
@@ -1409,7 +1409,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 11
                 Height = 23
                 Top = 11
-                Width = 844
+                Width = 846
                 Align = alClient
                 ParentColor = False
                 ParentFont = False
@@ -1421,8 +1421,8 @@ object MainConsoleForm: TMainConsoleForm
             Cursor = crVSplit
             Left = 1
             Height = 6
-            Top = 546
-            Width = 880
+            Top = 549
+            Width = 882
             Align = alBottom
             ResizeAnchor = akBottom
           end
