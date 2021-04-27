@@ -35,7 +35,7 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
-  ftx_loinc_services, regexpr;
+  ftx_loinc_services;
 
 Const
   FLAG_LONG_COMMON = 1;
@@ -1293,16 +1293,16 @@ begin
   StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
   StringSplit(ln, ',', CODE, CODE_TEXT);
 
-  PATH_TO_ROOT := ReplaceRegExpr('^"', PATH_TO_ROOT, '', TRUE);
-  PATH_TO_ROOT := ReplaceRegExpr('"$', PATH_TO_ROOT, '', TRUE);
-  SEQUENCE := ReplaceRegExpr('^"', SEQUENCE, '', TRUE);
-  SEQUENCE := ReplaceRegExpr('"$', SEQUENCE, '', TRUE);
-  IMMEDIATE_PARENT := ReplaceRegExpr('^"', IMMEDIATE_PARENT, '', TRUE);
-  IMMEDIATE_PARENT := ReplaceRegExpr('"$', IMMEDIATE_PARENT, '', TRUE);
-  CODE := ReplaceRegExpr('^"', CODE, '', TRUE);
-  CODE := ReplaceRegExpr('"$', CODE, '', TRUE);
-  CODE_TEXT := ReplaceRegExpr('^"', CODE_TEXT, '', TRUE);
-  CODE_TEXT := ReplaceRegExpr('"$', CODE_TEXT, '', TRUE);
+//  PATH_TO_ROOT := ReplaceRegExpr('^"', PATH_TO_ROOT, '', TRUE);
+//  PATH_TO_ROOT := ReplaceRegExpr('"$', PATH_TO_ROOT, '', TRUE);
+//  SEQUENCE := ReplaceRegExpr('^"', SEQUENCE, '', TRUE);
+//  SEQUENCE := ReplaceRegExpr('"$', SEQUENCE, '', TRUE);
+//  IMMEDIATE_PARENT := ReplaceRegExpr('^"', IMMEDIATE_PARENT, '', TRUE);
+//  IMMEDIATE_PARENT := ReplaceRegExpr('"$', IMMEDIATE_PARENT, '', TRUE);
+//  CODE := ReplaceRegExpr('^"', CODE, '', TRUE);
+//  CODE := ReplaceRegExpr('"$', CODE, '', TRUE);
+//  CODE_TEXT := ReplaceRegExpr('^"', CODE_TEXT, '', TRUE);
+//  CODE_TEXT := ReplaceRegExpr('"$', CODE_TEXT, '', TRUE);
 
   if (CODE.StartsWith('LP')) then
   begin

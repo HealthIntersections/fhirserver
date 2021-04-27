@@ -123,7 +123,6 @@ end;
 procedure TPackageServerEndPoint.Load;
 begin
   FUpdater := TPackageUpdaterThread.Create(Database.Link, self);
-  FUpdater.Start;
 end;
 
 procedure TPackageServerEndPoint.Unload;
@@ -196,6 +195,7 @@ begin
   FPackageServer.DB := Database.Link;
   FPackageServer.NextScan := FUpdater.FNextRun;
   WebEndPoint := FPackageServer;
+  FUpdater.Start;
   result := FPackageServer.link;
 end;
 
