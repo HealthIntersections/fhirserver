@@ -39,7 +39,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json,
   fhir_parser, fhir_objects,
-  fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
+  fhir5_parserBase, fhir5_resources, fhir5_resources_base, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
 
 Type
 
@@ -176,15 +176,21 @@ implementation
 procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirBase); 
 begin
   parseComments(value, jsn);
-  value.LocationStart := jsn.LocationStart;
-  value.LocationEnd := jsn.LocationEnd;
+  if KeepParseLocations then
+  begin
+    value.LocationData.ParseStart := jsn.LocationStart;
+    value.LocationData.ParseFinish := jsn.LocationEnd;
+  end;
 end;
 
-procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirResource); 
+procedure TFHIRJsonParser.ParseBaseProperties(jsn : TJsonObject; value : TFhirResource);
 begin
   parseComments(value, jsn);
-  value.LocationStart := jsn.LocationStart;
-  value.LocationEnd := jsn.LocationEnd;
+  if KeepParseLocations then
+  begin
+    value.LocationData.ParseStart := jsn.LocationStart;
+    value.LocationData.ParseFinish := jsn.LocationEnd;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBaseProperties(json : TJSONWriter; value : TFhirBase); 
@@ -197,8 +203,94 @@ begin
   {no-comments composeComments(json, elem);}
 end;
 
+procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; value : TFhirElement);
+begin
+  ParseBaseProperties(jsn, value); {jp2}
+  if jsn.has('id') or jsn.has('_id') then
+    value.idElement := parseString(jsn.node['id'], jsn.vObj['_id']); {L749}
+  if jsn.has('extension') then
+    iterateArray(jsn.vArr['extension'], value.extensionList, parseExtension);
+end;
 
-{{abstract.types.impl}}
+Procedure TFHIRJsonComposer.ComposeElementProperties(json : TJSONWriter; value : TFhirElement);
+var
+  i : integer {L426};
+begin
+  ComposeBaseProperties(json, value);  {L430}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeStringValue(json, 'id', value.idElement, false); {L769}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeStringProps(json, 'id', value.idElement, false); {L770}
+  if (SummaryOption in [soFull, soData]) and (value.extensionList.Count > 0) then
+  begin
+    startArray(json, 'extension', value.extensionList, false);
+    for i := 0 to value.extensionList.Count - 1 do
+      ComposeExtension(json, '', value.extensionList[i]); {L682}
+    finishArray(json, value.extensionList);
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseBackboneElementProperties(jsn : TJsonObject; value : TFhirBackboneElement);
+begin
+  ParseElementProperties(jsn, value); {jp2}
+  if jsn.has('modifierExtension') then
+    iterateArray(jsn.vArr['modifierExtension'], value.modifierExtensionList, parseExtension);
+end;
+
+Procedure TFHIRJsonComposer.ComposeBackboneElementProperties(json : TJSONWriter; value : TFhirBackboneElement);
+var
+  i : integer {L426};
+begin
+  ComposeElementProperties(json, value);  {L430}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.modifierExtensionList.Count > 0) then
+  begin
+    startArray(json, 'modifierExtension', value.modifierExtensionList, false);
+    for i := 0 to value.modifierExtensionList.Count - 1 do
+      ComposeExtension(json, '', value.modifierExtensionList[i]); {L682}
+    finishArray(json, value.modifierExtensionList);
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDataTypeProperties(jsn : TJsonObject; value : TFhirDataType);
+begin
+  ParseElementProperties(jsn, value); {jp2}
+end;
+
+Procedure TFHIRJsonComposer.ComposeDataTypeProperties(json : TJSONWriter; value : TFhirDataType);
+begin
+  ComposeElementProperties(json, value);  {L430}
+end;
+
+procedure TFHIRJsonParser.ParseBackboneTypeProperties(jsn : TJsonObject; value : TFhirBackboneType);
+begin
+  ParseDataTypeProperties(jsn, value); {jp2}
+  if jsn.has('modifierExtension') then
+    iterateArray(jsn.vArr['modifierExtension'], value.modifierExtensionList, parseExtension);
+end;
+
+Procedure TFHIRJsonComposer.ComposeBackboneTypeProperties(json : TJSONWriter; value : TFhirBackboneType);
+var
+  i : integer {L426};
+begin
+  ComposeDataTypeProperties(json, value);  {L430}
+  if (SummaryOption in [soFull, soSummary, soData]) and (value.modifierExtensionList.Count > 0) then
+  begin
+    startArray(json, 'modifierExtension', value.modifierExtensionList, false);
+    for i := 0 to value.modifierExtensionList.Count - 1 do
+      ComposeExtension(json, '', value.modifierExtensionList[i]); {L682}
+    finishArray(json, value.modifierExtensionList);
+  end;
+end;
+
+procedure TFHIRJsonParser.ParsePrimitiveTypeProperties(jsn : TJsonObject; value : TFhirPrimitiveType);
+begin
+  ParseDataTypeProperties(jsn, value); {jp2}
+end;
+
+Procedure TFHIRJsonComposer.ComposePrimitiveTypeProperties(json : TJSONWriter; value : TFhirPrimitiveType);
+begin
+  ComposeDataTypeProperties(json, value);  {L430}
+end;
 
 procedure TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
 begin
@@ -211,13 +303,16 @@ var
 begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
-    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"', value.LocationStart.line+1, value.LocationStart.col+1);
+    raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
   result := TFHIREnum.create;
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     result.system := aSystems[i];
@@ -234,11 +329,19 @@ begin
   if (value = nil) or (value.Value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeEnumProps(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
@@ -246,17 +349,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments) }) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -271,8 +380,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -288,11 +400,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
@@ -300,17 +420,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -325,8 +451,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -342,11 +471,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDateTimeProps(json : TJSONWriter; name : String; value : TFhirDateTime; inArray : boolean);
@@ -354,17 +491,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -379,8 +522,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -396,11 +542,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeStringProps(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
@@ -408,17 +562,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -433,8 +593,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -450,11 +613,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeIntegerProps(json : TJSONWriter; name : String; value : TFhirInteger; inArray : boolean);
@@ -462,17 +633,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -487,8 +664,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -504,11 +684,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUriProps(json : TJSONWriter; name : String; value : TFhirUri; inArray : boolean);
@@ -516,17 +704,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -541,8 +735,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTFslDateTime(JsonToString(value));
     if (jsn <> nil) then
@@ -558,11 +755,19 @@ begin
   if (value = nil) or (value.value.null) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeInstantProps(json : TJSONWriter; name : String; value : TFhirInstant; inArray : boolean);
@@ -570,17 +775,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -595,8 +806,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -612,11 +826,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeXhtmlProps(json : TJSONWriter; name : String; value : TFhirXhtml; inArray : boolean);
@@ -624,17 +846,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -649,8 +877,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := StringToBoolean(JsonToString(value));
     if (jsn <> nil) then
@@ -666,11 +897,19 @@ begin
   if (value = nil) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBooleanProps(json : TJSONWriter; name : String; value : TFhirBoolean; inArray : boolean);
@@ -678,17 +917,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -703,8 +948,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
      result.value := toTBytes(JsonToString(value));
     if (jsn <> nil) then
@@ -720,11 +968,19 @@ begin
   if (value = nil) or (value.value = nil) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, asString(value.value));
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeBase64BinaryProps(json : TJSONWriter; name : String; value : TFhirBase64Binary; inArray : boolean);
@@ -732,17 +988,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -757,8 +1019,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -774,11 +1039,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeTimeProps(json : TJSONWriter; name : String; value : TFhirTime; inArray : boolean);
@@ -786,17 +1059,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -811,8 +1090,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -828,11 +1110,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeDecimalProps(json : TJSONWriter; name : String; value : TFhirDecimal; inArray : boolean);
@@ -840,17 +1130,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -865,8 +1161,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -882,11 +1181,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeCodeProps(json : TJSONWriter; name : String; value : TFhirCode; inArray : boolean);
@@ -894,17 +1201,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -919,8 +1232,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -936,11 +1252,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeCanonicalProps(json : TJSONWriter; name : String; value : TFhirCanonical; inArray : boolean);
@@ -948,17 +1272,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -973,8 +1303,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -990,11 +1323,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeOidProps(json : TJSONWriter; name : String; value : TFhirOid; inArray : boolean);
@@ -1002,17 +1343,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1027,8 +1374,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1044,11 +1394,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUuidProps(json : TJSONWriter; name : String; value : TFhirUuid; inArray : boolean);
@@ -1056,17 +1414,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1081,8 +1445,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1098,11 +1465,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUrlProps(json : TJSONWriter; name : String; value : TFhirUrl; inArray : boolean);
@@ -1110,17 +1485,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1135,8 +1516,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1152,11 +1536,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeMarkdownProps(json : TJSONWriter; name : String; value : TFhirMarkdown; inArray : boolean);
@@ -1164,17 +1556,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1189,8 +1587,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1206,11 +1607,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
@@ -1218,17 +1627,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1243,8 +1658,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1260,11 +1678,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     prop(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeIdProps(json : TJSONWriter; name : String; value : TFhirId; inArray : boolean);
@@ -1272,17 +1698,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1297,8 +1729,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1314,11 +1749,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposePositiveIntProps(json : TJSONWriter; name : String; value : TFhirPositiveInt; inArray : boolean);
@@ -1326,17 +1769,23 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
 
@@ -1351,8 +1800,11 @@ begin
   try
     if (value <> nil) then
     begin
-      result.LocationStart := value.LocationStart;
-      result.LocationEnd := value.LocationEnd;
+      if KeepParseLocations then
+      begin
+        result.LocationData.ParseStart2 := value.LocationStart;
+        result.LocationData.ParseFinish2 := value.LocationEnd;
+      end;
     end;
     result.value := JsonToString(value);
     if (jsn <> nil) then
@@ -1368,11 +1820,19 @@ begin
   if (value = nil) or (value.value = '') then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+    end;
     exit;
   end
   else
+  begin
+    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;
     propNumber(json, name, value.value);
+    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;
+  end;
 end;
 
 Procedure TFHIRJsonComposer.ComposeInteger64Props(json : TJSONWriter; name : String; value : TFhirInteger64; inArray : boolean);
@@ -1380,19 +1840,26 @@ begin
   if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
   begin
     if inArray then
+    begin
+      if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
       propNull(json, name);
+      if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
+    end;
     exit;
   end
   else
   begin
+    if KeepLocationData then value.LocationData.ComposeStart := json.SourceLocation;
     if (inArray) then
       json.valueObject('')
     else
       json.valueObject('_'+name);
     ComposeElementProperties(json, value);
     json.finishObject;
+    if KeepLocationData then value.LocationData.ComposeFinish := json.SourceLocation;
   end;
 end;
+
 
 {{concrete.types.impl}}
 {{resources.impl}}
@@ -1403,10 +1870,10 @@ var
 begin
   s := jsn['resourceType'];
   if (s = '') then
-    raise EJsonParserException.create('error: the JSON Object has no resourceType property', jsn.LocationStart.line+1, jsn.locationStart.col+1)
+    raise jsn.locationStart.exception('The JSON Object has no resourceType property')
 {{resources.parse}}
   else
-    raise EJsonParserException.create('error: the element '+s+' is not a valid resource name', jsn.LocationStart.line+1, jsn.locationStart.col+1);
+    raise jsn.locationStart.exception('The element '+s+' is not a valid resource name');
 end;
 
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;

@@ -1,6 +1,4 @@
-unit fhir5_javascript;
-
-{$I fhir5.inc}
+unit fhir5_resources_{{N}};
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -18,59 +16,50 @@ unit fhir5_javascript;
      endorse or promote products derived from this software without specific 
      prior written permission.
   
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
   INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
   POSSIBILITY OF SUCH DAMAGE.
   
 }
 
+{$I fhir.inc}
+{$I fhir5.inc}
+
 interface
 
 {{mark}}
 
 uses
-  FHIR.Javascript, fhir_javascript;
+  SysUtils, Classes, 
+  fsl_base, fsl_utilities, fsl_stream, 
+  fhir_objects, fhir_utilities,  
+  fhir5_base, fhir5_enums, fhir5_types, fhir5_resources_base{{canonical}};
 
-procedure registerFHIRTypes(js : TFHIRJavascript);
-procedure registerFHIRTypesDef(js : TFHIRJavascript);
+{{$rt.enum}}
+
+type
+{{reslist-fwds}}
+
+{{res.abstract.intf}}
+
+{{res.concrete.intf}}
+
 
 implementation
 
-function v(xv : boolean) : String;
-begin
-  if xv then
-    result := ''
-  else
-    result := '4';
-end;
+uses
+  fhir5_utilities;
 
-procedure defineBasePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition; xv : boolean);
-begin
-end;
+{{res.abstract.impl}}
 
-{{js.register.routines}}
-
-procedure registerFHIRTypesInt(js : TFHIRJavascript; vs : boolean);
-begin
-{{js.register.reg}}
-end;
-
-procedure registerFHIRTypes(js : TFHIRJavascript);
-begin
-  registerFHIRTypesInt(js, false);
-end;
-
-procedure registerFHIRTypesDef(js : TFHIRJavascript);
-begin
-  registerFHIRTypesInt(js, true);
-end;
+{{res.concrete.impl}}
 
 end.
 

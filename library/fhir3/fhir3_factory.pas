@@ -89,6 +89,7 @@ type
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
+    function wrapCapabilityStatement2(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
     function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; override;
@@ -558,6 +559,11 @@ begin
     result := nil
   else
     result := TFHIRCapabilityStatement3.create(r);
+end;
+
+function TFHIRFactoryR3.wrapCapabilityStatement2(r: TFHIRResourceV): TFHIRCapabilityStatementW;
+begin
+  raise EFHIRException.Create('CapabilityStatement2 is not supported in FHIR R3');
 end;
 
 function TFHIRFactoryR3.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;

@@ -26,7 +26,7 @@ import org.hl7.fhir.utilities.Utilities;
 
 
 public class BaseGenerator {
-  private static final boolean MARKERS = true;
+  private static final boolean MARKERS = false;
 
   protected Definitions definitions;
   protected Configuration config;

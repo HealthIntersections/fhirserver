@@ -1,4 +1,4 @@
-unit fhir5_enums;
+unit fhir5_resources;
 
 {$I fhir5.inc}
 
@@ -36,23 +36,27 @@ interface
 {{mark}}
 
 uses
-  Classes, SysUtils, EncdDecd, 
-  fsl_base, fsl_utilities, FHIR.Support.Signatures, fsl_stream, 
-  fhir_objects, fhir_xhtml,  
-  fhir5_base;
+  SysUtils, Classes, 
+  fsl_base, fsl_utilities, fsl_stream, 
+  fhir_objects, fhir_utilities,  
+  fhir5_base, fhir5_enums, fhir5_types, fhir5_resources_base,
+  fhir5_resources_admin, fhir5_resources_canonical, fhir5_resources_clinical, fhir5_resources_financial, fhir5_resources_medications, fhir5_resources_other;
 
 type
+ TFhirResourceType = fhir5_resources_base.TFhirResourceType;
+  TFhirResourceTypeSet = fhir5_resources_base.TFhirResourceTypeSet;
+  TFhirResource = fhir5_resources_base.TFhirResource;
+  TFhirResourceClass = fhir5_resources_base.TFhirResourceClass;
+  TFhirResourceList = fhir5_resources_base.TFhirResourceList;
+  TFhirDomainResource = fhir5_resources_base.TFhirDomainResource;
 
-{{enum.decl}}
+  TFhirCanonicalResource = fhir5_resources_canonical.TFhirCanonicalResource;
+  TFhirMetadataResource = fhir5_resources_canonical.TFhirMetadataResource;
+  
+{{redeclare}}
 
-{{enum.consts}}
-
-{{enum.conv}}
 
 implementation
-
-
-{{enum.conv.impl}}
 
 end.
 

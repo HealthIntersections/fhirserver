@@ -1,4 +1,4 @@
-unit fhir5_constants;
+unit fhir5_javascript;
 
 {$I fhir5.inc}
 
@@ -18,46 +18,61 @@ unit fhir5_constants;
      endorse or promote products derived from this software without specific 
      prior written permission.
   
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
   INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
   POSSIBILITY OF SUCH DAMAGE.
   
 }
 
+{$I fhir.inc}
+
 interface
 
 {{mark}}
 
 uses
-  SysUtils, Classes,
-  fsl_utilities, fsl_stream,
-  fhir_objects, fhir5_types, fhir5_resources;
+  fsl_javascript, fhir_javascript;
 
-const
-  currentFHIRVersionRelease = fhirVersionRelease5;
-  FHIR_GENERATED_VERSION = '{{ver-mmp}}';
-  FHIR_GENERATED_VERSION_BASE = '{{ver-mm}}';
-  FHIR_GENERATED_PUBLICATION = '5';
-  FHIR_GENERATED_DATE = '{{date}}';
-
-{{rt.consts}}
-
-type
-
-{{search.param.enums}}
-
-const
-
-{{search.param.consts}}
+procedure registerFHIRTypes(js : TFHIRJavascript);
+procedure registerFHIRTypesDef(js : TFHIRJavascript);
 
 implementation
+
+function v(xv : boolean) : String;
+begin
+  if xv then
+    result := ''
+  else
+    result := '5';
+end;
+
+procedure defineBasePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition; xv : boolean);
+begin
+end;
+
+{{js.register.routines}}
+
+procedure registerFHIRTypesInt(js : TFHIRJavascript; vs : boolean);
+begin
+{{js.register.reg}}
+end;
+
+procedure registerFHIRTypes(js : TFHIRJavascript);
+begin
+  registerFHIRTypesInt(js, false);
+end;
+
+procedure registerFHIRTypesDef(js : TFHIRJavascript);
+begin
+  registerFHIRTypesInt(js, true);
+end;
 
 end.
 

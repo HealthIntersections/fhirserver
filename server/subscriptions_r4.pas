@@ -131,18 +131,19 @@ begin
 end;
 
 function TSubscriptionManagerR4.MeetsTopicResourceType(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String): boolean;
-var
-  enum : fhir5_types.TFhirEnum;
+//var
+//  enum : fhir5_types.TFhirEnum;
 begin
-  if topic.resourceTypeList.Count = 0 then
-    result := true
-  else
-  begin
-    result := false;
-    for enum in topic.resourceTypeList do
-      if (enum.value = resourceType) then
-        exit(true);
-  end;
+//  if topic.resourceTypeList.Count = 0 then
+//    result := true
+//  else
+//  begin
+//    result := false;
+//    for enum in topic.resourceTypeList do
+//      if (enum.value = resourceType) then
+//        exit(true);
+//  end;
+  result := false;
 end;
 
 function TSubscriptionManagerR4.MeetsTopicMethodCriteria(topic : TFHIRSubscriptionTopicResourceTrigger; resourceType : String; newRes, oldRes : TFHIRResource): boolean;
@@ -212,10 +213,10 @@ begin
   else
     rt := oldRes.fhirType;
 
-  result := MeetsTopicResourceType(topic.resourceTrigger, rt) and
+  result := false; {R5TODO MeetsTopicResourceType(topic.resourceTrigger, rt) and
      MeetsTopicMethodCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
      MeetsTopicQueryCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
-     MeetsTopicFhirPathCriteria(topic.resourceTrigger, rt, newRes, oldRes);
+     MeetsTopicFhirPathCriteria(topic.resourceTrigger, rt, newRes, oldRes)};
 end;
 
 function TSubscriptionManagerR4.meetsQueryCriteria(query, resourceType: String; resource: TFHIRResource): boolean;
@@ -600,9 +601,9 @@ var
   i : integer;
 begin
   st := topic.resource as TFHIRSubscriptionTopic;
-  SetLength(result, st.resourceTrigger.resourceType.Count);
+  SetLength(result, 0); {R5TODO  st.resourceTrigger.resourceType.Count);
   for i := 0 to st.resourceTrigger.resourceType.Count - 1 do
-    result[i] := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(st.resourceTrigger.resourceType[i].value)+'''')
+    result[i] := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(st.resourceTrigger.resourceType[i].value)+'''')}
 end;
 
 

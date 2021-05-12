@@ -647,8 +647,6 @@ var
 begin
   if (rt.context <> '') then
   begin
-    if (rt.contextType = StructureMapContextTypeType) then
-      b.append('@');
     b.append(rt.Context);
     if (rt.Element <> '')  then
     begin
@@ -1539,7 +1537,6 @@ begin
   if (lexer.hasToken('.')) then
   begin
     target.Context := start;
-    target.ContextType := StructureMapContextTypeVariable;
     start := '';
     lexer.token('.');
     target.Element := lexer.take();

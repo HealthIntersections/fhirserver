@@ -27,7 +27,7 @@ public class JavascriptGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.Javascript");
+	  String template = config.getTemplate("fhir5_javascript");
 
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{js.register.routines}}", r1.toString());

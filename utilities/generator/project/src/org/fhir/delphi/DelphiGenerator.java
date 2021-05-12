@@ -917,6 +917,8 @@ public class DelphiGenerator {
     }
     def.append("    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
     def.append("    Procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); Override;\r\n");
+    def.append("    Procedure listElementFieldsInOrder(fields : TStringList);\r\n");
+    def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
     def.append("  public\r\n");
     def.append("    constructor Create; Override;\r\n");
     def.append("    destructor Destroy; override;\r\n");
@@ -1245,6 +1247,8 @@ public class DelphiGenerator {
     def.append("  \r\n");
     def.append("    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
     def.append("    Procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); Override;\r\n");
+    def.append("    Procedure listElementFieldsInOrder(fields : TStringList);\r\n");
+    def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
     if (isBase) {
       def.append("    function GetResourceType : TFhirResourceType"+rId+"; virtual; abstract;\r\n");
       def.append("    function GetProfileVersion : TFHIRVersion; override;\r\n");
@@ -2031,6 +2035,8 @@ public class DelphiGenerator {
     def.append("  \r\n");
     def.append("    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
     def.append("    Procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); Override;\r\n");
+    def.append("    Procedure listElementFieldsInOrder(fields : TStringList);\r\n");
+    def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
     def.append("  public\r\n");
     def.append("    constructor Create; Override;\r\n");
     def.append("    destructor Destroy; override;\r\n");
@@ -2477,6 +2483,9 @@ public class DelphiGenerator {
       prsrImplJ.append("  val : boolean;\r\n");
     }
 
+    if (true) {
+      throw new Error("what?");
+    }
     if (category == ClassCategory.Resource)
       prsrImplJ.append(
           "begin\r\n"+
@@ -2825,7 +2834,7 @@ public class DelphiGenerator {
             "    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
             "      result."+s+obj+".Add(parseEnum(item, CODES_"+tn+rId+", SYSTEMS_"+tn+rId+"));\r\n");
 
-        workingComposerJ.append("  if "+(e.getMinCardinality() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(elem."+s+obj+".Count > 0) then\r\n");
+        workingComposerJ.append("  if "+(e.getMinCardinality() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(elem."+s+obj+".Count > 0) then {!1}\r\n");
         workingComposerJ.append(
             "  begin\r\n"+
                 "    val := false;\r\n"+    
@@ -2837,17 +2846,17 @@ public class DelphiGenerator {
                 "    end;\r\n"+
                 "    if val then\r\n"+
                 "    begin\r\n"+
-                "      json.valueArray('"+e.getName()+"');\r\n"+
+                "      startArray('"+e.getName()+"');\r\n"+
                 "      for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
                 "        ComposeEnumValue(json, '', elem."+s+obj+"[i], CODES_"+tn+rId+", true);\r\n"+
-                "      json.FinishArray;\r\n"+
+                "      finishArray;\r\n"+
                 "    end;\r\n"+
                 "    if ext then\r\n"+
                 "    begin\r\n"+
-                "      json.valueArray('_"+e.getName()+"');\r\n"+
+                "      startArray('_"+e.getName()+"');\r\n"+
                 "      for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
                 "        ComposeEnumProps(json, '', elem."+s+obj+"[i], CODES_"+tn+rId+", true);\r\n"+
-                "      json.FinishArray;\r\n"+
+                "      finishArray;\r\n"+
                 "    end;\r\n"+
             "  end;\r\n");
 
@@ -2945,7 +2954,7 @@ public class DelphiGenerator {
         workingParserT.append("    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
             "      result."+s+".Add(parse"+parseName(tn)+"(item));\r\n");
 
-        workingComposerJ.append("  if "+(e.getMinCardinality() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(elem."+s+".Count > 0) then\r\n");
+        workingComposerJ.append("  if "+(e.getMinCardinality() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(elem."+s+".Count > 0) then {!2}\r\n");
         if (typeIsPrimitive(e.typeCode())) 
           workingComposerJ.append(
               "  begin\r\n"+
@@ -2958,26 +2967,26 @@ public class DelphiGenerator {
                   "    end;\r\n"+
                   "    if val then\r\n"+
                   "    begin\r\n"+
-                  "      json.valueArray('"+e.getName()+"');\r\n"+
+                  "      startArray('"+e.getName()+"');\r\n"+
                   "      for i := 0 to elem."+s+".Count - 1 do\r\n"+
                   "        "+srlsdJ+"Value(json, '',"+srls.replace("#", "elem."+s+"[i]")+", true);\r\n"+
-                  "      json.FinishArray;\r\n"+
+                  "      finishArray;\r\n"+
                   "    end;\r\n"+
                   "    if ext then\r\n"+
                   "    begin\r\n"+
-                  "      json.valueArray('_"+e.getName()+"');\r\n"+
+                  "      startArray('_"+e.getName()+"');\r\n"+
                   "      for i := 0 to elem."+s+".Count - 1 do\r\n"+
                   "        "+srlsdJ+"Props(json, '',"+srls.replace("#", "elem."+s+"[i]")+", true);\r\n"+
-                  "      json.FinishArray;\r\n"+
+                  "      FinishArray;\r\n"+
                   "    end;\r\n"+
               "  end;\r\n");
         else
           workingComposerJ.append(
               "  begin\r\n"+
-                  "    json.valueArray('"+e.getName()+"');\r\n"+
+                  "    startArray('"+e.getName()+"');\r\n"+
                   "    for i := 0 to elem."+s+".Count - 1 do\r\n"+
                   "      "+srlsdJ+"(json, '', "+getParam3(tn)+srls.replace("#", "elem."+s+"[i]")+"); {z - "+e.typeCode()+"}\r\n"+
-                  "    json.FinishArray;\r\n"+
+                  "    finishArray;\r\n"+
               "  end;\r\n");
       }
     } else {
@@ -4060,13 +4069,13 @@ public class DelphiGenerator {
       prsrImplJ.append("begin\r\n");
       prsrImplJ.append("  i := StringArrayIndexOfSensitive(aNames, JsonToString(value));\r\n");
       prsrImplJ.append("  if (value <> nil) and (i < 0) then\r\n");
-      prsrImplJ.append("    raise EParserException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"', value.LocationStart.line+1, value.LocationStart.col+1);\r\n");
+      prsrImplJ.append("    raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"', value.LocationStart.line+1, value.LocationStart.col+1);\r\n");
       prsrImplJ.append("  result := TFHIREnum"+rId+".create;\r\n");
       prsrImplJ.append("  try\r\n");
-      prsrImplJ.append("    if (value <> nil) then\r\n");
+      prsrImplJ.append("    if (value <> nil) and KeepParseLocations then\r\n");
       prsrImplJ.append("    begin\r\n");
-      prsrImplJ.append("      result.LocationStart := value.LocationStart;\r\n");
-      prsrImplJ.append("      result.LocationEnd := value.LocationEnd;\r\n");
+      prsrImplJ.append("      result.LocationData.ParseStart2 := value.LocationStart;\r\n");
+      prsrImplJ.append("      result.LocationData.ParseFinish2 := value.LocationEnd;\r\n");
       prsrImplJ.append("    end;\r\n");
       prsrImplJ.append("    result.value := JsonToString(value);\r\n");
       prsrImplJ.append("    result.system := aSystems[i];\r\n");
@@ -4123,28 +4132,41 @@ public class DelphiGenerator {
       prsrImplJ.append("  if (value = nil) or (value.Value = '') then\r\n");
       prsrImplJ.append("  begin\r\n");
       prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("    begin\r\n");
+      prsrImplJ.append("      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;\r\n");
       prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;\r\n");
+      prsrImplJ.append("    end\r\n");
       prsrImplJ.append("    exit;\r\n");
       prsrImplJ.append("  end\r\n");
       prsrImplJ.append("  else\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;;\r\n");
       prsrImplJ.append("    prop(json, name, value.value);\r\n");
+      prsrImplJ.append("    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;\r\n");
       prsrImplJ.append("end;\r\n\r\n");
       prsrImplJ.append("Procedure TFHIRJsonComposer"+rId+".Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+rId+"; Const aNames : Array Of String; inArray : boolean);\r\n");
       prsrImplJ.append("begin\r\n");
       prsrImplJ.append("  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments) }) then\r\n");
       prsrImplJ.append("  begin\r\n");
       prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("    begin\r\n");
+      prsrImplJ.append("      if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;;\r\n");
       prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("      if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;\r\n");
+      prsrImplJ.append("    end\r\n");
       prsrImplJ.append("    exit;\r\n");
       prsrImplJ.append("  end\r\n");
       prsrImplJ.append("  else\r\n");
       prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if KeepLocationData then value.LocationData.ComposeStart2 := json.SourceLocation;;\r\n");
       prsrImplJ.append("    if (inArray) then\r\n");
       prsrImplJ.append("      json.valueObject('')\r\n");
       prsrImplJ.append("    else\r\n");
       prsrImplJ.append("      json.valueObject('_'+name);\r\n");
       prsrImplJ.append("    ComposeElementProperties(json, value);\r\n");
       prsrImplJ.append("    json.finishObject;\r\n");
+      prsrImplJ.append("    if KeepLocationData then value.LocationData.ComposeFinish2 := json.SourceLocation;\r\n");
       prsrImplJ.append("  end;\r\n");
       prsrImplJ.append("end;\r\n\r\n");
 
@@ -4202,7 +4224,7 @@ public class DelphiGenerator {
       prsrImplJ.append("begin\r\n");
       prsrImplJ.append("  result := TFhir"+tn+rId+".Create;\r\n");
       prsrImplJ.append("  try\r\n");
-      prsrImplJ.append("    if (value <> nil) then\r\n");
+      prsrImplJ.append("    if (value <> nil) and KeepParseLocations then\r\n");
       prsrImplJ.append("    begin\r\n");
       prsrImplJ.append("      result.LocationStart := value.LocationStart;\r\n");
       prsrImplJ.append("      result.LocationEnd := value.LocationEnd;\r\n");
@@ -4594,10 +4616,10 @@ public class DelphiGenerator {
     prsrImplJ.append("  Prop(json, 'id', elem.Id);\r\n");
     prsrImplJ.append("  if elem.hasExtensionList then\r\n");
     prsrImplJ.append("  begin\r\n");
-    prsrImplJ.append("    json.valueArray('extension');\r\n");
+    prsrImplJ.append("    startArray('extension');\r\n");
     prsrImplJ.append("    for i := 0 to elem.extensionList.Count - 1 do\r\n");
     prsrImplJ.append("      ComposeExtension(json, '',elem.extensionList[i]);\r\n");
-    prsrImplJ.append("    json.FinishArray;\r\n");
+    prsrImplJ.append("    finishArray;\r\n");
     prsrImplJ.append("  end;\r\n");
     prsrImplJ.append("end;\r\n\r\n");
     srlsdefJ.append("    Procedure ComposeBackboneElementProperties(json : TJSONWriter; elem : TFhirBackboneElement"+rId+"); overload;\r\n");
@@ -4608,10 +4630,10 @@ public class DelphiGenerator {
     prsrImplJ.append("  ComposeElementProperties(json, elem);\r\n");
     prsrImplJ.append("  if elem.hasModifierExtensionList then\r\n");
     prsrImplJ.append("  begin\r\n");
-    prsrImplJ.append("    json.valueArray('modifierExtension');\r\n");
+    prsrImplJ.append("    startArray('modifierExtension');\r\n");
     prsrImplJ.append("    for i := 0 to elem.modifierExtensionList.Count - 1 do\r\n");
     prsrImplJ.append("      ComposeExtension(json, '', elem.modifierExtensionList[i]);\r\n");
-    prsrImplJ.append("    json.FinishArray;\r\n");
+    prsrImplJ.append("    finishArray;\r\n");
     prsrImplJ.append("  end;\r\n");
     prsrImplJ.append("end;\r\n\r\n");
     if (vId.equals("4")) {
@@ -4623,10 +4645,10 @@ public class DelphiGenerator {
       prsrImplJ.append("  ComposeElementProperties(json, elem);\r\n");
       prsrImplJ.append("  if elem.hasModifierExtensionList then\r\n");
       prsrImplJ.append("  begin\r\n");
-      prsrImplJ.append("    json.valueArray('modifierExtension');\r\n");
+      prsrImplJ.append("    startArray('modifierExtension');\r\n");
       prsrImplJ.append("    for i := 0 to elem.modifierExtensionList.Count - 1 do\r\n");
       prsrImplJ.append("      ComposeExtension(json, '', elem.modifierExtensionList[i]);\r\n");
-      prsrImplJ.append("    json.FinishArray;\r\n");
+      prsrImplJ.append("    finishArray;\r\n");
       prsrImplJ.append("  end;\r\n");
       prsrImplJ.append("end;\r\n\r\n");
     }

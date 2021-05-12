@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.dstu2"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.utilities"/>
-	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/xpp3_xpath-1.1.4c.jar"/>
-	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/xpp3-1.1.4c.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.dstu3"/>
-	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/commons-codec-1.9.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.convertors"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r4"/>
 	<classpathentry kind="lib" path="C:/work/fhirserver/utilities/generator/dependencies/javaparser-core-3.6.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r5"/>
-	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/hapi-fhir-base-4.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/graha/.m2/repository/xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="C:/Users/graha/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

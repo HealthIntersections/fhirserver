@@ -25,9 +25,9 @@ import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.utilities.Utilities;
-import org.hl7.fhir.utilities.cache.NpmPackage;
-import org.hl7.fhir.utilities.cache.FilesystemPackageCacheManager;
-import org.hl7.fhir.utilities.cache.ToolsVersion;
+import org.hl7.fhir.utilities.npm.NpmPackage;
+import org.hl7.fhir.utilities.npm.FilesystemPackageCacheManager;
+import org.hl7.fhir.utilities.npm.ToolsVersion;
 
 public class PascalGenerator {
   
@@ -36,7 +36,7 @@ public class PascalGenerator {
     if (args.length != 2) {
       System.out.println("Usage: invoke with 2 command line parameters to generate HAPI R5 code");
       System.out.println("1: fhir version to generate from (e.g. 4.2.0 or 'current'");
-      System.out.println("2: The root path of the local copy of the github repo");
+      System.out.println("2: The root path of the local copy of the fhirserver github repo");
     } else {
       String version = args[0];
       String path = args[1];
@@ -49,7 +49,7 @@ public class PascalGenerator {
     Date date = new Date();
     
     String tp = Utilities.path(path, "utilities", "generator", "project", "templates");
-    String sp = Utilities.path(path, "library", "r5");
+    String sp = Utilities.path(path, "library", "fhir5");
     String dest = Utilities.path(path, "library", "r5gen");
     System.out.println("Load templates from "+tp);
     System.out.println("Master source in "+sp);
@@ -132,20 +132,20 @@ public class PascalGenerator {
     System.out.println(" .. Enumerations");
     EnumsGenerator egen = new EnumsGenerator(master, config, date, npm.version());
     egen.genEnums();
-    egen.generate(Utilities.path(dest,  "FHIR.R5.Enums.pas"));
+    egen.generate(Utilities.path(dest,  "fhir5_enums.pas"));
         
     System.out.println("Finish");   
-    cgen.generate(Utilities.path(dest, "FHIR.R5.Constants.pas"));
-    fgen.generate(Utilities.path(dest, "FHIR.R5.Factory.pas"));
-    igen.generate(Utilities.path(dest, "FHIR.R5.inc"));
-    iigen.generate(Utilities.path(dest, "FHIR.R5.IndexInfo.pas"));
-    jsgen.generate(Utilities.path(dest, "FHIR.R5.Javascript.pas"));
-    ogen.generate(Utilities.path(dest, "FHIR.R5.Operations.pas"));
-    rgen.generate(Utilities.path(dest, "FHIR.R5.Resources.pas"));
-    tgen.generate(Utilities.path(dest,  "FHIR.R5.Types.pas"));
-    fmtgen.generateJson(Utilities.path(dest, "FHIR.R5.Json.pas"));
-    fmtgen.generateXml(Utilities.path(dest,  "FHIR.R5.Xml.pas"));
-    fmtgen.generateTurtle(Utilities.path(dest,  "FHIR.R5.Turtle.pas"));
+    cgen.generate(Utilities.path(dest, "fhir5_constants.pas"));
+    fgen.generate(Utilities.path(dest, "fhir5_factory.pas"));
+    igen.generate(Utilities.path(dest, "fhir5.inc"));
+    iigen.generate(Utilities.path(dest, "fhir5_indexinfo.pas"));
+    jsgen.generate(Utilities.path(dest, "fhir5_javascript.pas"));
+    ogen.generate(Utilities.path(dest, "fhir5_operations.pas"));
+    rgen.generate(Utilities.path(dest, "fhir5_resources.pas"));
+    tgen.generate(Utilities.path(dest,  "fhir5_types.pas"));
+    fmtgen.generateJson(Utilities.path(dest, "fhir5_json.pas"));
+    fmtgen.generateXml(Utilities.path(dest,  "fhir5_xml.pas"));
+    fmtgen.generateTurtle(Utilities.path(dest,  "fhir5_turtle.pas"));
 
     System.out.println("Done ("+Long.toString(System.currentTimeMillis()-start)+"ms)");   
     

@@ -1,6 +1,5 @@
 unit fhir5_xml;
 
-{$I fhir5.inc}
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -31,15 +30,18 @@ unit fhir5_xml;
   
 }
 
+{$I fhir.inc}
+{$I fhir5.inc}
+
 interface
 
 {{mark}}
 
 uses
   SysUtils, Classes, 
-  fsl_base, fsl_utilities, fsl_collections, fsl_xml, fsl_xml, 
+  fsl_base, fsl_utilities, fsl_collections, fsl_xml,  
   fhir_parser, fhir_objects, 
-  fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
+  fhir5_parserBase, fhir5_resources, fhir5_resources_base, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
 
 Type
 
@@ -214,10 +216,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDate(element : TMXmlElement; path : string) : TFhirDate;
@@ -250,10 +254,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDateTime(element : TMXmlElement; path : string) : TFhirDateTime;
@@ -286,10 +292,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseString(element : TMXmlElement; path : string) : TFhirString;
@@ -321,10 +329,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseInteger(element : TMXmlElement; path : string) : TFhirInteger;
@@ -356,10 +366,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUri(element : TMXmlElement; path : string) : TFhirUri;
@@ -391,10 +403,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseInstant(element : TMXmlElement; path : string) : TFhirInstant;
@@ -427,10 +441,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseXhtml(element : TMXmlElement; path : string) : TFhirXhtml;
@@ -462,10 +478,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseBoolean(element : TMXmlElement; path : string) : TFhirBoolean;
@@ -497,10 +515,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', LCBooleanToString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseBase64Binary(element : TMXmlElement; path : string) : TFhirBase64Binary;
@@ -533,10 +553,12 @@ begin
   composeElementAttributes(xml, value);
   if (value.value <> nil) then
     attribute(xml, 'value', asString(value.value));
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseTime(element : TMXmlElement; path : string) : TFhirTime;
@@ -568,10 +590,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseDecimal(element : TMXmlElement; path : string) : TFhirDecimal;
@@ -603,10 +627,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseCode(element : TMXmlElement; path : string) : TFhirCode;
@@ -638,10 +664,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseCanonical(element : TMXmlElement; path : string) : TFhirCanonical;
@@ -673,10 +701,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseOid(element : TMXmlElement; path : string) : TFhirOid;
@@ -708,10 +738,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUuid(element : TMXmlElement; path : string) : TFhirUuid;
@@ -743,10 +775,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUrl(element : TMXmlElement; path : string) : TFhirUrl;
@@ -778,10 +812,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseMarkdown(element : TMXmlElement; path : string) : TFhirMarkdown;
@@ -813,10 +849,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseUnsignedInt(element : TMXmlElement; path : string) : TFhirUnsignedInt;
@@ -848,10 +886,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseId(element : TMXmlElement; path : string) : TFhirId;
@@ -883,10 +923,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParsePositiveInt(element : TMXmlElement; path : string) : TFhirPositiveInt;
@@ -918,10 +960,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 function TFHIRXmlParser.ParseInteger64(element : TMXmlElement; path : string) : TFhirInteger64;
@@ -937,8 +981,8 @@ begin
     begin
       if Not ParseElementChild(result, path, child) then
          UnknownContent(child, path);
-    end;
       child := NextSibling(child);
+    end;
     closeOutElement(result, element);
 
     result.link;
@@ -953,10 +997,12 @@ begin
     exit;
   composeElementAttributes(xml, value);
   attribute(xml, 'value', value.value);
+  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;
   xml.open(name);
   composeElementChildren(xml, value);
   closeOutElement(xml, value);
   xml.close(name);
+  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;
 end;
 
 {{types.concrete.impl}}

@@ -1077,7 +1077,7 @@ begin
   begin
     types := expandTypeList(element.type_List);
     try
-      q := addQuestion(group, QuestionnaireItemTypeChoice, element.path, '_type', 'type', true, nil, makeTypeList(profile, types, element.path));
+      q := addQuestion(group, QuestionnaireItemTypeCoding, element.path, '_type', 'type', true, nil, makeTypeList(profile, types, element.path));
       for t in types do
       begin
         sub := q.itemList.Append;
@@ -1190,7 +1190,7 @@ begin
 
     // complex cases:
     // ? itemTypeAttachment: ...?
-    QuestionnaireItemTypeChoice, QuestionnaireItemTypeOpenChoice :
+    QuestionnaireItemTypeCoding :
       if value is TFhirCoding then
         result := value.link as TFhirDataType
       else if value is TFHIREnum then
@@ -1347,7 +1347,7 @@ begin
   vs := resolveValueSet(nil, element.Binding);
   if vs = nil then
     vs := makeAnyValueSet;
-  addQuestion(group, QuestionnaireItemTypeChoice, path, 'value', unCamelCase(Tail(element.path)), required, answerGroups, vs);
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'value', unCamelCase(Tail(element.path)), required, answerGroups, vs);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';
@@ -1442,12 +1442,7 @@ end;
 
 function AnswerTypeForBinding(binding : TFhirElementDefinitionBinding) : TFhirQuestionnaireItemTypeEnum;
 begin
-  if (binding = nil) then
-    result := QuestionnaireItemTypeOpenChoice
-  else if (binding.Strength <> BindingStrengthRequired) then
-    result := QuestionnaireItemTypeOpenChoice
-  else
-    result := QuestionnaireItemTypeChoice;
+  result := QuestionnaireItemTypeCoding;
 end;
 
 procedure TQuestionnaireBuilder.addCodingQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1465,7 +1460,7 @@ procedure TQuestionnaireBuilder.addCodeableConceptQuestions(group : TFHIRQuestio
 begin
   group.setExtensionString(TYPE_EXTENSION, 'CodeableConcept');
   addQuestion(group, AnswerTypeForBinding(element.Binding), path, 'coding', 'code:', false, answerGroups, resolveValueSet(nil, element.Binding));
-  addQuestion(group, QuestionnaireItemTypeOpenChoice, path, 'coding/1', 'other codes:', false, answerGroups, makeAnyValueSet).Repeats := true;
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'coding/1', 'other codes:', false, answerGroups, makeAnyValueSet).Repeats := true;
   addQuestion(group, QuestionnaireItemTypeString, path, 'text', 'text:', required, answerGroups);
 end;
 
@@ -1501,15 +1496,15 @@ begin
   addQuestion(group, QuestionnaireItemTypeString, path, 'state', 'state:', false, answerGroups);
   addQuestion(group, QuestionnaireItemTypeString, path, 'zip', 'zip:', false, answerGroups);
   addQuestion(group, QuestionnaireItemTypeString, path, 'country', 'country:', false, answerGroups);
-  addQuestion(group, QuestionnaireItemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use'));
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/address-use'));
 end;
 
 procedure TQuestionnaireBuilder.addContactQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Contact');
-  addQuestion(group, QuestionnaireItemTypeChoice, path, 'system', 'type:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system'));
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'system', 'type:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-system'));
   addQuestion(group, QuestionnaireItemTypeString, path, 'value', 'value:', required, answerGroups);
-  addQuestion(group, QuestionnaireItemTypeChoice, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use'));
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'use', 'use:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/contact-use'));
 end;
 
 procedure TQuestionnaireBuilder.addIdentifierQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1523,7 +1518,7 @@ end;
 procedure TQuestionnaireBuilder.addQuantityQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Quantity');
-   addQuestion(group, QuestionnaireItemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
+   addQuestion(group, QuestionnaireItemTypeCoding, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
    addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', 'value:', required, answerGroups);
   addQuestion(group, QuestionnaireItemTypeString, path, 'units', 'units:', required, answerGroups);
   addQuestion(group, QuestionnaireItemTypeString, path, 'code', 'coded units:', false, answerGroups);
@@ -1533,9 +1528,9 @@ end;
 procedure TQuestionnaireBuilder.addAgeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Age');
-   addQuestion(group, QuestionnaireItemTypeChoice, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
+   addQuestion(group, QuestionnaireItemTypeCoding, path, 'comparator', 'comp:', false, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/quantity-comparator'));
    addQuestion(group, QuestionnaireItemTypeDecimal, path, 'value', 'value:', required, answerGroups);
-  addQuestion(group, QuestionnaireItemTypeChoice, path, 'units', 'units:', required, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units'));
+  addQuestion(group, QuestionnaireItemTypeCoding, path, 'units', 'units:', required, answerGroups, resolveValueSet('http://hl7.org/fhir/vs/duration-units'));
 end;
 
 procedure TQuestionnaireBuilder.addDurationQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);

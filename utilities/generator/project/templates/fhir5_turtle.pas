@@ -39,7 +39,7 @@ uses
   SysUtils, Classes, 
   fsl_base, fsl_utilities, fsl_collections, fsl_turtle, 
   fhir_parser, fhir_objects, 
-  fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
+  fhir5_parserBase, fhir5_resources, fhir5_resources_base, fhir5_constants, fhir5_base, fhir5_enums, fhir5_types;
 
 Type
 
@@ -130,14 +130,14 @@ implementation
 
 procedure TFHIRTurtleParser.ParseBaseProperties(obj : TTurtleComplex; value : TFhirBase); 
 begin
-  value.LocationStart := obj.Start;
-  value.LocationEnd := obj.Stop;
+  value.LocationData.ParseStart := obj.Start;
+  value.LocationData.ParseFinish := obj.Stop;
 end;
 
 procedure TFHIRTurtleParser.ParseBaseProperties(obj : TTurtleComplex; value : TFhirResource); 
 begin
-  value.LocationStart := obj.Start;
-  value.LocationEnd := obj.Stop;
+  value.LocationData.ParseStart := obj.Start;
+  value.LocationData.ParseFinish := obj.Stop;
 end;
 
 procedure TFHIRTurtleComposer.ComposeBase(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBase; useType : boolean; index : integer); 

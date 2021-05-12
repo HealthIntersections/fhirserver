@@ -47,7 +47,7 @@ public class ResourcesSplitter {
         start = null;
       } else if (s.endsWith("= class;") && start != null) {
         String tn = s.substring(0, s.indexOf("=")).trim();
-        typelines.add("  "+tn+" = FHIR.R5.Resources."+name+"."+tn+";");      
+        typelines.add("  "+tn+" = fhir5_resources."+name+"."+tn+";");      
       }
     }
 //    for (int i = lines.size()-1; i >= 0; i--) {
@@ -78,7 +78,7 @@ public class ResourcesSplitter {
 //      } else {
 //        if (s.endsWith("= class;") ) {
 //          String tn = s.substring(0, s.indexOf("=")).trim();
-//          typelines.add(0, "  "+tn+" = FHIR.R5.Resources."+name+"."+tn);
+//          typelines.add(0, "  "+tn+" = fhir5_resources."+name+"."+tn);
 //          hasAlias = true;
 //        }
 //      }
@@ -88,7 +88,7 @@ public class ResourcesSplitter {
 //      b.append(line);
 //      b.append("\r\n");
 //    }
-//    TextFile.stringToFile(b.toString(), "C:\\work\\fhirserver\\library\\R5\\FHIR.R5.Resources."+name+".pas");
+//    TextFile.stringToFile(b.toString(), "C:\\work\\fhirserver\\library\\R5\\fhir5_resources."+name+".pas");
 //    for (String line : typelines) {
 //      System.out.println(line);
 //    }

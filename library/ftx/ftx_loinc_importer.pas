@@ -1293,16 +1293,11 @@ begin
   StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
   StringSplit(ln, ',', CODE, CODE_TEXT);
 
-//  PATH_TO_ROOT := ReplaceRegExpr('^"', PATH_TO_ROOT, '', TRUE);
-//  PATH_TO_ROOT := ReplaceRegExpr('"$', PATH_TO_ROOT, '', TRUE);
-//  SEQUENCE := ReplaceRegExpr('^"', SEQUENCE, '', TRUE);
-//  SEQUENCE := ReplaceRegExpr('"$', SEQUENCE, '', TRUE);
-//  IMMEDIATE_PARENT := ReplaceRegExpr('^"', IMMEDIATE_PARENT, '', TRUE);
-//  IMMEDIATE_PARENT := ReplaceRegExpr('"$', IMMEDIATE_PARENT, '', TRUE);
-//  CODE := ReplaceRegExpr('^"', CODE, '', TRUE);
-//  CODE := ReplaceRegExpr('"$', CODE, '', TRUE);
-//  CODE_TEXT := ReplaceRegExpr('^"', CODE_TEXT, '', TRUE);
-//  CODE_TEXT := ReplaceRegExpr('"$', CODE_TEXT, '', TRUE);
+  PATH_TO_ROOT := RemoveQuotes(PATH_TO_ROOT);
+  SEQUENCE := RemoveQuotes(SEQUENCE);
+  IMMEDIATE_PARENT := RemoveQuotes(IMMEDIATE_PARENT);
+  CODE := RemoveQuotes(CODE);
+  CODE_TEXT := RemoveQuotes(CODE_TEXT);
 
   if (CODE.StartsWith('LP')) then
   begin

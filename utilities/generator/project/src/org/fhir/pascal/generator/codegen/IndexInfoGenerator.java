@@ -42,7 +42,7 @@ public class IndexInfoGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.IndexInfo");
+	  String template = config.getTemplate("fhir5_indexinfo");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{index-intf}}", indexHeaders.toString());
     template = template.replace("{{index-impl}}", indexMethods.toString());

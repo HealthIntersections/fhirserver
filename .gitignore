@@ -276,3 +276,4 @@ packages/lib/x86_64-darwin/
 packages/lib/aarch64-darwin/
 
 toolkit2/lib/aarch64-darwin/
+/library/copy_r5_files.bat

@@ -1,4 +1,4 @@
-ï»¿unit fhir5_resources_admin;
+unit fhir5_resources_admin;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,13 +34,17 @@
 
 interface
 
-// Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
+// Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
+
+
 
 uses
   SysUtils, Classes, 
   fsl_base, fsl_utilities, fsl_stream, 
-  fhir_objects, fhir_utilities, 
-  fhir5_base, fhir5_enums, fhir5_types, fhir5_resources_base;
+  fhir_objects, fhir_utilities,  
+  fhir5_base, fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources_canonical;
+
+
 
 type
 {$IFDEF FHIR_CATALOGENTRY}
@@ -74,6 +78,16 @@ type
   TFhirDeviceDefinitionDeviceNameList = class;
   TFhirDeviceDefinitionSpecialization = class;
   TFhirDeviceDefinitionSpecializationList = class;
+  TFhirDeviceDefinitionHasPart = class;
+  TFhirDeviceDefinitionHasPartList = class;
+  TFhirDeviceDefinitionPackaging = class;
+  TFhirDeviceDefinitionPackagingList = class;
+  TFhirDeviceDefinitionPackagingDistributor = class;
+  TFhirDeviceDefinitionPackagingDistributorList = class;
+  TFhirDeviceDefinitionPackagingUdiDeviceIdentifier = class;
+  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList = class;
+  TFhirDeviceDefinitionVersion = class;
+  TFhirDeviceDefinitionVersionList = class;
   TFhirDeviceDefinitionCapability = class;
   TFhirDeviceDefinitionCapabilityList = class;
   TFhirDeviceDefinitionProperty = class;
@@ -189,6 +203,9 @@ type
   TFhirSlot = class;
   TFhirSlotList = class;
 {$ENDIF FHIR_SLOT}
+
+
+
 
 {$IFDEF FHIR_CATALOGENTRY}
   // Used for example, to point to a substance, or to a device used to administer a medication.
@@ -328,7 +345,7 @@ type
     procedure SetReferencedItem(value : TFhirReference);
     function GetRelatedEntryList : TFhirCatalogEntryRelatedEntryList;
     function GetHasRelatedEntryList : Boolean;
-    Procedure SetUpdatedBy(value : TFhirReference);
+    procedure SetUpdatedBy(value : TFhirReference);
     function GetNoteList : TFhirAnnotationList;
     function GetHasNoteList : Boolean;
     procedure SetEstimatedDuration(value : TFhirDuration);
@@ -958,13 +975,9 @@ type
   TFhirDeviceProperty = class (TFhirBackboneElement)
   protected
     FType_ : TFhirCodeableConcept;
-    FvalueQuantityList : TFhirQuantityList;
-    FvalueCodeList : TFhirCodeableConceptList;
+    FValue : TFhirDataType;
     procedure SetType_(value : TFhirCodeableConcept);
-    function GetValueQuantityList : TFhirQuantityList;
-    function GetHasValueQuantityList : Boolean;
-    function GetValueCodeList : TFhirCodeableConceptList;
-    function GetHasValueCodeList : Boolean;
+    procedure SetValue(value : TFhirDataType);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -992,13 +1005,10 @@ type
     // Code that specifies the property being represented. No codes are specified but the MDC codes are an example: https://build.fhir.org/mdc.html.
     property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
-    // Property value as a quantity.
-    property valueQuantityList : TFhirQuantityList read GetValueQuantityList;
-    property hasValueQuantityList : boolean read GetHasValueQuantityList;
-
-    // Property value as a code, e.g., NTP4 (synced to NTP).
-    property valueCodeList : TFhirCodeableConceptList read GetValueCodeList;
-    property hasValueCodeList : boolean read GetHasValueCodeList;
+    // Typed access to Property value - can be a code or quantity. (defined for API consistency)
+    property value : TFhirDataType read FValue write SetValue;
+    // Property value - can be a code or quantity.
+    property valueElement : TFhirDataType read FValue write SetValue;
 
   end;
 
@@ -1887,6 +1897,557 @@ type
     property FhirDeviceDefinitionSpecializations[index : Integer] : TFhirDeviceDefinitionSpecialization read GetItemN write SetItemN; default;
   End;
 
+  // A device that is part (for example a component) of the present device.
+  TFhirDeviceDefinitionHasPart = class (TFhirBackboneElement)
+  protected
+    FReference : TFhirReference;
+    FCount : TFhirInteger;
+    procedure SetReference(value : TFhirReference);
+    procedure SetCount(value : TFhirInteger);
+    function GetCountST : String;
+    procedure SetCountST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirDeviceDefinitionHasPart; overload;
+    function Clone : TFhirDeviceDefinitionHasPart; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Reference to the device that is part of the current device. (defined for API consistency)
+    property reference : TFhirReference read FReference write SetReference;
+    // Reference to the device that is part of the current device.
+    property referenceElement : TFhirReference read FReference write SetReference;
+
+    // Typed access to Number of instances of the component device in the current device.
+    property count : String read GetCountST write SetCountST;
+    // Number of instances of the component device in the current device.
+    property countElement : TFhirInteger read FCount write SetCount;
+
+  end;
+
+  TFhirDeviceDefinitionHasPartListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceDefinitionHasPartList;
+    function GetCurrent : TFhirDeviceDefinitionHasPart;
+  protected
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create(list : TFhirDeviceDefinitionHasPartList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceDefinitionHasPart read GetCurrent;
+  end;
+
+  TFhirDeviceDefinitionHasPartList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDeviceDefinitionHasPart;
+    procedure SetItemN(index : Integer; value : TFhirDeviceDefinitionHasPart);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirDeviceDefinitionHasPartList; overload;
+    function Clone : TFhirDeviceDefinitionHasPartList; overload;
+    function GetEnumerator : TFhirDeviceDefinitionHasPartListEnumerator;
+    
+    //  Add a FhirDeviceDefinitionHasPart to the end of the list.
+    function Append : TFhirDeviceDefinitionHasPart;
+    
+    // Add an already existing FhirDeviceDefinitionHasPart to the end of the list.
+    procedure AddItem(value : TFhirDeviceDefinitionHasPart); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirDeviceDefinitionHasPart) : Integer;
+    
+    // Insert FhirDeviceDefinitionHasPart before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirDeviceDefinitionHasPart;
+    
+    // Insert an existing FhirDeviceDefinitionHasPart before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirDeviceDefinitionHasPart);
+    
+    // Get the iIndexth FhirDeviceDefinitionHasPart. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirDeviceDefinitionHasPart);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirDeviceDefinitionHasPart;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirDeviceDefinitionHasParts[index : Integer] : TFhirDeviceDefinitionHasPart read GetItemN write SetItemN; default;
+  End;
+
+  // Information about the packaging of the device, i.e. how the device is packaged.
+  TFhirDeviceDefinitionPackaging = class (TFhirBackboneElement)
+  protected
+    FIdentifier : TFhirIdentifier;
+    FType_ : TFhirCodeableConcept;
+    FCount : TFhirInteger;
+    FdistributorList : TFhirDeviceDefinitionPackagingDistributorList;
+    FudiDeviceIdentifierList : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+    FpackagingList : TFhirDeviceDefinitionPackagingList;
+    procedure SetIdentifier(value : TFhirIdentifier);
+    procedure SetType_(value : TFhirCodeableConcept);
+    procedure SetCount(value : TFhirInteger);
+    function GetCountST : String;
+    procedure SetCountST(value : String);
+    function GetDistributorList : TFhirDeviceDefinitionPackagingDistributorList;
+    function GetHasDistributorList : Boolean;
+    function GetUdiDeviceIdentifierList : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+    function GetHasUdiDeviceIdentifierList : Boolean;
+    function GetPackagingList : TFhirDeviceDefinitionPackagingList;
+    function GetHasPackagingList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirDeviceDefinitionPackaging; overload;
+    function Clone : TFhirDeviceDefinitionPackaging; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The business identifier of the packaged medication. (defined for API consistency)
+    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    // The business identifier of the packaged medication.
+    property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
+
+    // Typed access to A code that defines the specific type of packaging. (defined for API consistency)
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    // A code that defines the specific type of packaging.
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+
+    // Typed access to The number of items contained in the package (devices or sub-packages).
+    property count : String read GetCountST write SetCountST;
+    // The number of items contained in the package (devices or sub-packages).
+    property countElement : TFhirInteger read FCount write SetCount;
+
+    // An organization that distributes the packaged device.
+    property distributorList : TFhirDeviceDefinitionPackagingDistributorList read GetDistributorList;
+    property hasDistributorList : boolean read GetHasDistributorList;
+
+    // Unique Device Identifier (UDI) Barcode string on the packaging.
+    property udiDeviceIdentifierList : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList read GetUdiDeviceIdentifierList;
+    property hasUdiDeviceIdentifierList : boolean read GetHasUdiDeviceIdentifierList;
+
+    // Allows packages within packages.
+    property packagingList : TFhirDeviceDefinitionPackagingList read GetPackagingList;
+    property hasPackagingList : boolean read GetHasPackagingList;
+
+  end;
+
+  TFhirDeviceDefinitionPackagingListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceDefinitionPackagingList;
+    function GetCurrent : TFhirDeviceDefinitionPackaging;
+  protected
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create(list : TFhirDeviceDefinitionPackagingList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceDefinitionPackaging read GetCurrent;
+  end;
+
+  TFhirDeviceDefinitionPackagingList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDeviceDefinitionPackaging;
+    procedure SetItemN(index : Integer; value : TFhirDeviceDefinitionPackaging);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirDeviceDefinitionPackagingList; overload;
+    function Clone : TFhirDeviceDefinitionPackagingList; overload;
+    function GetEnumerator : TFhirDeviceDefinitionPackagingListEnumerator;
+    
+    //  Add a FhirDeviceDefinitionPackaging to the end of the list.
+    function Append : TFhirDeviceDefinitionPackaging;
+    
+    // Add an already existing FhirDeviceDefinitionPackaging to the end of the list.
+    procedure AddItem(value : TFhirDeviceDefinitionPackaging); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirDeviceDefinitionPackaging) : Integer;
+    
+    // Insert FhirDeviceDefinitionPackaging before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirDeviceDefinitionPackaging;
+    
+    // Insert an existing FhirDeviceDefinitionPackaging before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirDeviceDefinitionPackaging);
+    
+    // Get the iIndexth FhirDeviceDefinitionPackaging. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirDeviceDefinitionPackaging);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirDeviceDefinitionPackaging;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirDeviceDefinitionPackagings[index : Integer] : TFhirDeviceDefinitionPackaging read GetItemN write SetItemN; default;
+  End;
+
+  // An organization that distributes the packaged device.
+  TFhirDeviceDefinitionPackagingDistributor = class (TFhirBackboneElement)
+  protected
+    FName : TFhirString;
+    ForganizationReferenceList : TFhirReferenceList;
+    procedure SetName(value : TFhirString);
+    function GetNameST : String;
+    procedure SetNameST(value : String);
+    function GetOrganizationReferenceList : TFhirReferenceList;
+    function GetHasOrganizationReferenceList : Boolean;
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirDeviceDefinitionPackagingDistributor; overload;
+    function Clone : TFhirDeviceDefinitionPackagingDistributor; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Distributor's human-readable name.
+    property name : String read GetNameST write SetNameST;
+    // Distributor's human-readable name.
+    property nameElement : TFhirString read FName write SetName;
+
+    // Distributor as an Organization resource.
+    property organizationReferenceList : TFhirReferenceList read GetOrganizationReferenceList;
+    property hasOrganizationReferenceList : boolean read GetHasOrganizationReferenceList;
+
+  end;
+
+  TFhirDeviceDefinitionPackagingDistributorListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceDefinitionPackagingDistributorList;
+    function GetCurrent : TFhirDeviceDefinitionPackagingDistributor;
+  protected
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create(list : TFhirDeviceDefinitionPackagingDistributorList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceDefinitionPackagingDistributor read GetCurrent;
+  end;
+
+  TFhirDeviceDefinitionPackagingDistributorList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDeviceDefinitionPackagingDistributor;
+    procedure SetItemN(index : Integer; value : TFhirDeviceDefinitionPackagingDistributor);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirDeviceDefinitionPackagingDistributorList; overload;
+    function Clone : TFhirDeviceDefinitionPackagingDistributorList; overload;
+    function GetEnumerator : TFhirDeviceDefinitionPackagingDistributorListEnumerator;
+    
+    //  Add a FhirDeviceDefinitionPackagingDistributor to the end of the list.
+    function Append : TFhirDeviceDefinitionPackagingDistributor;
+    
+    // Add an already existing FhirDeviceDefinitionPackagingDistributor to the end of the list.
+    procedure AddItem(value : TFhirDeviceDefinitionPackagingDistributor); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirDeviceDefinitionPackagingDistributor) : Integer;
+    
+    // Insert FhirDeviceDefinitionPackagingDistributor before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirDeviceDefinitionPackagingDistributor;
+    
+    // Insert an existing FhirDeviceDefinitionPackagingDistributor before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirDeviceDefinitionPackagingDistributor);
+    
+    // Get the iIndexth FhirDeviceDefinitionPackagingDistributor. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirDeviceDefinitionPackagingDistributor);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirDeviceDefinitionPackagingDistributor;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirDeviceDefinitionPackagingDistributors[index : Integer] : TFhirDeviceDefinitionPackagingDistributor read GetItemN write SetItemN; default;
+  End;
+
+  // Unique Device Identifier (UDI) Barcode string on the packaging.
+  TFhirDeviceDefinitionPackagingUdiDeviceIdentifier = class (TFhirBackboneElement)
+  protected
+    FDeviceIdentifier : TFhirString;
+    FIssuer : TFhirUri;
+    FJurisdiction : TFhirUri;
+    procedure SetDeviceIdentifier(value : TFhirString);
+    function GetDeviceIdentifierST : String;
+    procedure SetDeviceIdentifierST(value : String);
+    procedure SetIssuer(value : TFhirUri);
+    function GetIssuerST : String;
+    procedure SetIssuerST(value : String);
+    procedure SetJurisdiction(value : TFhirUri);
+    function GetJurisdictionST : String;
+    procedure SetJurisdictionST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier; overload;
+    function Clone : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to Identifier to be associated with every instance for issuer and jurisdiction.
+    property deviceIdentifier : String read GetDeviceIdentifierST write SetDeviceIdentifierST;
+    // Identifier to be associated with every instance for issuer and jurisdiction.
+    property deviceIdentifierElement : TFhirString read FDeviceIdentifier write SetDeviceIdentifier;
+
+    // Typed access to The organization that assigns the identifier algorithm.
+    property issuer : String read GetIssuerST write SetIssuerST;
+    // The organization that assigns the identifier algorithm.
+    property issuerElement : TFhirUri read FIssuer write SetIssuer;
+
+    // Typed access to The jurisdiction to which the deviceIdentifier applies.
+    property jurisdiction : String read GetJurisdictionST write SetJurisdictionST;
+    // The jurisdiction to which the deviceIdentifier applies.
+    property jurisdictionElement : TFhirUri read FJurisdiction write SetJurisdiction;
+
+  end;
+
+  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+    function GetCurrent : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+  protected
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create(list : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier read GetCurrent;
+  end;
+
+  TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+    procedure SetItemN(index : Integer; value : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList; overload;
+    function Clone : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList; overload;
+    function GetEnumerator : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator;
+    
+    //  Add a FhirDeviceDefinitionPackagingUdiDeviceIdentifier to the end of the list.
+    function Append : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+    
+    // Add an already existing FhirDeviceDefinitionPackagingUdiDeviceIdentifier to the end of the list.
+    procedure AddItem(value : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier) : Integer;
+    
+    // Insert FhirDeviceDefinitionPackagingUdiDeviceIdentifier before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+    
+    // Insert an existing FhirDeviceDefinitionPackagingUdiDeviceIdentifier before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+    
+    // Get the iIndexth FhirDeviceDefinitionPackagingUdiDeviceIdentifier. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirDeviceDefinitionPackagingUdiDeviceIdentifiers[index : Integer] : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier read GetItemN write SetItemN; default;
+  End;
+
+  // The version of the device or software.
+  TFhirDeviceDefinitionVersion = class (TFhirBackboneElement)
+  protected
+    FType_ : TFhirCodeableConcept;
+    FComponent : TFhirIdentifier;
+    FValue : TFhirString;
+    procedure SetType_(value : TFhirCodeableConcept);
+    procedure SetComponent(value : TFhirIdentifier);
+    procedure SetValue(value : TFhirString);
+    function GetValueST : String;
+    procedure SetValueST(value : String);
+  
+    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Assign(oSource : TFslObject); override;
+    function Link : TFhirDeviceDefinitionVersion; overload;
+    function Clone : TFhirDeviceDefinitionVersion; overload;
+    function setProperty(propName : string; propValue : TFHIRObject) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    function getTypesForProperty(propName : string): String; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function Equals(other : TObject) : boolean; override;
+    function isEmpty : boolean; override;
+  {$IFNDEF FPC}published{$ENDIF}
+    // Typed access to The type of the device version, e.g. manufacturer, approved, internal. (defined for API consistency)
+    property type_ : TFhirCodeableConcept read FType_ write SetType_;
+    // The type of the device version, e.g. manufacturer, approved, internal.
+    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+
+    // Typed access to The hardware or software module of the device to which the version applies. (defined for API consistency)
+    property component : TFhirIdentifier read FComponent write SetComponent;
+    // The hardware or software module of the device to which the version applies.
+    property componentElement : TFhirIdentifier read FComponent write SetComponent;
+
+    // Typed access to The version text.
+    property value : String read GetValueST write SetValueST;
+    // The version text.
+    property valueElement : TFhirString read FValue write SetValue;
+
+  end;
+
+  TFhirDeviceDefinitionVersionListEnumerator = class (TFslObject)
+  private
+    FIndex : integer;
+    FList : TFhirDeviceDefinitionVersionList;
+    function GetCurrent : TFhirDeviceDefinitionVersion;
+  protected
+    function sizeInBytesV : cardinal; override;
+  public
+    constructor Create(list : TFhirDeviceDefinitionVersionList);
+    destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirDeviceDefinitionVersion read GetCurrent;
+  end;
+
+  TFhirDeviceDefinitionVersionList = class (TFHIRObjectList)
+  private
+    function GetItemN(index : Integer) : TFhirDeviceDefinitionVersion;
+    procedure SetItemN(index : Integer; value : TFhirDeviceDefinitionVersion);
+  protected
+    function ItemClass : TFslObjectClass; override;
+  public
+    function Link : TFhirDeviceDefinitionVersionList; overload;
+    function Clone : TFhirDeviceDefinitionVersionList; overload;
+    function GetEnumerator : TFhirDeviceDefinitionVersionListEnumerator;
+    
+    //  Add a FhirDeviceDefinitionVersion to the end of the list.
+    function Append : TFhirDeviceDefinitionVersion;
+    
+    // Add an already existing FhirDeviceDefinitionVersion to the end of the list.
+    procedure AddItem(value : TFhirDeviceDefinitionVersion); overload;
+    
+    // See if an item is already in the list. returns -1 if not in the list
+    function IndexOf(value : TFhirDeviceDefinitionVersion) : Integer;
+    
+    // Insert FhirDeviceDefinitionVersion before the designated index (0 = first item)
+    function Insert(index : Integer) : TFhirDeviceDefinitionVersion;
+    
+    // Insert an existing FhirDeviceDefinitionVersion before the designated index (0 = first item)
+    procedure InsertItem(index : Integer; value : TFhirDeviceDefinitionVersion);
+    
+    // Get the iIndexth FhirDeviceDefinitionVersion. (0 = first item)
+    procedure SetItemByIndex(index : Integer; value : TFhirDeviceDefinitionVersion);
+    
+    // The number of items in the collection
+    function Item(index : Integer) : TFhirDeviceDefinitionVersion;
+    
+    // The number of items in the collection
+    function Count : Integer; overload;
+    
+    // Remove the indexth item. The first item is index 0.
+    procedure Remove(index : Integer);
+    
+    // Remove All Items from the list
+    procedure ClearItems;
+    
+    property FhirDeviceDefinitionVersions[index : Integer] : TFhirDeviceDefinitionVersion read GetItemN write SetItemN; default;
+  End;
+
   // Additional capabilities that the device is defined or required to have e.g. "water resistant", "long life".
   TFhirDeviceDefinitionCapability = class (TFhirBackboneElement)
   protected
@@ -2210,9 +2771,11 @@ type
     FManufacturer : TFhirDataType;
     FdeviceNameList : TFhirDeviceDefinitionDeviceNameList;
     FModelNumber : TFhirString;
-    FType_ : TFhirCodeableConcept;
+    Ftype_List : TFhirCodeableConceptList;
     FspecializationList : TFhirDeviceDefinitionSpecializationList;
-    FversionList : TFhirStringList;
+    FhasPartList : TFhirDeviceDefinitionHasPartList;
+    FpackagingList : TFhirDeviceDefinitionPackagingList;
+    FversionList : TFhirDeviceDefinitionVersionList;
     FsafetyList : TFhirCodeableConceptList;
     FshelfLifeStorageList : TFhirProductShelfLifeList;
     FPhysicalCharacteristics : TFhirProdCharacteristic;
@@ -2223,7 +2786,6 @@ type
     FcontactList : TFhirContactPointList;
     FOnlineInformation : TFhirUri;
     FnoteList : TFhirAnnotationList;
-    FQuantity : TFhirQuantity;
     FParentDevice : TFhirReference;
     FmaterialList : TFhirDeviceDefinitionMaterialList;
     function GetIdentifierList : TFhirIdentifierList;
@@ -2236,10 +2798,15 @@ type
     procedure SetModelNumber(value : TFhirString);
     function GetModelNumberST : String;
     procedure SetModelNumberST(value : String);
-    procedure SetType_(value : TFhirCodeableConcept);
+    function GetType_List : TFhirCodeableConceptList;
+    function GetHasType_List : Boolean;
     function GetSpecializationList : TFhirDeviceDefinitionSpecializationList;
     function GetHasSpecializationList : Boolean;
-    function GetVersionList : TFhirStringList;
+    function GetHasPartList : TFhirDeviceDefinitionHasPartList;
+    function GetHasHasPartList : Boolean;
+    function GetPackagingList : TFhirDeviceDefinitionPackagingList;
+    function GetHasPackagingList : Boolean;
+    function GetVersionList : TFhirDeviceDefinitionVersionList;
     function GetHasVersionList : Boolean;
     function GetSafetyList : TFhirCodeableConceptList;
     function GetHasSafetyList : Boolean;
@@ -2260,7 +2827,6 @@ type
     procedure SetOnlineInformationST(value : String);
     function GetNoteList : TFhirAnnotationList;
     function GetHasNoteList : Boolean;
-    procedure SetQuantity(value : TFhirQuantity);
     procedure SetParentDevice(value : TFhirReference);
     function GetMaterialList : TFhirDeviceDefinitionMaterialList;
     function GetHasMaterialList : Boolean;
@@ -2309,17 +2875,24 @@ type
     // The model number for the device for example as defined by the manufacturer or labeler, or other agency.
     property modelNumberElement : TFhirString read FModelNumber write SetModelNumber;
 
-    // Typed access to What kind of device or device system this is. (defined for API consistency)
-    property type_ : TFhirCodeableConcept read FType_ write SetType_;
     // What kind of device or device system this is.
-    property type_Element : TFhirCodeableConcept read FType_ write SetType_;
+    property type_List : TFhirCodeableConceptList read GetType_List;
+    property hasType_List : boolean read GetHasType_List;
 
     // The capabilities supported on a  device, the standards to which the device conforms for a particular purpose, and used for the communication.
     property specializationList : TFhirDeviceDefinitionSpecializationList read GetSpecializationList;
     property hasSpecializationList : boolean read GetHasSpecializationList;
 
-    // The available versions of the device, e.g., software versions.
-    property versionList : TFhirStringList read GetVersionList;
+    // A device that is part (for example a component) of the present device.
+    property hasPartList : TFhirDeviceDefinitionHasPartList read GetHasPartList;
+    property hasHasPartList : boolean read GetHasHasPartList;
+
+    // Information about the packaging of the device, i.e. how the device is packaged.
+    property packagingList : TFhirDeviceDefinitionPackagingList read GetPackagingList;
+    property hasPackagingList : boolean read GetHasPackagingList;
+
+    // The version of the device or software.
+    property versionList : TFhirDeviceDefinitionVersionList read GetVersionList;
     property hasVersionList : boolean read GetHasVersionList;
 
     // Safety characteristics of the device.
@@ -2364,11 +2937,6 @@ type
     // Descriptive information, usage information or implantation information that is not captured in an existing element.
     property noteList : TFhirAnnotationList read GetNoteList;
     property hasNoteList : boolean read GetHasNoteList;
-
-    // Typed access to The quantity of the device present in the packaging (e.g. the number of devices present in a pack, or the number of devices in the same package of the medicinal product). (defined for API consistency)
-    property quantity : TFhirQuantity read FQuantity write SetQuantity;
-    // The quantity of the device present in the packaging (e.g. the number of devices present in a pack, or the number of devices in the same package of the medicinal product).
-    property quantityElement : TFhirQuantity read FQuantity write SetQuantity;
 
     // Typed access to The parent device it can be part of. (defined for API consistency)
     property parentDevice : TFhirReference read FParentDevice write SetParentDevice;
@@ -2641,9 +3209,9 @@ type
     property category : TFhirDeviceMetricCategoryEnum read GetCategoryST write SetCategoryST;
     property categoryElement : TFhirEnum read FCategory write SetCategory;
 
-    // Typed access to Describes the measurement repetition time. This is not necessarily the same as the update period. The measurement repetition time can range from milliseconds up to hours. An example for a measurement repetition time in the range of milliseconds is the sampling rate of an ECG. An example for a measurement repetition time in the range of hours is a NIBP that is triggered automatically every hour. The update period may be different than the measurement repetition time, if the device does not update the {$IFNDEF FPC}published{$ENDIF} observed value with the same frequency as it was measured. (defined for API consistency)
+    // Typed access to Describes the measurement repetition time. This is not necessarily the same as the update period. The measurement repetition time can range from milliseconds up to hours. An example for a measurement repetition time in the range of milliseconds is the sampling rate of an ECG. An example for a measurement repetition time in the range of hours is a NIBP that is triggered automatically every hour. The update period may be different than the measurement repetition time, if the device does not update the published observed value with the same frequency as it was measured. (defined for API consistency)
     property measurementPeriod : TFhirTiming read FMeasurementPeriod write SetMeasurementPeriod;
-    // Describes the measurement repetition time. This is not necessarily the same as the update period. The measurement repetition time can range from milliseconds up to hours. An example for a measurement repetition time in the range of milliseconds is the sampling rate of an ECG. An example for a measurement repetition time in the range of hours is a NIBP that is triggered automatically every hour. The update period may be different than the measurement repetition time, if the device does not update the {$IFNDEF FPC}published{$ENDIF} observed value with the same frequency as it was measured.
+    // Describes the measurement repetition time. This is not necessarily the same as the update period. The measurement repetition time can range from milliseconds up to hours. An example for a measurement repetition time in the range of milliseconds is the sampling rate of an ECG. An example for a measurement repetition time in the range of hours is a NIBP that is triggered automatically every hour. The update period may be different than the measurement repetition time, if the device does not update the published observed value with the same frequency as it was measured.
     property measurementPeriodElement : TFhirTiming read FMeasurementPeriod write SetMeasurementPeriod;
 
     // Describes the calibrations that have been performed or that are required to be performed.
@@ -3055,9 +3623,9 @@ type
     // Reason the encounter takes place, as specified using information from another resource. For admissions, this is the admission diagnosis. The indication will typically be a Condition (with other resources referenced in the evidence.detail), or a Procedure.
     property conditionElement : TFhirReference read FCondition write SetCondition;
 
-    // Typed access to Role that this diagnosis has within the encounter (e.g. admission, billing, discharge â€¦). (defined for API consistency)
+    // Typed access to Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …). (defined for API consistency)
     property use : TFhirCodeableConcept read FUse write SetUse;
-    // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge â€¦).
+    // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …).
     property useElement : TFhirCodeableConcept read FUse write SetUse;
 
     // Typed access to Ranking of the diagnosis (for each role type).
@@ -7777,10 +8345,14 @@ type
 
 {$ENDIF FHIR_SLOT}
 
+
+
 implementation
 
 uses
   fhir5_utilities;
+
+
 
 {$IFDEF FHIR_CATALOGENTRY}
 { TFhirCatalogEntryRelatedEntry }
@@ -7816,20 +8388,20 @@ end;
 procedure TFhirCatalogEntryRelatedEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'relationship', 'code', false, TFhirEnum, FRelationship.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'relationship', 'code', false, TFhirEnum, FRelationship.Link));
+  oList.add(TFHIRProperty.create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link));
 end;
 
 function TFhirCatalogEntryRelatedEntry.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'relationship') then
   begin
-    RelationshipElement := asEnum(SYSTEMS_TFhirCatalogEntryRelationTypeEnum, CODES_TFhirCatalogEntryRelationTypeEnum, propValue) {L1209};
+    RelationshipElement := asEnum(SYSTEMS_TFhirCatalogEntryRelationTypeEnum, CODES_TFhirCatalogEntryRelationTypeEnum, propValue);
     result := propValue;
   end
   else if (propName = 'target') then
   begin
-    Target := propValue as TFhirReference {L1199};
+    Target := propValue as TFhirReference;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -7842,8 +8414,8 @@ end;
 
 function TFhirCatalogEntryRelatedEntry.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'relationship') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull], CODES_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull])  {L1211}
-  else if (propName = 'target') then result := TFhirReference.create() {L1203}
+  if (propName = 'relationship') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull], CODES_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull]) 
+  else if (propName = 'target') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -7864,8 +8436,8 @@ end;
 
 procedure TFhirCatalogEntryRelatedEntry.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'relationship') then RelationshipElement := asEnum(SYSTEMS_TFhirCatalogEntryRelationTypeEnum, CODES_TFhirCatalogEntryRelationTypeEnum, new) {L1210}
-  else if (propName = 'target') then TargetElement := new as TFhirReference {L1195}
+  if (propName = 'relationship') then RelationshipElement := asEnum(SYSTEMS_TFhirCatalogEntryRelationTypeEnum, CODES_TFhirCatalogEntryRelationTypeEnum, new)
+  else if (propName = 'target') then TargetElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -7911,6 +8483,18 @@ begin
   result := inherited isEmpty  and isEmptyProp(FRelationship) and isEmptyProp(FTarget);
 end;
 
+procedure TFhirCatalogEntryRelatedEntry.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('relationship');
+  fields.add('target');
+end;
+
+function TFhirCatalogEntryRelatedEntry.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirCatalogEntryRelatedEntry.SetRelationship(value : TFhirEnum);
 begin
   FRelationship.free;
@@ -7936,21 +8520,7 @@ end;
 procedure TFhirCatalogEntryRelatedEntry.SetTarget(value : TFhirReference);
 begin
   FTarget.free;
-  FTarget := value; {L1134}
-end;
-
-procedure TFhirCatalogEntryRelatedEntry.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('relationship');
-  fields.add('target');
-end;
-
-function TFhirCatalogEntryRelatedEntry.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FRelationship.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  FTarget := value;
 end;
 
 { TFhirCatalogEntryRelatedEntryListEnumerator }
@@ -8214,104 +8784,104 @@ end;
 procedure TFhirCatalogEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'effectivePeriod', 'Period', false, TFhirPeriod, FEffectivePeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'orderable', 'boolean', false, TFhirBoolean, FOrderable.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'referencedItem', 'Reference', false, TFhirReference, FReferencedItem.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'relatedEntry', 'BackboneElement', true, TFhirCatalogEntryRelatedEntry, FRelatedEntryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'updatedBy', 'Reference', false, TFhirReference, FUpdatedBy.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'estimatedDuration', 'Duration', false, TFhirDuration, FEstimatedDuration.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'billingCode', 'CodeableConcept', true, TFhirCodeableConcept, FBillingCodeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'billingSummary', 'string', false, TFhirString, FBillingSummary.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'scheduleSummary', 'string', false, TFhirString, FScheduleSummary.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'limitationSummary', 'string', false, TFhirString, FLimitationSummary.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'regulatorySummary', 'string', false, TFhirString, FRegulatorySummary.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'effectivePeriod', 'Period', false, TFhirPeriod, FEffectivePeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'orderable', 'boolean', false, TFhirBoolean, FOrderable.Link));
+  oList.add(TFHIRProperty.create(self, 'referencedItem', 'Reference', false, TFhirReference, FReferencedItem.Link));
+  oList.add(TFHIRProperty.create(self, 'relatedEntry', 'BackboneElement', true, TFhirCatalogEntryRelatedEntry, FRelatedEntryList.Link));
+  oList.add(TFHIRProperty.create(self, 'updatedBy', 'Reference', false, TFhirReference, FUpdatedBy.Link));
+  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.create(self, 'estimatedDuration', 'Duration', false, TFhirDuration, FEstimatedDuration.Link));
+  oList.add(TFHIRProperty.create(self, 'billingCode', 'CodeableConcept', true, TFhirCodeableConcept, FBillingCodeList.Link));
+  oList.add(TFHIRProperty.create(self, 'billingSummary', 'string', false, TFhirString, FBillingSummary.Link));
+  oList.add(TFHIRProperty.create(self, 'scheduleSummary', 'string', false, TFhirString, FScheduleSummary.Link));
+  oList.add(TFHIRProperty.create(self, 'limitationSummary', 'string', false, TFhirString, FLimitationSummary.Link));
+  oList.add(TFHIRProperty.create(self, 'regulatorySummary', 'string', false, TFhirString, FRegulatorySummary.Link));
 end;
 
 function TFhirCatalogEntry.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirCatalogEntryTypeEnum, CODES_TFhirCatalogEntryTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirCatalogEntryTypeEnum, CODES_TFhirCatalogEntryTypeEnum, propValue);
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirCatalogEntryStatusEnum, CODES_TFhirCatalogEntryStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirCatalogEntryStatusEnum, CODES_TFhirCatalogEntryStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'effectivePeriod') then
   begin
-    EffectivePeriod := propValue as TFhirPeriod {L1199};
+    EffectivePeriod := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'orderable') then
   begin
-    OrderableElement := asBoolean(propValue) {L1221};
+    OrderableElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'referencedItem') then
   begin
-    ReferencedItem := propValue as TFhirReference {L1199};
+    ReferencedItem := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'relatedEntry') then
   begin
-    RelatedEntryList.add(propValue as TFhirCatalogEntryRelatedEntry) {L1048};
+    RelatedEntryList.add(propValue as TFhirCatalogEntryRelatedEntry);
     result := propValue;
   end
   else if (propName = 'updatedBy') then
   begin
-    UpdatedBy := propValue as TFhirReference {L1199};
+    UpdatedBy := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'note') then
   begin
-    NoteList.add(propValue as TFhirAnnotation) {L1048};
+    NoteList.add(propValue as TFhirAnnotation);
     result := propValue;
   end
   else if (propName = 'estimatedDuration') then
   begin
-    EstimatedDuration := propValue as TFhirDuration {L1199};
+    EstimatedDuration := propValue as TFhirDuration;
     result := propValue;
   end
   else if (propName = 'billingCode') then
   begin
-    BillingCodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    BillingCodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'billingSummary') then
   begin
-    BillingSummaryElement := asString(propValue) {L1221};
+    BillingSummaryElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'scheduleSummary') then
   begin
-    ScheduleSummaryElement := asString(propValue) {L1221};
+    ScheduleSummaryElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'limitationSummary') then
   begin
-    LimitationSummaryElement := asString(propValue) {L1221};
+    LimitationSummaryElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'regulatorySummary') then
   begin
-    RegulatorySummaryElement := asString(propValue) {L1221};
+    RegulatorySummaryElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -8319,31 +8889,31 @@ end;
 
 procedure TFhirCatalogEntry.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'relatedEntry') then RelatedEntryList.insertItem(index, propValue as TFhirCatalogEntryRelatedEntry) {L1049}
-  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
-  else if (propName = 'billingCode') then BillingCodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'relatedEntry') then RelatedEntryList.insertItem(index, propValue as TFhirCatalogEntryRelatedEntry)
+  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
+  else if (propName = 'billingCode') then BillingCodeList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirCatalogEntry.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryTypeEnum[CatalogEntryTypeNull], CODES_TFhirCatalogEntryTypeEnum[CatalogEntryTypeNull])  {L1211}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryStatusEnum[CatalogEntryStatusNull], CODES_TFhirCatalogEntryStatusEnum[CatalogEntryStatusNull])  {L1211}
-  else if (propName = 'effectivePeriod') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'orderable') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'referencedItem') then result := TFhirReference.create() {L1203}
-  else if (propName = 'relatedEntry') then result := RelatedEntryList.new() {L1053}
-  else if (propName = 'updatedBy') then result := TFhirReference.create() {L1203}
-  else if (propName = 'note') then result := NoteList.new() {L1053}
-  else if (propName = 'estimatedDuration') then result := TFhirDuration.create() {L1203}
-  else if (propName = 'billingCode') then result := BillingCodeList.new() {L1053}
-  else if (propName = 'billingSummary') then result := TFhirString.create() {L1223}
-  else if (propName = 'scheduleSummary') then result := TFhirString.create() {L1223}
-  else if (propName = 'limitationSummary') then result := TFhirString.create() {L1223}
-  else if (propName = 'regulatorySummary') then result := TFhirString.create() {L1223}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryTypeEnum[CatalogEntryTypeNull], CODES_TFhirCatalogEntryTypeEnum[CatalogEntryTypeNull]) 
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryStatusEnum[CatalogEntryStatusNull], CODES_TFhirCatalogEntryStatusEnum[CatalogEntryStatusNull]) 
+  else if (propName = 'effectivePeriod') then result := TFhirPeriod.create()
+  else if (propName = 'orderable') then result := TFhirBoolean.create()
+  else if (propName = 'referencedItem') then result := TFhirReference.create()
+  else if (propName = 'relatedEntry') then result := RelatedEntryList.new()
+  else if (propName = 'updatedBy') then result := TFhirReference.create()
+  else if (propName = 'note') then result := NoteList.new()
+  else if (propName = 'estimatedDuration') then result := TFhirDuration.create()
+  else if (propName = 'billingCode') then result := BillingCodeList.new()
+  else if (propName = 'billingSummary') then result := TFhirString.create()
+  else if (propName = 'scheduleSummary') then result := TFhirString.create()
+  else if (propName = 'limitationSummary') then result := TFhirString.create()
+  else if (propName = 'regulatorySummary') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -8370,18 +8940,18 @@ end;
 
 procedure TFhirCatalogEntry.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'type') then Type_Element := nil
   else if (propName = 'status') then StatusElement := nil
   else if (propName = 'effectivePeriod') then EffectivePeriodElement := nil
   else if (propName = 'orderable') then OrderableElement := nil
   else if (propName = 'referencedItem') then ReferencedItemElement := nil
-  else if (propName = 'relatedEntry') then deletePropertyValue('relatedEntry', RelatedEntryList, value) {L1054}
+  else if (propName = 'relatedEntry') then deletePropertyValue('relatedEntry', RelatedEntryList, value)
   else if (propName = 'updatedBy') then UpdatedByElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
+  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
   else if (propName = 'estimatedDuration') then EstimatedDurationElement := nil
-  else if (propName = 'billingCode') then deletePropertyValue('billingCode', BillingCodeList, value) {L1054}
+  else if (propName = 'billingCode') then deletePropertyValue('billingCode', BillingCodeList, value)
   else if (propName = 'billingSummary') then BillingSummaryElement := nil
   else if (propName = 'scheduleSummary') then ScheduleSummaryElement := nil
   else if (propName = 'limitationSummary') then LimitationSummaryElement := nil
@@ -8392,32 +8962,32 @@ end;
 
 procedure TFhirCatalogEntry.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirCatalogEntryTypeEnum, CODES_TFhirCatalogEntryTypeEnum, new) {L1210}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirCatalogEntryStatusEnum, CODES_TFhirCatalogEntryStatusEnum, new) {L1210}
-  else if (propName = 'effectivePeriod') then EffectivePeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'orderable') then OrderableElement := asBoolean(new) {L1222}
-  else if (propName = 'referencedItem') then ReferencedItemElement := new as TFhirReference {L1195}
-  else if (propName = 'relatedEntry') then replacePropertyValue('relatedEntry', RelatedEntryList, existing, new) {L1055}
-  else if (propName = 'updatedBy') then UpdatedByElement := new as TFhirReference {L1195}
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
-  else if (propName = 'estimatedDuration') then EstimatedDurationElement := new as TFhirDuration {L1195}
-  else if (propName = 'billingCode') then replacePropertyValue('billingCode', BillingCodeList, existing, new) {L1055}
-  else if (propName = 'billingSummary') then BillingSummaryElement := asString(new) {L1222}
-  else if (propName = 'scheduleSummary') then ScheduleSummaryElement := asString(new) {L1222}
-  else if (propName = 'limitationSummary') then LimitationSummaryElement := asString(new) {L1222}
-  else if (propName = 'regulatorySummary') then RegulatorySummaryElement := asString(new) {L1222}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirCatalogEntryTypeEnum, CODES_TFhirCatalogEntryTypeEnum, new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirCatalogEntryStatusEnum, CODES_TFhirCatalogEntryStatusEnum, new)
+  else if (propName = 'effectivePeriod') then EffectivePeriodElement := new as TFhirPeriod
+  else if (propName = 'orderable') then OrderableElement := asBoolean(new)
+  else if (propName = 'referencedItem') then ReferencedItemElement := new as TFhirReference
+  else if (propName = 'relatedEntry') then replacePropertyValue('relatedEntry', RelatedEntryList, existing, new)
+  else if (propName = 'updatedBy') then UpdatedByElement := new as TFhirReference
+  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
+  else if (propName = 'estimatedDuration') then EstimatedDurationElement := new as TFhirDuration
+  else if (propName = 'billingCode') then replacePropertyValue('billingCode', BillingCodeList, existing, new)
+  else if (propName = 'billingSummary') then BillingSummaryElement := asString(new)
+  else if (propName = 'scheduleSummary') then ScheduleSummaryElement := asString(new)
+  else if (propName = 'limitationSummary') then LimitationSummaryElement := asString(new)
+  else if (propName = 'regulatorySummary') then RegulatorySummaryElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirCatalogEntry.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'relatedEntry') then RelatedEntryList.move(source, destination) {L1050}
-  else if (propName = 'note') then NoteList.move(source, destination) {L1050}
-  else if (propName = 'billingCode') then BillingCodeList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'relatedEntry') then RelatedEntryList.move(source, destination)
+  else if (propName = 'note') then NoteList.move(source, destination)
+  else if (propName = 'billingCode') then BillingCodeList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -8464,6 +9034,36 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FName) and isEmptyProp(FType_) and isEmptyProp(FStatus) and isEmptyProp(FEffectivePeriod) and isEmptyProp(FOrderable) and isEmptyProp(FReferencedItem) and isEmptyProp(FrelatedEntryList) and isEmptyProp(FUpdatedBy) and isEmptyProp(FnoteList) and isEmptyProp(FEstimatedDuration) and isEmptyProp(FbillingCodeList) and isEmptyProp(FBillingSummary) and isEmptyProp(FScheduleSummary) and isEmptyProp(FLimitationSummary) and isEmptyProp(FRegulatorySummary);
 end;
 
+procedure TFhirCatalogEntry.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('name');
+  fields.add('type');
+  fields.add('status');
+  fields.add('effectivePeriod');
+  fields.add('orderable');
+  fields.add('referencedItem');
+  fields.add('relatedEntry');
+  fields.add('updatedBy');
+  fields.add('note');
+  fields.add('estimatedDuration');
+  fields.add('billingCode');
+  fields.add('billingSummary');
+  fields.add('scheduleSummary');
+  fields.add('limitationSummary');
+  fields.add('regulatorySummary');
+end;
+
+function TFhirCatalogEntry.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FRelatedEntryList.sizeInBytes);
+  inc(result, FNoteList.sizeInBytes);
+  inc(result, FBillingCodeList.sizeInBytes);
+end;
+
 function TFhirCatalogEntry.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -8479,7 +9079,7 @@ end;
 procedure TFhirCatalogEntry.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirCatalogEntry.GetNameST : String;
@@ -8549,13 +9149,13 @@ end;
 procedure TFhirCatalogEntry.SetEffectivePeriod(value : TFhirPeriod);
 begin
   FEffectivePeriod.free;
-  FEffectivePeriod := value; {L1134}
+  FEffectivePeriod := value;
 end;
 
 procedure TFhirCatalogEntry.SetOrderable(value : TFhirBoolean);
 begin
   FOrderable.free;
-  FOrderable := value; {L1134}
+  FOrderable := value;
 end;
 
 function TFhirCatalogEntry.GetOrderableST : Boolean;
@@ -8576,7 +9176,7 @@ end;
 procedure TFhirCatalogEntry.SetReferencedItem(value : TFhirReference);
 begin
   FReferencedItem.free;
-  FReferencedItem := value; {L1134}
+  FReferencedItem := value;
 end;
 
 function TFhirCatalogEntry.GetRelatedEntryList : TFhirCatalogEntryRelatedEntryList;
@@ -8594,7 +9194,7 @@ end;
 procedure TFhirCatalogEntry.SetUpdatedBy(value : TFhirReference);
 begin
   FUpdatedBy.free;
-  FUpdatedBy := value; {L1134}
+  FUpdatedBy := value;
 end;
 
 function TFhirCatalogEntry.GetNoteList : TFhirAnnotationList;
@@ -8612,7 +9212,7 @@ end;
 procedure TFhirCatalogEntry.SetEstimatedDuration(value : TFhirDuration);
 begin
   FEstimatedDuration.free;
-  FEstimatedDuration := value; {L1134}
+  FEstimatedDuration := value;
 end;
 
 function TFhirCatalogEntry.GetBillingCodeList : TFhirCodeableConceptList;
@@ -8630,7 +9230,7 @@ end;
 procedure TFhirCatalogEntry.SetBillingSummary(value : TFhirString);
 begin
   FBillingSummary.free;
-  FBillingSummary := value; {L1134}
+  FBillingSummary := value;
 end;
 
 function TFhirCatalogEntry.GetBillingSummaryST : String;
@@ -8656,7 +9256,7 @@ end;
 procedure TFhirCatalogEntry.SetScheduleSummary(value : TFhirString);
 begin
   FScheduleSummary.free;
-  FScheduleSummary := value; {L1134}
+  FScheduleSummary := value;
 end;
 
 function TFhirCatalogEntry.GetScheduleSummaryST : String;
@@ -8682,7 +9282,7 @@ end;
 procedure TFhirCatalogEntry.SetLimitationSummary(value : TFhirString);
 begin
   FLimitationSummary.free;
-  FLimitationSummary := value; {L1134}
+  FLimitationSummary := value;
 end;
 
 function TFhirCatalogEntry.GetLimitationSummaryST : String;
@@ -8708,7 +9308,7 @@ end;
 procedure TFhirCatalogEntry.SetRegulatorySummary(value : TFhirString);
 begin
   FRegulatorySummary.free;
-  FRegulatorySummary := value; {L1134}
+  FRegulatorySummary := value;
 end;
 
 function TFhirCatalogEntry.GetRegulatorySummaryST : String;
@@ -8729,48 +9329,6 @@ begin
   end
   else if FRegulatorySummary <> nil then
     FRegulatorySummary.value := '';
-end;
-
-procedure TFhirCatalogEntry.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('name');
-  fields.add('type');
-  fields.add('status');
-  fields.add('effectivePeriod');
-  fields.add('orderable');
-  fields.add('referencedItem');
-  fields.add('relatedEntry');
-  fields.add('updatedBy');
-  fields.add('note');
-  fields.add('estimatedDuration');
-  fields.add('billingCode');
-  fields.add('billingSummary');
-  fields.add('scheduleSummary');
-  fields.add('limitationSummary');
-  fields.add('regulatorySummary');
-end;
-
-function TFhirCatalogEntry.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FEffectivePeriod.sizeInBytes);
-  inc(result, FOrderable.sizeInBytes);
-  inc(result, FReferencedItem.sizeInBytes);
-  inc(result, FrelatedEntryList.sizeInBytes);
-  inc(result, FUpdatedBy.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FEstimatedDuration.sizeInBytes);
-  inc(result, FbillingCodeList.sizeInBytes);
-  inc(result, FBillingSummary.sizeInBytes);
-  inc(result, FScheduleSummary.sizeInBytes);
-  inc(result, FLimitationSummary.sizeInBytes);
-  inc(result, FRegulatorySummary.sizeInBytes);
 end;
 
 { TFhirCatalogEntryListEnumerator }
@@ -8951,44 +9509,44 @@ end;
 procedure TFhirDeviceUdiCarrier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'carrierAIDC', 'base64Binary', false, TFhirBase64Binary, FCarrierAIDC.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'carrierHRF', 'string', false, TFhirString, FCarrierHRF.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'entryType', 'code', false, TFhirEnum, FEntryType.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
+  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
+  oList.add(TFHIRProperty.create(self, 'carrierAIDC', 'base64Binary', false, TFhirBase64Binary, FCarrierAIDC.Link));
+  oList.add(TFHIRProperty.create(self, 'carrierHRF', 'string', false, TFhirString, FCarrierHRF.Link));
+  oList.add(TFHIRProperty.create(self, 'entryType', 'code', false, TFhirEnum, FEntryType.Link));
 end;
 
 function TFhirDeviceUdiCarrier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'deviceIdentifier') then
   begin
-    DeviceIdentifierElement := asString(propValue) {L1221};
+    DeviceIdentifierElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'issuer') then
   begin
-    IssuerElement := asUri(propValue) {L1221};
+    IssuerElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'jurisdiction') then
   begin
-    JurisdictionElement := asUri(propValue) {L1221};
+    JurisdictionElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'carrierAIDC') then
   begin
-    CarrierAIDCElement := asBase64Binary(propValue) {L1221};
+    CarrierAIDCElement := asBase64Binary(propValue);
     result := propValue;
   end
   else if (propName = 'carrierHRF') then
   begin
-    CarrierHRFElement := asString(propValue) {L1221};
+    CarrierHRFElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'entryType') then
   begin
-    EntryTypeElement := asEnum(SYSTEMS_TFhirUDIEntryTypeEnum, CODES_TFhirUDIEntryTypeEnum, propValue) {L1209};
+    EntryTypeElement := asEnum(SYSTEMS_TFhirUDIEntryTypeEnum, CODES_TFhirUDIEntryTypeEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -9001,12 +9559,12 @@ end;
 
 function TFhirDeviceUdiCarrier.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'deviceIdentifier') then result := TFhirString.create() {L1223}
-  else if (propName = 'issuer') then result := TFhirUri.create() {L1223}
-  else if (propName = 'jurisdiction') then result := TFhirUri.create() {L1223}
-  else if (propName = 'carrierAIDC') then result := TFhirBase64Binary.create() {L1223}
-  else if (propName = 'carrierHRF') then result := TFhirString.create() {L1223}
-  else if (propName = 'entryType') then result := TFhirEnum.create(SYSTEMS_TFhirUDIEntryTypeEnum[UDIEntryTypeNull], CODES_TFhirUDIEntryTypeEnum[UDIEntryTypeNull])  {L1211}
+  if (propName = 'deviceIdentifier') then result := TFhirString.create()
+  else if (propName = 'issuer') then result := TFhirUri.create()
+  else if (propName = 'jurisdiction') then result := TFhirUri.create()
+  else if (propName = 'carrierAIDC') then result := TFhirBase64Binary.create()
+  else if (propName = 'carrierHRF') then result := TFhirString.create()
+  else if (propName = 'entryType') then result := TFhirEnum.create(SYSTEMS_TFhirUDIEntryTypeEnum[UDIEntryTypeNull], CODES_TFhirUDIEntryTypeEnum[UDIEntryTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9035,12 +9593,12 @@ end;
 
 procedure TFhirDeviceUdiCarrier.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := asString(new) {L1222}
-  else if (propName = 'issuer') then IssuerElement := asUri(new) {L1222}
-  else if (propName = 'jurisdiction') then JurisdictionElement := asUri(new) {L1222}
-  else if (propName = 'carrierAIDC') then CarrierAIDCElement := asBase64Binary(new) {L1222}
-  else if (propName = 'carrierHRF') then CarrierHRFElement := asString(new) {L1222}
-  else if (propName = 'entryType') then EntryTypeElement := asEnum(SYSTEMS_TFhirUDIEntryTypeEnum, CODES_TFhirUDIEntryTypeEnum, new) {L1210}
+  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := asString(new)
+  else if (propName = 'issuer') then IssuerElement := asUri(new)
+  else if (propName = 'jurisdiction') then JurisdictionElement := asUri(new)
+  else if (propName = 'carrierAIDC') then CarrierAIDCElement := asBase64Binary(new)
+  else if (propName = 'carrierHRF') then CarrierHRFElement := asString(new)
+  else if (propName = 'entryType') then EntryTypeElement := asEnum(SYSTEMS_TFhirUDIEntryTypeEnum, CODES_TFhirUDIEntryTypeEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -9088,10 +9646,26 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDeviceIdentifier) and isEmptyProp(FIssuer) and isEmptyProp(FJurisdiction) and isEmptyProp(FCarrierAIDC) and isEmptyProp(FCarrierHRF) and isEmptyProp(FEntryType);
 end;
 
+procedure TFhirDeviceUdiCarrier.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('deviceIdentifier');
+  fields.add('issuer');
+  fields.add('jurisdiction');
+  fields.add('carrierAIDC');
+  fields.add('carrierHRF');
+  fields.add('entryType');
+end;
+
+function TFhirDeviceUdiCarrier.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceUdiCarrier.SetDeviceIdentifier(value : TFhirString);
 begin
   FDeviceIdentifier.free;
-  FDeviceIdentifier := value; {L1134}
+  FDeviceIdentifier := value;
 end;
 
 function TFhirDeviceUdiCarrier.GetDeviceIdentifierST : String;
@@ -9117,7 +9691,7 @@ end;
 procedure TFhirDeviceUdiCarrier.SetIssuer(value : TFhirUri);
 begin
   FIssuer.free;
-  FIssuer := value; {L1134}
+  FIssuer := value;
 end;
 
 function TFhirDeviceUdiCarrier.GetIssuerST : String;
@@ -9143,7 +9717,7 @@ end;
 procedure TFhirDeviceUdiCarrier.SetJurisdiction(value : TFhirUri);
 begin
   FJurisdiction.free;
-  FJurisdiction := value; {L1134}
+  FJurisdiction := value;
 end;
 
 function TFhirDeviceUdiCarrier.GetJurisdictionST : String;
@@ -9169,13 +9743,13 @@ end;
 procedure TFhirDeviceUdiCarrier.SetCarrierAIDC(value : TFhirBase64Binary);
 begin
   FCarrierAIDC.free;
-  FCarrierAIDC := value; {L1134}
+  FCarrierAIDC := value;
 end;
 
 function TFhirDeviceUdiCarrier.GetCarrierAIDCST : TBytes;
 begin
   if FCarrierAIDC = nil then
-    result := nil {L1148}
+    result := nil
   else
     result := FCarrierAIDC.value;
 end;
@@ -9195,7 +9769,7 @@ end;
 procedure TFhirDeviceUdiCarrier.SetCarrierHRF(value : TFhirString);
 begin
   FCarrierHRF.free;
-  FCarrierHRF := value; {L1134}
+  FCarrierHRF := value;
 end;
 
 function TFhirDeviceUdiCarrier.GetCarrierHRFST : String;
@@ -9238,28 +9812,6 @@ begin
     EntryTypeElement := nil
   else
     EntryTypeElement := TFhirEnum.create(SYSTEMS_TFhirUDIEntryTypeEnum[value], CODES_TFhirUDIEntryTypeEnum[value]);
-end;
-
-procedure TFhirDeviceUdiCarrier.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('deviceIdentifier');
-  fields.add('issuer');
-  fields.add('jurisdiction');
-  fields.add('carrierAIDC');
-  fields.add('carrierHRF');
-  fields.add('entryType');
-end;
-
-function TFhirDeviceUdiCarrier.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDeviceIdentifier.sizeInBytes);
-  inc(result, FIssuer.sizeInBytes);
-  inc(result, FJurisdiction.sizeInBytes);
-  inc(result, FCarrierAIDC.sizeInBytes);
-  inc(result, FCarrierHRF.sizeInBytes);
-  inc(result, FEntryType.sizeInBytes);
 end;
 
 { TFhirDeviceUdiCarrierListEnumerator }
@@ -9422,20 +9974,20 @@ end;
 procedure TFhirDeviceDeviceName.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirDeviceDeviceName.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -9448,8 +10000,8 @@ end;
 
 function TFhirDeviceDeviceName.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull])  {L1211}
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9470,8 +10022,8 @@ end;
 
 procedure TFhirDeviceDeviceName.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, new) {L1210}
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -9516,10 +10068,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FType_);
 end;
 
+procedure TFhirDeviceDeviceName.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('type');
+end;
+
+function TFhirDeviceDeviceName.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceDeviceName.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirDeviceDeviceName.GetNameST : String;
@@ -9562,20 +10126,6 @@ begin
     Type_Element := nil
   else
     Type_Element := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
-end;
-
-procedure TFhirDeviceDeviceName.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('name');
-  fields.add('type');
-end;
-
-function TFhirDeviceDeviceName.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
 end;
 
 { TFhirDeviceDeviceNameListEnumerator }
@@ -9738,20 +10288,20 @@ end;
 procedure TFhirDeviceSpecialization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'systemType', 'CodeableConcept', false, TFhirCodeableConcept, FSystemType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'systemType', 'CodeableConcept', false, TFhirCodeableConcept, FSystemType.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
 end;
 
 function TFhirDeviceSpecialization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'systemType') then
   begin
-    SystemType := propValue as TFhirCodeableConcept {L1199};
+    SystemType := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'version') then
   begin
-    VersionElement := asString(propValue) {L1221};
+    VersionElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -9764,8 +10314,8 @@ end;
 
 function TFhirDeviceSpecialization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'systemType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'version') then result := TFhirString.create() {L1223}
+  if (propName = 'systemType') then result := TFhirCodeableConcept.create()
+  else if (propName = 'version') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9786,8 +10336,8 @@ end;
 
 procedure TFhirDeviceSpecialization.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'systemType') then SystemTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'version') then VersionElement := asString(new) {L1222}
+  if (propName = 'systemType') then SystemTypeElement := new as TFhirCodeableConcept
+  else if (propName = 'version') then VersionElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -9832,16 +10382,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FSystemType) and isEmptyProp(FVersion);
 end;
 
+procedure TFhirDeviceSpecialization.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('systemType');
+  fields.add('version');
+end;
+
+function TFhirDeviceSpecialization.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceSpecialization.SetSystemType(value : TFhirCodeableConcept);
 begin
   FSystemType.free;
-  FSystemType := value; {L1134}
+  FSystemType := value;
 end;
 
 procedure TFhirDeviceSpecialization.SetVersion(value : TFhirString);
 begin
   FVersion.free;
-  FVersion := value; {L1134}
+  FVersion := value;
 end;
 
 function TFhirDeviceSpecialization.GetVersionST : String;
@@ -9862,20 +10424,6 @@ begin
   end
   else if FVersion <> nil then
     FVersion.value := '';
-end;
-
-procedure TFhirDeviceSpecialization.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('systemType');
-  fields.add('version');
-end;
-
-function TFhirDeviceSpecialization.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FSystemType.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
 end;
 
 { TFhirDeviceSpecializationListEnumerator }
@@ -10042,26 +10590,26 @@ end;
 procedure TFhirDeviceVersion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'component', 'Identifier', false, TFhirIdentifier, FComponent.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, FValue.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'component', 'Identifier', false, TFhirIdentifier, FComponent.Link));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, FValue.Link));
 end;
 
 function TFhirDeviceVersion.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'component') then
   begin
-    Component := propValue as TFhirIdentifier {L1199};
+    Component := propValue as TFhirIdentifier;
     result := propValue;
   end
   else if (propName = 'value') then
   begin
-    ValueElement := asString(propValue) {L1221};
+    ValueElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -10074,9 +10622,9 @@ end;
 
 function TFhirDeviceVersion.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'component') then result := TFhirIdentifier.create() {L1203}
-  else if (propName = 'value') then result := TFhirString.create() {L1223}
+  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'component') then result := TFhirIdentifier.create()
+  else if (propName = 'value') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -10099,9 +10647,9 @@ end;
 
 procedure TFhirDeviceVersion.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'component') then ComponentElement := new as TFhirIdentifier {L1195}
-  else if (propName = 'value') then ValueElement := asString(new) {L1222}
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'component') then ComponentElement := new as TFhirIdentifier
+  else if (propName = 'value') then ValueElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -10147,22 +10695,35 @@ begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FComponent) and isEmptyProp(FValue);
 end;
 
+procedure TFhirDeviceVersion.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('component');
+  fields.add('value');
+end;
+
+function TFhirDeviceVersion.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceVersion.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
-  FType_ := value; {L1134}
+  FType_ := value;
 end;
 
 procedure TFhirDeviceVersion.SetComponent(value : TFhirIdentifier);
 begin
   FComponent.free;
-  FComponent := value; {L1134}
+  FComponent := value;
 end;
 
 procedure TFhirDeviceVersion.SetValue(value : TFhirString);
 begin
   FValue.free;
-  FValue := value; {L1134}
+  FValue := value;
 end;
 
 function TFhirDeviceVersion.GetValueST : String;
@@ -10183,22 +10744,6 @@ begin
   end
   else if FValue <> nil then
     FValue.value := '';
-end;
-
-procedure TFhirDeviceVersion.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('component');
-  fields.add('value');
-end;
-
-function TFhirDeviceVersion.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FComponent.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
 end;
 
 { TFhirDeviceVersionListEnumerator }
@@ -10338,8 +10883,7 @@ end;
 destructor TFhirDeviceProperty.Destroy;
 begin
   FType_.free;
-  FValueQuantityList.Free;
-  FValueCodeList.Free;
+  FValue.free;
   inherited;
 end;
 
@@ -10347,28 +10891,7 @@ procedure TFhirDeviceProperty.Assign(oSource : TFslObject);
 begin
   inherited;
   type_ := TFhirDeviceProperty(oSource).type_.Clone;
-  if (TFhirDeviceProperty(oSource).FValueQuantityList = nil) then
-  begin
-    FValueQuantityList.free;
-    FValueQuantityList := nil;
-  end
-  else
-  begin
-    if FValueQuantityList = nil then
-      FValueQuantityList := TFhirQuantityList.Create;
-    FValueQuantityList.Assign(TFhirDeviceProperty(oSource).FValueQuantityList);
-  end;
-  if (TFhirDeviceProperty(oSource).FValueCodeList = nil) then
-  begin
-    FValueCodeList.free;
-    FValueCodeList := nil;
-  end
-  else
-  begin
-    if FValueCodeList = nil then
-      FValueCodeList := TFhirCodeableConceptList.Create;
-    FValueCodeList.Assign(TFhirDeviceProperty(oSource).FValueCodeList);
-  end;
+  value := TFhirDeviceProperty(oSource).value.Clone;
 end;
 
 procedure TFhirDeviceProperty.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
@@ -10376,35 +10899,27 @@ begin
   inherited;
   if (child_name = 'type') Then
      list.add(self.link, 'type', FType_.Link);
-  if (child_name = 'valueQuantity') Then
-    list.addAll(self, 'valueQuantity', FValueQuantityList);
-  if (child_name = 'valueCode') Then
-    list.addAll(self, 'valueCode', FValueCodeList);
+  if (child_name = 'value[x]') or (child_name = 'value') Then
+     list.add(self.link, 'value[x]', FValue.Link);
 end;
 
 procedure TFhirDeviceProperty.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept', false, TFhirDataType, FValue.Link));
 end;
 
 function TFhirDeviceProperty.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
-  else if (propName = 'valueQuantity') then
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept'])) then
   begin
-    ValueQuantityList.add(propValue as TFhirQuantity) {L1048};
-    result := propValue;
-  end
-  else if (propName = 'valueCode') then
-  begin
-    ValueCodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    Value := propValue as TFhirDataType;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -10412,51 +10927,42 @@ end;
 
 procedure TFhirDeviceProperty.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'valueQuantity') then ValueQuantityList.insertItem(index, propValue as TFhirQuantity) {L1049}
-  else if (propName = 'valueCode') then ValueCodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else inherited;
+  inherited;
 end;
 
 function TFhirDeviceProperty.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'valueQuantity') then result := ValueQuantityList.new() {L1053}
-  else if (propName = 'valueCode') then result := ValueCodeList.new() {L1053}
+  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Value')
   else result := inherited createPropertyValue(propName);
 end;
 
 function TFhirDeviceProperty.getTypesForProperty(propName: string) : String;
 begin
   if (propName = 'type') then result := 'CodeableConcept'
-  else if (propName = 'valueQuantity') then result := 'Quantity'
-  else if (propName = 'valueCode') then result := 'CodeableConcept'
+  else if (propName = 'value[x]') then result := 'Quantity|CodeableConcept'
   else result := inherited getTypesForProperty(propName);
 end;
 
 procedure TFhirDeviceProperty.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
-  else if (propName = 'valueQuantity') then deletePropertyValue('valueQuantity', ValueQuantityList, value) {L1054}
-  else if (propName = 'valueCode') then deletePropertyValue('valueCode', ValueCodeList, value) {L1054}
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept'])) then ValueElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceProperty.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'valueQuantity') then replacePropertyValue('valueQuantity', ValueQuantityList, existing, new) {L1055}
-  else if (propName = 'valueCode') then replacePropertyValue('valueCode', ValueCodeList, existing, new) {L1055}
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept'])) then ValueElement := new as TFhirDataType
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceProperty.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'valueQuantity') then ValueQuantityList.move(source, destination) {L1050}
-  else if (propName = 'valueCode') then ValueCodeList.move(source, destination) {L1050}
-  else
-    inherited reorderProperty(propName, source, destination);
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDeviceProperty.fhirType : string;
@@ -10485,60 +10991,37 @@ begin
   else
   begin
     o := TFhirDeviceProperty(other);
-    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(valueQuantityList, o.valueQuantityList, true) and 
-      compareDeep(valueCodeList, o.valueCodeList, true);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(valueElement, o.valueElement, true);
   end;
 end;
 
 function TFhirDeviceProperty.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FvalueQuantityList) and isEmptyProp(FvalueCodeList);
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FValue);
+end;
+
+procedure TFhirDeviceProperty.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('value[x]');
+end;
+
+function TFhirDeviceProperty.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
 end;
 
 procedure TFhirDeviceProperty.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
-  FType_ := value; {L1134}
+  FType_ := value;
 end;
 
-function TFhirDeviceProperty.GetValueQuantityList : TFhirQuantityList;
+procedure TFhirDeviceProperty.SetValue(value : TFhirDataType);
 begin
-  if FValueQuantityList = nil then
-    FValueQuantityList := TFhirQuantityList.Create;
-  result := FValueQuantityList;
-end;
-
-function TFhirDeviceProperty.GetHasValueQuantityList : boolean;
-begin
-  result := (FValueQuantityList <> nil) and (FValueQuantityList.count > 0);
-end;
-
-function TFhirDeviceProperty.GetValueCodeList : TFhirCodeableConceptList;
-begin
-  if FValueCodeList = nil then
-    FValueCodeList := TFhirCodeableConceptList.Create;
-  result := FValueCodeList;
-end;
-
-function TFhirDeviceProperty.GetHasValueCodeList : boolean;
-begin
-  result := (FValueCodeList <> nil) and (FValueCodeList.count > 0);
-end;
-
-procedure TFhirDeviceProperty.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('valueQuantity');
-  fields.add('valueCode');
-end;
-
-function TFhirDeviceProperty.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FvalueQuantityList.sizeInBytes);
-  inc(result, FvalueCodeList.sizeInBytes);
+  FValue.free;
+  FValue := value;
 end;
 
 { TFhirDevicePropertyListEnumerator }
@@ -10711,20 +11194,20 @@ end;
 procedure TFhirDeviceOperationalStatus.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'CodeableConcept', false, TFhirCodeableConcept, FValue.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'value', 'CodeableConcept', false, TFhirCodeableConcept, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link));
 end;
 
 function TFhirDeviceOperationalStatus.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'value') then
   begin
-    Value := propValue as TFhirCodeableConcept {L1199};
+    Value := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'reason') then
   begin
-    ReasonList.add(propValue as TFhirCodeableConcept) {L1048};
+    ReasonList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -10732,14 +11215,14 @@ end;
 
 procedure TFhirDeviceOperationalStatus.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirDeviceOperationalStatus.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'value') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'reason') then result := ReasonList.new() {L1053}
+  if (propName = 'value') then result := TFhirCodeableConcept.create()
+  else if (propName = 'reason') then result := ReasonList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -10753,22 +11236,22 @@ end;
 procedure TFhirDeviceOperationalStatus.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'value') then ValueElement := nil
-  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value) {L1054}
+  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceOperationalStatus.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'value') then ValueElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new) {L1055}
+  if (propName = 'value') then ValueElement := new as TFhirCodeableConcept
+  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceOperationalStatus.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'reason') then ReasonList.move(source, destination) {L1050}
+  if (propName = 'reason') then ReasonList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -10808,10 +11291,23 @@ begin
   result := inherited isEmpty  and isEmptyProp(FValue) and isEmptyProp(FreasonList);
 end;
 
+procedure TFhirDeviceOperationalStatus.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('value');
+  fields.add('reason');
+end;
+
+function TFhirDeviceOperationalStatus.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FReasonList.sizeInBytes);
+end;
+
 procedure TFhirDeviceOperationalStatus.SetValue(value : TFhirCodeableConcept);
 begin
   FValue.free;
-  FValue := value; {L1134}
+  FValue := value;
 end;
 
 function TFhirDeviceOperationalStatus.GetReasonList : TFhirCodeableConceptList;
@@ -10824,20 +11320,6 @@ end;
 function TFhirDeviceOperationalStatus.GetHasReasonList : boolean;
 begin
   result := (FReasonList <> nil) and (FReasonList.count > 0);
-end;
-
-procedure TFhirDeviceOperationalStatus.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('value');
-  fields.add('reason');
-end;
-
-function TFhirDeviceOperationalStatus.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FValue.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
 end;
 
 { TFhirDeviceOperationalStatusListEnumerator }
@@ -11010,20 +11492,20 @@ end;
 procedure TFhirDeviceAssociationStatus.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'CodeableConcept', false, TFhirCodeableConcept, FValue.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'value', 'CodeableConcept', false, TFhirCodeableConcept, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link));
 end;
 
 function TFhirDeviceAssociationStatus.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'value') then
   begin
-    Value := propValue as TFhirCodeableConcept {L1199};
+    Value := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'reason') then
   begin
-    ReasonList.add(propValue as TFhirCodeableConcept) {L1048};
+    ReasonList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -11031,14 +11513,14 @@ end;
 
 procedure TFhirDeviceAssociationStatus.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirDeviceAssociationStatus.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'value') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'reason') then result := ReasonList.new() {L1053}
+  if (propName = 'value') then result := TFhirCodeableConcept.create()
+  else if (propName = 'reason') then result := ReasonList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -11052,22 +11534,22 @@ end;
 procedure TFhirDeviceAssociationStatus.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'value') then ValueElement := nil
-  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value) {L1054}
+  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceAssociationStatus.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'value') then ValueElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new) {L1055}
+  if (propName = 'value') then ValueElement := new as TFhirCodeableConcept
+  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceAssociationStatus.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'reason') then ReasonList.move(source, destination) {L1050}
+  if (propName = 'reason') then ReasonList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -11107,10 +11589,23 @@ begin
   result := inherited isEmpty  and isEmptyProp(FValue) and isEmptyProp(FreasonList);
 end;
 
+procedure TFhirDeviceAssociationStatus.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('value');
+  fields.add('reason');
+end;
+
+function TFhirDeviceAssociationStatus.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FReasonList.sizeInBytes);
+end;
+
 procedure TFhirDeviceAssociationStatus.SetValue(value : TFhirCodeableConcept);
 begin
   FValue.free;
-  FValue := value; {L1134}
+  FValue := value;
 end;
 
 function TFhirDeviceAssociationStatus.GetReasonList : TFhirCodeableConceptList;
@@ -11123,20 +11618,6 @@ end;
 function TFhirDeviceAssociationStatus.GetHasReasonList : boolean;
 begin
   result := (FReasonList <> nil) and (FReasonList.count > 0);
-end;
-
-procedure TFhirDeviceAssociationStatus.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('value');
-  fields.add('reason');
-end;
-
-function TFhirDeviceAssociationStatus.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FValue.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
 end;
 
 { TFhirDeviceAssociationStatusListEnumerator }
@@ -11522,182 +12003,182 @@ end;
 procedure TFhirDevice.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'displayName', 'string', false, TFhirString, FDisplayName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'definition', 'Reference', false, TFhirReference, FDefinition.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'udiCarrier', 'BackboneElement', true, TFhirDeviceUdiCarrier, FUdiCarrierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'statusReason', 'CodeableConcept', true, TFhirCodeableConcept, FStatusReasonList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'distinctIdentifier', 'string', false, TFhirString, FDistinctIdentifier.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'manufacturer', 'string', false, TFhirString, FManufacturer.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'manufactureDate', 'dateTime', false, TFhirDateTime, FManufactureDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'expirationDate', 'dateTime', false, TFhirDateTime, FExpirationDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'serialNumber', 'string', false, TFhirString, FSerialNumber.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDeviceName, FDeviceNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'partNumber', 'string', false, TFhirString, FPartNumber.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceSpecialization, FSpecializationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'version', 'BackboneElement', true, TFhirDeviceVersion, FVersionList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceProperty, FProperty_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'BackboneElement', false, TFhirDeviceOperationalStatus, FOperationalStatus.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'associationStatus', 'BackboneElement', false, TFhirDeviceAssociationStatus, FAssociationStatus.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'displayName', 'string', false, TFhirString, FDisplayName.Link));
+  oList.add(TFHIRProperty.create(self, 'definition', 'Reference', false, TFhirReference, FDefinition.Link));
+  oList.add(TFHIRProperty.create(self, 'udiCarrier', 'BackboneElement', true, TFhirDeviceUdiCarrier, FUdiCarrierList.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'statusReason', 'CodeableConcept', true, TFhirCodeableConcept, FStatusReasonList.Link));
+  oList.add(TFHIRProperty.create(self, 'distinctIdentifier', 'string', false, TFhirString, FDistinctIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'manufacturer', 'string', false, TFhirString, FManufacturer.Link));
+  oList.add(TFHIRProperty.create(self, 'manufactureDate', 'dateTime', false, TFhirDateTime, FManufactureDate.Link));
+  oList.add(TFHIRProperty.create(self, 'expirationDate', 'dateTime', false, TFhirDateTime, FExpirationDate.Link));
+  oList.add(TFHIRProperty.create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link));
+  oList.add(TFHIRProperty.create(self, 'serialNumber', 'string', false, TFhirString, FSerialNumber.Link));
+  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDeviceName, FDeviceNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
+  oList.add(TFHIRProperty.create(self, 'partNumber', 'string', false, TFhirString, FPartNumber.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceSpecialization, FSpecializationList.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'BackboneElement', true, TFhirDeviceVersion, FVersionList.Link));
+  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceProperty, FProperty_List.Link));
+  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
+  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'BackboneElement', false, TFhirDeviceOperationalStatus, FOperationalStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'associationStatus', 'BackboneElement', false, TFhirDeviceAssociationStatus, FAssociationStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
+  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
+  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
 end;
 
 function TFhirDevice.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'displayName') then
   begin
-    DisplayNameElement := asString(propValue) {L1221};
+    DisplayNameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'definition') then
   begin
-    Definition := propValue as TFhirReference {L1199};
+    Definition := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'udiCarrier') then
   begin
-    UdiCarrierList.add(propValue as TFhirDeviceUdiCarrier) {L1048};
+    UdiCarrierList.add(propValue as TFhirDeviceUdiCarrier);
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirFHIRDeviceStatusEnum, CODES_TFhirFHIRDeviceStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirFHIRDeviceStatusEnum, CODES_TFhirFHIRDeviceStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'statusReason') then
   begin
-    StatusReasonList.add(propValue as TFhirCodeableConcept) {L1048};
+    StatusReasonList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'distinctIdentifier') then
   begin
-    DistinctIdentifierElement := asString(propValue) {L1221};
+    DistinctIdentifierElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'manufacturer') then
   begin
-    ManufacturerElement := asString(propValue) {L1221};
+    ManufacturerElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'manufactureDate') then
   begin
-    ManufactureDateElement := asDateTime(propValue) {L1221};
+    ManufactureDateElement := asDateTime(propValue);
     result := propValue;
   end
   else if (propName = 'expirationDate') then
   begin
-    ExpirationDateElement := asDateTime(propValue) {L1221};
+    ExpirationDateElement := asDateTime(propValue);
     result := propValue;
   end
   else if (propName = 'lotNumber') then
   begin
-    LotNumberElement := asString(propValue) {L1221};
+    LotNumberElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'serialNumber') then
   begin
-    SerialNumberElement := asString(propValue) {L1221};
+    SerialNumberElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'deviceName') then
   begin
-    DeviceNameList.add(propValue as TFhirDeviceDeviceName) {L1048};
+    DeviceNameList.add(propValue as TFhirDeviceDeviceName);
     result := propValue;
   end
   else if (propName = 'modelNumber') then
   begin
-    ModelNumberElement := asString(propValue) {L1221};
+    ModelNumberElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'partNumber') then
   begin
-    PartNumberElement := asString(propValue) {L1221};
+    PartNumberElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialization') then
   begin
-    SpecializationList.add(propValue as TFhirDeviceSpecialization) {L1048};
+    SpecializationList.add(propValue as TFhirDeviceSpecialization);
     result := propValue;
   end
   else if (propName = 'version') then
   begin
-    VersionList.add(propValue as TFhirDeviceVersion) {L1048};
+    VersionList.add(propValue as TFhirDeviceVersion);
     result := propValue;
   end
   else if (propName = 'property') then
   begin
-    Property_List.add(propValue as TFhirDeviceProperty) {L1048};
+    Property_List.add(propValue as TFhirDeviceProperty);
     result := propValue;
   end
   else if (propName = 'patient') then
   begin
-    Patient := propValue as TFhirReference {L1199};
+    Patient := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'operationalStatus') then
   begin
-    OperationalStatus := propValue as TFhirDeviceOperationalStatus {L1199};
+    OperationalStatus := propValue as TFhirDeviceOperationalStatus;
     result := propValue;
   end
   else if (propName = 'associationStatus') then
   begin
-    AssociationStatus := propValue as TFhirDeviceAssociationStatus {L1199};
+    AssociationStatus := propValue as TFhirDeviceAssociationStatus;
     result := propValue;
   end
   else if (propName = 'owner') then
   begin
-    Owner := propValue as TFhirReference {L1199};
+    Owner := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'contact') then
   begin
-    ContactList.add(propValue as TFhirContactPoint) {L1048};
+    ContactList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'location') then
   begin
-    Location := propValue as TFhirReference {L1199};
+    Location := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'url') then
   begin
-    UrlElement := asUri(propValue) {L1221};
+    UrlElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'note') then
   begin
-    NoteList.add(propValue as TFhirAnnotation) {L1048};
+    NoteList.add(propValue as TFhirAnnotation);
     result := propValue;
   end
   else if (propName = 'safety') then
   begin
-    SafetyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SafetyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'parent') then
   begin
-    Parent := propValue as TFhirReference {L1199};
+    Parent := propValue as TFhirReference;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -11705,51 +12186,51 @@ end;
 
 procedure TFhirDevice.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'udiCarrier') then UdiCarrierList.insertItem(index, propValue as TFhirDeviceUdiCarrier) {L1049}
-  else if (propName = 'statusReason') then StatusReasonList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'deviceName') then DeviceNameList.insertItem(index, propValue as TFhirDeviceDeviceName) {L1049}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialization') then SpecializationList.insertItem(index, propValue as TFhirDeviceSpecialization) {L1049}
-  else if (propName = 'version') then VersionList.insertItem(index, propValue as TFhirDeviceVersion) {L1049}
-  else if (propName = 'property') then Property_List.insertItem(index, propValue as TFhirDeviceProperty) {L1049}
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
-  else if (propName = 'safety') then SafetyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'udiCarrier') then UdiCarrierList.insertItem(index, propValue as TFhirDeviceUdiCarrier)
+  else if (propName = 'statusReason') then StatusReasonList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'deviceName') then DeviceNameList.insertItem(index, propValue as TFhirDeviceDeviceName)
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialization') then SpecializationList.insertItem(index, propValue as TFhirDeviceSpecialization)
+  else if (propName = 'version') then VersionList.insertItem(index, propValue as TFhirDeviceVersion)
+  else if (propName = 'property') then Property_List.insertItem(index, propValue as TFhirDeviceProperty)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
+  else if (propName = 'safety') then SafetyList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirDevice.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'displayName') then result := TFhirString.create() {L1223}
-  else if (propName = 'definition') then result := TFhirReference.create() {L1203}
-  else if (propName = 'udiCarrier') then result := UdiCarrierList.new() {L1053}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull], CODES_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull])  {L1211}
-  else if (propName = 'statusReason') then result := StatusReasonList.new() {L1053}
-  else if (propName = 'distinctIdentifier') then result := TFhirString.create() {L1223}
-  else if (propName = 'manufacturer') then result := TFhirString.create() {L1223}
-  else if (propName = 'manufactureDate') then result := TFhirDateTime.create() {L1223}
-  else if (propName = 'expirationDate') then result := TFhirDateTime.create() {L1223}
-  else if (propName = 'lotNumber') then result := TFhirString.create() {L1223}
-  else if (propName = 'serialNumber') then result := TFhirString.create() {L1223}
-  else if (propName = 'deviceName') then result := DeviceNameList.new() {L1053}
-  else if (propName = 'modelNumber') then result := TFhirString.create() {L1223}
-  else if (propName = 'partNumber') then result := TFhirString.create() {L1223}
-  else if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'specialization') then result := SpecializationList.new() {L1053}
-  else if (propName = 'version') then result := VersionList.new() {L1053}
-  else if (propName = 'property') then result := Property_List.new() {L1053}
-  else if (propName = 'patient') then result := TFhirReference.create() {L1203}
-  else if (propName = 'operationalStatus') then result := TFhirDeviceOperationalStatus.create() {L1203}
-  else if (propName = 'associationStatus') then result := TFhirDeviceAssociationStatus.create() {L1203}
-  else if (propName = 'owner') then result := TFhirReference.create() {L1203}
-  else if (propName = 'contact') then result := ContactList.new() {L1053}
-  else if (propName = 'location') then result := TFhirReference.create() {L1203}
-  else if (propName = 'url') then result := TFhirUri.create() {L1223}
-  else if (propName = 'note') then result := NoteList.new() {L1053}
-  else if (propName = 'safety') then result := SafetyList.new() {L1053}
-  else if (propName = 'parent') then result := TFhirReference.create() {L1203}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'displayName') then result := TFhirString.create()
+  else if (propName = 'definition') then result := TFhirReference.create()
+  else if (propName = 'udiCarrier') then result := UdiCarrierList.new()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull], CODES_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull]) 
+  else if (propName = 'statusReason') then result := StatusReasonList.new()
+  else if (propName = 'distinctIdentifier') then result := TFhirString.create()
+  else if (propName = 'manufacturer') then result := TFhirString.create()
+  else if (propName = 'manufactureDate') then result := TFhirDateTime.create()
+  else if (propName = 'expirationDate') then result := TFhirDateTime.create()
+  else if (propName = 'lotNumber') then result := TFhirString.create()
+  else if (propName = 'serialNumber') then result := TFhirString.create()
+  else if (propName = 'deviceName') then result := DeviceNameList.new()
+  else if (propName = 'modelNumber') then result := TFhirString.create()
+  else if (propName = 'partNumber') then result := TFhirString.create()
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'specialization') then result := SpecializationList.new()
+  else if (propName = 'version') then result := VersionList.new()
+  else if (propName = 'property') then result := Property_List.new()
+  else if (propName = 'patient') then result := TFhirReference.create()
+  else if (propName = 'operationalStatus') then result := TFhirDeviceOperationalStatus.create()
+  else if (propName = 'associationStatus') then result := TFhirDeviceAssociationStatus.create()
+  else if (propName = 'owner') then result := TFhirReference.create()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'location') then result := TFhirReference.create()
+  else if (propName = 'url') then result := TFhirUri.create()
+  else if (propName = 'note') then result := NoteList.new()
+  else if (propName = 'safety') then result := SafetyList.new()
+  else if (propName = 'parent') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -11789,34 +12270,34 @@ end;
 
 procedure TFhirDevice.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'displayName') then DisplayNameElement := nil
   else if (propName = 'definition') then DefinitionElement := nil
-  else if (propName = 'udiCarrier') then deletePropertyValue('udiCarrier', UdiCarrierList, value) {L1054}
+  else if (propName = 'udiCarrier') then deletePropertyValue('udiCarrier', UdiCarrierList, value)
   else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'statusReason') then deletePropertyValue('statusReason', StatusReasonList, value) {L1054}
+  else if (propName = 'statusReason') then deletePropertyValue('statusReason', StatusReasonList, value)
   else if (propName = 'distinctIdentifier') then DistinctIdentifierElement := nil
   else if (propName = 'manufacturer') then ManufacturerElement := nil
   else if (propName = 'manufactureDate') then ManufactureDateElement := nil
   else if (propName = 'expirationDate') then ExpirationDateElement := nil
   else if (propName = 'lotNumber') then LotNumberElement := nil
   else if (propName = 'serialNumber') then SerialNumberElement := nil
-  else if (propName = 'deviceName') then deletePropertyValue('deviceName', DeviceNameList, value) {L1054}
+  else if (propName = 'deviceName') then deletePropertyValue('deviceName', DeviceNameList, value)
   else if (propName = 'modelNumber') then ModelNumberElement := nil
   else if (propName = 'partNumber') then PartNumberElement := nil
-  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
-  else if (propName = 'specialization') then deletePropertyValue('specialization', SpecializationList, value) {L1054}
-  else if (propName = 'version') then deletePropertyValue('version', VersionList, value) {L1054}
-  else if (propName = 'property') then deletePropertyValue('property', Property_List, value) {L1054}
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
+  else if (propName = 'specialization') then deletePropertyValue('specialization', SpecializationList, value)
+  else if (propName = 'version') then deletePropertyValue('version', VersionList, value)
+  else if (propName = 'property') then deletePropertyValue('property', Property_List, value)
   else if (propName = 'patient') then PatientElement := nil
   else if (propName = 'operationalStatus') then OperationalStatusElement := nil
   else if (propName = 'associationStatus') then AssociationStatusElement := nil
   else if (propName = 'owner') then OwnerElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {L1054}
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
   else if (propName = 'location') then LocationElement := nil
   else if (propName = 'url') then UrlElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
-  else if (propName = 'safety') then deletePropertyValue('safety', SafetyList, value) {L1054}
+  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
+  else if (propName = 'safety') then deletePropertyValue('safety', SafetyList, value)
   else if (propName = 'parent') then ParentElement := nil
   else
     inherited deleteProperty(propName, value);
@@ -11824,52 +12305,52 @@ end;
 
 procedure TFhirDevice.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'displayName') then DisplayNameElement := asString(new) {L1222}
-  else if (propName = 'definition') then DefinitionElement := new as TFhirReference {L1195}
-  else if (propName = 'udiCarrier') then replacePropertyValue('udiCarrier', UdiCarrierList, existing, new) {L1055}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirFHIRDeviceStatusEnum, CODES_TFhirFHIRDeviceStatusEnum, new) {L1210}
-  else if (propName = 'statusReason') then replacePropertyValue('statusReason', StatusReasonList, existing, new) {L1055}
-  else if (propName = 'distinctIdentifier') then DistinctIdentifierElement := asString(new) {L1222}
-  else if (propName = 'manufacturer') then ManufacturerElement := asString(new) {L1222}
-  else if (propName = 'manufactureDate') then ManufactureDateElement := asDateTime(new) {L1222}
-  else if (propName = 'expirationDate') then ExpirationDateElement := asDateTime(new) {L1222}
-  else if (propName = 'lotNumber') then LotNumberElement := asString(new) {L1222}
-  else if (propName = 'serialNumber') then SerialNumberElement := asString(new) {L1222}
-  else if (propName = 'deviceName') then replacePropertyValue('deviceName', DeviceNameList, existing, new) {L1055}
-  else if (propName = 'modelNumber') then ModelNumberElement := asString(new) {L1222}
-  else if (propName = 'partNumber') then PartNumberElement := asString(new) {L1222}
-  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'specialization') then replacePropertyValue('specialization', SpecializationList, existing, new) {L1055}
-  else if (propName = 'version') then replacePropertyValue('version', VersionList, existing, new) {L1055}
-  else if (propName = 'property') then replacePropertyValue('property', Property_List, existing, new) {L1055}
-  else if (propName = 'patient') then PatientElement := new as TFhirReference {L1195}
-  else if (propName = 'operationalStatus') then OperationalStatusElement := new as TFhirDeviceOperationalStatus {L1195}
-  else if (propName = 'associationStatus') then AssociationStatusElement := new as TFhirDeviceAssociationStatus {L1195}
-  else if (propName = 'owner') then OwnerElement := new as TFhirReference {L1195}
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {L1055}
-  else if (propName = 'location') then LocationElement := new as TFhirReference {L1195}
-  else if (propName = 'url') then UrlElement := asUri(new) {L1222}
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
-  else if (propName = 'safety') then replacePropertyValue('safety', SafetyList, existing, new) {L1055}
-  else if (propName = 'parent') then ParentElement := new as TFhirReference {L1195}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'displayName') then DisplayNameElement := asString(new)
+  else if (propName = 'definition') then DefinitionElement := new as TFhirReference
+  else if (propName = 'udiCarrier') then replacePropertyValue('udiCarrier', UdiCarrierList, existing, new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirFHIRDeviceStatusEnum, CODES_TFhirFHIRDeviceStatusEnum, new)
+  else if (propName = 'statusReason') then replacePropertyValue('statusReason', StatusReasonList, existing, new)
+  else if (propName = 'distinctIdentifier') then DistinctIdentifierElement := asString(new)
+  else if (propName = 'manufacturer') then ManufacturerElement := asString(new)
+  else if (propName = 'manufactureDate') then ManufactureDateElement := asDateTime(new)
+  else if (propName = 'expirationDate') then ExpirationDateElement := asDateTime(new)
+  else if (propName = 'lotNumber') then LotNumberElement := asString(new)
+  else if (propName = 'serialNumber') then SerialNumberElement := asString(new)
+  else if (propName = 'deviceName') then replacePropertyValue('deviceName', DeviceNameList, existing, new)
+  else if (propName = 'modelNumber') then ModelNumberElement := asString(new)
+  else if (propName = 'partNumber') then PartNumberElement := asString(new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'specialization') then replacePropertyValue('specialization', SpecializationList, existing, new)
+  else if (propName = 'version') then replacePropertyValue('version', VersionList, existing, new)
+  else if (propName = 'property') then replacePropertyValue('property', Property_List, existing, new)
+  else if (propName = 'patient') then PatientElement := new as TFhirReference
+  else if (propName = 'operationalStatus') then OperationalStatusElement := new as TFhirDeviceOperationalStatus
+  else if (propName = 'associationStatus') then AssociationStatusElement := new as TFhirDeviceAssociationStatus
+  else if (propName = 'owner') then OwnerElement := new as TFhirReference
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'location') then LocationElement := new as TFhirReference
+  else if (propName = 'url') then UrlElement := asUri(new)
+  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
+  else if (propName = 'safety') then replacePropertyValue('safety', SafetyList, existing, new)
+  else if (propName = 'parent') then ParentElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDevice.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'udiCarrier') then UdiCarrierList.move(source, destination) {L1050}
-  else if (propName = 'statusReason') then StatusReasonList.move(source, destination) {L1050}
-  else if (propName = 'deviceName') then DeviceNameList.move(source, destination) {L1050}
-  else if (propName = 'type') then Type_List.move(source, destination) {L1050}
-  else if (propName = 'specialization') then SpecializationList.move(source, destination) {L1050}
-  else if (propName = 'version') then VersionList.move(source, destination) {L1050}
-  else if (propName = 'property') then Property_List.move(source, destination) {L1050}
-  else if (propName = 'contact') then ContactList.move(source, destination) {L1050}
-  else if (propName = 'note') then NoteList.move(source, destination) {L1050}
-  else if (propName = 'safety') then SafetyList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'udiCarrier') then UdiCarrierList.move(source, destination)
+  else if (propName = 'statusReason') then StatusReasonList.move(source, destination)
+  else if (propName = 'deviceName') then DeviceNameList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'specialization') then SpecializationList.move(source, destination)
+  else if (propName = 'version') then VersionList.move(source, destination)
+  else if (propName = 'property') then Property_List.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'note') then NoteList.move(source, destination)
+  else if (propName = 'safety') then SafetyList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -11923,6 +12404,56 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FDisplayName) and isEmptyProp(FDefinition) and isEmptyProp(FudiCarrierList) and isEmptyProp(FStatus) and isEmptyProp(FstatusReasonList) and isEmptyProp(FDistinctIdentifier) and isEmptyProp(FManufacturer) and isEmptyProp(FManufactureDate) and isEmptyProp(FExpirationDate) and isEmptyProp(FLotNumber) and isEmptyProp(FSerialNumber) and isEmptyProp(FdeviceNameList) and isEmptyProp(FModelNumber) and isEmptyProp(FPartNumber) and isEmptyProp(Ftype_List) and isEmptyProp(FspecializationList) and isEmptyProp(FversionList) and isEmptyProp(Fproperty_List) and isEmptyProp(FPatient) and isEmptyProp(FOperationalStatus) and isEmptyProp(FAssociationStatus) and isEmptyProp(FOwner) and isEmptyProp(FcontactList) and isEmptyProp(FLocation) and isEmptyProp(FUrl) and isEmptyProp(FnoteList) and isEmptyProp(FsafetyList) and isEmptyProp(FParent);
 end;
 
+procedure TFhirDevice.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('displayName');
+  fields.add('definition');
+  fields.add('udiCarrier');
+  fields.add('status');
+  fields.add('statusReason');
+  fields.add('distinctIdentifier');
+  fields.add('manufacturer');
+  fields.add('manufactureDate');
+  fields.add('expirationDate');
+  fields.add('lotNumber');
+  fields.add('serialNumber');
+  fields.add('deviceName');
+  fields.add('modelNumber');
+  fields.add('partNumber');
+  fields.add('type');
+  fields.add('specialization');
+  fields.add('version');
+  fields.add('property');
+  fields.add('patient');
+  fields.add('operationalStatus');
+  fields.add('associationStatus');
+  fields.add('owner');
+  fields.add('contact');
+  fields.add('location');
+  fields.add('url');
+  fields.add('note');
+  fields.add('safety');
+  fields.add('parent');
+end;
+
+function TFhirDevice.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FUdiCarrierList.sizeInBytes);
+  inc(result, FStatusReasonList.sizeInBytes);
+  inc(result, FDeviceNameList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FSpecializationList.sizeInBytes);
+  inc(result, FVersionList.sizeInBytes);
+  inc(result, FProperty_List.sizeInBytes);
+  inc(result, FContactList.sizeInBytes);
+  inc(result, FNoteList.sizeInBytes);
+  inc(result, FSafetyList.sizeInBytes);
+end;
+
 function TFhirDevice.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -11938,7 +12469,7 @@ end;
 procedure TFhirDevice.SetDisplayName(value : TFhirString);
 begin
   FDisplayName.free;
-  FDisplayName := value; {L1134}
+  FDisplayName := value;
 end;
 
 function TFhirDevice.GetDisplayNameST : String;
@@ -11964,7 +12495,7 @@ end;
 procedure TFhirDevice.SetDefinition(value : TFhirReference);
 begin
   FDefinition.free;
-  FDefinition := value; {L1134}
+  FDefinition := value;
 end;
 
 function TFhirDevice.GetUdiCarrierList : TFhirDeviceUdiCarrierList;
@@ -12016,7 +12547,7 @@ end;
 procedure TFhirDevice.SetDistinctIdentifier(value : TFhirString);
 begin
   FDistinctIdentifier.free;
-  FDistinctIdentifier := value; {L1134}
+  FDistinctIdentifier := value;
 end;
 
 function TFhirDevice.GetDistinctIdentifierST : String;
@@ -12042,7 +12573,7 @@ end;
 procedure TFhirDevice.SetManufacturer(value : TFhirString);
 begin
   FManufacturer.free;
-  FManufacturer := value; {L1134}
+  FManufacturer := value;
 end;
 
 function TFhirDevice.GetManufacturerST : String;
@@ -12068,7 +12599,7 @@ end;
 procedure TFhirDevice.SetManufactureDate(value : TFhirDateTime);
 begin
   FManufactureDate.free;
-  FManufactureDate := value; {L1134}
+  FManufactureDate := value;
 end;
 
 function TFhirDevice.GetManufactureDateST : TFslDateTime;
@@ -12089,7 +12620,7 @@ end;
 procedure TFhirDevice.SetExpirationDate(value : TFhirDateTime);
 begin
   FExpirationDate.free;
-  FExpirationDate := value; {L1134}
+  FExpirationDate := value;
 end;
 
 function TFhirDevice.GetExpirationDateST : TFslDateTime;
@@ -12110,7 +12641,7 @@ end;
 procedure TFhirDevice.SetLotNumber(value : TFhirString);
 begin
   FLotNumber.free;
-  FLotNumber := value; {L1134}
+  FLotNumber := value;
 end;
 
 function TFhirDevice.GetLotNumberST : String;
@@ -12136,7 +12667,7 @@ end;
 procedure TFhirDevice.SetSerialNumber(value : TFhirString);
 begin
   FSerialNumber.free;
-  FSerialNumber := value; {L1134}
+  FSerialNumber := value;
 end;
 
 function TFhirDevice.GetSerialNumberST : String;
@@ -12174,7 +12705,7 @@ end;
 procedure TFhirDevice.SetModelNumber(value : TFhirString);
 begin
   FModelNumber.free;
-  FModelNumber := value; {L1134}
+  FModelNumber := value;
 end;
 
 function TFhirDevice.GetModelNumberST : String;
@@ -12200,7 +12731,7 @@ end;
 procedure TFhirDevice.SetPartNumber(value : TFhirString);
 begin
   FPartNumber.free;
-  FPartNumber := value; {L1134}
+  FPartNumber := value;
 end;
 
 function TFhirDevice.GetPartNumberST : String;
@@ -12274,25 +12805,25 @@ end;
 procedure TFhirDevice.SetPatient(value : TFhirReference);
 begin
   FPatient.free;
-  FPatient := value; {L1134}
+  FPatient := value;
 end;
 
 procedure TFhirDevice.SetOperationalStatus(value : TFhirDeviceOperationalStatus);
 begin
   FOperationalStatus.free;
-  FOperationalStatus := value; {L1134}
+  FOperationalStatus := value;
 end;
 
 procedure TFhirDevice.SetAssociationStatus(value : TFhirDeviceAssociationStatus);
 begin
   FAssociationStatus.free;
-  FAssociationStatus := value; {L1134}
+  FAssociationStatus := value;
 end;
 
 procedure TFhirDevice.SetOwner(value : TFhirReference);
 begin
   FOwner.free;
-  FOwner := value; {L1134}
+  FOwner := value;
 end;
 
 function TFhirDevice.GetContactList : TFhirContactPointList;
@@ -12310,13 +12841,13 @@ end;
 procedure TFhirDevice.SetLocation(value : TFhirReference);
 begin
   FLocation.free;
-  FLocation := value; {L1134}
+  FLocation := value;
 end;
 
 procedure TFhirDevice.SetUrl(value : TFhirUri);
 begin
   FUrl.free;
-  FUrl := value; {L1134}
+  FUrl := value;
 end;
 
 function TFhirDevice.GetUrlST : String;
@@ -12366,74 +12897,7 @@ end;
 procedure TFhirDevice.SetParent(value : TFhirReference);
 begin
   FParent.free;
-  FParent := value; {L1134}
-end;
-
-procedure TFhirDevice.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('displayName');
-  fields.add('definition');
-  fields.add('udiCarrier');
-  fields.add('status');
-  fields.add('statusReason');
-  fields.add('distinctIdentifier');
-  fields.add('manufacturer');
-  fields.add('manufactureDate');
-  fields.add('expirationDate');
-  fields.add('lotNumber');
-  fields.add('serialNumber');
-  fields.add('deviceName');
-  fields.add('modelNumber');
-  fields.add('partNumber');
-  fields.add('type');
-  fields.add('specialization');
-  fields.add('version');
-  fields.add('property');
-  fields.add('patient');
-  fields.add('operationalStatus');
-  fields.add('associationStatus');
-  fields.add('owner');
-  fields.add('contact');
-  fields.add('location');
-  fields.add('url');
-  fields.add('note');
-  fields.add('safety');
-  fields.add('parent');
-end;
-
-function TFhirDevice.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDisplayName.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FudiCarrierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FstatusReasonList.sizeInBytes);
-  inc(result, FDistinctIdentifier.sizeInBytes);
-  inc(result, FManufacturer.sizeInBytes);
-  inc(result, FManufactureDate.sizeInBytes);
-  inc(result, FExpirationDate.sizeInBytes);
-  inc(result, FLotNumber.sizeInBytes);
-  inc(result, FSerialNumber.sizeInBytes);
-  inc(result, FdeviceNameList.sizeInBytes);
-  inc(result, FModelNumber.sizeInBytes);
-  inc(result, FPartNumber.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FspecializationList.sizeInBytes);
-  inc(result, FversionList.sizeInBytes);
-  inc(result, Fproperty_List.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FOperationalStatus.sizeInBytes);
-  inc(result, FAssociationStatus.sizeInBytes);
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FsafetyList.sizeInBytes);
+  FParent := value;
 end;
 
 { TFhirDeviceListEnumerator }
@@ -12602,26 +13066,26 @@ end;
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
+  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
 end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'deviceIdentifier') then
   begin
-    DeviceIdentifierElement := asString(propValue) {L1221};
+    DeviceIdentifierElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'issuer') then
   begin
-    IssuerElement := asUri(propValue) {L1221};
+    IssuerElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'jurisdiction') then
   begin
-    JurisdictionElement := asUri(propValue) {L1221};
+    JurisdictionElement := asUri(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -12634,9 +13098,9 @@ end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'deviceIdentifier') then result := TFhirString.create() {L1223}
-  else if (propName = 'issuer') then result := TFhirUri.create() {L1223}
-  else if (propName = 'jurisdiction') then result := TFhirUri.create() {L1223}
+  if (propName = 'deviceIdentifier') then result := TFhirString.create()
+  else if (propName = 'issuer') then result := TFhirUri.create()
+  else if (propName = 'jurisdiction') then result := TFhirUri.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -12659,9 +13123,9 @@ end;
 
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := asString(new) {L1222}
-  else if (propName = 'issuer') then IssuerElement := asUri(new) {L1222}
-  else if (propName = 'jurisdiction') then JurisdictionElement := asUri(new) {L1222}
+  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := asString(new)
+  else if (propName = 'issuer') then IssuerElement := asUri(new)
+  else if (propName = 'jurisdiction') then JurisdictionElement := asUri(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -12707,10 +13171,23 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDeviceIdentifier) and isEmptyProp(FIssuer) and isEmptyProp(FJurisdiction);
 end;
 
+procedure TFhirDeviceDefinitionUdiDeviceIdentifier.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('deviceIdentifier');
+  fields.add('issuer');
+  fields.add('jurisdiction');
+end;
+
+function TFhirDeviceDefinitionUdiDeviceIdentifier.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.SetDeviceIdentifier(value : TFhirString);
 begin
   FDeviceIdentifier.free;
-  FDeviceIdentifier := value; {L1134}
+  FDeviceIdentifier := value;
 end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.GetDeviceIdentifierST : String;
@@ -12736,7 +13213,7 @@ end;
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.SetIssuer(value : TFhirUri);
 begin
   FIssuer.free;
-  FIssuer := value; {L1134}
+  FIssuer := value;
 end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.GetIssuerST : String;
@@ -12762,7 +13239,7 @@ end;
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.SetJurisdiction(value : TFhirUri);
 begin
   FJurisdiction.free;
-  FJurisdiction := value; {L1134}
+  FJurisdiction := value;
 end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.GetJurisdictionST : String;
@@ -12783,22 +13260,6 @@ begin
   end
   else if FJurisdiction <> nil then
     FJurisdiction.value := '';
-end;
-
-procedure TFhirDeviceDefinitionUdiDeviceIdentifier.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('deviceIdentifier');
-  fields.add('issuer');
-  fields.add('jurisdiction');
-end;
-
-function TFhirDeviceDefinitionUdiDeviceIdentifier.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDeviceIdentifier.sizeInBytes);
-  inc(result, FIssuer.sizeInBytes);
-  inc(result, FJurisdiction.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionUdiDeviceIdentifierListEnumerator }
@@ -12961,20 +13422,20 @@ end;
 procedure TFhirDeviceDefinitionDeviceName.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirDeviceDefinitionDeviceName.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -12987,8 +13448,8 @@ end;
 
 function TFhirDeviceDefinitionDeviceName.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull])  {L1211}
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -13009,8 +13470,8 @@ end;
 
 procedure TFhirDeviceDefinitionDeviceName.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, new) {L1210}
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceNameTypeEnum, CODES_TFhirDeviceNameTypeEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -13055,10 +13516,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FType_);
 end;
 
+procedure TFhirDeviceDefinitionDeviceName.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('type');
+end;
+
+function TFhirDeviceDefinitionDeviceName.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceDefinitionDeviceName.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirDeviceDefinitionDeviceName.GetNameST : String;
@@ -13101,20 +13574,6 @@ begin
     Type_Element := nil
   else
     Type_Element := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
-end;
-
-procedure TFhirDeviceDefinitionDeviceName.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('name');
-  fields.add('type');
-end;
-
-function TFhirDeviceDefinitionDeviceName.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionDeviceNameListEnumerator }
@@ -13277,20 +13736,20 @@ end;
 procedure TFhirDeviceDefinitionSpecialization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'systemType', 'string', false, TFhirString, FSystemType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'systemType', 'string', false, TFhirString, FSystemType.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
 end;
 
 function TFhirDeviceDefinitionSpecialization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'systemType') then
   begin
-    SystemTypeElement := asString(propValue) {L1221};
+    SystemTypeElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'version') then
   begin
-    VersionElement := asString(propValue) {L1221};
+    VersionElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -13303,8 +13762,8 @@ end;
 
 function TFhirDeviceDefinitionSpecialization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'systemType') then result := TFhirString.create() {L1223}
-  else if (propName = 'version') then result := TFhirString.create() {L1223}
+  if (propName = 'systemType') then result := TFhirString.create()
+  else if (propName = 'version') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -13325,8 +13784,8 @@ end;
 
 procedure TFhirDeviceDefinitionSpecialization.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'systemType') then SystemTypeElement := asString(new) {L1222}
-  else if (propName = 'version') then VersionElement := asString(new) {L1222}
+  if (propName = 'systemType') then SystemTypeElement := asString(new)
+  else if (propName = 'version') then VersionElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -13371,10 +13830,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FSystemType) and isEmptyProp(FVersion);
 end;
 
+procedure TFhirDeviceDefinitionSpecialization.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('systemType');
+  fields.add('version');
+end;
+
+function TFhirDeviceDefinitionSpecialization.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceDefinitionSpecialization.SetSystemType(value : TFhirString);
 begin
   FSystemType.free;
-  FSystemType := value; {L1134}
+  FSystemType := value;
 end;
 
 function TFhirDeviceDefinitionSpecialization.GetSystemTypeST : String;
@@ -13400,7 +13871,7 @@ end;
 procedure TFhirDeviceDefinitionSpecialization.SetVersion(value : TFhirString);
 begin
   FVersion.free;
-  FVersion := value; {L1134}
+  FVersion := value;
 end;
 
 function TFhirDeviceDefinitionSpecialization.GetVersionST : String;
@@ -13421,20 +13892,6 @@ begin
   end
   else if FVersion <> nil then
     FVersion.value := '';
-end;
-
-procedure TFhirDeviceDefinitionSpecialization.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('systemType');
-  fields.add('version');
-end;
-
-function TFhirDeviceDefinitionSpecialization.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FSystemType.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionSpecializationListEnumerator }
@@ -13564,6 +14021,1744 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+{ TFhirDeviceDefinitionHasPart }
+
+constructor TFhirDeviceDefinitionHasPart.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDeviceDefinitionHasPart.Destroy;
+begin
+  FReference.free;
+  FCount.free;
+  inherited;
+end;
+
+procedure TFhirDeviceDefinitionHasPart.Assign(oSource : TFslObject);
+begin
+  inherited;
+  reference := TFhirDeviceDefinitionHasPart(oSource).reference.Clone;
+  countElement := TFhirDeviceDefinitionHasPart(oSource).countElement.Clone;
+end;
+
+procedure TFhirDeviceDefinitionHasPart.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'reference') Then
+     list.add(self.link, 'reference', FReference.Link);
+  if (child_name = 'count') Then
+     list.add(self.link, 'count', FCount.Link);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'reference', 'Reference', false, TFhirReference, FReference.Link));
+  oList.add(TFHIRProperty.create(self, 'count', 'integer', false, TFhirInteger, FCount.Link));
+end;
+
+function TFhirDeviceDefinitionHasPart.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'reference') then
+  begin
+    Reference := propValue as TFhirReference;
+    result := propValue;
+  end
+  else if (propName = 'count') then
+  begin
+    CountElement := asInteger(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirDeviceDefinitionHasPart.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'reference') then result := TFhirReference.create()
+  else if (propName = 'count') then result := TFhirInteger.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirDeviceDefinitionHasPart.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'reference') then result := 'Reference'
+  else if (propName = 'count') then result := 'integer'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'reference') then ReferenceElement := nil
+  else if (propName = 'count') then CountElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'reference') then ReferenceElement := new as TFhirReference
+  else if (propName = 'count') then CountElement := asInteger(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirDeviceDefinitionHasPart.fhirType : string;
+begin
+  result := 'DeviceDefinition.hasPart';
+end;
+
+function TFhirDeviceDefinitionHasPart.Link : TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart(inherited Link);
+end;
+
+function TFhirDeviceDefinitionHasPart.Clone : TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionHasPart.equals(other : TObject) : boolean; 
+var
+  o : TFhirDeviceDefinitionHasPart;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirDeviceDefinitionHasPart)) then
+    result := false
+  else
+  begin
+    o := TFhirDeviceDefinitionHasPart(other);
+    result := compareDeep(referenceElement, o.referenceElement, true) and compareDeep(countElement, o.countElement, true);
+  end;
+end;
+
+function TFhirDeviceDefinitionHasPart.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FReference) and isEmptyProp(FCount);
+end;
+
+procedure TFhirDeviceDefinitionHasPart.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('reference');
+  fields.add('count');
+end;
+
+function TFhirDeviceDefinitionHasPart.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
+procedure TFhirDeviceDefinitionHasPart.SetReference(value : TFhirReference);
+begin
+  FReference.free;
+  FReference := value;
+end;
+
+procedure TFhirDeviceDefinitionHasPart.SetCount(value : TFhirInteger);
+begin
+  FCount.free;
+  FCount := value;
+end;
+
+function TFhirDeviceDefinitionHasPart.GetCountST : String;
+begin
+  if FCount = nil then
+    result := ''
+  else
+    result := FCount.value;
+end;
+
+procedure TFhirDeviceDefinitionHasPart.SetCountST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCount = nil then
+      FCount := TFhirInteger.create;
+    FCount.value := value
+  end
+  else if FCount <> nil then
+    FCount.value := '';
+end;
+
+{ TFhirDeviceDefinitionHasPartListEnumerator }
+
+constructor TFhirDeviceDefinitionHasPartListEnumerator.Create(list : TFhirDeviceDefinitionHasPartList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirDeviceDefinitionHasPartListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceDefinitionHasPartListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirDeviceDefinitionHasPartListEnumerator.GetCurrent : TFhirDeviceDefinitionHasPart;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirDeviceDefinitionHasPartListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FList.sizeInBytes);
+end;
+
+{ TFhirDeviceDefinitionHasPartList }
+
+procedure TFhirDeviceDefinitionHasPartList.AddItem(value: TFhirDeviceDefinitionHasPart);
+begin
+  assert(value.ClassName = 'TFhirDeviceDefinitionHasPart', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDefinitionHasPart');
+  add(value);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Append: TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionHasPartList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDeviceDefinitionHasPartList.GetEnumerator : TFhirDeviceDefinitionHasPartListEnumerator;
+begin
+  result := TFhirDeviceDefinitionHasPartListEnumerator.Create(self.link);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Clone: TFhirDeviceDefinitionHasPartList;
+begin
+  result := TFhirDeviceDefinitionHasPartList(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDeviceDefinitionHasPartList.GetItemN(index: Integer): TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionHasPartList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirDeviceDefinitionHasPart;
+end;
+function TFhirDeviceDefinitionHasPartList.IndexOf(value: TFhirDeviceDefinitionHasPart): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Insert(index: Integer): TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionHasPartList.InsertItem(index: Integer; value: TFhirDeviceDefinitionHasPart);
+begin
+  assert(value is TFhirDeviceDefinitionHasPart);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Item(index: Integer): TFhirDeviceDefinitionHasPart;
+begin
+  result := TFhirDeviceDefinitionHasPart(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionHasPartList.Link: TFhirDeviceDefinitionHasPartList;
+begin
+  result := TFhirDeviceDefinitionHasPartList(inherited Link);
+end;
+
+procedure TFhirDeviceDefinitionHasPartList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDeviceDefinitionHasPartList.SetItemByIndex(index: Integer; value: TFhirDeviceDefinitionHasPart);
+begin
+  assert(value is TFhirDeviceDefinitionHasPart);
+  FhirDeviceDefinitionHasParts[index] := value;
+end;
+
+procedure TFhirDeviceDefinitionHasPartList.SetItemN(index: Integer; value: TFhirDeviceDefinitionHasPart);
+begin
+  assert(value is TFhirDeviceDefinitionHasPart);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDeviceDefinitionPackaging }
+
+constructor TFhirDeviceDefinitionPackaging.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDeviceDefinitionPackaging.Destroy;
+begin
+  FIdentifier.free;
+  FType_.free;
+  FCount.free;
+  FDistributorList.Free;
+  FUdiDeviceIdentifierList.Free;
+  FPackagingList.Free;
+  inherited;
+end;
+
+procedure TFhirDeviceDefinitionPackaging.Assign(oSource : TFslObject);
+begin
+  inherited;
+  identifier := TFhirDeviceDefinitionPackaging(oSource).identifier.Clone;
+  type_ := TFhirDeviceDefinitionPackaging(oSource).type_.Clone;
+  countElement := TFhirDeviceDefinitionPackaging(oSource).countElement.Clone;
+  if (TFhirDeviceDefinitionPackaging(oSource).FDistributorList = nil) then
+  begin
+    FDistributorList.free;
+    FDistributorList := nil;
+  end
+  else
+  begin
+    if FDistributorList = nil then
+      FDistributorList := TFhirDeviceDefinitionPackagingDistributorList.Create;
+    FDistributorList.Assign(TFhirDeviceDefinitionPackaging(oSource).FDistributorList);
+  end;
+  if (TFhirDeviceDefinitionPackaging(oSource).FUdiDeviceIdentifierList = nil) then
+  begin
+    FUdiDeviceIdentifierList.free;
+    FUdiDeviceIdentifierList := nil;
+  end
+  else
+  begin
+    if FUdiDeviceIdentifierList = nil then
+      FUdiDeviceIdentifierList := TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Create;
+    FUdiDeviceIdentifierList.Assign(TFhirDeviceDefinitionPackaging(oSource).FUdiDeviceIdentifierList);
+  end;
+  if (TFhirDeviceDefinitionPackaging(oSource).FPackagingList = nil) then
+  begin
+    FPackagingList.free;
+    FPackagingList := nil;
+  end
+  else
+  begin
+    if FPackagingList = nil then
+      FPackagingList := TFhirDeviceDefinitionPackagingList.Create;
+    FPackagingList.Assign(TFhirDeviceDefinitionPackaging(oSource).FPackagingList);
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackaging.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'identifier') Then
+     list.add(self.link, 'identifier', FIdentifier.Link);
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'count') Then
+     list.add(self.link, 'count', FCount.Link);
+  if (child_name = 'distributor') Then
+    list.addAll(self, 'distributor', FDistributorList);
+  if (child_name = 'udiDeviceIdentifier') Then
+    list.addAll(self, 'udiDeviceIdentifier', FUdiDeviceIdentifierList);
+  if (child_name = 'packaging') Then
+    list.addAll(self, 'packaging', FPackagingList);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'count', 'integer', false, TFhirInteger, FCount.Link));
+  oList.add(TFHIRProperty.create(self, 'distributor', 'BackboneElement', true, TFhirDeviceDefinitionPackagingDistributor, FDistributorList.Link));
+  oList.add(TFHIRProperty.create(self, 'udiDeviceIdentifier', 'BackboneElement', true, TFhirDeviceDefinitionPackagingUdiDeviceIdentifier, FUdiDeviceIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'packaging', '', true, TFhirDeviceDefinitionPackaging, FPackagingList.Link));
+end;
+
+function TFhirDeviceDefinitionPackaging.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'identifier') then
+  begin
+    Identifier := propValue as TFhirIdentifier;
+    result := propValue;
+  end
+  else if (propName = 'type') then
+  begin
+    Type_ := propValue as TFhirCodeableConcept;
+    result := propValue;
+  end
+  else if (propName = 'count') then
+  begin
+    CountElement := asInteger(propValue);
+    result := propValue;
+  end
+  else if (propName = 'distributor') then
+  begin
+    DistributorList.add(propValue as TFhirDeviceDefinitionPackagingDistributor);
+    result := propValue;
+  end
+  else if (propName = 'udiDeviceIdentifier') then
+  begin
+    UdiDeviceIdentifierList.add(propValue as TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+    result := propValue;
+  end
+  else if (propName = 'packaging') then
+  begin
+    PackagingList.add(propValue as TFhirDeviceDefinitionPackaging);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'distributor') then DistributorList.insertItem(index, propValue as TFhirDeviceDefinitionPackagingDistributor)
+  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.insertItem(index, propValue as TFhirDeviceDefinitionPackagingUdiDeviceIdentifier)
+  else if (propName = 'packaging') then PackagingList.insertItem(index, propValue as TFhirDeviceDefinitionPackaging)
+  else inherited;
+end;
+
+function TFhirDeviceDefinitionPackaging.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'identifier') then result := TFhirIdentifier.create()
+  else if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'count') then result := TFhirInteger.create()
+  else if (propName = 'distributor') then result := DistributorList.new()
+  else if (propName = 'udiDeviceIdentifier') then result := UdiDeviceIdentifierList.new()
+  else if (propName = 'packaging') then result := PackagingList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirDeviceDefinitionPackaging.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'identifier') then result := 'Identifier'
+  else if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'count') then result := 'integer'
+  else if (propName = 'distributor') then result := 'BackboneElement'
+  else if (propName = 'udiDeviceIdentifier') then result := 'BackboneElement'
+  else if (propName = 'packaging') then result := ''
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'identifier') then IdentifierElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'count') then CountElement := nil
+  else if (propName = 'distributor') then deletePropertyValue('distributor', DistributorList, value)
+  else if (propName = 'udiDeviceIdentifier') then deletePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, value)
+  else if (propName = 'packaging') then deletePropertyValue('packaging', PackagingList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'identifier') then IdentifierElement := new as TFhirIdentifier
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'count') then CountElement := asInteger(new)
+  else if (propName = 'distributor') then replacePropertyValue('distributor', DistributorList, existing, new)
+  else if (propName = 'udiDeviceIdentifier') then replacePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, existing, new)
+  else if (propName = 'packaging') then replacePropertyValue('packaging', PackagingList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'distributor') then DistributorList.move(source, destination)
+  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.move(source, destination)
+  else if (propName = 'packaging') then PackagingList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirDeviceDefinitionPackaging.fhirType : string;
+begin
+  result := 'DeviceDefinition.packaging';
+end;
+
+function TFhirDeviceDefinitionPackaging.Link : TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging(inherited Link);
+end;
+
+function TFhirDeviceDefinitionPackaging.Clone : TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackaging.equals(other : TObject) : boolean; 
+var
+  o : TFhirDeviceDefinitionPackaging;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirDeviceDefinitionPackaging)) then
+    result := false
+  else
+  begin
+    o := TFhirDeviceDefinitionPackaging(other);
+    result := compareDeep(identifierElement, o.identifierElement, true) and compareDeep(type_Element, o.type_Element, true) and 
+      compareDeep(countElement, o.countElement, true) and compareDeep(distributorList, o.distributorList, true) and 
+      compareDeep(udiDeviceIdentifierList, o.udiDeviceIdentifierList, true) and compareDeep(packagingList, o.packagingList, true);
+  end;
+end;
+
+function TFhirDeviceDefinitionPackaging.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FIdentifier) and isEmptyProp(FType_) and isEmptyProp(FCount) and isEmptyProp(FdistributorList) and isEmptyProp(FudiDeviceIdentifierList) and isEmptyProp(FpackagingList);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('type');
+  fields.add('count');
+  fields.add('distributor');
+  fields.add('udiDeviceIdentifier');
+  fields.add('packaging');
+end;
+
+function TFhirDeviceDefinitionPackaging.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDistributorList.sizeInBytes);
+  inc(result, FUdiDeviceIdentifierList.sizeInBytes);
+  inc(result, FPackagingList.sizeInBytes);
+end;
+
+procedure TFhirDeviceDefinitionPackaging.SetIdentifier(value : TFhirIdentifier);
+begin
+  FIdentifier.free;
+  FIdentifier := value;
+end;
+
+procedure TFhirDeviceDefinitionPackaging.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+procedure TFhirDeviceDefinitionPackaging.SetCount(value : TFhirInteger);
+begin
+  FCount.free;
+  FCount := value;
+end;
+
+function TFhirDeviceDefinitionPackaging.GetCountST : String;
+begin
+  if FCount = nil then
+    result := ''
+  else
+    result := FCount.value;
+end;
+
+procedure TFhirDeviceDefinitionPackaging.SetCountST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCount = nil then
+      FCount := TFhirInteger.create;
+    FCount.value := value
+  end
+  else if FCount <> nil then
+    FCount.value := '';
+end;
+
+function TFhirDeviceDefinitionPackaging.GetDistributorList : TFhirDeviceDefinitionPackagingDistributorList;
+begin
+  if FDistributorList = nil then
+    FDistributorList := TFhirDeviceDefinitionPackagingDistributorList.Create;
+  result := FDistributorList;
+end;
+
+function TFhirDeviceDefinitionPackaging.GetHasDistributorList : boolean;
+begin
+  result := (FDistributorList <> nil) and (FDistributorList.count > 0);
+end;
+
+function TFhirDeviceDefinitionPackaging.GetUdiDeviceIdentifierList : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+begin
+  if FUdiDeviceIdentifierList = nil then
+    FUdiDeviceIdentifierList := TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Create;
+  result := FUdiDeviceIdentifierList;
+end;
+
+function TFhirDeviceDefinitionPackaging.GetHasUdiDeviceIdentifierList : boolean;
+begin
+  result := (FUdiDeviceIdentifierList <> nil) and (FUdiDeviceIdentifierList.count > 0);
+end;
+
+function TFhirDeviceDefinitionPackaging.GetPackagingList : TFhirDeviceDefinitionPackagingList;
+begin
+  if FPackagingList = nil then
+    FPackagingList := TFhirDeviceDefinitionPackagingList.Create;
+  result := FPackagingList;
+end;
+
+function TFhirDeviceDefinitionPackaging.GetHasPackagingList : boolean;
+begin
+  result := (FPackagingList <> nil) and (FPackagingList.count > 0);
+end;
+
+{ TFhirDeviceDefinitionPackagingListEnumerator }
+
+constructor TFhirDeviceDefinitionPackagingListEnumerator.Create(list : TFhirDeviceDefinitionPackagingList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirDeviceDefinitionPackagingListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceDefinitionPackagingListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirDeviceDefinitionPackagingListEnumerator.GetCurrent : TFhirDeviceDefinitionPackaging;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirDeviceDefinitionPackagingListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FList.sizeInBytes);
+end;
+
+{ TFhirDeviceDefinitionPackagingList }
+
+procedure TFhirDeviceDefinitionPackagingList.AddItem(value: TFhirDeviceDefinitionPackaging);
+begin
+  assert(value.ClassName = 'TFhirDeviceDefinitionPackaging', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDefinitionPackaging');
+  add(value);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Append: TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDeviceDefinitionPackagingList.GetEnumerator : TFhirDeviceDefinitionPackagingListEnumerator;
+begin
+  result := TFhirDeviceDefinitionPackagingListEnumerator.Create(self.link);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Clone: TFhirDeviceDefinitionPackagingList;
+begin
+  result := TFhirDeviceDefinitionPackagingList(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDeviceDefinitionPackagingList.GetItemN(index: Integer): TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirDeviceDefinitionPackaging;
+end;
+function TFhirDeviceDefinitionPackagingList.IndexOf(value: TFhirDeviceDefinitionPackaging): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Insert(index: Integer): TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingList.InsertItem(index: Integer; value: TFhirDeviceDefinitionPackaging);
+begin
+  assert(value is TFhirDeviceDefinitionPackaging);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Item(index: Integer): TFhirDeviceDefinitionPackaging;
+begin
+  result := TFhirDeviceDefinitionPackaging(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingList.Link: TFhirDeviceDefinitionPackagingList;
+begin
+  result := TFhirDeviceDefinitionPackagingList(inherited Link);
+end;
+
+procedure TFhirDeviceDefinitionPackagingList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDeviceDefinitionPackagingList.SetItemByIndex(index: Integer; value: TFhirDeviceDefinitionPackaging);
+begin
+  assert(value is TFhirDeviceDefinitionPackaging);
+  FhirDeviceDefinitionPackagings[index] := value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingList.SetItemN(index: Integer; value: TFhirDeviceDefinitionPackaging);
+begin
+  assert(value is TFhirDeviceDefinitionPackaging);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDeviceDefinitionPackagingDistributor }
+
+constructor TFhirDeviceDefinitionPackagingDistributor.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDeviceDefinitionPackagingDistributor.Destroy;
+begin
+  FName.free;
+  FOrganizationReferenceList.Free;
+  inherited;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.Assign(oSource : TFslObject);
+begin
+  inherited;
+  nameElement := TFhirDeviceDefinitionPackagingDistributor(oSource).nameElement.Clone;
+  if (TFhirDeviceDefinitionPackagingDistributor(oSource).FOrganizationReferenceList = nil) then
+  begin
+    FOrganizationReferenceList.free;
+    FOrganizationReferenceList := nil;
+  end
+  else
+  begin
+    if FOrganizationReferenceList = nil then
+      FOrganizationReferenceList := TFhirReferenceList.Create;
+    FOrganizationReferenceList.Assign(TFhirDeviceDefinitionPackagingDistributor(oSource).FOrganizationReferenceList);
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'name') Then
+     list.add(self.link, 'name', FName.Link);
+  if (child_name = 'organizationReference') Then
+    list.addAll(self, 'organizationReference', FOrganizationReferenceList);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'organizationReference', 'Reference', true, TFhirReference, FOrganizationReferenceList.Link));
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'name') then
+  begin
+    NameElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'organizationReference') then
+  begin
+    OrganizationReferenceList.add(propValue as TFhirReference);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  if (propName = 'organizationReference') then OrganizationReferenceList.insertItem(index, propValue as TFhirReference)
+  else inherited;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'organizationReference') then result := OrganizationReferenceList.new()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'name') then result := 'string'
+  else if (propName = 'organizationReference') then result := 'Reference'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'organizationReference') then deletePropertyValue('organizationReference', OrganizationReferenceList, value)
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'organizationReference') then replacePropertyValue('organizationReference', OrganizationReferenceList, existing, new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'organizationReference') then OrganizationReferenceList.move(source, destination)
+  else
+    inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.fhirType : string;
+begin
+  result := 'DeviceDefinition.packaging.distributor';
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.Link : TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor(inherited Link);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.Clone : TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.equals(other : TObject) : boolean; 
+var
+  o : TFhirDeviceDefinitionPackagingDistributor;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirDeviceDefinitionPackagingDistributor)) then
+    result := false
+  else
+  begin
+    o := TFhirDeviceDefinitionPackagingDistributor(other);
+    result := compareDeep(nameElement, o.nameElement, true) and compareDeep(organizationReferenceList, o.organizationReferenceList, true);
+  end;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(ForganizationReferenceList);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('name');
+  fields.add('organizationReference');
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FOrganizationReferenceList.sizeInBytes);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.SetName(value : TFhirString);
+begin
+  FName.free;
+  FName := value;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.GetNameST : String;
+begin
+  if FName = nil then
+    result := ''
+  else
+    result := FName.value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributor.SetNameST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FName = nil then
+      FName := TFhirString.create;
+    FName.value := value
+  end
+  else if FName <> nil then
+    FName.value := '';
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.GetOrganizationReferenceList : TFhirReferenceList;
+begin
+  if FOrganizationReferenceList = nil then
+    FOrganizationReferenceList := TFhirReferenceList.Create;
+  result := FOrganizationReferenceList;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributor.GetHasOrganizationReferenceList : boolean;
+begin
+  result := (FOrganizationReferenceList <> nil) and (FOrganizationReferenceList.count > 0);
+end;
+
+{ TFhirDeviceDefinitionPackagingDistributorListEnumerator }
+
+constructor TFhirDeviceDefinitionPackagingDistributorListEnumerator.Create(list : TFhirDeviceDefinitionPackagingDistributorList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirDeviceDefinitionPackagingDistributorListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorListEnumerator.GetCurrent : TFhirDeviceDefinitionPackagingDistributor;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FList.sizeInBytes);
+end;
+
+{ TFhirDeviceDefinitionPackagingDistributorList }
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.AddItem(value: TFhirDeviceDefinitionPackagingDistributor);
+begin
+  assert(value.ClassName = 'TFhirDeviceDefinitionPackagingDistributor', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDefinitionPackagingDistributor');
+  add(value);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Append: TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.GetEnumerator : TFhirDeviceDefinitionPackagingDistributorListEnumerator;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributorListEnumerator.Create(self.link);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Clone: TFhirDeviceDefinitionPackagingDistributorList;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributorList(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.GetItemN(index: Integer): TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor;
+end;
+function TFhirDeviceDefinitionPackagingDistributorList.IndexOf(value: TFhirDeviceDefinitionPackagingDistributor): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Insert(index: Integer): TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.InsertItem(index: Integer; value: TFhirDeviceDefinitionPackagingDistributor);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingDistributor);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Item(index: Integer): TFhirDeviceDefinitionPackagingDistributor;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributor(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingDistributorList.Link: TFhirDeviceDefinitionPackagingDistributorList;
+begin
+  result := TFhirDeviceDefinitionPackagingDistributorList(inherited Link);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.SetItemByIndex(index: Integer; value: TFhirDeviceDefinitionPackagingDistributor);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingDistributor);
+  FhirDeviceDefinitionPackagingDistributors[index] := value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingDistributorList.SetItemN(index: Integer; value: TFhirDeviceDefinitionPackagingDistributor);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingDistributor);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDeviceDefinitionPackagingUdiDeviceIdentifier }
+
+constructor TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.Destroy;
+begin
+  FDeviceIdentifier.free;
+  FIssuer.free;
+  FJurisdiction.free;
+  inherited;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.Assign(oSource : TFslObject);
+begin
+  inherited;
+  deviceIdentifierElement := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(oSource).deviceIdentifierElement.Clone;
+  issuerElement := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(oSource).issuerElement.Clone;
+  jurisdictionElement := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(oSource).jurisdictionElement.Clone;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'deviceIdentifier') Then
+     list.add(self.link, 'deviceIdentifier', FDeviceIdentifier.Link);
+  if (child_name = 'issuer') Then
+     list.add(self.link, 'issuer', FIssuer.Link);
+  if (child_name = 'jurisdiction') Then
+     list.add(self.link, 'jurisdiction', FJurisdiction.Link);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
+  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'deviceIdentifier') then
+  begin
+    DeviceIdentifierElement := asString(propValue);
+    result := propValue;
+  end
+  else if (propName = 'issuer') then
+  begin
+    IssuerElement := asUri(propValue);
+    result := propValue;
+  end
+  else if (propName = 'jurisdiction') then
+  begin
+    JurisdictionElement := asUri(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'deviceIdentifier') then result := TFhirString.create()
+  else if (propName = 'issuer') then result := TFhirUri.create()
+  else if (propName = 'jurisdiction') then result := TFhirUri.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'deviceIdentifier') then result := 'string'
+  else if (propName = 'issuer') then result := 'uri'
+  else if (propName = 'jurisdiction') then result := 'uri'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := nil
+  else if (propName = 'issuer') then IssuerElement := nil
+  else if (propName = 'jurisdiction') then JurisdictionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'deviceIdentifier') then DeviceIdentifierElement := asString(new)
+  else if (propName = 'issuer') then IssuerElement := asUri(new)
+  else if (propName = 'jurisdiction') then JurisdictionElement := asUri(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.fhirType : string;
+begin
+  result := 'DeviceDefinition.packaging.udiDeviceIdentifier';
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.Link : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(inherited Link);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.Clone : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.equals(other : TObject) : boolean; 
+var
+  o : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirDeviceDefinitionPackagingUdiDeviceIdentifier)) then
+    result := false
+  else
+  begin
+    o := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(other);
+    result := compareDeep(deviceIdentifierElement, o.deviceIdentifierElement, true) and 
+      compareDeep(issuerElement, o.issuerElement, true) and compareDeep(jurisdictionElement, o.jurisdictionElement, true);
+  end;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FDeviceIdentifier) and isEmptyProp(FIssuer) and isEmptyProp(FJurisdiction);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('deviceIdentifier');
+  fields.add('issuer');
+  fields.add('jurisdiction');
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetDeviceIdentifier(value : TFhirString);
+begin
+  FDeviceIdentifier.free;
+  FDeviceIdentifier := value;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.GetDeviceIdentifierST : String;
+begin
+  if FDeviceIdentifier = nil then
+    result := ''
+  else
+    result := FDeviceIdentifier.value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetDeviceIdentifierST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDeviceIdentifier = nil then
+      FDeviceIdentifier := TFhirString.create;
+    FDeviceIdentifier.value := value
+  end
+  else if FDeviceIdentifier <> nil then
+    FDeviceIdentifier.value := '';
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetIssuer(value : TFhirUri);
+begin
+  FIssuer.free;
+  FIssuer := value;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.GetIssuerST : String;
+begin
+  if FIssuer = nil then
+    result := ''
+  else
+    result := FIssuer.value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetIssuerST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FIssuer = nil then
+      FIssuer := TFhirUri.create;
+    FIssuer.value := value
+  end
+  else if FIssuer <> nil then
+    FIssuer.value := '';
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetJurisdiction(value : TFhirUri);
+begin
+  FJurisdiction.free;
+  FJurisdiction := value;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.GetJurisdictionST : String;
+begin
+  if FJurisdiction = nil then
+    result := ''
+  else
+    result := FJurisdiction.value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.SetJurisdictionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FJurisdiction = nil then
+      FJurisdiction := TFhirUri.create;
+    FJurisdiction.value := value
+  end
+  else if FJurisdiction <> nil then
+    FJurisdiction.value := '';
+end;
+
+{ TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator }
+
+constructor TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.Create(list : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.GetCurrent : TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FList.sizeInBytes);
+end;
+
+{ TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList }
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.AddItem(value: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+begin
+  assert(value.ClassName = 'TFhirDeviceDefinitionPackagingUdiDeviceIdentifier', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDefinitionPackagingUdiDeviceIdentifier');
+  add(value);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Append: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.GetEnumerator : TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifierListEnumerator.Create(self.link);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Clone: TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.GetItemN(index: Integer): TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+end;
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.IndexOf(value: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Insert(index: Integer): TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.InsertItem(index: Integer; value: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Item(index: Integer): TFhirDeviceDefinitionPackagingUdiDeviceIdentifier;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifier(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Link: TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList;
+begin
+  result := TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList(inherited Link);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.SetItemByIndex(index: Integer; value: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+  FhirDeviceDefinitionPackagingUdiDeviceIdentifiers[index] := value;
+end;
+
+procedure TFhirDeviceDefinitionPackagingUdiDeviceIdentifierList.SetItemN(index: Integer; value: TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+begin
+  assert(value is TFhirDeviceDefinitionPackagingUdiDeviceIdentifier);
+  ObjectByIndex[index] := value;
+end;
+
+{ TFhirDeviceDefinitionVersion }
+
+constructor TFhirDeviceDefinitionVersion.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirDeviceDefinitionVersion.Destroy;
+begin
+  FType_.free;
+  FComponent.free;
+  FValue.free;
+  inherited;
+end;
+
+procedure TFhirDeviceDefinitionVersion.Assign(oSource : TFslObject);
+begin
+  inherited;
+  type_ := TFhirDeviceDefinitionVersion(oSource).type_.Clone;
+  component := TFhirDeviceDefinitionVersion(oSource).component.Clone;
+  valueElement := TFhirDeviceDefinitionVersion(oSource).valueElement.Clone;
+end;
+
+procedure TFhirDeviceDefinitionVersion.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'type') Then
+     list.add(self.link, 'type', FType_.Link);
+  if (child_name = 'component') Then
+     list.add(self.link, 'component', FComponent.Link);
+  if (child_name = 'value') Then
+     list.add(self.link, 'value', FValue.Link);
+end;
+
+procedure TFhirDeviceDefinitionVersion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'component', 'Identifier', false, TFhirIdentifier, FComponent.Link));
+  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, FValue.Link));
+end;
+
+function TFhirDeviceDefinitionVersion.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
+begin
+  if (propName = 'type') then
+  begin
+    Type_ := propValue as TFhirCodeableConcept;
+    result := propValue;
+  end
+  else if (propName = 'component') then
+  begin
+    Component := propValue as TFhirIdentifier;
+    result := propValue;
+  end
+  else if (propName = 'value') then
+  begin
+    ValueElement := asString(propValue);
+    result := propValue;
+  end
+  else result := inherited setProperty(propName, propValue);
+end;
+
+procedure TFhirDeviceDefinitionVersion.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirDeviceDefinitionVersion.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'component') then result := TFhirIdentifier.create()
+  else if (propName = 'value') then result := TFhirString.create()
+  else result := inherited createPropertyValue(propName);
+end;
+
+function TFhirDeviceDefinitionVersion.getTypesForProperty(propName: string) : String;
+begin
+  if (propName = 'type') then result := 'CodeableConcept'
+  else if (propName = 'component') then result := 'Identifier'
+  else if (propName = 'value') then result := 'string'
+  else result := inherited getTypesForProperty(propName);
+end;
+
+procedure TFhirDeviceDefinitionVersion.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'component') then ComponentElement := nil
+  else if (propName = 'value') then ValueElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDeviceDefinitionVersion.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'component') then ComponentElement := new as TFhirIdentifier
+  else if (propName = 'value') then ValueElement := asString(new)
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDeviceDefinitionVersion.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirDeviceDefinitionVersion.fhirType : string;
+begin
+  result := 'DeviceDefinition.version';
+end;
+
+function TFhirDeviceDefinitionVersion.Link : TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion(inherited Link);
+end;
+
+function TFhirDeviceDefinitionVersion.Clone : TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionVersion.equals(other : TObject) : boolean; 
+var
+  o : TFhirDeviceDefinitionVersion;
+begin
+  if (not inherited equals(other)) then
+    result := false
+  else if (not (other is TFhirDeviceDefinitionVersion)) then
+    result := false
+  else
+  begin
+    o := TFhirDeviceDefinitionVersion(other);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(componentElement, o.componentElement, true) and 
+      compareDeep(valueElement, o.valueElement, true);
+  end;
+end;
+
+function TFhirDeviceDefinitionVersion.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FComponent) and isEmptyProp(FValue);
+end;
+
+procedure TFhirDeviceDefinitionVersion.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('component');
+  fields.add('value');
+end;
+
+function TFhirDeviceDefinitionVersion.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
+procedure TFhirDeviceDefinitionVersion.SetType_(value : TFhirCodeableConcept);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+procedure TFhirDeviceDefinitionVersion.SetComponent(value : TFhirIdentifier);
+begin
+  FComponent.free;
+  FComponent := value;
+end;
+
+procedure TFhirDeviceDefinitionVersion.SetValue(value : TFhirString);
+begin
+  FValue.free;
+  FValue := value;
+end;
+
+function TFhirDeviceDefinitionVersion.GetValueST : String;
+begin
+  if FValue = nil then
+    result := ''
+  else
+    result := FValue.value;
+end;
+
+procedure TFhirDeviceDefinitionVersion.SetValueST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FValue = nil then
+      FValue := TFhirString.create;
+    FValue.value := value
+  end
+  else if FValue <> nil then
+    FValue.value := '';
+end;
+
+{ TFhirDeviceDefinitionVersionListEnumerator }
+
+constructor TFhirDeviceDefinitionVersionListEnumerator.Create(list : TFhirDeviceDefinitionVersionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+destructor TFhirDeviceDefinitionVersionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirDeviceDefinitionVersionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirDeviceDefinitionVersionListEnumerator.GetCurrent : TFhirDeviceDefinitionVersion;
+begin
+  Result := FList[FIndex];
+end;
+
+function TFhirDeviceDefinitionVersionListEnumerator.sizeInBytesV : cardinal;
+begin
+  result := inherited sizeInBytesV;
+  inc(result, FList.sizeInBytes);
+end;
+
+{ TFhirDeviceDefinitionVersionList }
+
+procedure TFhirDeviceDefinitionVersionList.AddItem(value: TFhirDeviceDefinitionVersion);
+begin
+  assert(value.ClassName = 'TFhirDeviceDefinitionVersion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceDefinitionVersion');
+  add(value);
+end;
+
+function TFhirDeviceDefinitionVersionList.Append: TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionVersionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirDeviceDefinitionVersionList.GetEnumerator : TFhirDeviceDefinitionVersionListEnumerator;
+begin
+  result := TFhirDeviceDefinitionVersionListEnumerator.Create(self.link);
+end;
+
+function TFhirDeviceDefinitionVersionList.Clone: TFhirDeviceDefinitionVersionList;
+begin
+  result := TFhirDeviceDefinitionVersionList(inherited Clone);
+end;
+
+function TFhirDeviceDefinitionVersionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirDeviceDefinitionVersionList.GetItemN(index: Integer): TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionVersionList.ItemClass: TFslObjectClass;
+begin
+  result := TFhirDeviceDefinitionVersion;
+end;
+function TFhirDeviceDefinitionVersionList.IndexOf(value: TFhirDeviceDefinitionVersion): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+function TFhirDeviceDefinitionVersionList.Insert(index: Integer): TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirDeviceDefinitionVersionList.InsertItem(index: Integer; value: TFhirDeviceDefinitionVersion);
+begin
+  assert(value is TFhirDeviceDefinitionVersion);
+  Inherited Insert(index, value);
+end;
+
+function TFhirDeviceDefinitionVersionList.Item(index: Integer): TFhirDeviceDefinitionVersion;
+begin
+  result := TFhirDeviceDefinitionVersion(ObjectByIndex[index]);
+end;
+
+function TFhirDeviceDefinitionVersionList.Link: TFhirDeviceDefinitionVersionList;
+begin
+  result := TFhirDeviceDefinitionVersionList(inherited Link);
+end;
+
+procedure TFhirDeviceDefinitionVersionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirDeviceDefinitionVersionList.SetItemByIndex(index: Integer; value: TFhirDeviceDefinitionVersion);
+begin
+  assert(value is TFhirDeviceDefinitionVersion);
+  FhirDeviceDefinitionVersions[index] := value;
+end;
+
+procedure TFhirDeviceDefinitionVersionList.SetItemN(index: Integer; value: TFhirDeviceDefinitionVersion);
+begin
+  assert(value is TFhirDeviceDefinitionVersion);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirDeviceDefinitionCapability }
 
 constructor TFhirDeviceDefinitionCapability.Create;
@@ -13607,20 +15802,20 @@ end;
 procedure TFhirDeviceDefinitionCapability.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', true, TFhirCodeableConcept, FDescriptionList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', true, TFhirCodeableConcept, FDescriptionList.Link));
 end;
 
 function TFhirDeviceDefinitionCapability.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'description') then
   begin
-    DescriptionList.add(propValue as TFhirCodeableConcept) {L1048};
+    DescriptionList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -13628,14 +15823,14 @@ end;
 
 procedure TFhirDeviceDefinitionCapability.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'description') then DescriptionList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'description') then DescriptionList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirDeviceDefinitionCapability.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'description') then result := DescriptionList.new() {L1053}
+  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'description') then result := DescriptionList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -13649,22 +15844,22 @@ end;
 procedure TFhirDeviceDefinitionCapability.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
-  else if (propName = 'description') then deletePropertyValue('description', DescriptionList, value) {L1054}
+  else if (propName = 'description') then deletePropertyValue('description', DescriptionList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceDefinitionCapability.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'description') then replacePropertyValue('description', DescriptionList, existing, new) {L1055}
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'description') then replacePropertyValue('description', DescriptionList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceDefinitionCapability.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'description') then DescriptionList.move(source, destination) {L1050}
+  if (propName = 'description') then DescriptionList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -13704,10 +15899,23 @@ begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FdescriptionList);
 end;
 
+procedure TFhirDeviceDefinitionCapability.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('description');
+end;
+
+function TFhirDeviceDefinitionCapability.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDescriptionList.sizeInBytes);
+end;
+
 procedure TFhirDeviceDefinitionCapability.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
-  FType_ := value; {L1134}
+  FType_ := value;
 end;
 
 function TFhirDeviceDefinitionCapability.GetDescriptionList : TFhirCodeableConceptList;
@@ -13720,20 +15928,6 @@ end;
 function TFhirDeviceDefinitionCapability.GetHasDescriptionList : boolean;
 begin
   result := (FDescriptionList <> nil) and (FDescriptionList.count > 0);
-end;
-
-procedure TFhirDeviceDefinitionCapability.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('description');
-end;
-
-function TFhirDeviceDefinitionCapability.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FdescriptionList.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionCapabilityListEnumerator }
@@ -13920,26 +16114,26 @@ end;
 procedure TFhirDeviceDefinitionProperty.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
+  oList.add(TFHIRProperty.create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link));
 end;
 
 function TFhirDeviceDefinitionProperty.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'valueQuantity') then
   begin
-    ValueQuantityList.add(propValue as TFhirQuantity) {L1048};
+    ValueQuantityList.add(propValue as TFhirQuantity);
     result := propValue;
   end
   else if (propName = 'valueCode') then
   begin
-    ValueCodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    ValueCodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -13947,16 +16141,16 @@ end;
 
 procedure TFhirDeviceDefinitionProperty.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'valueQuantity') then ValueQuantityList.insertItem(index, propValue as TFhirQuantity) {L1049}
-  else if (propName = 'valueCode') then ValueCodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'valueQuantity') then ValueQuantityList.insertItem(index, propValue as TFhirQuantity)
+  else if (propName = 'valueCode') then ValueCodeList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirDeviceDefinitionProperty.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'valueQuantity') then result := ValueQuantityList.new() {L1053}
-  else if (propName = 'valueCode') then result := ValueCodeList.new() {L1053}
+  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'valueQuantity') then result := ValueQuantityList.new()
+  else if (propName = 'valueCode') then result := ValueCodeList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -13971,25 +16165,25 @@ end;
 procedure TFhirDeviceDefinitionProperty.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'type') then Type_Element := nil
-  else if (propName = 'valueQuantity') then deletePropertyValue('valueQuantity', ValueQuantityList, value) {L1054}
-  else if (propName = 'valueCode') then deletePropertyValue('valueCode', ValueCodeList, value) {L1054}
+  else if (propName = 'valueQuantity') then deletePropertyValue('valueQuantity', ValueQuantityList, value)
+  else if (propName = 'valueCode') then deletePropertyValue('valueCode', ValueCodeList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceDefinitionProperty.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'valueQuantity') then replacePropertyValue('valueQuantity', ValueQuantityList, existing, new) {L1055}
-  else if (propName = 'valueCode') then replacePropertyValue('valueCode', ValueCodeList, existing, new) {L1055}
+  if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'valueQuantity') then replacePropertyValue('valueQuantity', ValueQuantityList, existing, new)
+  else if (propName = 'valueCode') then replacePropertyValue('valueCode', ValueCodeList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceDefinitionProperty.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'valueQuantity') then ValueQuantityList.move(source, destination) {L1050}
-  else if (propName = 'valueCode') then ValueCodeList.move(source, destination) {L1050}
+  if (propName = 'valueQuantity') then ValueQuantityList.move(source, destination)
+  else if (propName = 'valueCode') then ValueCodeList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -14030,10 +16224,25 @@ begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FvalueQuantityList) and isEmptyProp(FvalueCodeList);
 end;
 
+procedure TFhirDeviceDefinitionProperty.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('valueQuantity');
+  fields.add('valueCode');
+end;
+
+function TFhirDeviceDefinitionProperty.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FValueQuantityList.sizeInBytes);
+  inc(result, FValueCodeList.sizeInBytes);
+end;
+
 procedure TFhirDeviceDefinitionProperty.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
-  FType_ := value; {L1134}
+  FType_ := value;
 end;
 
 function TFhirDeviceDefinitionProperty.GetValueQuantityList : TFhirQuantityList;
@@ -14058,22 +16267,6 @@ end;
 function TFhirDeviceDefinitionProperty.GetHasValueCodeList : boolean;
 begin
   result := (FValueCodeList <> nil) and (FValueCodeList.count > 0);
-end;
-
-procedure TFhirDeviceDefinitionProperty.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('valueQuantity');
-  fields.add('valueCode');
-end;
-
-function TFhirDeviceDefinitionProperty.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FvalueQuantityList.sizeInBytes);
-  inc(result, FvalueCodeList.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionPropertyListEnumerator }
@@ -14240,26 +16433,26 @@ end;
 procedure TFhirDeviceDefinitionMaterial.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'alternate', 'boolean', false, TFhirBoolean, FAlternate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'allergenicIndicator', 'boolean', false, TFhirBoolean, FAllergenicIndicator.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));
+  oList.add(TFHIRProperty.create(self, 'alternate', 'boolean', false, TFhirBoolean, FAlternate.Link));
+  oList.add(TFHIRProperty.create(self, 'allergenicIndicator', 'boolean', false, TFhirBoolean, FAllergenicIndicator.Link));
 end;
 
 function TFhirDeviceDefinitionMaterial.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'substance') then
   begin
-    Substance := propValue as TFhirCodeableConcept {L1199};
+    Substance := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'alternate') then
   begin
-    AlternateElement := asBoolean(propValue) {L1221};
+    AlternateElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'allergenicIndicator') then
   begin
-    AllergenicIndicatorElement := asBoolean(propValue) {L1221};
+    AllergenicIndicatorElement := asBoolean(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -14272,9 +16465,9 @@ end;
 
 function TFhirDeviceDefinitionMaterial.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'substance') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'alternate') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'allergenicIndicator') then result := TFhirBoolean.create() {L1223}
+  if (propName = 'substance') then result := TFhirCodeableConcept.create()
+  else if (propName = 'alternate') then result := TFhirBoolean.create()
+  else if (propName = 'allergenicIndicator') then result := TFhirBoolean.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -14297,9 +16490,9 @@ end;
 
 procedure TFhirDeviceDefinitionMaterial.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'substance') then SubstanceElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'alternate') then AlternateElement := asBoolean(new) {L1222}
-  else if (propName = 'allergenicIndicator') then AllergenicIndicatorElement := asBoolean(new) {L1222}
+  if (propName = 'substance') then SubstanceElement := new as TFhirCodeableConcept
+  else if (propName = 'alternate') then AlternateElement := asBoolean(new)
+  else if (propName = 'allergenicIndicator') then AllergenicIndicatorElement := asBoolean(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -14345,16 +16538,29 @@ begin
   result := inherited isEmpty  and isEmptyProp(FSubstance) and isEmptyProp(FAlternate) and isEmptyProp(FAllergenicIndicator);
 end;
 
+procedure TFhirDeviceDefinitionMaterial.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('substance');
+  fields.add('alternate');
+  fields.add('allergenicIndicator');
+end;
+
+function TFhirDeviceDefinitionMaterial.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirDeviceDefinitionMaterial.SetSubstance(value : TFhirCodeableConcept);
 begin
   FSubstance.free;
-  FSubstance := value; {L1134}
+  FSubstance := value;
 end;
 
 procedure TFhirDeviceDefinitionMaterial.SetAlternate(value : TFhirBoolean);
 begin
   FAlternate.free;
-  FAlternate := value; {L1134}
+  FAlternate := value;
 end;
 
 function TFhirDeviceDefinitionMaterial.GetAlternateST : Boolean;
@@ -14375,7 +16581,7 @@ end;
 procedure TFhirDeviceDefinitionMaterial.SetAllergenicIndicator(value : TFhirBoolean);
 begin
   FAllergenicIndicator.free;
-  FAllergenicIndicator := value; {L1134}
+  FAllergenicIndicator := value;
 end;
 
 function TFhirDeviceDefinitionMaterial.GetAllergenicIndicatorST : Boolean;
@@ -14391,22 +16597,6 @@ begin
   if FAllergenicIndicator = nil then
     FAllergenicIndicator := TFhirBoolean.create;
   FAllergenicIndicator.value := value
-end;
-
-procedure TFhirDeviceDefinitionMaterial.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('substance');
-  fields.add('alternate');
-  fields.add('allergenicIndicator');
-end;
-
-function TFhirDeviceDefinitionMaterial.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FSubstance.sizeInBytes);
-  inc(result, FAlternate.sizeInBytes);
-  inc(result, FAllergenicIndicator.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionMaterialListEnumerator }
@@ -14550,8 +16740,10 @@ begin
   FManufacturer.free;
   FDeviceNameList.Free;
   FModelNumber.free;
-  FType_.free;
+  FType_List.Free;
   FSpecializationList.Free;
+  FHasPartList.Free;
+  FPackagingList.Free;
   FVersionList.Free;
   FSafetyList.Free;
   FShelfLifeStorageList.Free;
@@ -14563,7 +16755,6 @@ begin
   FContactList.Free;
   FOnlineInformation.free;
   FNoteList.Free;
-  FQuantity.free;
   FParentDevice.free;
   FMaterialList.Free;
   inherited;
@@ -14607,7 +16798,17 @@ begin
     FDeviceNameList.Assign(TFhirDeviceDefinition(oSource).FDeviceNameList);
   end;
   modelNumberElement := TFhirDeviceDefinition(oSource).modelNumberElement.Clone;
-  type_ := TFhirDeviceDefinition(oSource).type_.Clone;
+  if (TFhirDeviceDefinition(oSource).FType_List = nil) then
+  begin
+    FType_List.free;
+    FType_List := nil;
+  end
+  else
+  begin
+    if FType_List = nil then
+      FType_List := TFhirCodeableConceptList.Create;
+    FType_List.Assign(TFhirDeviceDefinition(oSource).FType_List);
+  end;
   if (TFhirDeviceDefinition(oSource).FSpecializationList = nil) then
   begin
     FSpecializationList.free;
@@ -14619,6 +16820,28 @@ begin
       FSpecializationList := TFhirDeviceDefinitionSpecializationList.Create;
     FSpecializationList.Assign(TFhirDeviceDefinition(oSource).FSpecializationList);
   end;
+  if (TFhirDeviceDefinition(oSource).FHasPartList = nil) then
+  begin
+    FHasPartList.free;
+    FHasPartList := nil;
+  end
+  else
+  begin
+    if FHasPartList = nil then
+      FHasPartList := TFhirDeviceDefinitionHasPartList.Create;
+    FHasPartList.Assign(TFhirDeviceDefinition(oSource).FHasPartList);
+  end;
+  if (TFhirDeviceDefinition(oSource).FPackagingList = nil) then
+  begin
+    FPackagingList.free;
+    FPackagingList := nil;
+  end
+  else
+  begin
+    if FPackagingList = nil then
+      FPackagingList := TFhirDeviceDefinitionPackagingList.Create;
+    FPackagingList.Assign(TFhirDeviceDefinition(oSource).FPackagingList);
+  end;
   if (TFhirDeviceDefinition(oSource).FVersionList = nil) then
   begin
     FVersionList.free;
@@ -14627,7 +16850,7 @@ begin
   else
   begin
     if FVersionList = nil then
-      FVersionList := TFhirStringList.Create;
+      FVersionList := TFhirDeviceDefinitionVersionList.Create;
     FVersionList.Assign(TFhirDeviceDefinition(oSource).FVersionList);
   end;
   if (TFhirDeviceDefinition(oSource).FSafetyList = nil) then
@@ -14710,7 +16933,6 @@ begin
       FNoteList := TFhirAnnotationList.Create;
     FNoteList.Assign(TFhirDeviceDefinition(oSource).FNoteList);
   end;
-  quantity := TFhirDeviceDefinition(oSource).quantity.Clone;
   parentDevice := TFhirDeviceDefinition(oSource).parentDevice.Clone;
   if (TFhirDeviceDefinition(oSource).FMaterialList = nil) then
   begin
@@ -14744,9 +16966,13 @@ begin
   if (child_name = 'modelNumber') Then
      list.add(self.link, 'modelNumber', FModelNumber.Link);
   if (child_name = 'type') Then
-     list.add(self.link, 'type', FType_.Link);
+    list.addAll(self, 'type', FType_List);
   if (child_name = 'specialization') Then
     list.addAll(self, 'specialization', FSpecializationList);
+  if (child_name = 'hasPart') Then
+    list.addAll(self, 'hasPart', FHasPartList);
+  if (child_name = 'packaging') Then
+    list.addAll(self, 'packaging', FPackagingList);
   if (child_name = 'version') Then
     list.addAll(self, 'version', FVersionList);
   if (child_name = 'safety') Then
@@ -14769,8 +16995,6 @@ begin
      list.add(self.link, 'onlineInformation', FOnlineInformation.Link);
   if (child_name = 'note') Then
     list.addAll(self, 'note', FNoteList);
-  if (child_name = 'quantity') Then
-     list.add(self.link, 'quantity', FQuantity.Link);
   if (child_name = 'parentDevice') Then
      list.add(self.link, 'parentDevice', FParentDevice.Link);
   if (child_name = 'material') Then
@@ -14780,134 +17004,140 @@ end;
 procedure TFhirDeviceDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'udiDeviceIdentifier', 'BackboneElement', true, TFhirDeviceDefinitionUdiDeviceIdentifier, FUdiDeviceIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'manufacturer[x]', 'string|Reference', false, TFhirDataType, FManufacturer.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDefinitionDeviceName, FDeviceNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceDefinitionSpecialization, FSpecializationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'version', 'string', true, TFhirString, FVersionList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'shelfLifeStorage', 'ProductShelfLife', true, TFhirProductShelfLife, FShelfLifeStorageList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'physicalCharacteristics', 'ProdCharacteristic', false, TFhirProdCharacteristic, FPhysicalCharacteristics.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'languageCode', 'CodeableConcept', true, TFhirCodeableConcept, FLanguageCodeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'capability', 'BackboneElement', true, TFhirDeviceDefinitionCapability, FCapabilityList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceDefinitionProperty, FProperty_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'onlineInformation', 'uri', false, TFhirUri, FOnlineInformation.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'parentDevice', 'Reference', false, TFhirReference, FParentDevice.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'material', 'BackboneElement', true, TFhirDeviceDefinitionMaterial, FMaterialList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'udiDeviceIdentifier', 'BackboneElement', true, TFhirDeviceDefinitionUdiDeviceIdentifier, FUdiDeviceIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'manufacturer[x]', 'string|Reference', false, TFhirDataType, FManufacturer.Link));
+  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDefinitionDeviceName, FDeviceNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceDefinitionSpecialization, FSpecializationList.Link));
+  oList.add(TFHIRProperty.create(self, 'hasPart', 'BackboneElement', true, TFhirDeviceDefinitionHasPart, FHasPartList.Link));
+  oList.add(TFHIRProperty.create(self, 'packaging', 'BackboneElement', true, TFhirDeviceDefinitionPackaging, FPackagingList.Link));
+  oList.add(TFHIRProperty.create(self, 'version', 'BackboneElement', true, TFhirDeviceDefinitionVersion, FVersionList.Link));
+  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
+  oList.add(TFHIRProperty.create(self, 'shelfLifeStorage', 'ProductShelfLife', true, TFhirProductShelfLife, FShelfLifeStorageList.Link));
+  oList.add(TFHIRProperty.create(self, 'physicalCharacteristics', 'ProdCharacteristic', false, TFhirProdCharacteristic, FPhysicalCharacteristics.Link));
+  oList.add(TFHIRProperty.create(self, 'languageCode', 'CodeableConcept', true, TFhirCodeableConcept, FLanguageCodeList.Link));
+  oList.add(TFHIRProperty.create(self, 'capability', 'BackboneElement', true, TFhirDeviceDefinitionCapability, FCapabilityList.Link));
+  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceDefinitionProperty, FProperty_List.Link));
+  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'onlineInformation', 'uri', false, TFhirUri, FOnlineInformation.Link));
+  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.create(self, 'parentDevice', 'Reference', false, TFhirReference, FParentDevice.Link));
+  oList.add(TFHIRProperty.create(self, 'material', 'BackboneElement', true, TFhirDeviceDefinitionMaterial, FMaterialList.Link));
 end;
 
 function TFhirDeviceDefinition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'udiDeviceIdentifier') then
   begin
-    UdiDeviceIdentifierList.add(propValue as TFhirDeviceDefinitionUdiDeviceIdentifier) {L1048};
+    UdiDeviceIdentifierList.add(propValue as TFhirDeviceDefinitionUdiDeviceIdentifier);
     result := propValue;
   end
   else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then
   begin
-    Manufacturer := propValue as TFhirDataType {L1185};
+    Manufacturer := propValue as TFhirDataType;
     result := propValue;
   end
   else if (propName = 'deviceName') then
   begin
-    DeviceNameList.add(propValue as TFhirDeviceDefinitionDeviceName) {L1048};
+    DeviceNameList.add(propValue as TFhirDeviceDefinitionDeviceName);
     result := propValue;
   end
   else if (propName = 'modelNumber') then
   begin
-    ModelNumberElement := asString(propValue) {L1221};
+    ModelNumberElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialization') then
   begin
-    SpecializationList.add(propValue as TFhirDeviceDefinitionSpecialization) {L1048};
+    SpecializationList.add(propValue as TFhirDeviceDefinitionSpecialization);
+    result := propValue;
+  end
+  else if (propName = 'hasPart') then
+  begin
+    HasPartList.add(propValue as TFhirDeviceDefinitionHasPart);
+    result := propValue;
+  end
+  else if (propName = 'packaging') then
+  begin
+    PackagingList.add(propValue as TFhirDeviceDefinitionPackaging);
     result := propValue;
   end
   else if (propName = 'version') then
   begin
-    VersionList.add(asString(propValue)){2};     result := propValue;
-
+    VersionList.add(propValue as TFhirDeviceDefinitionVersion);
+    result := propValue;
   end
   else if (propName = 'safety') then
   begin
-    SafetyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SafetyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'shelfLifeStorage') then
   begin
-    ShelfLifeStorageList.add(propValue as TFhirProductShelfLife) {L1048};
+    ShelfLifeStorageList.add(propValue as TFhirProductShelfLife);
     result := propValue;
   end
   else if (propName = 'physicalCharacteristics') then
   begin
-    PhysicalCharacteristics := propValue as TFhirProdCharacteristic {L1199};
+    PhysicalCharacteristics := propValue as TFhirProdCharacteristic;
     result := propValue;
   end
   else if (propName = 'languageCode') then
   begin
-    LanguageCodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    LanguageCodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'capability') then
   begin
-    CapabilityList.add(propValue as TFhirDeviceDefinitionCapability) {L1048};
+    CapabilityList.add(propValue as TFhirDeviceDefinitionCapability);
     result := propValue;
   end
   else if (propName = 'property') then
   begin
-    Property_List.add(propValue as TFhirDeviceDefinitionProperty) {L1048};
+    Property_List.add(propValue as TFhirDeviceDefinitionProperty);
     result := propValue;
   end
   else if (propName = 'owner') then
   begin
-    Owner := propValue as TFhirReference {L1199};
+    Owner := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'contact') then
   begin
-    ContactList.add(propValue as TFhirContactPoint) {L1048};
+    ContactList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'onlineInformation') then
   begin
-    OnlineInformationElement := asUri(propValue) {L1221};
+    OnlineInformationElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'note') then
   begin
-    NoteList.add(propValue as TFhirAnnotation) {L1048};
-    result := propValue;
-  end
-  else if (propName = 'quantity') then
-  begin
-    Quantity := propValue as TFhirQuantity {L1199};
+    NoteList.add(propValue as TFhirAnnotation);
     result := propValue;
   end
   else if (propName = 'parentDevice') then
   begin
-    ParentDevice := propValue as TFhirReference {L1199};
+    ParentDevice := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'material') then
   begin
-    MaterialList.add(propValue as TFhirDeviceDefinitionMaterial) {L1048};
+    MaterialList.add(propValue as TFhirDeviceDefinitionMaterial);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -14915,45 +17145,49 @@ end;
 
 procedure TFhirDeviceDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.insertItem(index, propValue as TFhirDeviceDefinitionUdiDeviceIdentifier) {L1049}
-  else if (propName = 'deviceName') then DeviceNameList.insertItem(index, propValue as TFhirDeviceDefinitionDeviceName) {L1049}
-  else if (propName = 'specialization') then SpecializationList.insertItem(index, propValue as TFhirDeviceDefinitionSpecialization) {L1049}
-  else if (propName = 'version') then VersionList.insertItem(index, asString(propValue)) {L1045}
-  else if (propName = 'safety') then SafetyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'shelfLifeStorage') then ShelfLifeStorageList.insertItem(index, propValue as TFhirProductShelfLife) {L1049}
-  else if (propName = 'languageCode') then LanguageCodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'capability') then CapabilityList.insertItem(index, propValue as TFhirDeviceDefinitionCapability) {L1049}
-  else if (propName = 'property') then Property_List.insertItem(index, propValue as TFhirDeviceDefinitionProperty) {L1049}
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation) {L1049}
-  else if (propName = 'material') then MaterialList.insertItem(index, propValue as TFhirDeviceDefinitionMaterial) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.insertItem(index, propValue as TFhirDeviceDefinitionUdiDeviceIdentifier)
+  else if (propName = 'deviceName') then DeviceNameList.insertItem(index, propValue as TFhirDeviceDefinitionDeviceName)
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialization') then SpecializationList.insertItem(index, propValue as TFhirDeviceDefinitionSpecialization)
+  else if (propName = 'hasPart') then HasPartList.insertItem(index, propValue as TFhirDeviceDefinitionHasPart)
+  else if (propName = 'packaging') then PackagingList.insertItem(index, propValue as TFhirDeviceDefinitionPackaging)
+  else if (propName = 'version') then VersionList.insertItem(index, propValue as TFhirDeviceDefinitionVersion)
+  else if (propName = 'safety') then SafetyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'shelfLifeStorage') then ShelfLifeStorageList.insertItem(index, propValue as TFhirProductShelfLife)
+  else if (propName = 'languageCode') then LanguageCodeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'capability') then CapabilityList.insertItem(index, propValue as TFhirDeviceDefinitionCapability)
+  else if (propName = 'property') then Property_List.insertItem(index, propValue as TFhirDeviceDefinitionProperty)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'note') then NoteList.insertItem(index, propValue as TFhirAnnotation)
+  else if (propName = 'material') then MaterialList.insertItem(index, propValue as TFhirDeviceDefinitionMaterial)
   else inherited;
 end;
 
 function TFhirDeviceDefinition.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'udiDeviceIdentifier') then result := UdiDeviceIdentifierList.new() {L1053}
-  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then raise EFHIRException.create('Cannot make property Manufacturer') {L1191}
-  else if (propName = 'deviceName') then result := DeviceNameList.new() {L1053}
-  else if (propName = 'modelNumber') then result := TFhirString.create() {L1223}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'specialization') then result := SpecializationList.new() {L1053}
-  else if (propName = 'version') then result := VersionList.new() {L1053}
-  else if (propName = 'safety') then result := SafetyList.new() {L1053}
-  else if (propName = 'shelfLifeStorage') then result := ShelfLifeStorageList.new() {L1053}
-  else if (propName = 'physicalCharacteristics') then result := TFhirProdCharacteristic.create() {L1203}
-  else if (propName = 'languageCode') then result := LanguageCodeList.new() {L1053}
-  else if (propName = 'capability') then result := CapabilityList.new() {L1053}
-  else if (propName = 'property') then result := Property_List.new() {L1053}
-  else if (propName = 'owner') then result := TFhirReference.create() {L1203}
-  else if (propName = 'contact') then result := ContactList.new() {L1053}
-  else if (propName = 'onlineInformation') then result := TFhirUri.create() {L1223}
-  else if (propName = 'note') then result := NoteList.new() {L1053}
-  else if (propName = 'quantity') then result := TFhirQuantity.create() {L1203}
-  else if (propName = 'parentDevice') then result := TFhirReference.create() {L1203}
-  else if (propName = 'material') then result := MaterialList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'udiDeviceIdentifier') then result := UdiDeviceIdentifierList.new()
+  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then raise EFHIRException.create('Cannot make property Manufacturer')
+  else if (propName = 'deviceName') then result := DeviceNameList.new()
+  else if (propName = 'modelNumber') then result := TFhirString.create()
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'specialization') then result := SpecializationList.new()
+  else if (propName = 'hasPart') then result := HasPartList.new()
+  else if (propName = 'packaging') then result := PackagingList.new()
+  else if (propName = 'version') then result := VersionList.new()
+  else if (propName = 'safety') then result := SafetyList.new()
+  else if (propName = 'shelfLifeStorage') then result := ShelfLifeStorageList.new()
+  else if (propName = 'physicalCharacteristics') then result := TFhirProdCharacteristic.create()
+  else if (propName = 'languageCode') then result := LanguageCodeList.new()
+  else if (propName = 'capability') then result := CapabilityList.new()
+  else if (propName = 'property') then result := Property_List.new()
+  else if (propName = 'owner') then result := TFhirReference.create()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'onlineInformation') then result := TFhirUri.create()
+  else if (propName = 'note') then result := NoteList.new()
+  else if (propName = 'parentDevice') then result := TFhirReference.create()
+  else if (propName = 'material') then result := MaterialList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -14966,7 +17200,9 @@ begin
   else if (propName = 'modelNumber') then result := 'string'
   else if (propName = 'type') then result := 'CodeableConcept'
   else if (propName = 'specialization') then result := 'BackboneElement'
-  else if (propName = 'version') then result := 'string'
+  else if (propName = 'hasPart') then result := 'BackboneElement'
+  else if (propName = 'packaging') then result := 'BackboneElement'
+  else if (propName = 'version') then result := 'BackboneElement'
   else if (propName = 'safety') then result := 'CodeableConcept'
   else if (propName = 'shelfLifeStorage') then result := 'ProductShelfLife'
   else if (propName = 'physicalCharacteristics') then result := 'ProdCharacteristic'
@@ -14977,7 +17213,6 @@ begin
   else if (propName = 'contact') then result := 'ContactPoint'
   else if (propName = 'onlineInformation') then result := 'uri'
   else if (propName = 'note') then result := 'Annotation'
-  else if (propName = 'quantity') then result := 'Quantity'
   else if (propName = 'parentDevice') then result := 'Reference'
   else if (propName = 'material') then result := 'BackboneElement'
   else result := inherited getTypesForProperty(propName);
@@ -14985,73 +17220,78 @@ end;
 
 procedure TFhirDeviceDefinition.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
-  else if (propName = 'udiDeviceIdentifier') then deletePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, value) {L1054}
-  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then ManufacturerElement := nil {L1189}
-  else if (propName = 'deviceName') then deletePropertyValue('deviceName', DeviceNameList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
+  else if (propName = 'udiDeviceIdentifier') then deletePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, value)
+  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then ManufacturerElement := nil
+  else if (propName = 'deviceName') then deletePropertyValue('deviceName', DeviceNameList, value)
   else if (propName = 'modelNumber') then ModelNumberElement := nil
-  else if (propName = 'type') then Type_Element := nil
-  else if (propName = 'specialization') then deletePropertyValue('specialization', SpecializationList, value) {L1054}
-  else if (propName = 'version') then deletePropertyValue('version', VersionList, value) {L1054}
-  else if (propName = 'safety') then deletePropertyValue('safety', SafetyList, value) {L1054}
-  else if (propName = 'shelfLifeStorage') then deletePropertyValue('shelfLifeStorage', ShelfLifeStorageList, value) {L1054}
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
+  else if (propName = 'specialization') then deletePropertyValue('specialization', SpecializationList, value)
+  else if (propName = 'hasPart') then deletePropertyValue('hasPart', HasPartList, value)
+  else if (propName = 'packaging') then deletePropertyValue('packaging', PackagingList, value)
+  else if (propName = 'version') then deletePropertyValue('version', VersionList, value)
+  else if (propName = 'safety') then deletePropertyValue('safety', SafetyList, value)
+  else if (propName = 'shelfLifeStorage') then deletePropertyValue('shelfLifeStorage', ShelfLifeStorageList, value)
   else if (propName = 'physicalCharacteristics') then PhysicalCharacteristicsElement := nil
-  else if (propName = 'languageCode') then deletePropertyValue('languageCode', LanguageCodeList, value) {L1054}
-  else if (propName = 'capability') then deletePropertyValue('capability', CapabilityList, value) {L1054}
-  else if (propName = 'property') then deletePropertyValue('property', Property_List, value) {L1054}
+  else if (propName = 'languageCode') then deletePropertyValue('languageCode', LanguageCodeList, value)
+  else if (propName = 'capability') then deletePropertyValue('capability', CapabilityList, value)
+  else if (propName = 'property') then deletePropertyValue('property', Property_List, value)
   else if (propName = 'owner') then OwnerElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {L1054}
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
   else if (propName = 'onlineInformation') then OnlineInformationElement := nil
-  else if (propName = 'note') then deletePropertyValue('note', NoteList, value) {L1054}
-  else if (propName = 'quantity') then QuantityElement := nil
+  else if (propName = 'note') then deletePropertyValue('note', NoteList, value)
   else if (propName = 'parentDevice') then ParentDeviceElement := nil
-  else if (propName = 'material') then deletePropertyValue('material', MaterialList, value) {L1054}
+  else if (propName = 'material') then deletePropertyValue('material', MaterialList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'udiDeviceIdentifier') then replacePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, existing, new) {L1055}
-  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then ManufacturerElement := new as TFhirDataType {L1190}
-  else if (propName = 'deviceName') then replacePropertyValue('deviceName', DeviceNameList, existing, new) {L1055}
-  else if (propName = 'modelNumber') then ModelNumberElement := asString(new) {L1222}
-  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'specialization') then replacePropertyValue('specialization', SpecializationList, existing, new) {L1055}
-  else if (propName = 'version') then replacePropertyValue('version', VersionList, existing, new) {L1055}
-  else if (propName = 'safety') then replacePropertyValue('safety', SafetyList, existing, new) {L1055}
-  else if (propName = 'shelfLifeStorage') then replacePropertyValue('shelfLifeStorage', ShelfLifeStorageList, existing, new) {L1055}
-  else if (propName = 'physicalCharacteristics') then PhysicalCharacteristicsElement := new as TFhirProdCharacteristic {L1195}
-  else if (propName = 'languageCode') then replacePropertyValue('languageCode', LanguageCodeList, existing, new) {L1055}
-  else if (propName = 'capability') then replacePropertyValue('capability', CapabilityList, existing, new) {L1055}
-  else if (propName = 'property') then replacePropertyValue('property', Property_List, existing, new) {L1055}
-  else if (propName = 'owner') then OwnerElement := new as TFhirReference {L1195}
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {L1055}
-  else if (propName = 'onlineInformation') then OnlineInformationElement := asUri(new) {L1222}
-  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new) {L1055}
-  else if (propName = 'quantity') then QuantityElement := new as TFhirQuantity {L1195}
-  else if (propName = 'parentDevice') then ParentDeviceElement := new as TFhirReference {L1195}
-  else if (propName = 'material') then replacePropertyValue('material', MaterialList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'udiDeviceIdentifier') then replacePropertyValue('udiDeviceIdentifier', UdiDeviceIdentifierList, existing, new)
+  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then ManufacturerElement := new as TFhirDataType
+  else if (propName = 'deviceName') then replacePropertyValue('deviceName', DeviceNameList, existing, new)
+  else if (propName = 'modelNumber') then ModelNumberElement := asString(new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'specialization') then replacePropertyValue('specialization', SpecializationList, existing, new)
+  else if (propName = 'hasPart') then replacePropertyValue('hasPart', HasPartList, existing, new)
+  else if (propName = 'packaging') then replacePropertyValue('packaging', PackagingList, existing, new)
+  else if (propName = 'version') then replacePropertyValue('version', VersionList, existing, new)
+  else if (propName = 'safety') then replacePropertyValue('safety', SafetyList, existing, new)
+  else if (propName = 'shelfLifeStorage') then replacePropertyValue('shelfLifeStorage', ShelfLifeStorageList, existing, new)
+  else if (propName = 'physicalCharacteristics') then PhysicalCharacteristicsElement := new as TFhirProdCharacteristic
+  else if (propName = 'languageCode') then replacePropertyValue('languageCode', LanguageCodeList, existing, new)
+  else if (propName = 'capability') then replacePropertyValue('capability', CapabilityList, existing, new)
+  else if (propName = 'property') then replacePropertyValue('property', Property_List, existing, new)
+  else if (propName = 'owner') then OwnerElement := new as TFhirReference
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'onlineInformation') then OnlineInformationElement := asUri(new)
+  else if (propName = 'note') then replacePropertyValue('note', NoteList, existing, new)
+  else if (propName = 'parentDevice') then ParentDeviceElement := new as TFhirReference
+  else if (propName = 'material') then replacePropertyValue('material', MaterialList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceDefinition.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.move(source, destination) {L1050}
-  else if (propName = 'deviceName') then DeviceNameList.move(source, destination) {L1050}
-  else if (propName = 'specialization') then SpecializationList.move(source, destination) {L1050}
-  else if (propName = 'version') then VersionList.move(source, destination) {L1046}
-  else if (propName = 'safety') then SafetyList.move(source, destination) {L1050}
-  else if (propName = 'shelfLifeStorage') then ShelfLifeStorageList.move(source, destination) {L1050}
-  else if (propName = 'languageCode') then LanguageCodeList.move(source, destination) {L1050}
-  else if (propName = 'capability') then CapabilityList.move(source, destination) {L1050}
-  else if (propName = 'property') then Property_List.move(source, destination) {L1050}
-  else if (propName = 'contact') then ContactList.move(source, destination) {L1050}
-  else if (propName = 'note') then NoteList.move(source, destination) {L1050}
-  else if (propName = 'material') then MaterialList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'udiDeviceIdentifier') then UdiDeviceIdentifierList.move(source, destination)
+  else if (propName = 'deviceName') then DeviceNameList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'specialization') then SpecializationList.move(source, destination)
+  else if (propName = 'hasPart') then HasPartList.move(source, destination)
+  else if (propName = 'packaging') then PackagingList.move(source, destination)
+  else if (propName = 'version') then VersionList.move(source, destination)
+  else if (propName = 'safety') then SafetyList.move(source, destination)
+  else if (propName = 'shelfLifeStorage') then ShelfLifeStorageList.move(source, destination)
+  else if (propName = 'languageCode') then LanguageCodeList.move(source, destination)
+  else if (propName = 'capability') then CapabilityList.move(source, destination)
+  else if (propName = 'property') then Property_List.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'note') then NoteList.move(source, destination)
+  else if (propName = 'material') then MaterialList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -15084,21 +17324,70 @@ begin
     o := TFhirDeviceDefinition(other);
     result := compareDeep(identifierList, o.identifierList, true) and compareDeep(udiDeviceIdentifierList, o.udiDeviceIdentifierList, true) and 
       compareDeep(manufacturerElement, o.manufacturerElement, true) and compareDeep(deviceNameList, o.deviceNameList, true) and 
-      compareDeep(modelNumberElement, o.modelNumberElement, true) and compareDeep(type_Element, o.type_Element, true) and 
-      compareDeep(specializationList, o.specializationList, true) and compareDeep(versionList, o.versionList, true) and 
+      compareDeep(modelNumberElement, o.modelNumberElement, true) and compareDeep(type_List, o.type_List, true) and 
+      compareDeep(specializationList, o.specializationList, true) and compareDeep(hasPartList, o.hasPartList, true) and 
+      compareDeep(packagingList, o.packagingList, true) and compareDeep(versionList, o.versionList, true) and 
       compareDeep(safetyList, o.safetyList, true) and compareDeep(shelfLifeStorageList, o.shelfLifeStorageList, true) and 
       compareDeep(physicalCharacteristicsElement, o.physicalCharacteristicsElement, true) and 
       compareDeep(languageCodeList, o.languageCodeList, true) and compareDeep(capabilityList, o.capabilityList, true) and 
       compareDeep(property_List, o.property_List, true) and compareDeep(ownerElement, o.ownerElement, true) and 
       compareDeep(contactList, o.contactList, true) and compareDeep(onlineInformationElement, o.onlineInformationElement, true) and 
-      compareDeep(noteList, o.noteList, true) and compareDeep(quantityElement, o.quantityElement, true) and 
-      compareDeep(parentDeviceElement, o.parentDeviceElement, true) and compareDeep(materialList, o.materialList, true);
+      compareDeep(noteList, o.noteList, true) and compareDeep(parentDeviceElement, o.parentDeviceElement, true) and 
+      compareDeep(materialList, o.materialList, true);
   end;
 end;
 
 function TFhirDeviceDefinition.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FudiDeviceIdentifierList) and isEmptyProp(FManufacturer) and isEmptyProp(FdeviceNameList) and isEmptyProp(FModelNumber) and isEmptyProp(FType_) and isEmptyProp(FspecializationList) and isEmptyProp(FversionList) and isEmptyProp(FsafetyList) and isEmptyProp(FshelfLifeStorageList) and isEmptyProp(FPhysicalCharacteristics) and isEmptyProp(FlanguageCodeList) and isEmptyProp(FcapabilityList) and isEmptyProp(Fproperty_List) and isEmptyProp(FOwner) and isEmptyProp(FcontactList) and isEmptyProp(FOnlineInformation) and isEmptyProp(FnoteList) and isEmptyProp(FQuantity) and isEmptyProp(FParentDevice) and isEmptyProp(FmaterialList);
+  result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FudiDeviceIdentifierList) and isEmptyProp(FManufacturer) and isEmptyProp(FdeviceNameList) and isEmptyProp(FModelNumber) and isEmptyProp(Ftype_List) and isEmptyProp(FspecializationList) and isEmptyProp(FhasPartList) and isEmptyProp(FpackagingList) and isEmptyProp(FversionList) and isEmptyProp(FsafetyList) and isEmptyProp(FshelfLifeStorageList) and isEmptyProp(FPhysicalCharacteristics) and isEmptyProp(FlanguageCodeList) and isEmptyProp(FcapabilityList) and isEmptyProp(Fproperty_List) and isEmptyProp(FOwner) and isEmptyProp(FcontactList) and isEmptyProp(FOnlineInformation) and isEmptyProp(FnoteList) and isEmptyProp(FParentDevice) and isEmptyProp(FmaterialList);
+end;
+
+procedure TFhirDeviceDefinition.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('udiDeviceIdentifier');
+  fields.add('manufacturer[x]');
+  fields.add('deviceName');
+  fields.add('modelNumber');
+  fields.add('type');
+  fields.add('specialization');
+  fields.add('hasPart');
+  fields.add('packaging');
+  fields.add('version');
+  fields.add('safety');
+  fields.add('shelfLifeStorage');
+  fields.add('physicalCharacteristics');
+  fields.add('languageCode');
+  fields.add('capability');
+  fields.add('property');
+  fields.add('owner');
+  fields.add('contact');
+  fields.add('onlineInformation');
+  fields.add('note');
+  fields.add('parentDevice');
+  fields.add('material');
+end;
+
+function TFhirDeviceDefinition.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FUdiDeviceIdentifierList.sizeInBytes);
+  inc(result, FDeviceNameList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FSpecializationList.sizeInBytes);
+  inc(result, FHasPartList.sizeInBytes);
+  inc(result, FPackagingList.sizeInBytes);
+  inc(result, FVersionList.sizeInBytes);
+  inc(result, FSafetyList.sizeInBytes);
+  inc(result, FShelfLifeStorageList.sizeInBytes);
+  inc(result, FLanguageCodeList.sizeInBytes);
+  inc(result, FCapabilityList.sizeInBytes);
+  inc(result, FProperty_List.sizeInBytes);
+  inc(result, FContactList.sizeInBytes);
+  inc(result, FNoteList.sizeInBytes);
+  inc(result, FMaterialList.sizeInBytes);
 end;
 
 function TFhirDeviceDefinition.GetIdentifierList : TFhirIdentifierList;
@@ -15128,7 +17417,7 @@ end;
 procedure TFhirDeviceDefinition.SetManufacturer(value : TFhirDataType);
 begin
   FManufacturer.free;
-  FManufacturer := value; {L1134}
+  FManufacturer := value;
 end;
 
 function TFhirDeviceDefinition.GetDeviceNameList : TFhirDeviceDefinitionDeviceNameList;
@@ -15146,7 +17435,7 @@ end;
 procedure TFhirDeviceDefinition.SetModelNumber(value : TFhirString);
 begin
   FModelNumber.free;
-  FModelNumber := value; {L1134}
+  FModelNumber := value;
 end;
 
 function TFhirDeviceDefinition.GetModelNumberST : String;
@@ -15169,10 +17458,16 @@ begin
     FModelNumber.value := '';
 end;
 
-procedure TFhirDeviceDefinition.SetType_(value : TFhirCodeableConcept);
+function TFhirDeviceDefinition.GetType_List : TFhirCodeableConceptList;
 begin
-  FType_.free;
-  FType_ := value; {L1134}
+  if FType_List = nil then
+    FType_List := TFhirCodeableConceptList.Create;
+  result := FType_List;
+end;
+
+function TFhirDeviceDefinition.GetHasType_List : boolean;
+begin
+  result := (FType_List <> nil) and (FType_List.count > 0);
 end;
 
 function TFhirDeviceDefinition.GetSpecializationList : TFhirDeviceDefinitionSpecializationList;
@@ -15187,10 +17482,34 @@ begin
   result := (FSpecializationList <> nil) and (FSpecializationList.count > 0);
 end;
 
-function TFhirDeviceDefinition.GetVersionList : TFhirStringList;
+function TFhirDeviceDefinition.GetHasPartList : TFhirDeviceDefinitionHasPartList;
+begin
+  if FHasPartList = nil then
+    FHasPartList := TFhirDeviceDefinitionHasPartList.Create;
+  result := FHasPartList;
+end;
+
+function TFhirDeviceDefinition.GetHasHasPartList : boolean;
+begin
+  result := (FHasPartList <> nil) and (FHasPartList.count > 0);
+end;
+
+function TFhirDeviceDefinition.GetPackagingList : TFhirDeviceDefinitionPackagingList;
+begin
+  if FPackagingList = nil then
+    FPackagingList := TFhirDeviceDefinitionPackagingList.Create;
+  result := FPackagingList;
+end;
+
+function TFhirDeviceDefinition.GetHasPackagingList : boolean;
+begin
+  result := (FPackagingList <> nil) and (FPackagingList.count > 0);
+end;
+
+function TFhirDeviceDefinition.GetVersionList : TFhirDeviceDefinitionVersionList;
 begin
   if FVersionList = nil then
-    FVersionList := TFhirStringList.Create;
+    FVersionList := TFhirDeviceDefinitionVersionList.Create;
   result := FVersionList;
 end;
 
@@ -15226,7 +17545,7 @@ end;
 procedure TFhirDeviceDefinition.SetPhysicalCharacteristics(value : TFhirProdCharacteristic);
 begin
   FPhysicalCharacteristics.free;
-  FPhysicalCharacteristics := value; {L1134}
+  FPhysicalCharacteristics := value;
 end;
 
 function TFhirDeviceDefinition.GetLanguageCodeList : TFhirCodeableConceptList;
@@ -15268,7 +17587,7 @@ end;
 procedure TFhirDeviceDefinition.SetOwner(value : TFhirReference);
 begin
   FOwner.free;
-  FOwner := value; {L1134}
+  FOwner := value;
 end;
 
 function TFhirDeviceDefinition.GetContactList : TFhirContactPointList;
@@ -15286,7 +17605,7 @@ end;
 procedure TFhirDeviceDefinition.SetOnlineInformation(value : TFhirUri);
 begin
   FOnlineInformation.free;
-  FOnlineInformation := value; {L1134}
+  FOnlineInformation := value;
 end;
 
 function TFhirDeviceDefinition.GetOnlineInformationST : String;
@@ -15321,16 +17640,10 @@ begin
   result := (FNoteList <> nil) and (FNoteList.count > 0);
 end;
 
-procedure TFhirDeviceDefinition.SetQuantity(value : TFhirQuantity);
-begin
-  FQuantity.free;
-  FQuantity := value; {L1134}
-end;
-
 procedure TFhirDeviceDefinition.SetParentDevice(value : TFhirReference);
 begin
   FParentDevice.free;
-  FParentDevice := value; {L1134}
+  FParentDevice := value;
 end;
 
 function TFhirDeviceDefinition.GetMaterialList : TFhirDeviceDefinitionMaterialList;
@@ -15343,58 +17656,6 @@ end;
 function TFhirDeviceDefinition.GetHasMaterialList : boolean;
 begin
   result := (FMaterialList <> nil) and (FMaterialList.count > 0);
-end;
-
-procedure TFhirDeviceDefinition.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('udiDeviceIdentifier');
-  fields.add('manufacturer[x]');
-  fields.add('deviceName');
-  fields.add('modelNumber');
-  fields.add('type');
-  fields.add('specialization');
-  fields.add('version');
-  fields.add('safety');
-  fields.add('shelfLifeStorage');
-  fields.add('physicalCharacteristics');
-  fields.add('languageCode');
-  fields.add('capability');
-  fields.add('property');
-  fields.add('owner');
-  fields.add('contact');
-  fields.add('onlineInformation');
-  fields.add('note');
-  fields.add('quantity');
-  fields.add('parentDevice');
-  fields.add('material');
-end;
-
-function TFhirDeviceDefinition.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FudiDeviceIdentifierList.sizeInBytes);
-  inc(result, FManufacturer.sizeInBytes);
-  inc(result, FdeviceNameList.sizeInBytes);
-  inc(result, FModelNumber.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FspecializationList.sizeInBytes);
-  inc(result, FversionList.sizeInBytes);
-  inc(result, FsafetyList.sizeInBytes);
-  inc(result, FshelfLifeStorageList.sizeInBytes);
-  inc(result, FPhysicalCharacteristics.sizeInBytes);
-  inc(result, FlanguageCodeList.sizeInBytes);
-  inc(result, FcapabilityList.sizeInBytes);
-  inc(result, Fproperty_List.sizeInBytes);
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FOnlineInformation.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FParentDevice.sizeInBytes);
-  inc(result, FmaterialList.sizeInBytes);
 end;
 
 { TFhirDeviceDefinitionListEnumerator }
@@ -15563,26 +17824,26 @@ end;
 procedure TFhirDeviceMetricCalibration.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'state', 'code', false, TFhirEnum, FState.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'time', 'instant', false, TFhirInstant, FTime.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'state', 'code', false, TFhirEnum, FState.Link));
+  oList.add(TFHIRProperty.create(self, 'time', 'instant', false, TFhirInstant, FTime.Link));
 end;
 
 function TFhirDeviceMetricCalibration.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum, CODES_TFhirDeviceMetricCalibrationTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum, CODES_TFhirDeviceMetricCalibrationTypeEnum, propValue);
     result := propValue;
   end
   else if (propName = 'state') then
   begin
-    StateElement := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum, CODES_TFhirDeviceMetricCalibrationStateEnum, propValue) {L1209};
+    StateElement := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum, CODES_TFhirDeviceMetricCalibrationStateEnum, propValue);
     result := propValue;
   end
   else if (propName = 'time') then
   begin
-    TimeElement := asInstant(propValue) {L1221};
+    TimeElement := asInstant(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -15595,9 +17856,9 @@ end;
 
 function TFhirDeviceMetricCalibration.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull], CODES_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull])  {L1211}
-  else if (propName = 'state') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull], CODES_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull])  {L1211}
-  else if (propName = 'time') then result := TFhirInstant.create() {L1223}
+  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull], CODES_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull]) 
+  else if (propName = 'state') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull], CODES_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull]) 
+  else if (propName = 'time') then result := TFhirInstant.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -15620,9 +17881,9 @@ end;
 
 procedure TFhirDeviceMetricCalibration.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum, CODES_TFhirDeviceMetricCalibrationTypeEnum, new) {L1210}
-  else if (propName = 'state') then StateElement := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum, CODES_TFhirDeviceMetricCalibrationStateEnum, new) {L1210}
-  else if (propName = 'time') then TimeElement := asInstant(new) {L1222}
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum, CODES_TFhirDeviceMetricCalibrationTypeEnum, new)
+  else if (propName = 'state') then StateElement := asEnum(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum, CODES_TFhirDeviceMetricCalibrationStateEnum, new)
+  else if (propName = 'time') then TimeElement := asInstant(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -15666,6 +17927,19 @@ end;
 function TFhirDeviceMetricCalibration.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FState) and isEmptyProp(FTime);
+end;
+
+procedure TFhirDeviceMetricCalibration.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('state');
+  fields.add('time');
+end;
+
+function TFhirDeviceMetricCalibration.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
 end;
 
 procedure TFhirDeviceMetricCalibration.SetType_(value : TFhirEnum);
@@ -15715,7 +17989,7 @@ end;
 procedure TFhirDeviceMetricCalibration.SetTime(value : TFhirInstant);
 begin
   FTime.free;
-  FTime := value; {L1134}
+  FTime := value;
 end;
 
 function TFhirDeviceMetricCalibration.GetTimeST : TFslDateTime;
@@ -15731,22 +18005,6 @@ begin
   if FTime = nil then
     FTime := TFhirInstant.create;
   FTime.value := value
-end;
-
-procedure TFhirDeviceMetricCalibration.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('state');
-  fields.add('time');
-end;
-
-function TFhirDeviceMetricCalibration.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FState.sizeInBytes);
-  inc(result, FTime.sizeInBytes);
 end;
 
 { TFhirDeviceMetricCalibrationListEnumerator }
@@ -15966,68 +18224,68 @@ end;
 procedure TFhirDeviceMetric.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'unit', 'CodeableConcept', false, TFhirCodeableConcept, FUnit_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'source', 'Reference', false, TFhirReference, FSource.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'code', false, TFhirEnum, FOperationalStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'color', 'code', false, TFhirEnum, FColor.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'category', 'code', false, TFhirEnum, FCategory.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'measurementPeriod', 'Timing', false, TFhirTiming, FMeasurementPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'calibration', 'BackboneElement', true, TFhirDeviceMetricCalibration, FCalibrationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'unit', 'CodeableConcept', false, TFhirCodeableConcept, FUnit_.Link));
+  oList.add(TFHIRProperty.create(self, 'source', 'Reference', false, TFhirReference, FSource.Link));
+  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
+  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'code', false, TFhirEnum, FOperationalStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'color', 'code', false, TFhirEnum, FColor.Link));
+  oList.add(TFHIRProperty.create(self, 'category', 'code', false, TFhirEnum, FCategory.Link));
+  oList.add(TFHIRProperty.create(self, 'measurementPeriod', 'Timing', false, TFhirTiming, FMeasurementPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'calibration', 'BackboneElement', true, TFhirDeviceMetricCalibration, FCalibrationList.Link));
 end;
 
 function TFhirDeviceMetric.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_ := propValue as TFhirCodeableConcept {L1199};
+    Type_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'unit') then
   begin
-    Unit_ := propValue as TFhirCodeableConcept {L1199};
+    Unit_ := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'source') then
   begin
-    Source := propValue as TFhirReference {L1199};
+    Source := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'parent') then
   begin
-    Parent := propValue as TFhirReference {L1199};
+    Parent := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'operationalStatus') then
   begin
-    OperationalStatusElement := asEnum(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum, CODES_TFhirDeviceMetricOperationalStatusEnum, propValue) {L1209};
+    OperationalStatusElement := asEnum(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum, CODES_TFhirDeviceMetricOperationalStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'color') then
   begin
-    ColorElement := asEnum(SYSTEMS_TFhirDeviceMetricColorEnum, CODES_TFhirDeviceMetricColorEnum, propValue) {L1209};
+    ColorElement := asEnum(SYSTEMS_TFhirDeviceMetricColorEnum, CODES_TFhirDeviceMetricColorEnum, propValue);
     result := propValue;
   end
   else if (propName = 'category') then
   begin
-    CategoryElement := asEnum(SYSTEMS_TFhirDeviceMetricCategoryEnum, CODES_TFhirDeviceMetricCategoryEnum, propValue) {L1209};
+    CategoryElement := asEnum(SYSTEMS_TFhirDeviceMetricCategoryEnum, CODES_TFhirDeviceMetricCategoryEnum, propValue);
     result := propValue;
   end
   else if (propName = 'measurementPeriod') then
   begin
-    MeasurementPeriod := propValue as TFhirTiming {L1199};
+    MeasurementPeriod := propValue as TFhirTiming;
     result := propValue;
   end
   else if (propName = 'calibration') then
   begin
-    CalibrationList.add(propValue as TFhirDeviceMetricCalibration) {L1048};
+    CalibrationList.add(propValue as TFhirDeviceMetricCalibration);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -16035,23 +18293,23 @@ end;
 
 procedure TFhirDeviceMetric.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'calibration') then CalibrationList.insertItem(index, propValue as TFhirDeviceMetricCalibration) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'calibration') then CalibrationList.insertItem(index, propValue as TFhirDeviceMetricCalibration)
   else inherited;
 end;
 
 function TFhirDeviceMetric.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'unit') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'source') then result := TFhirReference.create() {L1203}
-  else if (propName = 'parent') then result := TFhirReference.create() {L1203}
-  else if (propName = 'operationalStatus') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull], CODES_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull])  {L1211}
-  else if (propName = 'color') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricColorEnum[DeviceMetricColorNull], CODES_TFhirDeviceMetricColorEnum[DeviceMetricColorNull])  {L1211}
-  else if (propName = 'category') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull], CODES_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull])  {L1211}
-  else if (propName = 'measurementPeriod') then result := TFhirTiming.create() {L1203}
-  else if (propName = 'calibration') then result := CalibrationList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'unit') then result := TFhirCodeableConcept.create()
+  else if (propName = 'source') then result := TFhirReference.create()
+  else if (propName = 'parent') then result := TFhirReference.create()
+  else if (propName = 'operationalStatus') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull], CODES_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull]) 
+  else if (propName = 'color') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricColorEnum[DeviceMetricColorNull], CODES_TFhirDeviceMetricColorEnum[DeviceMetricColorNull]) 
+  else if (propName = 'category') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull], CODES_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull]) 
+  else if (propName = 'measurementPeriod') then result := TFhirTiming.create()
+  else if (propName = 'calibration') then result := CalibrationList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16072,7 +18330,7 @@ end;
 
 procedure TFhirDeviceMetric.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'type') then Type_Element := nil
   else if (propName = 'unit') then Unit_Element := nil
   else if (propName = 'source') then SourceElement := nil
@@ -16081,31 +18339,31 @@ begin
   else if (propName = 'color') then ColorElement := nil
   else if (propName = 'category') then CategoryElement := nil
   else if (propName = 'measurementPeriod') then MeasurementPeriodElement := nil
-  else if (propName = 'calibration') then deletePropertyValue('calibration', CalibrationList, value) {L1054}
+  else if (propName = 'calibration') then deletePropertyValue('calibration', CalibrationList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDeviceMetric.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'unit') then Unit_Element := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'source') then SourceElement := new as TFhirReference {L1195}
-  else if (propName = 'parent') then ParentElement := new as TFhirReference {L1195}
-  else if (propName = 'operationalStatus') then OperationalStatusElement := asEnum(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum, CODES_TFhirDeviceMetricOperationalStatusEnum, new) {L1210}
-  else if (propName = 'color') then ColorElement := asEnum(SYSTEMS_TFhirDeviceMetricColorEnum, CODES_TFhirDeviceMetricColorEnum, new) {L1210}
-  else if (propName = 'category') then CategoryElement := asEnum(SYSTEMS_TFhirDeviceMetricCategoryEnum, CODES_TFhirDeviceMetricCategoryEnum, new) {L1210}
-  else if (propName = 'measurementPeriod') then MeasurementPeriodElement := new as TFhirTiming {L1195}
-  else if (propName = 'calibration') then replacePropertyValue('calibration', CalibrationList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept
+  else if (propName = 'unit') then Unit_Element := new as TFhirCodeableConcept
+  else if (propName = 'source') then SourceElement := new as TFhirReference
+  else if (propName = 'parent') then ParentElement := new as TFhirReference
+  else if (propName = 'operationalStatus') then OperationalStatusElement := asEnum(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum, CODES_TFhirDeviceMetricOperationalStatusEnum, new)
+  else if (propName = 'color') then ColorElement := asEnum(SYSTEMS_TFhirDeviceMetricColorEnum, CODES_TFhirDeviceMetricColorEnum, new)
+  else if (propName = 'category') then CategoryElement := asEnum(SYSTEMS_TFhirDeviceMetricCategoryEnum, CODES_TFhirDeviceMetricCategoryEnum, new)
+  else if (propName = 'measurementPeriod') then MeasurementPeriodElement := new as TFhirTiming
+  else if (propName = 'calibration') then replacePropertyValue('calibration', CalibrationList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDeviceMetric.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'calibration') then CalibrationList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'calibration') then CalibrationList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -16149,6 +18407,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FType_) and isEmptyProp(FUnit_) and isEmptyProp(FSource) and isEmptyProp(FParent) and isEmptyProp(FOperationalStatus) and isEmptyProp(FColor) and isEmptyProp(FCategory) and isEmptyProp(FMeasurementPeriod) and isEmptyProp(FcalibrationList);
 end;
 
+procedure TFhirDeviceMetric.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('type');
+  fields.add('unit');
+  fields.add('source');
+  fields.add('parent');
+  fields.add('operationalStatus');
+  fields.add('color');
+  fields.add('category');
+  fields.add('measurementPeriod');
+  fields.add('calibration');
+end;
+
+function TFhirDeviceMetric.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FCalibrationList.sizeInBytes);
+end;
+
 function TFhirDeviceMetric.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -16164,25 +18444,25 @@ end;
 procedure TFhirDeviceMetric.SetType_(value : TFhirCodeableConcept);
 begin
   FType_.free;
-  FType_ := value; {L1134}
+  FType_ := value;
 end;
 
 procedure TFhirDeviceMetric.SetUnit_(value : TFhirCodeableConcept);
 begin
   FUnit_.free;
-  FUnit_ := value; {L1134}
+  FUnit_ := value;
 end;
 
 procedure TFhirDeviceMetric.SetSource(value : TFhirReference);
 begin
   FSource.free;
-  FSource := value; {L1134}
+  FSource := value;
 end;
 
 procedure TFhirDeviceMetric.SetParent(value : TFhirReference);
 begin
   FParent.free;
-  FParent := value; {L1134}
+  FParent := value;
 end;
 
 procedure TFhirDeviceMetric.SetOperationalStatus(value : TFhirEnum);
@@ -16254,7 +18534,7 @@ end;
 procedure TFhirDeviceMetric.SetMeasurementPeriod(value : TFhirTiming);
 begin
   FMeasurementPeriod.free;
-  FMeasurementPeriod := value; {L1134}
+  FMeasurementPeriod := value;
 end;
 
 function TFhirDeviceMetric.GetCalibrationList : TFhirDeviceMetricCalibrationList;
@@ -16267,35 +18547,6 @@ end;
 function TFhirDeviceMetric.GetHasCalibrationList : boolean;
 begin
   result := (FCalibrationList <> nil) and (FCalibrationList.count > 0);
-end;
-
-procedure TFhirDeviceMetric.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('type');
-  fields.add('unit');
-  fields.add('source');
-  fields.add('parent');
-  fields.add('operationalStatus');
-  fields.add('color');
-  fields.add('category');
-  fields.add('measurementPeriod');
-  fields.add('calibration');
-end;
-
-function TFhirDeviceMetric.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FUnit_.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FOperationalStatus.sizeInBytes);
-  inc(result, FColor.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FMeasurementPeriod.sizeInBytes);
-  inc(result, FcalibrationList.sizeInBytes);
 end;
 
 { TFhirDeviceMetricListEnumerator }
@@ -16460,20 +18711,20 @@ end;
 procedure TFhirEncounterStatusHistory.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterStatusHistory.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -16486,8 +18737,8 @@ end;
 
 function TFhirEncounterStatusHistory.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull])  {L1211}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
+  else if (propName = 'period') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16508,8 +18759,8 @@ end;
 
 procedure TFhirEncounterStatusHistory.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, new) {L1210}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
+  if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -16554,6 +18805,18 @@ begin
   result := inherited isEmpty  and isEmptyProp(FStatus) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirEncounterStatusHistory.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('status');
+  fields.add('period');
+end;
+
+function TFhirEncounterStatusHistory.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirEncounterStatusHistory.SetStatus(value : TFhirEnum);
 begin
   FStatus.free;
@@ -16579,21 +18842,7 @@ end;
 procedure TFhirEncounterStatusHistory.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
-end;
-
-procedure TFhirEncounterStatusHistory.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('status');
-  fields.add('period');
-end;
-
-function TFhirEncounterStatusHistory.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  FPeriod := value;
 end;
 
 { TFhirEncounterStatusHistoryListEnumerator }
@@ -16756,20 +19005,20 @@ end;
 procedure TFhirEncounterClassHistory.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterClassHistory.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'class') then
   begin
-    Class_ := propValue as TFhirCoding {L1199};
+    Class_ := propValue as TFhirCoding;
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -16782,8 +19031,8 @@ end;
 
 function TFhirEncounterClassHistory.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'class') then result := TFhirCoding.create() {L1203}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'class') then result := TFhirCoding.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16804,8 +19053,8 @@ end;
 
 procedure TFhirEncounterClassHistory.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'class') then Class_Element := new as TFhirCoding {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
+  if (propName = 'class') then Class_Element := new as TFhirCoding
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -16850,30 +19099,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FClass_) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirEncounterClassHistory.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('class');
+  fields.add('period');
+end;
+
+function TFhirEncounterClassHistory.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirEncounterClassHistory.SetClass_(value : TFhirCoding);
 begin
   FClass_.free;
-  FClass_ := value; {L1134}
+  FClass_ := value;
 end;
 
 procedure TFhirEncounterClassHistory.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
-end;
-
-procedure TFhirEncounterClassHistory.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('class');
-  fields.add('period');
-end;
-
-function TFhirEncounterClassHistory.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FClass_.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  FPeriod := value;
 end;
 
 { TFhirEncounterClassHistoryListEnumerator }
@@ -17050,26 +19297,26 @@ end;
 procedure TFhirEncounterParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'individual', 'Reference', false, TFhirReference, FIndividual.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'individual', 'Reference', false, TFhirReference, FIndividual.Link));
 end;
 
 function TFhirEncounterParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'individual') then
   begin
-    Individual := propValue as TFhirReference {L1199};
+    Individual := propValue as TFhirReference;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -17077,15 +19324,15 @@ end;
 
 procedure TFhirEncounterParticipant.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirEncounterParticipant.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'individual') then result := TFhirReference.create() {L1203}
+  if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'individual') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17099,7 +19346,7 @@ end;
 
 procedure TFhirEncounterParticipant.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
+  if (propName = 'type') then deletePropertyValue('type', Type_List, value)
   else if (propName = 'period') then PeriodElement := nil
   else if (propName = 'individual') then IndividualElement := nil
   else
@@ -17108,16 +19355,16 @@ end;
 
 procedure TFhirEncounterParticipant.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'individual') then IndividualElement := new as TFhirReference {L1195}
+  if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'individual') then IndividualElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirEncounterParticipant.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'type') then Type_List.move(source, destination) {L1050}
+  if (propName = 'type') then Type_List.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -17158,6 +19405,20 @@ begin
   result := inherited isEmpty  and isEmptyProp(Ftype_List) and isEmptyProp(FPeriod) and isEmptyProp(FIndividual);
 end;
 
+procedure TFhirEncounterParticipant.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('type');
+  fields.add('period');
+  fields.add('individual');
+end;
+
+function TFhirEncounterParticipant.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FType_List.sizeInBytes);
+end;
+
 function TFhirEncounterParticipant.GetType_List : TFhirCodeableConceptList;
 begin
   if FType_List = nil then
@@ -17173,29 +19434,13 @@ end;
 procedure TFhirEncounterParticipant.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirEncounterParticipant.SetIndividual(value : TFhirReference);
 begin
   FIndividual.free;
-  FIndividual := value; {L1134}
-end;
-
-procedure TFhirEncounterParticipant.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('type');
-  fields.add('period');
-  fields.add('individual');
-end;
-
-function TFhirEncounterParticipant.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FIndividual.sizeInBytes);
+  FIndividual := value;
 end;
 
 { TFhirEncounterParticipantListEnumerator }
@@ -17362,26 +19607,26 @@ end;
 procedure TFhirEncounterDiagnosis.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'condition', 'Reference', false, TFhirReference, FCondition.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'use', 'CodeableConcept', false, TFhirCodeableConcept, FUse.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'rank', 'positiveInt', false, TFhirPositiveInt, FRank.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'condition', 'Reference', false, TFhirReference, FCondition.Link));
+  oList.add(TFHIRProperty.create(self, 'use', 'CodeableConcept', false, TFhirCodeableConcept, FUse.Link));
+  oList.add(TFHIRProperty.create(self, 'rank', 'positiveInt', false, TFhirPositiveInt, FRank.Link));
 end;
 
 function TFhirEncounterDiagnosis.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'condition') then
   begin
-    Condition := propValue as TFhirReference {L1199};
+    Condition := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'use') then
   begin
-    Use := propValue as TFhirCodeableConcept {L1199};
+    Use := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'rank') then
   begin
-    RankElement := asPositiveInt(propValue) {L1221};
+    RankElement := asPositiveInt(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -17394,9 +19639,9 @@ end;
 
 function TFhirEncounterDiagnosis.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'condition') then result := TFhirReference.create() {L1203}
-  else if (propName = 'use') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'rank') then result := TFhirPositiveInt.create() {L1223}
+  if (propName = 'condition') then result := TFhirReference.create()
+  else if (propName = 'use') then result := TFhirCodeableConcept.create()
+  else if (propName = 'rank') then result := TFhirPositiveInt.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17419,9 +19664,9 @@ end;
 
 procedure TFhirEncounterDiagnosis.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'condition') then ConditionElement := new as TFhirReference {L1195}
-  else if (propName = 'use') then UseElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'rank') then RankElement := asPositiveInt(new) {L1222}
+  if (propName = 'condition') then ConditionElement := new as TFhirReference
+  else if (propName = 'use') then UseElement := new as TFhirCodeableConcept
+  else if (propName = 'rank') then RankElement := asPositiveInt(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -17467,22 +19712,35 @@ begin
   result := inherited isEmpty  and isEmptyProp(FCondition) and isEmptyProp(FUse) and isEmptyProp(FRank);
 end;
 
+procedure TFhirEncounterDiagnosis.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('condition');
+  fields.add('use');
+  fields.add('rank');
+end;
+
+function TFhirEncounterDiagnosis.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirEncounterDiagnosis.SetCondition(value : TFhirReference);
 begin
   FCondition.free;
-  FCondition := value; {L1134}
+  FCondition := value;
 end;
 
 procedure TFhirEncounterDiagnosis.SetUse(value : TFhirCodeableConcept);
 begin
   FUse.free;
-  FUse := value; {L1134}
+  FUse := value;
 end;
 
 procedure TFhirEncounterDiagnosis.SetRank(value : TFhirPositiveInt);
 begin
   FRank.free;
-  FRank := value; {L1134}
+  FRank := value;
 end;
 
 function TFhirEncounterDiagnosis.GetRankST : String;
@@ -17503,22 +19761,6 @@ begin
   end
   else if FRank <> nil then
     FRank.value := '';
-end;
-
-procedure TFhirEncounterDiagnosis.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('condition');
-  fields.add('use');
-  fields.add('rank');
-end;
-
-function TFhirEncounterDiagnosis.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FCondition.sizeInBytes);
-  inc(result, FUse.sizeInBytes);
-  inc(result, FRank.sizeInBytes);
 end;
 
 { TFhirEncounterDiagnosisListEnumerator }
@@ -17739,62 +19981,62 @@ end;
 procedure TFhirEncounterHospitalization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'preAdmissionIdentifier', 'Identifier', false, TFhirIdentifier, FPreAdmissionIdentifier.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'origin', 'Reference', false, TFhirReference, FOrigin.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'admitSource', 'CodeableConcept', false, TFhirCodeableConcept, FAdmitSource.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'reAdmission', 'CodeableConcept', false, TFhirCodeableConcept, FReAdmission.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'dietPreference', 'CodeableConcept', true, TFhirCodeableConcept, FDietPreferenceList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialCourtesy', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialCourtesyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialArrangement', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialArrangementList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'destination', 'Reference', false, TFhirReference, FDestination.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'dischargeDisposition', 'CodeableConcept', false, TFhirCodeableConcept, FDischargeDisposition.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'preAdmissionIdentifier', 'Identifier', false, TFhirIdentifier, FPreAdmissionIdentifier.Link));
+  oList.add(TFHIRProperty.create(self, 'origin', 'Reference', false, TFhirReference, FOrigin.Link));
+  oList.add(TFHIRProperty.create(self, 'admitSource', 'CodeableConcept', false, TFhirCodeableConcept, FAdmitSource.Link));
+  oList.add(TFHIRProperty.create(self, 'reAdmission', 'CodeableConcept', false, TFhirCodeableConcept, FReAdmission.Link));
+  oList.add(TFHIRProperty.create(self, 'dietPreference', 'CodeableConcept', true, TFhirCodeableConcept, FDietPreferenceList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialCourtesy', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialCourtesyList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialArrangement', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialArrangementList.Link));
+  oList.add(TFHIRProperty.create(self, 'destination', 'Reference', false, TFhirReference, FDestination.Link));
+  oList.add(TFHIRProperty.create(self, 'dischargeDisposition', 'CodeableConcept', false, TFhirCodeableConcept, FDischargeDisposition.Link));
 end;
 
 function TFhirEncounterHospitalization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'preAdmissionIdentifier') then
   begin
-    PreAdmissionIdentifier := propValue as TFhirIdentifier {L1199};
+    PreAdmissionIdentifier := propValue as TFhirIdentifier;
     result := propValue;
   end
   else if (propName = 'origin') then
   begin
-    Origin := propValue as TFhirReference {L1199};
+    Origin := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'admitSource') then
   begin
-    AdmitSource := propValue as TFhirCodeableConcept {L1199};
+    AdmitSource := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'reAdmission') then
   begin
-    ReAdmission := propValue as TFhirCodeableConcept {L1199};
+    ReAdmission := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'dietPreference') then
   begin
-    DietPreferenceList.add(propValue as TFhirCodeableConcept) {L1048};
+    DietPreferenceList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialCourtesy') then
   begin
-    SpecialCourtesyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialCourtesyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialArrangement') then
   begin
-    SpecialArrangementList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialArrangementList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'destination') then
   begin
-    Destination := propValue as TFhirReference {L1199};
+    Destination := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'dischargeDisposition') then
   begin
-    DischargeDisposition := propValue as TFhirCodeableConcept {L1199};
+    DischargeDisposition := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -17802,23 +20044,23 @@ end;
 
 procedure TFhirEncounterHospitalization.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'dietPreference') then DietPreferenceList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialCourtesy') then SpecialCourtesyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialArrangement') then SpecialArrangementList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'dietPreference') then DietPreferenceList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialCourtesy') then SpecialCourtesyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialArrangement') then SpecialArrangementList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirEncounterHospitalization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'preAdmissionIdentifier') then result := TFhirIdentifier.create() {L1203}
-  else if (propName = 'origin') then result := TFhirReference.create() {L1203}
-  else if (propName = 'admitSource') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'reAdmission') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'dietPreference') then result := DietPreferenceList.new() {L1053}
-  else if (propName = 'specialCourtesy') then result := SpecialCourtesyList.new() {L1053}
-  else if (propName = 'specialArrangement') then result := SpecialArrangementList.new() {L1053}
-  else if (propName = 'destination') then result := TFhirReference.create() {L1203}
-  else if (propName = 'dischargeDisposition') then result := TFhirCodeableConcept.create() {L1203}
+  if (propName = 'preAdmissionIdentifier') then result := TFhirIdentifier.create()
+  else if (propName = 'origin') then result := TFhirReference.create()
+  else if (propName = 'admitSource') then result := TFhirCodeableConcept.create()
+  else if (propName = 'reAdmission') then result := TFhirCodeableConcept.create()
+  else if (propName = 'dietPreference') then result := DietPreferenceList.new()
+  else if (propName = 'specialCourtesy') then result := SpecialCourtesyList.new()
+  else if (propName = 'specialArrangement') then result := SpecialArrangementList.new()
+  else if (propName = 'destination') then result := TFhirReference.create()
+  else if (propName = 'dischargeDisposition') then result := TFhirCodeableConcept.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17842,9 +20084,9 @@ begin
   else if (propName = 'origin') then OriginElement := nil
   else if (propName = 'admitSource') then AdmitSourceElement := nil
   else if (propName = 'reAdmission') then ReAdmissionElement := nil
-  else if (propName = 'dietPreference') then deletePropertyValue('dietPreference', DietPreferenceList, value) {L1054}
-  else if (propName = 'specialCourtesy') then deletePropertyValue('specialCourtesy', SpecialCourtesyList, value) {L1054}
-  else if (propName = 'specialArrangement') then deletePropertyValue('specialArrangement', SpecialArrangementList, value) {L1054}
+  else if (propName = 'dietPreference') then deletePropertyValue('dietPreference', DietPreferenceList, value)
+  else if (propName = 'specialCourtesy') then deletePropertyValue('specialCourtesy', SpecialCourtesyList, value)
+  else if (propName = 'specialArrangement') then deletePropertyValue('specialArrangement', SpecialArrangementList, value)
   else if (propName = 'destination') then DestinationElement := nil
   else if (propName = 'dischargeDisposition') then DischargeDispositionElement := nil
   else
@@ -17853,24 +20095,24 @@ end;
 
 procedure TFhirEncounterHospitalization.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'preAdmissionIdentifier') then PreAdmissionIdentifierElement := new as TFhirIdentifier {L1195}
-  else if (propName = 'origin') then OriginElement := new as TFhirReference {L1195}
-  else if (propName = 'admitSource') then AdmitSourceElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'reAdmission') then ReAdmissionElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'dietPreference') then replacePropertyValue('dietPreference', DietPreferenceList, existing, new) {L1055}
-  else if (propName = 'specialCourtesy') then replacePropertyValue('specialCourtesy', SpecialCourtesyList, existing, new) {L1055}
-  else if (propName = 'specialArrangement') then replacePropertyValue('specialArrangement', SpecialArrangementList, existing, new) {L1055}
-  else if (propName = 'destination') then DestinationElement := new as TFhirReference {L1195}
-  else if (propName = 'dischargeDisposition') then DischargeDispositionElement := new as TFhirCodeableConcept {L1195}
+  if (propName = 'preAdmissionIdentifier') then PreAdmissionIdentifierElement := new as TFhirIdentifier
+  else if (propName = 'origin') then OriginElement := new as TFhirReference
+  else if (propName = 'admitSource') then AdmitSourceElement := new as TFhirCodeableConcept
+  else if (propName = 'reAdmission') then ReAdmissionElement := new as TFhirCodeableConcept
+  else if (propName = 'dietPreference') then replacePropertyValue('dietPreference', DietPreferenceList, existing, new)
+  else if (propName = 'specialCourtesy') then replacePropertyValue('specialCourtesy', SpecialCourtesyList, existing, new)
+  else if (propName = 'specialArrangement') then replacePropertyValue('specialArrangement', SpecialArrangementList, existing, new)
+  else if (propName = 'destination') then DestinationElement := new as TFhirReference
+  else if (propName = 'dischargeDisposition') then DischargeDispositionElement := new as TFhirCodeableConcept
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirEncounterHospitalization.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'dietPreference') then DietPreferenceList.move(source, destination) {L1050}
-  else if (propName = 'specialCourtesy') then SpecialCourtesyList.move(source, destination) {L1050}
-  else if (propName = 'specialArrangement') then SpecialArrangementList.move(source, destination) {L1050}
+  if (propName = 'dietPreference') then DietPreferenceList.move(source, destination)
+  else if (propName = 'specialCourtesy') then SpecialCourtesyList.move(source, destination)
+  else if (propName = 'specialArrangement') then SpecialArrangementList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -17914,28 +20156,50 @@ begin
   result := inherited isEmpty  and isEmptyProp(FPreAdmissionIdentifier) and isEmptyProp(FOrigin) and isEmptyProp(FAdmitSource) and isEmptyProp(FReAdmission) and isEmptyProp(FdietPreferenceList) and isEmptyProp(FspecialCourtesyList) and isEmptyProp(FspecialArrangementList) and isEmptyProp(FDestination) and isEmptyProp(FDischargeDisposition);
 end;
 
+procedure TFhirEncounterHospitalization.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('preAdmissionIdentifier');
+  fields.add('origin');
+  fields.add('admitSource');
+  fields.add('reAdmission');
+  fields.add('dietPreference');
+  fields.add('specialCourtesy');
+  fields.add('specialArrangement');
+  fields.add('destination');
+  fields.add('dischargeDisposition');
+end;
+
+function TFhirEncounterHospitalization.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDietPreferenceList.sizeInBytes);
+  inc(result, FSpecialCourtesyList.sizeInBytes);
+  inc(result, FSpecialArrangementList.sizeInBytes);
+end;
+
 procedure TFhirEncounterHospitalization.SetPreAdmissionIdentifier(value : TFhirIdentifier);
 begin
   FPreAdmissionIdentifier.free;
-  FPreAdmissionIdentifier := value; {L1134}
+  FPreAdmissionIdentifier := value;
 end;
 
 procedure TFhirEncounterHospitalization.SetOrigin(value : TFhirReference);
 begin
   FOrigin.free;
-  FOrigin := value; {L1134}
+  FOrigin := value;
 end;
 
 procedure TFhirEncounterHospitalization.SetAdmitSource(value : TFhirCodeableConcept);
 begin
   FAdmitSource.free;
-  FAdmitSource := value; {L1134}
+  FAdmitSource := value;
 end;
 
 procedure TFhirEncounterHospitalization.SetReAdmission(value : TFhirCodeableConcept);
 begin
   FReAdmission.free;
-  FReAdmission := value; {L1134}
+  FReAdmission := value;
 end;
 
 function TFhirEncounterHospitalization.GetDietPreferenceList : TFhirCodeableConceptList;
@@ -17977,41 +20241,13 @@ end;
 procedure TFhirEncounterHospitalization.SetDestination(value : TFhirReference);
 begin
   FDestination.free;
-  FDestination := value; {L1134}
+  FDestination := value;
 end;
 
 procedure TFhirEncounterHospitalization.SetDischargeDisposition(value : TFhirCodeableConcept);
 begin
   FDischargeDisposition.free;
-  FDischargeDisposition := value; {L1134}
-end;
-
-procedure TFhirEncounterHospitalization.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('preAdmissionIdentifier');
-  fields.add('origin');
-  fields.add('admitSource');
-  fields.add('reAdmission');
-  fields.add('dietPreference');
-  fields.add('specialCourtesy');
-  fields.add('specialArrangement');
-  fields.add('destination');
-  fields.add('dischargeDisposition');
-end;
-
-function TFhirEncounterHospitalization.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FPreAdmissionIdentifier.sizeInBytes);
-  inc(result, FOrigin.sizeInBytes);
-  inc(result, FAdmitSource.sizeInBytes);
-  inc(result, FReAdmission.sizeInBytes);
-  inc(result, FdietPreferenceList.sizeInBytes);
-  inc(result, FspecialCourtesyList.sizeInBytes);
-  inc(result, FspecialArrangementList.sizeInBytes);
-  inc(result, FDestination.sizeInBytes);
-  inc(result, FDischargeDisposition.sizeInBytes);
+  FDischargeDisposition := value;
 end;
 
 { TFhirEncounterHospitalizationListEnumerator }
@@ -18182,32 +20418,32 @@ end;
 procedure TFhirEncounterLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterLocation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'location') then
   begin
-    Location := propValue as TFhirReference {L1199};
+    Location := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirEncounterLocationStatusEnum, CODES_TFhirEncounterLocationStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirEncounterLocationStatusEnum, CODES_TFhirEncounterLocationStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'physicalType') then
   begin
-    PhysicalType := propValue as TFhirCodeableConcept {L1199};
+    PhysicalType := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -18220,10 +20456,10 @@ end;
 
 function TFhirEncounterLocation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'location') then result := TFhirReference.create() {L1203}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull], CODES_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull])  {L1211}
-  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'location') then result := TFhirReference.create()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull], CODES_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull]) 
+  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18248,10 +20484,10 @@ end;
 
 procedure TFhirEncounterLocation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'location') then LocationElement := new as TFhirReference {L1195}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterLocationStatusEnum, CODES_TFhirEncounterLocationStatusEnum, new) {L1210}
-  else if (propName = 'physicalType') then PhysicalTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
+  if (propName = 'location') then LocationElement := new as TFhirReference
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterLocationStatusEnum, CODES_TFhirEncounterLocationStatusEnum, new)
+  else if (propName = 'physicalType') then PhysicalTypeElement := new as TFhirCodeableConcept
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -18297,10 +20533,24 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLocation) and isEmptyProp(FStatus) and isEmptyProp(FPhysicalType) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirEncounterLocation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('location');
+  fields.add('status');
+  fields.add('physicalType');
+  fields.add('period');
+end;
+
+function TFhirEncounterLocation.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirEncounterLocation.SetLocation(value : TFhirReference);
 begin
   FLocation.free;
-  FLocation := value; {L1134}
+  FLocation := value;
 end;
 
 procedure TFhirEncounterLocation.SetStatus(value : TFhirEnum);
@@ -18328,31 +20578,13 @@ end;
 procedure TFhirEncounterLocation.SetPhysicalType(value : TFhirCodeableConcept);
 begin
   FPhysicalType.free;
-  FPhysicalType := value; {L1134}
+  FPhysicalType := value;
 end;
 
 procedure TFhirEncounterLocation.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
-end;
-
-procedure TFhirEncounterLocation.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('location');
-  fields.add('status');
-  fields.add('physicalType');
-  fields.add('period');
-end;
-
-function TFhirEncounterLocation.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPhysicalType.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  FPeriod := value;
 end;
 
 { TFhirEncounterLocationListEnumerator }
@@ -18724,146 +20956,146 @@ end;
 procedure TFhirEncounter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'statusHistory', 'BackboneElement', true, TFhirEncounterStatusHistory, FStatusHistoryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'classHistory', 'BackboneElement', true, TFhirEncounterClassHistory, FClassHistoryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', false, TFhirCodeableConcept, FServiceType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'subjectStatus', 'CodeableConcept', false, TFhirCodeableConcept, FSubjectStatus.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'episodeOfCare', 'Reference', true, TFhirReference, FEpisodeOfCareList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'participant', 'BackboneElement', true, TFhirEncounterParticipant, FParticipantList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'appointment', 'Reference', true, TFhirReference, FAppointmentList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'length', 'Duration', false, TFhirDuration, FLength.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableReference', true, TFhirCodeableReference, FReasonList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'diagnosis', 'BackboneElement', true, TFhirEncounterDiagnosis, FDiagnosisList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'account', 'Reference', true, TFhirReference, FAccountList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'hospitalization', 'BackboneElement', false, TFhirEncounterHospitalization, FHospitalization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'location', 'BackboneElement', true, TFhirEncounterLocation, FLocationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceProvider', 'Reference', false, TFhirReference, FServiceProvider.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'statusHistory', 'BackboneElement', true, TFhirEncounterStatusHistory, FStatusHistoryList.Link));
+  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
+  oList.add(TFHIRProperty.create(self, 'classHistory', 'BackboneElement', true, TFhirEncounterClassHistory, FClassHistoryList.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', false, TFhirCodeableConcept, FServiceType.Link));
+  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));
+  oList.add(TFHIRProperty.create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link));
+  oList.add(TFHIRProperty.create(self, 'subjectStatus', 'CodeableConcept', false, TFhirCodeableConcept, FSubjectStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'episodeOfCare', 'Reference', true, TFhirReference, FEpisodeOfCareList.Link));
+  oList.add(TFHIRProperty.create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link));
+  oList.add(TFHIRProperty.create(self, 'participant', 'BackboneElement', true, TFhirEncounterParticipant, FParticipantList.Link));
+  oList.add(TFHIRProperty.create(self, 'appointment', 'Reference', true, TFhirReference, FAppointmentList.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'length', 'Duration', false, TFhirDuration, FLength.Link));
+  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableReference', true, TFhirCodeableReference, FReasonList.Link));
+  oList.add(TFHIRProperty.create(self, 'diagnosis', 'BackboneElement', true, TFhirEncounterDiagnosis, FDiagnosisList.Link));
+  oList.add(TFHIRProperty.create(self, 'account', 'Reference', true, TFhirReference, FAccountList.Link));
+  oList.add(TFHIRProperty.create(self, 'hospitalization', 'BackboneElement', false, TFhirEncounterHospitalization, FHospitalization.Link));
+  oList.add(TFHIRProperty.create(self, 'location', 'BackboneElement', true, TFhirEncounterLocation, FLocationList.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceProvider', 'Reference', false, TFhirReference, FServiceProvider.Link));
+  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
 end;
 
 function TFhirEncounter.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'statusHistory') then
   begin
-    StatusHistoryList.add(propValue as TFhirEncounterStatusHistory) {L1048};
+    StatusHistoryList.add(propValue as TFhirEncounterStatusHistory);
     result := propValue;
   end
   else if (propName = 'class') then
   begin
-    Class_ := propValue as TFhirCoding {L1199};
+    Class_ := propValue as TFhirCoding;
     result := propValue;
   end
   else if (propName = 'classHistory') then
   begin
-    ClassHistoryList.add(propValue as TFhirEncounterClassHistory) {L1048};
+    ClassHistoryList.add(propValue as TFhirEncounterClassHistory);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'serviceType') then
   begin
-    ServiceType := propValue as TFhirCodeableConcept {L1199};
+    ServiceType := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'priority') then
   begin
-    Priority := propValue as TFhirCodeableConcept {L1199};
+    Priority := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'subject') then
   begin
-    Subject := propValue as TFhirReference {L1199};
+    Subject := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'subjectStatus') then
   begin
-    SubjectStatus := propValue as TFhirCodeableConcept {L1199};
+    SubjectStatus := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'episodeOfCare') then
   begin
-    EpisodeOfCareList.add(propValue as TFhirReference) {L1048};
+    EpisodeOfCareList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'basedOn') then
   begin
-    BasedOnList.add(propValue as TFhirReference) {L1048};
+    BasedOnList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'participant') then
   begin
-    ParticipantList.add(propValue as TFhirEncounterParticipant) {L1048};
+    ParticipantList.add(propValue as TFhirEncounterParticipant);
     result := propValue;
   end
   else if (propName = 'appointment') then
   begin
-    AppointmentList.add(propValue as TFhirReference) {L1048};
+    AppointmentList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'length') then
   begin
-    Length := propValue as TFhirDuration {L1199};
+    Length := propValue as TFhirDuration;
     result := propValue;
   end
   else if (propName = 'reason') then
   begin
-    ReasonList.add(propValue as TFhirCodeableReference) {L1048};
+    ReasonList.add(propValue as TFhirCodeableReference);
     result := propValue;
   end
   else if (propName = 'diagnosis') then
   begin
-    DiagnosisList.add(propValue as TFhirEncounterDiagnosis) {L1048};
+    DiagnosisList.add(propValue as TFhirEncounterDiagnosis);
     result := propValue;
   end
   else if (propName = 'account') then
   begin
-    AccountList.add(propValue as TFhirReference) {L1048};
+    AccountList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'hospitalization') then
   begin
-    Hospitalization := propValue as TFhirEncounterHospitalization {L1199};
+    Hospitalization := propValue as TFhirEncounterHospitalization;
     result := propValue;
   end
   else if (propName = 'location') then
   begin
-    LocationList.add(propValue as TFhirEncounterLocation) {L1048};
+    LocationList.add(propValue as TFhirEncounterLocation);
     result := propValue;
   end
   else if (propName = 'serviceProvider') then
   begin
-    ServiceProvider := propValue as TFhirReference {L1199};
+    ServiceProvider := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'partOf') then
   begin
-    PartOf := propValue as TFhirReference {L1199};
+    PartOf := propValue as TFhirReference;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -18871,46 +21103,46 @@ end;
 
 procedure TFhirEncounter.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'statusHistory') then StatusHistoryList.insertItem(index, propValue as TFhirEncounterStatusHistory) {L1049}
-  else if (propName = 'classHistory') then ClassHistoryList.insertItem(index, propValue as TFhirEncounterClassHistory) {L1049}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'episodeOfCare') then EpisodeOfCareList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'basedOn') then BasedOnList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'participant') then ParticipantList.insertItem(index, propValue as TFhirEncounterParticipant) {L1049}
-  else if (propName = 'appointment') then AppointmentList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableReference) {L1049}
-  else if (propName = 'diagnosis') then DiagnosisList.insertItem(index, propValue as TFhirEncounterDiagnosis) {L1049}
-  else if (propName = 'account') then AccountList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirEncounterLocation) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'statusHistory') then StatusHistoryList.insertItem(index, propValue as TFhirEncounterStatusHistory)
+  else if (propName = 'classHistory') then ClassHistoryList.insertItem(index, propValue as TFhirEncounterClassHistory)
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'episodeOfCare') then EpisodeOfCareList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'basedOn') then BasedOnList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'participant') then ParticipantList.insertItem(index, propValue as TFhirEncounterParticipant)
+  else if (propName = 'appointment') then AppointmentList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'reason') then ReasonList.insertItem(index, propValue as TFhirCodeableReference)
+  else if (propName = 'diagnosis') then DiagnosisList.insertItem(index, propValue as TFhirEncounterDiagnosis)
+  else if (propName = 'account') then AccountList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirEncounterLocation)
   else inherited;
 end;
 
 function TFhirEncounter.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull])  {L1211}
-  else if (propName = 'statusHistory') then result := StatusHistoryList.new() {L1053}
-  else if (propName = 'class') then result := TFhirCoding.create() {L1203}
-  else if (propName = 'classHistory') then result := ClassHistoryList.new() {L1053}
-  else if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'serviceType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'priority') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'subject') then result := TFhirReference.create() {L1203}
-  else if (propName = 'subjectStatus') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'episodeOfCare') then result := EpisodeOfCareList.new() {L1053}
-  else if (propName = 'basedOn') then result := BasedOnList.new() {L1053}
-  else if (propName = 'participant') then result := ParticipantList.new() {L1053}
-  else if (propName = 'appointment') then result := AppointmentList.new() {L1053}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'length') then result := TFhirDuration.create() {L1203}
-  else if (propName = 'reason') then result := ReasonList.new() {L1053}
-  else if (propName = 'diagnosis') then result := DiagnosisList.new() {L1053}
-  else if (propName = 'account') then result := AccountList.new() {L1053}
-  else if (propName = 'hospitalization') then result := TFhirEncounterHospitalization.create() {L1203}
-  else if (propName = 'location') then result := LocationList.new() {L1053}
-  else if (propName = 'serviceProvider') then result := TFhirReference.create() {L1203}
-  else if (propName = 'partOf') then result := TFhirReference.create() {L1203}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
+  else if (propName = 'statusHistory') then result := StatusHistoryList.new()
+  else if (propName = 'class') then result := TFhirCoding.create()
+  else if (propName = 'classHistory') then result := ClassHistoryList.new()
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'serviceType') then result := TFhirCodeableConcept.create()
+  else if (propName = 'priority') then result := TFhirCodeableConcept.create()
+  else if (propName = 'subject') then result := TFhirReference.create()
+  else if (propName = 'subjectStatus') then result := TFhirCodeableConcept.create()
+  else if (propName = 'episodeOfCare') then result := EpisodeOfCareList.new()
+  else if (propName = 'basedOn') then result := BasedOnList.new()
+  else if (propName = 'participant') then result := ParticipantList.new()
+  else if (propName = 'appointment') then result := AppointmentList.new()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'length') then result := TFhirDuration.create()
+  else if (propName = 'reason') then result := ReasonList.new()
+  else if (propName = 'diagnosis') then result := DiagnosisList.new()
+  else if (propName = 'account') then result := AccountList.new()
+  else if (propName = 'hospitalization') then result := TFhirEncounterHospitalization.create()
+  else if (propName = 'location') then result := LocationList.new()
+  else if (propName = 'serviceProvider') then result := TFhirReference.create()
+  else if (propName = 'partOf') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18944,27 +21176,27 @@ end;
 
 procedure TFhirEncounter.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'status') then StatusElement := nil
-  else if (propName = 'statusHistory') then deletePropertyValue('statusHistory', StatusHistoryList, value) {L1054}
+  else if (propName = 'statusHistory') then deletePropertyValue('statusHistory', StatusHistoryList, value)
   else if (propName = 'class') then Class_Element := nil
-  else if (propName = 'classHistory') then deletePropertyValue('classHistory', ClassHistoryList, value) {L1054}
-  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
+  else if (propName = 'classHistory') then deletePropertyValue('classHistory', ClassHistoryList, value)
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
   else if (propName = 'serviceType') then ServiceTypeElement := nil
   else if (propName = 'priority') then PriorityElement := nil
   else if (propName = 'subject') then SubjectElement := nil
   else if (propName = 'subjectStatus') then SubjectStatusElement := nil
-  else if (propName = 'episodeOfCare') then deletePropertyValue('episodeOfCare', EpisodeOfCareList, value) {L1054}
-  else if (propName = 'basedOn') then deletePropertyValue('basedOn', BasedOnList, value) {L1054}
-  else if (propName = 'participant') then deletePropertyValue('participant', ParticipantList, value) {L1054}
-  else if (propName = 'appointment') then deletePropertyValue('appointment', AppointmentList, value) {L1054}
+  else if (propName = 'episodeOfCare') then deletePropertyValue('episodeOfCare', EpisodeOfCareList, value)
+  else if (propName = 'basedOn') then deletePropertyValue('basedOn', BasedOnList, value)
+  else if (propName = 'participant') then deletePropertyValue('participant', ParticipantList, value)
+  else if (propName = 'appointment') then deletePropertyValue('appointment', AppointmentList, value)
   else if (propName = 'period') then PeriodElement := nil
   else if (propName = 'length') then LengthElement := nil
-  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value) {L1054}
-  else if (propName = 'diagnosis') then deletePropertyValue('diagnosis', DiagnosisList, value) {L1054}
-  else if (propName = 'account') then deletePropertyValue('account', AccountList, value) {L1054}
+  else if (propName = 'reason') then deletePropertyValue('reason', ReasonList, value)
+  else if (propName = 'diagnosis') then deletePropertyValue('diagnosis', DiagnosisList, value)
+  else if (propName = 'account') then deletePropertyValue('account', AccountList, value)
   else if (propName = 'hospitalization') then HospitalizationElement := nil
-  else if (propName = 'location') then deletePropertyValue('location', LocationList, value) {L1054}
+  else if (propName = 'location') then deletePropertyValue('location', LocationList, value)
   else if (propName = 'serviceProvider') then ServiceProviderElement := nil
   else if (propName = 'partOf') then PartOfElement := nil
   else
@@ -18973,47 +21205,47 @@ end;
 
 procedure TFhirEncounter.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, new) {L1210}
-  else if (propName = 'statusHistory') then replacePropertyValue('statusHistory', StatusHistoryList, existing, new) {L1055}
-  else if (propName = 'class') then Class_Element := new as TFhirCoding {L1195}
-  else if (propName = 'classHistory') then replacePropertyValue('classHistory', ClassHistoryList, existing, new) {L1055}
-  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'serviceType') then ServiceTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'priority') then PriorityElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'subject') then SubjectElement := new as TFhirReference {L1195}
-  else if (propName = 'subjectStatus') then SubjectStatusElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'episodeOfCare') then replacePropertyValue('episodeOfCare', EpisodeOfCareList, existing, new) {L1055}
-  else if (propName = 'basedOn') then replacePropertyValue('basedOn', BasedOnList, existing, new) {L1055}
-  else if (propName = 'participant') then replacePropertyValue('participant', ParticipantList, existing, new) {L1055}
-  else if (propName = 'appointment') then replacePropertyValue('appointment', AppointmentList, existing, new) {L1055}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'length') then LengthElement := new as TFhirDuration {L1195}
-  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new) {L1055}
-  else if (propName = 'diagnosis') then replacePropertyValue('diagnosis', DiagnosisList, existing, new) {L1055}
-  else if (propName = 'account') then replacePropertyValue('account', AccountList, existing, new) {L1055}
-  else if (propName = 'hospitalization') then HospitalizationElement := new as TFhirEncounterHospitalization {L1195}
-  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new) {L1055}
-  else if (propName = 'serviceProvider') then ServiceProviderElement := new as TFhirReference {L1195}
-  else if (propName = 'partOf') then PartOfElement := new as TFhirReference {L1195}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEncounterStatusEnum, CODES_TFhirEncounterStatusEnum, new)
+  else if (propName = 'statusHistory') then replacePropertyValue('statusHistory', StatusHistoryList, existing, new)
+  else if (propName = 'class') then Class_Element := new as TFhirCoding
+  else if (propName = 'classHistory') then replacePropertyValue('classHistory', ClassHistoryList, existing, new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'serviceType') then ServiceTypeElement := new as TFhirCodeableConcept
+  else if (propName = 'priority') then PriorityElement := new as TFhirCodeableConcept
+  else if (propName = 'subject') then SubjectElement := new as TFhirReference
+  else if (propName = 'subjectStatus') then SubjectStatusElement := new as TFhirCodeableConcept
+  else if (propName = 'episodeOfCare') then replacePropertyValue('episodeOfCare', EpisodeOfCareList, existing, new)
+  else if (propName = 'basedOn') then replacePropertyValue('basedOn', BasedOnList, existing, new)
+  else if (propName = 'participant') then replacePropertyValue('participant', ParticipantList, existing, new)
+  else if (propName = 'appointment') then replacePropertyValue('appointment', AppointmentList, existing, new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'length') then LengthElement := new as TFhirDuration
+  else if (propName = 'reason') then replacePropertyValue('reason', ReasonList, existing, new)
+  else if (propName = 'diagnosis') then replacePropertyValue('diagnosis', DiagnosisList, existing, new)
+  else if (propName = 'account') then replacePropertyValue('account', AccountList, existing, new)
+  else if (propName = 'hospitalization') then HospitalizationElement := new as TFhirEncounterHospitalization
+  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new)
+  else if (propName = 'serviceProvider') then ServiceProviderElement := new as TFhirReference
+  else if (propName = 'partOf') then PartOfElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirEncounter.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'statusHistory') then StatusHistoryList.move(source, destination) {L1050}
-  else if (propName = 'classHistory') then ClassHistoryList.move(source, destination) {L1050}
-  else if (propName = 'type') then Type_List.move(source, destination) {L1050}
-  else if (propName = 'episodeOfCare') then EpisodeOfCareList.move(source, destination) {L1050}
-  else if (propName = 'basedOn') then BasedOnList.move(source, destination) {L1050}
-  else if (propName = 'participant') then ParticipantList.move(source, destination) {L1050}
-  else if (propName = 'appointment') then AppointmentList.move(source, destination) {L1050}
-  else if (propName = 'reason') then ReasonList.move(source, destination) {L1050}
-  else if (propName = 'diagnosis') then DiagnosisList.move(source, destination) {L1050}
-  else if (propName = 'account') then AccountList.move(source, destination) {L1050}
-  else if (propName = 'location') then LocationList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'statusHistory') then StatusHistoryList.move(source, destination)
+  else if (propName = 'classHistory') then ClassHistoryList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'episodeOfCare') then EpisodeOfCareList.move(source, destination)
+  else if (propName = 'basedOn') then BasedOnList.move(source, destination)
+  else if (propName = 'participant') then ParticipantList.move(source, destination)
+  else if (propName = 'appointment') then AppointmentList.move(source, destination)
+  else if (propName = 'reason') then ReasonList.move(source, destination)
+  else if (propName = 'diagnosis') then DiagnosisList.move(source, destination)
+  else if (propName = 'account') then AccountList.move(source, destination)
+  else if (propName = 'location') then LocationList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -19062,6 +21294,51 @@ end;
 function TFhirEncounter.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FStatus) and isEmptyProp(FstatusHistoryList) and isEmptyProp(FClass_) and isEmptyProp(FclassHistoryList) and isEmptyProp(Ftype_List) and isEmptyProp(FServiceType) and isEmptyProp(FPriority) and isEmptyProp(FSubject) and isEmptyProp(FSubjectStatus) and isEmptyProp(FepisodeOfCareList) and isEmptyProp(FbasedOnList) and isEmptyProp(FparticipantList) and isEmptyProp(FappointmentList) and isEmptyProp(FPeriod) and isEmptyProp(FLength) and isEmptyProp(FreasonList) and isEmptyProp(FdiagnosisList) and isEmptyProp(FaccountList) and isEmptyProp(FHospitalization) and isEmptyProp(FlocationList) and isEmptyProp(FServiceProvider) and isEmptyProp(FPartOf);
+end;
+
+procedure TFhirEncounter.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('statusHistory');
+  fields.add('class');
+  fields.add('classHistory');
+  fields.add('type');
+  fields.add('serviceType');
+  fields.add('priority');
+  fields.add('subject');
+  fields.add('subjectStatus');
+  fields.add('episodeOfCare');
+  fields.add('basedOn');
+  fields.add('participant');
+  fields.add('appointment');
+  fields.add('period');
+  fields.add('length');
+  fields.add('reason');
+  fields.add('diagnosis');
+  fields.add('account');
+  fields.add('hospitalization');
+  fields.add('location');
+  fields.add('serviceProvider');
+  fields.add('partOf');
+end;
+
+function TFhirEncounter.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FStatusHistoryList.sizeInBytes);
+  inc(result, FClassHistoryList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FEpisodeOfCareList.sizeInBytes);
+  inc(result, FBasedOnList.sizeInBytes);
+  inc(result, FParticipantList.sizeInBytes);
+  inc(result, FAppointmentList.sizeInBytes);
+  inc(result, FReasonList.sizeInBytes);
+  inc(result, FDiagnosisList.sizeInBytes);
+  inc(result, FAccountList.sizeInBytes);
+  inc(result, FLocationList.sizeInBytes);
 end;
 
 function TFhirEncounter.GetIdentifierList : TFhirIdentifierList;
@@ -19113,7 +21390,7 @@ end;
 procedure TFhirEncounter.SetClass_(value : TFhirCoding);
 begin
   FClass_.free;
-  FClass_ := value; {L1134}
+  FClass_ := value;
 end;
 
 function TFhirEncounter.GetClassHistoryList : TFhirEncounterClassHistoryList;
@@ -19143,25 +21420,25 @@ end;
 procedure TFhirEncounter.SetServiceType(value : TFhirCodeableConcept);
 begin
   FServiceType.free;
-  FServiceType := value; {L1134}
+  FServiceType := value;
 end;
 
 procedure TFhirEncounter.SetPriority(value : TFhirCodeableConcept);
 begin
   FPriority.free;
-  FPriority := value; {L1134}
+  FPriority := value;
 end;
 
 procedure TFhirEncounter.SetSubject(value : TFhirReference);
 begin
   FSubject.free;
-  FSubject := value; {L1134}
+  FSubject := value;
 end;
 
 procedure TFhirEncounter.SetSubjectStatus(value : TFhirCodeableConcept);
 begin
   FSubjectStatus.free;
-  FSubjectStatus := value; {L1134}
+  FSubjectStatus := value;
 end;
 
 function TFhirEncounter.GetEpisodeOfCareList : TFhirReferenceList;
@@ -19215,13 +21492,13 @@ end;
 procedure TFhirEncounter.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirEncounter.SetLength(value : TFhirDuration);
 begin
   FLength.free;
-  FLength := value; {L1134}
+  FLength := value;
 end;
 
 function TFhirEncounter.GetReasonList : TFhirCodeableReferenceList;
@@ -19263,7 +21540,7 @@ end;
 procedure TFhirEncounter.SetHospitalization(value : TFhirEncounterHospitalization);
 begin
   FHospitalization.free;
-  FHospitalization := value; {L1134}
+  FHospitalization := value;
 end;
 
 function TFhirEncounter.GetLocationList : TFhirEncounterLocationList;
@@ -19281,69 +21558,13 @@ end;
 procedure TFhirEncounter.SetServiceProvider(value : TFhirReference);
 begin
   FServiceProvider.free;
-  FServiceProvider := value; {L1134}
+  FServiceProvider := value;
 end;
 
 procedure TFhirEncounter.SetPartOf(value : TFhirReference);
 begin
   FPartOf.free;
-  FPartOf := value; {L1134}
-end;
-
-procedure TFhirEncounter.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('status');
-  fields.add('statusHistory');
-  fields.add('class');
-  fields.add('classHistory');
-  fields.add('type');
-  fields.add('serviceType');
-  fields.add('priority');
-  fields.add('subject');
-  fields.add('subjectStatus');
-  fields.add('episodeOfCare');
-  fields.add('basedOn');
-  fields.add('participant');
-  fields.add('appointment');
-  fields.add('period');
-  fields.add('length');
-  fields.add('reason');
-  fields.add('diagnosis');
-  fields.add('account');
-  fields.add('hospitalization');
-  fields.add('location');
-  fields.add('serviceProvider');
-  fields.add('partOf');
-end;
-
-function TFhirEncounter.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FstatusHistoryList.sizeInBytes);
-  inc(result, FClass_.sizeInBytes);
-  inc(result, FclassHistoryList.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FServiceType.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FSubjectStatus.sizeInBytes);
-  inc(result, FepisodeOfCareList.sizeInBytes);
-  inc(result, FbasedOnList.sizeInBytes);
-  inc(result, FparticipantList.sizeInBytes);
-  inc(result, FappointmentList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FLength.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FdiagnosisList.sizeInBytes);
-  inc(result, FaccountList.sizeInBytes);
-  inc(result, FHospitalization.sizeInBytes);
-  inc(result, FlocationList.sizeInBytes);
-  inc(result, FServiceProvider.sizeInBytes);
-  inc(result, FPartOf.sizeInBytes);
+  FPartOf := value;
 end;
 
 { TFhirEncounterListEnumerator }
@@ -19599,59 +21820,59 @@ end;
 procedure TFhirEndpoint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'connectionType', 'Coding', false, TFhirCoding, FConnectionType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'payloadType', 'CodeableConcept', true, TFhirCodeableConcept, FPayloadTypeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'payloadMimeType', 'code', true, TFhirCode, FPayloadMimeTypeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'url', false, TFhirUrl, FAddress.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'header', 'string', true, TFhirString, FHeaderList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'connectionType', 'Coding', false, TFhirCoding, FConnectionType.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'payloadType', 'CodeableConcept', true, TFhirCodeableConcept, FPayloadTypeList.Link));
+  oList.add(TFHIRProperty.create(self, 'payloadMimeType', 'code', true, TFhirCode, FPayloadMimeTypeList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'url', false, TFhirUrl, FAddress.Link));
+  oList.add(TFHIRProperty.create(self, 'header', 'string', true, TFhirString, FHeaderList.Link));
 end;
 
 function TFhirEndpoint.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirEndpointStatusEnum, CODES_TFhirEndpointStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirEndpointStatusEnum, CODES_TFhirEndpointStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'connectionType') then
   begin
-    ConnectionType := propValue as TFhirCoding {L1199};
+    ConnectionType := propValue as TFhirCoding;
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'managingOrganization') then
   begin
-    ManagingOrganization := propValue as TFhirReference {L1199};
+    ManagingOrganization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'contact') then
   begin
-    ContactList.add(propValue as TFhirContactPoint) {L1048};
+    ContactList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'payloadType') then
   begin
-    PayloadTypeList.add(propValue as TFhirCodeableConcept) {L1048};
+    PayloadTypeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'payloadMimeType') then
@@ -19661,7 +21882,7 @@ begin
   end
   else if (propName = 'address') then
   begin
-    AddressElement := asUrl(propValue) {L1221};
+    AddressElement := asUrl(propValue);
     result := propValue;
   end
   else if (propName = 'header') then
@@ -19674,27 +21895,27 @@ end;
 
 procedure TFhirEndpoint.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'payloadType') then PayloadTypeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'payloadMimeType') then PayloadMimeTypeList.insertItem(index, asCode(propValue)) {L1045}
-  else if (propName = 'header') then HeaderList.insertItem(index, asString(propValue)) {L1045}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'payloadType') then PayloadTypeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'payloadMimeType') then PayloadMimeTypeList.insertItem(index, asCode(propValue))
+  else if (propName = 'header') then HeaderList.insertItem(index, asString(propValue))
   else inherited;
 end;
 
 function TFhirEndpoint.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEndpointStatusEnum[EndpointStatusNull], CODES_TFhirEndpointStatusEnum[EndpointStatusNull])  {L1211}
-  else if (propName = 'connectionType') then result := TFhirCoding.create() {L1203}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'managingOrganization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'contact') then result := ContactList.new() {L1053}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'payloadType') then result := PayloadTypeList.new() {L1053}
-  else if (propName = 'payloadMimeType') then result := PayloadMimeTypeList.new() {L1053}
-  else if (propName = 'address') then result := TFhirUrl.create() {L1223}
-  else if (propName = 'header') then result := HeaderList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEndpointStatusEnum[EndpointStatusNull], CODES_TFhirEndpointStatusEnum[EndpointStatusNull]) 
+  else if (propName = 'connectionType') then result := TFhirCoding.create()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'payloadType') then result := PayloadTypeList.new()
+  else if (propName = 'payloadMimeType') then result := PayloadMimeTypeList.new()
+  else if (propName = 'address') then result := TFhirUrl.create()
+  else if (propName = 'header') then result := HeaderList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -19716,45 +21937,45 @@ end;
 
 procedure TFhirEndpoint.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'status') then StatusElement := nil
   else if (propName = 'connectionType') then ConnectionTypeElement := nil
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'managingOrganization') then ManagingOrganizationElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {L1054}
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
   else if (propName = 'period') then PeriodElement := nil
-  else if (propName = 'payloadType') then deletePropertyValue('payloadType', PayloadTypeList, value) {L1054}
-  else if (propName = 'payloadMimeType') then deletePropertyValue('payloadMimeType', PayloadMimeTypeList, value) {L1054}
+  else if (propName = 'payloadType') then deletePropertyValue('payloadType', PayloadTypeList, value)
+  else if (propName = 'payloadMimeType') then deletePropertyValue('payloadMimeType', PayloadMimeTypeList, value)
   else if (propName = 'address') then AddressElement := nil
-  else if (propName = 'header') then deletePropertyValue('header', HeaderList, value) {L1054}
+  else if (propName = 'header') then deletePropertyValue('header', HeaderList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirEndpoint.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEndpointStatusEnum, CODES_TFhirEndpointStatusEnum, new) {L1210}
-  else if (propName = 'connectionType') then ConnectionTypeElement := new as TFhirCoding {L1195}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {L1055}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'payloadType') then replacePropertyValue('payloadType', PayloadTypeList, existing, new) {L1055}
-  else if (propName = 'payloadMimeType') then replacePropertyValue('payloadMimeType', PayloadMimeTypeList, existing, new) {L1055}
-  else if (propName = 'address') then AddressElement := asUrl(new) {L1222}
-  else if (propName = 'header') then replacePropertyValue('header', HeaderList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirEndpointStatusEnum, CODES_TFhirEndpointStatusEnum, new)
+  else if (propName = 'connectionType') then ConnectionTypeElement := new as TFhirCoding
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'payloadType') then replacePropertyValue('payloadType', PayloadTypeList, existing, new)
+  else if (propName = 'payloadMimeType') then replacePropertyValue('payloadMimeType', PayloadMimeTypeList, existing, new)
+  else if (propName = 'address') then AddressElement := asUrl(new)
+  else if (propName = 'header') then replacePropertyValue('header', HeaderList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirEndpoint.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'contact') then ContactList.move(source, destination) {L1050}
-  else if (propName = 'payloadType') then PayloadTypeList.move(source, destination) {L1050}
-  else if (propName = 'payloadMimeType') then PayloadMimeTypeList.move(source, destination) {L1046}
-  else if (propName = 'header') then HeaderList.move(source, destination) {L1046}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'payloadType') then PayloadTypeList.move(source, destination)
+  else if (propName = 'payloadMimeType') then PayloadMimeTypeList.move(source, destination)
+  else if (propName = 'header') then HeaderList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -19799,6 +22020,32 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FStatus) and isEmptyProp(FConnectionType) and isEmptyProp(FName) and isEmptyProp(FManagingOrganization) and isEmptyProp(FcontactList) and isEmptyProp(FPeriod) and isEmptyProp(FpayloadTypeList) and isEmptyProp(FpayloadMimeTypeList) and isEmptyProp(FAddress) and isEmptyProp(FheaderList);
 end;
 
+procedure TFhirEndpoint.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('connectionType');
+  fields.add('name');
+  fields.add('managingOrganization');
+  fields.add('contact');
+  fields.add('period');
+  fields.add('payloadType');
+  fields.add('payloadMimeType');
+  fields.add('address');
+  fields.add('header');
+end;
+
+function TFhirEndpoint.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FContactList.sizeInBytes);
+  inc(result, FPayloadTypeList.sizeInBytes);
+  inc(result, FPayloadMimeTypeList.sizeInBytes);
+  inc(result, FHeaderList.sizeInBytes);
+end;
+
 function TFhirEndpoint.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -19836,13 +22083,13 @@ end;
 procedure TFhirEndpoint.SetConnectionType(value : TFhirCoding);
 begin
   FConnectionType.free;
-  FConnectionType := value; {L1134}
+  FConnectionType := value;
 end;
 
 procedure TFhirEndpoint.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirEndpoint.GetNameST : String;
@@ -19868,7 +22115,7 @@ end;
 procedure TFhirEndpoint.SetManagingOrganization(value : TFhirReference);
 begin
   FManagingOrganization.free;
-  FManagingOrganization := value; {L1134}
+  FManagingOrganization := value;
 end;
 
 function TFhirEndpoint.GetContactList : TFhirContactPointList;
@@ -19886,7 +22133,7 @@ end;
 procedure TFhirEndpoint.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 function TFhirEndpoint.GetPayloadTypeList : TFhirCodeableConceptList;
@@ -19916,7 +22163,7 @@ end;
 procedure TFhirEndpoint.SetAddress(value : TFhirUrl);
 begin
   FAddress.free;
-  FAddress := value; {L1134}
+  FAddress := value;
 end;
 
 function TFhirEndpoint.GetAddressST : String;
@@ -19949,38 +22196,6 @@ end;
 function TFhirEndpoint.GetHasHeaderList : boolean;
 begin
   result := (FHeaderList <> nil) and (FHeaderList.count > 0);
-end;
-
-procedure TFhirEndpoint.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('status');
-  fields.add('connectionType');
-  fields.add('name');
-  fields.add('managingOrganization');
-  fields.add('contact');
-  fields.add('period');
-  fields.add('payloadType');
-  fields.add('payloadMimeType');
-  fields.add('address');
-  fields.add('header');
-end;
-
-function TFhirEndpoint.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FConnectionType.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FManagingOrganization.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FpayloadTypeList.sizeInBytes);
-  inc(result, FpayloadMimeTypeList.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FheaderList.sizeInBytes);
 end;
 
 { TFhirEndpointListEnumerator }
@@ -20153,32 +22368,32 @@ end;
 procedure TFhirGroupCharacteristic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'CodeableConcept|boolean|Quantity|Range|Reference', false, TFhirDataType, FValue.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'exclude', 'boolean', false, TFhirBoolean, FExclude.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'CodeableConcept|boolean|Quantity|Range|Reference', false, TFhirDataType, FValue.Link));
+  oList.add(TFHIRProperty.create(self, 'exclude', 'boolean', false, TFhirBoolean, FExclude.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirGroupCharacteristic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'code') then
   begin
-    Code := propValue as TFhirCodeableConcept {L1199};
+    Code := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then
   begin
-    Value := propValue as TFhirDataType {L1185};
+    Value := propValue as TFhirDataType;
     result := propValue;
   end
   else if (propName = 'exclude') then
   begin
-    ExcludeElement := asBoolean(propValue) {L1221};
+    ExcludeElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -20191,10 +22406,10 @@ end;
 
 function TFhirGroupCharacteristic.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
-  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then raise EFHIRException.create('Cannot make property Value') {L1191}
-  else if (propName = 'exclude') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'code') then result := TFhirCodeableConcept.create()
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then raise EFHIRException.create('Cannot make property Value')
+  else if (propName = 'exclude') then result := TFhirBoolean.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20210,7 +22425,7 @@ end;
 procedure TFhirGroupCharacteristic.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'code') then CodeElement := nil
-  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then ValueElement := nil {L1189}
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then ValueElement := nil
   else if (propName = 'exclude') then ExcludeElement := nil
   else if (propName = 'period') then PeriodElement := nil
   else
@@ -20219,10 +22434,10 @@ end;
 
 procedure TFhirGroupCharacteristic.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
-  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then ValueElement := new as TFhirDataType {L1190}
-  else if (propName = 'exclude') then ExcludeElement := asBoolean(new) {L1222}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
+  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then ValueElement := new as TFhirDataType
+  else if (propName = 'exclude') then ExcludeElement := asBoolean(new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -20268,22 +22483,36 @@ begin
   result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue) and isEmptyProp(FExclude) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirGroupCharacteristic.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('value[x]');
+  fields.add('exclude');
+  fields.add('period');
+end;
+
+function TFhirGroupCharacteristic.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirGroupCharacteristic.SetCode(value : TFhirCodeableConcept);
 begin
   FCode.free;
-  FCode := value; {L1134}
+  FCode := value;
 end;
 
 procedure TFhirGroupCharacteristic.SetValue(value : TFhirDataType);
 begin
   FValue.free;
-  FValue := value; {L1134}
+  FValue := value;
 end;
 
 procedure TFhirGroupCharacteristic.SetExclude(value : TFhirBoolean);
 begin
   FExclude.free;
-  FExclude := value; {L1134}
+  FExclude := value;
 end;
 
 function TFhirGroupCharacteristic.GetExcludeST : Boolean;
@@ -20304,25 +22533,7 @@ end;
 procedure TFhirGroupCharacteristic.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
-end;
-
-procedure TFhirGroupCharacteristic.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('code');
-  fields.add('value[x]');
-  fields.add('exclude');
-  fields.add('period');
-end;
-
-function TFhirGroupCharacteristic.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FExclude.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  FPeriod := value;
 end;
 
 { TFhirGroupCharacteristicListEnumerator }
@@ -20489,26 +22700,26 @@ end;
 procedure TFhirGroupMember.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'entity', 'Reference', false, TFhirReference, FEntity.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'inactive', 'boolean', false, TFhirBoolean, FInactive.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'entity', 'Reference', false, TFhirReference, FEntity.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'inactive', 'boolean', false, TFhirBoolean, FInactive.Link));
 end;
 
 function TFhirGroupMember.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'entity') then
   begin
-    Entity := propValue as TFhirReference {L1199};
+    Entity := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'inactive') then
   begin
-    InactiveElement := asBoolean(propValue) {L1221};
+    InactiveElement := asBoolean(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -20521,9 +22732,9 @@ end;
 
 function TFhirGroupMember.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'entity') then result := TFhirReference.create() {L1203}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'inactive') then result := TFhirBoolean.create() {L1223}
+  if (propName = 'entity') then result := TFhirReference.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'inactive') then result := TFhirBoolean.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20546,9 +22757,9 @@ end;
 
 procedure TFhirGroupMember.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'entity') then EntityElement := new as TFhirReference {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'inactive') then InactiveElement := asBoolean(new) {L1222}
+  if (propName = 'entity') then EntityElement := new as TFhirReference
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'inactive') then InactiveElement := asBoolean(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -20594,22 +22805,35 @@ begin
   result := inherited isEmpty  and isEmptyProp(FEntity) and isEmptyProp(FPeriod) and isEmptyProp(FInactive);
 end;
 
+procedure TFhirGroupMember.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('entity');
+  fields.add('period');
+  fields.add('inactive');
+end;
+
+function TFhirGroupMember.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirGroupMember.SetEntity(value : TFhirReference);
 begin
   FEntity.free;
-  FEntity := value; {L1134}
+  FEntity := value;
 end;
 
 procedure TFhirGroupMember.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirGroupMember.SetInactive(value : TFhirBoolean);
 begin
   FInactive.free;
-  FInactive := value; {L1134}
+  FInactive := value;
 end;
 
 function TFhirGroupMember.GetInactiveST : Boolean;
@@ -20625,22 +22849,6 @@ begin
   if FInactive = nil then
     FInactive := TFhirBoolean.create;
   FInactive.value := value
-end;
-
-procedure TFhirGroupMember.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('entity');
-  fields.add('period');
-  fields.add('inactive');
-end;
-
-function TFhirGroupMember.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FEntity.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FInactive.sizeInBytes);
 end;
 
 { TFhirGroupMemberListEnumerator }
@@ -20870,68 +23078,68 @@ end;
 procedure TFhirGroup.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'actual', 'boolean', false, TFhirBoolean, FActual.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'unsignedInt', false, TFhirUnsignedInt, FQuantity.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'managingEntity', 'Reference', false, TFhirReference, FManagingEntity.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'characteristic', 'BackboneElement', true, TFhirGroupCharacteristic, FCharacteristicList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'member', 'BackboneElement', true, TFhirGroupMember, FMemberList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.create(self, 'actual', 'boolean', false, TFhirBoolean, FActual.Link));
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'quantity', 'unsignedInt', false, TFhirUnsignedInt, FQuantity.Link));
+  oList.add(TFHIRProperty.create(self, 'managingEntity', 'Reference', false, TFhirReference, FManagingEntity.Link));
+  oList.add(TFHIRProperty.create(self, 'characteristic', 'BackboneElement', true, TFhirGroupCharacteristic, FCharacteristicList.Link));
+  oList.add(TFHIRProperty.create(self, 'member', 'BackboneElement', true, TFhirGroupMember, FMemberList.Link));
 end;
 
 function TFhirGroup.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirGroupTypeEnum, CODES_TFhirGroupTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirGroupTypeEnum, CODES_TFhirGroupTypeEnum, propValue);
     result := propValue;
   end
   else if (propName = 'actual') then
   begin
-    ActualElement := asBoolean(propValue) {L1221};
+    ActualElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'code') then
   begin
-    Code := propValue as TFhirCodeableConcept {L1199};
+    Code := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'quantity') then
   begin
-    QuantityElement := asUnsignedInt(propValue) {L1221};
+    QuantityElement := asUnsignedInt(propValue);
     result := propValue;
   end
   else if (propName = 'managingEntity') then
   begin
-    ManagingEntity := propValue as TFhirReference {L1199};
+    ManagingEntity := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'characteristic') then
   begin
-    CharacteristicList.add(propValue as TFhirGroupCharacteristic) {L1048};
+    CharacteristicList.add(propValue as TFhirGroupCharacteristic);
     result := propValue;
   end
   else if (propName = 'member') then
   begin
-    MemberList.add(propValue as TFhirGroupMember) {L1048};
+    MemberList.add(propValue as TFhirGroupMember);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -20939,24 +23147,24 @@ end;
 
 procedure TFhirGroup.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'characteristic') then CharacteristicList.insertItem(index, propValue as TFhirGroupCharacteristic) {L1049}
-  else if (propName = 'member') then MemberList.insertItem(index, propValue as TFhirGroupMember) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'characteristic') then CharacteristicList.insertItem(index, propValue as TFhirGroupCharacteristic)
+  else if (propName = 'member') then MemberList.insertItem(index, propValue as TFhirGroupMember)
   else inherited;
 end;
 
 function TFhirGroup.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirGroupTypeEnum[GroupTypeNull], CODES_TFhirGroupTypeEnum[GroupTypeNull])  {L1211}
-  else if (propName = 'actual') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'quantity') then result := TFhirUnsignedInt.create() {L1223}
-  else if (propName = 'managingEntity') then result := TFhirReference.create() {L1203}
-  else if (propName = 'characteristic') then result := CharacteristicList.new() {L1053}
-  else if (propName = 'member') then result := MemberList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirGroupTypeEnum[GroupTypeNull], CODES_TFhirGroupTypeEnum[GroupTypeNull]) 
+  else if (propName = 'actual') then result := TFhirBoolean.create()
+  else if (propName = 'code') then result := TFhirCodeableConcept.create()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'quantity') then result := TFhirUnsignedInt.create()
+  else if (propName = 'managingEntity') then result := TFhirReference.create()
+  else if (propName = 'characteristic') then result := CharacteristicList.new()
+  else if (propName = 'member') then result := MemberList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20977,7 +23185,7 @@ end;
 
 procedure TFhirGroup.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
   else if (propName = 'type') then Type_Element := nil
   else if (propName = 'actual') then ActualElement := nil
@@ -20985,33 +23193,33 @@ begin
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'quantity') then QuantityElement := nil
   else if (propName = 'managingEntity') then ManagingEntityElement := nil
-  else if (propName = 'characteristic') then deletePropertyValue('characteristic', CharacteristicList, value) {L1054}
-  else if (propName = 'member') then deletePropertyValue('member', MemberList, value) {L1054}
+  else if (propName = 'characteristic') then deletePropertyValue('characteristic', CharacteristicList, value)
+  else if (propName = 'member') then deletePropertyValue('member', MemberList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirGroup.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirGroupTypeEnum, CODES_TFhirGroupTypeEnum, new) {L1210}
-  else if (propName = 'actual') then ActualElement := asBoolean(new) {L1222}
-  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'quantity') then QuantityElement := asUnsignedInt(new) {L1222}
-  else if (propName = 'managingEntity') then ManagingEntityElement := new as TFhirReference {L1195}
-  else if (propName = 'characteristic') then replacePropertyValue('characteristic', CharacteristicList, existing, new) {L1055}
-  else if (propName = 'member') then replacePropertyValue('member', MemberList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirGroupTypeEnum, CODES_TFhirGroupTypeEnum, new)
+  else if (propName = 'actual') then ActualElement := asBoolean(new)
+  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'quantity') then QuantityElement := asUnsignedInt(new)
+  else if (propName = 'managingEntity') then ManagingEntityElement := new as TFhirReference
+  else if (propName = 'characteristic') then replacePropertyValue('characteristic', CharacteristicList, existing, new)
+  else if (propName = 'member') then replacePropertyValue('member', MemberList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirGroup.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'characteristic') then CharacteristicList.move(source, destination) {L1050}
-  else if (propName = 'member') then MemberList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'characteristic') then CharacteristicList.move(source, destination)
+  else if (propName = 'member') then MemberList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -21055,6 +23263,29 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FType_) and isEmptyProp(FActual) and isEmptyProp(FCode) and isEmptyProp(FName) and isEmptyProp(FQuantity) and isEmptyProp(FManagingEntity) and isEmptyProp(FcharacteristicList) and isEmptyProp(FmemberList);
 end;
 
+procedure TFhirGroup.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('type');
+  fields.add('actual');
+  fields.add('code');
+  fields.add('name');
+  fields.add('quantity');
+  fields.add('managingEntity');
+  fields.add('characteristic');
+  fields.add('member');
+end;
+
+function TFhirGroup.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FCharacteristicList.sizeInBytes);
+  inc(result, FMemberList.sizeInBytes);
+end;
+
 function TFhirGroup.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -21070,7 +23301,7 @@ end;
 procedure TFhirGroup.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirGroup.GetActiveST : Boolean;
@@ -21113,7 +23344,7 @@ end;
 procedure TFhirGroup.SetActual(value : TFhirBoolean);
 begin
   FActual.free;
-  FActual := value; {L1134}
+  FActual := value;
 end;
 
 function TFhirGroup.GetActualST : Boolean;
@@ -21134,13 +23365,13 @@ end;
 procedure TFhirGroup.SetCode(value : TFhirCodeableConcept);
 begin
   FCode.free;
-  FCode := value; {L1134}
+  FCode := value;
 end;
 
 procedure TFhirGroup.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirGroup.GetNameST : String;
@@ -21166,7 +23397,7 @@ end;
 procedure TFhirGroup.SetQuantity(value : TFhirUnsignedInt);
 begin
   FQuantity.free;
-  FQuantity := value; {L1134}
+  FQuantity := value;
 end;
 
 function TFhirGroup.GetQuantityST : String;
@@ -21192,7 +23423,7 @@ end;
 procedure TFhirGroup.SetManagingEntity(value : TFhirReference);
 begin
   FManagingEntity.free;
-  FManagingEntity := value; {L1134}
+  FManagingEntity := value;
 end;
 
 function TFhirGroup.GetCharacteristicList : TFhirGroupCharacteristicList;
@@ -21217,36 +23448,6 @@ end;
 function TFhirGroup.GetHasMemberList : boolean;
 begin
   result := (FMemberList <> nil) and (FMemberList.count > 0);
-end;
-
-procedure TFhirGroup.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('type');
-  fields.add('actual');
-  fields.add('code');
-  fields.add('name');
-  fields.add('quantity');
-  fields.add('managingEntity');
-  fields.add('characteristic');
-  fields.add('member');
-end;
-
-function TFhirGroup.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FActual.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FManagingEntity.sizeInBytes);
-  inc(result, FcharacteristicList.sizeInBytes);
-  inc(result, FmemberList.sizeInBytes);
 end;
 
 { TFhirGroupListEnumerator }
@@ -21411,20 +23612,20 @@ end;
 procedure TFhirHealthcareServiceEligibility.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'comment', 'markdown', false, TFhirMarkdown, FComment.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'comment', 'markdown', false, TFhirMarkdown, FComment.Link));
 end;
 
 function TFhirHealthcareServiceEligibility.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'code') then
   begin
-    Code := propValue as TFhirCodeableConcept {L1199};
+    Code := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'comment') then
   begin
-    CommentElement := asMarkdown(propValue) {L1221};
+    CommentElement := asMarkdown(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -21437,8 +23638,8 @@ end;
 
 function TFhirHealthcareServiceEligibility.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'comment') then result := TFhirMarkdown.create() {L1223}
+  if (propName = 'code') then result := TFhirCodeableConcept.create()
+  else if (propName = 'comment') then result := TFhirMarkdown.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21459,8 +23660,8 @@ end;
 
 procedure TFhirHealthcareServiceEligibility.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'comment') then CommentElement := asMarkdown(new) {L1222}
+  if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
+  else if (propName = 'comment') then CommentElement := asMarkdown(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -21505,16 +23706,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FComment);
 end;
 
+procedure TFhirHealthcareServiceEligibility.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('code');
+  fields.add('comment');
+end;
+
+function TFhirHealthcareServiceEligibility.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirHealthcareServiceEligibility.SetCode(value : TFhirCodeableConcept);
 begin
   FCode.free;
-  FCode := value; {L1134}
+  FCode := value;
 end;
 
 procedure TFhirHealthcareServiceEligibility.SetComment(value : TFhirMarkdown);
 begin
   FComment.free;
-  FComment := value; {L1134}
+  FComment := value;
 end;
 
 function TFhirHealthcareServiceEligibility.GetCommentST : String;
@@ -21535,20 +23748,6 @@ begin
   end
   else if FComment <> nil then
     FComment.value := '';
-end;
-
-procedure TFhirHealthcareServiceEligibility.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('code');
-  fields.add('comment');
-end;
-
-function TFhirHealthcareServiceEligibility.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
 end;
 
 { TFhirHealthcareServiceEligibilityListEnumerator }
@@ -21728,32 +23927,32 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link)) {L990};
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
+  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
 end;
 
 function TFhirHealthcareServiceAvailableTime.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'daysOfWeek') then
   begin
-    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)); {L994}
+    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue));
     result := propValue;
   end
   else if (propName = 'allDay') then
   begin
-    AllDayElement := asBoolean(propValue) {L1221};
+    AllDayElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'availableStartTime') then
   begin
-    AvailableStartTimeElement := asTime(propValue) {L1221};
+    AvailableStartTimeElement := asTime(propValue);
     result := propValue;
   end
   else if (propName = 'availableEndTime') then
   begin
-    AvailableEndTimeElement := asTime(propValue) {L1221};
+    AvailableEndTimeElement := asTime(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -21761,15 +23960,15 @@ end;
 
 procedure TFhirHealthcareServiceAvailableTime.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {L995}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue))
   else inherited;
 end;
 
 function TFhirHealthcareServiceAvailableTime.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'availableStartTime') then result := TFhirTime.create() {L1223}
-  else if (propName = 'availableEndTime') then result := TFhirTime.create() {L1223}
+  if (propName = 'allDay') then result := TFhirBoolean.create()
+  else if (propName = 'availableStartTime') then result := TFhirTime.create()
+  else if (propName = 'availableEndTime') then result := TFhirTime.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21793,16 +23992,16 @@ end;
 
 procedure TFhirHealthcareServiceAvailableTime.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'allDay') then AllDayElement := asBoolean(new) {L1222}
-  else if (propName = 'availableStartTime') then AvailableStartTimeElement := asTime(new) {L1222}
-  else if (propName = 'availableEndTime') then AvailableEndTimeElement := asTime(new) {L1222}
+  if (propName = 'allDay') then AllDayElement := asBoolean(new)
+  else if (propName = 'availableStartTime') then AvailableStartTimeElement := asTime(new)
+  else if (propName = 'availableEndTime') then AvailableEndTimeElement := asTime(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirHealthcareServiceAvailableTime.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination) {L996}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -21844,6 +24043,21 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FAvailableStartTime) and isEmptyProp(FAvailableEndTime);
 end;
 
+procedure TFhirHealthcareServiceAvailableTime.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('availableStartTime');
+  fields.add('availableEndTime');
+end;
+
+function TFhirHealthcareServiceAvailableTime.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDaysOfWeek.sizeInBytes);
+end;
+
 function TFhirHealthcareServiceAvailableTime.GetDaysOfWeek : TFhirEnumList;
 begin
   if FDaysOfWeek = nil then
@@ -21883,7 +24097,7 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.SetAllDay(value : TFhirBoolean);
 begin
   FAllDay.free;
-  FAllDay := value; {L1134}
+  FAllDay := value;
 end;
 
 function TFhirHealthcareServiceAvailableTime.GetAllDayST : Boolean;
@@ -21904,7 +24118,7 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.SetAvailableStartTime(value : TFhirTime);
 begin
   FAvailableStartTime.free;
-  FAvailableStartTime := value; {L1134}
+  FAvailableStartTime := value;
 end;
 
 function TFhirHealthcareServiceAvailableTime.GetAvailableStartTimeST : String;
@@ -21930,7 +24144,7 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.SetAvailableEndTime(value : TFhirTime);
 begin
   FAvailableEndTime.free;
-  FAvailableEndTime := value; {L1134}
+  FAvailableEndTime := value;
 end;
 
 function TFhirHealthcareServiceAvailableTime.GetAvailableEndTimeST : String;
@@ -21951,24 +24165,6 @@ begin
   end
   else if FAvailableEndTime <> nil then
     FAvailableEndTime.value := '';
-end;
-
-procedure TFhirHealthcareServiceAvailableTime.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('daysOfWeek');
-  fields.add('allDay');
-  fields.add('availableStartTime');
-  fields.add('availableEndTime');
-end;
-
-function TFhirHealthcareServiceAvailableTime.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDaysOfWeek.sizeInBytes);
-  inc(result, FAllDay.sizeInBytes);
-  inc(result, FAvailableStartTime.sizeInBytes);
-  inc(result, FAvailableEndTime.sizeInBytes);
 end;
 
 { TFhirHealthcareServiceAvailableTimeListEnumerator }
@@ -22131,20 +24327,20 @@ end;
 procedure TFhirHealthcareServiceNotAvailable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
 end;
 
 function TFhirHealthcareServiceNotAvailable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'description') then
   begin
-    DescriptionElement := asString(propValue) {L1221};
+    DescriptionElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'during') then
   begin
-    During := propValue as TFhirPeriod {L1199};
+    During := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -22157,8 +24353,8 @@ end;
 
 function TFhirHealthcareServiceNotAvailable.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirString.create() {L1223}
-  else if (propName = 'during') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'description') then result := TFhirString.create()
+  else if (propName = 'during') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -22179,8 +24375,8 @@ end;
 
 procedure TFhirHealthcareServiceNotAvailable.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'description') then DescriptionElement := asString(new) {L1222}
-  else if (propName = 'during') then DuringElement := new as TFhirPeriod {L1195}
+  if (propName = 'description') then DescriptionElement := asString(new)
+  else if (propName = 'during') then DuringElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -22225,10 +24421,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FDuring);
 end;
 
+procedure TFhirHealthcareServiceNotAvailable.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('during');
+end;
+
+function TFhirHealthcareServiceNotAvailable.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirHealthcareServiceNotAvailable.SetDescription(value : TFhirString);
 begin
   FDescription.free;
-  FDescription := value; {L1134}
+  FDescription := value;
 end;
 
 function TFhirHealthcareServiceNotAvailable.GetDescriptionST : String;
@@ -22254,21 +24462,7 @@ end;
 procedure TFhirHealthcareServiceNotAvailable.SetDuring(value : TFhirPeriod);
 begin
   FDuring.free;
-  FDuring := value; {L1134}
-end;
-
-procedure TFhirHealthcareServiceNotAvailable.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('during');
-end;
-
-function TFhirHealthcareServiceNotAvailable.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FDuring.sizeInBytes);
+  FDuring := value;
 end;
 
 { TFhirHealthcareServiceNotAvailableListEnumerator }
@@ -22684,152 +24878,152 @@ end;
 procedure TFhirHealthcareService.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'providedBy', 'Reference', false, TFhirReference, FProvidedBy.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'extraDetails', 'markdown', false, TFhirMarkdown, FExtraDetails.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'coverageArea', 'Reference', true, TFhirReference, FCoverageAreaList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceProvisionCode', 'CodeableConcept', true, TFhirCodeableConcept, FServiceProvisionCodeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'eligibility', 'BackboneElement', true, TFhirHealthcareServiceEligibility, FEligibilityList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'program', 'CodeableConcept', true, TFhirCodeableConcept, FProgram_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'characteristic', 'CodeableConcept', true, TFhirCodeableConcept, FCharacteristicList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'referralMethod', 'CodeableConcept', true, TFhirCodeableConcept, FReferralMethodList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'appointmentRequired', 'boolean', false, TFhirBoolean, FAppointmentRequired.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirHealthcareServiceAvailableTime, FAvailableTimeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirHealthcareServiceNotAvailable, FNotAvailableList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'providedBy', 'Reference', false, TFhirReference, FProvidedBy.Link));
+  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
+  oList.add(TFHIRProperty.create(self, 'extraDetails', 'markdown', false, TFhirMarkdown, FExtraDetails.Link));
+  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'coverageArea', 'Reference', true, TFhirReference, FCoverageAreaList.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceProvisionCode', 'CodeableConcept', true, TFhirCodeableConcept, FServiceProvisionCodeList.Link));
+  oList.add(TFHIRProperty.create(self, 'eligibility', 'BackboneElement', true, TFhirHealthcareServiceEligibility, FEligibilityList.Link));
+  oList.add(TFHIRProperty.create(self, 'program', 'CodeableConcept', true, TFhirCodeableConcept, FProgram_List.Link));
+  oList.add(TFHIRProperty.create(self, 'characteristic', 'CodeableConcept', true, TFhirCodeableConcept, FCharacteristicList.Link));
+  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
+  oList.add(TFHIRProperty.create(self, 'referralMethod', 'CodeableConcept', true, TFhirCodeableConcept, FReferralMethodList.Link));
+  oList.add(TFHIRProperty.create(self, 'appointmentRequired', 'boolean', false, TFhirBoolean, FAppointmentRequired.Link));
+  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirHealthcareServiceAvailableTime, FAvailableTimeList.Link));
+  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirHealthcareServiceNotAvailable, FNotAvailableList.Link));
+  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirHealthcareService.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'providedBy') then
   begin
-    ProvidedBy := propValue as TFhirReference {L1199};
+    ProvidedBy := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'category') then
   begin
-    CategoryList.add(propValue as TFhirCodeableConcept) {L1048};
+    CategoryList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialty') then
   begin
-    SpecialtyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialtyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'location') then
   begin
-    LocationList.add(propValue as TFhirReference) {L1048};
+    LocationList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'comment') then
   begin
-    CommentElement := asString(propValue) {L1221};
+    CommentElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'extraDetails') then
   begin
-    ExtraDetailsElement := asMarkdown(propValue) {L1221};
+    ExtraDetailsElement := asMarkdown(propValue);
     result := propValue;
   end
   else if (propName = 'photo') then
   begin
-    Photo := propValue as TFhirAttachment {L1199};
+    Photo := propValue as TFhirAttachment;
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'coverageArea') then
   begin
-    CoverageAreaList.add(propValue as TFhirReference) {L1048};
+    CoverageAreaList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'serviceProvisionCode') then
   begin
-    ServiceProvisionCodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    ServiceProvisionCodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'eligibility') then
   begin
-    EligibilityList.add(propValue as TFhirHealthcareServiceEligibility) {L1048};
+    EligibilityList.add(propValue as TFhirHealthcareServiceEligibility);
     result := propValue;
   end
   else if (propName = 'program') then
   begin
-    Program_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Program_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'characteristic') then
   begin
-    CharacteristicList.add(propValue as TFhirCodeableConcept) {L1048};
+    CharacteristicList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'communication') then
   begin
-    CommunicationList.add(propValue as TFhirCodeableConcept) {L1048};
+    CommunicationList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'referralMethod') then
   begin
-    ReferralMethodList.add(propValue as TFhirCodeableConcept) {L1048};
+    ReferralMethodList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'appointmentRequired') then
   begin
-    AppointmentRequiredElement := asBoolean(propValue) {L1221};
+    AppointmentRequiredElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'availableTime') then
   begin
-    AvailableTimeList.add(propValue as TFhirHealthcareServiceAvailableTime) {L1048};
+    AvailableTimeList.add(propValue as TFhirHealthcareServiceAvailableTime);
     result := propValue;
   end
   else if (propName = 'notAvailable') then
   begin
-    NotAvailableList.add(propValue as TFhirHealthcareServiceNotAvailable) {L1048};
+    NotAvailableList.add(propValue as TFhirHealthcareServiceNotAvailable);
     result := propValue;
   end
   else if (propName = 'availabilityExceptions') then
   begin
-    AvailabilityExceptionsElement := asString(propValue) {L1221};
+    AvailabilityExceptionsElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'endpoint') then
   begin
-    EndpointList.add(propValue as TFhirReference) {L1048};
+    EndpointList.add(propValue as TFhirReference);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -22837,51 +25031,51 @@ end;
 
 procedure TFhirHealthcareService.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'category') then CategoryList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'coverageArea') then CoverageAreaList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'serviceProvisionCode') then ServiceProvisionCodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'eligibility') then EligibilityList.insertItem(index, propValue as TFhirHealthcareServiceEligibility) {L1049}
-  else if (propName = 'program') then Program_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'characteristic') then CharacteristicList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'referralMethod') then ReferralMethodList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'availableTime') then AvailableTimeList.insertItem(index, propValue as TFhirHealthcareServiceAvailableTime) {L1049}
-  else if (propName = 'notAvailable') then NotAvailableList.insertItem(index, propValue as TFhirHealthcareServiceNotAvailable) {L1049}
-  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'category') then CategoryList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'coverageArea') then CoverageAreaList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'serviceProvisionCode') then ServiceProvisionCodeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'eligibility') then EligibilityList.insertItem(index, propValue as TFhirHealthcareServiceEligibility)
+  else if (propName = 'program') then Program_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'characteristic') then CharacteristicList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'referralMethod') then ReferralMethodList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'availableTime') then AvailableTimeList.insertItem(index, propValue as TFhirHealthcareServiceAvailableTime)
+  else if (propName = 'notAvailable') then NotAvailableList.insertItem(index, propValue as TFhirHealthcareServiceNotAvailable)
+  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirHealthcareService.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'providedBy') then result := TFhirReference.create() {L1203}
-  else if (propName = 'category') then result := CategoryList.new() {L1053}
-  else if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'specialty') then result := SpecialtyList.new() {L1053}
-  else if (propName = 'location') then result := LocationList.new() {L1053}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'comment') then result := TFhirString.create() {L1223}
-  else if (propName = 'extraDetails') then result := TFhirMarkdown.create() {L1223}
-  else if (propName = 'photo') then result := TFhirAttachment.create() {L1203}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'coverageArea') then result := CoverageAreaList.new() {L1053}
-  else if (propName = 'serviceProvisionCode') then result := ServiceProvisionCodeList.new() {L1053}
-  else if (propName = 'eligibility') then result := EligibilityList.new() {L1053}
-  else if (propName = 'program') then result := Program_List.new() {L1053}
-  else if (propName = 'characteristic') then result := CharacteristicList.new() {L1053}
-  else if (propName = 'communication') then result := CommunicationList.new() {L1053}
-  else if (propName = 'referralMethod') then result := ReferralMethodList.new() {L1053}
-  else if (propName = 'appointmentRequired') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'availableTime') then result := AvailableTimeList.new() {L1053}
-  else if (propName = 'notAvailable') then result := NotAvailableList.new() {L1053}
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create() {L1223}
-  else if (propName = 'endpoint') then result := EndpointList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'providedBy') then result := TFhirReference.create()
+  else if (propName = 'category') then result := CategoryList.new()
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'specialty') then result := SpecialtyList.new()
+  else if (propName = 'location') then result := LocationList.new()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'comment') then result := TFhirString.create()
+  else if (propName = 'extraDetails') then result := TFhirMarkdown.create()
+  else if (propName = 'photo') then result := TFhirAttachment.create()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'coverageArea') then result := CoverageAreaList.new()
+  else if (propName = 'serviceProvisionCode') then result := ServiceProvisionCodeList.new()
+  else if (propName = 'eligibility') then result := EligibilityList.new()
+  else if (propName = 'program') then result := Program_List.new()
+  else if (propName = 'characteristic') then result := CharacteristicList.new()
+  else if (propName = 'communication') then result := CommunicationList.new()
+  else if (propName = 'referralMethod') then result := ReferralMethodList.new()
+  else if (propName = 'appointmentRequired') then result := TFhirBoolean.create()
+  else if (propName = 'availableTime') then result := AvailableTimeList.new()
+  else if (propName = 'notAvailable') then result := NotAvailableList.new()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -22916,82 +25110,82 @@ end;
 
 procedure TFhirHealthcareService.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
   else if (propName = 'providedBy') then ProvidedByElement := nil
-  else if (propName = 'category') then deletePropertyValue('category', CategoryList, value) {L1054}
-  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
-  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value) {L1054}
-  else if (propName = 'location') then deletePropertyValue('location', LocationList, value) {L1054}
+  else if (propName = 'category') then deletePropertyValue('category', CategoryList, value)
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
+  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value)
+  else if (propName = 'location') then deletePropertyValue('location', LocationList, value)
   else if (propName = 'name') then NameElement := nil
   else if (propName = 'comment') then CommentElement := nil
   else if (propName = 'extraDetails') then ExtraDetailsElement := nil
   else if (propName = 'photo') then PhotoElement := nil
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
-  else if (propName = 'coverageArea') then deletePropertyValue('coverageArea', CoverageAreaList, value) {L1054}
-  else if (propName = 'serviceProvisionCode') then deletePropertyValue('serviceProvisionCode', ServiceProvisionCodeList, value) {L1054}
-  else if (propName = 'eligibility') then deletePropertyValue('eligibility', EligibilityList, value) {L1054}
-  else if (propName = 'program') then deletePropertyValue('program', Program_List, value) {L1054}
-  else if (propName = 'characteristic') then deletePropertyValue('characteristic', CharacteristicList, value) {L1054}
-  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value) {L1054}
-  else if (propName = 'referralMethod') then deletePropertyValue('referralMethod', ReferralMethodList, value) {L1054}
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
+  else if (propName = 'coverageArea') then deletePropertyValue('coverageArea', CoverageAreaList, value)
+  else if (propName = 'serviceProvisionCode') then deletePropertyValue('serviceProvisionCode', ServiceProvisionCodeList, value)
+  else if (propName = 'eligibility') then deletePropertyValue('eligibility', EligibilityList, value)
+  else if (propName = 'program') then deletePropertyValue('program', Program_List, value)
+  else if (propName = 'characteristic') then deletePropertyValue('characteristic', CharacteristicList, value)
+  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value)
+  else if (propName = 'referralMethod') then deletePropertyValue('referralMethod', ReferralMethodList, value)
   else if (propName = 'appointmentRequired') then AppointmentRequiredElement := nil
-  else if (propName = 'availableTime') then deletePropertyValue('availableTime', AvailableTimeList, value) {L1054}
-  else if (propName = 'notAvailable') then deletePropertyValue('notAvailable', NotAvailableList, value) {L1054}
+  else if (propName = 'availableTime') then deletePropertyValue('availableTime', AvailableTimeList, value)
+  else if (propName = 'notAvailable') then deletePropertyValue('notAvailable', NotAvailableList, value)
   else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := nil
-  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value) {L1054}
+  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirHealthcareService.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'providedBy') then ProvidedByElement := new as TFhirReference {L1195}
-  else if (propName = 'category') then replacePropertyValue('category', CategoryList, existing, new) {L1055}
-  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new) {L1055}
-  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new) {L1055}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'comment') then CommentElement := asString(new) {L1222}
-  else if (propName = 'extraDetails') then ExtraDetailsElement := asMarkdown(new) {L1222}
-  else if (propName = 'photo') then PhotoElement := new as TFhirAttachment {L1195}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'coverageArea') then replacePropertyValue('coverageArea', CoverageAreaList, existing, new) {L1055}
-  else if (propName = 'serviceProvisionCode') then replacePropertyValue('serviceProvisionCode', ServiceProvisionCodeList, existing, new) {L1055}
-  else if (propName = 'eligibility') then replacePropertyValue('eligibility', EligibilityList, existing, new) {L1055}
-  else if (propName = 'program') then replacePropertyValue('program', Program_List, existing, new) {L1055}
-  else if (propName = 'characteristic') then replacePropertyValue('characteristic', CharacteristicList, existing, new) {L1055}
-  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new) {L1055}
-  else if (propName = 'referralMethod') then replacePropertyValue('referralMethod', ReferralMethodList, existing, new) {L1055}
-  else if (propName = 'appointmentRequired') then AppointmentRequiredElement := asBoolean(new) {L1222}
-  else if (propName = 'availableTime') then replacePropertyValue('availableTime', AvailableTimeList, existing, new) {L1055}
-  else if (propName = 'notAvailable') then replacePropertyValue('notAvailable', NotAvailableList, existing, new) {L1055}
-  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new) {L1222}
-  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'providedBy') then ProvidedByElement := new as TFhirReference
+  else if (propName = 'category') then replacePropertyValue('category', CategoryList, existing, new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new)
+  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new)
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'comment') then CommentElement := asString(new)
+  else if (propName = 'extraDetails') then ExtraDetailsElement := asMarkdown(new)
+  else if (propName = 'photo') then PhotoElement := new as TFhirAttachment
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'coverageArea') then replacePropertyValue('coverageArea', CoverageAreaList, existing, new)
+  else if (propName = 'serviceProvisionCode') then replacePropertyValue('serviceProvisionCode', ServiceProvisionCodeList, existing, new)
+  else if (propName = 'eligibility') then replacePropertyValue('eligibility', EligibilityList, existing, new)
+  else if (propName = 'program') then replacePropertyValue('program', Program_List, existing, new)
+  else if (propName = 'characteristic') then replacePropertyValue('characteristic', CharacteristicList, existing, new)
+  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new)
+  else if (propName = 'referralMethod') then replacePropertyValue('referralMethod', ReferralMethodList, existing, new)
+  else if (propName = 'appointmentRequired') then AppointmentRequiredElement := asBoolean(new)
+  else if (propName = 'availableTime') then replacePropertyValue('availableTime', AvailableTimeList, existing, new)
+  else if (propName = 'notAvailable') then replacePropertyValue('notAvailable', NotAvailableList, existing, new)
+  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new)
+  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirHealthcareService.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'category') then CategoryList.move(source, destination) {L1050}
-  else if (propName = 'type') then Type_List.move(source, destination) {L1050}
-  else if (propName = 'specialty') then SpecialtyList.move(source, destination) {L1050}
-  else if (propName = 'location') then LocationList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'coverageArea') then CoverageAreaList.move(source, destination) {L1050}
-  else if (propName = 'serviceProvisionCode') then ServiceProvisionCodeList.move(source, destination) {L1050}
-  else if (propName = 'eligibility') then EligibilityList.move(source, destination) {L1050}
-  else if (propName = 'program') then Program_List.move(source, destination) {L1050}
-  else if (propName = 'characteristic') then CharacteristicList.move(source, destination) {L1050}
-  else if (propName = 'communication') then CommunicationList.move(source, destination) {L1050}
-  else if (propName = 'referralMethod') then ReferralMethodList.move(source, destination) {L1050}
-  else if (propName = 'availableTime') then AvailableTimeList.move(source, destination) {L1050}
-  else if (propName = 'notAvailable') then NotAvailableList.move(source, destination) {L1050}
-  else if (propName = 'endpoint') then EndpointList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'category') then CategoryList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'specialty') then SpecialtyList.move(source, destination)
+  else if (propName = 'location') then LocationList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'coverageArea') then CoverageAreaList.move(source, destination)
+  else if (propName = 'serviceProvisionCode') then ServiceProvisionCodeList.move(source, destination)
+  else if (propName = 'eligibility') then EligibilityList.move(source, destination)
+  else if (propName = 'program') then Program_List.move(source, destination)
+  else if (propName = 'characteristic') then CharacteristicList.move(source, destination)
+  else if (propName = 'communication') then CommunicationList.move(source, destination)
+  else if (propName = 'referralMethod') then ReferralMethodList.move(source, destination)
+  else if (propName = 'availableTime') then AvailableTimeList.move(source, destination)
+  else if (propName = 'notAvailable') then NotAvailableList.move(source, destination)
+  else if (propName = 'endpoint') then EndpointList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -23043,6 +25237,56 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FProvidedBy) and isEmptyProp(FcategoryList) and isEmptyProp(Ftype_List) and isEmptyProp(FspecialtyList) and isEmptyProp(FlocationList) and isEmptyProp(FName) and isEmptyProp(FComment) and isEmptyProp(FExtraDetails) and isEmptyProp(FPhoto) and isEmptyProp(FtelecomList) and isEmptyProp(FcoverageAreaList) and isEmptyProp(FserviceProvisionCodeList) and isEmptyProp(FeligibilityList) and isEmptyProp(Fprogram_List) and isEmptyProp(FcharacteristicList) and isEmptyProp(FcommunicationList) and isEmptyProp(FreferralMethodList) and isEmptyProp(FAppointmentRequired) and isEmptyProp(FavailableTimeList) and isEmptyProp(FnotAvailableList) and isEmptyProp(FAvailabilityExceptions) and isEmptyProp(FendpointList);
 end;
 
+procedure TFhirHealthcareService.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('providedBy');
+  fields.add('category');
+  fields.add('type');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('name');
+  fields.add('comment');
+  fields.add('extraDetails');
+  fields.add('photo');
+  fields.add('telecom');
+  fields.add('coverageArea');
+  fields.add('serviceProvisionCode');
+  fields.add('eligibility');
+  fields.add('program');
+  fields.add('characteristic');
+  fields.add('communication');
+  fields.add('referralMethod');
+  fields.add('appointmentRequired');
+  fields.add('availableTime');
+  fields.add('notAvailable');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
+function TFhirHealthcareService.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FCategoryList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FSpecialtyList.sizeInBytes);
+  inc(result, FLocationList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FCoverageAreaList.sizeInBytes);
+  inc(result, FServiceProvisionCodeList.sizeInBytes);
+  inc(result, FEligibilityList.sizeInBytes);
+  inc(result, FProgram_List.sizeInBytes);
+  inc(result, FCharacteristicList.sizeInBytes);
+  inc(result, FCommunicationList.sizeInBytes);
+  inc(result, FReferralMethodList.sizeInBytes);
+  inc(result, FAvailableTimeList.sizeInBytes);
+  inc(result, FNotAvailableList.sizeInBytes);
+  inc(result, FEndpointList.sizeInBytes);
+end;
+
 function TFhirHealthcareService.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -23058,7 +25302,7 @@ end;
 procedure TFhirHealthcareService.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirHealthcareService.GetActiveST : Boolean;
@@ -23079,7 +25323,7 @@ end;
 procedure TFhirHealthcareService.SetProvidedBy(value : TFhirReference);
 begin
   FProvidedBy.free;
-  FProvidedBy := value; {L1134}
+  FProvidedBy := value;
 end;
 
 function TFhirHealthcareService.GetCategoryList : TFhirCodeableConceptList;
@@ -23133,7 +25377,7 @@ end;
 procedure TFhirHealthcareService.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirHealthcareService.GetNameST : String;
@@ -23159,7 +25403,7 @@ end;
 procedure TFhirHealthcareService.SetComment(value : TFhirString);
 begin
   FComment.free;
-  FComment := value; {L1134}
+  FComment := value;
 end;
 
 function TFhirHealthcareService.GetCommentST : String;
@@ -23185,7 +25429,7 @@ end;
 procedure TFhirHealthcareService.SetExtraDetails(value : TFhirMarkdown);
 begin
   FExtraDetails.free;
-  FExtraDetails := value; {L1134}
+  FExtraDetails := value;
 end;
 
 function TFhirHealthcareService.GetExtraDetailsST : String;
@@ -23211,7 +25455,7 @@ end;
 procedure TFhirHealthcareService.SetPhoto(value : TFhirAttachment);
 begin
   FPhoto.free;
-  FPhoto := value; {L1134}
+  FPhoto := value;
 end;
 
 function TFhirHealthcareService.GetTelecomList : TFhirContactPointList;
@@ -23313,7 +25557,7 @@ end;
 procedure TFhirHealthcareService.SetAppointmentRequired(value : TFhirBoolean);
 begin
   FAppointmentRequired.free;
-  FAppointmentRequired := value; {L1134}
+  FAppointmentRequired := value;
 end;
 
 function TFhirHealthcareService.GetAppointmentRequiredST : Boolean;
@@ -23358,7 +25602,7 @@ end;
 procedure TFhirHealthcareService.SetAvailabilityExceptions(value : TFhirString);
 begin
   FAvailabilityExceptions.free;
-  FAvailabilityExceptions := value; {L1134}
+  FAvailabilityExceptions := value;
 end;
 
 function TFhirHealthcareService.GetAvailabilityExceptionsST : String;
@@ -23391,64 +25635,6 @@ end;
 function TFhirHealthcareService.GetHasEndpointList : boolean;
 begin
   result := (FEndpointList <> nil) and (FEndpointList.count > 0);
-end;
-
-procedure TFhirHealthcareService.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('providedBy');
-  fields.add('category');
-  fields.add('type');
-  fields.add('specialty');
-  fields.add('location');
-  fields.add('name');
-  fields.add('comment');
-  fields.add('extraDetails');
-  fields.add('photo');
-  fields.add('telecom');
-  fields.add('coverageArea');
-  fields.add('serviceProvisionCode');
-  fields.add('eligibility');
-  fields.add('program');
-  fields.add('characteristic');
-  fields.add('communication');
-  fields.add('referralMethod');
-  fields.add('appointmentRequired');
-  fields.add('availableTime');
-  fields.add('notAvailable');
-  fields.add('availabilityExceptions');
-  fields.add('endpoint');
-end;
-
-function TFhirHealthcareService.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FProvidedBy.sizeInBytes);
-  inc(result, FcategoryList.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FspecialtyList.sizeInBytes);
-  inc(result, FlocationList.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
-  inc(result, FExtraDetails.sizeInBytes);
-  inc(result, FPhoto.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FcoverageAreaList.sizeInBytes);
-  inc(result, FserviceProvisionCodeList.sizeInBytes);
-  inc(result, FeligibilityList.sizeInBytes);
-  inc(result, Fprogram_List.sizeInBytes);
-  inc(result, FcharacteristicList.sizeInBytes);
-  inc(result, FcommunicationList.sizeInBytes);
-  inc(result, FreferralMethodList.sizeInBytes);
-  inc(result, FAppointmentRequired.sizeInBytes);
-  inc(result, FavailableTimeList.sizeInBytes);
-  inc(result, FnotAvailableList.sizeInBytes);
-  inc(result, FAvailabilityExceptions.sizeInBytes);
-  inc(result, FendpointList.sizeInBytes);
 end;
 
 { TFhirHealthcareServiceListEnumerator }
@@ -23617,26 +25803,26 @@ end;
 procedure TFhirLocationPosition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'longitude', 'decimal', false, TFhirDecimal, FLongitude.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'latitude', 'decimal', false, TFhirDecimal, FLatitude.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'altitude', 'decimal', false, TFhirDecimal, FAltitude.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'longitude', 'decimal', false, TFhirDecimal, FLongitude.Link));
+  oList.add(TFHIRProperty.create(self, 'latitude', 'decimal', false, TFhirDecimal, FLatitude.Link));
+  oList.add(TFHIRProperty.create(self, 'altitude', 'decimal', false, TFhirDecimal, FAltitude.Link));
 end;
 
 function TFhirLocationPosition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'longitude') then
   begin
-    LongitudeElement := asDecimal(propValue) {L1221};
+    LongitudeElement := asDecimal(propValue);
     result := propValue;
   end
   else if (propName = 'latitude') then
   begin
-    LatitudeElement := asDecimal(propValue) {L1221};
+    LatitudeElement := asDecimal(propValue);
     result := propValue;
   end
   else if (propName = 'altitude') then
   begin
-    AltitudeElement := asDecimal(propValue) {L1221};
+    AltitudeElement := asDecimal(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -23649,9 +25835,9 @@ end;
 
 function TFhirLocationPosition.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'longitude') then result := TFhirDecimal.create() {L1223}
-  else if (propName = 'latitude') then result := TFhirDecimal.create() {L1223}
-  else if (propName = 'altitude') then result := TFhirDecimal.create() {L1223}
+  if (propName = 'longitude') then result := TFhirDecimal.create()
+  else if (propName = 'latitude') then result := TFhirDecimal.create()
+  else if (propName = 'altitude') then result := TFhirDecimal.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -23674,9 +25860,9 @@ end;
 
 procedure TFhirLocationPosition.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'longitude') then LongitudeElement := asDecimal(new) {L1222}
-  else if (propName = 'latitude') then LatitudeElement := asDecimal(new) {L1222}
-  else if (propName = 'altitude') then AltitudeElement := asDecimal(new) {L1222}
+  if (propName = 'longitude') then LongitudeElement := asDecimal(new)
+  else if (propName = 'latitude') then LatitudeElement := asDecimal(new)
+  else if (propName = 'altitude') then AltitudeElement := asDecimal(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -23722,10 +25908,23 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLongitude) and isEmptyProp(FLatitude) and isEmptyProp(FAltitude);
 end;
 
+procedure TFhirLocationPosition.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('longitude');
+  fields.add('latitude');
+  fields.add('altitude');
+end;
+
+function TFhirLocationPosition.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirLocationPosition.SetLongitude(value : TFhirDecimal);
 begin
   FLongitude.free;
-  FLongitude := value; {L1134}
+  FLongitude := value;
 end;
 
 function TFhirLocationPosition.GetLongitudeST : String;
@@ -23751,7 +25950,7 @@ end;
 procedure TFhirLocationPosition.SetLatitude(value : TFhirDecimal);
 begin
   FLatitude.free;
-  FLatitude := value; {L1134}
+  FLatitude := value;
 end;
 
 function TFhirLocationPosition.GetLatitudeST : String;
@@ -23777,7 +25976,7 @@ end;
 procedure TFhirLocationPosition.SetAltitude(value : TFhirDecimal);
 begin
   FAltitude.free;
-  FAltitude := value; {L1134}
+  FAltitude := value;
 end;
 
 function TFhirLocationPosition.GetAltitudeST : String;
@@ -23798,22 +25997,6 @@ begin
   end
   else if FAltitude <> nil then
     FAltitude.value := '';
-end;
-
-procedure TFhirLocationPosition.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('longitude');
-  fields.add('latitude');
-  fields.add('altitude');
-end;
-
-function TFhirLocationPosition.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FLongitude.sizeInBytes);
-  inc(result, FLatitude.sizeInBytes);
-  inc(result, FAltitude.sizeInBytes);
 end;
 
 { TFhirLocationPositionListEnumerator }
@@ -23993,32 +26176,32 @@ end;
 procedure TFhirLocationHoursOfOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link)) {L990};
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'openingTime', 'time', false, TFhirTime, FOpeningTime.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'closingTime', 'time', false, TFhirTime, FClosingTime.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.create(self, 'openingTime', 'time', false, TFhirTime, FOpeningTime.Link));
+  oList.add(TFHIRProperty.create(self, 'closingTime', 'time', false, TFhirTime, FClosingTime.Link));
 end;
 
 function TFhirLocationHoursOfOperation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'daysOfWeek') then
   begin
-    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)); {L994}
+    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue));
     result := propValue;
   end
   else if (propName = 'allDay') then
   begin
-    AllDayElement := asBoolean(propValue) {L1221};
+    AllDayElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'openingTime') then
   begin
-    OpeningTimeElement := asTime(propValue) {L1221};
+    OpeningTimeElement := asTime(propValue);
     result := propValue;
   end
   else if (propName = 'closingTime') then
   begin
-    ClosingTimeElement := asTime(propValue) {L1221};
+    ClosingTimeElement := asTime(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -24026,15 +26209,15 @@ end;
 
 procedure TFhirLocationHoursOfOperation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {L995}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue))
   else inherited;
 end;
 
 function TFhirLocationHoursOfOperation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'openingTime') then result := TFhirTime.create() {L1223}
-  else if (propName = 'closingTime') then result := TFhirTime.create() {L1223}
+  if (propName = 'allDay') then result := TFhirBoolean.create()
+  else if (propName = 'openingTime') then result := TFhirTime.create()
+  else if (propName = 'closingTime') then result := TFhirTime.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -24058,16 +26241,16 @@ end;
 
 procedure TFhirLocationHoursOfOperation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'allDay') then AllDayElement := asBoolean(new) {L1222}
-  else if (propName = 'openingTime') then OpeningTimeElement := asTime(new) {L1222}
-  else if (propName = 'closingTime') then ClosingTimeElement := asTime(new) {L1222}
+  if (propName = 'allDay') then AllDayElement := asBoolean(new)
+  else if (propName = 'openingTime') then OpeningTimeElement := asTime(new)
+  else if (propName = 'closingTime') then ClosingTimeElement := asTime(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirLocationHoursOfOperation.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination) {L996}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -24106,6 +26289,21 @@ end;
 function TFhirLocationHoursOfOperation.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FOpeningTime) and isEmptyProp(FClosingTime);
+end;
+
+procedure TFhirLocationHoursOfOperation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('openingTime');
+  fields.add('closingTime');
+end;
+
+function TFhirLocationHoursOfOperation.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDaysOfWeek.sizeInBytes);
 end;
 
 function TFhirLocationHoursOfOperation.GetDaysOfWeek : TFhirEnumList;
@@ -24147,7 +26345,7 @@ end;
 procedure TFhirLocationHoursOfOperation.SetAllDay(value : TFhirBoolean);
 begin
   FAllDay.free;
-  FAllDay := value; {L1134}
+  FAllDay := value;
 end;
 
 function TFhirLocationHoursOfOperation.GetAllDayST : Boolean;
@@ -24168,7 +26366,7 @@ end;
 procedure TFhirLocationHoursOfOperation.SetOpeningTime(value : TFhirTime);
 begin
   FOpeningTime.free;
-  FOpeningTime := value; {L1134}
+  FOpeningTime := value;
 end;
 
 function TFhirLocationHoursOfOperation.GetOpeningTimeST : String;
@@ -24194,7 +26392,7 @@ end;
 procedure TFhirLocationHoursOfOperation.SetClosingTime(value : TFhirTime);
 begin
   FClosingTime.free;
-  FClosingTime := value; {L1134}
+  FClosingTime := value;
 end;
 
 function TFhirLocationHoursOfOperation.GetClosingTimeST : String;
@@ -24215,24 +26413,6 @@ begin
   end
   else if FClosingTime <> nil then
     FClosingTime.value := '';
-end;
-
-procedure TFhirLocationHoursOfOperation.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('daysOfWeek');
-  fields.add('allDay');
-  fields.add('openingTime');
-  fields.add('closingTime');
-end;
-
-function TFhirLocationHoursOfOperation.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDaysOfWeek.sizeInBytes);
-  inc(result, FAllDay.sizeInBytes);
-  inc(result, FOpeningTime.sizeInBytes);
-  inc(result, FClosingTime.sizeInBytes);
 end;
 
 { TFhirLocationHoursOfOperationListEnumerator }
@@ -24520,45 +26700,45 @@ end;
 procedure TFhirLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'Coding', false, TFhirCoding, FOperationalStatus.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFhirEnum, FMode.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'position', 'BackboneElement', false, TFhirLocationPosition, FPosition.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'hoursOfOperation', 'BackboneElement', true, TFhirLocationHoursOfOperation, FHoursOfOperationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'Coding', false, TFhirCoding, FOperationalStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFhirEnum, FMode.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
+  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
+  oList.add(TFHIRProperty.create(self, 'position', 'BackboneElement', false, TFhirLocationPosition, FPosition.Link));
+  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
+  oList.add(TFHIRProperty.create(self, 'hoursOfOperation', 'BackboneElement', true, TFhirLocationHoursOfOperation, FHoursOfOperationList.Link));
+  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirLocation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirLocationStatusEnum, CODES_TFhirLocationStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirLocationStatusEnum, CODES_TFhirLocationStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'operationalStatus') then
   begin
-    OperationalStatus := propValue as TFhirCoding {L1199};
+    OperationalStatus := propValue as TFhirCoding;
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'alias') then
@@ -24568,62 +26748,62 @@ begin
   end
   else if (propName = 'description') then
   begin
-    DescriptionElement := asString(propValue) {L1221};
+    DescriptionElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'mode') then
   begin
-    ModeElement := asEnum(SYSTEMS_TFhirLocationModeEnum, CODES_TFhirLocationModeEnum, propValue) {L1209};
+    ModeElement := asEnum(SYSTEMS_TFhirLocationModeEnum, CODES_TFhirLocationModeEnum, propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    Address := propValue as TFhirAddress {L1199};
+    Address := propValue as TFhirAddress;
     result := propValue;
   end
   else if (propName = 'physicalType') then
   begin
-    PhysicalType := propValue as TFhirCodeableConcept {L1199};
+    PhysicalType := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'position') then
   begin
-    Position := propValue as TFhirLocationPosition {L1199};
+    Position := propValue as TFhirLocationPosition;
     result := propValue;
   end
   else if (propName = 'managingOrganization') then
   begin
-    ManagingOrganization := propValue as TFhirReference {L1199};
+    ManagingOrganization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'partOf') then
   begin
-    PartOf := propValue as TFhirReference {L1199};
+    PartOf := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'hoursOfOperation') then
   begin
-    HoursOfOperationList.add(propValue as TFhirLocationHoursOfOperation) {L1048};
+    HoursOfOperationList.add(propValue as TFhirLocationHoursOfOperation);
     result := propValue;
   end
   else if (propName = 'availabilityExceptions') then
   begin
-    AvailabilityExceptionsElement := asString(propValue) {L1221};
+    AvailabilityExceptionsElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'endpoint') then
   begin
-    EndpointList.add(propValue as TFhirReference) {L1048};
+    EndpointList.add(propValue as TFhirReference);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -24631,34 +26811,34 @@ end;
 
 procedure TFhirLocation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue)) {L1045}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'hoursOfOperation') then HoursOfOperationList.insertItem(index, propValue as TFhirLocationHoursOfOperation) {L1049}
-  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue))
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'hoursOfOperation') then HoursOfOperationList.insertItem(index, propValue as TFhirLocationHoursOfOperation)
+  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirLocation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirLocationStatusEnum[LocationStatusNull], CODES_TFhirLocationStatusEnum[LocationStatusNull])  {L1211}
-  else if (propName = 'operationalStatus') then result := TFhirCoding.create() {L1203}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'alias') then result := AliasList.new() {L1053}
-  else if (propName = 'description') then result := TFhirString.create() {L1223}
-  else if (propName = 'mode') then result := TFhirEnum.create(SYSTEMS_TFhirLocationModeEnum[LocationModeNull], CODES_TFhirLocationModeEnum[LocationModeNull])  {L1211}
-  else if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'address') then result := TFhirAddress.create() {L1203}
-  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'position') then result := TFhirLocationPosition.create() {L1203}
-  else if (propName = 'managingOrganization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'partOf') then result := TFhirReference.create() {L1203}
-  else if (propName = 'hoursOfOperation') then result := HoursOfOperationList.new() {L1053}
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create() {L1223}
-  else if (propName = 'endpoint') then result := EndpointList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirLocationStatusEnum[LocationStatusNull], CODES_TFhirLocationStatusEnum[LocationStatusNull]) 
+  else if (propName = 'operationalStatus') then result := TFhirCoding.create()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'alias') then result := AliasList.new()
+  else if (propName = 'description') then result := TFhirString.create()
+  else if (propName = 'mode') then result := TFhirEnum.create(SYSTEMS_TFhirLocationModeEnum[LocationModeNull], CODES_TFhirLocationModeEnum[LocationModeNull]) 
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'address') then result := TFhirAddress.create()
+  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create()
+  else if (propName = 'position') then result := TFhirLocationPosition.create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'partOf') then result := TFhirReference.create()
+  else if (propName = 'hoursOfOperation') then result := HoursOfOperationList.new()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -24686,58 +26866,58 @@ end;
 
 procedure TFhirLocation.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'status') then StatusElement := nil
   else if (propName = 'operationalStatus') then OperationalStatusElement := nil
   else if (propName = 'name') then NameElement := nil
-  else if (propName = 'alias') then deletePropertyValue('alias', AliasList, value) {L1054}
+  else if (propName = 'alias') then deletePropertyValue('alias', AliasList, value)
   else if (propName = 'description') then DescriptionElement := nil
   else if (propName = 'mode') then ModeElement := nil
-  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'address') then AddressElement := nil
   else if (propName = 'physicalType') then PhysicalTypeElement := nil
   else if (propName = 'position') then PositionElement := nil
   else if (propName = 'managingOrganization') then ManagingOrganizationElement := nil
   else if (propName = 'partOf') then PartOfElement := nil
-  else if (propName = 'hoursOfOperation') then deletePropertyValue('hoursOfOperation', HoursOfOperationList, value) {L1054}
+  else if (propName = 'hoursOfOperation') then deletePropertyValue('hoursOfOperation', HoursOfOperationList, value)
   else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := nil
-  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value) {L1054}
+  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirLocation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirLocationStatusEnum, CODES_TFhirLocationStatusEnum, new) {L1210}
-  else if (propName = 'operationalStatus') then OperationalStatusElement := new as TFhirCoding {L1195}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'alias') then replacePropertyValue('alias', AliasList, existing, new) {L1055}
-  else if (propName = 'description') then DescriptionElement := asString(new) {L1222}
-  else if (propName = 'mode') then ModeElement := asEnum(SYSTEMS_TFhirLocationModeEnum, CODES_TFhirLocationModeEnum, new) {L1210}
-  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'address') then AddressElement := new as TFhirAddress {L1195}
-  else if (propName = 'physicalType') then PhysicalTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'position') then PositionElement := new as TFhirLocationPosition {L1195}
-  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'partOf') then PartOfElement := new as TFhirReference {L1195}
-  else if (propName = 'hoursOfOperation') then replacePropertyValue('hoursOfOperation', HoursOfOperationList, existing, new) {L1055}
-  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new) {L1222}
-  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirLocationStatusEnum, CODES_TFhirLocationStatusEnum, new)
+  else if (propName = 'operationalStatus') then OperationalStatusElement := new as TFhirCoding
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'alias') then replacePropertyValue('alias', AliasList, existing, new)
+  else if (propName = 'description') then DescriptionElement := asString(new)
+  else if (propName = 'mode') then ModeElement := asEnum(SYSTEMS_TFhirLocationModeEnum, CODES_TFhirLocationModeEnum, new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'address') then AddressElement := new as TFhirAddress
+  else if (propName = 'physicalType') then PhysicalTypeElement := new as TFhirCodeableConcept
+  else if (propName = 'position') then PositionElement := new as TFhirLocationPosition
+  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference
+  else if (propName = 'partOf') then PartOfElement := new as TFhirReference
+  else if (propName = 'hoursOfOperation') then replacePropertyValue('hoursOfOperation', HoursOfOperationList, existing, new)
+  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new)
+  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirLocation.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'alias') then AliasList.move(source, destination) {L1046}
-  else if (propName = 'type') then Type_List.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'hoursOfOperation') then HoursOfOperationList.move(source, destination) {L1050}
-  else if (propName = 'endpoint') then EndpointList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'alias') then AliasList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'hoursOfOperation') then HoursOfOperationList.move(source, destination)
+  else if (propName = 'endpoint') then EndpointList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -24786,6 +26966,39 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FStatus) and isEmptyProp(FOperationalStatus) and isEmptyProp(FName) and isEmptyProp(FaliasList) and isEmptyProp(FDescription) and isEmptyProp(FMode) and isEmptyProp(Ftype_List) and isEmptyProp(FtelecomList) and isEmptyProp(FAddress) and isEmptyProp(FPhysicalType) and isEmptyProp(FPosition) and isEmptyProp(FManagingOrganization) and isEmptyProp(FPartOf) and isEmptyProp(FhoursOfOperationList) and isEmptyProp(FAvailabilityExceptions) and isEmptyProp(FendpointList);
 end;
 
+procedure TFhirLocation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('status');
+  fields.add('operationalStatus');
+  fields.add('name');
+  fields.add('alias');
+  fields.add('description');
+  fields.add('mode');
+  fields.add('type');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('physicalType');
+  fields.add('position');
+  fields.add('managingOrganization');
+  fields.add('partOf');
+  fields.add('hoursOfOperation');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
+function TFhirLocation.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FAliasList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FHoursOfOperationList.sizeInBytes);
+  inc(result, FEndpointList.sizeInBytes);
+end;
+
 function TFhirLocation.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -24823,13 +27036,13 @@ end;
 procedure TFhirLocation.SetOperationalStatus(value : TFhirCoding);
 begin
   FOperationalStatus.free;
-  FOperationalStatus := value; {L1134}
+  FOperationalStatus := value;
 end;
 
 procedure TFhirLocation.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirLocation.GetNameST : String;
@@ -24867,7 +27080,7 @@ end;
 procedure TFhirLocation.SetDescription(value : TFhirString);
 begin
   FDescription.free;
-  FDescription := value; {L1134}
+  FDescription := value;
 end;
 
 function TFhirLocation.GetDescriptionST : String;
@@ -24939,31 +27152,31 @@ end;
 procedure TFhirLocation.SetAddress(value : TFhirAddress);
 begin
   FAddress.free;
-  FAddress := value; {L1134}
+  FAddress := value;
 end;
 
 procedure TFhirLocation.SetPhysicalType(value : TFhirCodeableConcept);
 begin
   FPhysicalType.free;
-  FPhysicalType := value; {L1134}
+  FPhysicalType := value;
 end;
 
 procedure TFhirLocation.SetPosition(value : TFhirLocationPosition);
 begin
   FPosition.free;
-  FPosition := value; {L1134}
+  FPosition := value;
 end;
 
 procedure TFhirLocation.SetManagingOrganization(value : TFhirReference);
 begin
   FManagingOrganization.free;
-  FManagingOrganization := value; {L1134}
+  FManagingOrganization := value;
 end;
 
 procedure TFhirLocation.SetPartOf(value : TFhirReference);
 begin
   FPartOf.free;
-  FPartOf := value; {L1134}
+  FPartOf := value;
 end;
 
 function TFhirLocation.GetHoursOfOperationList : TFhirLocationHoursOfOperationList;
@@ -24981,7 +27194,7 @@ end;
 procedure TFhirLocation.SetAvailabilityExceptions(value : TFhirString);
 begin
   FAvailabilityExceptions.free;
-  FAvailabilityExceptions := value; {L1134}
+  FAvailabilityExceptions := value;
 end;
 
 function TFhirLocation.GetAvailabilityExceptionsST : String;
@@ -25014,50 +27227,6 @@ end;
 function TFhirLocation.GetHasEndpointList : boolean;
 begin
   result := (FEndpointList <> nil) and (FEndpointList.count > 0);
-end;
-
-procedure TFhirLocation.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('status');
-  fields.add('operationalStatus');
-  fields.add('name');
-  fields.add('alias');
-  fields.add('description');
-  fields.add('mode');
-  fields.add('type');
-  fields.add('telecom');
-  fields.add('address');
-  fields.add('physicalType');
-  fields.add('position');
-  fields.add('managingOrganization');
-  fields.add('partOf');
-  fields.add('hoursOfOperation');
-  fields.add('availabilityExceptions');
-  fields.add('endpoint');
-end;
-
-function TFhirLocation.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FOperationalStatus.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FaliasList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FMode.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FPhysicalType.sizeInBytes);
-  inc(result, FPosition.sizeInBytes);
-  inc(result, FManagingOrganization.sizeInBytes);
-  inc(result, FPartOf.sizeInBytes);
-  inc(result, FhoursOfOperationList.sizeInBytes);
-  inc(result, FAvailabilityExceptions.sizeInBytes);
-  inc(result, FendpointList.sizeInBytes);
 end;
 
 { TFhirLocationListEnumerator }
@@ -25240,32 +27409,32 @@ end;
 procedure TFhirOrganizationContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'purpose', 'CodeableConcept', false, TFhirCodeableConcept, FPurpose.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'purpose', 'CodeableConcept', false, TFhirCodeableConcept, FPurpose.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
 end;
 
 function TFhirOrganizationContact.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'purpose') then
   begin
-    Purpose := propValue as TFhirCodeableConcept {L1199};
+    Purpose := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    Name := propValue as TFhirHumanName {L1199};
+    Name := propValue as TFhirHumanName;
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    Address := propValue as TFhirAddress {L1199};
+    Address := propValue as TFhirAddress;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -25273,16 +27442,16 @@ end;
 
 procedure TFhirOrganizationContact.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
+  if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
   else inherited;
 end;
 
 function TFhirOrganizationContact.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'purpose') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'name') then result := TFhirHumanName.create() {L1203}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'address') then result := TFhirAddress.create() {L1203}
+  if (propName = 'purpose') then result := TFhirCodeableConcept.create()
+  else if (propName = 'name') then result := TFhirHumanName.create()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'address') then result := TFhirAddress.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -25299,7 +27468,7 @@ procedure TFhirOrganizationContact.deleteProperty(propName: string; value : TFHI
 begin
   if (propName = 'purpose') then PurposeElement := nil
   else if (propName = 'name') then NameElement := nil
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'address') then AddressElement := nil
   else
     inherited deleteProperty(propName, value);
@@ -25307,17 +27476,17 @@ end;
 
 procedure TFhirOrganizationContact.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'purpose') then PurposeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'name') then NameElement := new as TFhirHumanName {L1195}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'address') then AddressElement := new as TFhirAddress {L1195}
+  if (propName = 'purpose') then PurposeElement := new as TFhirCodeableConcept
+  else if (propName = 'name') then NameElement := new as TFhirHumanName
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'address') then AddressElement := new as TFhirAddress
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirOrganizationContact.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
+  if (propName = 'telecom') then TelecomList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -25358,16 +27527,31 @@ begin
   result := inherited isEmpty  and isEmptyProp(FPurpose) and isEmptyProp(FName) and isEmptyProp(FtelecomList) and isEmptyProp(FAddress);
 end;
 
+procedure TFhirOrganizationContact.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('purpose');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+end;
+
+function TFhirOrganizationContact.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FTelecomList.sizeInBytes);
+end;
+
 procedure TFhirOrganizationContact.SetPurpose(value : TFhirCodeableConcept);
 begin
   FPurpose.free;
-  FPurpose := value; {L1134}
+  FPurpose := value;
 end;
 
 procedure TFhirOrganizationContact.SetName(value : TFhirHumanName);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirOrganizationContact.GetTelecomList : TFhirContactPointList;
@@ -25385,25 +27569,7 @@ end;
 procedure TFhirOrganizationContact.SetAddress(value : TFhirAddress);
 begin
   FAddress.free;
-  FAddress := value; {L1134}
-end;
-
-procedure TFhirOrganizationContact.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('purpose');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('address');
-end;
-
-function TFhirOrganizationContact.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FPurpose.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
+  FAddress := value;
 end;
 
 { TFhirOrganizationContactListEnumerator }
@@ -25673,38 +27839,38 @@ end;
 procedure TFhirOrganization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirOrganizationContact, FContactList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirOrganizationContact, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirOrganization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_List.add(propValue as TFhirCodeableConcept) {L1048};
+    Type_List.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameElement := asString(propValue) {L1221};
+    NameElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'alias') then
@@ -25714,27 +27880,27 @@ begin
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    AddressList.add(propValue as TFhirAddress) {L1048};
+    AddressList.add(propValue as TFhirAddress);
     result := propValue;
   end
   else if (propName = 'partOf') then
   begin
-    PartOf := propValue as TFhirReference {L1199};
+    PartOf := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'contact') then
   begin
-    ContactList.add(propValue as TFhirOrganizationContact) {L1048};
+    ContactList.add(propValue as TFhirOrganizationContact);
     result := propValue;
   end
   else if (propName = 'endpoint') then
   begin
-    EndpointList.add(propValue as TFhirReference) {L1048};
+    EndpointList.add(propValue as TFhirReference);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -25742,28 +27908,28 @@ end;
 
 procedure TFhirOrganization.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue)) {L1045}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress) {L1049}
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirOrganizationContact) {L1049}
-  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue))
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirOrganizationContact)
+  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirOrganization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'type') then result := Type_List.new() {L1053}
-  else if (propName = 'name') then result := TFhirString.create() {L1223}
-  else if (propName = 'alias') then result := AliasList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'address') then result := AddressList.new() {L1053}
-  else if (propName = 'partOf') then result := TFhirReference.create() {L1203}
-  else if (propName = 'contact') then result := ContactList.new() {L1053}
-  else if (propName = 'endpoint') then result := EndpointList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'type') then result := Type_List.new()
+  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'alias') then result := AliasList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'address') then result := AddressList.new()
+  else if (propName = 'partOf') then result := TFhirReference.create()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -25784,45 +27950,45 @@ end;
 
 procedure TFhirOrganization.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
-  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {L1054}
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value)
   else if (propName = 'name') then NameElement := nil
-  else if (propName = 'alias') then deletePropertyValue('alias', AliasList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
-  else if (propName = 'address') then deletePropertyValue('address', AddressList, value) {L1054}
+  else if (propName = 'alias') then deletePropertyValue('alias', AliasList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
+  else if (propName = 'address') then deletePropertyValue('address', AddressList, value)
   else if (propName = 'partOf') then PartOfElement := nil
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {L1054}
-  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value) {L1054}
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
+  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirOrganization.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {L1055}
-  else if (propName = 'name') then NameElement := asString(new) {L1222}
-  else if (propName = 'alias') then replacePropertyValue('alias', AliasList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new) {L1055}
-  else if (propName = 'partOf') then PartOfElement := new as TFhirReference {L1195}
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {L1055}
-  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new)
+  else if (propName = 'name') then NameElement := asString(new)
+  else if (propName = 'alias') then replacePropertyValue('alias', AliasList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new)
+  else if (propName = 'partOf') then PartOfElement := new as TFhirReference
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirOrganization.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'type') then Type_List.move(source, destination) {L1050}
-  else if (propName = 'alias') then AliasList.move(source, destination) {L1046}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'address') then AddressList.move(source, destination) {L1050}
-  else if (propName = 'contact') then ContactList.move(source, destination) {L1050}
-  else if (propName = 'endpoint') then EndpointList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'type') then Type_List.move(source, destination)
+  else if (propName = 'alias') then AliasList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'address') then AddressList.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'endpoint') then EndpointList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -25866,6 +28032,33 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(Ftype_List) and isEmptyProp(FName) and isEmptyProp(FaliasList) and isEmptyProp(FtelecomList) and isEmptyProp(FaddressList) and isEmptyProp(FPartOf) and isEmptyProp(FcontactList) and isEmptyProp(FendpointList);
 end;
 
+procedure TFhirOrganization.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('type');
+  fields.add('name');
+  fields.add('alias');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('partOf');
+  fields.add('contact');
+  fields.add('endpoint');
+end;
+
+function TFhirOrganization.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FType_List.sizeInBytes);
+  inc(result, FAliasList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAddressList.sizeInBytes);
+  inc(result, FContactList.sizeInBytes);
+  inc(result, FEndpointList.sizeInBytes);
+end;
+
 function TFhirOrganization.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -25881,7 +28074,7 @@ end;
 procedure TFhirOrganization.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirOrganization.GetActiveST : Boolean;
@@ -25914,7 +28107,7 @@ end;
 procedure TFhirOrganization.SetName(value : TFhirString);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirOrganization.GetNameST : String;
@@ -25976,7 +28169,7 @@ end;
 procedure TFhirOrganization.SetPartOf(value : TFhirReference);
 begin
   FPartOf.free;
-  FPartOf := value; {L1134}
+  FPartOf := value;
 end;
 
 function TFhirOrganization.GetContactList : TFhirOrganizationContactList;
@@ -26001,36 +28194,6 @@ end;
 function TFhirOrganization.GetHasEndpointList : boolean;
 begin
   result := (FEndpointList <> nil) and (FEndpointList.count > 0);
-end;
-
-procedure TFhirOrganization.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('type');
-  fields.add('name');
-  fields.add('alias');
-  fields.add('telecom');
-  fields.add('address');
-  fields.add('partOf');
-  fields.add('contact');
-  fields.add('endpoint');
-end;
-
-function TFhirOrganization.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FaliasList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FaddressList.sizeInBytes);
-  inc(result, FPartOf.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FendpointList.sizeInBytes);
 end;
 
 { TFhirOrganizationListEnumerator }
@@ -26320,80 +28483,80 @@ end;
 procedure TFhirOrganizationAffiliation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'participatingOrganization', 'Reference', false, TFhirReference, FParticipatingOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'network', 'Reference', true, TFhirReference, FNetworkList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'participatingOrganization', 'Reference', false, TFhirReference, FParticipatingOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'network', 'Reference', true, TFhirReference, FNetworkList.Link));
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirOrganizationAffiliation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'organization') then
   begin
-    Organization := propValue as TFhirReference {L1199};
+    Organization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'participatingOrganization') then
   begin
-    ParticipatingOrganization := propValue as TFhirReference {L1199};
+    ParticipatingOrganization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'network') then
   begin
-    NetworkList.add(propValue as TFhirReference) {L1048};
+    NetworkList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'code') then
   begin
-    CodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    CodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialty') then
   begin
-    SpecialtyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialtyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'location') then
   begin
-    LocationList.add(propValue as TFhirReference) {L1048};
+    LocationList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'healthcareService') then
   begin
-    HealthcareServiceList.add(propValue as TFhirReference) {L1048};
+    HealthcareServiceList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'endpoint') then
   begin
-    EndpointList.add(propValue as TFhirReference) {L1048};
+    EndpointList.add(propValue as TFhirReference);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -26401,31 +28564,31 @@ end;
 
 procedure TFhirOrganizationAffiliation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'network') then NetworkList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'healthcareService') then HealthcareServiceList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'network') then NetworkList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'healthcareService') then HealthcareServiceList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirOrganizationAffiliation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'organization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'participatingOrganization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'network') then result := NetworkList.new() {L1053}
-  else if (propName = 'code') then result := CodeList.new() {L1053}
-  else if (propName = 'specialty') then result := SpecialtyList.new() {L1053}
-  else if (propName = 'location') then result := LocationList.new() {L1053}
-  else if (propName = 'healthcareService') then result := HealthcareServiceList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'endpoint') then result := EndpointList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'organization') then result := TFhirReference.create()
+  else if (propName = 'participatingOrganization') then result := TFhirReference.create()
+  else if (propName = 'network') then result := NetworkList.new()
+  else if (propName = 'code') then result := CodeList.new()
+  else if (propName = 'specialty') then result := SpecialtyList.new()
+  else if (propName = 'location') then result := LocationList.new()
+  else if (propName = 'healthcareService') then result := HealthcareServiceList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -26448,50 +28611,50 @@ end;
 
 procedure TFhirOrganizationAffiliation.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
   else if (propName = 'period') then PeriodElement := nil
   else if (propName = 'organization') then OrganizationElement := nil
   else if (propName = 'participatingOrganization') then ParticipatingOrganizationElement := nil
-  else if (propName = 'network') then deletePropertyValue('network', NetworkList, value) {L1054}
-  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {L1054}
-  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value) {L1054}
-  else if (propName = 'location') then deletePropertyValue('location', LocationList, value) {L1054}
-  else if (propName = 'healthcareService') then deletePropertyValue('healthcareService', HealthcareServiceList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
-  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value) {L1054}
+  else if (propName = 'network') then deletePropertyValue('network', NetworkList, value)
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value)
+  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value)
+  else if (propName = 'location') then deletePropertyValue('location', LocationList, value)
+  else if (propName = 'healthcareService') then deletePropertyValue('healthcareService', HealthcareServiceList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
+  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirOrganizationAffiliation.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'organization') then OrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'participatingOrganization') then ParticipatingOrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'network') then replacePropertyValue('network', NetworkList, existing, new) {L1055}
-  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {L1055}
-  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new) {L1055}
-  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new) {L1055}
-  else if (propName = 'healthcareService') then replacePropertyValue('healthcareService', HealthcareServiceList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'organization') then OrganizationElement := new as TFhirReference
+  else if (propName = 'participatingOrganization') then ParticipatingOrganizationElement := new as TFhirReference
+  else if (propName = 'network') then replacePropertyValue('network', NetworkList, existing, new)
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new)
+  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new)
+  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new)
+  else if (propName = 'healthcareService') then replacePropertyValue('healthcareService', HealthcareServiceList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirOrganizationAffiliation.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'network') then NetworkList.move(source, destination) {L1050}
-  else if (propName = 'code') then CodeList.move(source, destination) {L1050}
-  else if (propName = 'specialty') then SpecialtyList.move(source, destination) {L1050}
-  else if (propName = 'location') then LocationList.move(source, destination) {L1050}
-  else if (propName = 'healthcareService') then HealthcareServiceList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'endpoint') then EndpointList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'network') then NetworkList.move(source, destination)
+  else if (propName = 'code') then CodeList.move(source, destination)
+  else if (propName = 'specialty') then SpecialtyList.move(source, destination)
+  else if (propName = 'location') then LocationList.move(source, destination)
+  else if (propName = 'healthcareService') then HealthcareServiceList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'endpoint') then EndpointList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -26537,6 +28700,36 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FPeriod) and isEmptyProp(FOrganization) and isEmptyProp(FParticipatingOrganization) and isEmptyProp(FnetworkList) and isEmptyProp(FcodeList) and isEmptyProp(FspecialtyList) and isEmptyProp(FlocationList) and isEmptyProp(FhealthcareServiceList) and isEmptyProp(FtelecomList) and isEmptyProp(FendpointList);
 end;
 
+procedure TFhirOrganizationAffiliation.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('period');
+  fields.add('organization');
+  fields.add('participatingOrganization');
+  fields.add('network');
+  fields.add('code');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('healthcareService');
+  fields.add('telecom');
+  fields.add('endpoint');
+end;
+
+function TFhirOrganizationAffiliation.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FNetworkList.sizeInBytes);
+  inc(result, FCodeList.sizeInBytes);
+  inc(result, FSpecialtyList.sizeInBytes);
+  inc(result, FLocationList.sizeInBytes);
+  inc(result, FHealthcareServiceList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FEndpointList.sizeInBytes);
+end;
+
 function TFhirOrganizationAffiliation.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -26552,7 +28745,7 @@ end;
 procedure TFhirOrganizationAffiliation.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirOrganizationAffiliation.GetActiveST : Boolean;
@@ -26573,19 +28766,19 @@ end;
 procedure TFhirOrganizationAffiliation.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirOrganizationAffiliation.SetOrganization(value : TFhirReference);
 begin
   FOrganization.free;
-  FOrganization := value; {L1134}
+  FOrganization := value;
 end;
 
 procedure TFhirOrganizationAffiliation.SetParticipatingOrganization(value : TFhirReference);
 begin
   FParticipatingOrganization.free;
-  FParticipatingOrganization := value; {L1134}
+  FParticipatingOrganization := value;
 end;
 
 function TFhirOrganizationAffiliation.GetNetworkList : TFhirReferenceList;
@@ -26670,40 +28863,6 @@ end;
 function TFhirOrganizationAffiliation.GetHasEndpointList : boolean;
 begin
   result := (FEndpointList <> nil) and (FEndpointList.count > 0);
-end;
-
-procedure TFhirOrganizationAffiliation.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('period');
-  fields.add('organization');
-  fields.add('participatingOrganization');
-  fields.add('network');
-  fields.add('code');
-  fields.add('specialty');
-  fields.add('location');
-  fields.add('healthcareService');
-  fields.add('telecom');
-  fields.add('endpoint');
-end;
-
-function TFhirOrganizationAffiliation.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FParticipatingOrganization.sizeInBytes);
-  inc(result, FnetworkList.sizeInBytes);
-  inc(result, FcodeList.sizeInBytes);
-  inc(result, FspecialtyList.sizeInBytes);
-  inc(result, FlocationList.sizeInBytes);
-  inc(result, FhealthcareServiceList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FendpointList.sizeInBytes);
 end;
 
 { TFhirOrganizationAffiliationListEnumerator }
@@ -26908,50 +29067,50 @@ end;
 procedure TFhirPatientContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirPatientContact.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'relationship') then
   begin
-    RelationshipList.add(propValue as TFhirCodeableConcept) {L1048};
+    RelationshipList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    Name := propValue as TFhirHumanName {L1199};
+    Name := propValue as TFhirHumanName;
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    Address := propValue as TFhirAddress {L1199};
+    Address := propValue as TFhirAddress;
     result := propValue;
   end
   else if (propName = 'gender') then
   begin
-    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue) {L1209};
+    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue);
     result := propValue;
   end
   else if (propName = 'organization') then
   begin
-    Organization := propValue as TFhirReference {L1199};
+    Organization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -26959,20 +29118,20 @@ end;
 
 procedure TFhirPatientContact.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'relationship') then RelationshipList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
+  if (propName = 'relationship') then RelationshipList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
   else inherited;
 end;
 
 function TFhirPatientContact.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'relationship') then result := RelationshipList.new() {L1053}
-  else if (propName = 'name') then result := TFhirHumanName.create() {L1203}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'address') then result := TFhirAddress.create() {L1203}
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull])  {L1211}
-  else if (propName = 'organization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'relationship') then result := RelationshipList.new()
+  else if (propName = 'name') then result := TFhirHumanName.create()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'address') then result := TFhirAddress.create()
+  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'organization') then result := TFhirReference.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -26990,9 +29149,9 @@ end;
 
 procedure TFhirPatientContact.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'relationship') then deletePropertyValue('relationship', RelationshipList, value) {L1054}
+  if (propName = 'relationship') then deletePropertyValue('relationship', RelationshipList, value)
   else if (propName = 'name') then NameElement := nil
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'address') then AddressElement := nil
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'organization') then OrganizationElement := nil
@@ -27003,21 +29162,21 @@ end;
 
 procedure TFhirPatientContact.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'relationship') then replacePropertyValue('relationship', RelationshipList, existing, new) {L1055}
-  else if (propName = 'name') then NameElement := new as TFhirHumanName {L1195}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'address') then AddressElement := new as TFhirAddress {L1195}
-  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new) {L1210}
-  else if (propName = 'organization') then OrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
+  if (propName = 'relationship') then replacePropertyValue('relationship', RelationshipList, existing, new)
+  else if (propName = 'name') then NameElement := new as TFhirHumanName
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'address') then AddressElement := new as TFhirAddress
+  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new)
+  else if (propName = 'organization') then OrganizationElement := new as TFhirReference
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPatientContact.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'relationship') then RelationshipList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
+  if (propName = 'relationship') then RelationshipList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -27060,6 +29219,25 @@ begin
   result := inherited isEmpty  and isEmptyProp(FrelationshipList) and isEmptyProp(FName) and isEmptyProp(FtelecomList) and isEmptyProp(FAddress) and isEmptyProp(FGender) and isEmptyProp(FOrganization) and isEmptyProp(FPeriod);
 end;
 
+procedure TFhirPatientContact.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('relationship');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('gender');
+  fields.add('organization');
+  fields.add('period');
+end;
+
+function TFhirPatientContact.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FRelationshipList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+end;
+
 function TFhirPatientContact.GetRelationshipList : TFhirCodeableConceptList;
 begin
   if FRelationshipList = nil then
@@ -27075,7 +29253,7 @@ end;
 procedure TFhirPatientContact.SetName(value : TFhirHumanName);
 begin
   FName.free;
-  FName := value; {L1134}
+  FName := value;
 end;
 
 function TFhirPatientContact.GetTelecomList : TFhirContactPointList;
@@ -27093,7 +29271,7 @@ end;
 procedure TFhirPatientContact.SetAddress(value : TFhirAddress);
 begin
   FAddress.free;
-  FAddress := value; {L1134}
+  FAddress := value;
 end;
 
 procedure TFhirPatientContact.SetGender(value : TFhirEnum);
@@ -27121,37 +29299,13 @@ end;
 procedure TFhirPatientContact.SetOrganization(value : TFhirReference);
 begin
   FOrganization.free;
-  FOrganization := value; {L1134}
+  FOrganization := value;
 end;
 
 procedure TFhirPatientContact.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
-end;
-
-procedure TFhirPatientContact.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('relationship');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('address');
-  fields.add('gender');
-  fields.add('organization');
-  fields.add('period');
-end;
-
-function TFhirPatientContact.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FrelationshipList.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  FPeriod := value;
 end;
 
 { TFhirPatientContactListEnumerator }
@@ -27314,20 +29468,20 @@ end;
 procedure TFhirPatientCommunication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
+  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
 end;
 
 function TFhirPatientCommunication.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'language') then
   begin
-    Language := propValue as TFhirCodeableConcept {L1199};
+    Language := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'preferred') then
   begin
-    PreferredElement := asBoolean(propValue) {L1221};
+    PreferredElement := asBoolean(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -27340,8 +29494,8 @@ end;
 
 function TFhirPatientCommunication.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'language') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'preferred') then result := TFhirBoolean.create() {L1223}
+  if (propName = 'language') then result := TFhirCodeableConcept.create()
+  else if (propName = 'preferred') then result := TFhirBoolean.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27362,8 +29516,8 @@ end;
 
 procedure TFhirPatientCommunication.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'language') then LanguageElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'preferred') then PreferredElement := asBoolean(new) {L1222}
+  if (propName = 'language') then LanguageElement := new as TFhirCodeableConcept
+  else if (propName = 'preferred') then PreferredElement := asBoolean(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -27408,16 +29562,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLanguage) and isEmptyProp(FPreferred);
 end;
 
+procedure TFhirPatientCommunication.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('language');
+  fields.add('preferred');
+end;
+
+function TFhirPatientCommunication.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirPatientCommunication.SetLanguage(value : TFhirCodeableConcept);
 begin
   FLanguage.free;
-  FLanguage := value; {L1134}
+  FLanguage := value;
 end;
 
 procedure TFhirPatientCommunication.SetPreferred(value : TFhirBoolean);
 begin
   FPreferred.free;
-  FPreferred := value; {L1134}
+  FPreferred := value;
 end;
 
 function TFhirPatientCommunication.GetPreferredST : Boolean;
@@ -27433,20 +29599,6 @@ begin
   if FPreferred = nil then
     FPreferred := TFhirBoolean.create;
   FPreferred.value := value
-end;
-
-procedure TFhirPatientCommunication.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('language');
-  fields.add('preferred');
-end;
-
-function TFhirPatientCommunication.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FLanguage.sizeInBytes);
-  inc(result, FPreferred.sizeInBytes);
 end;
 
 { TFhirPatientCommunicationListEnumerator }
@@ -27609,20 +29761,20 @@ end;
 procedure TFhirPatientLink.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'other', 'Reference', false, TFhirReference, FOther.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'other', 'Reference', false, TFhirReference, FOther.Link));
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirPatientLink.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'other') then
   begin
-    Other := propValue as TFhirReference {L1199};
+    Other := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'type') then
   begin
-    Type_Element := asEnum(SYSTEMS_TFhirLinkTypeEnum, CODES_TFhirLinkTypeEnum, propValue) {L1209};
+    Type_Element := asEnum(SYSTEMS_TFhirLinkTypeEnum, CODES_TFhirLinkTypeEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -27635,8 +29787,8 @@ end;
 
 function TFhirPatientLink.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'other') then result := TFhirReference.create() {L1203}
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirLinkTypeEnum[LinkTypeNull], CODES_TFhirLinkTypeEnum[LinkTypeNull])  {L1211}
+  if (propName = 'other') then result := TFhirReference.create()
+  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirLinkTypeEnum[LinkTypeNull], CODES_TFhirLinkTypeEnum[LinkTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27657,8 +29809,8 @@ end;
 
 procedure TFhirPatientLink.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'other') then OtherElement := new as TFhirReference {L1195}
-  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirLinkTypeEnum, CODES_TFhirLinkTypeEnum, new) {L1210}
+  if (propName = 'other') then OtherElement := new as TFhirReference
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirLinkTypeEnum, CODES_TFhirLinkTypeEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -27703,10 +29855,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FOther) and isEmptyProp(FType_);
 end;
 
+procedure TFhirPatientLink.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('other');
+  fields.add('type');
+end;
+
+function TFhirPatientLink.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirPatientLink.SetOther(value : TFhirReference);
 begin
   FOther.free;
-  FOther := value; {L1134}
+  FOther := value;
 end;
 
 procedure TFhirPatientLink.SetType_(value : TFhirEnum);
@@ -27729,20 +29893,6 @@ begin
     Type_Element := nil
   else
     Type_Element := TFhirEnum.create(SYSTEMS_TFhirLinkTypeEnum[value], CODES_TFhirLinkTypeEnum[value]);
-end;
-
-procedure TFhirPatientLink.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('other');
-  fields.add('type');
-end;
-
-function TFhirPatientLink.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FOther.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
 end;
 
 { TFhirPatientLinkListEnumerator }
@@ -28056,104 +30206,104 @@ end;
 procedure TFhirPatient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'deceased[x]', 'boolean|dateTime', false, TFhirDataType, FDeceased.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'maritalStatus', 'CodeableConcept', false, TFhirCodeableConcept, FMaritalStatus.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'multipleBirth[x]', 'boolean|integer', false, TFhirDataType, FMultipleBirth.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirPatientContact, FContactList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirPatientCommunication, FCommunicationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'generalPractitioner', 'Reference', true, TFhirReference, FGeneralPractitionerList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPatientLink, FLink_List.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.create(self, 'deceased[x]', 'boolean|dateTime', false, TFhirDataType, FDeceased.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.create(self, 'maritalStatus', 'CodeableConcept', false, TFhirCodeableConcept, FMaritalStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'multipleBirth[x]', 'boolean|integer', false, TFhirDataType, FMultipleBirth.Link));
+  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirPatientContact, FContactList.Link));
+  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirPatientCommunication, FCommunicationList.Link));
+  oList.add(TFHIRProperty.create(self, 'generalPractitioner', 'Reference', true, TFhirReference, FGeneralPractitionerList.Link));
+  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPatientLink, FLink_List.Link));
 end;
 
 function TFhirPatient.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameList.add(propValue as TFhirHumanName) {L1048};
+    NameList.add(propValue as TFhirHumanName);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'gender') then
   begin
-    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue) {L1209};
+    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue);
     result := propValue;
   end
   else if (propName = 'birthDate') then
   begin
-    BirthDateElement := asDate(propValue) {L1221};
+    BirthDateElement := asDate(propValue);
     result := propValue;
   end
   else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then
   begin
-    Deceased := propValue as TFhirDataType {L1185};
+    Deceased := propValue as TFhirDataType;
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    AddressList.add(propValue as TFhirAddress) {L1048};
+    AddressList.add(propValue as TFhirAddress);
     result := propValue;
   end
   else if (propName = 'maritalStatus') then
   begin
-    MaritalStatus := propValue as TFhirCodeableConcept {L1199};
+    MaritalStatus := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then
   begin
-    MultipleBirth := propValue as TFhirDataType {L1185};
+    MultipleBirth := propValue as TFhirDataType;
     result := propValue;
   end
   else if (propName = 'photo') then
   begin
-    PhotoList.add(propValue as TFhirAttachment) {L1048};
+    PhotoList.add(propValue as TFhirAttachment);
     result := propValue;
   end
   else if (propName = 'contact') then
   begin
-    ContactList.add(propValue as TFhirPatientContact) {L1048};
+    ContactList.add(propValue as TFhirPatientContact);
     result := propValue;
   end
   else if (propName = 'communication') then
   begin
-    CommunicationList.add(propValue as TFhirPatientCommunication) {L1048};
+    CommunicationList.add(propValue as TFhirPatientCommunication);
     result := propValue;
   end
   else if (propName = 'generalPractitioner') then
   begin
-    GeneralPractitionerList.add(propValue as TFhirReference) {L1048};
+    GeneralPractitionerList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'managingOrganization') then
   begin
-    ManagingOrganization := propValue as TFhirReference {L1199};
+    ManagingOrganization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'link') then
   begin
-    Link_List.add(propValue as TFhirPatientLink) {L1048};
+    Link_List.add(propValue as TFhirPatientLink);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -28161,36 +30311,36 @@ end;
 
 procedure TFhirPatient.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress) {L1049}
-  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment) {L1049}
-  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirPatientContact) {L1049}
-  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirPatientCommunication) {L1049}
-  else if (propName = 'generalPractitioner') then GeneralPractitionerList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'link') then Link_List.insertItem(index, propValue as TFhirPatientLink) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress)
+  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment)
+  else if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirPatientContact)
+  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirPatientCommunication)
+  else if (propName = 'generalPractitioner') then GeneralPractitionerList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'link') then Link_List.insertItem(index, propValue as TFhirPatientLink)
   else inherited;
 end;
 
 function TFhirPatient.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'name') then result := NameList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull])  {L1211}
-  else if (propName = 'birthDate') then result := TFhirDate.create() {L1223}
-  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then raise EFHIRException.create('Cannot make property Deceased') {L1191}
-  else if (propName = 'address') then result := AddressList.new() {L1053}
-  else if (propName = 'maritalStatus') then result := TFhirCodeableConcept.create() {L1203}
-  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then raise EFHIRException.create('Cannot make property MultipleBirth') {L1191}
-  else if (propName = 'photo') then result := PhotoList.new() {L1053}
-  else if (propName = 'contact') then result := ContactList.new() {L1053}
-  else if (propName = 'communication') then result := CommunicationList.new() {L1053}
-  else if (propName = 'generalPractitioner') then result := GeneralPractitionerList.new() {L1053}
-  else if (propName = 'managingOrganization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'link') then result := Link_List.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'name') then result := NameList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then raise EFHIRException.create('Cannot make property Deceased')
+  else if (propName = 'address') then result := AddressList.new()
+  else if (propName = 'maritalStatus') then result := TFhirCodeableConcept.create()
+  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then raise EFHIRException.create('Cannot make property MultipleBirth')
+  else if (propName = 'photo') then result := PhotoList.new()
+  else if (propName = 'contact') then result := ContactList.new()
+  else if (propName = 'communication') then result := CommunicationList.new()
+  else if (propName = 'generalPractitioner') then result := GeneralPractitionerList.new()
+  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'link') then result := Link_List.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -28217,59 +30367,59 @@ end;
 
 procedure TFhirPatient.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
-  else if (propName = 'name') then deletePropertyValue('name', NameList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  else if (propName = 'name') then deletePropertyValue('name', NameList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'birthDate') then BirthDateElement := nil
-  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then DeceasedElement := nil {L1189}
-  else if (propName = 'address') then deletePropertyValue('address', AddressList, value) {L1054}
+  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then DeceasedElement := nil
+  else if (propName = 'address') then deletePropertyValue('address', AddressList, value)
   else if (propName = 'maritalStatus') then MaritalStatusElement := nil
-  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then MultipleBirthElement := nil {L1189}
-  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value) {L1054}
-  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {L1054}
-  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value) {L1054}
-  else if (propName = 'generalPractitioner') then deletePropertyValue('generalPractitioner', GeneralPractitionerList, value) {L1054}
+  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then MultipleBirthElement := nil
+  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value)
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value)
+  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value)
+  else if (propName = 'generalPractitioner') then deletePropertyValue('generalPractitioner', GeneralPractitionerList, value)
   else if (propName = 'managingOrganization') then ManagingOrganizationElement := nil
-  else if (propName = 'link') then deletePropertyValue('link', Link_List, value) {L1054}
+  else if (propName = 'link') then deletePropertyValue('link', Link_List, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirPatient.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new) {L1210}
-  else if (propName = 'birthDate') then BirthDateElement := asDate(new) {L1222}
-  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then DeceasedElement := new as TFhirDataType {L1190}
-  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new) {L1055}
-  else if (propName = 'maritalStatus') then MaritalStatusElement := new as TFhirCodeableConcept {L1195}
-  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then MultipleBirthElement := new as TFhirDataType {L1190}
-  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new) {L1055}
-  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {L1055}
-  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new) {L1055}
-  else if (propName = 'generalPractitioner') then replacePropertyValue('generalPractitioner', GeneralPractitionerList, existing, new) {L1055}
-  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'link') then replacePropertyValue('link', Link_List, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new)
+  else if (propName = 'birthDate') then BirthDateElement := asDate(new)
+  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then DeceasedElement := new as TFhirDataType
+  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new)
+  else if (propName = 'maritalStatus') then MaritalStatusElement := new as TFhirCodeableConcept
+  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then MultipleBirthElement := new as TFhirDataType
+  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new)
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new)
+  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new)
+  else if (propName = 'generalPractitioner') then replacePropertyValue('generalPractitioner', GeneralPractitionerList, existing, new)
+  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference
+  else if (propName = 'link') then replacePropertyValue('link', Link_List, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPatient.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'name') then NameList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'address') then AddressList.move(source, destination) {L1050}
-  else if (propName = 'photo') then PhotoList.move(source, destination) {L1050}
-  else if (propName = 'contact') then ContactList.move(source, destination) {L1050}
-  else if (propName = 'communication') then CommunicationList.move(source, destination) {L1050}
-  else if (propName = 'generalPractitioner') then GeneralPractitionerList.move(source, destination) {L1050}
-  else if (propName = 'link') then Link_List.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'name') then NameList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'address') then AddressList.move(source, destination)
+  else if (propName = 'photo') then PhotoList.move(source, destination)
+  else if (propName = 'contact') then ContactList.move(source, destination)
+  else if (propName = 'communication') then CommunicationList.move(source, destination)
+  else if (propName = 'generalPractitioner') then GeneralPractitionerList.move(source, destination)
+  else if (propName = 'link') then Link_List.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -28317,6 +30467,41 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FnameList) and isEmptyProp(FtelecomList) and isEmptyProp(FGender) and isEmptyProp(FBirthDate) and isEmptyProp(FDeceased) and isEmptyProp(FaddressList) and isEmptyProp(FMaritalStatus) and isEmptyProp(FMultipleBirth) and isEmptyProp(FphotoList) and isEmptyProp(FcontactList) and isEmptyProp(FcommunicationList) and isEmptyProp(FgeneralPractitionerList) and isEmptyProp(FManagingOrganization) and isEmptyProp(Flink_List);
 end;
 
+procedure TFhirPatient.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('deceased[x]');
+  fields.add('address');
+  fields.add('maritalStatus');
+  fields.add('multipleBirth[x]');
+  fields.add('photo');
+  fields.add('contact');
+  fields.add('communication');
+  fields.add('generalPractitioner');
+  fields.add('managingOrganization');
+  fields.add('link');
+end;
+
+function TFhirPatient.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FNameList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAddressList.sizeInBytes);
+  inc(result, FPhotoList.sizeInBytes);
+  inc(result, FContactList.sizeInBytes);
+  inc(result, FCommunicationList.sizeInBytes);
+  inc(result, FGeneralPractitionerList.sizeInBytes);
+  inc(result, FLink_List.sizeInBytes);
+end;
+
 function TFhirPatient.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -28332,7 +30517,7 @@ end;
 procedure TFhirPatient.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirPatient.GetActiveST : Boolean;
@@ -28399,7 +30584,7 @@ end;
 procedure TFhirPatient.SetBirthDate(value : TFhirDate);
 begin
   FBirthDate.free;
-  FBirthDate := value; {L1134}
+  FBirthDate := value;
 end;
 
 function TFhirPatient.GetBirthDateST : TFslDateTime;
@@ -28420,7 +30605,7 @@ end;
 procedure TFhirPatient.SetDeceased(value : TFhirDataType);
 begin
   FDeceased.free;
-  FDeceased := value; {L1134}
+  FDeceased := value;
 end;
 
 function TFhirPatient.GetAddressList : TFhirAddressList;
@@ -28438,13 +30623,13 @@ end;
 procedure TFhirPatient.SetMaritalStatus(value : TFhirCodeableConcept);
 begin
   FMaritalStatus.free;
-  FMaritalStatus := value; {L1134}
+  FMaritalStatus := value;
 end;
 
 procedure TFhirPatient.SetMultipleBirth(value : TFhirDataType);
 begin
   FMultipleBirth.free;
-  FMultipleBirth := value; {L1134}
+  FMultipleBirth := value;
 end;
 
 function TFhirPatient.GetPhotoList : TFhirAttachmentList;
@@ -28498,7 +30683,7 @@ end;
 procedure TFhirPatient.SetManagingOrganization(value : TFhirReference);
 begin
   FManagingOrganization.free;
-  FManagingOrganization := value; {L1134}
+  FManagingOrganization := value;
 end;
 
 function TFhirPatient.GetLink_List : TFhirPatientLinkList;
@@ -28511,48 +30696,6 @@ end;
 function TFhirPatient.GetHasLink_List : boolean;
 begin
   result := (FLink_List <> nil) and (FLink_List.count > 0);
-end;
-
-procedure TFhirPatient.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('gender');
-  fields.add('birthDate');
-  fields.add('deceased[x]');
-  fields.add('address');
-  fields.add('maritalStatus');
-  fields.add('multipleBirth[x]');
-  fields.add('photo');
-  fields.add('contact');
-  fields.add('communication');
-  fields.add('generalPractitioner');
-  fields.add('managingOrganization');
-  fields.add('link');
-end;
-
-function TFhirPatient.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FnameList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FBirthDate.sizeInBytes);
-  inc(result, FDeceased.sizeInBytes);
-  inc(result, FaddressList.sizeInBytes);
-  inc(result, FMaritalStatus.sizeInBytes);
-  inc(result, FMultipleBirth.sizeInBytes);
-  inc(result, FphotoList.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FcommunicationList.sizeInBytes);
-  inc(result, FgeneralPractitionerList.sizeInBytes);
-  inc(result, FManagingOrganization.sizeInBytes);
-  inc(result, Flink_List.sizeInBytes);
 end;
 
 { TFhirPatientListEnumerator }
@@ -28717,20 +30860,20 @@ end;
 procedure TFhirPersonLink.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'assurance', 'code', false, TFhirEnum, FAssurance.Link)); {L1170}
+  oList.add(TFHIRProperty.create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link));
+  oList.add(TFHIRProperty.create(self, 'assurance', 'code', false, TFhirEnum, FAssurance.Link));
 end;
 
 function TFhirPersonLink.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'target') then
   begin
-    Target := propValue as TFhirReference {L1199};
+    Target := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'assurance') then
   begin
-    AssuranceElement := asEnum(SYSTEMS_TFhirIdentityAssuranceLevelEnum, CODES_TFhirIdentityAssuranceLevelEnum, propValue) {L1209};
+    AssuranceElement := asEnum(SYSTEMS_TFhirIdentityAssuranceLevelEnum, CODES_TFhirIdentityAssuranceLevelEnum, propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -28743,8 +30886,8 @@ end;
 
 function TFhirPersonLink.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'target') then result := TFhirReference.create() {L1203}
-  else if (propName = 'assurance') then result := TFhirEnum.create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull], CODES_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull])  {L1211}
+  if (propName = 'target') then result := TFhirReference.create()
+  else if (propName = 'assurance') then result := TFhirEnum.create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull], CODES_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -28765,8 +30908,8 @@ end;
 
 procedure TFhirPersonLink.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'target') then TargetElement := new as TFhirReference {L1195}
-  else if (propName = 'assurance') then AssuranceElement := asEnum(SYSTEMS_TFhirIdentityAssuranceLevelEnum, CODES_TFhirIdentityAssuranceLevelEnum, new) {L1210}
+  if (propName = 'target') then TargetElement := new as TFhirReference
+  else if (propName = 'assurance') then AssuranceElement := asEnum(SYSTEMS_TFhirIdentityAssuranceLevelEnum, CODES_TFhirIdentityAssuranceLevelEnum, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -28811,10 +30954,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FTarget) and isEmptyProp(FAssurance);
 end;
 
+procedure TFhirPersonLink.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('target');
+  fields.add('assurance');
+end;
+
+function TFhirPersonLink.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirPersonLink.SetTarget(value : TFhirReference);
 begin
   FTarget.free;
-  FTarget := value; {L1134}
+  FTarget := value;
 end;
 
 procedure TFhirPersonLink.SetAssurance(value : TFhirEnum);
@@ -28837,20 +30992,6 @@ begin
     AssuranceElement := nil
   else
     AssuranceElement := TFhirEnum.create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[value], CODES_TFhirIdentityAssuranceLevelEnum[value]);
-end;
-
-procedure TFhirPersonLink.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('target');
-  fields.add('assurance');
-end;
-
-function TFhirPersonLink.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FAssurance.sizeInBytes);
 end;
 
 { TFhirPersonLinkListEnumerator }
@@ -29100,68 +31241,68 @@ end;
 procedure TFhirPerson.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPersonLink, FLink_List.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
+  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPersonLink, FLink_List.Link));
 end;
 
 function TFhirPerson.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameList.add(propValue as TFhirHumanName) {L1048};
+    NameList.add(propValue as TFhirHumanName);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'gender') then
   begin
-    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue) {L1209};
+    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue);
     result := propValue;
   end
   else if (propName = 'birthDate') then
   begin
-    BirthDateElement := asDate(propValue) {L1221};
+    BirthDateElement := asDate(propValue);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    AddressList.add(propValue as TFhirAddress) {L1048};
+    AddressList.add(propValue as TFhirAddress);
     result := propValue;
   end
   else if (propName = 'photo') then
   begin
-    Photo := propValue as TFhirAttachment {L1199};
+    Photo := propValue as TFhirAttachment;
     result := propValue;
   end
   else if (propName = 'managingOrganization') then
   begin
-    ManagingOrganization := propValue as TFhirReference {L1199};
+    ManagingOrganization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'link') then
   begin
-    Link_List.add(propValue as TFhirPersonLink) {L1048};
+    Link_List.add(propValue as TFhirPersonLink);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -29169,26 +31310,26 @@ end;
 
 procedure TFhirPerson.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress) {L1049}
-  else if (propName = 'link') then Link_List.insertItem(index, propValue as TFhirPersonLink) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress)
+  else if (propName = 'link') then Link_List.insertItem(index, propValue as TFhirPersonLink)
   else inherited;
 end;
 
 function TFhirPerson.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'name') then result := NameList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull])  {L1211}
-  else if (propName = 'birthDate') then result := TFhirDate.create() {L1223}
-  else if (propName = 'address') then result := AddressList.new() {L1053}
-  else if (propName = 'photo') then result := TFhirAttachment.create() {L1203}
-  else if (propName = 'managingOrganization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'link') then result := Link_List.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'name') then result := NameList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'address') then result := AddressList.new()
+  else if (propName = 'photo') then result := TFhirAttachment.create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'link') then result := Link_List.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29209,43 +31350,43 @@ end;
 
 procedure TFhirPerson.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
-  else if (propName = 'name') then deletePropertyValue('name', NameList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
+  else if (propName = 'name') then deletePropertyValue('name', NameList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'birthDate') then BirthDateElement := nil
-  else if (propName = 'address') then deletePropertyValue('address', AddressList, value) {L1054}
+  else if (propName = 'address') then deletePropertyValue('address', AddressList, value)
   else if (propName = 'photo') then PhotoElement := nil
   else if (propName = 'managingOrganization') then ManagingOrganizationElement := nil
   else if (propName = 'active') then ActiveElement := nil
-  else if (propName = 'link') then deletePropertyValue('link', Link_List, value) {L1054}
+  else if (propName = 'link') then deletePropertyValue('link', Link_List, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirPerson.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new) {L1210}
-  else if (propName = 'birthDate') then BirthDateElement := asDate(new) {L1222}
-  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new) {L1055}
-  else if (propName = 'photo') then PhotoElement := new as TFhirAttachment {L1195}
-  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'link') then replacePropertyValue('link', Link_List, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new)
+  else if (propName = 'birthDate') then BirthDateElement := asDate(new)
+  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new)
+  else if (propName = 'photo') then PhotoElement := new as TFhirAttachment
+  else if (propName = 'managingOrganization') then ManagingOrganizationElement := new as TFhirReference
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'link') then replacePropertyValue('link', Link_List, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPerson.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'name') then NameList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'address') then AddressList.move(source, destination) {L1050}
-  else if (propName = 'link') then Link_List.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'name') then NameList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'address') then AddressList.move(source, destination)
+  else if (propName = 'link') then Link_List.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -29287,6 +31428,31 @@ end;
 function TFhirPerson.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FnameList) and isEmptyProp(FtelecomList) and isEmptyProp(FGender) and isEmptyProp(FBirthDate) and isEmptyProp(FaddressList) and isEmptyProp(FPhoto) and isEmptyProp(FManagingOrganization) and isEmptyProp(FActive) and isEmptyProp(Flink_List);
+end;
+
+procedure TFhirPerson.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('address');
+  fields.add('photo');
+  fields.add('managingOrganization');
+  fields.add('active');
+  fields.add('link');
+end;
+
+function TFhirPerson.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FNameList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAddressList.sizeInBytes);
+  inc(result, FLink_List.sizeInBytes);
 end;
 
 function TFhirPerson.GetIdentifierList : TFhirIdentifierList;
@@ -29350,7 +31516,7 @@ end;
 procedure TFhirPerson.SetBirthDate(value : TFhirDate);
 begin
   FBirthDate.free;
-  FBirthDate := value; {L1134}
+  FBirthDate := value;
 end;
 
 function TFhirPerson.GetBirthDateST : TFslDateTime;
@@ -29383,19 +31549,19 @@ end;
 procedure TFhirPerson.SetPhoto(value : TFhirAttachment);
 begin
   FPhoto.free;
-  FPhoto := value; {L1134}
+  FPhoto := value;
 end;
 
 procedure TFhirPerson.SetManagingOrganization(value : TFhirReference);
 begin
   FManagingOrganization.free;
-  FManagingOrganization := value; {L1134}
+  FManagingOrganization := value;
 end;
 
 procedure TFhirPerson.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirPerson.GetActiveST : Boolean;
@@ -29423,36 +31589,6 @@ end;
 function TFhirPerson.GetHasLink_List : boolean;
 begin
   result := (FLink_List <> nil) and (FLink_List.count > 0);
-end;
-
-procedure TFhirPerson.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('gender');
-  fields.add('birthDate');
-  fields.add('address');
-  fields.add('photo');
-  fields.add('managingOrganization');
-  fields.add('active');
-  fields.add('link');
-end;
-
-function TFhirPerson.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FnameList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FBirthDate.sizeInBytes);
-  inc(result, FaddressList.sizeInBytes);
-  inc(result, FPhoto.sizeInBytes);
-  inc(result, FManagingOrganization.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, Flink_List.sizeInBytes);
 end;
 
 { TFhirPersonListEnumerator }
@@ -29635,32 +31771,32 @@ end;
 procedure TFhirPractitionerQualification.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'issuer', 'Reference', false, TFhirReference, FIssuer.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'issuer', 'Reference', false, TFhirReference, FIssuer.Link));
 end;
 
 function TFhirPractitionerQualification.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'code') then
   begin
-    Code := propValue as TFhirCodeableConcept {L1199};
+    Code := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'issuer') then
   begin
-    Issuer := propValue as TFhirReference {L1199};
+    Issuer := propValue as TFhirReference;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -29668,16 +31804,16 @@ end;
 
 procedure TFhirPractitionerQualification.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
   else inherited;
 end;
 
 function TFhirPractitionerQualification.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'issuer') then result := TFhirReference.create() {L1203}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'code') then result := TFhirCodeableConcept.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'issuer') then result := TFhirReference.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29692,7 +31828,7 @@ end;
 
 procedure TFhirPractitionerQualification.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'code') then CodeElement := nil
   else if (propName = 'period') then PeriodElement := nil
   else if (propName = 'issuer') then IssuerElement := nil
@@ -29702,17 +31838,17 @@ end;
 
 procedure TFhirPractitionerQualification.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'issuer') then IssuerElement := new as TFhirReference {L1195}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'issuer') then IssuerElement := new as TFhirReference
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPractitionerQualification.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -29753,6 +31889,21 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FCode) and isEmptyProp(FPeriod) and isEmptyProp(FIssuer);
 end;
 
+procedure TFhirPractitionerQualification.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('code');
+  fields.add('period');
+  fields.add('issuer');
+end;
+
+function TFhirPractitionerQualification.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+end;
+
 function TFhirPractitionerQualification.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -29768,37 +31919,19 @@ end;
 procedure TFhirPractitionerQualification.SetCode(value : TFhirCodeableConcept);
 begin
   FCode.free;
-  FCode := value; {L1134}
+  FCode := value;
 end;
 
 procedure TFhirPractitionerQualification.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirPractitionerQualification.SetIssuer(value : TFhirReference);
 begin
   FIssuer.free;
-  FIssuer := value; {L1134}
-end;
-
-procedure TFhirPractitionerQualification.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('code');
-  fields.add('period');
-  fields.add('issuer');
-end;
-
-function TFhirPractitionerQualification.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FIssuer.sizeInBytes);
+  FIssuer := value;
 end;
 
 { TFhirPractitionerQualificationListEnumerator }
@@ -30068,68 +32201,68 @@ end;
 procedure TFhirPractitioner.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'qualification', 'BackboneElement', true, TFhirPractitionerQualification, FQualificationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.create(self, 'qualification', 'BackboneElement', true, TFhirPractitionerQualification, FQualificationList.Link));
+  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
 end;
 
 function TFhirPractitioner.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameList.add(propValue as TFhirHumanName) {L1048};
+    NameList.add(propValue as TFhirHumanName);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    AddressList.add(propValue as TFhirAddress) {L1048};
+    AddressList.add(propValue as TFhirAddress);
     result := propValue;
   end
   else if (propName = 'gender') then
   begin
-    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue) {L1209};
+    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue);
     result := propValue;
   end
   else if (propName = 'birthDate') then
   begin
-    BirthDateElement := asDate(propValue) {L1221};
+    BirthDateElement := asDate(propValue);
     result := propValue;
   end
   else if (propName = 'photo') then
   begin
-    PhotoList.add(propValue as TFhirAttachment) {L1048};
+    PhotoList.add(propValue as TFhirAttachment);
     result := propValue;
   end
   else if (propName = 'qualification') then
   begin
-    QualificationList.add(propValue as TFhirPractitionerQualification) {L1048};
+    QualificationList.add(propValue as TFhirPractitionerQualification);
     result := propValue;
   end
   else if (propName = 'communication') then
   begin
-    CommunicationList.add(propValue as TFhirCodeableConcept) {L1048};
+    CommunicationList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -30137,28 +32270,28 @@ end;
 
 procedure TFhirPractitioner.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress) {L1049}
-  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment) {L1049}
-  else if (propName = 'qualification') then QualificationList.insertItem(index, propValue as TFhirPractitionerQualification) {L1049}
-  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress)
+  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment)
+  else if (propName = 'qualification') then QualificationList.insertItem(index, propValue as TFhirPractitionerQualification)
+  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirPractitioner.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'name') then result := NameList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'address') then result := AddressList.new() {L1053}
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull])  {L1211}
-  else if (propName = 'birthDate') then result := TFhirDate.create() {L1223}
-  else if (propName = 'photo') then result := PhotoList.new() {L1053}
-  else if (propName = 'qualification') then result := QualificationList.new() {L1053}
-  else if (propName = 'communication') then result := CommunicationList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'name') then result := NameList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'address') then result := AddressList.new()
+  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'photo') then result := PhotoList.new()
+  else if (propName = 'qualification') then result := QualificationList.new()
+  else if (propName = 'communication') then result := CommunicationList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -30179,45 +32312,45 @@ end;
 
 procedure TFhirPractitioner.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
-  else if (propName = 'name') then deletePropertyValue('name', NameList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
-  else if (propName = 'address') then deletePropertyValue('address', AddressList, value) {L1054}
+  else if (propName = 'name') then deletePropertyValue('name', NameList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
+  else if (propName = 'address') then deletePropertyValue('address', AddressList, value)
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'birthDate') then BirthDateElement := nil
-  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value) {L1054}
-  else if (propName = 'qualification') then deletePropertyValue('qualification', QualificationList, value) {L1054}
-  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value) {L1054}
+  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value)
+  else if (propName = 'qualification') then deletePropertyValue('qualification', QualificationList, value)
+  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirPractitioner.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new) {L1055}
-  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new) {L1210}
-  else if (propName = 'birthDate') then BirthDateElement := asDate(new) {L1222}
-  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new) {L1055}
-  else if (propName = 'qualification') then replacePropertyValue('qualification', QualificationList, existing, new) {L1055}
-  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new)
+  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new)
+  else if (propName = 'birthDate') then BirthDateElement := asDate(new)
+  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new)
+  else if (propName = 'qualification') then replacePropertyValue('qualification', QualificationList, existing, new)
+  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPractitioner.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'name') then NameList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'address') then AddressList.move(source, destination) {L1050}
-  else if (propName = 'photo') then PhotoList.move(source, destination) {L1050}
-  else if (propName = 'qualification') then QualificationList.move(source, destination) {L1050}
-  else if (propName = 'communication') then CommunicationList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'name') then NameList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'address') then AddressList.move(source, destination)
+  else if (propName = 'photo') then PhotoList.move(source, destination)
+  else if (propName = 'qualification') then QualificationList.move(source, destination)
+  else if (propName = 'communication') then CommunicationList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -30261,6 +32394,33 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FnameList) and isEmptyProp(FtelecomList) and isEmptyProp(FaddressList) and isEmptyProp(FGender) and isEmptyProp(FBirthDate) and isEmptyProp(FphotoList) and isEmptyProp(FqualificationList) and isEmptyProp(FcommunicationList);
 end;
 
+procedure TFhirPractitioner.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('address');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('photo');
+  fields.add('qualification');
+  fields.add('communication');
+end;
+
+function TFhirPractitioner.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FNameList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAddressList.sizeInBytes);
+  inc(result, FPhotoList.sizeInBytes);
+  inc(result, FQualificationList.sizeInBytes);
+  inc(result, FCommunicationList.sizeInBytes);
+end;
+
 function TFhirPractitioner.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -30276,7 +32436,7 @@ end;
 procedure TFhirPractitioner.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirPractitioner.GetActiveST : Boolean;
@@ -30355,7 +32515,7 @@ end;
 procedure TFhirPractitioner.SetBirthDate(value : TFhirDate);
 begin
   FBirthDate.free;
-  FBirthDate := value; {L1134}
+  FBirthDate := value;
 end;
 
 function TFhirPractitioner.GetBirthDateST : TFslDateTime;
@@ -30407,36 +32567,6 @@ end;
 function TFhirPractitioner.GetHasCommunicationList : boolean;
 begin
   result := (FCommunicationList <> nil) and (FCommunicationList.count > 0);
-end;
-
-procedure TFhirPractitioner.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('address');
-  fields.add('gender');
-  fields.add('birthDate');
-  fields.add('photo');
-  fields.add('qualification');
-  fields.add('communication');
-end;
-
-function TFhirPractitioner.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FnameList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FaddressList.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FBirthDate.sizeInBytes);
-  inc(result, FphotoList.sizeInBytes);
-  inc(result, FqualificationList.sizeInBytes);
-  inc(result, FcommunicationList.sizeInBytes);
 end;
 
 { TFhirPractitionerListEnumerator }
@@ -30618,32 +32748,32 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link)) {L990};
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
+  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
 end;
 
 function TFhirPractitionerRoleAvailableTime.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'daysOfWeek') then
   begin
-    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)); {L994}
+    DaysOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue));
     result := propValue;
   end
   else if (propName = 'allDay') then
   begin
-    AllDayElement := asBoolean(propValue) {L1221};
+    AllDayElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'availableStartTime') then
   begin
-    AvailableStartTimeElement := asTime(propValue) {L1221};
+    AvailableStartTimeElement := asTime(propValue);
     result := propValue;
   end
   else if (propName = 'availableEndTime') then
   begin
-    AvailableEndTimeElement := asTime(propValue) {L1221};
+    AvailableEndTimeElement := asTime(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -30651,15 +32781,15 @@ end;
 
 procedure TFhirPractitionerRoleAvailableTime.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {L995}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue))
   else inherited;
 end;
 
 function TFhirPractitionerRoleAvailableTime.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'availableStartTime') then result := TFhirTime.create() {L1223}
-  else if (propName = 'availableEndTime') then result := TFhirTime.create() {L1223}
+  if (propName = 'allDay') then result := TFhirBoolean.create()
+  else if (propName = 'availableStartTime') then result := TFhirTime.create()
+  else if (propName = 'availableEndTime') then result := TFhirTime.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -30683,16 +32813,16 @@ end;
 
 procedure TFhirPractitionerRoleAvailableTime.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'allDay') then AllDayElement := asBoolean(new) {L1222}
-  else if (propName = 'availableStartTime') then AvailableStartTimeElement := asTime(new) {L1222}
-  else if (propName = 'availableEndTime') then AvailableEndTimeElement := asTime(new) {L1222}
+  if (propName = 'allDay') then AllDayElement := asBoolean(new)
+  else if (propName = 'availableStartTime') then AvailableStartTimeElement := asTime(new)
+  else if (propName = 'availableEndTime') then AvailableEndTimeElement := asTime(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPractitionerRoleAvailableTime.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination) {L996}
+  if (propName = 'daysOfWeek') then FDaysOfWeek.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -30734,6 +32864,21 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDaysOfWeek) and isEmptyProp(FAllDay) and isEmptyProp(FAvailableStartTime) and isEmptyProp(FAvailableEndTime);
 end;
 
+procedure TFhirPractitionerRoleAvailableTime.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('daysOfWeek');
+  fields.add('allDay');
+  fields.add('availableStartTime');
+  fields.add('availableEndTime');
+end;
+
+function TFhirPractitionerRoleAvailableTime.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FDaysOfWeek.sizeInBytes);
+end;
+
 function TFhirPractitionerRoleAvailableTime.GetDaysOfWeek : TFhirEnumList;
 begin
   if FDaysOfWeek = nil then
@@ -30773,7 +32918,7 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.SetAllDay(value : TFhirBoolean);
 begin
   FAllDay.free;
-  FAllDay := value; {L1134}
+  FAllDay := value;
 end;
 
 function TFhirPractitionerRoleAvailableTime.GetAllDayST : Boolean;
@@ -30794,7 +32939,7 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.SetAvailableStartTime(value : TFhirTime);
 begin
   FAvailableStartTime.free;
-  FAvailableStartTime := value; {L1134}
+  FAvailableStartTime := value;
 end;
 
 function TFhirPractitionerRoleAvailableTime.GetAvailableStartTimeST : String;
@@ -30820,7 +32965,7 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.SetAvailableEndTime(value : TFhirTime);
 begin
   FAvailableEndTime.free;
-  FAvailableEndTime := value; {L1134}
+  FAvailableEndTime := value;
 end;
 
 function TFhirPractitionerRoleAvailableTime.GetAvailableEndTimeST : String;
@@ -30841,24 +32986,6 @@ begin
   end
   else if FAvailableEndTime <> nil then
     FAvailableEndTime.value := '';
-end;
-
-procedure TFhirPractitionerRoleAvailableTime.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('daysOfWeek');
-  fields.add('allDay');
-  fields.add('availableStartTime');
-  fields.add('availableEndTime');
-end;
-
-function TFhirPractitionerRoleAvailableTime.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDaysOfWeek.sizeInBytes);
-  inc(result, FAllDay.sizeInBytes);
-  inc(result, FAvailableStartTime.sizeInBytes);
-  inc(result, FAvailableEndTime.sizeInBytes);
 end;
 
 { TFhirPractitionerRoleAvailableTimeListEnumerator }
@@ -31021,20 +33148,20 @@ end;
 procedure TFhirPractitionerRoleNotAvailable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
 end;
 
 function TFhirPractitionerRoleNotAvailable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'description') then
   begin
-    DescriptionElement := asString(propValue) {L1221};
+    DescriptionElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'during') then
   begin
-    During := propValue as TFhirPeriod {L1199};
+    During := propValue as TFhirPeriod;
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -31047,8 +33174,8 @@ end;
 
 function TFhirPractitionerRoleNotAvailable.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirString.create() {L1223}
-  else if (propName = 'during') then result := TFhirPeriod.create() {L1203}
+  if (propName = 'description') then result := TFhirString.create()
+  else if (propName = 'during') then result := TFhirPeriod.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -31069,8 +33196,8 @@ end;
 
 procedure TFhirPractitionerRoleNotAvailable.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'description') then DescriptionElement := asString(new) {L1222}
-  else if (propName = 'during') then DuringElement := new as TFhirPeriod {L1195}
+  if (propName = 'description') then DescriptionElement := asString(new)
+  else if (propName = 'during') then DuringElement := new as TFhirPeriod
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -31115,10 +33242,22 @@ begin
   result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FDuring);
 end;
 
+procedure TFhirPractitionerRoleNotAvailable.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('description');
+  fields.add('during');
+end;
+
+function TFhirPractitionerRoleNotAvailable.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirPractitionerRoleNotAvailable.SetDescription(value : TFhirString);
 begin
   FDescription.free;
-  FDescription := value; {L1134}
+  FDescription := value;
 end;
 
 function TFhirPractitionerRoleNotAvailable.GetDescriptionST : String;
@@ -31144,21 +33283,7 @@ end;
 procedure TFhirPractitionerRoleNotAvailable.SetDuring(value : TFhirPeriod);
 begin
   FDuring.free;
-  FDuring := value; {L1134}
-end;
-
-procedure TFhirPractitionerRoleNotAvailable.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('description');
-  fields.add('during');
-end;
-
-function TFhirPractitionerRoleNotAvailable.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FDuring.sizeInBytes);
+  FDuring := value;
 end;
 
 { TFhirPractitionerRoleNotAvailableListEnumerator }
@@ -31464,92 +33589,92 @@ end;
 procedure TFhirPractitionerRole.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'practitioner', 'Reference', false, TFhirReference, FPractitioner.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirPractitionerRoleAvailableTime, FAvailableTimeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirPractitionerRoleNotAvailable, FNotAvailableList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'practitioner', 'Reference', false, TFhirReference, FPractitioner.Link));
+  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirPractitionerRoleAvailableTime, FAvailableTimeList.Link));
+  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirPractitionerRoleNotAvailable, FNotAvailableList.Link));
+  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirPractitionerRole.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'practitioner') then
   begin
-    Practitioner := propValue as TFhirReference {L1199};
+    Practitioner := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'organization') then
   begin
-    Organization := propValue as TFhirReference {L1199};
+    Organization := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'code') then
   begin
-    CodeList.add(propValue as TFhirCodeableConcept) {L1048};
+    CodeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialty') then
   begin
-    SpecialtyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialtyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'location') then
   begin
-    LocationList.add(propValue as TFhirReference) {L1048};
+    LocationList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'healthcareService') then
   begin
-    HealthcareServiceList.add(propValue as TFhirReference) {L1048};
+    HealthcareServiceList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'availableTime') then
   begin
-    AvailableTimeList.add(propValue as TFhirPractitionerRoleAvailableTime) {L1048};
+    AvailableTimeList.add(propValue as TFhirPractitionerRoleAvailableTime);
     result := propValue;
   end
   else if (propName = 'notAvailable') then
   begin
-    NotAvailableList.add(propValue as TFhirPractitionerRoleNotAvailable) {L1048};
+    NotAvailableList.add(propValue as TFhirPractitionerRoleNotAvailable);
     result := propValue;
   end
   else if (propName = 'availabilityExceptions') then
   begin
-    AvailabilityExceptionsElement := asString(propValue) {L1221};
+    AvailabilityExceptionsElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'endpoint') then
   begin
-    EndpointList.add(propValue as TFhirReference) {L1048};
+    EndpointList.add(propValue as TFhirReference);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -31557,34 +33682,34 @@ end;
 
 procedure TFhirPractitionerRole.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'healthcareService') then HealthcareServiceList.insertItem(index, propValue as TFhirReference) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'availableTime') then AvailableTimeList.insertItem(index, propValue as TFhirPractitionerRoleAvailableTime) {L1049}
-  else if (propName = 'notAvailable') then NotAvailableList.insertItem(index, propValue as TFhirPractitionerRoleNotAvailable) {L1049}
-  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'location') then LocationList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'healthcareService') then HealthcareServiceList.insertItem(index, propValue as TFhirReference)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'availableTime') then AvailableTimeList.insertItem(index, propValue as TFhirPractitionerRoleAvailableTime)
+  else if (propName = 'notAvailable') then NotAvailableList.insertItem(index, propValue as TFhirPractitionerRoleNotAvailable)
+  else if (propName = 'endpoint') then EndpointList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirPractitionerRole.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'practitioner') then result := TFhirReference.create() {L1203}
-  else if (propName = 'organization') then result := TFhirReference.create() {L1203}
-  else if (propName = 'code') then result := CodeList.new() {L1053}
-  else if (propName = 'specialty') then result := SpecialtyList.new() {L1053}
-  else if (propName = 'location') then result := LocationList.new() {L1053}
-  else if (propName = 'healthcareService') then result := HealthcareServiceList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'availableTime') then result := AvailableTimeList.new() {L1053}
-  else if (propName = 'notAvailable') then result := NotAvailableList.new() {L1053}
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create() {L1223}
-  else if (propName = 'endpoint') then result := EndpointList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'practitioner') then result := TFhirReference.create()
+  else if (propName = 'organization') then result := TFhirReference.create()
+  else if (propName = 'code') then result := CodeList.new()
+  else if (propName = 'specialty') then result := SpecialtyList.new()
+  else if (propName = 'location') then result := LocationList.new()
+  else if (propName = 'healthcareService') then result := HealthcareServiceList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'availableTime') then result := AvailableTimeList.new()
+  else if (propName = 'notAvailable') then result := NotAvailableList.new()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -31609,55 +33734,55 @@ end;
 
 procedure TFhirPractitionerRole.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
   else if (propName = 'period') then PeriodElement := nil
   else if (propName = 'practitioner') then PractitionerElement := nil
   else if (propName = 'organization') then OrganizationElement := nil
-  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {L1054}
-  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value) {L1054}
-  else if (propName = 'location') then deletePropertyValue('location', LocationList, value) {L1054}
-  else if (propName = 'healthcareService') then deletePropertyValue('healthcareService', HealthcareServiceList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
-  else if (propName = 'availableTime') then deletePropertyValue('availableTime', AvailableTimeList, value) {L1054}
-  else if (propName = 'notAvailable') then deletePropertyValue('notAvailable', NotAvailableList, value) {L1054}
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value)
+  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value)
+  else if (propName = 'location') then deletePropertyValue('location', LocationList, value)
+  else if (propName = 'healthcareService') then deletePropertyValue('healthcareService', HealthcareServiceList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
+  else if (propName = 'availableTime') then deletePropertyValue('availableTime', AvailableTimeList, value)
+  else if (propName = 'notAvailable') then deletePropertyValue('notAvailable', NotAvailableList, value)
   else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := nil
-  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value) {L1054}
+  else if (propName = 'endpoint') then deletePropertyValue('endpoint', EndpointList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirPractitionerRole.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'practitioner') then PractitionerElement := new as TFhirReference {L1195}
-  else if (propName = 'organization') then OrganizationElement := new as TFhirReference {L1195}
-  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {L1055}
-  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new) {L1055}
-  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new) {L1055}
-  else if (propName = 'healthcareService') then replacePropertyValue('healthcareService', HealthcareServiceList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'availableTime') then replacePropertyValue('availableTime', AvailableTimeList, existing, new) {L1055}
-  else if (propName = 'notAvailable') then replacePropertyValue('notAvailable', NotAvailableList, existing, new) {L1055}
-  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new) {L1222}
-  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'practitioner') then PractitionerElement := new as TFhirReference
+  else if (propName = 'organization') then OrganizationElement := new as TFhirReference
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new)
+  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new)
+  else if (propName = 'location') then replacePropertyValue('location', LocationList, existing, new)
+  else if (propName = 'healthcareService') then replacePropertyValue('healthcareService', HealthcareServiceList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'availableTime') then replacePropertyValue('availableTime', AvailableTimeList, existing, new)
+  else if (propName = 'notAvailable') then replacePropertyValue('notAvailable', NotAvailableList, existing, new)
+  else if (propName = 'availabilityExceptions') then AvailabilityExceptionsElement := asString(new)
+  else if (propName = 'endpoint') then replacePropertyValue('endpoint', EndpointList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirPractitionerRole.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'code') then CodeList.move(source, destination) {L1050}
-  else if (propName = 'specialty') then SpecialtyList.move(source, destination) {L1050}
-  else if (propName = 'location') then LocationList.move(source, destination) {L1050}
-  else if (propName = 'healthcareService') then HealthcareServiceList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'availableTime') then AvailableTimeList.move(source, destination) {L1050}
-  else if (propName = 'notAvailable') then NotAvailableList.move(source, destination) {L1050}
-  else if (propName = 'endpoint') then EndpointList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'code') then CodeList.move(source, destination)
+  else if (propName = 'specialty') then SpecialtyList.move(source, destination)
+  else if (propName = 'location') then LocationList.move(source, destination)
+  else if (propName = 'healthcareService') then HealthcareServiceList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'availableTime') then AvailableTimeList.move(source, destination)
+  else if (propName = 'notAvailable') then NotAvailableList.move(source, destination)
+  else if (propName = 'endpoint') then EndpointList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -31704,6 +33829,39 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FPeriod) and isEmptyProp(FPractitioner) and isEmptyProp(FOrganization) and isEmptyProp(FcodeList) and isEmptyProp(FspecialtyList) and isEmptyProp(FlocationList) and isEmptyProp(FhealthcareServiceList) and isEmptyProp(FtelecomList) and isEmptyProp(FavailableTimeList) and isEmptyProp(FnotAvailableList) and isEmptyProp(FAvailabilityExceptions) and isEmptyProp(FendpointList);
 end;
 
+procedure TFhirPractitionerRole.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('period');
+  fields.add('practitioner');
+  fields.add('organization');
+  fields.add('code');
+  fields.add('specialty');
+  fields.add('location');
+  fields.add('healthcareService');
+  fields.add('telecom');
+  fields.add('availableTime');
+  fields.add('notAvailable');
+  fields.add('availabilityExceptions');
+  fields.add('endpoint');
+end;
+
+function TFhirPractitionerRole.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FCodeList.sizeInBytes);
+  inc(result, FSpecialtyList.sizeInBytes);
+  inc(result, FLocationList.sizeInBytes);
+  inc(result, FHealthcareServiceList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAvailableTimeList.sizeInBytes);
+  inc(result, FNotAvailableList.sizeInBytes);
+  inc(result, FEndpointList.sizeInBytes);
+end;
+
 function TFhirPractitionerRole.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -31719,7 +33877,7 @@ end;
 procedure TFhirPractitionerRole.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirPractitionerRole.GetActiveST : Boolean;
@@ -31740,19 +33898,19 @@ end;
 procedure TFhirPractitionerRole.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 procedure TFhirPractitionerRole.SetPractitioner(value : TFhirReference);
 begin
   FPractitioner.free;
-  FPractitioner := value; {L1134}
+  FPractitioner := value;
 end;
 
 procedure TFhirPractitionerRole.SetOrganization(value : TFhirReference);
 begin
   FOrganization.free;
-  FOrganization := value; {L1134}
+  FOrganization := value;
 end;
 
 function TFhirPractitionerRole.GetCodeList : TFhirCodeableConceptList;
@@ -31842,7 +34000,7 @@ end;
 procedure TFhirPractitionerRole.SetAvailabilityExceptions(value : TFhirString);
 begin
   FAvailabilityExceptions.free;
-  FAvailabilityExceptions := value; {L1134}
+  FAvailabilityExceptions := value;
 end;
 
 function TFhirPractitionerRole.GetAvailabilityExceptionsST : String;
@@ -31875,44 +34033,6 @@ end;
 function TFhirPractitionerRole.GetHasEndpointList : boolean;
 begin
   result := (FEndpointList <> nil) and (FEndpointList.count > 0);
-end;
-
-procedure TFhirPractitionerRole.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('period');
-  fields.add('practitioner');
-  fields.add('organization');
-  fields.add('code');
-  fields.add('specialty');
-  fields.add('location');
-  fields.add('healthcareService');
-  fields.add('telecom');
-  fields.add('availableTime');
-  fields.add('notAvailable');
-  fields.add('availabilityExceptions');
-  fields.add('endpoint');
-end;
-
-function TFhirPractitionerRole.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FPractitioner.sizeInBytes);
-  inc(result, FOrganization.sizeInBytes);
-  inc(result, FcodeList.sizeInBytes);
-  inc(result, FspecialtyList.sizeInBytes);
-  inc(result, FlocationList.sizeInBytes);
-  inc(result, FhealthcareServiceList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FavailableTimeList.sizeInBytes);
-  inc(result, FnotAvailableList.sizeInBytes);
-  inc(result, FAvailabilityExceptions.sizeInBytes);
-  inc(result, FendpointList.sizeInBytes);
 end;
 
 { TFhirPractitionerRoleListEnumerator }
@@ -32077,20 +34197,20 @@ end;
 procedure TFhirRelatedPersonCommunication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
+  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
 end;
 
 function TFhirRelatedPersonCommunication.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'language') then
   begin
-    Language := propValue as TFhirCodeableConcept {L1199};
+    Language := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'preferred') then
   begin
-    PreferredElement := asBoolean(propValue) {L1221};
+    PreferredElement := asBoolean(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -32103,8 +34223,8 @@ end;
 
 function TFhirRelatedPersonCommunication.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'language') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'preferred') then result := TFhirBoolean.create() {L1223}
+  if (propName = 'language') then result := TFhirCodeableConcept.create()
+  else if (propName = 'preferred') then result := TFhirBoolean.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -32125,8 +34245,8 @@ end;
 
 procedure TFhirRelatedPersonCommunication.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'language') then LanguageElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'preferred') then PreferredElement := asBoolean(new) {L1222}
+  if (propName = 'language') then LanguageElement := new as TFhirCodeableConcept
+  else if (propName = 'preferred') then PreferredElement := asBoolean(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -32171,16 +34291,28 @@ begin
   result := inherited isEmpty  and isEmptyProp(FLanguage) and isEmptyProp(FPreferred);
 end;
 
+procedure TFhirRelatedPersonCommunication.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('language');
+  fields.add('preferred');
+end;
+
+function TFhirRelatedPersonCommunication.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+end;
+
 procedure TFhirRelatedPersonCommunication.SetLanguage(value : TFhirCodeableConcept);
 begin
   FLanguage.free;
-  FLanguage := value; {L1134}
+  FLanguage := value;
 end;
 
 procedure TFhirRelatedPersonCommunication.SetPreferred(value : TFhirBoolean);
 begin
   FPreferred.free;
-  FPreferred := value; {L1134}
+  FPreferred := value;
 end;
 
 function TFhirRelatedPersonCommunication.GetPreferredST : Boolean;
@@ -32196,20 +34328,6 @@ begin
   if FPreferred = nil then
     FPreferred := TFhirBoolean.create;
   FPreferred.value := value
-end;
-
-procedure TFhirRelatedPersonCommunication.listFieldsInOrder(fields : TStringList);
-begin
-  listBackboneElementFieldsInOrder(fields);
-  fields.add('language');
-  fields.add('preferred');
-end;
-
-function TFhirRelatedPersonCommunication.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FLanguage.sizeInBytes);
-  inc(result, FPreferred.sizeInBytes);
 end;
 
 { TFhirRelatedPersonCommunicationListEnumerator }
@@ -32487,80 +34605,80 @@ end;
 procedure TFhirRelatedPerson.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirRelatedPersonCommunication, FCommunicationList.Link)) {L1039};
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
+  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
+  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirRelatedPersonCommunication, FCommunicationList.Link));
 end;
 
 function TFhirRelatedPerson.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'patient') then
   begin
-    Patient := propValue as TFhirReference {L1199};
+    Patient := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'relationship') then
   begin
-    RelationshipList.add(propValue as TFhirCodeableConcept) {L1048};
+    RelationshipList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'name') then
   begin
-    NameList.add(propValue as TFhirHumanName) {L1048};
+    NameList.add(propValue as TFhirHumanName);
     result := propValue;
   end
   else if (propName = 'telecom') then
   begin
-    TelecomList.add(propValue as TFhirContactPoint) {L1048};
+    TelecomList.add(propValue as TFhirContactPoint);
     result := propValue;
   end
   else if (propName = 'gender') then
   begin
-    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue) {L1209};
+    GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, propValue);
     result := propValue;
   end
   else if (propName = 'birthDate') then
   begin
-    BirthDateElement := asDate(propValue) {L1221};
+    BirthDateElement := asDate(propValue);
     result := propValue;
   end
   else if (propName = 'address') then
   begin
-    AddressList.add(propValue as TFhirAddress) {L1048};
+    AddressList.add(propValue as TFhirAddress);
     result := propValue;
   end
   else if (propName = 'photo') then
   begin
-    PhotoList.add(propValue as TFhirAttachment) {L1048};
+    PhotoList.add(propValue as TFhirAttachment);
     result := propValue;
   end
   else if (propName = 'period') then
   begin
-    Period := propValue as TFhirPeriod {L1199};
+    Period := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'communication') then
   begin
-    CommunicationList.add(propValue as TFhirRelatedPersonCommunication) {L1048};
+    CommunicationList.add(propValue as TFhirRelatedPersonCommunication);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -32568,30 +34686,30 @@ end;
 
 procedure TFhirRelatedPerson.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'relationship') then RelationshipList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName) {L1049}
-  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint) {L1049}
-  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress) {L1049}
-  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment) {L1049}
-  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirRelatedPersonCommunication) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'relationship') then RelationshipList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'name') then NameList.insertItem(index, propValue as TFhirHumanName)
+  else if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint)
+  else if (propName = 'address') then AddressList.insertItem(index, propValue as TFhirAddress)
+  else if (propName = 'photo') then PhotoList.insertItem(index, propValue as TFhirAttachment)
+  else if (propName = 'communication') then CommunicationList.insertItem(index, propValue as TFhirRelatedPersonCommunication)
   else inherited;
 end;
 
 function TFhirRelatedPerson.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'patient') then result := TFhirReference.create() {L1203}
-  else if (propName = 'relationship') then result := RelationshipList.new() {L1053}
-  else if (propName = 'name') then result := NameList.new() {L1053}
-  else if (propName = 'telecom') then result := TelecomList.new() {L1053}
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull])  {L1211}
-  else if (propName = 'birthDate') then result := TFhirDate.create() {L1223}
-  else if (propName = 'address') then result := AddressList.new() {L1053}
-  else if (propName = 'photo') then result := PhotoList.new() {L1053}
-  else if (propName = 'period') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'communication') then result := CommunicationList.new() {L1053}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'patient') then result := TFhirReference.create()
+  else if (propName = 'relationship') then result := RelationshipList.new()
+  else if (propName = 'name') then result := NameList.new()
+  else if (propName = 'telecom') then result := TelecomList.new()
+  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'address') then result := AddressList.new()
+  else if (propName = 'photo') then result := PhotoList.new()
+  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'communication') then result := CommunicationList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -32614,49 +34732,49 @@ end;
 
 procedure TFhirRelatedPerson.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
   else if (propName = 'patient') then PatientElement := nil
-  else if (propName = 'relationship') then deletePropertyValue('relationship', RelationshipList, value) {L1054}
-  else if (propName = 'name') then deletePropertyValue('name', NameList, value) {L1054}
-  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {L1054}
+  else if (propName = 'relationship') then deletePropertyValue('relationship', RelationshipList, value)
+  else if (propName = 'name') then deletePropertyValue('name', NameList, value)
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value)
   else if (propName = 'gender') then GenderElement := nil
   else if (propName = 'birthDate') then BirthDateElement := nil
-  else if (propName = 'address') then deletePropertyValue('address', AddressList, value) {L1054}
-  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value) {L1054}
+  else if (propName = 'address') then deletePropertyValue('address', AddressList, value)
+  else if (propName = 'photo') then deletePropertyValue('photo', PhotoList, value)
   else if (propName = 'period') then PeriodElement := nil
-  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value) {L1054}
+  else if (propName = 'communication') then deletePropertyValue('communication', CommunicationList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirRelatedPerson.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'patient') then PatientElement := new as TFhirReference {L1195}
-  else if (propName = 'relationship') then replacePropertyValue('relationship', RelationshipList, existing, new) {L1055}
-  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new) {L1055}
-  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {L1055}
-  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new) {L1210}
-  else if (propName = 'birthDate') then BirthDateElement := asDate(new) {L1222}
-  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new) {L1055}
-  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new) {L1055}
-  else if (propName = 'period') then PeriodElement := new as TFhirPeriod {L1195}
-  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new) {L1055}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'patient') then PatientElement := new as TFhirReference
+  else if (propName = 'relationship') then replacePropertyValue('relationship', RelationshipList, existing, new)
+  else if (propName = 'name') then replacePropertyValue('name', NameList, existing, new)
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new)
+  else if (propName = 'gender') then GenderElement := asEnum(SYSTEMS_TFhirAdministrativeGenderEnum, CODES_TFhirAdministrativeGenderEnum, new)
+  else if (propName = 'birthDate') then BirthDateElement := asDate(new)
+  else if (propName = 'address') then replacePropertyValue('address', AddressList, existing, new)
+  else if (propName = 'photo') then replacePropertyValue('photo', PhotoList, existing, new)
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod
+  else if (propName = 'communication') then replacePropertyValue('communication', CommunicationList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirRelatedPerson.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'relationship') then RelationshipList.move(source, destination) {L1050}
-  else if (propName = 'name') then NameList.move(source, destination) {L1050}
-  else if (propName = 'telecom') then TelecomList.move(source, destination) {L1050}
-  else if (propName = 'address') then AddressList.move(source, destination) {L1050}
-  else if (propName = 'photo') then PhotoList.move(source, destination) {L1050}
-  else if (propName = 'communication') then CommunicationList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'relationship') then RelationshipList.move(source, destination)
+  else if (propName = 'name') then NameList.move(source, destination)
+  else if (propName = 'telecom') then TelecomList.move(source, destination)
+  else if (propName = 'address') then AddressList.move(source, destination)
+  else if (propName = 'photo') then PhotoList.move(source, destination)
+  else if (propName = 'communication') then CommunicationList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -32701,6 +34819,35 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FPatient) and isEmptyProp(FrelationshipList) and isEmptyProp(FnameList) and isEmptyProp(FtelecomList) and isEmptyProp(FGender) and isEmptyProp(FBirthDate) and isEmptyProp(FaddressList) and isEmptyProp(FphotoList) and isEmptyProp(FPeriod) and isEmptyProp(FcommunicationList);
 end;
 
+procedure TFhirRelatedPerson.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('patient');
+  fields.add('relationship');
+  fields.add('name');
+  fields.add('telecom');
+  fields.add('gender');
+  fields.add('birthDate');
+  fields.add('address');
+  fields.add('photo');
+  fields.add('period');
+  fields.add('communication');
+end;
+
+function TFhirRelatedPerson.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FRelationshipList.sizeInBytes);
+  inc(result, FNameList.sizeInBytes);
+  inc(result, FTelecomList.sizeInBytes);
+  inc(result, FAddressList.sizeInBytes);
+  inc(result, FPhotoList.sizeInBytes);
+  inc(result, FCommunicationList.sizeInBytes);
+end;
+
 function TFhirRelatedPerson.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -32716,7 +34863,7 @@ end;
 procedure TFhirRelatedPerson.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirRelatedPerson.GetActiveST : Boolean;
@@ -32737,7 +34884,7 @@ end;
 procedure TFhirRelatedPerson.SetPatient(value : TFhirReference);
 begin
   FPatient.free;
-  FPatient := value; {L1134}
+  FPatient := value;
 end;
 
 function TFhirRelatedPerson.GetRelationshipList : TFhirCodeableConceptList;
@@ -32801,7 +34948,7 @@ end;
 procedure TFhirRelatedPerson.SetBirthDate(value : TFhirDate);
 begin
   FBirthDate.free;
-  FBirthDate := value; {L1134}
+  FBirthDate := value;
 end;
 
 function TFhirRelatedPerson.GetBirthDateST : TFslDateTime;
@@ -32846,7 +34993,7 @@ end;
 procedure TFhirRelatedPerson.SetPeriod(value : TFhirPeriod);
 begin
   FPeriod.free;
-  FPeriod := value; {L1134}
+  FPeriod := value;
 end;
 
 function TFhirRelatedPerson.GetCommunicationList : TFhirRelatedPersonCommunicationList;
@@ -32859,40 +35006,6 @@ end;
 function TFhirRelatedPerson.GetHasCommunicationList : boolean;
 begin
   result := (FCommunicationList <> nil) and (FCommunicationList.count > 0);
-end;
-
-procedure TFhirRelatedPerson.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('patient');
-  fields.add('relationship');
-  fields.add('name');
-  fields.add('telecom');
-  fields.add('gender');
-  fields.add('birthDate');
-  fields.add('address');
-  fields.add('photo');
-  fields.add('period');
-  fields.add('communication');
-end;
-
-function TFhirRelatedPerson.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FrelationshipList.sizeInBytes);
-  inc(result, FnameList.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FBirthDate.sizeInBytes);
-  inc(result, FaddressList.sizeInBytes);
-  inc(result, FphotoList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FcommunicationList.sizeInBytes);
 end;
 
 { TFhirRelatedPersonListEnumerator }
@@ -33136,56 +35249,56 @@ end;
 procedure TFhirSchedule.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference', true, TFhirReference, FActorList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'planningHorizon', 'Period', false, TFhirPeriod, FPlanningHorizon.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.create(self, 'actor', 'Reference', true, TFhirReference, FActorList.Link));
+  oList.add(TFHIRProperty.create(self, 'planningHorizon', 'Period', false, TFhirPeriod, FPlanningHorizon.Link));
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
 end;
 
 function TFhirSchedule.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'active') then
   begin
-    ActiveElement := asBoolean(propValue) {L1221};
+    ActiveElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'serviceCategory') then
   begin
-    ServiceCategoryList.add(propValue as TFhirCodeableConcept) {L1048};
+    ServiceCategoryList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'serviceType') then
   begin
-    ServiceTypeList.add(propValue as TFhirCodeableConcept) {L1048};
+    ServiceTypeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialty') then
   begin
-    SpecialtyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialtyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'actor') then
   begin
-    ActorList.add(propValue as TFhirReference) {L1048};
+    ActorList.add(propValue as TFhirReference);
     result := propValue;
   end
   else if (propName = 'planningHorizon') then
   begin
-    PlanningHorizon := propValue as TFhirPeriod {L1199};
+    PlanningHorizon := propValue as TFhirPeriod;
     result := propValue;
   end
   else if (propName = 'comment') then
   begin
-    CommentElement := asString(propValue) {L1221};
+    CommentElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -33193,24 +35306,24 @@ end;
 
 procedure TFhirSchedule.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'serviceCategory') then ServiceCategoryList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'serviceType') then ServiceTypeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'actor') then ActorList.insertItem(index, propValue as TFhirReference) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'serviceCategory') then ServiceCategoryList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'serviceType') then ServiceTypeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'actor') then ActorList.insertItem(index, propValue as TFhirReference)
   else inherited;
 end;
 
 function TFhirSchedule.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'active') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'serviceCategory') then result := ServiceCategoryList.new() {L1053}
-  else if (propName = 'serviceType') then result := ServiceTypeList.new() {L1053}
-  else if (propName = 'specialty') then result := SpecialtyList.new() {L1053}
-  else if (propName = 'actor') then result := ActorList.new() {L1053}
-  else if (propName = 'planningHorizon') then result := TFhirPeriod.create() {L1203}
-  else if (propName = 'comment') then result := TFhirString.create() {L1223}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'serviceCategory') then result := ServiceCategoryList.new()
+  else if (propName = 'serviceType') then result := ServiceTypeList.new()
+  else if (propName = 'specialty') then result := SpecialtyList.new()
+  else if (propName = 'actor') then result := ActorList.new()
+  else if (propName = 'planningHorizon') then result := TFhirPeriod.create()
+  else if (propName = 'comment') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -33229,12 +35342,12 @@ end;
 
 procedure TFhirSchedule.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
   else if (propName = 'active') then ActiveElement := nil
-  else if (propName = 'serviceCategory') then deletePropertyValue('serviceCategory', ServiceCategoryList, value) {L1054}
-  else if (propName = 'serviceType') then deletePropertyValue('serviceType', ServiceTypeList, value) {L1054}
-  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value) {L1054}
-  else if (propName = 'actor') then deletePropertyValue('actor', ActorList, value) {L1054}
+  else if (propName = 'serviceCategory') then deletePropertyValue('serviceCategory', ServiceCategoryList, value)
+  else if (propName = 'serviceType') then deletePropertyValue('serviceType', ServiceTypeList, value)
+  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value)
+  else if (propName = 'actor') then deletePropertyValue('actor', ActorList, value)
   else if (propName = 'planningHorizon') then PlanningHorizonElement := nil
   else if (propName = 'comment') then CommentElement := nil
   else
@@ -33243,25 +35356,25 @@ end;
 
 procedure TFhirSchedule.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'active') then ActiveElement := asBoolean(new) {L1222}
-  else if (propName = 'serviceCategory') then replacePropertyValue('serviceCategory', ServiceCategoryList, existing, new) {L1055}
-  else if (propName = 'serviceType') then replacePropertyValue('serviceType', ServiceTypeList, existing, new) {L1055}
-  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new) {L1055}
-  else if (propName = 'actor') then replacePropertyValue('actor', ActorList, existing, new) {L1055}
-  else if (propName = 'planningHorizon') then PlanningHorizonElement := new as TFhirPeriod {L1195}
-  else if (propName = 'comment') then CommentElement := asString(new) {L1222}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'active') then ActiveElement := asBoolean(new)
+  else if (propName = 'serviceCategory') then replacePropertyValue('serviceCategory', ServiceCategoryList, existing, new)
+  else if (propName = 'serviceType') then replacePropertyValue('serviceType', ServiceTypeList, existing, new)
+  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new)
+  else if (propName = 'actor') then replacePropertyValue('actor', ActorList, existing, new)
+  else if (propName = 'planningHorizon') then PlanningHorizonElement := new as TFhirPeriod
+  else if (propName = 'comment') then CommentElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirSchedule.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'serviceCategory') then ServiceCategoryList.move(source, destination) {L1050}
-  else if (propName = 'serviceType') then ServiceTypeList.move(source, destination) {L1050}
-  else if (propName = 'specialty') then SpecialtyList.move(source, destination) {L1050}
-  else if (propName = 'actor') then ActorList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'serviceCategory') then ServiceCategoryList.move(source, destination)
+  else if (propName = 'serviceType') then ServiceTypeList.move(source, destination)
+  else if (propName = 'specialty') then SpecialtyList.move(source, destination)
+  else if (propName = 'actor') then ActorList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -33304,6 +35417,29 @@ begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FActive) and isEmptyProp(FserviceCategoryList) and isEmptyProp(FserviceTypeList) and isEmptyProp(FspecialtyList) and isEmptyProp(FactorList) and isEmptyProp(FPlanningHorizon) and isEmptyProp(FComment);
 end;
 
+procedure TFhirSchedule.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('active');
+  fields.add('serviceCategory');
+  fields.add('serviceType');
+  fields.add('specialty');
+  fields.add('actor');
+  fields.add('planningHorizon');
+  fields.add('comment');
+end;
+
+function TFhirSchedule.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FServiceCategoryList.sizeInBytes);
+  inc(result, FServiceTypeList.sizeInBytes);
+  inc(result, FSpecialtyList.sizeInBytes);
+  inc(result, FActorList.sizeInBytes);
+end;
+
 function TFhirSchedule.GetIdentifierList : TFhirIdentifierList;
 begin
   if FIdentifierList = nil then
@@ -33319,7 +35455,7 @@ end;
 procedure TFhirSchedule.SetActive(value : TFhirBoolean);
 begin
   FActive.free;
-  FActive := value; {L1134}
+  FActive := value;
 end;
 
 function TFhirSchedule.GetActiveST : Boolean;
@@ -33388,13 +35524,13 @@ end;
 procedure TFhirSchedule.SetPlanningHorizon(value : TFhirPeriod);
 begin
   FPlanningHorizon.free;
-  FPlanningHorizon := value; {L1134}
+  FPlanningHorizon := value;
 end;
 
 procedure TFhirSchedule.SetComment(value : TFhirString);
 begin
   FComment.free;
-  FComment := value; {L1134}
+  FComment := value;
 end;
 
 function TFhirSchedule.GetCommentST : String;
@@ -33415,32 +35551,6 @@ begin
   end
   else if FComment <> nil then
     FComment.value := '';
-end;
-
-procedure TFhirSchedule.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('active');
-  fields.add('serviceCategory');
-  fields.add('serviceType');
-  fields.add('specialty');
-  fields.add('actor');
-  fields.add('planningHorizon');
-  fields.add('comment');
-end;
-
-function TFhirSchedule.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FActive.sizeInBytes);
-  inc(result, FserviceCategoryList.sizeInBytes);
-  inc(result, FserviceTypeList.sizeInBytes);
-  inc(result, FspecialtyList.sizeInBytes);
-  inc(result, FactorList.sizeInBytes);
-  inc(result, FPlanningHorizon.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
 end;
 
 { TFhirScheduleListEnumerator }
@@ -33686,74 +35796,74 @@ end;
 procedure TFhirSlot.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'appointmentType', 'CodeableConcept', false, TFhirCodeableConcept, FAppointmentType.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Reference', false, TFhirReference, FSchedule.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link)); {L1170}
-  oList.add(TFHIRProperty.create(self, 'start', 'instant', false, TFhirInstant, FStart.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'overbooked', 'boolean', false, TFhirBoolean, FOverbooked.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link)); {L1172}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
+  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
+  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.create(self, 'appointmentType', 'CodeableConcept', false, TFhirCodeableConcept, FAppointmentType.Link));
+  oList.add(TFHIRProperty.create(self, 'schedule', 'Reference', false, TFhirReference, FSchedule.Link));
+  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));
+  oList.add(TFHIRProperty.create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));
+  oList.add(TFHIRProperty.create(self, 'overbooked', 'boolean', false, TFhirBoolean, FOverbooked.Link));
+  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
 end;
 
 function TFhirSlot.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'identifier') then
   begin
-    IdentifierList.add(propValue as TFhirIdentifier) {L1048};
+    IdentifierList.add(propValue as TFhirIdentifier);
     result := propValue;
   end
   else if (propName = 'serviceCategory') then
   begin
-    ServiceCategoryList.add(propValue as TFhirCodeableConcept) {L1048};
+    ServiceCategoryList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'serviceType') then
   begin
-    ServiceTypeList.add(propValue as TFhirCodeableConcept) {L1048};
+    ServiceTypeList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'specialty') then
   begin
-    SpecialtyList.add(propValue as TFhirCodeableConcept) {L1048};
+    SpecialtyList.add(propValue as TFhirCodeableConcept);
     result := propValue;
   end
   else if (propName = 'appointmentType') then
   begin
-    AppointmentType := propValue as TFhirCodeableConcept {L1199};
+    AppointmentType := propValue as TFhirCodeableConcept;
     result := propValue;
   end
   else if (propName = 'schedule') then
   begin
-    Schedule := propValue as TFhirReference {L1199};
+    Schedule := propValue as TFhirReference;
     result := propValue;
   end
   else if (propName = 'status') then
   begin
-    StatusElement := asEnum(SYSTEMS_TFhirSlotStatusEnum, CODES_TFhirSlotStatusEnum, propValue) {L1209};
+    StatusElement := asEnum(SYSTEMS_TFhirSlotStatusEnum, CODES_TFhirSlotStatusEnum, propValue);
     result := propValue;
   end
   else if (propName = 'start') then
   begin
-    StartElement := asInstant(propValue) {L1221};
+    StartElement := asInstant(propValue);
     result := propValue;
   end
   else if (propName = 'end') then
   begin
-    End_Element := asInstant(propValue) {L1221};
+    End_Element := asInstant(propValue);
     result := propValue;
   end
   else if (propName = 'overbooked') then
   begin
-    OverbookedElement := asBoolean(propValue) {L1221};
+    OverbookedElement := asBoolean(propValue);
     result := propValue;
   end
   else if (propName = 'comment') then
   begin
-    CommentElement := asString(propValue) {L1221};
+    CommentElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -33761,26 +35871,26 @@ end;
 
 procedure TFhirSlot.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier) {L1049}
-  else if (propName = 'serviceCategory') then ServiceCategoryList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'serviceType') then ServiceTypeList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
-  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept) {L1049}
+  if (propName = 'identifier') then IdentifierList.insertItem(index, propValue as TFhirIdentifier)
+  else if (propName = 'serviceCategory') then ServiceCategoryList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'serviceType') then ServiceTypeList.insertItem(index, propValue as TFhirCodeableConcept)
+  else if (propName = 'specialty') then SpecialtyList.insertItem(index, propValue as TFhirCodeableConcept)
   else inherited;
 end;
 
 function TFhirSlot.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := IdentifierList.new() {L1053}
-  else if (propName = 'serviceCategory') then result := ServiceCategoryList.new() {L1053}
-  else if (propName = 'serviceType') then result := ServiceTypeList.new() {L1053}
-  else if (propName = 'specialty') then result := SpecialtyList.new() {L1053}
-  else if (propName = 'appointmentType') then result := TFhirCodeableConcept.create() {L1203}
-  else if (propName = 'schedule') then result := TFhirReference.create() {L1203}
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirSlotStatusEnum[SlotStatusNull], CODES_TFhirSlotStatusEnum[SlotStatusNull])  {L1211}
-  else if (propName = 'start') then result := TFhirInstant.create() {L1223}
-  else if (propName = 'end') then result := TFhirInstant.create() {L1223}
-  else if (propName = 'overbooked') then result := TFhirBoolean.create() {L1223}
-  else if (propName = 'comment') then result := TFhirString.create() {L1223}
+  if (propName = 'identifier') then result := IdentifierList.new()
+  else if (propName = 'serviceCategory') then result := ServiceCategoryList.new()
+  else if (propName = 'serviceType') then result := ServiceTypeList.new()
+  else if (propName = 'specialty') then result := SpecialtyList.new()
+  else if (propName = 'appointmentType') then result := TFhirCodeableConcept.create()
+  else if (propName = 'schedule') then result := TFhirReference.create()
+  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirSlotStatusEnum[SlotStatusNull], CODES_TFhirSlotStatusEnum[SlotStatusNull]) 
+  else if (propName = 'start') then result := TFhirInstant.create()
+  else if (propName = 'end') then result := TFhirInstant.create()
+  else if (propName = 'overbooked') then result := TFhirBoolean.create()
+  else if (propName = 'comment') then result := TFhirString.create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -33802,10 +35912,10 @@ end;
 
 procedure TFhirSlot.deleteProperty(propName: string; value : TFHIRObject);
 begin
-  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value) {L1054}
-  else if (propName = 'serviceCategory') then deletePropertyValue('serviceCategory', ServiceCategoryList, value) {L1054}
-  else if (propName = 'serviceType') then deletePropertyValue('serviceType', ServiceTypeList, value) {L1054}
-  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value) {L1054}
+  if (propName = 'identifier') then deletePropertyValue('identifier', IdentifierList, value)
+  else if (propName = 'serviceCategory') then deletePropertyValue('serviceCategory', ServiceCategoryList, value)
+  else if (propName = 'serviceType') then deletePropertyValue('serviceType', ServiceTypeList, value)
+  else if (propName = 'specialty') then deletePropertyValue('specialty', SpecialtyList, value)
   else if (propName = 'appointmentType') then AppointmentTypeElement := nil
   else if (propName = 'schedule') then ScheduleElement := nil
   else if (propName = 'status') then StatusElement := nil
@@ -33819,27 +35929,27 @@ end;
 
 procedure TFhirSlot.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new) {L1055}
-  else if (propName = 'serviceCategory') then replacePropertyValue('serviceCategory', ServiceCategoryList, existing, new) {L1055}
-  else if (propName = 'serviceType') then replacePropertyValue('serviceType', ServiceTypeList, existing, new) {L1055}
-  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new) {L1055}
-  else if (propName = 'appointmentType') then AppointmentTypeElement := new as TFhirCodeableConcept {L1195}
-  else if (propName = 'schedule') then ScheduleElement := new as TFhirReference {L1195}
-  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirSlotStatusEnum, CODES_TFhirSlotStatusEnum, new) {L1210}
-  else if (propName = 'start') then StartElement := asInstant(new) {L1222}
-  else if (propName = 'end') then End_Element := asInstant(new) {L1222}
-  else if (propName = 'overbooked') then OverbookedElement := asBoolean(new) {L1222}
-  else if (propName = 'comment') then CommentElement := asString(new) {L1222}
+  if (propName = 'identifier') then replacePropertyValue('identifier', IdentifierList, existing, new)
+  else if (propName = 'serviceCategory') then replacePropertyValue('serviceCategory', ServiceCategoryList, existing, new)
+  else if (propName = 'serviceType') then replacePropertyValue('serviceType', ServiceTypeList, existing, new)
+  else if (propName = 'specialty') then replacePropertyValue('specialty', SpecialtyList, existing, new)
+  else if (propName = 'appointmentType') then AppointmentTypeElement := new as TFhirCodeableConcept
+  else if (propName = 'schedule') then ScheduleElement := new as TFhirReference
+  else if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirSlotStatusEnum, CODES_TFhirSlotStatusEnum, new)
+  else if (propName = 'start') then StartElement := asInstant(new)
+  else if (propName = 'end') then End_Element := asInstant(new)
+  else if (propName = 'overbooked') then OverbookedElement := asBoolean(new)
+  else if (propName = 'comment') then CommentElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirSlot.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'identifier') then IdentifierList.move(source, destination) {L1050}
-  else if (propName = 'serviceCategory') then ServiceCategoryList.move(source, destination) {L1050}
-  else if (propName = 'serviceType') then ServiceTypeList.move(source, destination) {L1050}
-  else if (propName = 'specialty') then SpecialtyList.move(source, destination) {L1050}
+  if (propName = 'identifier') then IdentifierList.move(source, destination)
+  else if (propName = 'serviceCategory') then ServiceCategoryList.move(source, destination)
+  else if (propName = 'serviceType') then ServiceTypeList.move(source, destination)
+  else if (propName = 'specialty') then SpecialtyList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -33882,6 +35992,31 @@ end;
 function TFhirSlot.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FidentifierList) and isEmptyProp(FserviceCategoryList) and isEmptyProp(FserviceTypeList) and isEmptyProp(FspecialtyList) and isEmptyProp(FAppointmentType) and isEmptyProp(FSchedule) and isEmptyProp(FStatus) and isEmptyProp(FStart) and isEmptyProp(FEnd_) and isEmptyProp(FOverbooked) and isEmptyProp(FComment);
+end;
+
+procedure TFhirSlot.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('identifier');
+  fields.add('serviceCategory');
+  fields.add('serviceType');
+  fields.add('specialty');
+  fields.add('appointmentType');
+  fields.add('schedule');
+  fields.add('status');
+  fields.add('start');
+  fields.add('end');
+  fields.add('overbooked');
+  fields.add('comment');
+end;
+
+function TFhirSlot.sizeInBytesV;
+begin;
+  result := inherited sizeInBytesV;
+  inc(result, FIdentifierList.sizeInBytes);
+  inc(result, FServiceCategoryList.sizeInBytes);
+  inc(result, FServiceTypeList.sizeInBytes);
+  inc(result, FSpecialtyList.sizeInBytes);
 end;
 
 function TFhirSlot.GetIdentifierList : TFhirIdentifierList;
@@ -33935,13 +36070,13 @@ end;
 procedure TFhirSlot.SetAppointmentType(value : TFhirCodeableConcept);
 begin
   FAppointmentType.free;
-  FAppointmentType := value; {L1134}
+  FAppointmentType := value;
 end;
 
 procedure TFhirSlot.SetSchedule(value : TFhirReference);
 begin
   FSchedule.free;
-  FSchedule := value; {L1134}
+  FSchedule := value;
 end;
 
 procedure TFhirSlot.SetStatus(value : TFhirEnum);
@@ -33969,7 +36104,7 @@ end;
 procedure TFhirSlot.SetStart(value : TFhirInstant);
 begin
   FStart.free;
-  FStart := value; {L1134}
+  FStart := value;
 end;
 
 function TFhirSlot.GetStartST : TFslDateTime;
@@ -33990,7 +36125,7 @@ end;
 procedure TFhirSlot.SetEnd_(value : TFhirInstant);
 begin
   FEnd_.free;
-  FEnd_ := value; {L1134}
+  FEnd_ := value;
 end;
 
 function TFhirSlot.GetEnd_ST : TFslDateTime;
@@ -34011,7 +36146,7 @@ end;
 procedure TFhirSlot.SetOverbooked(value : TFhirBoolean);
 begin
   FOverbooked.free;
-  FOverbooked := value; {L1134}
+  FOverbooked := value;
 end;
 
 function TFhirSlot.GetOverbookedST : Boolean;
@@ -34032,7 +36167,7 @@ end;
 procedure TFhirSlot.SetComment(value : TFhirString);
 begin
   FComment.free;
-  FComment := value; {L1134}
+  FComment := value;
 end;
 
 function TFhirSlot.GetCommentST : String;
@@ -34053,38 +36188,6 @@ begin
   end
   else if FComment <> nil then
     FComment.value := '';
-end;
-
-procedure TFhirSlot.listFieldsInOrder(fields : TStringList);
-begin
-  listDomainResourceFieldsInOrder(fields);
-  fields.add('identifier');
-  fields.add('serviceCategory');
-  fields.add('serviceType');
-  fields.add('specialty');
-  fields.add('appointmentType');
-  fields.add('schedule');
-  fields.add('status');
-  fields.add('start');
-  fields.add('end');
-  fields.add('overbooked');
-  fields.add('comment');
-end;
-
-function TFhirSlot.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FserviceCategoryList.sizeInBytes);
-  inc(result, FserviceTypeList.sizeInBytes);
-  inc(result, FspecialtyList.sizeInBytes);
-  inc(result, FAppointmentType.sizeInBytes);
-  inc(result, FSchedule.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FEnd_.sizeInBytes);
-  inc(result, FOverbooked.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
 end;
 
 { TFhirSlotListEnumerator }
@@ -34215,6 +36318,7 @@ begin
 end;
 
 {$ENDIF FHIR_SLOT}
+
 
 end.
 

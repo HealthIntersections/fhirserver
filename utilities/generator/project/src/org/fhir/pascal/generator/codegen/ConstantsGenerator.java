@@ -64,7 +64,7 @@ public class ConstantsGenerator extends BaseGenerator {
 
 	public void generate(String filename) throws Exception {
 	  doGen();
-	  String template = config.getTemplate("FHIR.R5.Constants");    
+	  String template = config.getTemplate("fhir5_constants");    
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{ver-mmp}}", version);
     template = template.replace("{{ver-mm}}", VersionUtilities.getMajMin(version));

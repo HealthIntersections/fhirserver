@@ -87,7 +87,7 @@ const
 {$IFDEF FHIR_DEVICEDEFINITION}                   tcOther, {$ENDIF}
 {$IFDEF FHIR_DEVICEMETRIC}                       tcData, {$ENDIF}
 {$IFDEF FHIR_DEVICEREQUEST}                      tcClinical, {$ENDIF}
-{$IFDEF FHIR_DEVICEUSESTATEMENT}                 tcClinical, {$ENDIF}
+{$IFDEF FHIR_DEVICEUSAGE}                        tcClinical, {$ENDIF}
 {$IFDEF FHIR_DIAGNOSTICREPORT}                   tcClinical, {$ENDIF}
 {$IFDEF FHIR_DOCUMENTMANIFEST}                   tcDocuments, {$ENDIF}
 {$IFDEF FHIR_DOCUMENTREFERENCE}                  tcDocuments, {$ENDIF}
@@ -116,6 +116,7 @@ const
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}                tcOther, {$ENDIF}
 {$IFDEF FHIR_INGREDIENT}                         tcMedicationDefinition, {$ENDIF}
 {$IFDEF FHIR_INSURANCEPLAN}                      tcFinancial, {$ENDIF}
+{$IFDEF FHIR_INVENTORYREPORT}                    tcOther, {$ENDIF}
 {$IFDEF FHIR_INVOICE}                            tcFinancial, {$ENDIF}
 {$IFDEF FHIR_LIBRARY}                            tcOther, {$ENDIF}
 {$IFDEF FHIR_LINKAGE}                            tcData, {$ENDIF}

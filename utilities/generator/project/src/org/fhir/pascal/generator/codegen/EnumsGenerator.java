@@ -34,7 +34,7 @@ public class EnumsGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.Enums");
+	  String template = config.getTemplate("fhir5_enums");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{enum.decl}}", ed.toString());
     template = template.replace("{{enum.consts}}", ec.toString());

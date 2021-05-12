@@ -14,6 +14,7 @@ import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.ElementDefinition;
+import org.hl7.fhir.r5.model.ElementDefinition.PropertyRepresentation;
 import org.hl7.fhir.r5.model.ElementDefinition.TypeRefComponent;
 import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.utilities.Utilities;
@@ -32,13 +33,15 @@ public abstract class ClassGenerator extends BaseGenerator {
     super(definitions, config, version, genDate);
   }
 
-  protected void generateType(Analysis analysis, TypeInfo ti, ClassGeneratorCategory category, StringBuilder fwds, StringBuilder intf, StringBuilder impl) throws Exception {
+  protected String generateType(Analysis analysis, TypeInfo ti, ClassGeneratorCategory category, StringBuilder fwds, StringBuilder intf, StringBuilder impl) throws Exception {
     String tn = ti.getName();
 
     String tj = tn.substring(5);
 
     StringBuilder def = new StringBuilder();
     StringBuilder defPriv1 = new StringBuilder();
+    StringBuilder fields = new StringBuilder();
+    StringBuilder sizers = new StringBuilder();
     StringBuilder defPriv2 = new StringBuilder();
     StringBuilder defPub = new StringBuilder();
     StringBuilder impli = new StringBuilder();
@@ -63,7 +66,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     types.add(tn);
     
     for (ElementDefinition c : ti.getChildren()) {
-      generateField(analysis, ti, c, getInheritedElement(analysis, ti, c), defPriv1, defPriv2, defPub, impli, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, ti.getName().equals("Extension"), tj);
+      generateField(analysis, ti, c, getInheritedElement(analysis, ti, c), defPriv1, defPriv2, defPub, impli, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, ti.getName().equals("Extension"), tj, fields, sizers);
     }
 
     if (config.hasTemplate(tn+".private")) {
@@ -80,6 +83,8 @@ public abstract class ClassGenerator extends BaseGenerator {
     if (ti.hasChildren()) {
       def.append("    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
       def.append("    procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); override;\r\n");
+      def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
+      def.append("    function sizeInBytesV : cardinal; override;\r\n");
     }
     if (config.hasTemplate(tn+".protected")) {
       def.append(config.getTemplate(tn+".protected"));
@@ -109,7 +114,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     if (config.hasTemplate(tn+".public")) {
       def.append(config.getTemplate(tn+".public"));
     }
-    def.append("  published\r\n");
+    def.append("  {$IFNDEF FPC}published{$ENDIF}\r\n");
     def.append(defPub.toString());
     if (config.hasTemplate(tn+".published")) {
       def.append(config.getTemplate(tn+".published"));
@@ -238,6 +243,17 @@ public abstract class ClassGenerator extends BaseGenerator {
       impl2.append("begin\r\n");
       impl2.append("  result := inherited isEmpty "+empty.toString()+";\r\n");
       impl2.append("end;\r\n\r\n");
+
+      impl2.append("procedure "+tn+".listFieldsInOrder(fields : TStringList);\r\n");
+      impl2.append("begin;\r\n");
+      impl2.append("  inherited listFieldsInOrder(fields);\r\n");  
+      impl2.append(fields.toString());  
+      impl2.append("end;\r\n\r\n");
+      impl2.append("function "+tn+".sizeInBytesV;\r\n");
+      impl2.append("begin;\r\n");
+      impl2.append("  result := inherited sizeInBytesV;\r\n");  
+      impl2.append(sizers.toString());  
+      impl2.append("end;\r\n\r\n");
     }
 
     intf.append(def.toString());
@@ -247,11 +263,14 @@ public abstract class ClassGenerator extends BaseGenerator {
       def.append(config.getTemplate(tn+".implementation"));
     }
     defineList(tn, tn+"List", null, category, ti == analysis.getRootType() && analysis.isAbstract(), false, fwds, intf, impl);
+    return tn;
   }
   
   protected void generateAbstractType(Analysis analysis, TypeInfo ti, ClassGeneratorCategory category, StringBuilder fwds, StringBuilder intf, StringBuilder impl) throws Exception {
     StringBuilder def = new StringBuilder();
     StringBuilder defPriv1 = new StringBuilder();
+    StringBuilder fields = new StringBuilder();
+    StringBuilder sizers = new StringBuilder();
     StringBuilder defPriv2 = new StringBuilder();
     StringBuilder defPub = new StringBuilder();
     StringBuilder impli = new StringBuilder();
@@ -276,7 +295,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     String tj = tn.substring(5);
     
     for (ElementDefinition e : ti.getChildren()) {
-      generateField(analysis, ti, e, getInheritedElement(analysis, ti, e), defPriv1, defPriv2, defPub, impli, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), tj);
+      generateField(analysis, ti, e, getInheritedElement(analysis, ti, e), defPriv1, defPriv2, defPub, impli, create, destroy, assign, empty, getkids, getkidsvars, getprops, getpropsvars, setprops, insprops, makeprops, propTypes, delprops, replprops, reorderprops, tn, "", category, e.getName().equals("Extension"), tj, fields, sizers);
     }
 
     def.append("  // "+makeDocoSafe(analysis.getStructure().getDescription(), "// ")+"\r\n");
@@ -294,6 +313,8 @@ public abstract class ClassGenerator extends BaseGenerator {
     if (ti.hasChildren()) {
       def.append("    procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;\r\n");
       def.append("    procedure ListProperties(oList : "+listForm("TFHIRProperty")+"; bInheritedProperties, bPrimitiveValues : Boolean); override;\r\n");
+      def.append("    procedure listFieldsInOrder(fields : TStringList); override;\r\n");
+      def.append("    function sizeInBytesV : cardinal; override;\r\n");
     }
     if (tn.equals("TFhirResource")) {
       def.append("    function GetResourceType : TFhirResourceType; virtual; abstract;\r\n");
@@ -341,7 +362,7 @@ public abstract class ClassGenerator extends BaseGenerator {
       def.append(config.getTemplate(tn+".public"));
     }
     if (tn.equals("TFhirResource") || ti.hasChildren() || config.hasTemplate(tn+".published")) {
-      def.append("  published\r\n");
+      def.append("  {$IFNDEF FPC}published{$ENDIF}\r\n");
     }
     if (tn.equals("TFhirResource")) {
       def.append("    property ResourceType : TFhirResourceType read GetResourceType;\r\n\r\n");
@@ -580,6 +601,17 @@ public abstract class ClassGenerator extends BaseGenerator {
       impl2.append("begin\r\n");
       impl2.append("  result := inherited isEmpty "+empty.toString()+";\r\n");
       impl2.append("end;\r\n\r\n");
+      
+      impl2.append("procedure "+tn+".listFieldsInOrder(fields : TStringList);\r\n");
+      impl2.append("begin;\r\n");
+      impl2.append("  inherited listFieldsInOrder(fields);\r\n");  
+      impl2.append(fields.toString());
+      impl2.append("end;\r\n\r\n");
+      impl2.append("function "+tn+".sizeInBytesV;\r\n");
+      impl2.append("begin;\r\n");
+      impl2.append("  result := inherited sizeInBytesV;\r\n");  
+      impl2.append(sizers.toString());  
+      impl2.append("end;\r\n\r\n");      
     }
     impl2.append("function "+tn+".Link : "+tn+";\r\n");
     impl2.append("begin\r\n");
@@ -619,6 +651,8 @@ public abstract class ClassGenerator extends BaseGenerator {
               "    FIndex : integer;\r\n"+
               "    FList : "+tnl+";\r\n"+
               "    function GetCurrent : "+tn+";\r\n"+
+              "  protected\r\n"+
+              "    function sizeInBytesV : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create(list : "+tnl+");\r\n"+
               "    destructor Destroy; override;\r\n"+
@@ -720,6 +754,12 @@ public abstract class ClassGenerator extends BaseGenerator {
               "function "+tnl+"Enumerator.GetCurrent : "+tn+";\r\n"+
               "begin\r\n"+
               "  Result := FList[FIndex];\r\n"+
+              "end;\r\n"+
+              "\r\n"+
+              "function "+tnl+"Enumerator.sizeInBytesV : cardinal;\r\n"+
+              "begin\r\n"+
+              "  result := inherited sizeInBytesV;\r\n"+
+              "  inc(result, FList.sizeInBytes);\r\n"+
               "end;\r\n"+
           "\r\n");
       impl.append(
@@ -913,13 +953,18 @@ public abstract class ClassGenerator extends BaseGenerator {
 
   private void generateField(Analysis analysis, TypeInfo ti, ElementDefinition e, ElementDefinition base, StringBuilder defPriv1, StringBuilder defPriv2, StringBuilder defPub, StringBuilder impli, StringBuilder create, StringBuilder destroy, 
         StringBuilder assign, LineLimitedStringBuilder empty, StringBuilder getkids, StringBuilder getkidsvars, StringBuilder getprops, StringBuilder getpropsvars, StringBuilder setprops, StringBuilder insprops, StringBuilder makeprops,
-        StringBuilder propTypes, StringBuilder delprops, StringBuilder replprops, StringBuilder reorderprops, String cn, String pt, ClassGeneratorCategory category, boolean isExtension, String tj) throws Exception {
+        StringBuilder propTypes, StringBuilder delprops, StringBuilder replprops, StringBuilder reorderprops, String cn, String pt, ClassGeneratorCategory category, boolean isExtension, String tj, StringBuilder fields, StringBuilder sizers) throws Exception {
 
     String tn = e.getUserString("pascal.type");
     String path = e.getPath();
 
     String parse = null;
     String propV = "F"+getTitle(getElementName(e.getName()));
+    if (e.hasRepresentation(PropertyRepresentation.XMLATTR)) { 
+      fields.append("  fields.add('@"+e.getName()+"');\r\n");
+    } else {
+      fields.append("  fields.add('"+e.getName()+"');\r\n");
+    }
     String s = getElementName(e.getName());
     String sumSet = "";
     if (s.equals("total") && path.startsWith("Bundle"))
@@ -941,6 +986,7 @@ public abstract class ClassGenerator extends BaseGenerator {
     if (e.unbounded()) {
       if (e.hasUserData("pascal.enum")) {
         if (base == null) {
+          sizers.append("  inc(result, F"+getTitle(s)+".sizeInBytes);\r\n");
           defPriv1.append("    F"+getTitle(s)+" : "+listForm("TFhirEnum")+";\r\n");
           destroy.append("  F"+getTitle(s)+".Free;\r\n");
           empty.append(" and isEmptyProp(F"+getTitle(s)+")");
@@ -1010,6 +1056,7 @@ public abstract class ClassGenerator extends BaseGenerator {
         s = s+"List";
         defPub.append("    // "+makeDocoSafe(e.getDefinition(), "// ")+"\r\n");
         if (base == null) { 
+          sizers.append("  inc(result, "+propV+"List.sizeInBytes);\r\n");
           defPriv1.append("    F"+s+" : "+tnl+";\r\n");
           destroy.append("  F"+getTitle(s)+".Free;\r\n");
           empty.append(" and isEmptyProp(F"+s+")");

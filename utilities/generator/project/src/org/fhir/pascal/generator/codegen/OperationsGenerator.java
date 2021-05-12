@@ -34,17 +34,17 @@ public class OperationsGenerator extends BaseGenerator {
     super(definitions, configuration, version, genDate);
   }
 
-	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.Operations");
+  public void generate(String filename) throws Exception {
+    String template = config.getTemplate("fhir5_operations");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{op.intf}}", o1.toString());
     template = template.replace("{{op.impl}}", o2.toString());
 
     OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(filename));
     w.write(template);
-		w.flush();
-		w.close();
-	}
+    w.flush();
+    w.close();
+  }
 
   public void genOperation(OperationDefinition op) throws IOException {
     String name = Utilities.capitalize(getPascalName(op.getCode()));
@@ -52,17 +52,21 @@ public class OperationsGenerator extends BaseGenerator {
       return;
     opNames.add(name);
 
-    line(o1, "  //Operation "+op.getCode()+" ("+op.getName()+")");
+    line(o1, "  //Operation "+op.getCode()+" ("+op.present()+")");
 
     genOp(op, op.getParameter(), OperationParameterUse.IN, "Request", "Req");
     genOp(op, op.getParameter(), OperationParameterUse.OUT, "Response", "Resp");
-    
+
   }
-	
+
 
   private void genOp(OperationDefinition op, List<OperationDefinitionParameterComponent> plist, OperationParameterUse use, String suffix, String prefix) throws IOException {
+    if (op.getId().equals("NamingSystem-translate-id")) {
+      return;
+    }
     String name = Utilities.capitalize(getPascalName(op.getCode()));
     StringBuilder fields = new StringBuilder();
+    StringBuilder sizers = new StringBuilder();
     StringBuilder accessors = new StringBuilder();
     StringBuilder properties = new StringBuilder();
     StringBuilder destroy = new StringBuilder();
@@ -99,10 +103,12 @@ public class OperationsGenerator extends BaseGenerator {
 
         if (list) {
           if (!obj) {
-            fields.append("    F"+Utilities.capitalize(pn)+"List : TList<"+pt+">;\r\n");
-            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TList<"+pt+">.create;\r\n");
+            String tn =pt.equals("String") ? "TStringList" : "TList<"+pt+">";
+            fields.append("    F"+Utilities.capitalize(pn)+"List : "+tn+";\r\n");
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+"List.sizeInBytes);\r\n");
+            gencreate.append("  F"+Utilities.capitalize(pn)+"List := "+tn+".create;\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
-            properties.append("    property "+pn+"List : TList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
+            properties.append("    property "+pn+"List : "+tn+" read F"+Utilities.capitalize(pn)+"List;\r\n");
 
             vars.add(pt);
             String v = "v"+Integer.toString(vars.size());
@@ -117,6 +123,7 @@ public class OperationsGenerator extends BaseGenerator {
 
           } else {
             fields.append("    F"+Utilities.capitalize(pn)+"List : TFslList<"+pt+">;\r\n");
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+"List.sizeInBytes);\r\n");
             gencreate.append("  F"+Utilities.capitalize(pn)+"List := TFslList<"+pt+">.create;\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
             properties.append("    property "+pn+"List : TFslList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
@@ -144,6 +151,9 @@ public class OperationsGenerator extends BaseGenerator {
         } else {
           fields.append("    F"+Utilities.capitalize(pn)+" : "+pt+";\r\n");
           if (obj) {
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+".sizeInBytes);\r\n");
+          } 
+          if (obj) {
             accessors.append("    procedure Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+".free;\r\n");
             line(o2, "procedure TFHIR"+name+"Op"+suffix+".Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\nbegin\r\n  F"+Utilities.capitalize(pn)+".free;\r\n  F"+Utilities.capitalize(pn)+" := value;\r\nend;");
@@ -151,9 +161,10 @@ public class OperationsGenerator extends BaseGenerator {
           properties.append("    property "+pn+" : "+pt+" read F"+Utilities.capitalize(pn)+" write "+(obj ? "Set" : "F")+Utilities.capitalize(pn)+";\r\n");
 
           if (!pt.equals("Boolean")) {
-            if (pt.equals("String"))
+            if (pt.equals("String")) {
               params.append("    if (F"+Utilities.capitalize(pn)+" <> '') then\r\n");
-            else if (pt.equals("TFslDateTime"))
+              sizers.append("  inc(result, (F"+Utilities.capitalize(pn)+".length * sizeof(char))+12);\r\n");
+            } else if (pt.equals("TFslDateTime"))
               params.append("    if (F"+Utilities.capitalize(pn)+".notNull) then\r\n");
             else
               params.append("    if (F"+Utilities.capitalize(pn)+" <> nil) then\r\n");
@@ -205,6 +216,7 @@ public class OperationsGenerator extends BaseGenerator {
               accessors.toString()+
               "  protected\r\n"+
               "    function isKnownName(name : String) : boolean; override;\r\n"+
+              "    function sizeInBytesV : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create; overload; override;\r\n"+
               "    constructor Create(params : TFhirParametersParameter"+"); overload; override;\r\n"+
@@ -219,6 +231,7 @@ public class OperationsGenerator extends BaseGenerator {
               accessors.toString()+
               "  protected\r\n"+
               "    function isKnownName(name : String) : boolean; override;\r\n"+
+              "    function sizeInBytesV : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create; overload; override;\r\n"+
               "    destructor Destroy; override;\r\n"+
@@ -294,6 +307,11 @@ public class OperationsGenerator extends BaseGenerator {
           "begin\r\n"+
               "  result := StringArrayExists(["+names.substring(2)+"], name);\r\n"+
           "end;\r\n");
+    o2.append("\r\nfunction TFHIR"+name+"Op"+suffix+".sizeInBytesV : cardinal;\r\n");
+    o2.append("begin\r\n");
+    o2.append("  result := inherited sizeInBytesV;\r\n");
+    o2.append(sizers.toString());
+    o2.append("end;\r\n\r\n");
   }
 
 

@@ -1,4 +1,4 @@
-unit fhir5_resources;
+unit fhir5_constants;
 
 {$I fhir5.inc}
 
@@ -36,29 +36,28 @@ interface
 {{mark}}
 
 uses
-  SysUtils, Classes, 
-  fsl_base, fsl_utilities, fsl_stream, 
-  fhir_objects, fhir_utilities,  
-  fhir5_base, fhir5_enums, fhir5_types;
+  SysUtils, Classes,
+  fsl_utilities, fsl_stream,
+  fhir_objects, fhir5_types, fhir5_resources, fhir5_resources_base;
 
-{{$rt.enum}}
+const
+  currentFHIRVersionRelease = fhirVersionRelease5;
+  FHIR_GENERATED_VERSION = '{{ver-mmp}}';
+  FHIR_GENERATED_VERSION_BASE = '{{ver-mm}}';
+  FHIR_GENERATED_PUBLICATION = '5';
+  FHIR_GENERATED_DATE = '{{date}}';
+
+{{rt.consts}}
 
 type
-{{reslist-fwds}}
 
-{{res.abstract.intf}}
+{{search.param.enums}}
 
-{{res.concrete.intf}}
+const
 
+{{search.param.consts}}
 
 implementation
-
-uses
-  fhir5_utilities;
-
-{{res.abstract.impl}}
-
-{{res.concrete.impl}}
 
 end.
 
