@@ -1087,7 +1087,6 @@ begin
                 res.free;
               end;
             end;
-            break;
           end;
         html.append('</table>'#13#10);
 

@@ -157,11 +157,11 @@ function TFHIRFeature.matches(f: TFHIRFeature): boolean;
 var
   i : integer;
 begin
-  if (f = nil) or (FContext.Count > f.FContext.Count) then
+  if (f = nil) or (FContext.Count < f.FContext.Count) then
     result := false
   else
   begin
-    for i := 0 to FContext.Count - 1 do
+    for i := 0 to f.FContext.Count - 1 do
       if not FContext[i].matches(f.FContext[i]) then
         exit(false);
     result := (f.value = '') or (f.value = value);
@@ -284,7 +284,7 @@ function TFHIRFeatureContextNode.ToString: string;
 begin
   result := FKind;
   if FQualifier <> '' then
-    result := result + ':' + FQualifier;
+    result := result + ':' + FQualifier
 end;
 
 { TFHIRFeatureComparer }
