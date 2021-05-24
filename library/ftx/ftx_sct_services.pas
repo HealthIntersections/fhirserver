@@ -59,7 +59,7 @@ The content loads and works extremely quickly.
 Uses
   SysUtils, Classes, Generics.Collections, Character,
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
 
@@ -712,6 +712,7 @@ operations
     function getRefSet(id : int64) : TSnomedReferenceSetMemberArray;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -1400,6 +1401,13 @@ function TSnomedServices.DebugDesc(index: cardinal): String;
 begin
   checkIsLoaded;
   result := GetConceptId(index)+'|'+GetDisplayName(index, FDefaultLanguage)+'|';
+end;
+
+procedure TSnomedServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:descends'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:in'));
 end;
 
 function TSnomedServices.Definition(context: TCodeSystemProviderContext): string;

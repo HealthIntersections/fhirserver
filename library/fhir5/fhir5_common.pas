@@ -5235,19 +5235,19 @@ begin
     f.value := 'SMART-on-FHIR';
 
     f := statement.restList[0].featureList.Append;
-    f.code := 'ouath-uris-register';
+    f.code := 'oauth-uris-register';
     f.value := register;
 
     f := statement.restList[0].featureList.Append;
-    f.code := 'ouath-uris-authorize';
+    f.code := 'oauth-uris-authorize';
     f.value := authorize;
 
     f := statement.restList[0].featureList.Append;
-    f.code := 'ouath-uris-token';
+    f.code := 'oauth-uris-token';
     f.value := token;
 
     f := statement.restList[0].featureList.Append;
-    f.code := 'ouath-uris-manage';
+    f.code := 'oauth-uris-manage';
     f.value := manage;
 
     for s in caps do

@@ -37,7 +37,7 @@ Uses
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum,
   fsl_http,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
-  fhir_common,
+  fhir_common, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -264,6 +264,7 @@ Type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
     procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
@@ -416,6 +417,11 @@ begin
   FModel := TUcumModel.Create;
   FHandlers := TUcumRegistry.Create;
   FHandlers.Register;
+end;
+
+procedure TUcumServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'canonical:equals'));
 end;
 
 function TUcumServices.Definition(context: TCodeSystemProviderContext): string;

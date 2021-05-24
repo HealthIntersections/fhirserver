@@ -36,7 +36,7 @@ Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
   fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc,
   fsl_http,
-  fhir_objects, fhir_common, fhir_utilities, fhir_factory,
+  fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -462,6 +462,7 @@ Type
     procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
   End;
 
@@ -937,6 +938,28 @@ begin
   FStems := TLoincStems.Create;
   FEntries := TLOINCHeirarchyEntryList.create;
   FAnswerLists := TLOINCAnswersList.create;
+end;
+
+procedure TLOINCServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SCALE_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SCALE_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CLASS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'COMPONENT:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'PROPERTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TIME_ASPCT:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SYSTEM:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'METHOD_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'ORDER_OBS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CLASSTYPE:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STATUS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'copyright:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'parent:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'ancestor:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:descends'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'LIST:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TYPE:equals'));
 end;
 
 function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;

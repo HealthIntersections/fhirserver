@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_http, fsl_json, fsl_fetcher,
-  fhir_objects, fhir_common, fhir_factory,
+  fhir_objects, fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -98,7 +98,8 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function defToThisVersion(specifiedVersion : String) : boolean; override;
-  end;
+     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+ end;
 
 implementation
 
@@ -107,6 +108,10 @@ implementation
 constructor THGVSProvider.Create;
 begin
   inherited Create;
+end;
+
+procedure THGVSProvider.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 destructor THGVSProvider.Destroy;

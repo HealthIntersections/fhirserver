@@ -5432,7 +5432,6 @@ begin
   FFeatures.defineFeature('rest.validation', FServerContext.Validate);
   FFeatures.defineFeature('rest.auditing', FServerContext.DoAudit);
 
-//  FServerContext.TerminologyServer.defineFeatures(FFeatures);
   for cfg in FServerContext.ResConfig.Values do
     if (cfg.name <> '') then
     begin

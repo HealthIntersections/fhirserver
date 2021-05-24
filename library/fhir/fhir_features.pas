@@ -43,6 +43,9 @@ type
     FQualifier: String;
     class function fromString(syntax : String) : TFHIRFeatureContextNode; overload;
   public
+    function matches(f : TFHIRFeatureContextNode) : boolean;
+    function ToString: string; override;
+
     property kind : String read FKind write FKind;
     property qualifier : String read FQualifier write FQualifier;
   end;
@@ -67,6 +70,8 @@ type
     property value : String read FValue;
 
     function matches(f : TFHIRFeature) : boolean;
+    function livesOn(f : TFHIRFeature) : boolean;
+    function relativePath(f : TFHIRFeature) : string;
     function makeSubFeature(subId, value : String) : TFHIRFeature;
   end;
 
@@ -135,7 +140,7 @@ begin
   try
     result.FId := syntax.Trim;
     result.FValue := value.Trim;
-    for s in syntax.split([',']) do
+    for s in syntax.split(['.']) do
       result.FContext.Add(TFHIRFeatureContextNode.fromString(s.Trim));
     result.link;
   finally
@@ -149,11 +154,45 @@ begin
 end;
 
 function TFHIRFeature.matches(f: TFHIRFeature): boolean;
+var
+  i : integer;
 begin
-  if (f = nil) or not id.StartsWith(f.id) then
+  if (f = nil) or (FContext.Count > f.FContext.Count) then
     result := false
   else
+  begin
+    for i := 0 to FContext.Count - 1 do
+      if not FContext[i].matches(f.FContext[i]) then
+        exit(false);
     result := (f.value = '') or (f.value = value);
+  end;
+end;
+
+function TFHIRFeature.relativePath(f: TFHIRFeature): string;
+var
+  i : integer;
+begin
+  result := '';
+  for i := f.FContext.count to FContext.count - 1 do
+    if result = '' then
+      result := FContext[i].ToString
+    else
+      result := result + '.' + FContext[i].ToString;
+end;
+
+function TFHIRFeature.livesOn(f: TFHIRFeature): boolean;
+var
+  i : integer;
+begin
+  if (f = nil) or (FContext.Count <> f.FContext.Count+1) then
+    result := false
+  else
+  begin
+    for i := 0 to f.FContext.Count - 1 do
+      if not FContext[i].matches(f.FContext[i]) then
+        exit(false);
+    result := (f.value = '') or (f.value = value);
+  end;
 end;
 
 procedure TFHIRFeature.Setvalue(const Value: String);
@@ -234,6 +273,18 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFHIRFeatureContextNode.matches(f: TFHIRFeatureContextNode): boolean;
+begin
+  result := (FKind = f.FKind) and ((f.FQualifier = '') or (f.qualifier = qualifier));
+end;
+
+function TFHIRFeatureContextNode.ToString: string;
+begin
+  result := FKind;
+  if FQualifier <> '' then
+    result := result + ':' + FQualifier;
 end;
 
 { TFHIRFeatureComparer }

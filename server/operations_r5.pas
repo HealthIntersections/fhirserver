@@ -3886,6 +3886,8 @@ begin
   try
     fl := manager.Storage.Features.sortedFeatures;
     try
+      manager.defineFeatures(fl);
+      fl.Sort;
       if request.Parameters.has('feature') then
       begin
         matched := true;

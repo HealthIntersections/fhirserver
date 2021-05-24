@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_http,
-  fhir_common,
+  fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -178,6 +178,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 const
@@ -259,6 +260,14 @@ begin
   FDefinitions := TIETFLanguageDefinitions.Create(FileToString(sourceFile, TEncoding.ASCII));
 end;
 
+
+procedure TIETFLanguageCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
+var
+  s : string;
+begin
+  for s in CODES_TIETFLanguageComponent do
+    features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', s+':exists'));
+end;
 
 function TIETFLanguageCodeServices.TotalCount : integer;
 begin

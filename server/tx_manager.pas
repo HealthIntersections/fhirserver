@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
   fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http,
   fdb_manager,
-  fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory,
+  fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_icd10, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
@@ -84,6 +84,7 @@ Type
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
     procedure sweepSnomed;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
 
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
@@ -225,6 +226,7 @@ Type
     function NextValueSetMemberKey : integer;
 
     function cacheSize : UInt64; virtual;
+    procedure defineFeatures(features: TFslList<TFHIRFeature>); virtual;
   end;
 
 implementation
@@ -299,6 +301,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 function TAllCodeSystemsProvider.TotalCount : integer;
@@ -419,6 +422,11 @@ begin
   inherited Create;
   FStore := store;
   FActCode := actCode;
+end;
+
+procedure TAllCodeSystemsProvider.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+
 end;
 
 function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
@@ -868,6 +876,26 @@ begin
     addCodesystemUri('ACIR', 'acir', FCommonTerminologies.FACIR.systemUri(nil), FCommonTerminologies.FACIR.version(nil), FCommonTerminologies.FACIR.TotalCount);
 end;
 
+
+procedure TTerminologyServerStore.defineFeatures(features: TFslList<TFHIRFeature>);
+var
+  cs : TFhirCodeSystemW;
+  list : TFslList<TFHIRCodeSystemW>;
+begin
+  FCommonTerminologies.defineFeatures(features);
+  list := TFslList<TFHIRCodeSystemW>.create;
+  try
+    FCodeSystems.listAll(list);
+    for cs in list do
+    begin
+
+    end;
+  finally
+    list.Free;
+  end;
+
+
+end;
 
 destructor TTerminologyServerStore.Destroy;
 begin
@@ -1744,6 +1772,28 @@ begin
   finally
     p.free;
   end;
+end;
+
+procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  if FLoinc <> nil then
+    FLoinc.defineFeatures(features);
+  if FDefSnomed <> nil then
+    FDefSnomed.defineFeatures(features);
+  if FUcum <> nil then
+    FUcum.defineFeatures(features);
+  if FRxNorm <> nil then
+    FRxNorm.defineFeatures(features);
+  if FNciMeta <> nil then
+    FNciMeta.defineFeatures(features);
+  if FUnii <> nil then
+    FUnii.defineFeatures(features);
+  if FACIR <> nil then
+    FACIR.defineFeatures(features);
+  if FNDFRT <> nil then
+    FNDFRT.defineFeatures(features);
+  if FNDC <> nil then
+    FNDC.defineFeatures(features);
 end;
 
 destructor TCommonTerminologies.Destroy;

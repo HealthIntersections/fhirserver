@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_http, fsl_threads,
   fdb_manager,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -122,6 +122,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
   TRxNormServices = class (TUMLSServices)
@@ -471,6 +472,15 @@ begin
 end;
 
 
+
+procedure TUMLSServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SAB:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CUI:equals'));
+end;
 
 function TUMLSServices.TotalCount : integer;
 var

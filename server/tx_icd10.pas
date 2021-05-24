@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_http,
-  fhir_objects, fhir_common, fhir_factory,
+  fhir_objects, fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -122,7 +122,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
     procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function defToThisVersion(specifiedVersion : String) : boolean; override;
-
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -167,6 +167,10 @@ begin
   FCodes := TFslList<TICD10Node>.create;
   FIsDefault := isDefault;
   load(filename);
+end;
+
+procedure TICD10Provider.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 destructor TICD10Provider.Destroy;

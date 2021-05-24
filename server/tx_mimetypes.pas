@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-   fsl_utilities, fsl_stream, fsl_base, fsl_http,
-  fhir_common,
+  fsl_utilities, fsl_stream, fsl_base, fsl_http,
+  fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -89,6 +89,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -100,6 +101,10 @@ begin
   inherited Create;
 end;
 
+
+procedure TMimeTypeCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+end;
 
 function TMimeTypeCodeServices.TotalCount : integer;
 begin

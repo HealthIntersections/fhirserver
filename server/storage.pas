@@ -251,6 +251,7 @@ type
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     property Operations : TFslList<TFhirOperation> read FOperations;
     function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); overload;
   end;
 
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)
@@ -302,7 +303,7 @@ type
     function SupportsTransactions : boolean; virtual;
     function SupportsSearch : boolean; virtual;
     function SupportsHistory : boolean; virtual;
-    procedure defineFeatures; virtual;
+    procedure defineFeatures; overload; virtual;
   public
     constructor Create(factory : TFHIRFactory); virtual;
     destructor Destroy; override;
@@ -375,8 +376,6 @@ type
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
     function cacheSize : UInt64; virtual;
     procedure clearCache; virtual;
-
-    procedure dumpFeatures;
   end;
 
 
@@ -409,15 +408,6 @@ begin
   FFeatures.Free;
   FFactory.Free;
   inherited;
-end;
-
-procedure TFHIRStorageService.dumpFeatures;
-var
-  f : TFHIRFeature;
-begin
-  Logging.log('Features defined for this server');
-  for f in FFeatures.sortedFeatures.forEnum do
-    Logging.log(f.ToString);
 end;
 
 function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
@@ -591,6 +581,11 @@ begin
   finally
     int.Free;
   end;
+end;
+
+procedure TFHIROperationEngine.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  TFHIRServerContext(FServerContext).TerminologyServer.defineFeatures(features);
 end;
 
 destructor TFHIROperationEngine.Destroy;
@@ -936,6 +931,7 @@ var
   i : integer;
 //  ct : TFhirConformanceContact;
   ServerContext : TFHIRServerContext;
+  fl : TFslList<TFHIRFeature>;
 begin
   ServerContext := TFHIRServerContext(FServerContext);
   try
@@ -1114,6 +1110,14 @@ begin
         // factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
       finally
         html.free;
+      end;
+      fl := Storage.FFeatures.sortedFeatures;
+      try
+        TFHIRServerContext(FServerContext).TerminologyServer.defineFeatures(fl);
+        fl.Sort;
+        oConf.defineFeatures(fl);
+      finally
+        fl.Free;
       end;
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then

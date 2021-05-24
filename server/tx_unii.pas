@@ -37,6 +37,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http,
   fdb_manager,
+  fhir_features,
   ftx_service;
 
 type
@@ -106,6 +107,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 Procedure ImportUnii(filename : String; dbm : TFDBManager);
@@ -124,6 +126,10 @@ begin
   self.db := db;
 end;
 
+
+procedure TUniiServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+end;
 
 function TUniiServices.TotalCount : integer;
 var

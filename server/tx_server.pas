@@ -42,7 +42,7 @@ uses
 
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads,
   fdb_manager,
-  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory,
+  fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
   fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
@@ -122,6 +122,7 @@ Type
     function Summary : String;
     function cacheSize : UInt64; override;
     procedure clearCache;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -142,6 +143,11 @@ begin
   FClosures := TFslMap<TClosureManager>.create('tx.closure');
   if (DB <> nil) then
     LoadClosures;
+end;
+
+procedure TTerminologyServer.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  inherited;
 end;
 
 destructor TTerminologyServer.Destroy;

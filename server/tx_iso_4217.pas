@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http,
-  fhir_common,
+  fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -107,6 +107,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 
@@ -120,6 +121,11 @@ begin
   FCurrencies := TIso4217CurrencySet.Create;
 end;
 
+
+procedure TIso4217Services.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'decimals:equals'));
+end;
 
 function TIso4217Services.TotalCount : integer;
 begin

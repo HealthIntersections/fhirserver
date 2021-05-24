@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_http,
-  fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities,
+  fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features,
   ftx_service;
 
 type
@@ -218,6 +218,7 @@ type
     procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
     procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 
@@ -401,6 +402,14 @@ begin
   FFactory := factory;
   if (FCs.CodeSystem.tag <> nil) then
     Fmap := TCodeSystemAdornment(FCs.CodeSystem.Tag).FMap;
+end;
+
+procedure TFhirCodeSystemProvider.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-not-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'child:exists'));
 end;
 
 function TFhirCodeSystemProvider.Definition(context: TCodeSystemProviderContext): string;

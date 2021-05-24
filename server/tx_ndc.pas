@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads,
   fdb_manager, fdb_dialects,
-  fhir_objects, fhir_common, fhir_factory, fhir_utilities,
+  fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
   ftx_service;
 
@@ -134,6 +134,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -460,6 +461,11 @@ begin
   FRoutes := TDictionary<integer, String>.create;
   FDoseforms := TDictionary<integer, String>.create;
   load();
+end;
+
+procedure TNDCServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+
 end;
 
 destructor TNDCServices.Destroy;

@@ -35,8 +35,8 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_http,
-  fsl_base, fsl_stream, 
-  fhir_common,
+  fsl_base, fsl_stream,
+  fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -101,6 +101,7 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -119,6 +120,12 @@ begin
   Load;
 end;
 
+
+procedure TAreaCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'type:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'type:equals'));
+end;
 
 function TAreaCodeServices.TotalCount : integer;
 begin

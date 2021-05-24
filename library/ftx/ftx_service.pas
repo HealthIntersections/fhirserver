@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_base, fsl_collections, fsl_fpc,
   fsl_http,
-  fhir_common, fhir_factory,
+  fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks;
 
 const
@@ -131,6 +131,7 @@ Type
     function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
     procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;

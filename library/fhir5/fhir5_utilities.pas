@@ -6607,10 +6607,10 @@ begin
   try
     for f in source do
     begin
-      if f.matches(pf) then
+      if f.livesOn(pf) then
         with dest.Append do
         begin
-          code := f.id;
+          code := f.relativePath(pf);
           value := f.value;
         end;
     end;

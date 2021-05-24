@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
   fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc,
-  fhir_common,
+  fhir_common, fhir_features,
   ftx_service;
 
 type
@@ -102,6 +102,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -116,6 +117,11 @@ begin
   Load;
 end;
 
+
+procedure TCountryCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'code:regex'));
+end;
 
 function TCountryCodeServices.TotalCount : integer;
 begin

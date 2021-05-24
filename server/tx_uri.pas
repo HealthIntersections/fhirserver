@@ -36,6 +36,7 @@ uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_stream, fsl_http,
   fdb_manager,
+  fhir_features,
   ftx_service;
 
 type
@@ -83,6 +84,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -133,6 +135,10 @@ end;
 function TUriServices.Code(context : TCodeSystemProviderContext) : string;
 begin
   result := TUriHolder(context).url;
+end;
+
+procedure TUriServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 function TUriServices.Definition(context: TCodeSystemProviderContext): string;

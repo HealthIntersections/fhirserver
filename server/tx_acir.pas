@@ -36,6 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_utilities, fsl_base, fsl_http,
+  fhir_features,
   ftx_service;
 
 type
@@ -110,6 +111,7 @@ type
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 implementation
@@ -125,6 +127,10 @@ begin
   Load;
 end;
 
+
+procedure TACIRServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+end;
 
 function TACIRServices.TotalCount : integer;
 begin
