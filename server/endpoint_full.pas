@@ -64,6 +64,7 @@ Type
   private
     FFactory : TFHIRFactory;
     FBundle: TFHIRBundleW;
+    FList : TStringList;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -289,10 +290,13 @@ begin
   inherited Create;
   FFactory := factory;
   FBundle := FFactory.wrapBundle(FFactory.makeResource('Bundle'));
+  FList := TStringList.create;
+  FList.Sorted := false;
 end;
 
 destructor TPackageLoader.Destroy;
 begin
+  FList.Free;
   FFactory.Free;
   FBundle.Free;
   inherited;
@@ -301,10 +305,16 @@ end;
 procedure TPackageLoader.load(rType, id: String; stream: TStream);
 var
   p : TFHIRParser;
+  s : String;
 begin
   p := FFactory.makeParser(nil, ffJson, THTTPLanguages.create('en'));
   try
-    FBundle.addEntry.resource := p.parseResource(stream);
+    s := rType + '|' + id;
+    if FList.IndexOf(s) = -1 then
+    begin
+      FBundle.addEntry.resource := p.parseResource(stream);
+      Flist.Add(s);
+    end;
   finally
     p.Free;
   end;

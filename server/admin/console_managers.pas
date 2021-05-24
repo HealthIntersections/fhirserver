@@ -548,6 +548,7 @@ begin
   try
     frm.EP := TFHIRServerConfigSection.create('EP'+inttostr(FFile['endpoints'].sections.Count));
     frm.EP['path'].value := '/path';
+    frm.Cfg := FFile.link;
     if frm.ShowModal = mrOK then
     begin
       result := FFile['endpoints'].section[frm.EP.Name].link;

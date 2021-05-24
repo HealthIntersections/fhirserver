@@ -99,7 +99,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object ToolButton2: TToolButton
             Left = 24
-            Height = 22
+            Height = 8
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
@@ -321,11 +321,11 @@ object MainConsoleForm: TMainConsoleForm
             Height = 509
             Top = 40
             Width = 882
-            ActivePage = tbWebSettings
+            ActivePage = tbEndPoints
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 0
+            TabIndex = 3
             TabOrder = 1
             object tbWebSettings: TTabSheet
               Caption = 'Web Settings'
@@ -946,18 +946,18 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbTermload: TTabSheet
               Caption = 'Terminologies'
-              ClientHeight = 475
-              ClientWidth = 870
+              ClientHeight = 481
+              ClientWidth = 874
               ImageIndex = 7
               ParentFont = False
               object Panel33: TPanel
                 Left = 0
                 Height = 34
                 Top = 0
-                Width = 870
+                Width = 874
                 Align = alTop
                 ClientHeight = 34
-                ClientWidth = 870
+                ClientWidth = 874
                 ParentFont = False
                 TabOrder = 0
                 object btnTxAdd: TBitBtn
@@ -1098,9 +1098,9 @@ object MainConsoleForm: TMainConsoleForm
               end
               object lvTx: TListView
                 Left = 0
-                Height = 441
+                Height = 447
                 Top = 34
-                Width = 870
+                Width = 874
                 Align = alClient
                 AutoWidthLastColumn = True
                 Columns = <                
@@ -1128,7 +1128,7 @@ object MainConsoleForm: TMainConsoleForm
                   end                
                   item
                     Caption = 'Status'
-                    Width = 268
+                    Width = 280
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1140,18 +1140,18 @@ object MainConsoleForm: TMainConsoleForm
             end
             object tbEndPoints: TTabSheet
               Caption = 'End Points'
-              ClientHeight = 475
-              ClientWidth = 870
+              ClientHeight = 481
+              ClientWidth = 874
               ImageIndex = 8
               ParentFont = False
               object Panel35: TPanel
                 Left = 0
                 Height = 34
                 Top = 0
-                Width = 870
+                Width = 874
                 Align = alTop
                 ClientHeight = 34
-                ClientWidth = 870
+                ClientWidth = 874
                 ParentFont = False
                 TabOrder = 0
                 object btnEPAdd: TBitBtn
@@ -1196,6 +1196,7 @@ object MainConsoleForm: TMainConsoleForm
                     FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
                     FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
                   }
+                  OnClick = btnEPAddClick
                   ParentFont = False
                   TabOrder = 0
                 end
@@ -1294,7 +1295,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 0
                 Height = 182
                 Top = 34
-                Width = 870
+                Width = 874
                 Align = alTop
                 AutoWidthLastColumn = True
                 Columns = <                
@@ -1323,7 +1324,7 @@ object MainConsoleForm: TMainConsoleForm
                   end                
                   item
                     Caption = 'Status'
-                    Width = 358
+                    Width = 370
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1337,27 +1338,27 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 0
                 Height = 9
                 Top = 216
-                Width = 870
+                Width = 874
                 Align = alTop
                 ResizeAnchor = akTop
               end
               object Panel38: TPanel
                 Left = 0
-                Height = 250
+                Height = 256
                 Top = 225
-                Width = 870
+                Width = 874
                 Align = alClient
                 BorderWidth = 4
                 Caption = 'Panel38'
-                ClientHeight = 250
-                ClientWidth = 870
+                ClientHeight = 256
+                ClientWidth = 874
                 ParentFont = False
                 TabOrder = 3
                 object lvPackages: TListView
                   Left = 5
-                  Height = 219
+                  Height = 225
                   Top = 26
-                  Width = 860
+                  Width = 864
                   Align = alClient
                   Checkboxes = True
                   Columns = <>
@@ -1369,7 +1370,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 5
                   Height = 21
                   Top = 5
-                  Width = 860
+                  Width = 864
                   Align = alTop
                   Alignment = taLeftJustify
                   Caption = 'Packages loaded with current EndPoint'

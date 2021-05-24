@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_utilities;
+  fhir_objects, fhir_utilities, fhir_features;
 
 Type
   TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf);
@@ -478,6 +478,7 @@ type
     procedure impl(url, desc : String); virtual; abstract;
     procedure fmt(mt : String); virtual; abstract;
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); virtual; abstract;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; virtual; abstract;
     procedure addOperation(name, url : String); virtual; abstract;
 

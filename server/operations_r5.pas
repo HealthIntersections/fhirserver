@@ -40,7 +40,7 @@ uses
   fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities,
   fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_constants, fhir5_utilities, fhir5_opbase, fhir5_operations, fhir5_pathengine, fhir5_pathnode,
   fhir5_common, fhir5_questionnaire, fhir5_validator, fhir5_context, fhir5_profiles, fhir5_narrative, fhir5_graphdefinition, fhir5_maputils,
-  fhir_codegen, fhir_diff,
+  fhir_codegen, fhir_diff, fhir_features,
   tx_operations, ftx_ucum_services,
   operations,
   session, tags, storage, database, obsservation_stats, search,
@@ -365,6 +365,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirFeatureOperation = class (TFhirNativeOperationR5)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : String; override;
+  public
+    function Name : String; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; override;
+    function formalURL : String; override;
+  end;
+
   TServerTransformerServices = class (TTransformerServices)
   private
     FServerContext : TFHIRServerContext;
@@ -672,6 +684,7 @@ begin
 //    FOperations.add(TFhirCodeSystemComposeOperation.create(Factory.link, ServerContext.TerminologyServer.Link));
   FOperations.add(TFhirObservationStatsOperation.create(Factory.link));
   FOperations.add(TFhirObservationLastNOperation.create(Factory.link));
+  FOperations.add(TFhirFeatureOperation.create(Factory.link));
 end;
 
 procedure TFhirNativeOperationEngineR5.doAuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenanceW; opName: String; httpCode: Integer; name, message: String; patientId : String);
@@ -3852,6 +3865,97 @@ begin
   finally
     op.Free;
   end;
+end;
+
+{ TFhirFeatureOperation }
+
+function TFhirFeatureOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
+begin
+  result := nil;
+end;
+
+function TFhirFeatureOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse): String;
+var
+  p : TFhirParameters;
+  fl : TFslList<TFHIRFeature>;
+  f, pf : TFhirFeature;
+  matched, m : boolean;
+  s : String;
+begin
+  p := TFhirParameters.Create;
+  try
+    fl := manager.Storage.Features.sortedFeatures;
+    try
+      if request.Parameters.has('feature') then
+      begin
+        matched := true;
+        for s in request.Parameters.values('feature') do
+        begin
+          pf := TFHIRFeature.fromString(s);
+          try
+            m := false;
+            for f in fl do
+              if f.matches(pf) then
+              begin
+                p.AddParameter('feature', f.ToString);
+                m := true;
+              end;
+            matched := matched and m;
+          finally
+            pf.Free;
+          end;
+        end;
+      end
+      else
+      begin
+        for f in fl do
+          p.AddParameter('feature', f.ToString);
+        matched := true;
+      end;
+    finally
+      fl.Free;
+    end;
+    response.Resource := p.Link;
+    if p.parameterList.Count = 0 then
+    begin
+      response.HTTPCode := 501;
+      response.Message := 'Not Implemented';
+    end
+    else
+    begin
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+    end;
+  finally
+    p.Free;
+  end;
+  result := 'Feature Negotiation';
+end;
+
+function TFhirFeatureOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/CapabilityStatement-features';
+end;
+
+function TFhirFeatureOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirFeatureOperation.Name: String;
+begin
+  result := 'features';
+end;
+
+function TFhirFeatureOperation.owningResource: String;
+begin
+  result := 'CapabilityStatement2';
+
+end;
+
+function TFhirFeatureOperation.Types: TArray<String>;
+begin
+  SetLength(result, 0);
 end;
 
 end.

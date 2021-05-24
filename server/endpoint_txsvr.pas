@@ -1328,6 +1328,7 @@ begin
   else if FStore.factory.txPackage <> '' then
     FStore.loadPackage(FStore.factory.txPackage, true);
   FStore.loadPackage(FStore.factory.txSupportPackage, false);
+  FStore.Initialise;
 
   // still to be done: load ad-hoc files
 //    for s in listF do

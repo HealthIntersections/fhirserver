@@ -325,6 +325,7 @@ type
     procedure btnCombineGoClick(Sender: TObject);
     procedure btnDeleteEditionClick(Sender: TObject);
     procedure btnDestinationClick(Sender: TObject);
+    procedure btnEPAddClick(Sender: TObject);
     procedure btnFetchObjectsClick(Sender: TObject);
     procedure btnFetchObjectsPlusClick(Sender: TObject);
     procedure btnImportLoincClick(Sender: TObject);
@@ -1334,6 +1335,11 @@ begin
   end;
   if dlgSave.Execute then
     edtDestination.text := dlgSave.filename;
+end;
+
+procedure TMainConsoleForm.btnEPAddClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainConsoleForm.btnFetchObjectsClick(Sender: TObject);

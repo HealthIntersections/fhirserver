@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_common, 
+  fhir_objects, fhir_common, fhir_features,
   fhir5_types, fhir5_resources, fhir5_operations, fhir5_opbase, fhir5_enums;
 
 const
@@ -145,7 +145,7 @@ type
     procedure setSearchMpiMatch(Value: String); override;
     procedure setSearchScore(Value: String); override;
     function getURL: String; override;
-    procedure setUrl(Value: String);  override;
+     procedure setUrl(Value: String);  override;
     function getrequestIfNoneExist: String; override;
     procedure setrequestIfNoneExist(Value: String); override;
     function getrequestIfMatch: String; override;
@@ -244,6 +244,7 @@ type
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
     procedure addOperation(name, url : String); override;
 
@@ -310,6 +311,7 @@ type
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
     procedure addOperation(name, url : String); override;
 
@@ -1361,6 +1363,10 @@ begin
   c := ct.telecomList.Append;
   c.system := MAP_TContactType[kind];
   c.value := 'http://healthintersections.com.au/';
+end;
+
+procedure TFHIRCapabilityStatement5.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 function TFHIRCapabilityStatement5.getURL: String;
@@ -5205,7 +5211,7 @@ end;
 
 function TFHIRCapabilityStatement25.addResource(code: String): TFhirCapabilityStatementRestResourceW;
 begin
-  result := TFhirCapabilityStatementRestResource5.create(statement.restList[0].resourceList.append.link);
+  result := TFhirCapabilityStatementRestResource25.create(statement.restList[0].resourceList.append.link);
   result.code := code;
 end;
 
@@ -5219,29 +5225,37 @@ begin
     statement.restList.append.mode := RestfulCapabilityModeServer;
 
   f := statement.restList[0].featureList.Append;
-  f.code := CapabilityFeatureSecurityCors;
-  f.value := CapabilityFeatureValueTrue;
+  f.code := 'security-cors';
+  f.value := 'true';
 
   if authorize <> '' then
   begin
     f := statement.restList[0].featureList.Append;
-    f.code := CapabilityFeatureSecurityService;
-    f.value := CapabilityFeatureValueTrue;
-//    security.serviceList.Append.codingList.Append;
-//    c.System := 'http://hl7.org/fhir/restful-security-service';
-//    c.code := 'SMART-on-FHIR';
-//    c.display := 'SMART-on-FHIR';
-//    statement.restList[0].security.description := 'This server implements OAuth2 for login using the Smart App Launch profile';
-//
-//    ext := statement.restList[0].security.extensionList.Append;
-//    ext.url := 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris';
-//    // ext.addExtension('dscovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FServerContext.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
-//    ext.addExtensionUri('register', register);
-//    ext.addExtensionUri('authorize', authorize);
-//    ext.addExtensionUri('token', token);
-//    ext.addExtensionUri('manage', manage);
-//    for s in caps do
-//      statement.restList[0].security.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities', s);
+    f.code := 'security-service';
+    f.value := 'SMART-on-FHIR';
+
+    f := statement.restList[0].featureList.Append;
+    f.code := 'ouath-uris-register';
+    f.value := register;
+
+    f := statement.restList[0].featureList.Append;
+    f.code := 'ouath-uris-authorize';
+    f.value := authorize;
+
+    f := statement.restList[0].featureList.Append;
+    f.code := 'ouath-uris-token';
+    f.value := token;
+
+    f := statement.restList[0].featureList.Append;
+    f.code := 'ouath-uris-manage';
+    f.value := manage;
+
+    for s in caps do
+    begin
+      f := statement.restList[0].featureList.Append;
+      f.code := 'smart-capabilities';
+      f.value := s;
+    end;
   end;
 end;
 
@@ -5254,6 +5268,11 @@ begin
   c := ct.telecomList.Append;
   c.system := MAP_TContactType[kind];
   c.value := 'http://healthintersections.com.au/';
+end;
+
+procedure TFHIRCapabilityStatement25.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  statement.defineFeatures(features);
 end;
 
 function TFHIRCapabilityStatement25.getURL: String;
@@ -5625,18 +5644,35 @@ begin
 end;
 
 function TFhirCapabilityStatementRestResource25.GetReadHistory: boolean;
+var
+  f : TFhirCapabilityStatement2RestFeature;
 begin
-  result := (Element as TFhirCapabilityStatementRestResource).readHistory;
+  result := false;
+  for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
+    if f.code = 'readHistory' then
+      exit(f.value = 'true');
 end;
 
 function TFhirCapabilityStatementRestResource25.hasInteraction: boolean;
 begin
-  result := (Element as TFhirCapabilityStatementRestResource).interactionList.Count > 0;
+  result := (Element as TFhirCapabilityStatement2RestResource).interactionList.Count > 0;
 end;
 
 procedure TFhirCapabilityStatementRestResource25.SetReadHistory(Value: boolean);
+var
+  f : TFhirCapabilityStatement2RestFeature;
 begin
-  (Element as TFhirCapabilityStatementRestResource).readHistory := Value;
+  for f in (Element as TFhirCapabilityStatement2RestResource).featureList do
+  begin
+    if f.code = 'readHistory' then
+    begin
+      f.value := 'true';
+      exit;
+    end;
+  end;
+  f := (Element as TFhirCapabilityStatement2RestResource).featureList.Append;
+  f.code := 'readHistory';
+  f.value := 'true';
 end;
 
 

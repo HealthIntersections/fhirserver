@@ -41,7 +41,7 @@ uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json,
   fhir_parser, fhir_objects,
-  fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_types, fhir5_resources_base;
+  fhir5_base, fhir5_enums, fhir5_parserBase, fhir5_resources, fhir5_constants, fhir5_types, fhir5_resources_base;
 
 Type
 
@@ -15632,9 +15632,9 @@ procedure TFHIRJsonParser.ParseCapabilityStatement2RestFeatureProperties(jsn : T
 begin
     ParseBackboneElementProperties(jsn, value);
     if jsn.has('code') or jsn.has('_code') then
-        value.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirCapabilityFeatureEnum, SYSTEMS_TFhirCapabilityFeatureEnum);
+        value.codeElement := ParseString(jsn.node['code'], jsn.vObj['_code']);
     if jsn.has('value') or jsn.has('_value') then
-        value.valueElement := parseEnum(jsn.path+'/value', jsn.node['value'], jsn.vObj['_value'], CODES_TFhirCapabilityFeatureValueEnum, SYSTEMS_TFhirCapabilityFeatureValueEnum);
+        value.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);
 end;
 
 procedure TFHIRJsonComposer.ComposeCapabilityStatement2RestFeature(json : TJSONWriter; name : string; value : TFhirCapabilityStatement2RestFeature; noObj : boolean = false);
@@ -15643,8 +15643,8 @@ begin
     exit;
   startElement(json, name, value, noObj);
   ComposeBackboneElementProperties(json, value);
-  ComposeEnumValue(json, 'code', value.codeElement, CODES_TFhirCapabilityFeatureEnum, false);
-  ComposeEnumValue(json, 'value', value.valueElement, CODES_TFhirCapabilityFeatureValueEnum, false);
+  ComposeStringValue(json, 'code', value.codeElement, false);
+  ComposeStringValue(json, 'value', value.valueElement, false);
   finishElement(json, name, value, noObj);
 end;
 

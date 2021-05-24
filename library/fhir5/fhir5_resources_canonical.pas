@@ -2876,14 +2876,14 @@ type
   // A statement that affirms support for a feature.
   TFhirCapabilityStatement2RestFeature = class (TFhirBackboneElement)
   protected
-    FCode : TFhirEnum;
-    FValue : TFhirEnum;
-    procedure SetCode(value : TFhirEnum);
-    function GetCodeST : TFhirCapabilityFeatureEnum;
-    procedure SetCodeST(value : TFhirCapabilityFeatureEnum);
-    procedure SetValue(value : TFhirEnum);
-    function GetValueST : TFhirCapabilityFeatureValueEnum;
-    procedure SetValueST(value : TFhirCapabilityFeatureValueEnum);
+    FCode : TFhirString;
+    FValue : TFhirString;
+    procedure SetCode(value : TFhirString);
+    function GetCodeST : String;
+    procedure SetCodeST(value : String);
+    procedure SetValue(value : TFhirString);
+    function GetValueST : String;
+    procedure SetValueST(value : String);
   
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
@@ -2907,12 +2907,12 @@ type
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
     // A code that describes the feature being reported on.
-    property code : TFhirCapabilityFeatureEnum read GetCodeST write SetCodeST;
-    property codeElement : TFhirEnum read FCode write SetCode;
+    property code : String read GetCodeST write SetCodeST;
+    property codeElement : TFhirString read FCode write SetCode;
 
     // A value for the feature - maybe true, false, or one of the set of codes allowed in the definition of the feature code.
-    property value : TFhirCapabilityFeatureValueEnum read GetValueST write SetValueST;
-    property valueElement : TFhirEnum read FValue write SetValue;
+    property value : String read GetValueST write SetValueST;
+    property valueElement : TFhirString read FValue write SetValue;
 
   end;
 
@@ -31843,12 +31843,12 @@ function TFhirCapabilityStatement2RestFeature.setProperty(propName : string; pro
 begin
   if (propName = 'code') then
   begin
-    CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, propValue);
+    CodeElement := asString(propValue);
     result := propValue;
   end
   else if (propName = 'value') then
   begin
-    ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, propValue);
+    ValueElement := asString(propValue);
     result := propValue;
   end
   else result := inherited setProperty(propName, propValue);
@@ -31883,8 +31883,8 @@ end;
 
 procedure TFhirCapabilityStatement2RestFeature.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirCapabilityFeatureEnum, CODES_TFhirCapabilityFeatureEnum, new)
-  else if (propName = 'value') then ValueElement := asEnum(SYSTEMS_TFhirCapabilityFeatureValueEnum, CODES_TFhirCapabilityFeatureValueEnum, new)
+  if (propName = 'code') then CodeElement := asString(new)
+  else if (propName = 'value') then ValueElement := asString(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -31941,48 +31941,48 @@ begin;
   result := inherited sizeInBytesV;
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetCode(value : TFhirEnum);
+procedure TFhirCapabilityStatement2RestFeature.SetCode(value : TFhirString);
 begin
   FCode.free;
   FCode := value;
 end;
 
-function TFhirCapabilityStatement2RestFeature.GetCodeST : TFhirCapabilityFeatureEnum;
+function TFhirCapabilityStatement2RestFeature.GetCodeST : String;
 begin
   if FCode = nil then
-    result := TFhirCapabilityFeatureEnum(0)
+    result := ''
   else
-    result := TFhirCapabilityFeatureEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureEnum, FCode.value));
+    result := FCode.value;
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetCodeST(value : TFhirCapabilityFeatureEnum);
+procedure TFhirCapabilityStatement2RestFeature.SetCodeST(value : String);
 begin
-  if ord(value) = 0 then
+  if value = '' then
     CodeElement := nil
   else
-    CodeElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureEnum[value], CODES_TFhirCapabilityFeatureEnum[value]);
+    CodeElement := TFhirString.create(value);
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetValue(value : TFhirEnum);
+procedure TFhirCapabilityStatement2RestFeature.SetValue(value : TFhirString);
 begin
   FValue.free;
   FValue := value;
 end;
 
-function TFhirCapabilityStatement2RestFeature.GetValueST : TFhirCapabilityFeatureValueEnum;
+function TFhirCapabilityStatement2RestFeature.GetValueST : String;
 begin
   if FValue = nil then
-    result := TFhirCapabilityFeatureValueEnum(0)
+    result := ''
   else
-    result := TFhirCapabilityFeatureValueEnum(StringArrayIndexOfSensitive(CODES_TFhirCapabilityFeatureValueEnum, FValue.value));
+    result := FValue.value;
 end;
 
-procedure TFhirCapabilityStatement2RestFeature.SetValueST(value : TFhirCapabilityFeatureValueEnum);
+procedure TFhirCapabilityStatement2RestFeature.SetValueST(value : String);
 begin
-  if ord(value) = 0 then
+  if value = '' then
     ValueElement := nil
   else
-    ValueElement := TFhirEnum.create(SYSTEMS_TFhirCapabilityFeatureValueEnum[value], CODES_TFhirCapabilityFeatureValueEnum[value]);
+    ValueElement := TFhirString.create(value);
 end;
 
 { TFhirCapabilityStatement2RestFeatureListEnumerator }

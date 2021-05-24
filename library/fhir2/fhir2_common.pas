@@ -37,7 +37,7 @@ uses
   fsl_base, fsl_utilities,
   fsl_http,
   fhir_objects, fhir_common, 
-  fhir2_types, fhir2_operations, fhir2_opbase,
+  fhir2_types, fhir2_operations, fhir2_opbase, fhir_features,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
 
 const
@@ -258,6 +258,7 @@ type
     procedure setAcceptUnknown(const Value: TCapabilityStatementAcceptUnknown); override;
 
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
     procedure addOperation(name, url : String); override;
 
@@ -1209,6 +1210,10 @@ begin
   c := ct.telecomList.Append;
   c.system := MAP_TContactType[kind];
   c.value := 'http://healthintersections.com.au/';
+end;
+
+procedure TFHIRCapabilityStatement2.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 function TFHIRCapabilityStatement2.GetUrl: String;

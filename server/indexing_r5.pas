@@ -361,7 +361,7 @@ begin
             if ndx.SearchType = sptComposite then
               // ignore for now
             else case ndx.Usage of
-              sxpNull: raise EFHIRException.create('Path is not defined properly');
+              sxpNull: ; // nothing.. /// raise EFHIRException.create('Path is not defined properly');
               sxpNormal:
                 begin
                 if work is TFHIRExtension then

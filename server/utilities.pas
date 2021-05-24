@@ -230,6 +230,7 @@ begin
   cmdSearch := true;
   cmdCreate := true;
   cmdOperation := true;
+  cmdVRead := true;
   versionUpdates := false;
   lastResourceId  := 0;
 end;

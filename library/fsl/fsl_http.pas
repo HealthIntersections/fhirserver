@@ -74,6 +74,7 @@ type
     function Link : THTTPParameters; overload;
 
     function has(const n: String): Boolean;
+    function values(const n: String): TArray<String>;
 
     property Count : Integer read getItemCount;
     property Value[Name: String]: String Read GetVar; default;
@@ -423,6 +424,19 @@ end;
 function THTTPParameters.Link: THTTPParameters;
 begin
   result := THTTPParameters(inherited Link);
+end;
+
+function THTTPParameters.values(const n: String): TArray<String>;
+var
+  i : Integer;
+begin
+  SetLength(result, 0);
+  if retrieveNameIndex(n, i) then
+  begin
+    SetLength(result, getValueCount(i));
+    for i := 0 to length(result) - 1 do
+      retrieveitem(n, i, result[i]);
+  end;
 end;
 
 function TMultiValList.list(index: integer): TStringList;

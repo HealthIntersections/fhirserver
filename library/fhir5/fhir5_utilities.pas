@@ -40,7 +40,7 @@ uses
   fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_turtle, fsl_xml, fsl_crypto,
   fsl_fetcher,
 
-  fhir_parser, fhir_objects, fhir_xhtml,  fhir_utilities,
+  fhir_parser, fhir_objects, fhir_xhtml,  fhir_utilities, fhir_features,
   fhir5_context, fhir5_enums, fhir5_types, fhir5_resources, fhir5_resources_base, fhir5_constants;
 
 const
@@ -547,6 +547,16 @@ type
     function sourceDesc: String;
     function targetDesc: String;
   end;
+
+  TFHIRCapabilityStatement2Helper = class helper (TFhirResourceHelper) for TFhirCapabilityStatement2
+  private
+    procedure dumpFeatures(dest : TFhirCapabilityStatement2RestFeatureList; source : TFslList<TFHIRFeature>; path : String);
+  public
+    procedure defineFeature(feature : TFHIRFeature);
+    procedure defineFeatures(features : TFslList<TFHIRFeature>);
+    function hasFeature(feature : TFHIRFeature) : boolean;
+  end;
+
 
   TSignatureType = (SignatureTypeAuthor, SignatureTypeCoAuthor, SignatureTypeParticipant, SignatureTypeTranscriptionist, SignatureTypeVerification,
                     SignatureTypeValidation, SignatureTypeConsent, SignatureTypeWitnessSignature, SignatureTypeWitnessEvent, SignatureTypeWitnessIdentity,
@@ -6561,6 +6571,57 @@ begin
   result := '';
   for i := 0 to useContextList.Count - 1 do
     result := result + gen(useContextList[i]);
+end;
+
+{ TFHIRCapabilityStatement2Helper }
+
+procedure TFHIRCapabilityStatement2Helper.defineFeature(feature: TFHIRFeature);
+begin
+
+end;
+
+procedure TFHIRCapabilityStatement2Helper.defineFeatures(features: TFslList<TFHIRFeature>);
+var
+  rest : TFhirCapabilityStatement2Rest;
+  res : TFhirCapabilityStatement2RestResource;
+  int : TFhirCapabilityStatement2RestResourceInteraction;
+begin
+  for rest in restList do
+  begin
+    dumpFeatures(rest.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]);
+    for res in rest.resourceList do
+    begin
+      dumpFeatures(res.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]+'.resource:'+CODES_TFhirResourceTypesEnum[res.type_]);
+      for int in res.interactionList do
+        dumpFeatures(int.featureList, features, 'rest:'+CODES_TFhirRestfulCapabilityModeEnum[rest.mode]+'.resource:'+CODES_TFhirResourceTypesEnum[res.type_]+'.interaction:'+
+           CODES_TFhirTypeRestfulInteractionEnum[int.code]);
+    end;
+  end;
+end;
+
+procedure TFHIRCapabilityStatement2Helper.dumpFeatures(dest: TFhirCapabilityStatement2RestFeatureList; source: TFslList<TFHIRFeature>; path: String);
+var
+  pf, f : TFHIRFeature;
+begin
+  pf := TFHIRFeature.fromString(path);
+  try
+    for f in source do
+    begin
+      if f.matches(pf) then
+        with dest.Append do
+        begin
+          code := f.id;
+          value := f.value;
+        end;
+    end;
+  finally
+    pf.free;
+  end;
+end;
+
+function TFHIRCapabilityStatement2Helper.hasFeature(feature: TFHIRFeature): boolean;
+begin
+  result := false;
 end;
 
 end.

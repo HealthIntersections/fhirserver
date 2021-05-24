@@ -11923,8 +11923,8 @@ end;
 procedure TFHIRTurtleParser.ParseCapabilityStatement2RestFeatureProperties(obj : TTurtleComplex; value : TFhirCapabilityStatement2RestFeature);
 begin
     ParseBackboneElementProperties(obj, value);
-    value.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.feature.code'), CODES_TFhirCapabilityFeatureEnum, SYSTEMS_TFhirCapabilityFeatureEnum);
-    value.valueElement := ParseEnum(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.feature.value'), CODES_TFhirCapabilityFeatureValueEnum, SYSTEMS_TFhirCapabilityFeatureValueEnum);
+    value.codeElement := ParseString(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.feature.code'));
+    value.valueElement := ParseString(obj.complex('http://hl7.org/fhir/CapabilityStatement2.rest.feature.value'));
 end;
 
 procedure TFHIRTurtleComposer.ComposeCapabilityStatement2RestFeature(parent :  TTurtleComplex; parentType, name : String; value : TFhirCapabilityStatement2RestFeature; useType : boolean; index : integer);
@@ -11942,8 +11942,8 @@ begin
       this.addPredicate('a', 'fhir:CapabilityStatement2RestFeature');
   end;
   composeBackboneElement(this, '', name, value, false, index);
-  ComposeEnum(this, 'CapabilityStatement2.rest.feature', 'code', value.codeElement, CODES_TFhirCapabilityFeatureEnum, SYSTEMS_TFhirCapabilityFeatureEnum, false, -1);
-  ComposeEnum(this, 'CapabilityStatement2.rest.feature', 'value', value.valueElement, CODES_TFhirCapabilityFeatureValueEnum, SYSTEMS_TFhirCapabilityFeatureValueEnum, false, -1);
+  ComposeString(this, 'CapabilityStatement2.rest.feature', 'code', value.codeElement, false, -1);
+  ComposeString(this, 'CapabilityStatement2.rest.feature', 'value', value.valueElement, false, -1);
 end;
 
 function TFHIRTurtleParser.ParseCapabilityStatement2RestResource(obj : TTurtleComplex) : TFhirCapabilityStatement2RestResource;

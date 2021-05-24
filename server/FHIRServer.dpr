@@ -517,7 +517,8 @@ uses
   endpoint_full in 'endpoint_full.pas',
   endpoint in 'endpoint.pas',
   web_cache in 'web_cache.pas',
-  fsl_diff in '..\library\fsl\fsl_diff.pas';
+  fsl_diff in '..\library\fsl\fsl_diff.pas',
+  fhir_features in '..\library\fhir\fhir_features.pas';
 
 begin
   ExecuteFhirServer;

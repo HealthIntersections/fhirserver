@@ -41,7 +41,7 @@ uses
   fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine,
   fhir_client, fhir_cdshooks,
   session,
-  fhir_indexing, fhir_graphql,
+  fhir_indexing, fhir_graphql, fhir_features,
   html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder,
   client_cache_manager;
 
@@ -232,6 +232,7 @@ type
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property lang : THTTPLanguages read FLang write FLang;
+    property Storage : TFHIRStorageService read FStorage;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
     function check(response : TFHIRResponse; test : boolean; code : Integer; const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType) : Boolean; virtual;
@@ -295,16 +296,21 @@ type
   TFHIRStorageService = class (TFslObject)
   protected
     FFactory : TFHIRFactory;
+    FFeatures : TFHIRFeatureEngine;
     function GetTotalResourceCount: integer; virtual; abstract;
     function SupportsSubscriptions : boolean; virtual;
     function SupportsTransactions : boolean; virtual;
     function SupportsSearch : boolean; virtual;
     function SupportsHistory : boolean; virtual;
+    procedure defineFeatures; virtual;
   public
     constructor Create(factory : TFHIRFactory); virtual;
     destructor Destroy; override;
     function Link : TFHIRStorageService; overload;
     property Factory : TFHIRFactory read FFactory;
+    property Features : TFHIRFeatureEngine read FFeatures;
+
+    procedure Initialise(); virtual;
 
     // OAuth Support
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); virtual;
@@ -369,6 +375,8 @@ type
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
     function cacheSize : UInt64; virtual;
     procedure clearCache; virtual;
+
+    procedure dumpFeatures;
   end;
 
 
@@ -393,12 +401,23 @@ constructor TFHIRStorageService.Create(factory : TFHIRFactory);
 begin
   inherited create;
   FFactory := factory;
+  FFeatures := TFHIRFeatureEngine.create;
 end;
 
 destructor TFHIRStorageService.Destroy;
 begin
+  FFeatures.Free;
   FFactory.Free;
   inherited;
+end;
+
+procedure TFHIRStorageService.dumpFeatures;
+var
+  f : TFHIRFeature;
+begin
+  Logging.log('Features defined for this server');
+  for f in FFeatures.sortedFeatures.forEnum do
+    Logging.log(f.ToString);
 end;
 
 function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
@@ -440,6 +459,11 @@ end;
 function TFHIRStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
 begin
   raise EFHIRException.create('This server does not support OAuth');
+end;
+
+procedure TFHIRStorageService.Initialise;
+begin
+  defineFeatures;
 end;
 
 function TFHIRStorageService.Link: TFHIRStorageService;
@@ -916,7 +940,7 @@ begin
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;
-    oConf := factory.wrapCapabilityStatement2(factory.makeResource('CapabilityStatement'));
+    oConf := factory.wrapCapabilityStatement2(factory.makeResource('CapabilityStatement2'));
     try
       response.Resource := oConf.Resource.link;
 
@@ -1067,6 +1091,7 @@ begin
                 res.free;
               end;
             end;
+            break;
           end;
         html.append('</table>'#13#10);
 
@@ -1086,7 +1111,7 @@ begin
 
         html.append('</div>'#13#10);
         // operations
-        factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
+        // factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
       finally
         html.free;
       end;
@@ -1424,6 +1449,14 @@ begin
   finally
     int.Free;
   end;
+end;
+
+procedure TFHIRStorageService.defineFeatures;
+begin
+  FFeatures.defineFeature('rest.feature-header', true);
+  FFeatures.defineFeature('rest.security-cors', true);
+  FFeatures.defineFeature('rest.subscriptions', SupportsSubscriptions);
+  FFeatures.defineFeature('rest.transactions', SupportsTransactions);
 end;
 
 procedure TFHIRStorageService.Yield(client: TFHIRClientV; exception: Exception);

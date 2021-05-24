@@ -237,6 +237,7 @@ begin
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
+
     FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
     FMaintenanceThread.Start;
 

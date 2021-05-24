@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_base, fsl_utilities,
   fsl_http,
-  fhir_objects, fhir_common, 
+  fhir_objects, fhir_common, fhir_features,
   fhir3_types, fhir3_resources, fhir3_operations, fhir3_opbase;
 
 const
@@ -247,6 +247,7 @@ type
     procedure impl(url, desc : String); override;
     procedure fmt(mt : String); override;
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; override;
     procedure addOperation(name, url : String); override;
 
@@ -1312,6 +1313,10 @@ begin
   c := ct.telecomList.Append;
   c.system := MAP_TContactType[kind];
   c.value := 'http://healthintersections.com.au/';
+end;
+
+procedure TFHIRCapabilityStatement3.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
 end;
 
 function TFHIRCapabilityStatement3.GetURL: String;

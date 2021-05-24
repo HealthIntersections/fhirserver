@@ -213,10 +213,11 @@ begin
   else
     rt := oldRes.fhirType;
 
-  result := false; {R5TODO MeetsTopicResourceType(topic.resourceTrigger, rt) and
-     MeetsTopicMethodCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
-     MeetsTopicQueryCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
-     MeetsTopicFhirPathCriteria(topic.resourceTrigger, rt, newRes, oldRes)};
+  result := false;
+// MeetsTopicResourceType(topic.resourceTrigger, rt) and
+//     MeetsTopicMethodCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
+//     MeetsTopicQueryCriteria(topic.resourceTrigger, rt, newRes, oldRes) and
+//     MeetsTopicFhirPathCriteria(topic.resourceTrigger, rt, newRes, oldRes);
 end;
 
 function TSubscriptionManagerR4.meetsQueryCriteria(query, resourceType: String; resource: TFHIRResource): boolean;
@@ -601,9 +602,10 @@ var
   i : integer;
 begin
   st := topic.resource as TFHIRSubscriptionTopic;
-  SetLength(result, 0); {R5TODO  st.resourceTrigger.resourceType.Count);
-  for i := 0 to st.resourceTrigger.resourceType.Count - 1 do
-    result[i] := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(st.resourceTrigger.resourceType[i].value)+'''')}
+  SetLength(result, 0);
+//  st.resourceTrigger.resourceType.Count);
+//  for i := 0 to st.resourceTrigger.resourceType.Count - 1 do
+//    result[i] := conn.CountSQL('select ResourceTypeKey from Types where ResourceName = '''+SQLWrapString(st.resourceTrigger.resourceType[i].value)+'''');
 end;
 
 

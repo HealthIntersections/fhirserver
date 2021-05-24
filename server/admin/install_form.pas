@@ -154,7 +154,7 @@ begin
   else if version = 'r4' then
     result := SameText(pi, 'R4') or pi.StartsWith('4.0') or piv.StartsWith('4.0')
   else if version = 'r5' then
-    result := SameText(pi, 'R5') or pi.StartsWith('4.5') or piv.StartsWith('4.5')
+    result := SameText(pi, 'R5') or pi.StartsWith('4.6') or piv.StartsWith('4.6')
   else
     result := false;
 end;
@@ -188,7 +188,7 @@ begin
     lvPackages.Enabled := false;
     loadPackages;
   end
-  else if type_ = 'general' then
+  else if type_ = 'full' then
   begin
     edtUserName.text := '';
     edtUserName.Enabled := true;
@@ -264,6 +264,8 @@ begin
         s := s+','+i.Caption;
   if s <> '' then
     result := result + ' -packages '+s;
+  if edtAnonymousRights.text <> '' then
+    result := result + ' -default-rights '+edtAnonymousRights.text;
 end;
 
 procedure TEndpointInstallForm.SetConnection(AValue: TFDBConnection);

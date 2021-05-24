@@ -106,6 +106,8 @@ var
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   post, resp : TStringStream;
 begin
+exit;
+
   post := TStringStream.create(cnt, TEncoding.UTF8);
   try
     http := TIdHTTP.Create(nil);

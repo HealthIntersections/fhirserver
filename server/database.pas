@@ -40,7 +40,7 @@ uses
   fsl_http, fsl_graphql,
   fsl_npm_cache,
   fhir_objects, fhir_parser, fhir_xhtml,  fhir_utilities, fhir_cdshooks,
-  fhir_validator, fhir_common, fhir_factory, fhir_narrative,
+  fhir_validator, fhir_common, fhir_factory, fhir_narrative, fhir_indexing,
   fhir_client,
   fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
@@ -344,12 +344,13 @@ type
     function SupportsTransactions : boolean; override;
     function SupportsSearch : boolean; override;
     function SupportsHistory : boolean; override;
+    procedure defineFeatures; override;
   public
     constructor Create(DB: TFDBManager; factory : TFHIRFactory); reintroduce;
     destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
     function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
-    procedure Initialise();
+    procedure Initialise(); override;
 //    procedure SaveResource(res: TFHIRResourceV; dateTime: TFslDateTime; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -5421,6 +5422,38 @@ begin
   result := key;
 end;
 
+procedure TFHIRNativeStorageService.defineFeatures;
+var
+  cfg : TFHIRResourceConfig;
+  il : TFslList<TFhirIndex>;
+  ii : TFhirIndex;
+begin
+  inherited;
+  FFeatures.defineFeature('rest.validation', FServerContext.Validate);
+  FFeatures.defineFeature('rest.auditing', FServerContext.DoAudit);
+
+//  FServerContext.TerminologyServer.defineFeatures(FFeatures);
+  for cfg in FServerContext.ResConfig.Values do
+    if (cfg.name <> '') then
+    begin
+      FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.upsert', cfg.IdClient);
+      FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.version-updates', cfg.versionUpdates);
+      il := FServerContext.Indexes.Indexes.listByType(cfg.name);
+      if (il <> nil) then
+      begin
+        for ii in il do
+          if ii.SearchType = sptReference then
+            FFeatures.defineFeature('rest:server.resource:'+cfg.name+'.searchInclude', ii.Name);
+      end;
+    end;
+
+//    property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
+//    property SessionManager : TFHIRSessionManager read FSessionManager;
+//    property ConsentEngine : TFHIRConsentEngine read FConsentEngine write SetConsentEngine;
+//    property TagManager : TFHIRTagManager read FTagManager;
+//    property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
+end;
+
 procedure TFHIRNativeStorageService.Initialise();
 var
   conn: TFDBConnection;
@@ -5431,6 +5464,8 @@ var
   li : TPackageLoadingInformation;
   res : TFslStringSet;
 begin
+  inherited;
+
   ServerContext.SubscriptionManager := ServerContext.ServerFactory.makeSubscriptionManager(ServerContext);
   ServerContext.SubscriptionManager.dataBase := FDB.Link;
   ServerContext.SubscriptionManager.Base := 'http://localhost/';

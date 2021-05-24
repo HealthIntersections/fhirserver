@@ -7145,7 +7145,7 @@ end;
 function TFHIRXmlParser.ParseAgeChild(value : TFhirAge; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if Not ParseElementChild(value, path, child) then
+  if Not ParseQuantityChild(value, path, child) then
     result := false;
 end;
 
@@ -7464,7 +7464,7 @@ end;
 function TFHIRXmlParser.ParseDurationChild(value : TFhirDuration; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if Not ParseElementChild(value, path, child) then
+      if Not ParseQuantityChild(value, path, child) then
     result := false;
 end;
 
@@ -14889,9 +14889,9 @@ function TFHIRXmlParser.ParseCapabilityStatement2RestFeatureChild(value : TFhirC
 begin
   result := true;
       if (child.localName = 'code') then
-        value.codeElement := ParseEnum(CODES_TFhirCapabilityFeatureEnum, SYSTEMS_TFhirCapabilityFeatureEnum, child, path+'/code')
+        value.codeElement := ParseString(child, path+'/code')
       else if (child.localName = 'value') then
-        value.valueElement := ParseEnum(CODES_TFhirCapabilityFeatureValueEnum, SYSTEMS_TFhirCapabilityFeatureValueEnum, child, path+'/value')
+        value.valueElement := ParseString(child, path+'/value')
       else if Not ParseBackboneElementChild(value, path, child) then
     result := false;
 end;
@@ -14912,8 +14912,8 @@ end;
 procedure TFHIRXmlComposer.ComposeCapabilityStatement2RestFeatureChildren(xml : TXmlBuilder; value : TFhirCapabilityStatement2RestFeature);
 begin
   composeBackboneElementChildren(xml, value);
-  ComposeEnum(xml, 'code', value.codeElement, CODES_TFhirCapabilityFeatureEnum);
-  ComposeEnum(xml, 'value', value.valueElement, CODES_TFhirCapabilityFeatureValueEnum);
+  ComposeString(xml, 'code', value.codeElement);
+  ComposeString(xml, 'value', value.valueElement);
 end;
 
 function TFHIRXmlParser.ParseCapabilityStatement2RestResource(element : TMXmlElement; path : string) : TFhirCapabilityStatement2RestResource;
