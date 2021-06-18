@@ -31,6 +31,8 @@ unit fhir5_json;
   
 }
 
+{$I fhir.inc}
+
 interface
 
 // Generated on Wed, May 12, 2021 17:44+1000 for FHIR v4.6.0
@@ -103,6 +105,14 @@ Type
     procedure ParseInteger64(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseInteger64(value : TJsonNode; jsn : TJsonObject) : TFHIRInteger64; overload;
 
+    function ParseExtension(jsn : TJsonObject) : TFhirExtension; overload;
+    procedure ParseExtensionProperties(jsn : TJsonObject; value : TFhirExtension); overload;
+    procedure ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
+
+    function ParseNarrative(jsn : TJsonObject) : TFhirNarrative; overload; 
+    procedure ParseNarrativeProperties(jsn : TJsonObject; value : TFhirNarrative); overload;
+    procedure ParseNarrative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
+
     function ParseAddress(jsn : TJsonObject) : TFhirAddress; overload; 
     procedure ParseAddressProperties(jsn : TJsonObject; value : TFhirAddress); overload;
     procedure ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
@@ -145,9 +155,6 @@ Type
     function ParseExpression(jsn : TJsonObject) : TFhirExpression; overload; 
     procedure ParseExpressionProperties(jsn : TJsonObject; value : TFhirExpression); overload;
     procedure ParseExpression(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
-    function ParseExtension(jsn : TJsonObject) : TFhirExtension; overload; 
-    procedure ParseExtensionProperties(jsn : TJsonObject; value : TFhirExtension); overload;
-    procedure ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
     function ParseHumanName(jsn : TJsonObject) : TFhirHumanName; overload; 
     procedure ParseHumanNameProperties(jsn : TJsonObject; value : TFhirHumanName); overload;
     procedure ParseHumanName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
@@ -160,9 +167,6 @@ Type
     function ParseMoney(jsn : TJsonObject) : TFhirMoney; overload; 
     procedure ParseMoneyProperties(jsn : TJsonObject; value : TFhirMoney); overload;
     procedure ParseMoney(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
-    function ParseNarrative(jsn : TJsonObject) : TFhirNarrative; overload; 
-    procedure ParseNarrativeProperties(jsn : TJsonObject; value : TFhirNarrative); overload;
-    procedure ParseNarrative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 
     function ParseParameterDefinition(jsn : TJsonObject) : TFhirParameterDefinition; overload; 
     procedure ParseParameterDefinitionProperties(jsn : TJsonObject; value : TFhirParameterDefinition); overload;
     procedure ParseParameterDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; 

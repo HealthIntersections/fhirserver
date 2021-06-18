@@ -135,7 +135,7 @@ procedure ExecuteFhirServer; overload;
 
 implementation
 
-{$IFDEF WINDOWS}
+{$IFDEF DELPHI}
 uses
   JclDebug;
 {$ENDIF}
@@ -555,7 +555,7 @@ begin
       else
         dispName := 'FHIR Server';
 
-    {$IFDEF WINDOWS}
+    {$IFDEF DELPHI}
     if JclExceptionTrackingActive then
       logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
@@ -670,7 +670,7 @@ begin
     GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
     {$ENDIF}
     InitOpenSSL;
-    {$IFDEF WINDOWS}
+    {$IFDEF DELPHI}
     JclStartExceptionTracking;
     CoInitialize(nil);
     {$ENDIF}
