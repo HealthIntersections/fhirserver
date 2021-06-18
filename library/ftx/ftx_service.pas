@@ -89,7 +89,7 @@ Type
 
     function chooseDisplay(languages : TIETFLanguageDefinitions; lang : THTTPLanguages) : String;
     function present : String;
-    function has(src : String) : boolean;
+    function has(display : String) : boolean;
     function preferred : String;
     property display[i : integer] : String read getDisplay;
   end;
@@ -565,9 +565,14 @@ begin
   result := Items[i].value;
 end;
 
-function TCodeDisplays.has(src: String): boolean;
+function TCodeDisplays.has(display: String): boolean;
+var
+  cd : TCodeDisplay;
 begin
   result := false;
+  for cd in self do
+    if (cd.value = display) then
+      exit(true);
 end;
 
 function TCodeDisplays.preferred: String;
