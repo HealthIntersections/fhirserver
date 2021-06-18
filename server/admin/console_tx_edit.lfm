@@ -229,7 +229,6 @@ object EditTxForm: TEditTxForm
       'icd10'
       'ndc'
       'unii'
-      'lang'
       'ndfrt'
       'nci'
     )

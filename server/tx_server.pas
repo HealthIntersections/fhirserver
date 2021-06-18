@@ -46,7 +46,7 @@ uses
   fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
-  tx_lang, closuremanager, adaptations, utilities, bundlebuilder,
+  ftx_lang, closuremanager, adaptations, utilities, bundlebuilder,
   tx_manager, ftx_sct_expressions;
 
 Type
@@ -56,6 +56,7 @@ Type
     FDependencies : TFslStringObjectMatch; // object is TFslStringList of identity
     FClosures : TFslMap<TClosureManager>;
     FWebBase : String;
+    FCaching : boolean;
 
     procedure AddDependency(name, value : String);
 //    function getCodeDefinition(c : TFhirCodeSystemConceptW; code : string) : TFhirCodeSystemConceptW; overload;
@@ -136,6 +137,7 @@ uses
 constructor TTerminologyServer.Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies);
 begin
   inherited;
+  FCaching := true;
   FExpansions := TFslStringObjectMatch.create;
   FExpansions.PreventDuplicates;
   FDependencies := TFslStringObjectMatch.create;
@@ -328,10 +330,10 @@ begin
   end;
   if result = nil then
   begin
-    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, workerGetExpansion, workerCanExpand);
+    exp := TFHIRValueSetExpander.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, workerGetExpansion, workerCanExpand);
     try
       result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
-      if (dependencies.Count > 0) and (cacheId <> '') then
+      if (dependencies.Count > 0) and (cacheId <> '') and FCaching then
       begin
         FLock.Lock('expandVS.2');
         try
@@ -484,7 +486,7 @@ function TTerminologyServer.MakeChecker(uri: string; profile : TFHIRExpansionPar
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, uri);
+  result := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, uri);
   try
     vs := getValueSetByUrl(uri);
     try
@@ -508,7 +510,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, vs.url);
     try
       check.prepare(vs, profile);
       result := check.check(coding, abstractOk, implySystem);
@@ -531,7 +533,7 @@ begin
     vs.Link;
 
   try
-    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, vs.url);
+    check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, txResources.link, CommonTerminologies.Languages.link, vs.url);
     try
       check.prepare(vs, profile);
       result := check.check(coded, abstractOk, implySystem);
@@ -1237,7 +1239,7 @@ begin
         profile := TFHIRExpansionParams.Create;
         try
           try
-            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, vs.url);
+            val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, vs.url);
             try
               val.prepare(vs, profile);
               if not val.check(URL, version, code, true, false) then
@@ -1279,7 +1281,7 @@ begin
       profile := TFHIRExpansionParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, vs.url);
+          val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, nil, CommonTerminologies.Languages.link, vs.url);
           try
             val.prepare(vs, profile);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';

@@ -307,6 +307,9 @@ begin
             count := StrToIntDef(params.str('count'), 0);
             offset := StrToIntDef(params.str('offset'), 0);
             limit := StrToIntDef(params.str('_limit'), 0);
+            if (limit < 0) then
+              limit := 0;
+
             if profile.displayLanguage.header = '' then
               profile.displayLanguage := request.Lang;
             if (txResources = nil) then
@@ -380,7 +383,7 @@ begin
   result := nil;
 end;
 
-function camonicalMatches(mr : TFHIRMetadataResourceW; canonical : String) : boolean;
+function canonicalMatches(mr : TFHIRMetadataResourceW; canonical : String) : boolean;
 var
   l, r : String;
 begin
@@ -447,7 +450,7 @@ begin
                     result := result+' in vs '+url+' (ref)';
                     txResources := processAdditionalResources(context, manager, nil, params);
                     for mr in txResources do
-                      if (camonicalMatches(mr, url)) and (mr is TFHIRValueSetW) then
+                      if (canonicalMatches(mr, url)) and (mr is TFHIRValueSetW) then
                       begin
                         vs := (mr as TFHIRValueSetW).link;
                         break;
@@ -1303,10 +1306,14 @@ begin
   begin
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
-    coding.systemUri := request.Parameters['system'];
-    coding.version := request.Parameters['version'];
-    coding.code := request.Parameters['code'];
-    coding.display := request.Parameters['display'];
+    try
+      coding.systemUri := request.Parameters['system'];
+      coding.version := request.Parameters['version'];
+      coding.code := request.Parameters['code'];
+      coding.display := request.Parameters['display'];
+    finally
+      coding.free;
+    end;
   end
   else if ((request.resource <> nil) and (request.Resource.fhirType = 'Parameters')) then
   begin

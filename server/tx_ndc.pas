@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
@@ -74,10 +74,12 @@ type
   private
     FKey: integer;
     FPackage: boolean;
+    FCode: String;
   public
     constructor create(package : boolean; key : integer);
     property package : boolean read FPackage write FPackage;
     property key : integer read FKey write FKey;
+    property code : String read FCode write FCode;
   end;
 
   { TNDCServices }
@@ -96,7 +98,7 @@ type
     procedure load;
     procedure loadDict(conn: TFDBConnection; dict: TDictionary<integer, String>; sql: String);
   public
-    constructor Create(db : TFDBManager; version : String);
+    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
 
@@ -114,8 +116,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -450,9 +451,9 @@ end;
 
 { TNDCServices }
 
-constructor TNDCServices.Create(db: TFDBManager; version : String);
+constructor TNDCServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager; version : String);
 begin
-  inherited Create;
+  inherited Create(languages);
 
   self.FDb := db;
   self.FVersion := version;
@@ -640,7 +641,7 @@ begin
   result := c;
 end;
 
-procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 var
   c : string;
   code : TNDCProviderContext;
@@ -661,28 +662,7 @@ begin
       raise;
     end;
   end;
-  list.Add(c.Trim);
-end;
-
-procedure TNDCServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
-var
-  c : string;
-  conn : TFDBConnection;
-begin
-  conn := FDB.getconnection('Displays');
-  try
-    c := conn.Lookup('NDCPackages', 'Code', code, 'Description', '');
-    if c = '' then
-      c := conn.Lookup('NDCProducts', 'Code', code, 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'Code', code, 'Suffix', '');
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
-  end;
-  list.Add(c.Trim);
+  list.see(c.Trim);
 end;
 
 procedure TNDCServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);

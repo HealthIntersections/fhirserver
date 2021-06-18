@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, fsl_http,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang,
   fhir_common, fhir_features,
   ftx_service;
 
@@ -67,7 +67,7 @@ type
 
     procedure load;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TUSStateServices; overload;
 
@@ -83,8 +83,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -109,9 +108,9 @@ implementation
 
 { TUSStateServices }
 
-Constructor TUSStateServices.create();
+Constructor TUSStateServices.create(languages : TIETFLanguageDefinitions);
 begin
-  inherited Create;
+  inherited;
   FCodes := TFslList<TUSStateConcept>.create;
   FMap := TFslMap<TUSStateConcept>.create('tx.usstate');
   FMap.defaultValue := nil;
@@ -152,11 +151,6 @@ end;
 function TUSStateServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
-end;
-
-procedure TUSStateServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -273,9 +267,9 @@ begin
   result := TUSStateConcept(context).display.Trim;
 end;
 
-procedure TUSStateServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUSStateServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TUSStateServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

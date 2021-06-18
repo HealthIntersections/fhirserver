@@ -58,7 +58,7 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
@@ -530,6 +530,7 @@ operations
     FRel : TSnomedRelationshipList;
     FRefSetIndex : TSnomedReferenceSetIndex;
     FRefSetMembers : TSnomedReferenceSetMembers;
+    FDefLangSet : TSnomedReferenceSetMemberArray;
     FVersionUri : String;
     FVersionDate : String;
 
@@ -579,6 +580,7 @@ operations
     function GetEditionName: String;
     function GetEditionId: String;
 
+    function loadLang(iLang : cardinal) : TSnomedReferenceSetMemberArray;
     procedure checkIsLoaded;
     function GetConcept: TSnomedConceptList;
     function GetDesc: TSnomedDescriptions;
@@ -601,7 +603,7 @@ operations
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TSnomedServices; Overload;
     Procedure Load(Const sFilename : String; immediate : boolean);
@@ -637,7 +639,7 @@ operations
     Property DefaultLanguageRefSet : Cardinal read GetDefaultLanguage write FDefaultLanguage;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : String; Overload;
-    Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
+    Procedure ListDisplayNames(list : TCodeDisplays; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
     Function GetConceptId(Const iConcept : Cardinal) : String; Overload;
     function GetDescriptionId(Const iDesc : Cardinal) : String; Overload;
     function GetRelationshipId(Const iRel : Cardinal) : String; Overload;
@@ -666,7 +668,7 @@ operations
     Function IsValidConcept(Const sTerm : String):Boolean;
     Function IsValidDescription(Const sTerm : String; var concept : UInt64; var description : String):Boolean;
     Function GetDisplayName(Const sTerm, sLangSet : String) : String; Overload;
-    Procedure ListDisplayNames(list : TStringList; Const sTerm, sLangSet : String; FlagMask : Byte); Overload;
+    Procedure ListDisplayNames(list : TCodeDisplays; Const sTerm, sLangSet : String; FlagMask : Byte); Overload;
     function ReferenceSetExists(sid : String) : Boolean;
 
     // status stuff
@@ -692,8 +694,7 @@ operations
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -1380,7 +1381,7 @@ end;
 
 { TSnomedServices }
 
-constructor TSnomedServices.Create;
+constructor TSnomedServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
   FLock := TFslLock.create('Snomed');
@@ -1626,10 +1627,19 @@ begin
       FPreferredTerm := 0;
     if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
       FFSN := 0;
+    FDefLangSet := FRefSetMembers.GetMembers(FDefaultLanguage);
     FLoaded := now;
   finally
     FLoading := false;
   end;
+end;
+
+function TSnomedServices.loadLang(iLang: cardinal): TSnomedReferenceSetMemberArray;
+begin
+  if iLang = FDefaultLanguage then
+    result := FDefLangSet
+  else
+    result := FRefSetMembers.GetMembers(iLang);
 end;
 
 function TSnomedServices.LoadStatus: String;
@@ -1995,7 +2005,7 @@ begin
     Raise ETerminologyError.Create('no usable search text found');
 
   if iLang <> 0 Then
-    aLangMembers := FRefSetMembers.GetMembers(iLang);
+    aLangMembers := loadLang(iLang);
 
   iCount := 0;
   SetLength(result, 100);
@@ -2116,7 +2126,7 @@ begin
   SetLength(aMembers, 0);
   result := '';
   if iLang <> 0 then
-    aMembers := FRefSetMembers.GetMembers(iLang);
+    aMembers := loadLang(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   Descs := Refs.GetReferences(Descriptions);
   SetLength(dlist, length(descs));
@@ -2247,8 +2257,7 @@ begin
   result := FLoaded <> 0;
 end;
 
-procedure TSnomedServices.ListDisplayNames(list: TStringList; const iConcept,
-  iLang: Cardinal; FlagMask: Byte);
+procedure TSnomedServices.ListDisplayNames(list: TCodeDisplays; const iConcept, iLang: Cardinal; FlagMask: Byte);
 var
   aMembers : TSnomedReferenceSetMemberArray;
   iLoop : integer;
@@ -2263,19 +2272,18 @@ var
 begin
   checkIsLoaded;
   if iLang <> 0 then
-    aMembers := FRefSetMembers.GetMembers(iLang);
+    aMembers := loadLang(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   Descs := Refs.GetReferences(Descriptions);
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
     if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.add(Strings.GetEntry(iDesc).trim);
+      list.see(Strings.GetEntry(iDesc).trim);
   End;
 end;
 
-procedure TSnomedServices.ListDisplayNames(list: TStringList; const sTerm,
-  sLangSet: String; FlagMask: Byte);
+procedure TSnomedServices.ListDisplayNames(list: TCodeDisplays; const sTerm, sLangSet: String; FlagMask: Byte);
 var
   iTerm, iLang : Cardinal;
 begin
@@ -3761,10 +3769,19 @@ begin
   end;
 end;
 
-procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
+var
+  ctxt : TSnomedExpressionContext;
 begin
   checkIsLoaded;
-  Displays(Code(context), list, lang);
+  ctxt := context as TSnomedExpressionContext;
+  if (ctxt = nil) then
+    raise ETerminologyError.create('Unable to find context in '+systemUri(nil))
+  else if ctxt.isComplex then
+    // there's only one display name - for now?
+    list.see(displayExpression(ctxt.FExpression).Trim)
+  else
+    ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, FDefaultLanguage, $FF);
 end;
 
 procedure TSnomedServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
@@ -3878,25 +3895,6 @@ begin
     finally
       exp.free;
     end;
-  end;
-end;
-
-procedure TSnomedServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
-var
-  ctxt : TSnomedExpressionContext;
-begin
-  checkIsLoaded;
-  ctxt := locate(code) as TSnomedExpressionContext;
-  try
-    if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil))
-    else if ctxt.isComplex then
-      // there's only one display name - for now?
-      list.Add(displayExpression(ctxt.FExpression).Trim)
-    else
-      ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, FDefaultLanguage, $FF);
-  finally
-    close(ctxt);
   end;
 end;
 
@@ -4017,6 +4015,7 @@ begin
     SetLength(FActiveRoots, 0);
     FDefaultLanguage := 0;
     FLoaded := 0;
+    FDefLangSet := nil;
   finally
     FLock.unlock;
   end;
@@ -4995,7 +4994,7 @@ end;
 
 procedure TSnomedServices.checkExpr(concept: TSnomedConcept);
 var
-  list : TStringList;
+  list : TCodeDisplays;
   i : integer;
   ok : boolean;
   iTerm : Cardinal;
@@ -5010,19 +5009,19 @@ begin
 
   if (concept.reference <> NO_REFERENCE) and (concept.description <> '') then
   begin
-    list := TStringList.create;
+    list := TCodeDisplays.create;
     try
       ListDisplayNames(list, iTerm, 0, $FF);
       ok := false;
       d := normalise(concept.description);
       for i := 0 to list.count - 1 do
-        if (normalise(list[i]) = d) then
+        if (normalise(list.display[i]) = d) then
         begin
           ok := true;
           break;
         end;
       if not ok then
-        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.CommaText+'")');
+        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present+'")');
     finally
       list.free;
     end;

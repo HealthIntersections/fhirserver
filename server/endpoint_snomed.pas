@@ -9,7 +9,7 @@ uses
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_threads, fsl_logging, fsl_json, fsl_http, fsl_npm, fsl_stream, fsl_htmlgen,
   fdb_manager,
-  ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
+  ftx_service, ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
   server_config, utilities, server_constants,
   tx_manager, telnet_server,
@@ -289,11 +289,12 @@ end;
 
 function TSnomedWebServer.processSnomedForTool(ss : TSnomedServices; code : String) : String;
 var
-  sl : TStringList;
-  s : String;
+  sl : TCodeDisplays;
+  cd : TCodeDisplay;
   id : UInt64;
   exp : TSnomedExpression;
   index : cardinal;
+  s : string;
 begin
   if StringIsInteger64(code) then
   begin
@@ -302,11 +303,11 @@ begin
       result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
        '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
        '" active="'+booleanToString(ss.isActive(index))+'">';
-      sl := TStringList.Create;
+      sl := TCodeDisplays.Create;
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
-        for s in sl do
-          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
+        for cd in sl do
+          result := result + '<display value="'+FormatTextToXml(cd.value, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;
@@ -315,11 +316,11 @@ begin
     else if ss.IsValidDescription(code, id, s) then
     begin
       result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+FormatTextToXml(s, xmlAttribute)+'">';
-      sl := TStringList.Create;
+      sl := TCodeDisplays.Create;
       try
         ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
-        for s in sl do
-          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
+        for cd in sl do
+          result := result + '<display value="'+FormatTextToXml(cd.value, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;

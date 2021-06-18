@@ -100,6 +100,7 @@ type
 
   TMainConsoleForm = class(TForm)
     BitBtn1: TBitBtn;
+    btnLangFile: TSpeedButton;
     btnTxImport: TBitBtn;
     btnIDAdd: TBitBtn;
     btnIDDelete: TBitBtn;
@@ -138,7 +139,8 @@ type
     edtDate: TDateTimePicker;
     edtDestination: TEdit;
     edtAdminSCIMSalt: TEdit;
-    edtTelnetPassword: TEdit;
+    edtGoogleId: TEdit;
+    edtLangFile: TEdit;
     edtInternational: TEdit;
     edtLoincDate: TEdit;
     edtLoincDest: TEdit;
@@ -150,8 +152,8 @@ type
     edtSSLPassword: TEdit;
     edtSSLPort: TEdit;
     edtHostName: TEdit;
+    edtTelnetPassword: TEdit;
     edtWebPort: TEdit;
-    edtGoogleId: TEdit;
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
@@ -169,14 +171,18 @@ type
     FileSaveAs1: TFileSaveAs;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
-    GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;
+    GroupBox5: TGroupBox;
     GroupBox6: TGroupBox;
+    GroupBox7: TGroupBox;
     HelpContents1: THelpContents;
     Image2: TImage;
     Image3: TImage;
     Image4: TImage;
     ImageList1: TImageList;
+    Label1: TLabel;
+    Label38: TLabel;
+    Label43: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
     Label12: TLabel;
@@ -202,12 +208,10 @@ type
     Label34: TLabel;
     Label35: TLabel;
     Label36: TLabel;
-    Label37: TLabel;
     Label39: TLabel;
     Label4: TLabel;
     Label40: TLabel;
     Label41: TLabel;
-    Label42: TLabel;
     lblSomething: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -297,6 +301,7 @@ type
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
+    tbGeneral: TTabSheet;
     tbWebSettings: TTabSheet;
     tbUserAdmin: TTabSheet;
     tbEndPoints: TTabSheet;
@@ -331,6 +336,7 @@ type
     procedure btnImportLoincClick(Sender: TObject);
     procedure btnImportSnomedClick(Sender: TObject);
     procedure btnInternationalClick(Sender: TObject);
+    procedure btnLangFileClick(Sender: TObject);
     procedure btnLoincDestClick(Sender: TObject);
     procedure btnLoincImportStopClick(Sender: TObject);
     procedure btnLoincSourceClick(Sender: TObject);
@@ -352,6 +358,7 @@ type
     procedure edtFilterChange(Sender: TObject);
     procedure edtGoogleIdChange(Sender: TObject);
     procedure edtHostNameChange(Sender: TObject);
+    procedure edtLangFileChange(Sender: TObject);
     procedure edtPrivateKeyChange(Sender: TObject);
     procedure edtSSLCertChange(Sender: TObject);
     procedure edtSSLPasswordChange(Sender: TObject);
@@ -662,7 +669,7 @@ begin
   end
   else
     pgMain.ActivePage := tbConsole;
-  pgManage.ActivePage := tbWebSettings;
+  pgManage.ActivePage := tbGeneral;
 end;
 
 procedure TMainConsoleForm.Image2Click(Sender: TObject);
@@ -851,6 +858,8 @@ begin
     edtSSLPassword.Enabled := true;
     edtGoogleId.Text := FConfig.web['googleid'].value;
     edtGoogleId.Enabled := true;
+    edtLangFile.Text := FConfig.service['langfile'].value;
+    edtLangFile.Enabled := true;
     edtTelnetPassword.Text := FConfig.web['telnet-password'].value;
     edtTelnetPassword.Enabled := true;
 
@@ -905,6 +914,8 @@ begin
     edtSSLPassword.Enabled := false;
     edtGoogleId.Text := '';
     edtGoogleId.Enabled := false;
+    edtLangFile.Text := '';
+    edtLangFile.Enabled := false;
     edtTelnetPassword.Text := '';
     edtTelnetPassword.Enabled := false;
     lvPackages.Enabled := true;
@@ -989,6 +1000,8 @@ begin
     lblDoco.caption := 'The post to use for plain (unsecured) web services'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
+  else if ActiveControl = edtGoogleId then
+    lblDoco.caption := 'IETF Language definitions source file'
   else if ActiveControl = edtAdminEmail then
     lblDoco.caption := 'The administrator email for this server'
   else if ActiveControl = edtAdminOrganization then
@@ -1071,6 +1084,15 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.edtLangFileChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.service['langfile'].value := edtLangFile.Text;
+    FConfig.Save;
+  end;
+end;
+
 procedure TMainConsoleForm.edtPrivateKeyChange(Sender: TObject);
 begin
   if not FLoading then
@@ -1111,7 +1133,7 @@ procedure TMainConsoleForm.edtTelnetPasswordChange(Sender: TObject);
 begin
   if not FLoading then
   begin
-    FConfig.web['telnet-password'].value := edtGoogleId.Text;
+    FConfig.web['telnet-password'].value := edtTelnetPassword.Text;
     FConfig.Save;
   end;
 end;
@@ -1476,6 +1498,13 @@ begin
    dlgOpen.Title := 'Choose International SNOMED cache file';
    if dlgOpen.Execute then
      edtInternational.text := dlgOpen.filename;
+end;
+
+procedure TMainConsoleForm.btnLangFileClick(Sender: TObject);
+begin
+  dlgOpen.filename := edtLangFile.text;
+  if dlgOpen.Execute then;
+    edtLangFile.text := dlgOpen.filename;
 end;
 
 procedure TMainConsoleForm.btnLoincDestClick(Sender: TObject);

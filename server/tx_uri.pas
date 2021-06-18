@@ -66,8 +66,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -122,10 +121,6 @@ begin
   raise ETerminologyTodo.create('TUriServices.getPrepContext');
 end;
 
-procedure TUriServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-end;
-
 function TUriServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
   result := TUriHolder.create(code);
@@ -156,7 +151,7 @@ begin
   result := '';
 end;
 
-procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
 end;
 

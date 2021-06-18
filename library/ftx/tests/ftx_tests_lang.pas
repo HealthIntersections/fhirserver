@@ -34,9 +34,8 @@ interface
 
 uses
   Sysutils, Classes,
-  fsl_testing,
-  fsl_stream,
-  ftx_lang;
+  fsl_stream, fsl_lang,
+  fsl_testing;
 
 
 type
@@ -62,7 +61,7 @@ implementation
 procedure TIETFLangTests.fail(code : String);
 var
   msg : String;
-  o : TIETFLanguageCodeConcept;
+  o : TIETFLang;
 begin
   o := FDefinitions.parse(code, msg);
   try
@@ -76,7 +75,7 @@ end;
 procedure TIETFLangTests.pass(code : String);
 var
   msg : String;
-  o : TIETFLanguageCodeConcept;
+  o : TIETFLang;
 begin
   o := FDefinitions.parse(code, msg);
   try

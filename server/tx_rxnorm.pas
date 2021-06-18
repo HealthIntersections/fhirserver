@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
   fdb_manager,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features,
   fhir_cdshooks,
@@ -84,7 +84,7 @@ type
     class function getSAB : String; virtual;
     function getCodeField : String; virtual;
   public
-    constructor Create(nci : boolean; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; nci : boolean; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
 
@@ -101,8 +101,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -127,7 +126,7 @@ type
 
   TRxNormServices = class (TUMLSServices)
   public
-    constructor Create(db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -139,7 +138,7 @@ type
     class function getSAB : String; override;
     function getCodeField : String; override;
   public
-    constructor Create(db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -148,7 +147,7 @@ type
 
   TNciMetaServices = class (TUMLSServices)
   public
-    constructor Create(db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -452,9 +451,9 @@ end;
 
 { TUMLSServices }
 
-constructor TUMLSServices.Create(nci: boolean; db: TFDBManager);
+constructor TUMLSServices.Create(languages : TIETFLanguageDefinitions; nci: boolean; db: TFDBManager);
 begin
-  inherited Create;
+  inherited Create(Languages);
 
   self.nci := nci;
   if (nci) then
@@ -542,11 +541,6 @@ end;
 class function TUMLSServices.getSAB: String;
 begin
   result := 'RXNORM';
-end;
-
-procedure TUMLSServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -645,10 +639,10 @@ begin
   result := TUMLSConcept(context).FDisplay.Trim;
 end;
 
-procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
-  list.AddStrings(TUMLSConcept(context).FOthers);
+  list.see(Display(context, THTTPLanguages.create('en')));
+  list.see(TUMLSConcept(context).FOthers);
 end;
 
 procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -1026,9 +1020,9 @@ end;
 
 { TRxNormServices }
 
-constructor TRxNormServices.Create(db: TFDBManager);
+constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited create(false, db);
+  inherited create(languages, false, db);
 end;
 
 function TRxNormServices.description: String;
@@ -1053,9 +1047,9 @@ end;
 
 { TNciMetaServices }
 
-constructor TNciMetaServices.Create(db: TFDBManager);
+constructor TNciMetaServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited create(true, db);
+  inherited create(languages, true, db);
 end;
 
 function TNciMetaServices.description: String;
@@ -1080,9 +1074,9 @@ end;
 
 { TNDFRTServices }
 
-constructor TNDFRTServices.Create(db: TFDBManager);
+constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited create(false, db);
+  inherited create(languages, false, db);
 end;
 
 function TNDFRTServices.description: String;

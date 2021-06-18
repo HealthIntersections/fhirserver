@@ -71,7 +71,7 @@ function THTTPCacheManager.generateKey(ep : String; req: TIdHTTPRequestInfo): St
 var
   pos : Integer;
 begin
-  result :=  ep+'|'+req.RawHTTPCommand+'|'+req.Accept+'|'+req.AuthUsername;
+  result :=  ep+'|'+req.RawHTTPCommand+'|'+req.Accept+'|'+req.AuthUsername+'|'+req.AcceptLanguage+'|'+req.AcceptCharSet+'|'+req.AcceptEncoding;
   if req.PostStream <> nil then
   begin
     pos := req.PostStream.Position;

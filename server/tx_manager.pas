@@ -34,13 +34,13 @@ interface
 
 uses
   SysUtils, Classes, fsl_threads, Generics.Defaults, Generics.Collections,
-  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http,
+  fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang,
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features,
   fhir_codesystem_service, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_icd10, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217,
-  tx_mimetypes, tx_lang, fsl_logging, tx_ndc, tx_hgvs,
+  tx_mimetypes, ftx_lang, fsl_logging, tx_ndc, tx_hgvs,
   utilities, server_config;
 
 const
@@ -50,6 +50,7 @@ Type
   TCommonTerminologies = class (TFslObject)
   private
     FSettings : TFHIRServerSettings;
+    FLanguages : TIETFLanguageDefinitions;
     FLoinc : TLOINCServices;
     FSnomed : TFslList<TSnomedServices>;
     FIcd10 : TFslList<TICD10Provider>;
@@ -89,6 +90,7 @@ Type
     // load external terminology resources (snomed, Loinc, etc)
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
 
+    property Languages : TIETFLanguageDefinitions read FLanguages;
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
     Property Icd10 : TFslList<TICD10Provider> read FIcd10;
@@ -287,8 +289,7 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -419,7 +420,7 @@ end;
 
 constructor TAllCodeSystemsProvider.Create(store: TCommonTerminologies; actCode : TCodeSystemProvider);
 begin
-  inherited Create;
+  inherited Create(store.Languages.link);
   FStore := store;
   FActCode := actCode;
 end;
@@ -470,11 +471,7 @@ begin
   inherited;
 end;
 
-procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages);
-begin
-  raise ETerminologyError.create('Not Created Yet');
-end;
-procedure TAllCodeSystemsProvider.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
+procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TCodeDisplays);
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
@@ -1434,7 +1431,7 @@ begin
     try
       // todo; version specific....
       if FCodeSystems.has(system) then
-        result := TFhirCodeSystemProvider.create(ffactory.link, FCodeSystems.get(system).link);
+        result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, ffactory.link, FCodeSystems.get(system).link);
     finally
       FLock.Unlock;
     end;
@@ -1460,7 +1457,7 @@ end;
 function TTerminologyServerStore.getProvider(codesystem: TFhirCodeSystemW; profile : TFHIRExpansionParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
-  result := TFhirCodeSystemProvider.create(FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
+  result := TFhirCodeSystemProvider.create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
 end;
 
 function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProvider>;
@@ -1764,7 +1761,7 @@ begin
   FSettings := settings;
   FSnomed := TFslList<TSnomedServices>.create;
   FIcd10 := TFslList<TICD10Provider>.create;
-  p := TUriServices.Create();
+  p := TUriServices.Create(FLanguages.link);
   try
     FProviderClasses := TFslMap<TCodeSystemProvider>.Create('tc.common');
     FProviderClasses.Add(p.systemUri(nil), p.link);
@@ -1811,6 +1808,7 @@ begin
   FUcum.free;
   FRxNorm.Free;
   FNciMeta.Free;
+  FLanguages.Free;
   inherited;
 end;
 
@@ -1888,13 +1886,18 @@ var
   end;
 
 begin
-  add(TACIRServices.Create).free;
-  add(TAreaCodeServices.Create).free;
-  add(TIso4217Services.Create).free;
-  add(TMimeTypeCodeServices.Create).free;
-  add(TCountryCodeServices.Create).free;
-  add(TUSStateServices.Create).free;
-  add(THGVSProvider.Create).free;
+  s := fixFile(FSettings.LangFile);
+  if not FileExists(s) then
+    raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
+  FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
+  add(TIETFLanguageCodeServices.Create(FLanguages.link)).free;
+  add(TACIRServices.Create(FLanguages.link)).free;
+  add(TAreaCodeServices.Create(FLanguages.link)).free;
+  add(TIso4217Services.Create(FLanguages.link)).free;
+  add(TMimeTypeCodeServices.Create(FLanguages.link)).free;
+  add(TCountryCodeServices.Create(FLanguages.link)).free;
+  add(TUSStateServices.Create(FLanguages.link)).free;
+  add(THGVSProvider.Create(FLanguages.link)).free;
 
   for tx in txList.sections do
   begin
@@ -1904,7 +1907,7 @@ begin
       if tx['type'].value = 'icd10' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        icdX := TICD10Provider.Create(true, fixFile(tx['source'].value));
+        icdX := TICD10Provider.Create(FLanguages.link, true, fixFile(tx['source'].value));
         try
           add(icdX);
           icd10.Add(icdX.link);
@@ -1915,7 +1918,7 @@ begin
       else if tx['type'].value = 'snomed' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        sn := TSnomedServices.Create;
+        sn := TSnomedServices.Create(FLanguages.link);
         try
           sn.Load(fixFile(tx['source'].value), tx['default'].value = 'true');
           add(sn, tx['default'].readAsBool);
@@ -1931,45 +1934,40 @@ begin
       else if tx['type'].value = 'loinc' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Loinc := TLoincServices.Create;
+        Loinc := TLoincServices.Create(FLanguages.link);
         add(Loinc);
         Loinc.Load(fixFile(tx['source'].value));
       end
       else if tx['type'].value = 'ucum' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Ucum := TUcumServices.Create;
+        Ucum := TUcumServices.Create(FLanguages.link);
         Ucum.Import(fixFile(tx['source'].value));
       end
       else if tx['type'].value = 'rxnorm' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        RxNorm := TRxNormServices.create(connectToDatabase(tx))
+        RxNorm := TRxNormServices.create(FLanguages.link, connectToDatabase(tx))
       end
       else if tx['type'].value = 'ndc' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDC := TNDCServices.create(connectToDatabase(tx), tx['version'].value)
+        NDC := TNDCServices.create(FLanguages.link, connectToDatabase(tx), tx['version'].value)
       end
       else if tx['type'].value = 'ndfrt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDFRT := TNDFRTServices.create(connectToDatabase(tx))
+        NDFRT := TNDFRTServices.create(FLanguages.link, connectToDatabase(tx))
       end
       else if tx['type'].value = 'mcimeta' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NciMeta := TNciMetaServices.Create(connectToDatabase(tx))
+        NciMeta := TNciMetaServices.Create(FLanguages.link, connectToDatabase(tx))
       end
       else if tx['type'].value = 'unii' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        Unii := TUniiServices.Create(connectToDatabase(tx))
-      end
-      else if tx['type'].value = 'lang' then
-      begin
-        Logging.log('load '+s+' from '+tx['source'].value);
-        add(TIETFLanguageCodeServices.Create(fixFile(tx['source'].value))).free;
+        Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);

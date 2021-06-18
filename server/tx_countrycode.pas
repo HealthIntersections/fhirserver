@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang,
   fhir_common, fhir_features,
   ftx_service;
 
@@ -67,7 +67,7 @@ type
 
     procedure load;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TCountryCodeServices; overload;
 
@@ -83,8 +83,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -109,9 +108,9 @@ implementation
 
 { TCountryCodeServices }
 
-Constructor TCountryCodeServices.create;
+Constructor TCountryCodeServices.create(languages : TIETFLanguageDefinitions);
 begin
-  inherited Create;
+  inherited;
   FCodes := TFslList<TCountryCodeConcept>.create;
   FMap := TFslMap<TCountryCodeConcept>.create('tx.countrycode');
   Load;
@@ -147,11 +146,6 @@ end;
 function TCountryCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
-end;
-
-procedure TCountryCodeServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -956,9 +950,9 @@ begin
   result := TCountryCodeConcept(context).display.Trim;
 end;
 
-procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TCountryCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

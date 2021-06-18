@@ -34,8 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum,
-  fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common, fhir_features,
   fhir_cdshooks,
@@ -89,7 +88,7 @@ Type
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
@@ -246,8 +245,7 @@ Type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -411,7 +409,7 @@ begin
   End;
 end;
 
-constructor TUcumServices.Create;
+constructor TUcumServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
   FModel := TUcumModel.Create;
@@ -863,9 +861,9 @@ begin
     result := getDisplay(TUCUMContext(context).concept.code, lang);
 end;
 
-procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Code(context).Trim);
+  list.see(Code(context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
@@ -889,11 +887,6 @@ begin
   Finally
     res.Free;
   End;
-end;
-
-procedure TUcumServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 function TUcumServices.getDisplay(code: String; const lang : THTTPLanguages): String;

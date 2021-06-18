@@ -113,6 +113,8 @@ type
 
   TFhirOperationOutcome5 = class (TFhirOperationOutcomeW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function hasText : boolean; override;
     function text : String; override;
     function code : TFhirIssueType; override;
@@ -165,6 +167,8 @@ type
 
   TFhirBinary5 = class (TFhirBinaryW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function ContentType : String; override;
     function content : TBytes; override;
   end;
@@ -174,6 +178,8 @@ type
   private
     function bundle : TFhirBundle;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function next(bnd : TFHIRResourceV) : String; overload; override;
     procedure addEntries(bnd : TFHIRResourceV); override;
     procedure addEntry(bnd : TFhirBundleEntryW; first : boolean); overload; override;
@@ -232,6 +238,8 @@ type
   private
     function statement : TFhirCapabilityStatement;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function hasRest : boolean; override;
     function hasSecurity(system, code : String) : boolean; override;
 
@@ -299,6 +307,8 @@ type
   private
     function statement : TFhirCapabilityStatement2;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function hasRest : boolean; override;
     function hasSecurity(system, code : String) : boolean; override;
 
@@ -360,6 +370,8 @@ type
   private
     function sd : TFhirStructureDefinition;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function kind : TStructureDefinitionKind; override;
     function name : String; override;
     function url : String; override;
@@ -399,6 +411,8 @@ type
   protected
     procedure populateList; override;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParam(name : String; value : TFHIRObject); overload; override;
@@ -420,6 +434,7 @@ type
     procedure setDisplay(Value: String); override;
     procedure setSystem(Value: String); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
+    procedure addDesignation(lang, use, value : String); override;
   end;
 
   TFhirValueSetExpansion5 = class (TFhirValueSetExpansionW)
@@ -480,8 +495,12 @@ type
 
   TFHIRValueSet5 = class (TFHIRValueSetW)
   private
+    FExp : TFhirValueSetExpansionW;
     function vs : TFhirValueSet;
   public
+    destructor Destroy; override;
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getURL : String; override;
     procedure setUrl(value : String); override;
     function getName : String; override;
@@ -591,6 +610,7 @@ type
   TFhirCodeSystemProperty5 = class (TFhirCodeSystemPropertyW)
   public
     function code : String; override;
+    function uri : String; override;
     function type_ : TFhirCodeSystemPropertyType; override;
   end;
 
@@ -598,6 +618,8 @@ type
   private
     function cs : TFhirCodeSystem;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getURL : String; override;
     function getName : String; override;
     function getVersion : String; override;
@@ -677,6 +699,8 @@ type
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getURL: String; override;
     function getDate: TFslDateTime; override;
     function getDescription: String; override;
@@ -734,6 +758,8 @@ type
   private
     function ae : TFHIRAuditEvent;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     procedure success; override;
     procedure eventType(system, code, display : String); override;
     procedure eventSubType(system, code, display : String); override;
@@ -748,6 +774,8 @@ type
   private
     function sub : TFhirSubscription;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getTopic: string; override;
     function getCriteria: String; override;
     function getDirect: boolean; override;
@@ -772,6 +800,8 @@ type
   private
 //    function sub : TFhirSubscriptionTopic;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
   end;
 
   TFhirObservationComponent5 = class (TFhirObservationComponentW)
@@ -790,6 +820,8 @@ type
   private
     function obs : TFHIRObservation;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getValue: TFHIRObject;  override;
     procedure setValue(Value: TFHIRObject); override;
     function GetDevice: String; override;
@@ -899,6 +931,8 @@ type
 
   TFHIRGroup5 = class (TFHIRGroupW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function name : String; override;
     function hasMembers : boolean; override;
     function hasCharacteristics : boolean; override;
@@ -907,11 +941,15 @@ type
 
   TFhirPatient5 = class (TFhirPatientW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function nameSummary : String; override;
   end;
 
   TFhirEncounter5 = class (TFhirEncounterW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function patientId : String; override;
     function summary : String; override;
   end;
@@ -928,6 +966,8 @@ type
   private
     function nm : TFHIRNamingSystem;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getDate: TFslDateTime; override;
     function getDescription: String; override;
     function getName: String; override;
@@ -950,6 +990,8 @@ type
 
   TFHIRStructureMap5 = class (TFHIRStructureMapW)
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function url : String; override;
   end;
 
@@ -957,6 +999,8 @@ type
   private
     function consent : TFHIRConsent;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function GetActive: boolean; override;
     function GetPatient: String; override;
     function GetDateTime: TFslDateTime; override;
@@ -968,6 +1012,8 @@ type
   private
     function ed : TFHIREventDefinition;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function url : String;
     function language : String; override;
     function triggerType : TTriggerType; override;
@@ -979,6 +1025,8 @@ type
   private
     function tc : TFhirTerminologyCapabilities;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getDate: TFslDateTime; override;
     function getDescription: String; override;
     function getName: String; override;
@@ -1005,6 +1053,8 @@ type
   private
     function ts : TFHIRTestScript;
   protected
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     function getURL: String; override;
     function getName: String; override;
     function getStatus: TPublicationStatus; override;
@@ -1028,6 +1078,8 @@ type
   private
     function p : TFhirProvenance;
   public
+    function GetLanguage: String; override;
+    procedure SetLanguage(const Value: String); override;
     procedure clearTargets; override;
     procedure clearSignatures; override;
     procedure addTarget(url : String); override;
@@ -1058,6 +1110,11 @@ begin
     for a := low(TFhirIssueType) to High(TFhirIssueType) do
       if ExceptionTypeTranslations[a] = op.issueList[0].code then
        exit(a);
+end;
+
+function TFhirOperationOutcome5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
 end;
 
 function TFhirOperationOutcome5.hasErrors: boolean;
@@ -1095,6 +1152,11 @@ end;
 function TFhirOperationOutcome5.rule(level: TIssueSeverity; source: String; typeCode: TFhirIssueType; path: string; test: boolean; msg: string): boolean;
 begin
   result := (resource as TFhirOperationOutcome).rule(ISSUE_SEVERITY_MAP2[level], source, ExceptionTypeTranslations[typeCode], path, test, msg);
+end;
+
+procedure TFhirOperationOutcome5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 function TFhirOperationOutcome5.severity: TIssueSeverity;
@@ -1174,6 +1236,11 @@ begin
   end;
 end;
 
+function TFHIRBundle5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRBundle5.GetLastUpdated: TFslDateTime;
 begin
   if bundle.meta <> nil then
@@ -1218,6 +1285,11 @@ var
 begin
   b := bnd as TFHIRBundle;
   result := b.Links['next'];
+end;
+
+procedure TFHIRBundle5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 procedure TFHIRBundle5.SetLastUpdated(Value: TFslDateTime);
@@ -1649,6 +1721,11 @@ begin
   end;
 end;
 
+function TFHIRCapabilityStatement5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 procedure TFHIRCapabilityStatement5.setKind(Value: TCapabilityStatementKind);
 begin
   case value of
@@ -1658,6 +1735,11 @@ begin
   else
     statement.kind := CapabilityStatementKindNull;
   end;
+end;
+
+procedure TFHIRCapabilityStatement5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 function TFHIRCapabilityStatement5.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
@@ -1820,6 +1902,11 @@ begin
   result := parameter.bool[name];
 end;
 
+function TFHIRParameters5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRParameters5.GetParameter(name: String): TFhirParametersParameterW;
 var
   t : TFhirParametersParameterW;
@@ -1866,6 +1953,11 @@ begin
     FList.Add(TFhirParametersParameter5.Create(t.Link));
 end;
 
+procedure TFHIRParameters5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 function TFHIRParameters5.str(name: String): String;
 begin
   result := parameter.str[name];
@@ -1903,6 +1995,11 @@ begin
         exit(TFHIRElementDefinition5.Create(ed.Link));
 end;
 
+function TFHIRStructureDefinition5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRStructureDefinition5.kind: TStructureDefinitionKind;
 begin
   case sd.kind of
@@ -1927,6 +2024,11 @@ end;
 function TFHIRStructureDefinition5.sd: TFhirStructureDefinition;
 begin
   result := resource as TFhirStructureDefinition;
+end;
+
+procedure TFHIRStructureDefinition5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 function TFHIRStructureDefinition5.type_: String;
@@ -2307,6 +2409,12 @@ begin
   vs.text := nil;
 end;
 
+destructor TFHIRValueSet5.Destroy;
+begin
+  FExp.Free;
+  inherited;
+end;
+
 function TFHIRValueSet5.excludes: TFslList<TFhirValueSetComposeIncludeW>;
 var
   c : TFhirValueSetComposeInclude;
@@ -2323,15 +2431,20 @@ end;
 
 function TFHIRValueSet5.expansion: TFhirValueSetExpansionW;
 begin
-  result := TFhirValueSetExpansion5.create(vs.expansion.Link);
+  if (FExp = nil) and (vs.expansion <> nil) then
+    FExp := TFhirValueSetExpansion5.create(vs.expansion.Link);
+  result := FExp;
 end;
 
 function TFHIRValueSet5.forceExpansion: TFhirValueSetExpansionW;
 begin
-  vs.expansion := TFhirValueSetExpansion.create;
+  if (vs.expansion = nil) then
+    vs.expansion := TFhirValueSetExpansion.create;
   vs.expansion.timestamp := TFslDateTime.makeUTC;
   vs.expansion.identifier := NewGuidURN;
-  result := TFhirValueSetExpansion5.create(vs.expansion.Link);
+  vs.expansion.parameterList.Clear;
+  vs.expansion.containsList.Clear;
+  result := expansion;
 end;
 
 function TFHIRValueSet5.getContext: String;
@@ -2428,9 +2541,19 @@ begin
   vs.Description := value;
 end;
 
+procedure TFHIRValueSet5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 function TFHIRValueSet5.getDescription: String;
 begin
   result := vs.Description;
+end;
+
+function TFHIRValueSet5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
 end;
 
 procedure TFHIRValueSet5.setVersion(value: String);
@@ -2801,6 +2924,11 @@ begin
   result := MAP_TFhirConceptPropertyTypeEnum[(Element as TFhirCodeSystemProperty).type_];
 end;
 
+function TFhirCodeSystemProperty5.uri: String;
+begin
+  result := (Element as TFhirCodeSystemProperty).uri;
+end;
+
 { TFhirCodeSystemConceptProperty5 }
 
 function TFhirCodeSystemConceptProperty5.code: String;
@@ -3004,6 +3132,11 @@ begin
   result := cs.description;
 end;
 
+function TFhirCodeSystem5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFhirCodeSystem5.getChildren(c: TFhirCodeSystemConceptW): TFhirCodeSystemConceptListW;
 var
   list : TFhirCodeSystemConceptList;
@@ -3112,6 +3245,11 @@ end;
 procedure TFhirCodeSystem5.SetDescription(Value: String);
 begin
   cs.description := value;
+end;
+
+procedure TFhirCodeSystem5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 procedure TFhirCodeSystem5.SetName(Value: String);
@@ -3245,6 +3383,21 @@ begin
   result := (Element as TFhirValueSetExpansionContains).code;
 end;
 
+procedure TFhirValueSetExpansionContains5.addDesignation(lang, use, value: String);
+var
+  d : TFhirValueSetComposeIncludeConceptDesignation;
+  l,r : String;
+begin
+  d := (Element as TFhirValueSetExpansionContains).designationList.Append;
+  d.language := lang;
+  d.value := value;
+  if use <> '' then
+  begin
+    StringSplit(use, '#', l, r);
+    d.use := TFHIRCoding.Create(l, r);
+  end;
+end;
+
 function TFhirValueSetExpansionContains5.contains: TFslList<TFhirValueSetExpansionContainsW>;
 var
   item : TFhirValueSetExpansionContains;
@@ -3368,6 +3521,11 @@ begin
   result := cm.Description;
 end;
 
+function TFhirConceptMap5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFhirConceptMap5.GetName: String;
 begin
   result := cm.Name;
@@ -3386,6 +3544,11 @@ end;
 procedure TFhirConceptMap5.SetDescription(Value: String);
 begin
   cm.Description := value;
+end;
+
+procedure TFhirConceptMap5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 procedure TFhirConceptMap5.SetName(Value: String);
@@ -3742,6 +3905,11 @@ begin
   c.Display := display;
 end;
 
+function TFHIRAuditEvent5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 procedure TFHIRAuditEvent5.participantId(system, value, alt, name: String);
 var
   p: TFhirAuditEventParticipant;
@@ -3763,6 +3931,11 @@ begin
   p.network := TFhirAuditEventParticipantNetwork.Create;
   p.network.address := ip;
   p.network.type_ := AuditEventAgentNetworkType2;
+end;
+
+procedure TFHIRAuditEvent5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 procedure TFHIRAuditEvent5.source(name, system, value: String);
@@ -3889,6 +4062,11 @@ begin
     result[i] := sub.headerList[i].value;
 end;
 
+function TFHIRSubscription5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRSubscription5.getTopic : String;
 begin
   result := sub.topic;
@@ -3952,6 +4130,11 @@ begin
     sub.headerList.Append.value := s;
 end;
 
+procedure TFHIRSubscription5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 procedure TFHIRSubscription5.SetMethod(Value: TSubscriptionMethod);
 begin
 //  sub.channel.type_ := MAP_TSubscriptionMethod2[value];
@@ -3982,6 +4165,16 @@ end;
 function TFhirBinary5.ContentType: String;
 begin
   result := (resource as TFHIRBinary).contentType;
+end;
+
+function TFhirBinary5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
+procedure TFhirBinary5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 { TFhirObservationComponent5 }
@@ -4241,6 +4434,11 @@ begin
   obs.issued := Value;
 end;
 
+procedure TFhirObservation5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 procedure TFhirObservation5.SetSubject(const Value: String);
 begin
   if value = '' then
@@ -4329,6 +4527,11 @@ end;
 function TFhirObservation5.GetIssued: TFslDateTime;
 begin
   result := obs.issued;
+end;
+
+function TFhirObservation5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
 end;
 
 function TFhirObservation5.hasDevice: boolean;
@@ -4657,6 +4860,11 @@ begin
     result.add(TFHIRGroupCharacteristic5.create(gc.link));
 end;
 
+function TFHIRGroup5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRGroup5.hasCharacteristics: boolean;
 begin
   result := (Resource as TFHIRGroup).characteristicList.count > 0;
@@ -4670,6 +4878,11 @@ end;
 function TFHIRGroup5.name: String;
 begin
   result := (Resource as TFHIRGroup).name;
+end;
+
+procedure TFHIRGroup5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 { TFHIRGroupCharacteristic5 }
@@ -4723,6 +4936,11 @@ begin
   result := nm.description;
 end;
 
+function TFHIRNamingSystem5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRNamingSystem5.getName: String;
 begin
   result := nm.name;
@@ -4773,6 +4991,11 @@ begin
   nm.description := value;
 end;
 
+procedure TFHIRNamingSystem5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 procedure TFHIRNamingSystem5.setName(Value: String);
 begin
   nm.name := value;
@@ -4799,6 +5022,16 @@ begin
 end;
 
 { TFHIRStructureMap5 }
+
+function TFHIRStructureMap5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
+procedure TFHIRStructureMap5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
 
 function TFHIRStructureMap5.url: String;
 begin
@@ -4832,6 +5065,11 @@ begin
     result := ed.triggerList[0].condition.expression;
 end;
 
+function TFHIREventDefinition5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIREventDefinition5.language: String;
 begin
   if ed.triggerList.Count = 0 then
@@ -4840,6 +5078,11 @@ begin
     result := ''
   else
     result := ed.triggerList[0].condition.language;
+end;
+
+procedure TFHIREventDefinition5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 //const
@@ -4858,9 +5101,19 @@ end;
 
 { TFhirPatient5 }
 
+function TFhirPatient5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFhirPatient5.nameSummary: String;
 begin
   result := HumanNamesAsText((resource as TFhirPatient).nameList);
+end;
+
+procedure TFhirPatient5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 { TFhirTerminologyCapabilities5 }
@@ -4900,6 +5153,11 @@ end;
 function TFhirTerminologyCapabilities5.getDescription: String;
 begin
   result := tc.description;
+end;
+
+function TFhirTerminologyCapabilities5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
 end;
 
 function TFhirTerminologyCapabilities5.getName: String;
@@ -4944,6 +5202,11 @@ begin
   tc.description := value;
 end;
 
+
+procedure TFhirTerminologyCapabilities5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
 
 procedure TFhirTerminologyCapabilities5.setName(Value: String);
 begin
@@ -5037,6 +5300,11 @@ begin
   result := consent.dateTime;
 end;
 
+function TFHIRConsent5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFHIRConsent5.GetPatient: String;
 begin
   if consent.subject <> nil then
@@ -5050,11 +5318,26 @@ begin
   result := nil; // for now
 end;
 
+procedure TFHIRConsent5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
+
 { TFhirEncounter5 }
+
+function TFhirEncounter5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
 
 function TFhirEncounter5.patientId: String;
 begin
   result := (FRes as TFHIREncounter).subject.getId;
+end;
+
+procedure TFhirEncounter5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 function TFhirEncounter5.summary: String;
@@ -5077,6 +5360,11 @@ end;
 function TFhirTestScript5.getDescription: String;
 begin
   result := ts.description;
+end;
+
+function TFHIRTestScript5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
 end;
 
 function TFhirTestScript5.getName: String;
@@ -5115,6 +5403,11 @@ begin
   ts.description := value;
 end;
 
+
+procedure TFHIRTestScript5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
 
 procedure TFhirTestScript5.setName(Value: String);
 begin
@@ -5166,9 +5459,19 @@ begin
   p.targetList.Clear;
 end;
 
+function TFhirProvenance5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 function TFhirProvenance5.p: TFhirProvenance;
 begin
   result := (Fres as TFhirProvenance);
+end;
+
+procedure TFhirProvenance5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 { TFhirConceptMapGroupElementDependsOn5 }
@@ -5555,6 +5858,11 @@ begin
   end;
 end;
 
+function TFHIRCapabilityStatement25.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
 procedure TFHIRCapabilityStatement25.setKind(Value: TCapabilityStatementKind);
 begin
   case value of
@@ -5564,6 +5872,11 @@ begin
   else
     statement.kind := CapabilityStatementKindNull;
   end;
+end;
+
+procedure TFHIRCapabilityStatement25.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
 end;
 
 function TFHIRCapabilityStatement25.getAcceptUnknown: TCapabilityStatementAcceptUnknown;
@@ -5676,5 +5989,17 @@ begin
 end;
 
 
+
+{ TFHIRSubscriptionTopic5 }
+
+function TFHIRSubscriptionTopic5.GetLanguage: String;
+begin
+  result := (resource as TFHIRResource).language;
+end;
+
+procedure TFHIRSubscriptionTopic5.SetLanguage(const Value: String);
+begin
+  (resource as TFHIRResource).language := value;
+end;
 
 end.

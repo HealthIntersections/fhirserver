@@ -34,8 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc,
-  fsl_http,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http,
   fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
@@ -393,7 +392,7 @@ Type
   protected
     function sizeInBytesV : cardinal; override;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TLOINCServices; Overload;
 
@@ -404,7 +403,7 @@ Type
     function supportsLang(const lang : THTTPLanguages): boolean;
 
     Function GetDisplayByName(Const sCode : String; langs : TLangArray) : String;
-    procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TStringList);
+    procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TCodeDisplays);
     Function Search(sText : String; all: boolean) : TMatchArray; overload;
     Function GetPropertyId(aType : TLoincPropertyType; langs : TLangArray; const sName : String) : cardinal;
     Function GetPropertyCodes(iProp : cardinal) : TCardinalArray;
@@ -444,8 +443,7 @@ Type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -926,7 +924,7 @@ end;
 
 { TLOINCServices }
 
-constructor TLOINCServices.Create;
+constructor TLOINCServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
   FLang := TLoincLanguages.Create;
@@ -997,8 +995,7 @@ begin
   result := Desc.GetEntry(iName, lang);
 end;
 
-procedure TLOINCServices.GetDisplaysByName(const sCode: String;
-  langs: TLangArray; list: TStringList);
+procedure TLOINCServices.GetDisplaysByName(const sCode: String; langs: TLangArray; list: TCodeDisplays);
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
@@ -1016,7 +1013,7 @@ begin
   Begin
     CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    list.Add(Desc.GetEntry(iDescription, ilang).trim);
+    list.see(Desc.GetEntry(iDescription, ilang).trim);
     if iOtherNames <> 0 then
     begin
       names := FRefs.GetRefs(iOtherNames);
@@ -1025,19 +1022,19 @@ begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
           if l = ilang then
-            list.Add(s.trim);
+            list.see(s.trim);
       end;
     end;
   End
   else if AnswerLists.FindCode(sCode, iIndex, FDesc) then
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
-    list.Add(Desc.GetEntry(iDescription, ilang).Trim);
+    list.see(Desc.GetEntry(iDescription, ilang).Trim);
   end
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
-    list.Add(Desc.GetEntry(text, ilang).Trim);
+    list.see(Desc.GetEntry(text, ilang).Trim);
   end
 end;
 
@@ -2162,9 +2159,9 @@ begin
   result := Desc.GetEntry(iDescription, ilang);
 end;
 
-procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  GetDisplaysByName(Code(context), langsForLang(lang), list);
+  GetDisplaysByName(Code(context), langsForLang(THTTPLanguages.Create('en')), list);
 end;
 
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -2268,12 +2265,6 @@ begin
     End;
     {$ENDIF}
   End;
-end;
-
-procedure TLOINCServices.Displays(code: String; list: TStringList;
-  const lang: THTTPLanguages);
-begin
-  GetDisplaysByName(code, langsForLang(lang), list);
 end;
 
 

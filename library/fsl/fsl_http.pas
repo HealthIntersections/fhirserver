@@ -621,10 +621,10 @@ begin
       if s.Contains(';') then
       begin
         StringSplit(s, ';', l, r);
-        list.Add(TLanguageSpec.Create(l, StrToFloatDef(r, 0.5)));
+        list.Add(TLanguageSpec.Create(l.trim, StrToFloatDef(r, 0.5)));
       end
       else
-        list.Add(TLanguageSpec.Create(s, 1));
+        list.Add(TLanguageSpec.Create(s.trim, 1));
     end;
     if (list.count > 1) then
     begin
@@ -632,7 +632,7 @@ begin
     end;
     SetLength(FCodes, list.Count);
     for i := 0 to list.Count - 1 do
-      FCodes[i] := list[i].FCode;
+      FCodes[list.Count - 1 - i] := list[i].FCode;
   finally
     list.Free;
   end;

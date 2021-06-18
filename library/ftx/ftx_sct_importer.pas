@@ -463,7 +463,7 @@ var
 begin
   FStart := now;
 
-  FSvc := TSnomedServices.Create;
+  FSvc := TSnomedServices.Create(nil);
   FWordList := TFslMap<TWordCache>.Create('wordmap');
   FStemList := TFslMap<TStemCache>.Create('stemmap');
   FStringsTemp := TDictionary<String, Cardinal>.Create;

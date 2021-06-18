@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_http,
+  fsl_base, fsl_http, fsl_lang,
   fhir_objects, fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks,
   ftx_service;
@@ -73,7 +73,7 @@ type
     procedure load(filename : String);
     procedure countDescendents(node : TICD10Node);
   public
-    constructor Create(isDefault : boolean; filename : String);
+    constructor Create(languages : TIETFLanguageDefinitions; isDefault : boolean; filename : String);
     destructor Destroy; override;
     function link : TICD10Provider; overload;
 
@@ -97,8 +97,7 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -160,9 +159,9 @@ end;
 
 { TICD10Provider }
 
-constructor TICD10Provider.Create(isDefault : boolean; filename: String);
+constructor TICD10Provider.Create(languages : TIETFLanguageDefinitions; isDefault : boolean; filename: String);
 begin
-  inherited create;
+  inherited create(languages);
   FRoots := TFslList<TICD10Node>.create;
   FCodes := TFslList<TICD10Node>.create;
   FIsDefault := isDefault;
@@ -252,21 +251,12 @@ begin
     result := TICD10Node(context).FDisplay
 end;
 
-procedure TICD10Provider.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
-var
-  context : TCodeSystemProviderContext;
+procedure TICD10Provider.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  context := locate(code);
-  if context <> nil then
-    Displays(context, list, lang);
-end;
-
-procedure TICD10Provider.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
-begin
-  if (lang.matches(FLanguage)) then
-    list.add(TICD10Node(context).FLocalDisplay)
-  else
-    list.add(TICD10Node(context).FDisplay)
+//  if (lang.matches(FLanguage)) then
+//    list.see(TICD10Node(context).FLocalDisplay)
+//  else
+  list.see(TICD10Node(context).FDisplay)
 end;
 
 function TICD10Provider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;

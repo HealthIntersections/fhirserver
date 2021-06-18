@@ -37,6 +37,176 @@ uses
   fsl_utilities, fsl_base, fsl_stream;
 
 type
+{
+a single primary language subtag based on a two-letter language code from ISO 639-1 (2002) or a three-letter code from ISO 639-2 (1998), ISO 639-3 (2007) or ISO 639-5 (2008), or registered through the BCP 47 process and composed of five to eight letters;
+up to three optional extended language subtags composed of three letters each, separated by hyphens; (There is currently no extended language subtag registered in the Language Subtag Registry without an equivalent and preferred primary language subtag. This component of language tags is preserved for backwards compatibility and to allow for future parts of ISO 639.)
+an optional script subtag, based on a four-letter script code from ISO 15924 (usually written in title case);
+an optional region subtag based on a two-letter country code from ISO 3166-1 alpha-2 (usually written in upper case), or a three-digit code from UN M.49 for geographical regions;
+
+optional variant subtags, separated by hyphens, each composed of five to eight letters, or of four characters starting with a digit; (Variant subtags are registered with IANA and not associated with any external standard.)
+optional extension subtags, separated by hyphens, each composed of a single character, with the exception of the letter x, and a hyphen followed by one or more subtags of two to eight characters each, separated by hyphens;
+an optional private-use subtag, composed of the letter x and a hyphen followed by subtags of one to eight characters each, separated by hyphens.
+
+ langtag       = language
+                 ["-" script]
+                 ["-" region]
+                 *("-" variant)
+                 *("-" extension)
+                 ["-" privateuse]
+
+ language      = 2*3ALPHA            ; shortest ISO 639 code
+                 ["-" extlang]       ; sometimes followed by
+                                     ; extended language subtags
+               / 4ALPHA              ; or reserved for future use
+               / 5*8ALPHA            ; or registered language subtag
+
+ extlang       = 3ALPHA              ; selected ISO 639 codes
+                 *2("-" 3ALPHA)      ; permanently reserved
+
+ script        = 4ALPHA              ; ISO 15924 code
+
+ region        = 2ALPHA              ; ISO 3166-1 code
+               / 3DIGIT              ; UN M.49 code
+
+ variant       = 5*8alphanum         ; registered variants
+               / (DIGIT 3alphanum)
+
+ extension     = singleton 1*("-" (2*8alphanum))
+
+                                     ; Single alphanumerics
+                                     ; "x" reserved for private use
+ singleton     = DIGIT               ; 0 - 9
+               / %x41-57             ; A - W
+               / %x59-5A             ; Y - Z
+               / %x61-77             ; a - w
+               / %x79-7A             ; y - z
+
+ privateuse    = "x" 1*("-" (1*8alphanum))
+
+ grandfathered = irregular           ; non-redundant tags registered
+               / regular             ; during the RFC 3066 era
+
+ irregular     = "en-GB-oed"         ; irregular tags do not match
+               / "i-ami"             ; the 'langtag' production and
+               / "i-bnn"             ; would not otherwise be
+               / "i-default"         ; considered 'well-formed'
+               / "i-enochian"        ; These tags are all valid,
+               / "i-hak"             ; but most are deprecated
+               / "i-klingon"         ; in favor of more modern
+               / "i-lux"             ; subtags or subtag
+               / "i-mingo"           ; combination
+
+http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+http://r12a.github.io/apps/subtags/
+https://www.w3.org/International/articles/language-tags/index.en
+
+
+}
+
+  TIETFLangPartType = (lptNone, lptLanguage, lptExtLang, lptScript, lptRegion, lptVariant, lptExtension);
+
+  TIETFLang = class (TFslObject)
+  private
+    FCode : String;
+    FLanguage : string;
+    FScript : string;
+    FRegion : String;
+    FVariant : String;
+    FExtension : String;
+    FExtLang : TArray<String>;
+    FPrivateUse : TArray<String>;
+
+    procedure addExtLang(s : String);
+    procedure addPrivateUse(s : String);
+  public
+    constructor Create(code : String);
+    function Link : TIETFLang; overload;
+
+    property code : String read FCode;
+    property language : string read Flanguage;
+    property extLang : TArray<String> read FextLang;
+    property script : string read Fscript;
+    property region : String read Fregion;
+    property variant : String read Fvariant;
+    property extension : String read Fextension;
+    property privateUse : TArray<String> read FPrivateUse;
+
+    function matches(other : TIETFLang; depth : TIETFLangPartType) : boolean; overload;
+    function matches(other : TIETFLang) : boolean; overload;
+
+    function isLangRegion : boolean;
+  end;
+
+  TIETFLanguageEntry = class (TFslObject)
+  private
+    FCode: String;
+    FDisplay: String;
+  public
+    property code : String read FCode write FCode;
+    property display : String read FDisplay write FDisplay;
+  end;
+
+  TIETFLanguageLanguage = class (TIETFLanguageEntry)
+  private
+    FSScript: String;
+    FScope: String;
+  public
+    function Link : TIETFLanguageLanguage; overload;
+    property sscript : String read FSScript write FSScript;
+    property scope : String read FScope write FScope;
+  end;
+
+  TIETFLanguageExtLang = class (TIETFLanguageEntry)
+  public
+    function Link : TIETFLanguageExtLang; overload;
+  end;
+
+  TIETFLanguageScript = class (TIETFLanguageEntry)
+  public
+    function Link : TIETFLanguageScript; overload;
+  end;
+
+  TIETFLanguageRegion = class (TIETFLanguageEntry)
+  public
+    function Link : TIETFLanguageRegion; overload;
+  end;
+
+  TIETFLanguageVariant = class (TIETFLanguageEntry)
+  public
+    function Link : TIETFLanguageVariant; overload;
+  end;
+
+  TIETFLanguageDefinitions = class (TFslObject)
+  private
+    FLanguages : TFslMap<TIETFLanguageLanguage>;
+    FExtLanguages : TFslMap<TIETFLanguageExtLang>;
+    FScripts : TFslMap<TIETFLanguageScript>;
+    FRegions : TFslMap<TIETFLanguageRegion>;
+    FVariants : TFslMap<TIETFLanguageVariant>;
+    function readVars(st : TStringList; i : integer; vars : TFslStringDictionary) :integer;
+    function loadLanguage(vars : TFslStringDictionary; i : integer) :integer;
+    function loadExtLang(vars : TFslStringDictionary; i : integer) :integer;
+    function loadScript(vars : TFslStringDictionary; i : integer) :integer;
+    function loadRegion(vars : TFslStringDictionary; i : integer) :integer;
+    function loadVariant(vars : TFslStringDictionary; i : integer) :integer;
+    procedure Load(source : String);
+  public
+    constructor Create(source : String);
+    destructor Destroy; override;
+
+    function link : TIETFLanguageDefinitions; overload;
+
+    class function checkSource(source : String) : String;
+    function parse(code : String; var msg : String) : TIETFLang; overload;
+    function parse(code : String) : TIETFLang; overload;
+    function present(code : TIETFLang) : String; overload;
+    function present(code : TIETFLang; template : String) : String; overload;
+
+    function getDisplayForRegion(code : String):String;
+    function getDisplayForLang(code : String):String;
+  end;
+
+
   TIso4217Currency = class (TFslObject)
   private
     FDisplay: String;
@@ -72,6 +242,7 @@ type
   end;
 
 function currencyForIso4217Code(code : String) : String;
+
 
 implementation
 
@@ -335,6 +506,687 @@ begin
   result := inherited sizeInBytesV;
   inc(result, FCodes.sizeInBytes);
   inc(result, FMap.sizeInBytes);
+end;
+
+{ TIETFLang }
+
+constructor TIETFLang.create(code : String);
+begin
+  inherited create;
+  self.FCode := code;
+end;
+
+function TIETFLang.matches(other: TIETFLang; depth: TIETFLangPartType): boolean;
+begin
+  if depth >= lptExtension then
+    if (FExtension <> other.FExtension) then
+      exit(false);
+
+  if depth >= lptVariant then
+    if (FVariant <> other.FVariant) then
+      exit(false);
+
+  if depth >= lptRegion then
+    if (FRegion <> other.FRegion) then
+      exit(false);
+
+  if depth >= lptScript then
+    if (FScript <> other.FScript) then
+      exit(false);
+//
+//  if depth >= lptExtLang then
+//    if (FExtLang <> '') and (FExtLang <> other.FExtLang) then
+//      exit(false);
+
+  if depth >= lptLanguage then
+    exit(FLanguage = other.FLanguage);
+  result := true;
+end;
+
+procedure TIETFLang.addExtLang(s: String);
+begin
+  SetLength(FExtLang, length(FExtLang)+1);
+  FExtLang[length(FExtLang)-1] := s;
+end;
+
+procedure TIETFLang.addPrivateUse(s: String);
+begin
+  SetLength(FPrivateUse, length(FPrivateUse)+1);
+  FPrivateUse[length(FPrivateUse)-1] := s;
+end;
+
+
+function TIETFLang.isLangRegion: boolean;
+begin
+  result := (language <> '') and (region <> '') and
+    (length(extLang) = 0) and (script = '') and (variant = '') and (extension = '') and (length(FPrivateUse) = 0);
+
+end;
+
+function TIETFLang.Link: TIETFLang;
+begin
+  result := TIETFLang(inherited link);
+end;
+
+
+function TIETFLang.matches(other: TIETFLang): boolean;
+begin
+  if FExtension <> '' then
+    if FExtension <> other.FExtension then
+      exit(false);
+
+  if FVariant <> '' then
+    if FVariant <> other.FVariant then
+      exit(false);
+
+  if FRegion <> '' then
+    if FRegion <> other.FRegion then
+      exit(false);
+
+  if FScript <> '' then
+    if FScript <> other.FScript then
+      exit(false);
+
+  if length(FExtLang) > 0 then
+    if FExtLang <> other.FExtLang then
+      exit(false);
+
+  exit(FLanguage = other.FLanguage);
+end;
+
+{ TIETFLanguageDefinitions }
+
+constructor TIETFLanguageDefinitions.Create(source : String);
+begin
+  inherited Create;
+  FLanguages := TFslMap<TIETFLanguageLanguage>.create('tx.lang');
+  FExtLanguages := TFslMap<TIETFLanguageExtLang>.create('tx.lang.ext');
+  FScripts := TFslMap<TIETFLanguageScript>.create('tx.lang.scripts');
+  FRegions := TFslMap<TIETFLanguageRegion>.create('tx.lang.reg');
+  FVariants := TFslMap<TIETFLanguageVariant>.create('tx.lang.var');
+  Load(source);
+end;
+
+destructor TIETFLanguageDefinitions.Destroy;
+begin
+  FVariants.Free;
+  FScripts.Free;
+  FExtLanguages.Free;
+  FRegions.Free;
+  FLanguages.Free;
+  inherited;
+end;
+
+class function TIETFLanguageDefinitions.checkSource(source: String): String;
+begin
+  if source.StartsWith('%%') then
+    result := 'Ok'
+  else
+    result := 'Invalid';
+end;
+
+function TIETFLanguageDefinitions.getDisplayForRegion(code: String): String;
+begin
+//  if not FRegions.TryGetValue(code, result) then
+//    result := '??';
+end;
+
+function TIETFLanguageDefinitions.link: TIETFLanguageDefinitions;
+begin
+  result := TIETFLanguageDefinitions(inherited link);
+end;
+
+function TIETFLanguageDefinitions.getDisplayForLang(code: String): String;
+begin
+//  if not FLanguages.TryGetValue(code, result) then
+//    result := '??';
+end;
+
+
+function TIETFLanguageDefinitions.parse(code : String; var msg : String) : TIETFLang;
+var
+  parts : TArray<String>;
+  res : TIETFLang;
+  c, i, t : integer;
+begin
+  msg := '';
+  res := TIETFLang.create(code);
+  try
+    if code <> '' then
+    begin
+      parts := code.Split(['-']);
+      c := 0;
+      t := length(parts);
+      if not FLanguages.ContainsKey(parts[c]) and (parts[c] <> '*') then
+        msg := 'Invalid Language code "'+parts[c]+'"'
+      else
+      begin
+        res.FLanguage := parts[c];
+        inc(c);
+        for i := 1 to 3 do
+        begin
+          if (c < t) and FExtLanguages.ContainsKey(parts[c]) then
+          begin
+            res.addExtLang(parts[c]);
+            inc(c);
+          end;
+        end;
+        if (c < t) and FScripts.ContainsKey(parts[c]) then
+        begin
+          res.FScript := parts[c];
+          inc(c);
+        end;
+        if (c < t) and FRegions.ContainsKey(parts[c]) then
+        begin
+          res.FRegion := parts[c];
+          inc(c);
+        end;
+        if (c < t) and FVariants.ContainsKey(parts[c]) then
+        begin
+          res.FVariant := parts[c];
+          inc(c);
+        end;
+        while (c < t) and parts[c].StartsWith('x') do
+        begin
+          res.addPrivateUse(parts[c]);
+          inc(c);
+        end;
+        if (c < t) then
+          msg := 'Unable to recognise part '+inttostr(c+1)+' ("'+parts[c]+'") as a valid language part';
+      end;
+    end;
+    if msg = '' then
+      result := res.Link
+    else
+      result := nil;
+  finally
+    res.Free;
+  end;
+end;
+
+
+function TIETFLanguageDefinitions.parse(code: String): TIETFLang;
+var
+  m : String;
+begin
+  result := parse(code, m);
+end;
+
+function TIETFLanguageDefinitions.present(code: TIETFLang; template: String): String;
+begin
+  result := template.Replace('{{lang}}', FLanguages[code.language].display).Replace('{{region}}', FRegions[code.region].display);
+end;
+
+function TIETFLanguageDefinitions.present(code: TIETFLang): String;
+var
+  b : TStringBuilder;
+  first : boolean;
+  procedure note(n, v : String);
+  begin
+    if first then
+      first := false
+    else
+      b.Append(', ');
+    b.Append(n);
+    b.Append('=');
+    b.Append(v);
+  end;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.append(FLanguages[code.language].display);
+    if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
+    begin
+      b.Append(' (');
+      first := true;
+      if (code.script <> '') then
+        note('Script', FScripts[code.script].display);
+      if (code.region <> '') then
+        note('Region', FRegions[code.region].display);
+      if (code.variant <> '') then
+        note('Region', FVariants[code.variant].display);
+      b.Append(')');
+    end;
+
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.readVars(st: TStringList; i: integer; vars: TFslStringDictionary): integer;
+var
+  l, r : String;
+begin
+  vars.Clear;
+  while (i < st.Count) and (st[i] <> '%%') do
+  begin
+    if not st[i].StartsWith(' ') then
+    begin
+      StringSplit(st[i], ':', l, r);
+      if not vars.ContainsKey(l.trim) then
+        vars.Add(l.trim, r.Trim);
+    end;
+    inc(i);
+  end;
+  result := i;
+end;
+
+//procedure TIETFLanguageDefinitions.LoadCountries;
+//begin
+//  FCountries.Add('AD', 'Andorra');
+//  FCountries.Add('AE', 'United Arab Emirates');
+//  FCountries.add('AF', 'Afghanistan');
+//  FCountries.add('AG', 'Antigua and Barbuda');
+//  FCountries.add('AI', 'Anguilla');
+//  FCountries.add('AL', 'Albania');
+//  FCountries.add('AM', 'Armenia');
+//  FCountries.add('AO', 'Angola');
+//  FCountries.add('AQ', 'Antarctica');
+//  FCountries.add('AR', 'Argentina');
+//  FCountries.add('AS', 'American Samoa');
+//  FCountries.add('AT', 'Austria');
+//  FCountries.add('AU', 'Australia');
+//  FCountries.add('AW', 'Aruba');
+//  FCountries.add('AX', 'Eland Islands');
+//  FCountries.add('AZ', 'Azerbaijan');
+//  FCountries.add('BA', 'Bosnia and Herzegovina');
+//  FCountries.add('BB', 'Barbados');
+//  FCountries.add('BD', 'Bangladesh');
+//  FCountries.add('BE', 'Belgium');
+//  FCountries.add('BF', 'Burkina Faso');
+//  FCountries.add('BG', 'Bulgaria');
+//  FCountries.add('BH', 'Bahrain');
+//  FCountries.add('BI', 'Burundi');
+//  FCountries.add('BJ', 'Benin');
+//  FCountries.add('BL', 'Saint Barthilemy');
+//  FCountries.add('BM', 'Bermuda');
+//  FCountries.add('BN', 'Brunei Darussalam');
+//  FCountries.add('BO', 'Bolivia, Plurinational State of');
+//  FCountries.add('BQ', 'Bonaire, Sint Eustatius and Saba');
+//  FCountries.add('BR', 'Brazil');
+//  FCountries.add('BS', 'Bahamas');
+//  FCountries.add('BT', 'Bhutan');
+//  FCountries.add('BV', 'Bouvet Island');
+//  FCountries.add('BW', 'Botswana');
+//  FCountries.add('BY', 'Belarus');
+//  FCountries.add('BZ', 'Belize');
+//  FCountries.add('CA', 'Canada');
+//  FCountries.add('CC', 'Cocos (Keeling) Islands');
+//  FCountries.add('CD', 'Congo, the Democratic Republic of the');
+//  FCountries.add('CF', 'Central African Republic');
+//  FCountries.add('CG', 'Congo');
+//  FCountries.add('CH', 'Switzerland');
+//  FCountries.add('CI', 'Ctte d''Ivoire');
+//  FCountries.add('CK', 'Cook Islands');
+//  FCountries.add('CL', 'Chile');
+//  FCountries.add('CM', 'Cameroon');
+//  FCountries.add('CN', 'China');
+//  FCountries.add('CO', 'Colombia');
+//  FCountries.add('CR', 'Costa Rica');
+//  FCountries.add('CU', 'Cuba');
+//  FCountries.add('CV', 'Cabo Verde');
+//  FCountries.add('CW', 'Curagao');
+//  FCountries.add('CX', 'Christmas Island');
+//  FCountries.add('CY', 'Cyprus');
+//  FCountries.add('CZ', 'Czech Republic');
+//  FCountries.add('DE', 'Germany');
+//  FCountries.add('DJ', 'Djibouti');
+//  FCountries.add('DK', 'Denmark');
+//  FCountries.add('DM', 'Dominica');
+//  FCountries.add('DO', 'Dominican Republic');
+//  FCountries.add('DZ', 'Algeria');
+//  FCountries.add('EC', 'Ecuador');
+//  FCountries.add('EE', 'Estonia');
+//  FCountries.add('EG', 'Egypt');
+//  FCountries.add('EH', 'Western Sahara');
+//  FCountries.add('ER', 'Eritrea');
+//  FCountries.add('ES', 'Spain');
+//  FCountries.add('ET', 'Ethiopia');
+//  FCountries.add('FI', 'Finland');
+//  FCountries.add('FJ', 'Fiji');
+//  FCountries.add('FK', 'Falkland Islands (Malvinas)');
+//  FCountries.add('FM', 'Micronesia, Federated States of');
+//  FCountries.add('FO', 'Faroe Islands');
+//  FCountries.add('FR', 'France');
+//  FCountries.add('GA', 'Gabon');
+//  FCountries.add('GB', 'United Kingdom');
+//  FCountries.add('GD', 'Grenada');
+//  FCountries.add('GE', 'Georgia');
+//  FCountries.add('GF', 'French Guiana');
+//  FCountries.add('GG', 'Guernsey');
+//  FCountries.add('GH', 'Ghana');
+//  FCountries.add('GI', 'Gibraltar');
+//  FCountries.add('GL', 'Greenland');
+//  FCountries.add('GM', 'Gambia');
+//  FCountries.add('GN', 'Guinea');
+//  FCountries.add('GP', 'Guadeloupe');
+//  FCountries.add('GQ', 'Equatorial Guinea');
+//  FCountries.add('GR', 'Greece');
+//  FCountries.add('GS', 'South Georgia and the South Sandwich Islands');
+//  FCountries.add('GT', 'Guatemala');
+//  FCountries.add('GU', 'Guam');
+//  FCountries.add('GW', 'Guinea-Bissau');
+//  FCountries.add('GY', 'Guyana');
+//  FCountries.add('HK', 'Hong Kong');
+//  FCountries.add('HM', 'Heard Island and McDonald Islands');
+//  FCountries.add('HN', 'Honduras');
+//  FCountries.add('HR', 'Croatia');
+//  FCountries.add('HT', 'Haiti');
+//  FCountries.add('HU', 'Hungary');
+//  FCountries.add('ID', 'Indonesia');
+//  FCountries.add('IE', 'Ireland');
+//  FCountries.add('IL', 'Israel');
+//  FCountries.add('IM', 'Isle of Man');
+//  FCountries.add('IN', 'India');
+//  FCountries.add('IO', 'British Indian Ocean Territory');
+//  FCountries.add('IQ', 'Iraq');
+//  FCountries.add('IR', 'Iran, Islamic Republic of');
+//  FCountries.add('IS', 'Iceland');
+//  FCountries.add('IT', 'Italy');
+//  FCountries.add('JE', 'Jersey');
+//  FCountries.add('JM', 'Jamaica');
+//  FCountries.add('JO', 'Jordan');
+//  FCountries.add('JP', 'Japan');
+//  FCountries.add('KE', 'Kenya');
+//  FCountries.add('KG', 'Kyrgyzstan');
+//  FCountries.add('KH', 'Cambodia');
+//  FCountries.add('KI', 'Kiribati');
+//  FCountries.add('KM', 'Comoros');
+//  FCountries.add('KN', 'Saint Kitts and Nevis');
+//  FCountries.add('KP', 'Korea, Democratic People''s Republic of');
+//  FCountries.add('KR', 'Korea, Republic of');
+//  FCountries.add('KW', 'Kuwait');
+//  FCountries.add('KY', 'Cayman Islands');
+//  FCountries.add('KZ', 'Kazakhstan');
+//  FCountries.add('LA', 'Lao People''s Democratic Republic');
+//  FCountries.add('LB', 'Lebanon');
+//  FCountries.add('LC', 'Saint Lucia');
+//  FCountries.add('LI', 'Liechtenstein');
+//  FCountries.add('LK', 'Sri Lanka');
+//  FCountries.add('LR', 'Liberia');
+//  FCountries.add('LS', 'Lesotho');
+//  FCountries.add('LT', 'Lithuania');
+//  FCountries.add('LU', 'Luxembourg');
+//  FCountries.add('LV', 'Latvia');
+//  FCountries.add('LY', 'Libya');
+//  FCountries.add('MA', 'Morocco');
+//  FCountries.add('MC', 'Monaco');
+//  FCountries.add('MD', 'Moldova, Republic of');
+//  FCountries.add('ME', 'Montenegro');
+//  FCountries.add('MF', 'Saint Martin (French part)');
+//  FCountries.add('MG', 'Madagascar');
+//  FCountries.add('MH', 'Marshall Islands');
+//  FCountries.add('MK', 'Macedonia, the former Yugoslav Republic of');
+//  FCountries.add('ML', 'Mali');
+//  FCountries.add('MM', 'Myanmar');
+//  FCountries.add('MN', 'Mongolia');
+//  FCountries.add('MO', 'Macao');
+//  FCountries.add('MP', 'Northern Mariana Islands');
+//  FCountries.add('MQ', 'Martinique');
+//  FCountries.add('MR', 'Mauritania');
+//  FCountries.add('MS', 'Montserrat');
+//  FCountries.add('MT', 'Malta');
+//  FCountries.add('MU', 'Mauritius');
+//  FCountries.add('MV', 'Maldives');
+//  FCountries.add('MW', 'Malawi');
+//  FCountries.add('MX', 'Mexico');
+//  FCountries.add('MY', 'Malaysia');
+//  FCountries.add('MZ', 'Mozambique');
+//  FCountries.add('NA', 'Namibia');
+//  FCountries.add('NC', 'New Caledonia');
+//  FCountries.add('NE', 'Niger');
+//  FCountries.add('NF', 'Norfolk Island');
+//  FCountries.add('NG', 'Nigeria');
+//  FCountries.add('NI', 'Nicaragua');
+//  FCountries.add('NL', 'Netherlands');
+//  FCountries.add('NO', 'Norway');
+//  FCountries.add('NP', 'Nepal');
+//  FCountries.add('NR', 'Nauru');
+//  FCountries.add('NU', 'Niue');
+//  FCountries.add('NZ', 'New Zealand');
+//  FCountries.add('OM', 'Oman');
+//  FCountries.add('PA', 'Panama');
+//  FCountries.add('PE', 'Peru');
+//  FCountries.add('PF', 'French Polynesia');
+//  FCountries.add('PG', 'Papua New Guinea');
+//  FCountries.add('PH', 'Philippines');
+//  FCountries.add('PK', 'Pakistan');
+//  FCountries.add('PL', 'Poland');
+//  FCountries.add('PM', 'Saint Pierre and Miquelon');
+//  FCountries.add('PN', 'Pitcairn');
+//  FCountries.add('PR', 'Puerto Rico');
+//  FCountries.add('PS', 'Palestine, State of');
+//  FCountries.add('PT', 'Portugal');
+//  FCountries.add('PW', 'Palau');
+//  FCountries.add('PY', 'Paraguay');
+//  FCountries.add('QA', 'Qatar');
+//  FCountries.add('RE', 'Riunion');
+//  FCountries.add('RO', 'Romania');
+//  FCountries.add('RS', 'Serbia');
+//  FCountries.add('RU', 'Russian Federation');
+//  FCountries.add('RW', 'Rwanda');
+//  FCountries.add('SA', 'Saudi Arabia');
+//  FCountries.add('SB', 'Solomon Islands');
+//  FCountries.add('SC', 'Seychelles');
+//  FCountries.add('SD', 'Sudan');
+//  FCountries.add('SE', 'Sweden');
+//  FCountries.add('SG', 'Singapore');
+//  FCountries.add('SH', 'Saint Helena, Ascension and Tristan da Cunha');
+//  FCountries.add('SI', 'Slovenia');
+//  FCountries.add('SJ', 'Svalbard and Jan Mayen');
+//  FCountries.add('SK', 'Slovakia');
+//  FCountries.add('SL', 'Sierra Leone');
+//  FCountries.add('SM', 'San Marino');
+//  FCountries.add('SN', 'Senegal');
+//  FCountries.add('SO', 'Somalia');
+//  FCountries.add('SR', 'Suriname');
+//  FCountries.add('SS', 'South Sudan');
+//  FCountries.add('ST', 'Sao Tome and Principe');
+//  FCountries.add('SV', 'El Salvador');
+//  FCountries.add('SX', 'Sint Maarten (Dutch part)');
+//  FCountries.add('SY', 'Syrian Arab Republic');
+//  FCountries.add('SZ', 'Swaziland');
+//  FCountries.add('TC', 'Turks and Caicos Islands');
+//  FCountries.add('TD', 'Chad');
+//  FCountries.add('TF', 'French Southern Territories');
+//  FCountries.add('TG', 'Togo');
+//  FCountries.add('TH', 'Thailand');
+//  FCountries.add('TJ', 'Tajikistan');
+//  FCountries.add('TK', 'Tokelau');
+//  FCountries.add('TL', 'Timor-Leste');
+//  FCountries.add('TM', 'Turkmenistan');
+//  FCountries.add('TN', 'Tunisia');
+//  FCountries.add('TO', 'Tonga');
+//  FCountries.add('TR', 'Turkey');
+//  FCountries.add('TT', 'Trinidad and Tobago');
+//  FCountries.add('TV', 'Tuvalu');
+//  FCountries.add('TW', 'Taiwan, Province of China');
+//  FCountries.add('TZ', 'Tanzania, United Republic of');
+//  FCountries.add('UA', 'Ukraine');
+//  FCountries.add('UG', 'Uganda');
+//  FCountries.add('UM', 'United States Minor Outlying Islands');
+//  FCountries.add('US', 'United States');
+//  FCountries.add('UY', 'Uruguay');
+//  FCountries.add('UZ', 'Uzbekistan');
+//  FCountries.add('VA', 'Holy See (Vatican City State)');
+//  FCountries.add('VC', 'Saint Vincent and the Grenadines');
+//  FCountries.add('VE', 'Venezuela, Bolivarian Republic of');
+//  FCountries.add('VG', 'Virgin Islands, British');
+//  FCountries.add('VI', 'Virgin Islands, U.S.');
+//  FCountries.add('VN', 'Viet Nam');
+//  FCountries.add('VU', 'Vanuatu');
+//  FCountries.add('WF', 'Wallis and Futuna');
+//  FCountries.add('WS', 'Samoa');
+//  FCountries.add('YE', 'Yemen');
+//  FCountries.add('YT', 'Mayotte');
+//  FCountries.add('ZA', 'South Africa');
+//  FCountries.add('ZM', 'Zambia');
+//  FCountries.add('ZW', 'Zimbabwe');
+//end;
+
+procedure TIETFLanguageDefinitions.Load(source : String);
+var
+  st : TStringList;
+  i : integer;
+  vars : TFslStringDictionary;
+begin
+  st := TStringList.Create;
+  try
+    st.Text := source;
+    i := 0;
+    vars := TFslStringDictionary.create;
+    try
+      while (i < st.Count) and (st[i] = '%%') do
+      begin
+        inc(i);
+        i := readVars(st, i, vars);
+        if vars['Type'] = 'language' then
+          i := LoadLanguage(vars, i)
+        else if vars['Type'] = 'extlang' then
+          i := LoadExtLang(vars, i)
+        else if vars['Type'] = 'script' then
+          i := LoadScript(vars, i)
+        else if vars['Type'] = 'region' then
+          i := LoadRegion(vars, i)
+        else if vars['Type'] = 'variant' then
+          i := LoadVariant(vars, i)
+        else if (vars['Type'] <> 'grandfathered') and (vars['Type'] <> 'redundant') then
+           raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
+      end;
+    finally
+      vars.Free;
+    end;
+    if i < st.count then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
+  finally
+    st.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.loadExtLang(vars: TFslStringDictionary; i: integer): integer;
+var
+  cc : TIETFLanguageExtLang;
+begin
+  cc := TIETFLanguageExtLang.Create;
+  try
+    cc.code := vars['Subtag'];
+    cc.display := vars['Description'];
+    if FExtLanguages.ContainsKey(cc.code) then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
+    FExtLanguages.Add(cc.code, cc.Link);
+    result := i;
+  finally
+    cc.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.loadLanguage(vars : TFslStringDictionary; i: integer): integer;
+var
+  cc : TIETFLanguageLanguage;
+begin
+  cc := TIETFLanguageLanguage.Create;
+  try
+    cc.code := vars['Subtag'];
+    cc.display := vars['Description'];
+    if (vars.ContainsKey('Suppress-Script')) then
+      cc.sscript := vars['Suppress-Script'];
+    if (vars.ContainsKey('Scope')) then
+      cc.scope := vars['Scope'];
+    if FLanguages.ContainsKey(cc.code) then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate language code '+cc.code+' at line '+inttostr(i+1));
+    FLanguages.Add(cc.code, cc.Link);
+    result := i;
+  finally
+    cc.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.loadRegion(vars: TFslStringDictionary; i: integer): integer;
+var
+  cc : TIETFLanguageRegion;
+begin
+  cc := TIETFLanguageRegion.Create;
+  try
+    cc.code := vars['Subtag'];
+    cc.display := vars['Description'];
+    if FRegions.ContainsKey(cc.code) then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+    FRegions.Add(cc.code, cc.Link);
+    result := i;
+  finally
+    cc.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.loadScript(vars: TFslStringDictionary; i: integer): integer;
+var
+  cc : TIETFLanguageScript;
+begin
+  cc := TIETFLanguageScript.Create;
+  try
+    cc.code := vars['Subtag'];
+    cc.display := vars['Description'];
+    if FScripts.ContainsKey(cc.code) then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
+    FScripts.Add(cc.code, cc.Link);
+    result := i;
+  finally
+    cc.Free;
+  end;
+end;
+
+function TIETFLanguageDefinitions.loadVariant(vars: TFslStringDictionary; i: integer): integer;
+var
+  cc : TIETFLanguageVariant;
+begin
+  cc := TIETFLanguageVariant.Create;
+  try
+    cc.code := vars['Subtag'];
+    cc.display := vars['Description'];
+    if FVariants.ContainsKey(cc.code) then
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+    FVariants.Add(cc.code, cc.Link);
+    result := i;
+  finally
+    cc.Free;
+  end;
+end;
+
+{ TIETFLanguageLanguage }
+
+
+function TIETFLanguageLanguage.Link: TIETFLanguageLanguage;
+begin
+  result := TIETFLanguageLanguage(inherited link);
+end;
+
+{ TIETFLanguageExtLang }
+
+function TIETFLanguageExtLang.Link: TIETFLanguageExtLang;
+begin
+  result := TIETFLanguageExtLang(inherited link);
+end;
+
+{ TIETFLanguageScript }
+
+function TIETFLanguageScript.Link: TIETFLanguageScript;
+begin
+  result := TIETFLanguageScript(inherited link);
+end;
+
+{ TIETFLanguageRegion }
+
+function TIETFLanguageRegion.Link: TIETFLanguageRegion;
+begin
+  result := TIETFLanguageRegion(inherited link);
+end;
+
+{ TIETFLanguageVariant }
+
+function TIETFLanguageVariant.Link: TIETFLanguageVariant;
+begin
+  result := TIETFLanguageVariant(inherited link);
 end;
 
 end.

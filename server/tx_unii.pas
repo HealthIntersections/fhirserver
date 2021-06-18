@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http,
+  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang,
   fdb_manager,
   fhir_features,
   ftx_service;
@@ -69,7 +69,7 @@ type
   public
     db : TFDBManager;
 
-    constructor Create(db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
 
@@ -88,8 +88,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -119,9 +118,9 @@ uses
 
 { TUniiServices }
 
-constructor TUniiServices.Create(db: TFDBManager);
+constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited Create;
+  inherited Create(languages);
 
   self.db := db;
 end;
@@ -200,11 +199,6 @@ end;
 function TUniiServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   raise ETerminologyTodo.create('TUniiServices.getPrepContext');
-end;
-
-procedure TUniiServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 Procedure ImportUnii(filename : String; dbm : TFDBManager);
@@ -345,10 +339,10 @@ begin
   result := TUniiConcept(context).FDisplay.trim;
 end;
 
-procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
-  list.AddStrings(TUniiConcept(context).FOthers);
+  list.see(Display(context, THTTPLanguages.create('en')));
+  list.see(TUniiConcept(context).FOthers);
 end;
 
 function TUniiServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

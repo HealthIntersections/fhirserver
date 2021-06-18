@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_utilities, fsl_base, fsl_collections, fsl_fpc,
+  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang,
   fsl_http,
   fhir_common, fhir_factory, fhir_features,
   fhir_cdshooks;
@@ -62,6 +62,38 @@ Type
     function Link : TCodeSystemProviderFilterPreparationContext; overload;
   end;
 
+  TCodeDisplay = class (TFslObject)
+  private
+    FLanguage: String;
+    FValue: String;
+    FLang: TIETFLang;
+    procedure SetLang(const Value: TIETFLang);
+  public
+    destructor Destroy; override;
+    function link : TCodeDisplay; overload;
+
+    property language : String read FLanguage write FLanguage;
+    property lang : TIETFLang read FLang write SetLang;
+    property value : String read FValue write FValue;
+  end;
+
+  TCodeDisplays = class (TFslList<TCodeDisplay>)
+  private
+    function getDisplay(i: integer): String;
+    function findMatch(languages : TIETFLanguageDefinitions; lang: TIETFLang; out display : String) : boolean;
+    function langMatches(requested, stated : String) : boolean;
+  public
+    procedure see(value : String; overwrite : boolean = false); overload;
+    procedure see(values : TStringList; overwrite : boolean = false); overload;
+    procedure see(lang, value : String; overwrite : boolean = false); overload;
+
+    function chooseDisplay(languages : TIETFLanguageDefinitions; lang : THTTPLanguages) : String;
+    function present : String;
+    function has(src : String) : boolean;
+    function preferred : String;
+    property display[i : integer] : String read getDisplay;
+  end;
+
   TSearchFilterText = class (TFslObject)
   private
     FFilter: string;
@@ -81,6 +113,7 @@ Type
 
     function null : Boolean;
     function passes(value : String) : boolean; overload;
+    function passes(cds : TCodeDisplays) : boolean; overload;
     function passes(value : String; var rating : double) : boolean; overload;
     function passes(stems : TFslStringList; var rating : double) : boolean; overload;
     property filter : string read FFilter;
@@ -90,7 +123,12 @@ Type
   TCodeSystemProvider = class abstract (TFslObject)
   private
     FUseCount : cardinal;
+  protected
+    FLanguages : TIETFLanguageDefinitions;
   public
+    constructor Create(languages : TIETFLanguageDefinitions);
+    destructor Destroy; override;
+
     function Link : TCodeSystemProvider; overload;
 
     function description : String;  virtual; abstract;
@@ -111,8 +149,7 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; virtual; abstract;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; virtual; abstract;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; virtual; abstract;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; virtual; abstract;  // get all displays for all languages
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
@@ -152,9 +189,21 @@ begin
   // do nothing
 end;
 
+constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions);
+begin
+  inherited create;
+  FLanguages := languages;
+end;
+
 function TCodeSystemProvider.defToThisVersion(specifiedVersion : String): boolean;
 begin
   result := true;
+end;
+
+destructor TCodeSystemProvider.Destroy;
+begin
+  FLanguages.Free;
+  inherited;
 end;
 
 function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
@@ -166,8 +215,6 @@ begin
   if result then
     Close(ctxt);
 end;
-
-
 
 procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 begin
@@ -362,6 +409,16 @@ begin
   end;
 end;
 
+function TSearchFilterText.passes(cds: TCodeDisplays): boolean;
+var
+  cd : TCodeDisplay;
+begin
+  result := false;
+  for cd in cds do
+    if passes(cd.value) then
+      exit(true);
+end;
+
 procedure TSearchFilterText.process;
 var
   i, j : Integer;
@@ -409,6 +466,144 @@ end;
 function TCodeSystemProviderFilterPreparationContext.Link: TCodeSystemProviderFilterPreparationContext;
 begin
   result := TCodeSystemProviderFilterPreparationContext(inherited Link);
+end;
+
+{ TCodeDisplays }
+
+function TCodeDisplays.chooseDisplay(languages : TIETFLanguageDefinitions; lang: THTTPLanguages): String;
+var
+  l : string;
+  rl : TIETFLang;
+begin
+  result := '';
+  if (length(lang.codes) = 0) then
+  begin
+      rl := languages.parse('');
+      try
+        if findMatch(languages, rl, result) then
+          exit;
+      finally
+        rl.Free;
+      end;
+  end
+  else
+  begin
+    for l in lang.codes do
+    begin
+      rl := languages.parse(l);
+      try
+        if findMatch(languages, rl, result) then
+          exit;
+      finally
+        rl.Free;
+      end;
+    end;
+  end;
+end;
+
+function TCodeDisplays.findMatch(languages : TIETFLanguageDefinitions; lang: TIETFLang; out display: String): boolean;
+var
+  cd : TCodeDisplay;
+  a : TIETFLangPartType;
+begin
+  result := false;
+  for a := High(TIETFLangPartType) downto Low(TIETFLangPartType) do
+  begin
+    for cd in self do
+    begin
+      if cd.lang = nil then
+        cd.lang := languages.parse(cd.language);
+      if cd.lang.matches(lang, a) then
+      begin
+        display := cd.Value;
+        exit(true);
+      end;
+    end;
+  end;
+end;
+
+function TCodeDisplays.langMatches(requested, stated: String): boolean;
+begin
+  result := stated.StartsWith(requested);
+end;
+
+procedure TCodeDisplays.see(value: String; overwrite: boolean);
+begin
+  see('', value, overwrite);
+end;
+
+procedure TCodeDisplays.see(values: TStringList; overwrite: boolean);
+var
+  s : String;
+begin
+  for s in values do
+    see('', s, overwrite);
+end;
+
+procedure TCodeDisplays.see(lang, value: String; overwrite: boolean);
+var
+  cd : TCodeDisplay;
+  i : integer;
+begin
+  if overwrite then
+    for i := count - 1 downto 0 do
+      if Items[i].language = lang then
+        delete(i);
+
+  cd := TCodeDisplay.create;
+  try
+    cd.language := lang;
+    cd.value := value;
+    add(cd.Link);
+  finally
+    cd.Free;
+  end;
+end;
+
+function TCodeDisplays.getDisplay(i: integer): String;
+begin
+  result := Items[i].value;
+end;
+
+function TCodeDisplays.has(src: String): boolean;
+begin
+  result := false;
+end;
+
+function TCodeDisplays.preferred: String;
+begin
+  if Count = 0 then
+    result := ''
+  else
+    result := display[0];
+end;
+
+function TCodeDisplays.present: String;
+var
+  cd : TCodeDisplay;
+begin
+  result := '';
+  for cd in self do
+    CommaAdd(result, cd.value);
+end;
+
+{ TCodeDisplay }
+
+destructor TCodeDisplay.Destroy;
+begin
+  FLang.Free;
+  inherited;
+end;
+
+function TCodeDisplay.link: TCodeDisplay;
+begin
+  result := TCodeDisplay(inherited link);
+end;
+
+procedure TCodeDisplay.SetLang(const Value: TIETFLang);
+begin
+  FLang.Free;
+  FLang := Value;
 end;
 
 end.

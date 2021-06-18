@@ -116,7 +116,8 @@ type
     FSMSFrom: String;
     FSMSToken: String;
     FSMSAccount: String;
-    FHostSms: String; // for status update messages
+    FHostSms: String;
+    FLangFile: String; // for status update messages
 
   public
     constructor Create; override;
@@ -149,6 +150,7 @@ type
     property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
     property HostSms : String read FHostSms write FHostSms;
+    property LangFile : String read FLangFile write FLangFile;
 
   end;
 
@@ -302,6 +304,8 @@ begin
   FSMSFrom := ini['destinations'].section['sms']['from'].value;
   FSMSToken := ini['destinations'].section['sms']['token'].value;
   FSMSAccount := ini['destinations'].section['sms']['account'].value;
+
+  FLangFile := ini.service['langfile'].value;
 end;
 
 function TFHIRServerSettings.nextRequestId: string;

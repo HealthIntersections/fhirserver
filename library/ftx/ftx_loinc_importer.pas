@@ -123,6 +123,7 @@ Type
   Private
     Code : String;
     Display : String;
+    QuestionText : String;
     Names : Cardinal;
     Comps : TConceptArray;
     Props : TConceptArray;
@@ -574,6 +575,7 @@ begin
             oCode.Names := 0;
             oCode.Code := Trim(items[FLD_LOINC_NUM]);
             oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
+            oCode.QuestionText := Trim(items[FLD_SURVEY_QUEST_TEXT]);
             if Length(oCode.Code) > iLength Then
               iLength := Length(oCode.Code);
 
@@ -671,6 +673,8 @@ begin
             Try
               if items[FLD_SHORTNAME] <> '' Then
                 oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
+              if oCode.QuestionText <> '' then
+                oNames.AddObject(oCode.QuestionText, TObject(0));
               for s in items[FLD_RELATEDNAMES2].Split([';']) do
                 if oNames.IndexOf(items[FLD_SHORTNAME]) = -1 then
                   oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
@@ -1062,7 +1066,7 @@ begin
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStemmer := TFslWordStemmer.create('english');
-  oSvc := TLOINCServices.Create;
+  oSvc := TLOINCServices.Create(nil);
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));
     FWordList.Sorted := true;
@@ -1121,7 +1125,7 @@ begin
     FStemmer.Free;
     FLanguages.Free;
   End;
-  TLoincServices.Create.Load(FOutputFile);
+  TLoincServices.Create(nil).Load(FOutputFile);
 End;
 
 function TLoincImporter.listConcepts(arr: TConceptArray): TCardinalArray;

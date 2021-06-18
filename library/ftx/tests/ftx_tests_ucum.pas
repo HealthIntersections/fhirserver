@@ -121,7 +121,7 @@ procedure TUcumTest.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create;
+    svc := TUcumServices.Create(nil);
     svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
   end;
 end;
@@ -235,7 +235,7 @@ procedure TUcumSpecialTests.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create;
+    svc := TUcumServices.Create(nil);
     svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
   end;
 end;

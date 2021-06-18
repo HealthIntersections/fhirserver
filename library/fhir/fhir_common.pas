@@ -174,6 +174,8 @@ type
     FRes : TFHIRResourceV;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function sizeInBytesV : cardinal; override;
+    function GetLanguage: String;  virtual; abstract;
+    procedure SetLanguage(const Value: String); virtual; abstract;
   public
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
@@ -189,6 +191,7 @@ type
     procedure setIdValue(id : String); override;
     procedure checkNoImplicitRules(place, role : String); virtual;
     function hasExtensions : boolean; override;
+    property language : String read GetLanguage write SetLanguage;
 
     property Resource : TFHIRResourceV read FRes;
   end;
@@ -597,6 +600,7 @@ type
   public
     function link : TFhirCodeSystemPropertyW; overload;
     function code : String; virtual; abstract;
+    function uri : String; virtual; abstract;
     function type_ : TFhirCodeSystemPropertyType; virtual; abstract;
   end;
 
@@ -646,6 +650,7 @@ type
   public
     function link : TFslMetadataResourceList; overload;
   end;
+
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
@@ -666,6 +671,8 @@ type
     function language : String; virtual; abstract;
 
     function properties : TFslList<TFhirCodeSystemPropertyW>;  virtual; abstract;
+    function propertyCode(uri : String) : String;
+
     // this is special because it's owned
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
@@ -694,6 +701,7 @@ type
     property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
 
+    procedure addDesignation(lang, use, value : String); virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
   end;
 
@@ -1653,6 +1661,16 @@ end;
 function TFhirCodeSystemW.link: TFhirCodeSystemW;
 begin
   result := TFhirCodeSystemW(inherited link);
+end;
+
+function TFhirCodeSystemW.propertyCode(uri : String): String;
+var
+  p : TFhirCodeSystemPropertyW;
+begin
+  result := '';
+  for p in properties.forEnum do
+    if p.uri = uri then
+      exit(p.code);
 end;
 
 function TFhirCodeSystemW.sizeInBytesV : cardinal;

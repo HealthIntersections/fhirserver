@@ -1208,7 +1208,7 @@ Begin
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
 
-  // Ensure object is assigned.                            se
+  // Ensure object is assigned.
   If Not Assigned(oObject) Then
     Invariant(sLocation, sObject + ' was not assigned and was expected to have been of class ' + aClass.ClassName);
 

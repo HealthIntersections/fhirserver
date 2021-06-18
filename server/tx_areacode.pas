@@ -34,8 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_http,
-  fsl_base, fsl_stream,
+  fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream,
   fhir_common, fhir_features,
   ftx_service;
 
@@ -70,7 +69,7 @@ type
 
     procedure load;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TAreaCodeServices; overload;
 
@@ -86,8 +85,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -112,9 +110,9 @@ implementation
 
 { TAreaCodeServices }
 
-Constructor TAreaCodeServices.create();
+Constructor TAreaCodeServices.create(languages : TIETFLanguageDefinitions);
 begin
-  inherited Create;
+  inherited Create(languages);
   FCodes := TFslList<TAreaCodeConcept>.create;
   FMap := TFslMap<TAreaCodeConcept>.create('tx.areacode');
   Load;
@@ -151,11 +149,6 @@ end;
 function TAreaCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
-end;
-
-procedure TAreaCodeServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -484,9 +477,9 @@ begin
   result := TAreaCodeConcept(context).display;
 end;
 
-procedure TAreaCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TAreaCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TAreaCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

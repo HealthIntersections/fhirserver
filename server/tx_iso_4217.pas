@@ -72,7 +72,7 @@ type
   private
     FCurrencies : TIso4217CurrencySet;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TIso4217Services; overload;
 
@@ -88,8 +88,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -115,9 +114,9 @@ implementation
 
 { TIso4217Services }
 
-Constructor TIso4217Services.create();
+Constructor TIso4217Services.create(languages : TIETFLanguageDefinitions);
 begin
-  inherited Create;
+  inherited;
   FCurrencies := TIso4217CurrencySet.Create;
 end;
 
@@ -153,12 +152,6 @@ begin
   result := nil;
 end;
 
-procedure TIso4217Services.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
-end;
-
-
 function TIso4217Services.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
   result := TIso4217Concept.Create(FCurrencies.Map[code].link);
@@ -190,9 +183,9 @@ begin
   result := TIso4217Concept(context).display.Trim;
 end;
 
-procedure TIso4217Services.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TIso4217Services.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TIso4217Services.IsAbstract(context : TCodeSystemProviderContext) : boolean;

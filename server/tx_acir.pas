@@ -35,7 +35,7 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_http,
+  fsl_utilities, fsl_base, fsl_http, fsl_lang,
   fhir_features,
   ftx_service;
 
@@ -73,7 +73,7 @@ type
 
     procedure load;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
@@ -91,8 +91,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -118,9 +117,9 @@ implementation
 
 { TACIRServices }
 
-Constructor TACIRServices.create();
+Constructor TACIRServices.create(languages : TIETFLanguageDefinitions);
 begin
-  inherited Create;
+  inherited Create(languages);
   FList := TFslList<TACIRConcept>.create;
   FMap := TFslMap<TACIRConcept>.create('tx.acir');
 
@@ -161,11 +160,6 @@ end;
 function TACIRServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
-end;
-
-procedure TACIRServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
 end;
 
 procedure TACIRServices.load;
@@ -283,9 +277,9 @@ begin
   result := TACIRConcept(context).Display.Trim;
 end;
 
-procedure TACIRServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TACIRServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TACIRServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

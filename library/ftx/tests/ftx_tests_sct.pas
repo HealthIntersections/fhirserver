@@ -71,7 +71,7 @@ implementation
 
 procedure TSnomedTests.Setup;
 begin
-  FServices := TSnomedServices.Create;
+  FServices := TSnomedServices.Create(nil);
   FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
 end;
 

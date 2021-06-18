@@ -53,7 +53,6 @@ type
 
   TMimeTypeCodeServices = class (TCodeSystemProvider)
   public
-    constructor Create; override;
     destructor Destroy; Override;
     Function Link : TMimeTypeCodeServices; overload;
 
@@ -71,8 +70,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -95,11 +93,6 @@ type
 implementation
 
 { TMimeTypeCodeServices }
-
-Constructor TMimeTypeCodeServices.create;
-begin
-  inherited Create;
-end;
 
 
 procedure TMimeTypeCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -136,12 +129,6 @@ function TMimeTypeCodeServices.getPrepContext: TCodeSystemProviderFilterPreparat
 begin
   result := nil;
 end;
-
-procedure TMimeTypeCodeServices.Displays(code : String; list : TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
-end;
-
 
 function TMimeTypeCodeServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 var
@@ -183,9 +170,9 @@ begin
   result := getDisplay(TMTCodeSystemProviderContext(context).mt.source, lang);
 end;
 
-procedure TMimeTypeCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TMimeTypeCodeServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(Display(context, lang));
+  list.see(Display(context, THTTPLanguages.create('en')));
 end;
 
 function TMimeTypeCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

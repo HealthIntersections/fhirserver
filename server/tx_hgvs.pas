@@ -52,8 +52,6 @@ type
  THGVSProvider = class (TCodeSystemProvider)
   private
   public
-    constructor Create; override;
-    destructor Destroy; override;
     function link : THGVSProvider; overload;
 
     function description : String; override;
@@ -73,8 +71,7 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); overload; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); overload; override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -105,18 +102,9 @@ implementation
 
 { THGVSProvider }
 
-constructor THGVSProvider.Create;
-begin
-  inherited Create;
-end;
 
 procedure THGVSProvider.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-end;
-
-destructor THGVSProvider.Destroy;
-begin
-  inherited;
 end;
 
 function THGVSProvider.ChildCount(context: TCodeSystemProviderContext): integer;
@@ -164,14 +152,9 @@ begin
   result := Code(Context);
 end;
 
-procedure THGVSProvider.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang: THTTPLanguages);
+procedure THGVSProvider.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  list.Add(code(context));
-end;
-
-procedure THGVSProvider.Displays(code: String; list: TStringList; const lang: THTTPLanguages);
-begin
-  list.Add(code);
+  list.see(code(context));
 end;
 
 function THGVSProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;

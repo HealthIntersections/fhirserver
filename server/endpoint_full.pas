@@ -558,7 +558,9 @@ end;
 
 function TFullServerEndPoint.cacheSize: UInt64;
 begin
-  result := inherited CacheSize + FStore.cacheSize;
+  result := inherited CacheSize;
+  if FStore <> nil then
+    result := result + FStore.cacheSize;
 end;
 
 Procedure TFullServerEndPoint.checkDatabase();
