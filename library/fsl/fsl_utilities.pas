@@ -15978,14 +15978,14 @@ begin
     //'I'
     #$24BE : result := 'I';
     #$FF29 : result := 'I';
-    #$CC : result := 'I';
-    #$CD : result := 'I';
-    #$CE : result := 'I';
+    #$00CC : result := 'I';
+    #$00CD : result := 'I';
+    #$00CE : result := 'I';
     #$0128 : result := 'I';
     #$012A : result := 'I';
     #$012C : result := 'I';
     #$0130 : result := 'I';
-    #$CF : result := 'I';
+    #$00CF : result := 'I';
     #$1E2E : result := 'I';
     #$1EC8 : result := 'I';
     #$01CF : result := 'I';
@@ -16060,7 +16060,7 @@ begin
     #$FF2E : result := 'N';
     #$01F8 : result := 'N';
     #$0143 : result := 'N';
-    #$D1 : result := 'N';
+    #$00D1 : result := 'N';
     #$1E44 : result := 'N';
     #$0147 : result := 'N';
     #$1E46 : result := 'N';
@@ -16080,14 +16080,14 @@ begin
     //'O'
     #$24C4 : result := 'O';
     #$FF2F : result := 'O';
-    #$D2 : result := 'O';
-    #$D3 : result := 'O';
-    #$D4 : result := 'O';
+    #$00D2 : result := 'O';
+    #$00D3 : result := 'O';
+    #$00D4 : result := 'O';
     #$1ED2 : result := 'O';
     #$1ED0 : result := 'O';
     #$1ED6 : result := 'O';
     #$1ED4 : result := 'O';
-    #$D5 : result := 'O';
+    #$00D5 : result := 'O';
     #$1E4C : result := 'O';
     #$022C : result := 'O';
     #$1E4E : result := 'O';
@@ -16097,7 +16097,7 @@ begin
     #$014E : result := 'O';
     #$022E : result := 'O';
     #$0230 : result := 'O';
-    #$D6 : result := 'O';
+    #$00D6 : result := 'O';
     #$022A : result := 'O';
     #$1ECE : result := 'O';
     #$0150 : result := 'O';
@@ -16114,7 +16114,7 @@ begin
     #$1ED8 : result := 'O';
     #$01EA : result := 'O';
     #$01EC : result := 'O';
-    #$D8 : result := 'O';
+    #$00D8 : result := 'O';
     #$01FE : result := 'O';
     #$0186 : result := 'O';
     #$019F : result := 'O';
@@ -16212,15 +16212,15 @@ begin
     //'U'
     #$24CA : result := 'U';
     #$FF35 : result := 'U';
-    #$D9 : result := 'U';
-    #$DA : result := 'U';
-    #$DB : result := 'U';
+    #$00D9 : result := 'U';
+    #$00DA : result := 'U';
+    #$00DB : result := 'U';
     #$0168 : result := 'U';
     #$1E78 : result := 'U';
     #$016A : result := 'U';
     #$1E7A : result := 'U';
     #$016C : result := 'U';
-    #$DC : result := 'U';
+    #$00DC : result := 'U';
     #$01DB : result := 'U';
     #$01D7 : result := 'U';
     #$01D5 : result := 'U';
@@ -16277,7 +16277,7 @@ begin
     #$24CE : result := 'Y';
     #$FF39 : result := 'Y';
     #$1EF2 : result := 'Y';
-    #$DD : result := 'Y';
+    #$00DD : result := 'Y';
     #$0176 : result := 'Y';
     #$1EF8 : result := 'Y';
     #$0232 : result := 'Y';
@@ -16502,13 +16502,13 @@ begin
     //'i'
     #$24D8 : result := 'i';
     #$FF49 : result := 'i';
-    #$EC : result := 'i';
-    #$ED : result := 'i';
-    #$EE : result := 'i';
+    #$00EC : result := 'i';
+    #$00ED : result := 'i';
+    #$00EE : result := 'i';
     #$0129 : result := 'i';
     #$012B : result := 'i';
     #$012D : result := 'i';
-    #$EF : result := 'i';
+    #$00EF : result := 'i';
     #$1E2F : result := 'i';
     #$1EC9 : result := 'i';
     #$01D0 : result := 'i';
@@ -16580,7 +16580,7 @@ begin
     #$FF4E : result := 'n';
     #$01F9 : result := 'n';
     #$0144 : result := 'n';
-    #$F1 : result := 'n';
+    #$00F1 : result := 'n';
     #$1E45 : result := 'n';
     #$0148 : result := 'n';
     #$1E47 : result := 'n';
@@ -16601,14 +16601,14 @@ begin
     //'o'
     #$24DE : result := 'o';
     #$FF4F : result := 'o';
-    #$F2 : result := 'o';
-    #$F3 : result := 'o';
-    #$F4 : result := 'o';
+    #$00F2 : result := 'o';
+    #$00F3 : result := 'o';
+    #$00F4 : result := 'o';
     #$1ED3 : result := 'o';
     #$1ED1 : result := 'o';
     #$1ED7 : result := 'o';
     #$1ED5 : result := 'o';
-    #$F5 : result := 'o';
+    #$00F5 : result := 'o';
     #$1E4D : result := 'o';
     #$022D : result := 'o';
     #$1E4F : result := 'o';
@@ -16618,7 +16618,7 @@ begin
     #$014F : result := 'o';
     #$022F : result := 'o';
     #$0231 : result := 'o';
-    #$F6 : result := 'o';
+    #$00F6 : result := 'o';
     #$022B : result := 'o';
     #$1ECF : result := 'o';
     #$0151 : result := 'o';
@@ -16635,7 +16635,7 @@ begin
     #$1ED9 : result := 'o';
     #$01EB : result := 'o';
     #$01ED : result := 'o';
-    #$F8 : result := 'o';
+    #$00F8 : result := 'o';
     #$01FF : result := 'o';
     #$A74B : result := 'o';
     #$A74D : result := 'o';
@@ -16740,15 +16740,15 @@ begin
     //'u'
     #$24E4 : result := 'u';
     #$FF55 : result := 'u';
-    #$F9 : result := 'u';
-    #$FA : result := 'u';
-    #$FB : result := 'u';
+    #$00F9 : result := 'u';
+    #$00FA : result := 'u';
+    #$00FB : result := 'u';
     #$0169 : result := 'u';
     #$1E79 : result := 'u';
     #$016B : result := 'u';
     #$1E7B : result := 'u';
     #$016D : result := 'u';
-    #$FC : result := 'u';
+    #$00FC : result := 'u';
     #$01DC : result := 'u';
     #$01D8 : result := 'u';
     #$01D6 : result := 'u';
@@ -16806,12 +16806,12 @@ begin
     #$24E8 : result := 'y';
     #$FF59 : result := 'y';
     #$1EF3 : result := 'y';
-    #$FD : result := 'y';
+    #$00FD : result := 'y';
     #$0177 : result := 'y';
     #$1EF9 : result := 'y';
     #$0233 : result := 'y';
     #$1E8F : result := 'y';
-    #$FF : result := 'y';
+    #$00FF : result := 'y';
     #$1EF7 : result := 'y';
     #$1E99 : result := 'y';
     #$1EF5 : result := 'y';
