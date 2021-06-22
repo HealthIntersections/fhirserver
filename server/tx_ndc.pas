@@ -75,11 +75,38 @@ type
     FKey: integer;
     FPackage: boolean;
     FCode: String;
+    FDisplay : String;
   public
     constructor create(package : boolean; key : integer);
     property package : boolean read FPackage write FPackage;
     property key : integer read FKey write FKey;
     property code : String read FCode write FCode;
+    property display : String read FDisplay write FDisplay;
+  end;
+
+  TNDCIteratorContext = class (TCodeSystemIteratorContext)
+  private
+    FMore : boolean;
+    FProducts : boolean;
+    FSecond : boolean;
+    FConn : TFDBConnection;
+  public
+    destructor Destroy; override;
+    function more : boolean; override;
+  end;
+
+  TNDCFilterPreparationContext = class (TCodeSystemProviderFilterPreparationContext)
+  end;
+
+  TNDCFilterContextMode = (fcmCode11, fcmCode10, fcmProduct);
+
+  TNDCFilterContext = class (TCodeSystemProviderFilterContext)
+  private
+    FMode : TNDCFilterContextMode;
+    FConn : TFDBConnection;
+  public
+    constructor Create(mode : TNDCFilterContextMode; conn : TFDBConnection);
+    destructor Destroy; override;
   end;
 
   { TNDCServices }
@@ -97,6 +124,8 @@ type
     FDoseforms : TDictionary<integer, String>;
     procedure load;
     procedure loadDict(conn: TFDBConnection; dict: TDictionary<integer, String>; sql: String);
+    function packageDisplay(conn : TFDBConnection) : String;
+    function productDisplay(conn : TFDBConnection) : String;
   public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager; version : String);
     destructor Destroy; Override;
@@ -106,8 +135,8 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
@@ -123,7 +152,8 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -553,33 +583,48 @@ var
   conn : TFDBConnection;
 begin
   code := context as TNDCProviderContext;
-  conn := FDB.getConnection('Code');
-  try
-    if code.package then
-      c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Code', '')
-    else
-      c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Code', '');
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
+  if code.FCode <> '' then
+    result := code.FCode
+  else
+  begin
+    conn := FDB.getConnection('Code');
+    try
+      if code.package then
+        c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Code', '')
+      else
+        c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Code', '');
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
     end;
+    result := c;
   end;
-  result := c;
 end;
 
-function TNDCServices.ChildCount(context: TCodeSystemProviderContext): integer;
+function TNDCServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   conn : TFDBConnection;
+  iter : TNDCIteratorContext;
 begin
   if (context = nil) then
   begin
     conn := FDB.getconnection('ChildCount');
     try
-      result := conn.CountSQL('select count(*) from NDCProducts') + conn.CountSQL('select count(*) from NDCPackages');
-      conn.release;
+      iter := TNDCIteratorContext.Create(nil, conn.CountSQL('select count(*) from NDCProducts') + conn.CountSQL('select count(*) from NDCPackages'));
+      try
+        iter.FConn := conn;
+        iter.FConn.SQL := 'Select NDCPackages.NDCKey, NDCPackages.Code, Code11, TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey';
+        iter.FConn.Prepare;
+        iter.FConn.Execute;
+        iter.FMore := iter.FConn.FetchNext;
+        result := iter.Link;
+      finally
+        iter.Free;
+      end;
     except
       on e : Exception do
       begin
@@ -589,12 +634,64 @@ begin
     end;
   end
   else
-    result := 0;
+    result := TCodeSystemIteratorContext.Create(nil, 0);
+end;
+
+function TNDCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+var
+  iter : TNDCIteratorContext;
+  ctxt : TNDCProviderContext;
+begin
+  iter := context as TNDCIteratorContext;
+  if iter.FProducts then
+  begin
+    ctxt := TNDCProviderContext.create(false, iter.FConn.GetColIntegerByName('NDCKey'));
+    try
+      ctxt.FDisplay := productDisplay(iter.FConn);
+      ctxt.code := iter.FConn.GetColStringByName('Code');
+      iter.FMore := iter.FConn.FetchNext;
+      result := ctxt.link;
+    finally
+      ctxt.Free;
+    end;
+  end
+  else
+  begin
+    ctxt := TNDCProviderContext.create(true, iter.FConn.GetColIntegerByName('NDCKey'));
+    try
+      ctxt.FDisplay := packageDisplay(iter.FConn);
+      if iter.FSecond then
+      begin
+        ctxt.code := iter.FConn.GetColStringByName('Code11');
+        iter.FSecond := false;
+        iter.FMore := iter.FConn.FetchNext;
+        if not iter.FMore then
+        begin
+          iter.FConn.Terminate;
+          iter.FProducts := true;
+          iter.FConn.SQL := 'Select NDCKey, Code, Tradename, Suffix from NDCProducts';
+          iter.FConn.Prepare;
+          iter.FConn.Execute;
+          iter.FMore := iter.FConn.FetchNext;
+          result := getNextContext(iter);
+        end;
+      end
+      else
+      begin
+        ctxt.code := iter.FConn.GetColStringByName('Code');
+        iter.FSecond := true;
+      end;
+
+      result := ctxt.link;
+    finally
+       ctxt.Free;
+    end;
+  end;
 end;
 
 function TNDCServices.Definition(context: TCodeSystemProviderContext): string;
 begin
-  result := Display(context, THTTPLanguages.Create(''));
+  result := '';
 end;
 
 function TNDCServices.description: String;
@@ -609,60 +706,51 @@ var
   conn : TFDBConnection;
 begin
   code := context as TNDCProviderContext;
-  c := '';
-  conn := FDB.getconnection('Display');
-  try
-    if code.package then
-    begin
-      conn.sql := 'Select TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key);
-      conn.prepare;
-      conn.execute;
-      if conn.fetchnext then
-        c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+' '+conn.ColStringByName['Description'];
-      conn.terminate;
-    end
-    else
-    begin
-      conn.sql := 'Select TradeName, Suffix from NDCProducts where NDCKey = '+inttostr(code.key);
-      conn.prepare;
-      conn.execute;
-      if conn.fetchnext then
-        c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix'];
-      conn.terminate;
+  if (code.FDisplay <> '') then
+    result := code.FDisplay
+  else
+  begin
+    c := '';
+    conn := FDB.getconnection('Display');
+    try
+      if code.package then
+      begin
+        conn.sql := 'Select TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key);
+        conn.prepare;
+        conn.execute;
+        if conn.fetchnext then
+          c := packageDisplay(conn);
+        conn.terminate;
+      end
+      else
+      begin
+        conn.sql := 'Select TradeName, Suffix from NDCProducts where NDCKey = '+inttostr(code.key);
+        conn.prepare;
+        conn.execute;
+        if conn.fetchnext then
+          c := productDisplay(conn);
+        conn.terminate;
+      end;
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
     end;
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
+    result := c;
   end;
-  result := c;
 end;
 
 procedure TNDCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
-var
-  c : string;
-  code : TNDCProviderContext;
-  conn : TFDBConnection;
 begin
-  code := context as TNDCProviderContext;
-  conn := FDB.getconnection('Displays');
-  try
-    if code.package then
-      c := conn.Lookup('NDCPackages', 'NDCKey', inttostr(code.key), 'Description', '')
-    else
-      c := conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'TradeName', '')+' '+conn.Lookup('NDCProducts', 'NDCKey', inttostr(code.key), 'Suffix', '');
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
-  end;
-  list.see(c.Trim);
+  list.see(Display(context, THTTPLanguages.Create('')));
+end;
+
+function TNDCServices.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+begin
+  result := (prop = 'code-type') and (op = foEqual) and StringArrayExistsSensitive(['10-digit', '11-digit', 'product'], value);
 end;
 
 procedure TNDCServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -674,14 +762,34 @@ begin
   conn := FDB.getconnection('Display');
   try
     if code.package then
-      conn.sql := 'Select Type, TradeName, DoseForm, Route, Company, Category, Generics from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
+      conn.sql := 'Select [NDCPackages].Code, [NDCProducts].Code as PCode, [NDCPackages].Code11, [NDCPackages].Active, Type, TradeName, DoseForm, Route, Company, Category, Generics '+'from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
     else
       conn.sql := 'Select * from NDCProducts where NDCKey = '+inttostr(code.key);
     conn.prepare;
     conn.execute;
     if conn.fetchnext then
     begin
+      if not code.package then
+      begin
+        resp.addProp('code-type').value := factory.makeString('product');
+        resp.addProp('description').value := factory.makeString(productDisplay(conn));
+      end
+      else if (code.code.Contains('-')) then
+      begin
+        resp.addProp('synonym').value := factory.makeString(conn.ColStringByName['Code11']);
+        resp.addProp('code-type').value := factory.makeString('10-digit');
+        resp.addProp('description').value := factory.makeString(packageDisplay(conn));
+        resp.addProp('product').value := factory.makeString(conn.ColStringByName['PCode']);
+      end
+      else
+      begin
+        resp.addProp('synonym').value := factory.makeString(conn.ColStringByName['Code']);
+        resp.addProp('code-type').value := factory.makeString('11-digit');
+        resp.addProp('description').value := factory.makeString(packageDisplay(conn));
+        resp.addProp('product').value := factory.makeString(conn.ColStringByName['PCode']);
+      end;
       resp.addProp('type').value := factory.makeString(FTypes[conn.ColIntegerByName['Type']]);
+      resp.addProp('active').value := factory.makeString(BooleanToString(conn.ColIntegerByName['Active'] = 1));
       resp.addProp('trade-name').value := factory.makeString(conn.ColStringByName['TradeName']);
       resp.addProp('dose-form').value := factory.makeString(FDoseforms[conn.ColIntegerByName['DoseForm']]);
       resp.addProp('route').value := factory.makeString(FRoutes[conn.ColIntegerByName['Route']]);
@@ -700,42 +808,116 @@ begin
   end;
 end;
 
-function TNDCServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TNDCServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+var
+  ctxt : TNDCFilterPreparationContext;
+  res : TNDCFilterContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.filter');
+  res := nil;
+  try
+    ctxt := prep as TNDCFilterPreparationContext;
+    if (prop = 'code-type') and (op = foEqual) then
+    begin
+      if value = '10-digit' then
+        res := TNDCFilterContext.Create(fcmCode10, FDb.GetConnection('ndc.filter'))
+      else if value = '11-digit' then
+        res := TNDCFilterContext.Create(fcmCode11, FDb.GetConnection('ndc.filter'))
+      else if value = 'product' then
+        res := TNDCFilterContext.Create(fcmProduct, FDb.GetConnection('ndc.filter'))
+      else
+        raise Exception.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
+      if forIteration then
+      begin
+        if res.FMode = fcmProduct then
+          res.FConn.SQL := 'Select * from NDCProducts'
+        else
+          res.FConn.SQL := 'Select NDCPackages.NDCKey, NDCPackages.Code, Code11, TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey';
+        res.FConn.prepare;
+        res.FConn.Execute;
+      end;
+    end
+    else
+      raise Exception.Create('The filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" is not understood for NDC');
+    result := res.link;
+  finally
+    res.free;
+  end;
 end;
 
 function TNDCServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+var
+  context : TNDCFilterContext;
+  res : TNDCProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.FilterConcept');
+  context := ctxt as TNDCFilterContext;
+  res := TNDCProviderContext.create(true, context.FConn.GetColIntegerByName('NDCKey'));
+  try
+    if context.FMode = fcmProduct then
+      res.FDisplay := productDisplay(context.FConn)
+    else
+      res.FDisplay := packageDisplay(context.FConn);
+    if context.FMode = fcmCode11 then
+      res.code := context.FConn.GetColStringByName('Code11')
+    else
+      res.code := context.FConn.GetColStringByName('Code');
+    result := res.link;
+  finally
+    res.Free;
+  end;
 end;
 
 function TNDCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
+var
+  context : TNDCFilterContext;
+  res : TNDCProviderContext;
+  const sqlp = 'Select NDCPackages.NDCKey, NDCPackages.Code, Code11, TradeName, Suffix, Description from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and ';
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.filterLocate');
+  context := ctxt as TNDCFilterContext;
+  case context.FMode of
+    fcmCode11: context.FConn.sql := sqlp + '(NDCPackages.Code11 = '''+SQLWrapString(code)+''')';
+    fcmCode10: context.FConn.sql := sqlp + '(NDCPackages.Code = '''+SQLWrapString(code)+''')';
+    fcmProduct: context.FConn.sql := 'Select * from  NDCProducts where Code = '''+SQLWrapString(code)+'''';
+  else
+    exit(nil);
+  end;
+  context.FConn.prepare;
+  try
+    context.FConn.execute;
+    if context.FConn.fetchnext then
+    begin
+      res := TNDCProviderContext.create(true, context.FConn.GetColIntegerByName('NDCKey'));
+      try
+        if context.FMode = fcmProduct then
+          res.FDisplay := productDisplay(context.FConn)
+        else
+          res.FDisplay := packageDisplay(context.FConn);
+        if context.FMode = fcmCode11 then
+          res.code := context.FConn.GetColStringByName('Code11')
+        else
+          res.code := context.FConn.GetColStringByName('Code');
+        result := res.link;
+      finally
+        res.Free;
+      end;
+    end
+    else
+      result := nil;
+  finally
+    context.FConn.Terminate;
+  end;
 end;
 
 function TNDCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+var
+  context : TNDCFilterContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.FilterMore');
+  context := ctxt as TNDCFilterContext;
+  result := context.FConn.FetchNext;
 end;
 
 procedure TNDCServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
 begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.getCDSInfo');
-end;
-
-function TNDCServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
-begin
-  if (context = nil) then
-  begin
-    if ndx <= FProductCount then
-      result := TNDCProviderContext.create(false, ndx + 1)
-    else
-      result := TNDCProviderContext.create(true, ndx - FProductCount + 1)
-  end
-  else
-    raise ETerminologyError.create('No nested children in NDC');
 end;
 
 function TNDCServices.getDefinition(code: String): String;
@@ -755,7 +937,7 @@ begin
     conn.prepare;
     conn.execute;
     if conn.fetchnext then
-      c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']
+      c := productDisplay(conn)
     else
     begin
       conn.terminate;
@@ -763,7 +945,7 @@ begin
       conn.prepare;
       conn.execute;
       if conn.fetchnext then
-        c := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+' '+conn.ColStringByName['Description'];
+        c := packageDisplay(conn)
     end;
     conn.terminate;
     conn.release;
@@ -779,12 +961,24 @@ end;
 
 function TNDCServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.getPrepContext:');
+  result := TNDCFilterPreparationContext.Create;
 end;
 
 function TNDCServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+var
+  context : TNDCFilterContext;
+  res : TNDCProviderContext;
+  cc : TNDCProviderContext;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.InFilter');
+  context := ctxt as TNDCFilterContext;
+  cc := concept as TNDCProviderContext;
+  case context.FMode of
+    fcmCode11: result := context.FConn.CountSQL('Select * from NDCPackages where Code11 = '''+SQLWrapString(cc.FCode)) > 0;
+    fcmCode10: result := context.FConn.CountSQL('Select * from NDCPackages where Code = '''+SQLWrapString(cc.FCode)) > 0;
+    fcmProduct: result := context.FConn.CountSQL('Select * from NDCProducts where Code = '''+SQLWrapString(cc.FCode)) > 0;
+  else
+    result := false;
+  end;
 end;
 
 function TNDCServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -799,34 +993,42 @@ end;
 
 function TNDCServices.locate(code: String; var message: String): TCodeSystemProviderContext;
 var
-  c : TCodeSystemProviderContext;
+  c : TNDCProviderContext;
   k : integer;
   conn : TFDBConnection;
 begin
   c := nil;
-  conn := FDB.getconnection('locate');
   try
-    if code.contains('-') then
-      k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+'''')
-    else
-      k := conn.CountSQL('Select NDCKey from NDCPackages where code11 = '''+SQLWrapString(code)+'''');
-    if (k <> 0) or not code.contains('-') then
-      c := TNDCProviderContext.create(true, k)
-    else
-    begin
-      k := conn.CountSQL('Select NDCKey from NDCProducts where code = '''+SQLWrapString(code)+'''');
-      if k <> 0 then
-        c := TNDCProviderContext.create(false, k)
+    conn := FDB.getconnection('locate');
+    try
+      if code.contains('-') then
+        k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+'''')
+      else
+        k := conn.CountSQL('Select NDCKey from NDCPackages where code11 = '''+SQLWrapString(code)+'''');
+      if (k <> 0) or not code.contains('-') then
+        c := TNDCProviderContext.create(true, k)
+      else
+      begin
+        k := conn.CountSQL('Select NDCKey from NDCProducts where code = '''+SQLWrapString(code)+'''');
+        if k <> 0 then
+          c := TNDCProviderContext.create(false, k)
+      end;
+      if c = nil then
+        message := 'Code "'+code+'" not found in NDC'
+      else
+        c.code := code;
+      result := c.link;
+      conn.release;
+    except
+      on e : Exception do
+      begin
+        conn.error(e);
+        raise;
+      end;
     end;
-    conn.release;
-  except
-    on e : Exception do
-    begin
-      conn.error(e);
-      raise;
-    end;
+  finally
+    c.free;
   end;
-  result := c;
 end;
 
 function TNDCServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
@@ -834,9 +1036,25 @@ begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.locateIsA');
 end;
 
-function TNDCServices.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
+function TNDCServices.packageDisplay(conn: TFDBConnection): String;
 begin
-  raise ETerminologyTodo.Create('Not done yet: TNDCServices.prepare');
+  if conn.ColStringByName['Suffix'] <> '' then
+    result := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+', '+conn.ColStringByName['Description']+' (package)'
+  else
+    result := conn.ColStringByName['TradeName']+', '+conn.ColStringByName['Description']+' (package)';
+end;
+
+function TNDCServices.productDisplay(conn: TFDBConnection): String;
+begin
+  result := conn.ColStringByName['TradeName']+' '+conn.ColStringByName['Suffix']+' (product)';
+end;
+
+function TNDCServices.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
+var
+  ctxt : TNDCFilterPreparationContext;
+begin
+  ctxt := prep as TNDCFilterPreparationContext;
+  result := true;
 end;
 
 function TNDCServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
@@ -861,6 +1079,38 @@ begin
   inherited create;
   self.package := package;
   self.key := key;
+end;
+
+{ TNDCIteratorContext }
+
+destructor TNDCIteratorContext.Destroy;
+begin
+  FConn.Terminate;
+  FConn.Release;
+  inherited;
+end;
+
+function TNDCIteratorContext.more: boolean;
+begin
+  result := FMore;
+
+end;
+
+{ TNDCFilterContext }
+
+constructor TNDCFilterContext.Create(mode: TNDCFilterContextMode; conn: TFDBConnection);
+begin
+  inherited Create;
+  FMode := mode;
+  FConn := conn;
+end;
+
+destructor TNDCFilterContext.Destroy;
+begin
+  if FConn.Prepared then
+    FConn.Terminate;
+  FConn.Release;
+  inherited;
 end;
 
 end.

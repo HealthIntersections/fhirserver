@@ -78,8 +78,8 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
@@ -95,7 +95,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -203,17 +203,18 @@ begin
   result := TIso4217Services(Inherited Link);
 end;
 
-function TIso4217Services.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TIso4217Services.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if (context = nil) then
-    result := TotalCount
+    result := TCodeSystemIteratorContext.Create(nil, TotalCount)
   else
-    result := 0; // no children
+    result := TCodeSystemIteratorContext.Create(nil, 0); // no children
 end;
 
-function TIso4217Services.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TIso4217Services.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := TIso4217Concept.Create(FCurrencies.Codes[ndx].link);
+  result := TIso4217Concept.Create(FCurrencies.Codes[context.current].link);
+  context.next;
 end;
 
 function TIso4217Services.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -238,7 +239,7 @@ begin
   result := 'not-subsumed';
 end;
 
-function TIso4217Services.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TIso4217Services.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   res : TIso4217ConceptFilter;
   c : TIso4217Currency;

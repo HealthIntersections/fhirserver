@@ -838,7 +838,7 @@ begin
 
         if (v) then
         begin
-          if (c.display <> '') and (not list.has(c.display)) then
+          if (c.display <> '') and (not list.has(FLanguages, FParams.displayLanguage, c.display)) then
             msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.present+']');
           if list.Count > 0 then
             result.AddParamStr('display', list.chooseDisplay(FLanguages, FParams.displayLanguage));
@@ -993,9 +993,9 @@ begin
       if Loc <> nil then
       begin
         listDisplays(displays, cs, loc);
-        cs.close(loc);
         listDisplays(displays, cc);
         result := (abstractOk or not cs.IsAbstract(loc));
+        cs.close(loc);
         exit;
       end;
     end;
@@ -1011,7 +1011,7 @@ begin
         for fc in cfl do
         begin
           // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
-          filters[i] := cs.filter(fc.prop, fc.Op, fc.value, prep);
+          filters[i] := cs.filter(false, fc.prop, fc.Op, fc.value, prep);
           inc(i);
         end;
         if cs.prepare(prep) then // all are together, just query the first filter
@@ -1614,6 +1614,7 @@ var
   cc : TFhirValueSetComposeIncludeConceptW;
   cctxt : TCodeSystemProviderContext;
   cds : TCodeDisplays;
+  iter : TCodeSystemIteratorContext;
 begin
   imports := TFslList<TFHIRImportedValueSet>.create;
   try
@@ -1659,10 +1660,15 @@ begin
               else
                 raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
 
-            if imports.Empty and (limitCount > 0) and (cs.TotalCount > limitCount) and not (FParams.limitedExpansion) then
-              raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
-            for i := 0 to cs.ChildCount(nil) - 1 do
-              processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getcontext(nil, i), expansion, imports)
+            iter := cs.getIterator(nil);
+            try
+              if imports.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) then
+                raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
+              while iter.more do
+                processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getNextContext(iter), expansion, imports)
+            finally
+              iter.Free;
+            end;
           end
           else
           begin
@@ -1747,7 +1753,7 @@ begin
                 begin
                   fc := fcl[i];
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  filters[i+offset] := cs.filter(fc.prop, fc.Op, fc.value, prep);
+                  filters[i+offset] := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
                   if filters[i+offset] = nil then
                     raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.systemUri(nil));
                   if cs.isNotClosed(filter, filters[i+offset]) then
@@ -1811,6 +1817,7 @@ var
   i : integer;
   vs : String;
   cds : TCodeDisplays;
+  iter : TCodeSystemIteratorContext;
 begin
   try
     if (cs.version(nil) <> '') and (expansion <> nil) then
@@ -1823,14 +1830,19 @@ begin
     begin
       cds := TCodeDisplays.Create;
       try
-        listDisplays(cds, cs, context); // cs.Display(context, FParams.displayLanguage)
+        listDisplays(cds, cs, context);
         processCode(doDelete, limitCount, list, map, cs.systemUri(context), '', cs.Code(context), cds, cs.definition(context), expansion, imports);
       finally
         cds.Free;
       end;
     end;
-    for i := 0 to cs.ChildCount(context) - 1 do
-      processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getcontext(context, i), expansion, imports);
+    iter := cs.getIterator(context);
+    try
+      while iter.more do
+        processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getNextContext(iter), expansion, imports);
+    finally
+      iter.Free;
+    end;
   finally
     cs.Close(context);
   end;

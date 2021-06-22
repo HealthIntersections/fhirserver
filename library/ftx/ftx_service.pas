@@ -52,6 +52,25 @@ Type
     function Link : TCodeSystemProviderContext; overload;
   end;
 
+  TCodeSystemIteratorContext = class (TFslObject)
+  protected
+    FContext: TCodeSystemProviderContext;
+    FCount: integer;
+    FCurrent: integer;
+  public
+    constructor Create(context : TCodeSystemProviderContext; count : integer);
+    destructor Destroy; override;
+
+    function Link : TCodeSystemIteratorContext; overload;
+
+    property context : TCodeSystemProviderContext read FContext;
+    property count : integer read FCount;
+    property current : integer read FCurrent;
+
+    function more : boolean; virtual;
+    procedure next; // only call from within a provider
+  end;
+
   TCodeSystemProviderFilterContext = class (TFslObject)
   public
     function Link : TCodeSystemProviderFilterContext; overload;
@@ -89,7 +108,8 @@ Type
 
     function chooseDisplay(languages : TIETFLanguageDefinitions; lang : THTTPLanguages) : String;
     function present : String;
-    function has(display : String) : boolean;
+    function has(display : String) : boolean; overload;
+    function has(languages : TIETFLanguageDefinitions; lang : THTTPLanguages; display : String) : boolean; overload;
     function preferred : String;
     property display[i : integer] : String read getDisplay;
   end;
@@ -133,8 +153,8 @@ Type
 
     function description : String;  virtual; abstract;
     function TotalCount : integer;  virtual; abstract;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; virtual; abstract;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; virtual; abstract;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
     function version(context : TCodeSystemProviderContext) : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
@@ -156,7 +176,7 @@ Type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
@@ -210,10 +230,14 @@ function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperator; v
 var
   ctxt : TCodeSystemProviderFilterContext;
 begin
-  ctxt := filter(prop, op, value, nil);
-  result := ctxt <> nil;
-  if result then
-    Close(ctxt);
+  result := false;
+  ctxt := filter(true, prop, op, value, nil);
+  try
+    result := ctxt <> nil;
+  finally
+    if result then
+      Close(ctxt);
+  end;
 end;
 
 procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
@@ -478,13 +502,13 @@ begin
   result := '';
   if (length(lang.codes) = 0) then
   begin
-      rl := languages.parse('');
-      try
-        if findMatch(languages, rl, result) then
-          exit;
-      finally
-        rl.Free;
-      end;
+    rl := languages.parse('');
+    try
+      if findMatch(languages, rl, result) then
+        exit;
+    finally
+      rl.Free;
+    end;
   end
   else
   begin
@@ -565,6 +589,35 @@ begin
   result := Items[i].value;
 end;
 
+function TCodeDisplays.has(languages: TIETFLanguageDefinitions; lang: THTTPLanguages; display: String): boolean;
+var
+  l : string;
+  rl : TIETFLang;
+  cd : TCodeDisplay;
+begin
+  result := false;
+  if (length(lang.codes) = 0) then
+  begin
+    for cd in self do
+      if (SameText(cd.value, display)) then
+        exit(true);
+  end
+  else
+  begin
+    for l in lang.codes do
+    begin
+      rl := languages.parse(l);
+      try
+        for cd in self do
+          if (langMatches(l, cd.FLanguage) or (cd.FLanguage = '')) and SameText(cd.value, display) then
+            exit(true);
+      finally
+        rl.Free;
+      end;
+    end;
+  end;
+end;
+
 function TCodeDisplays.has(display: String): boolean;
 var
   cd : TCodeDisplay;
@@ -609,6 +662,36 @@ procedure TCodeDisplay.SetLang(const Value: TIETFLang);
 begin
   FLang.Free;
   FLang := Value;
+end;
+
+{ TCodeSystemIndexBasedIterator }
+
+constructor TCodeSystemIteratorContext.Create(context: TCodeSystemProviderContext; count: integer);
+begin
+  inherited Create;
+  FContext := context;
+  FCount := count;
+end;
+
+destructor TCodeSystemIteratorContext.Destroy;
+begin
+  FContext.free;
+  inherited;
+end;
+
+function TCodeSystemIteratorContext.Link: TCodeSystemIteratorContext;
+begin
+  result := TCodeSystemIteratorContext(inherited Link);
+end;
+
+function TCodeSystemIteratorContext.more: boolean;
+begin
+  result := FCurrent < FCount;
+end;
+
+procedure TCodeSystemIteratorContext.next;
+begin
+  inc(FCurrent);
 end;
 
 end.

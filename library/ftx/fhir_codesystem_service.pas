@@ -192,8 +192,8 @@ type
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
     function TotalCount : integer; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
@@ -205,7 +205,7 @@ type
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function hasSupplement(url : String) : boolean; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -434,12 +434,12 @@ begin
   result := true;
 end;
 
-function TFhirCodeSystemProvider.ChildCount(context: TCodeSystemProviderContext): integer;
+function TFhirCodeSystemProvider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if context = nil then
-    result := FCs.CodeSystem.conceptCount
+    result := TCodeSystemIteratorContext.Create(nil, FCs.CodeSystem.conceptCount)
   else
-    result := TFhirCodeSystemProviderContext(context).context.conceptCount + TFhirCodeSystemProviderContext(context).context.extensionCount('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
+    result := TCodeSystemIteratorContext.Create(context.Link, TFhirCodeSystemProviderContext(context).context.conceptCount + TFhirCodeSystemProviderContext(context).context.extensionCount('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes'));
 end;
 
 procedure TFhirCodeSystemProvider.Close(ctxt: TCodeSystemProviderContext);
@@ -532,32 +532,37 @@ begin
     b.Free;
   end;end;
 
-function TFhirCodeSystemProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
-//var
-//  ex : TFhirExtension;
-//  code : String;
+function TFhirCodeSystemProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+var
+  ex : TFhirExtensionW;
+  code : String;
+  ndx : integer;
 begin
   result := nil;
-  if context = nil then
-    result := TFhirCodeSystemProviderContext.create(FCs.CodeSystem.concept(ndx))
+  if context.context = nil then
+    result := TFhirCodeSystemProviderContext.create(FCs.CodeSystem.concept(context.current).link)
   else
   begin
-    if (ndx < TFhirCodeSystemProviderContext(context).context.conceptCount) then
-      result := TFhirCodeSystemProviderContext.create(TFhirCodeSystemProviderContext(context).context.concept(ndx))
+    if (context.current < TFhirCodeSystemProviderContext(context).context.conceptCount) then
+      result := TFhirCodeSystemProviderContext.create(TFhirCodeSystemProviderContext(context).context.concept(context.current).link)
     else
     begin
-//      ndx := ndx - TFhirCodeSystemProviderContext(context).context.conceptCount;
-      // what is this doing?
-//      for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensionList do
+      raise Exception.Create('Not supported right now');
+//      ndx := context.current - TFhirCodeSystemProviderContext(context.context).context.conceptCount;
+//      // what is this doing?
+//      for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensions.forEnum do
+//      begin
 //        if (ndx = 0) then
-//        begin
-//          code := TFHIRCode(ex.value).value;
-//          exit(doLocate(code));
-//        end
-//        else if ex.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes' then
-//          dec(ndx);
+////        begin
+////          code := TFHIRCode(ex.value).value;
+////          exit(doLocate(code));
+////        end
+////        else if ex.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes' then
+////          dec(ndx);
+//      end;
     end;
   end;
+  context.next;
 end;
 
 function TFhirCodeSystemProvider.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
@@ -1042,7 +1047,7 @@ begin
   end;
 end;
 
-function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TFhirCodeSystemProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
   ts : TStringList;

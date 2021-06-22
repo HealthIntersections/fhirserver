@@ -82,8 +82,8 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -103,7 +103,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
@@ -179,14 +179,14 @@ begin
   inherited;
 end;
 
-function TICD10Provider.ChildCount(context: TCodeSystemProviderContext): integer;
+function TICD10Provider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if context = nil then
-    result := FRoots.count
+    result := TCodeSystemIteratorContext.Create(nil, FRoots.count)
   else if not TICD10Node(context).hasChildren then
-    result := 0
+    result := TCodeSystemIteratorContext.Create(nil, 0)
   else
-    result := TICD10Node(context).FChildren.Count;
+    result := TCodeSystemIteratorContext.Create(nil, TICD10Node(context).FChildren.Count);
 end;
 
 procedure TICD10Provider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
@@ -280,7 +280,7 @@ begin
   end;
 end;
 
-function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TICD10Provider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.create('Not implemented: TICD10Provider.filter');
 end;
@@ -310,12 +310,13 @@ begin
   raise ETerminologyError.create('Not implemented: TICD10Provider.getCDSInfo');
 end;
 
-function TICD10Provider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function TICD10Provider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  if context = nil then
-    result := FRoots[ndx]
+  if context.context = nil then
+    result := FRoots[context.current]
   else
-    result := TICD10Node(context).FChildren[ndx];
+    result := TICD10Node(context.context).FChildren[context.current];
+  context.next;
 end;
 
 function TICD10Provider.getDefinition(code: String): String;

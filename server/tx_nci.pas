@@ -76,8 +76,8 @@ type
     Function Link : TNciMetaServices; overload;
 
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String):String; override;
     function getDefinition(code : String):String; override;
@@ -368,12 +368,12 @@ begin
   result := TNciMetaServices(Inherited Link);
 end;
 
-function TNciMetaServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TNciMetaServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   raise ETerminologyError.create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
 end;
 
-function TNciMetaServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TNciMetaServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
 end;

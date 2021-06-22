@@ -94,6 +94,7 @@ procedure TClientCacheManagerEntry.update(list: TFslMetadataResourceList);
 var
   i, j : TFHIRMetadataResourceW;
   remove : TFslMetadataResourceList;
+  c : cardinal;
 begin
   remove := TFslMetadataResourceList.create;
   try
@@ -102,7 +103,11 @@ begin
       for j in FList do
         if (i.url = j.url) and (i.version = j.version) then
         begin
-          FSize := FSize - j.sizeInBytes;
+          c := j.sizeInBytes;
+          if (c > FSize) then
+            FSize := 0
+          else
+            FSize := FSize - c;
           remove.Add(j.link);
         end;
     end;

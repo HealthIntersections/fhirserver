@@ -54,8 +54,8 @@ type
     function description : String; override;
 
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -73,7 +73,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -170,12 +170,12 @@ begin
   result := TUriServices(Inherited Link);
 end;
 
-function TUriServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TUriServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := 0; // no children
+  result := TCodeSystemIteratorContext.Create(nil, 0); // no children
 end;
 
-function TUriServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TUriServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyTodo.create('TUriServices.getcontext');
 end;
@@ -201,7 +201,7 @@ begin
   raise ETerminologyTodo.create('TUriServices.searchFilter');
 end;
 
-function TUriServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUriServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyTodo.create('TUriServices.filter');
 end;

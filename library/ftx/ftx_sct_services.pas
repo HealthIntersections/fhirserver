@@ -684,8 +684,8 @@ operations
     // generic terminology server interface
     function description : String; override;
     function TotalCount : integer; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -695,7 +695,7 @@ operations
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
@@ -3540,7 +3540,7 @@ begin
     result := nil;
 end;
 
-function TSnomedServices.ChildCount(context: TCodeSystemProviderContext): integer;
+function TSnomedServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   i : integer;
   Identity : UInt64;
@@ -3555,25 +3555,27 @@ var
   Inbounds : TCardinalArray;
   did : UInt64;
   Active, Defining : boolean;
+  ndx : integer;
 begin
   checkIsLoaded;
   SetLength(inbounds, 0);
   if (context = nil) then // root
-    result := length(FActiveRoots)
+    ndx := length(FActiveRoots)
   else if (TSnomedExpressionContext(context).isComplex) then
-    result := 0 // no children on expressions
+    ndx := 0 // no children on expressions
   else
   begin
     Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := Refs.GetReferences(InboundIndex);
-    result := 0;
+    ndx := 0;
     For i := 0 to High(Inbounds) Do
     Begin
       Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, iWork4, iWork5, iWork6, date, Active, Defining, Group);
       if (iWork3 = Is_a_Index) and Active Then
-        inc(result);
+        inc(ndx);
     End;
   end;
+  result := TCodeSystemIteratorContext.Create(context.Link, ndx);
 end;
 
 procedure TSnomedServices.Close(ctxt: TCodeSystemProviderContext);
@@ -3609,7 +3611,7 @@ begin
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
-function TSnomedServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function TSnomedServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 var
   i, c : integer;
   Identity : UInt64;
@@ -3624,9 +3626,12 @@ var
   date : TSnomedDate;
   did : UInt64;
   Active, Defining : boolean;
+  ndx : integer;
 begin
   checkIsLoaded;
   result := nil;
+  ndx := context.current;
+  context.next;
   SetLength(inbounds, 0);
   if (context = nil) then
     raise ETerminologyError.create('check this code? [2]') // I don't understand why we return is_a here?
@@ -4068,7 +4073,7 @@ begin
   end;
 end;
 
-function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : UInt64;
 begin

@@ -91,9 +91,8 @@ type
     class function checkDB(conn : TFDBConnection) : String;
 
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
-//    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -108,7 +107,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -712,13 +711,13 @@ begin
   end;
 end;
 
-function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TUMLSServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   qry : TFDBConnection;
 begin
   qry := db.GetConnection(dbprefix+'.display');
   try
-    result := qry.CountSQL('Select count(cui1) from RXNCONSO');
+    result := TCodeSystemIteratorContext.Create(nil, qry.CountSQL('Select count(cui1) from RXNCONSO'));
     qry.Release;
   except
     on e : Exception do
@@ -741,9 +740,9 @@ begin
   result := 'RXCUI';
 end;
 
-function TUMLSServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TUMLSServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.create('getNextContext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TUMLSServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -827,7 +826,7 @@ begin
   end;
 end;
 
-function TUMLSServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUMLSServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   res : TUMLSFilter;
   ok : boolean;

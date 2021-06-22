@@ -389,6 +389,8 @@ Type
     function FilterByIsA(value: String; this: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
+    function langDesc(iLang : word) : String;
+    function allLangs : TLangArray;
   protected
     function sizeInBytesV : cardinal; override;
   public
@@ -432,8 +434,8 @@ Type
 
     function description : String; override;
     function TotalCount : integer; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function findMAConcept(code : String) : Cardinal;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
@@ -444,7 +446,7 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -1021,20 +1023,21 @@ begin
       begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
-          if l = ilang then
-            list.see(s.trim);
+          if (l = ilang) then
+            list.see(langDesc(iLang), s.trim);
       end;
     end;
   End
   else if AnswerLists.FindCode(sCode, iIndex, FDesc) then
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
-    list.see(Desc.GetEntry(iDescription, ilang).Trim);
+    s := Desc.GetEntry(iDescription, ilang);
+    list.see(langDesc(iLang), s.Trim);
   end
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
-    list.see(Desc.GetEntry(text, ilang).Trim);
+    list.see(langDesc(iLang), Desc.GetEntry(text, ilang).Trim);
   end
 end;
 
@@ -1114,6 +1117,20 @@ end;
 function TLOINCServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
+end;
+
+function TLOINCServices.langDesc(iLang: word): String;
+var
+  i : integer;
+  llang, country : String;
+begin
+  if iLang = 0 then
+    result := ''
+  else
+  begin
+    FLang.GetEntry(iLang, llang, country);
+    result := llang +'-'+country;
+  end;
 end;
 
 function TLOINCServices.langsForLang(const lang : THTTPLanguages): TLangArray;
@@ -1973,6 +1990,15 @@ begin
   end;
 end;
 
+function TLOINCServices.allLangs: TLangArray;
+var
+  i : integer;
+begin
+  SetLength(result, FLang.count);
+  for i := 0 to length(result) - 1 do
+    result[i] := i;
+end;
+
 function TLOINCServices.buildValueSet(factory : TFHIRFactory; id: String): TFhirValueSetW;
 var
   index : cardinal;
@@ -2073,8 +2099,7 @@ begin
   end;
 end;
 
-function TLOINCServices.ChildCount(context: TCodeSystemProviderContext
-  ): integer;
+function TLOINCServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   ctxt : TLoincProviderContext;
 begin
@@ -2082,11 +2107,11 @@ begin
   // no children in loinc
 
   if context = nil then
-    result := TotalCount
+    result := TCodeSystemIteratorContext.Create(nil, TotalCount)
   else if ctxt.kind = lpckPart then
-    result := 0
+    result := TCodeSystemIteratorContext.Create(nil, 0)
   else
-    result := 0;
+    result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
 procedure TLOINCServices.Close(ctxt: TCodeSystemProviderContext);
@@ -2094,13 +2119,13 @@ begin
   ctxt.Free;
 end;
 
-function TLOINCServices.getcontext(context: TCodeSystemProviderContext;
-  ndx: integer): TCodeSystemProviderContext;
+function TLOINCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  if (context = nil) then
-    result := TLoincProviderContext.Create(lpckCode, ndx) // offset from 0 to avoid ambiguity about nil contxt, and first entry
+  if (context.context = nil) then
+    result := TLoincProviderContext.Create(lpckCode, context.count) // offset from 0 to avoid ambiguity about nil contxt, and first entry
   else
     raise ETerminologyError.create('shouldn''t be here');
+  context.next;
 end;
 
 function TLOINCServices.Code(context: TCodeSystemProviderContext): string;
@@ -2161,7 +2186,7 @@ end;
 
 procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TCodeDisplays);
 begin
-  GetDisplaysByName(Code(context), langsForLang(THTTPLanguages.Create('en')), list);
+  GetDisplaysByName(Code(context), allLangs, list);
 end;
 
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -2273,16 +2298,14 @@ begin
   result := '';
 end;
 
-function TLOINCServices.getDisplay(code: String; const lang: THTTPLanguages
-  ): String;
+function TLOINCServices.getDisplay(code: String; const lang: THTTPLanguages): String;
 begin
   result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then
     raise ETerminologyError.create('unable to find '+code+' in '+systemUri(nil));
 end;
 
-function TLOINCServices.IsAbstract(context: TCodeSystemProviderContext
-  ): boolean;
+function TLOINCServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   result := false; // loinc don't do abstract
 end;
@@ -2591,9 +2614,7 @@ begin
     result := nil;
 end;
 
-function TLOINCServices.filter(prop: String; op: TFhirFilterOperator;
-  value: String; prep: TCodeSystemProviderFilterPreparationContext
-  ): TCodeSystemProviderFilterContext;
+function TLOINCServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   if prop = 'SCALE_TYP' then
     result := FilterByPropertyId(lptScales, op, value)

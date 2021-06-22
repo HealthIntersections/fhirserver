@@ -56,8 +56,8 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -77,7 +77,7 @@ type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
@@ -107,9 +107,9 @@ procedure THGVSProvider.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
 end;
 
-function THGVSProvider.ChildCount(context: TCodeSystemProviderContext): integer;
+function THGVSProvider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := 0;
+  result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
 procedure THGVSProvider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
@@ -167,7 +167,7 @@ begin
   // nothing
 end;
 
-function THGVSProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function THGVSProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS');
 end;
@@ -197,9 +197,10 @@ begin
   // nothing
 end;
 
-function THGVSProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function THGVSProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   result := nil;
+  context.next;
 end;
 
 function THGVSProvider.getDefinition(code: String): String;

@@ -76,8 +76,8 @@ type
     class function checkDB(conn : TFDBConnection) : String;
 
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
@@ -96,7 +96,7 @@ type
 
     function description : String; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -375,12 +375,12 @@ begin
   end;
 end;
 
-function TUniiServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TUniiServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := 0; // no children
+  result := TCodeSystemIteratorContext.Create(nil, 0); // no children
 end;
 
-function TUniiServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TUniiServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyTodo.create('TUniiServices.getcontext');
 end;
@@ -406,7 +406,7 @@ begin
   raise ETerminologyTodo.create('TUniiServices.searchFilter');
 end;
 
-function TUniiServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUniiServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyTodo.create('TUniiServices.filter');
 end;

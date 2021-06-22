@@ -235,8 +235,8 @@ Type
 
     function description : String; override;
     function TotalCount : integer; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -246,7 +246,7 @@ Type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -830,9 +830,9 @@ begin
   inc(result, FDefinition.sizeInBytes);
 end;
 
-function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
+function TUcumServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := 0;
+  result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
 procedure TUcumServices.Close(ctxt: TCodeSystemProviderContext);
@@ -848,7 +848,7 @@ begin
     result := TUCUMContext(context).concept.code;
 end;
 
-function TUcumServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   result := nil;
 end;
@@ -1030,7 +1030,7 @@ begin
   ctxt.Free;
 end;
 
-function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TUcumServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if (prop = 'canonical') and (op in [foEqual]) then
     result := TUcumFilterContext.create(value)

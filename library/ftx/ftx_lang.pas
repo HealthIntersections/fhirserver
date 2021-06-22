@@ -77,8 +77,8 @@ type
     function description : String; override;
 
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -96,7 +96,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -236,12 +236,12 @@ begin
   end;
 end;
 
-function TIETFLanguageCodeServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TIETFLanguageCodeServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := -1;
+  result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-function TIETFLanguageCodeServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.getcontext');
 end;
@@ -267,7 +267,7 @@ begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.searchFilter');
 end;
 
-function TIETFLanguageCodeServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TIETFLanguageCodeServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   i : integer;
 begin

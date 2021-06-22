@@ -79,8 +79,8 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -98,7 +98,7 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -297,17 +297,18 @@ begin
   result := TACIRServices(Inherited Link);
 end;
 
-function TACIRServices.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TACIRServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if context = nil then
-    result := totalcount
+    result := TCodeSystemIteratorContext.Create(nil, totalcount)
   else
-    result := 0; // no children
+    result := TCodeSystemIteratorContext.Create(nil, 0); // no children
 end;
 
-function TACIRServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TACIRServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FList[ndx];
+  result := FList[context.current];
+  context.next;
 end;
 
 function TACIRServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -336,7 +337,7 @@ begin
   result := 'not-subsumed';
 end;
 
-function TACIRServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TACIRServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyTodo.create('TACIRServices.filter');
 end;

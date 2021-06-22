@@ -278,8 +278,8 @@ Type
     destructor Destroy; override;
     function TotalCount : integer;  override;
     function description : String; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
@@ -291,7 +291,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TCodeDisplays); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -314,15 +314,15 @@ begin
     result := result + FStore.NciMeta.TotalCount;
 end;
 
-function TAllCodeSystemsProvider.ChildCount(context : TCodeSystemProviderContext) : integer;
+function TAllCodeSystemsProvider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if (context = nil) then
-    result := TotalCount
+    result := TCodeSystemIteratorContext.Create(nil, TotalCount)
   else
     raise ETerminologyError.create('Not Created Yet');
 end;
 
-function TAllCodeSystemsProvider.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
+function TAllCodeSystemsProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
@@ -501,10 +501,11 @@ begin
   end;
 end;
 
-function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TAllCodeSystemsProvider.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.create('Not Created Yet');
 end;
+
 function TAllCodeSystemsProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 var
   ctxt : TAllCodeSystemsProviderFilterPreparationContext;
