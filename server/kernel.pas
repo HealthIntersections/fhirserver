@@ -333,6 +333,8 @@ var
 begin
   FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create;
+  FWebServer.Common.cache.Caching := settings.Ini.web['caching'].value = 'true';
+
   {$IFNDEF NO_JS}
   FWebServer.Common.OnRegisterJs := registerJs;
   {$ENDIF}

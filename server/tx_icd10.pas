@@ -186,7 +186,7 @@ begin
   else if not TICD10Node(context).hasChildren then
     result := TCodeSystemIteratorContext.Create(nil, 0)
   else
-    result := TCodeSystemIteratorContext.Create(nil, TICD10Node(context).FChildren.Count);
+    result := TCodeSystemIteratorContext.Create(context.link, TICD10Node(context).FChildren.Count);
 end;
 
 procedure TICD10Provider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);

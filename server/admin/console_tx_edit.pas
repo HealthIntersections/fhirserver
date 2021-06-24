@@ -209,6 +209,7 @@ begin
 
     edtFile.Text := Tx['source'].value;
     chkActive.Checked := tx['active'].readAsBool;
+
     rbMSSQL.Checked := tx['db-type'].value = 'mssql';
     rbMySQL.Checked := tx['db-type'].value = 'mysql';
     rbMSSQLClick(self);
@@ -229,6 +230,7 @@ begin
   Tx['type'].value := cbxType.items[cbxType.ItemIndex];
   Tx['source'].value := edtFile.Text;
   Tx['active'].ValueBool := chkActive.Checked;
+
   tx['db-type'].value := cbxDriver.Text;
   if rbMySQL.Checked then
     tx['db-type'].value := 'mysql'

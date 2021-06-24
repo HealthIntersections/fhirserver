@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads,
   fdb_manager,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
@@ -197,6 +197,7 @@ type
   private
     FStore : TTerminologyFhirServerStorage;
     UTGFolder : String;
+    FWeb : TTerminologyServerWebServer;
     function version : TFHIRVersion;
     function makeFactory : TFHIRFactory;
     function makeServerFactory : TFHIRServerFactory;
@@ -1305,13 +1306,11 @@ begin
 end;
 
 function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
-var
-  wep : TTerminologyServerWebServer;
 begin
-  wep := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
-  wep.FEndPoint := self;
-  WebEndPoint := wep;
-  result := wep;
+  FWeb := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
+  FWeb.FEndPoint := self;
+  WebEndPoint := FWeb;
+  result := FWeb;
 end;
 
 procedure TTerminologyServerEndPoint.Load;
@@ -1345,7 +1344,19 @@ end;
 
 procedure TTerminologyServerEndPoint.internalThread;
 begin
-  // nothing to check
+  try
+    setThreadStatus('Google Commit');
+    FWeb.Common.Google.commit;
+    setThreadStatus('Checking Async Tasks');
+    FWeb.CheckAsyncTasks;
+    setThreadStatus('Sweeping Client Cache');
+    FServerContext.ClientCacheManager.sweep;
+    setThreadStatus('Build Terminology Indexes');
+    FServerContext.TerminologyServer.BuildIndexes(false);
+  except
+    on e : exception do
+      Logging.log('Error in internal thread for '+Config.name+': '+e.Message);
+  end;
 end;
 
 procedure TTerminologyServerEndPoint.InstallDatabase;

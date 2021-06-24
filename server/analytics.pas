@@ -66,6 +66,7 @@ type
     FEvents : TFslList<TGoogleAnalyaticsEventData>;
     FServerId: String;
     FCycle : integer;
+    FWorking : boolean;
     procedure post(cnt : String);
     {$IFDEF FPC}
     function filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
@@ -106,8 +107,7 @@ var
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   post, resp : TStringStream;
 begin
-exit;
-
+  exit;
   post := TStringStream.create(cnt, TEncoding.UTF8);
   try
     http := TIdHTTP.Create(nil);
@@ -148,6 +148,8 @@ var
 begin
   if FServerId = '' then
     exit;
+  if not FWorking then
+    exit;
   event := TGoogleAnalyaticsEventData.Create;
   try
     event.resourceName := resourceName;
@@ -180,6 +182,7 @@ var
 begin
   if FServerId = '' then
     exit;
+  FWorking := true;
   b := TStringBuilder.Create;
   try
     FLock.Lock;

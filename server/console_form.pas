@@ -130,6 +130,7 @@ type
     btnFetchThreads: TButton;
     btnClearCache: TButton;
     cbxEdition: TComboBox;
+    chkCaching: TCheckBox;
     chkWebMode: TCheckBox;
     edtCACert: TEdit;
     edtConfigFile: TEdit;
@@ -181,6 +182,7 @@ type
     Image4: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
+    Label37: TLabel;
     Label38: TLabel;
     Label43: TLabel;
     lblDoco: TLabel;
@@ -348,6 +350,7 @@ type
     procedure btnFetchThreadsClick(Sender: TObject);
     procedure cbUMLSDriverChange(Sender: TObject);
     procedure cbxEditionChange(Sender: TObject);
+    procedure chkCachingChange(Sender: TObject);
     procedure chkWebModeChange(Sender: TObject);
     procedure edtAdminEmailChange(Sender: TObject);
     procedure edtAdminOrganizationChange(Sender: TObject);
@@ -846,6 +849,8 @@ begin
     edtWebPort.Enabled := true;
     chkWebMode.Checked := FConfig.web['plain-mode'].value = 'redirect';
     chkWebMode.Enabled := true;
+    chkCaching.Checked := FConfig.web['caching'].value = 'true';
+    chkCaching.Enabled := true;
     edtSSLPort.Text := FConfig.web['https'].value;
     edtSSLPort.Enabled := true;
     edtSSLCert.Text := FConfig.web['certname'].value;
@@ -902,6 +907,8 @@ begin
     edtWebPort.Enabled := false;
     chkWebMode.checked := false;
     chkWebMode.Enabled := false;
+    chkCaching.checked := false;
+    chkCaching.Enabled := false;
     edtSSLPort.Text := '';
     edtSSLPort.Enabled := false;
     edtSSLCert.Text := '';
@@ -980,6 +987,8 @@ procedure TMainConsoleForm.updateDoco;
 begin
   if ActiveControl = chkWebMode then
     lblDoco.caption := 'If this is selected, then any requests on the non-secure port will immediately be redirected to the SSL port. Note that end-points may have their own security rules for SSL, but won''t have any restrictions on open (other than not working)'
+  else if ActiveControl = chkCaching then
+    lblDoco.caption := 'If this is selected, then the server will do aggresive http level caching'
   else if ActiveControl = edtCACert then
     lblDoco.caption := 'The CA certificate for the SSL certificate, in DER format'
   else if ActiveControl = edtAdminSCIMSalt then
@@ -1063,7 +1072,7 @@ begin
   finally
     mConsole.Lines.EndUpdate;
   end;
-  mConsole.SelStart := mConsole.Lines.Text.Length-1;
+  mConsole.SelStart := mConsole.Lines.Text.Length;
 end;
 
 procedure TMainConsoleForm.edtGoogleIdChange(Sender: TObject);
@@ -1617,6 +1626,18 @@ begin
   btnBase.Enabled := b;
 end;
 
+procedure TMainConsoleForm.chkCachingChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    if chkCaching.Checked then
+      FConfig.web['caching'].value := 'true'
+    else
+      FConfig.web['caching'].value := 'false';
+    FConfig.save;
+  end;
+end;
+
 procedure TMainConsoleForm.chkWebModeChange(Sender: TObject);
 begin
   if not FLoading then
@@ -1774,7 +1795,7 @@ begin
       FLines.delete(0);
       mConsole.lines.delete(0);
     end;
-    mConsole.SelStart := mConsole.Lines.Text.Length-1;
+    mConsole.SelStart := mConsole.Lines.Text.Length;
     mStats.Text := rs;
   finally
     ts.free;

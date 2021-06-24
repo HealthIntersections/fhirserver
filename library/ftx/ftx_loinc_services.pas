@@ -820,7 +820,7 @@ end;
 
 function TLOINCCodeList.FindCode(sCode: String; var iIndex: Cardinal): Boolean;
 var
-  L, H, I : Cardinal;
+  L, H, I : Integer;
   C: Integer;
   s, sF : String;
 begin
@@ -1037,7 +1037,8 @@ begin
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
-    list.see(langDesc(iLang), Desc.GetEntry(text, ilang).Trim);
+    s := Desc.GetEntry(text, ilang).Trim;
+    list.see(langDesc(iLang), s);
   end
 end;
 
@@ -2122,7 +2123,7 @@ end;
 function TLOINCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   if (context.context = nil) then
-    result := TLoincProviderContext.Create(lpckCode, context.count) // offset from 0 to avoid ambiguity about nil contxt, and first entry
+    result := TLoincProviderContext.Create(lpckCode, context.current) // offset from 0 to avoid ambiguity about nil contxt, and first entry
   else
     raise ETerminologyError.create('shouldn''t be here');
   context.next;

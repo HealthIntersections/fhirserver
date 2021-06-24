@@ -28,7 +28,7 @@ type
     FSize : Cardinal;
     FCache : TFslMap<TCachedHTTPResponse>;
     FMaxSize: Cardinal;
-    FNotCaching : boolean;
+    FCaching : boolean;
     function generateKey(ep : String; req : TIdHTTPRequestInfo) : String;
   public
     constructor Create; override;
@@ -37,6 +37,7 @@ type
     procedure recordResponse(ep : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; summary : String);
     procedure Clear;
     procedure Trim;
+    property Caching : boolean read FCaching write FCaching;
     property MaxSize : Cardinal read FMaxSize write FMaxSize;
   end;
 
@@ -59,7 +60,6 @@ begin
   FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
   FSize := 0;
   FMaxSize := 1024 * 1024 * 1024; // 1 GB
-  FNotCaching := FolderExists('c:\work\fhirserver');
 end;
 
 destructor THTTPCacheManager.Destroy;
@@ -112,7 +112,7 @@ function THTTPCacheManager.respond(ep : String; request: TIdHTTPRequestInfo; res
 var
   co : TCachedHTTPResponse;
 begin
-  if FNotCaching then
+  if not FCaching then
     exit(false);
 
   FLock.Lock;

@@ -762,7 +762,7 @@ begin
   conn := FDB.getconnection('Display');
   try
     if code.package then
-      conn.sql := 'Select [NDCPackages].Code, [NDCProducts].Code as PCode, [NDCPackages].Code11, [NDCPackages].Active, Type, TradeName, DoseForm, Route, Company, Category, Generics '+'from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
+      conn.sql := 'Select [NDCPackages].Code, [NDCProducts].Code as PCode, [NDCPackages].Code11, [NDCPackages].Active, Description, Suffix, Type, TradeName, DoseForm, Route, Company, Category, Generics '+'from NDCProducts, NDCPackages where NDCProducts.NDCKey = NDCPackages.ProductKey and NDCPackages.NDCKey = '+inttostr(code.key)
     else
       conn.sql := 'Select * from NDCProducts where NDCKey = '+inttostr(code.key);
     conn.prepare;
