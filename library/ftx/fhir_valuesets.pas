@@ -202,6 +202,7 @@ Type
 
     procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
     procedure importValueSet(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+    procedure excludeValueSet(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW);
     procedure processCodes(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cset : TFhirValueSetComposeIncludeW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
     procedure handleCompose(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 
@@ -1526,6 +1527,22 @@ begin
   end;
 end;
 
+procedure TFHIRValueSetExpander.excludeValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW);
+var
+  c : TFhirValueSetExpansionContainsW;
+  s : String;
+begin
+  for c in vs.expansion.contains.forEnum do
+  begin
+    s := key(c);
+    if map.ContainsKey(s) then
+    begin
+      list.Remove(map[s]);
+      map.Remove(s);
+    end;
+  end;
+end;
+
 procedure TFHIRValueSetExpander.importValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
 var
   c : TFhirValueSetExpansionContainsW;
@@ -1610,6 +1627,7 @@ var
   inner : boolean;
   s, display : String;
   imports : TFslList<TFHIRImportedValueSet>;
+  excludevs : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
   cctxt : TCodeSystemProviderContext;
@@ -1617,14 +1635,22 @@ var
   iter : TCodeSystemIteratorContext;
 begin
   imports := TFslList<TFHIRImportedValueSet>.create;
+  excludevs := TFslList<TFHIRImportedValueSet>.create;
   try
     FFactory.checkNoModifiers(cset,'ValueSetExpander.processCodes', 'set');
     for s in cset.valueSets do
-      imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
-
+    begin
+      if (doDelete) then
+        excludevs.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)))
+      else
+        imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
+    end;
     if cset.systemUri = '' then
     begin
-      importValueSet(list, map, imports[0].valueSet, expansion, imports, 1);
+      if (doDelete) then
+        excludeValueSet(list, map, excludevs[0].valueSet)
+      else
+        importValueSet(list, map, imports[0].valueSet, expansion, imports, 1);
     end
     else
     begin
