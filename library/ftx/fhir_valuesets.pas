@@ -477,7 +477,8 @@ begin
       checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FAdditionalResources.link, FLanguages.link, other.url);
       try
         checker.prepare(other, FParams);
-        FOthers.Add(s, checker.Link);
+        if not FOthers.ExistsByKey(s) then
+          FOthers.Add(s, checker.Link);
       finally
         checker.free;
       end;
