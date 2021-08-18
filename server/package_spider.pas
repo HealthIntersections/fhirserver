@@ -51,7 +51,7 @@ Type
     constructor Create(json : TJsonArray);
     destructor Destroy; override;
 
-    function isOk(package, feed : String) : boolean;
+    function isOk(package, feed : String; var list : String) : boolean;
   end;
 
   TSendEmailEvent = procedure (dest, subj, body : String);
@@ -86,6 +86,11 @@ Type
   end;
 
 implementation
+
+function fix(url : String) : String;
+begin
+  result := url.Replace('http:', 'https:');
+end;
 
 { TPackageUpdater }
 
@@ -252,7 +257,7 @@ begin
       try
         arr := json.arr['feeds'];
         for i := 0 to arr.Count - 1 do
-          updateTheFeed(arr.Obj[i].str['url'], MASTER_URL, arr.Obj[i].str['email'], pr);
+          updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['email'], pr);
       finally
         pr.Free;
       end;
@@ -313,13 +318,13 @@ var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
-  id, url, d: String;
+  id, url, d, list: String;
 begin
   url := '??';
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
-    if pr.isOk(id, source) then
+    if pr.isOk(id, source, list) then
     begin
       if (not hasStored(guid)) then
       begin
@@ -327,14 +332,16 @@ begin
         if (d.length > 2) and (d[2] = ' ') and StringIsInteger16(d[1]) then
           d := '0'+d;
         date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
-        log('Fetch '+item.element('link').Text, source, false);
-        url := item.element('link').Text;
+        url := fix(item.element('link').Text);
+        log('Fetch '+url, source, false);
         content := fetchUrl(url, 'application/tar+gzip');
         store(source, guid, date, content, id);
       end;
     end
     else
-      log('The package '+id+' is not allowed to come from '+source, source, true);
+    begin
+      log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+    end;
   except
     on e : Exception do
     begin
@@ -357,22 +364,26 @@ begin
   inherited;
 end;
 
-function TPackageRestrictions.isOk(package, feed: String): boolean;
+function TPackageRestrictions.isOk(package, feed: String; var list : String): boolean;
 var
   e, f : TJsonNode;
   eo : TJsonObject;
 begin
   result := true;
+  list := '';
   if FJson <> nil then
   begin
     for e in FJson do
     begin
       eo := e as TJsonObject;
-      if matches(package, eo.str['mask']) then
+      if matches(fix(package), fix(eo.str['mask'])) then
       begin
         result := false;
         for f in eo.arr['feeds'] do
-          result := result or (feed = TJsonString(f).value);
+        begin
+          result := result or (fix(feed) = fix(TJsonString(f).value));
+          CommaAdd(list, TJsonString(f).value);
+        end;
         exit(result);
       end;
     end;
