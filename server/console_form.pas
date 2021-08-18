@@ -155,9 +155,11 @@ type
     edtHostName: TEdit;
     edtTelnetPassword: TEdit;
     edtWebPort: TEdit;
+    edtWebMaxConnections: TEdit;
     edtAdminEmail: TEdit;
     edtAdminOrganization: TEdit;
     edtAdminSMS: TEdit;
+    edtWebPort1: TEdit;
     FileNewAction: TAction;
     ActionList1: TActionList;
     EditCopy1: TEditCopy;
@@ -184,6 +186,7 @@ type
     Label1: TLabel;
     Label37: TLabel;
     Label38: TLabel;
+    Label42: TLabel;
     Label43: TLabel;
     lblDoco: TLabel;
     Label10: TLabel;
@@ -368,6 +371,7 @@ type
     procedure edtSSLPortChange(Sender: TObject);
     procedure edtTelnetPasswordChange(Sender: TObject);
     procedure edtWebPortChange(Sender: TObject);
+    procedure edtWebMaxConnectionsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -847,6 +851,8 @@ begin
     edtHostName.Enabled := true;
     edtWebPort.Text := FConfig.web['http'].value;
     edtWebPort.Enabled := true;
+    edtWebMaxConnections.Text := FConfig.web['http-max-conn'].value;
+    edtWebMaxConnections.Enabled := true;
     chkWebMode.Checked := FConfig.web['plain-mode'].value = 'redirect';
     chkWebMode.Enabled := true;
     chkCaching.Checked := FConfig.web['caching'].value = 'true';
@@ -905,6 +911,8 @@ begin
     edtHostName.Enabled := false;
     edtWebPort.Text := '';
     edtWebPort.Enabled := false;
+    edtWebMaxConnections.Text := '';
+    edtWebMaxConnections.Enabled := false;
     chkWebMode.checked := false;
     chkWebMode.Enabled := false;
     chkCaching.checked := false;
@@ -1007,6 +1015,8 @@ begin
     lblDoco.caption := 'The host name by which clients know this server (normally, the server uses the Host details provided by the client, but there are places in the OAuth process and others where this is not available'
   else if ActiveControl = edtWebPort then
     lblDoco.caption := 'The post to use for plain (unsecured) web services'
+  else if ActiveControl = edtWebMaxConnections then
+    lblDoco.caption := 'How many concurrent connections allowed (default is 15, 0 is no restrictions)'
   else if ActiveControl = edtGoogleId then
     lblDoco.caption := 'The google id to use for reporting hits to the geolocating device'
   else if ActiveControl = edtGoogleId then
@@ -1152,6 +1162,15 @@ begin
   if not FLoading then
   begin
     FConfig.web['http'].value := edtWebPort.Text;
+    FConfig.Save;
+  end;
+end;
+
+procedure TMainConsoleForm.edtWebMaxConnectionsChange(Sender: TObject);
+begin
+  if not FLoading then
+  begin
+    FConfig.web['http-max-conn'].value := edtWebMaxConnections.Text;
     FConfig.Save;
   end;
 end;

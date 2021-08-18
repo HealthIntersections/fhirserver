@@ -44,8 +44,9 @@ uses
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
-  PLAIN_KEEP_ALIVE = true;
+  PLAIN_KEEP_ALIVE = false;
   SECURE_KEEP_ALIVE = false;
+  DEF_SERVER_CONN_LIMIT = 15;
 
 type
   TFHIRWebServerStats = class (TFslObject)
@@ -87,6 +88,7 @@ type
     FHost : String;
     FActualPort: integer;
     FActualSSLPort: integer;
+    FConnLimit : Integer;
     FAdminEmail: String; // stated administrator
     FName: String; // name of this server
     FOwnerName: String; // name of the org that administers the service
@@ -112,6 +114,7 @@ type
     property host: String read FHost write FHost;
     property SSLPort: integer read FActualSSLPort;
     property ActualPort: integer read FActualPort write FActualPort;
+    property ConnLimit : Integer read FConnLimit write FConnLimit;
     property Google : TGoogleAnalyticsProvider read FGoogle;
     Property Stats : TFHIRWebServerStats read FStats;
     property Lock : TFslLock read FLock;

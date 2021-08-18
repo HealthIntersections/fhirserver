@@ -58,10 +58,10 @@ object MainConsoleForm: TMainConsoleForm
       Height = 643
       Top = 1
       Width = 892
-      ActivePage = tbThreads
+      ActivePage = tbManage
       Align = alClient
       ParentFont = False
-      TabIndex = 1
+      TabIndex = 3
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -100,7 +100,7 @@ object MainConsoleForm: TMainConsoleForm
           end
           object ToolButton2: TToolButton
             Left = 24
-            Height = 22
+            Height = 8
             Top = 2
             Caption = 'ToolButton2'
             Style = tbsSeparator
@@ -468,12 +468,12 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
               object GroupBox1: TGroupBox
                 Left = 0
-                Height = 144
+                Height = 178
                 Top = 0
                 Width = 874
                 Align = alTop
                 Caption = '  Web Host  '
-                ClientHeight = 124
+                ClientHeight = 158
                 ClientWidth = 870
                 ParentFont = False
                 TabOrder = 0
@@ -546,7 +546,7 @@ object MainConsoleForm: TMainConsoleForm
                   TabOrder = 3
                 end
                 object Label37: TLabel
-                  Left = 10
+                  Left = 8
                   Height = 15
                   Top = 92
                   Width = 64
@@ -554,11 +554,32 @@ object MainConsoleForm: TMainConsoleForm
                   ParentColor = False
                   ParentFont = False
                 end
+                object Label42: TLabel
+                  Left = 8
+                  Height = 15
+                  Top = 122
+                  Width = 93
+                  Caption = 'Max Connections'
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object edtWebMaxConnections: TEdit
+                  Left = 112
+                  Height = 23
+                  Top = 120
+                  Width = 746
+                  Anchors = [akTop, akLeft, akRight]
+                  OnChange = edtWebMaxConnectionsChange
+                  ParentFont = False
+                  TabOrder = 4
+                  Text = 'edtWebMaxConnections'
+                  TextHint = '15'
+                end
               end
               object GroupBox2: TGroupBox
                 Left = 0
                 Height = 184
-                Top = 144
+                Top = 178
                 Width = 874
                 Align = alTop
                 Caption = '  SSL  '

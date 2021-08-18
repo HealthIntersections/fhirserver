@@ -289,6 +289,7 @@ begin
   FCertFile := ini.web['certname'].value;
   FRootCertFile := ini.web['cacertname'].value;
   FSSLPassword := ini.web['password'].value;
+  Common.ConnLimit := ini.web['http-max-conn'].readAsInt(DEF_SERVER_CONN_LIMIT);
 
   NoUserAuthentication := ini.web['no-auth'].readAsBool;
   UseOAuth := ini.web['oauth'].readAsBool(true);
@@ -410,18 +411,24 @@ begin
 end;
 
 Procedure TFhirWebServer.Start; // (active, threads: boolean);
+var
+  s : String;
 Begin
+  if Common.ConnLimit = 0 then
+    s := ', No connection limit'
+  else
+    s := ', Limited to '+inttostr(Common.ConnLimit)+' connections';
 
   Logging.log('Start Web Server:');
   if (Common.ActualPort = 0) then
     Logging.log('  http: not active')
   else
-    Logging.log('  http: listen on ' + inttostr(Common.ActualPort));
+    Logging.log('  http: listen on ' + inttostr(Common.ActualPort)+s);
 
   if (Common.ActualSSLPort = 0) then
     Logging.log('  https: not active')
   else
-    Logging.log('  https: listen on ' + inttostr(Common.ActualSSLPort));
+    Logging.log('  https: listen on ' + inttostr(Common.ActualSSLPort)+s);
   FActive := true;
   Common.Stats.Start;
   StartServer;
@@ -451,6 +458,7 @@ Begin
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
     FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
+    FPlainServer.MaxConnections := Common.ConnLimit;
     FPlainServer.active := true;
   end;
   if Common.ActualSSLPort > 0 then
@@ -489,6 +497,7 @@ Begin
     FSSLServer.OnConnect := DoConnect;
     FSSLServer.OnDisconnect := DoDisconnect;
     FSSLServer.OnParseAuthentication := ParseAuthenticationHeader;
+    FSSLServer.MaxConnections := Common.ConnLimit;
     FSSLServer.active := true;
   end;
 end;
