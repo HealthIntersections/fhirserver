@@ -329,7 +329,7 @@ begin
       ddr := 'SQL Server Native Client 11.0';
     result := TFDBOdbcManager.create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
-  else if sameText(details['type'].value, 'mysql') then
+  else if sameText(details['db-type'].value, 'mysql') then
   begin
     Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
     result := TFDBOdbcManager.create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
@@ -347,7 +347,7 @@ function describeDatabase(details: TFHIRServerConfigSection): String;
 begin
   if sameText(details['db-type'].value, 'mssql') then
     result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
-  else if sameText(details['type'].value, 'mysql') then
+  else if sameText(details['db-type'].value, 'mysql') then
     result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
   else if sameText(details['db-type'].value, 'SQLite') then
     result := details['db-type'].value+':'+details['db-database'].value
