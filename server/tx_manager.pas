@@ -1872,7 +1872,7 @@ var
   sn: TSnomedServices;
 //  def : boolean;
   icdX: TICD10Provider;
-  function fixFile(fn : String) : String;
+  function fixFile(name, fn : String) : String;
   begin
     if FileExists(fn) then
       result := fn
@@ -1883,11 +1883,11 @@ var
     else if FileExists(Path(['[curr]', fn])) then
       result := Path(['[curr]', fn])
     else
-      raise Exception.Create('Unable to find the file '+fn);
+      raise Exception.Create('Unable to find the '+name+' file "'+fn+'"');
   end;
 
 begin
-  s := fixFile(FSettings.LangFile);
+  s := fixFile('lang', FSettings.LangFile);
   if not FileExists(s) then
     raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
   FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
@@ -1908,7 +1908,7 @@ begin
       if tx['type'].value = 'icd10' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        icdX := TICD10Provider.Create(FLanguages.link, true, fixFile(tx['source'].value));
+        icdX := TICD10Provider.Create(FLanguages.link, true, fixFile('icd10', tx['source'].value));
         try
           add(icdX);
           icd10.Add(icdX.link);
@@ -1921,7 +1921,7 @@ begin
         Logging.log('load '+s+' from '+tx['source'].value);
         sn := TSnomedServices.Create(FLanguages.link);
         try
-          sn.Load(fixFile(tx['source'].value), tx['default'].value = 'true');
+          sn.Load(fixFile('sct', tx['source'].value), tx['default'].value = 'true');
           add(sn, tx['default'].readAsBool);
           if not FProviderClasses.ContainsKey(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri) then
             FProviderClasses.Add(sn.systemUri(nil)+URI_VERSION_BREAK+sn.EditionUri, sn.link);
@@ -1937,13 +1937,13 @@ begin
         Logging.log('load '+s+' from '+tx['source'].value);
         Loinc := TLoincServices.Create(FLanguages.link);
         add(Loinc);
-        Loinc.Load(fixFile(tx['source'].value));
+        Loinc.Load(fixFile('loinc', tx['source'].value));
       end
       else if tx['type'].value = 'ucum' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
         Ucum := TUcumServices.Create(FLanguages.link);
-        Ucum.Import(fixFile(tx['source'].value));
+        Ucum.Import(fixFile('ucum', tx['source'].value));
       end
       else if tx['type'].value = 'rxnorm' then
       begin
