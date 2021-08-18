@@ -144,6 +144,7 @@ Type
     FAutoFree: boolean;
     FInternal : TThread;
     FRunning : Boolean;
+    FStopped : Boolean;
     FTimePeriod: cardinal;
 
     procedure InternalExecute;
@@ -1027,7 +1028,7 @@ begin
         et := GetTickCount64 + TimePeriod;
         repeat
           sleep(50);
-        until GetTickCount64 >= et;
+        until (GetTickCount64 >= et) or (FStopped);
       end;
     end
     else
@@ -1061,11 +1062,13 @@ Begin
   If FRunning Then
     RaiseError('Open', 'Thread is already running.');
   FRunning := True;
+  FStopped := False;
   FInternal := TInternalThread.create(self);
 End;
 
 procedure TFslThread.Stop;
 Begin
+  FStopped := true;
   FInternal.Terminate;
 End;
 
