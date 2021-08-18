@@ -58,7 +58,7 @@ type
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
     procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure serveSearch(name, canonical, FHIRVersion, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveSearch(name, canonical, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; response : TIdHTTPResponseInfo);
     procedure SetScanning(const Value: boolean);
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
@@ -639,7 +639,7 @@ begin
     result := '';
 end;
 
-procedure TFHIRPackageWebServer.serveSearch(name, canonical, FHIRVersion, sort : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+procedure TFHIRPackageWebServer.serveSearch(name, canonical, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
@@ -698,14 +698,14 @@ begin
           vars.add('canonical', TFHIRObjectText.create(canonical));
           vars.add('FHIRVersion', TFHIRObjectText.create(FHIRVersion));
           vars.add('count', TFHIRObjectText.create(conn.CountSQL('Select count(*) from PackageVersions')));
-          vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(false)));
+          vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(secure)));
           vars.add('ver', TFHIRObjectText.create('4.0.1'));
           vars.add('r2selected', TFHIRObjectText.create(sel('R2', FHIRVersion)));
           vars.add('r3selected', TFHIRObjectText.create(sel('R3', FHIRVersion)));
           vars.add('r4selected', TFHIRObjectText.create(sel('R4', FHIRVersion)));
-          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(false)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true, false)));
+          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true, false)));
           vars.add('status', TFHIRObjectText.create(status));
-          returnFile(request, response, nil, request.Document, 'packages-search.html', false, vars);
+          returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
         finally
           vars.free;
         end;
@@ -865,7 +865,7 @@ begin
     begin
       if not pm.has('lastUpdated') then
       begin
-        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], request, response);
+        serveSearch(pm['name'], pm['canonical'], pm['fhirversion'], pm['sort'], secure, request, response);
         result := 'Search Packages';
       end
       else if pm['lastUpdated'].startsWith('-') then
