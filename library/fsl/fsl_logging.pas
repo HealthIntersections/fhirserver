@@ -140,6 +140,7 @@ Type
     FLastday : integer;
     FWorkingLine : String;
     FCount : integer;
+    FLock : TFslLock;
 
     procedure checkDay;
     procedure close;
@@ -460,6 +461,7 @@ end;
 constructor TLogging.Create;
 begin
   inherited;
+  FLock := TFslLock.Create('console');
   FListeners := TFslList<TLogListener>.create;
   FStarting := true;
   FStartTime := now;
@@ -471,6 +473,7 @@ begin
   close;
   FFileLogger.Free;
   FListeners.Free;
+  FLock.Free;
   inherited;
 end;
 
@@ -576,7 +579,12 @@ begin
     if FLogToConsole then
     begin
       try
-        System.Writeln(s);
+        FLock.Lock;
+        try
+          System.Writeln(s);
+        finally
+          FLock.unlock;
+        end;
       except
         FLogToConsole := false;
       end;
@@ -620,7 +628,12 @@ begin
   if FLogToConsole then
   begin
     try
-      System.Writeln(s);
+      FLock.Lock;
+      try
+        System.Writeln(s);
+      finally
+        FLock.unlock;
+      end;
     except
       FLogToConsole := false;
     end;
@@ -648,7 +661,12 @@ begin
   if FLogToConsole then
   begin
     try
-      System.Write(s);
+      FLock.Lock;
+      try
+        System.Writeln(s);
+      finally
+        FLock.unlock;
+      end;
     except
       FLogToConsole := false;
     end;
@@ -669,7 +687,14 @@ var
 begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
-    System.Write(s);
+  begin
+    FLock.Lock;
+    try
+      System.Writeln(s);
+    finally
+      FLock.unlock;
+    end;
+  end;
   for listener in FListeners do
   begin
     try
@@ -686,7 +711,14 @@ var
   msg : String;
 begin
   if FLogToConsole then
-    System.Writeln(s);
+  begin
+    FLock.Lock;
+    try
+      System.Writeln(s);
+    finally
+      FLock.unlock;
+    end;
+  end;
 
   msg := FWorkingLine + s;
   FWorkingLine := '';
