@@ -501,19 +501,22 @@ begin
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
   for s in cc.valueSets do
   begin
-    other := findValueSet(s);
-    try
-      if other = nil then
-        raise ETerminologyError.create('Unable to find value set ' + s);
-      checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FAdditionalResources.link, FLanguages.link, other.url);
+    if not FOthers.ExistsByKey(s) then
+    begin
+      other := findValueSet(s);
       try
-        checker.prepare(other, FParams);
-        FOthers.Add(s, checker.Link);
+        if other = nil then
+          raise ETerminologyError.create('Unable to find value set ' + s);
+        checker := TValueSetChecker.create(FFactory.link, FOnGetValueSet, FOnGetCSProvider, FAdditionalResources.link, FLanguages.link, other.url);
+        try
+          checker.prepare(other, FParams);
+          FOthers.Add(s, checker.Link);
+        finally
+          checker.free;
+        end;
       finally
-        checker.free;
+        other.free;
       end;
-    finally
-      other.free;
     end;
   end;
   if not FOthers.ExistsByKey(cc.systemUri) then
