@@ -663,7 +663,7 @@ begin
     try
       FLock.Lock;
       try
-        System.Writeln(s);
+        System.Write(s);
       finally
         FLock.unlock;
       end;
@@ -690,7 +690,7 @@ begin
   begin
     FLock.Lock;
     try
-      System.Writeln(s);
+      System.Write(s);
     finally
       FLock.unlock;
     end;
