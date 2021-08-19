@@ -993,7 +993,7 @@ end;
 function TCountryCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   // nothing
-  result := true;
+  result := false;
 end;
 
 function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
@@ -1031,7 +1031,7 @@ end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TCountryCodeServices.filterLocate');
+  result := FMap[code];
 end;
 
 function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -1062,7 +1062,7 @@ end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise ETerminologyTodo.create('TCountryCodeServices.Close');
+  // nothing
 end;
 
 
