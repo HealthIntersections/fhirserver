@@ -691,6 +691,7 @@ operations
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -5050,6 +5051,11 @@ begin
   finally
     b.free;
   end;
+end;
+
+function TSnomedServices.sameContext(a, b: TCodeSystemProviderContext): boolean;
+begin
+  result := (a is TSnomedExpressionContext) and (b is TSnomedExpressionContext) and ((a as TSnomedExpressionContext).FSource = (b as TSnomedExpressionContext).FSource);
 end;
 
 procedure TSnomedServices.renderExpr(b: TStringBuilder; expr: TSnomedExpression; option : TSnomedServicesRenderOption);

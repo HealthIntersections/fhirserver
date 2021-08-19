@@ -97,6 +97,7 @@ type
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -784,6 +785,11 @@ begin
   filter.qry.SQL := 'Select '+getCodeField+', STR '+sql2+' where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
   filter.qry.Prepare;
   filter.qry.Execute;
+end;
+
+function TUMLSServices.sameContext(a, b: TCodeSystemProviderContext): boolean;
+begin
+  result := (a is TUMLSConcept) and (b is TUMLSConcept) and ((a as TUMLSConcept).FCode = (b as TUMLSConcept).FCode);
 end;
 
 function TUMLSServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;

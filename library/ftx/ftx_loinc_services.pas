@@ -442,6 +442,7 @@ Type
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
@@ -2674,6 +2675,13 @@ end;
 function TLOINCServices.name(context: TCodeSystemProviderContext): String;
 begin
   result := 'LOINC';
+end;
+
+function TLOINCServices.sameContext(a, b: TCodeSystemProviderContext): boolean;
+begin
+  result := (a is TLoincProviderContext) and (b is TLoincProviderContext)
+    and ((a as TLoincProviderContext).FKind = (b as TLoincProviderContext).FKind)
+    and ((a as TLoincProviderContext).FIndex = (b as TLoincProviderContext).FIndex);
 end;
 
 function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext;

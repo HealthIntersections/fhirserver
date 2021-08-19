@@ -765,11 +765,13 @@ type
 
     property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
+    function hasValueSets : boolean; virtual; abstract;
     function valueSets : TArray<String>; virtual; abstract;
     function hasConcepts : boolean; virtual; abstract;
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; virtual; abstract;
     function addConcept : TFhirValueSetComposeIncludeConceptW; virtual; abstract;
     function hasFilters : boolean; virtual; abstract;
+    function filterCount : integer; virtual; abstract;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; virtual; abstract;
     function addFilter : TFhirValueSetComposeIncludeFilterW; virtual; abstract;
   end;

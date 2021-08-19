@@ -162,6 +162,7 @@ Type
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
+    function sameContext(a, b : TCodeSystemProviderContext) : boolean; virtual;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
@@ -309,6 +310,11 @@ end;
 procedure TCodeSystemProvider.RecordUse;
 begin
   inc(FUseCount);
+end;
+
+function TCodeSystemProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;
+begin
+  result := a = b;
 end;
 
 function TCodeSystemProvider.SpecialEnumeration: String;

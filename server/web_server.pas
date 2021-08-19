@@ -477,7 +477,7 @@ Begin
     FSSLServer.DefaultPort := Common.ActualSSLPort;
     FSSLServer.KeepAlive := SECURE_KEEP_ALIVE;
     FSSLServer.OnCreatePostStream := CreatePostStream;
-    FIOHandler := TIdOpenSSLIOHandlerServer.Create(Nil);
+    FIOHandler := TIdOpenSSLIOHandlerServer.Create(nil);
     FSSLServer.IOHandler := FIOHandler;
     FSSLServer.OnQuerySSLPort := DoQuerySSLPort;
 

@@ -422,6 +422,8 @@ type
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; override;
     function addConcept : TFhirValueSetComposeIncludeConceptW; override;
     function hasFilters : boolean; override;
+    function hasValueSets : boolean; override;
+    function filterCount : integer; override;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
     function addFilter : TFhirValueSetComposeIncludeFilterW; override;
   end;
@@ -2526,6 +2528,11 @@ begin
     result.Add(TFhirValueSetComposeIncludeConcept4.Create(i.Link));
 end;
 
+function TFhirValueSetComposeInclude4.filterCount: integer;
+begin
+  result := (Element as TFhirValueSetComposeInclude).filterList.Count;
+end;
+
 function TFhirValueSetComposeInclude4.filters: TFslList<TFhirValueSetComposeIncludeFilterW>;
 var
   i : TFhirValueSetComposeIncludeFilter;
@@ -2543,6 +2550,11 @@ end;
 function TFhirValueSetComposeInclude4.hasFilters: boolean;
 begin
   result := (Element as TFhirValueSetComposeInclude).filterList.Count > 0;
+end;
+
+function TFhirValueSetComposeInclude4.hasValueSets: boolean;
+begin
+  result := (Element as TFhirValueSetComposeInclude).valueSetList.Count > 0;
 end;
 
 procedure TFhirValueSetComposeInclude4.SetSystem(Value: String);

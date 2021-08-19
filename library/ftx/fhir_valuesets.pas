@@ -116,6 +116,16 @@ Type
     function hash : String;
   end;
 
+  TSpecialProviderFilterContextNothing = class (TCodeSystemProviderFilterContext);
+  TSpecialProviderFilterContextConcepts = class (TCodeSystemProviderFilterContext)
+  private
+    FList : TFslList<TCodeSystemProviderContext>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure add(c : TCodeSystemProviderContext);
+  end;
+
   TFHIRImportedValueSet = class (TFslObject)
   private
     FValueSet: TFHIRValueSetW;
@@ -198,6 +208,7 @@ Type
     FOnCheckCanExpand : TCheckCanExpandEvent;
     FLang : String;
 
+    function makeFilterForValueSet(cs : TCodeSystemProvider; vs : TFHIRValueSetW) : TCodeSystemProviderFilterContext;
     procedure processCodeAndDescendants(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
 
     procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
@@ -227,6 +238,25 @@ const
    CODES_TFhirExpansionParamsFixedVersionMode : array [TFhirExpansionParamsFixedVersionMode] of String = ('Default', 'Check', 'Override');
 
 implementation
+
+{ TSpecialProviderFilterContextConcepts }
+
+constructor TSpecialProviderFilterContextConcepts.Create;
+begin
+  inherited;
+  FList := TFslList<TCodeSystemProviderContext>.create;
+end;
+
+destructor TSpecialProviderFilterContextConcepts.Destroy;
+begin
+  FList.free;
+  inherited;
+end;
+
+procedure TSpecialProviderFilterContextConcepts.add(c: TCodeSystemProviderContext);
+begin
+  FList.Add(c);
+end;
 
 { TValueSetWorker }
 
@@ -1274,6 +1304,49 @@ begin
   result := key(c.systemUri, c.Code);
 end;
 
+function TFHIRValueSetExpander.makeFilterForValueSet(cs: TCodeSystemProvider; vs: TFHIRValueSetW): TCodeSystemProviderFilterContext;
+var
+  inc : TFhirValueSetComposeIncludeW;
+  cc : TFhirValueSetComposeIncludeConceptW;
+  cf : TFhirValueSetComposeIncludeFilterW;
+  message : String;
+begin
+  result := nil;
+  for inc in vs.excludes.forEnum do // no short cuts if there's excludes
+    exit;
+  for inc in vs.includes.forEnum do
+  begin
+    if inc.systemUri = '' then
+      exit; // no short cuts if there's further value set references
+    if inc.systemUri = cs.systemUri(nil) then
+    begin
+      // ok we have a match. Check we can simplify it
+      if inc.hasValueSets then
+        exit;
+      if inc.hasConcepts and inc.hasFilters then
+        exit;
+      if inc.filterCount > 1 then
+        exit;
+      if inc.hasFilters then
+      begin
+        for cf in inc.filters.forEnum do // will only cycle once
+        begin
+          exit(cs.filter(false, cf.prop, cf.op, cf.value, nil));
+        end;
+      end
+      else
+      begin
+        result := TSpecialProviderFilterContextConcepts.create;
+        for cc in inc.concepts.forEnum do
+          TSpecialProviderFilterContextConcepts(result).add(cs.locate(cc.code, message));
+        exit;
+      end;
+    end;
+  end;
+  // if we get to here, there's nothing left
+  result := TSpecialProviderFilterContextNothing.create;
+end;
+
 procedure TFHIRValueSetExpander.handleCompose(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source: TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 var
   vs : TFHIRValueSetW;
@@ -1599,11 +1672,12 @@ end;
 procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cset: TFhirValueSetComposeIncludeW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
-  i, offset, count : integer;
+  i, count, offset : integer;
   fc : TFhirValueSetComposeIncludeFilterW;
   fcl : TFslList<TFhirValueSetComposeIncludeFilterW>;
   c : TCodeSystemProviderContext;
-  filters : Array of TCodeSystemProviderFilterContext;
+  filters : TFslList<TCodeSystemProviderFilterContext>;
+  f : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderFilterContext;
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
@@ -1615,196 +1689,241 @@ var
   cctxt : TCodeSystemProviderContext;
   cds : TCodeDisplays;
   iter : TCodeSystemIteratorContext;
+  vs : TFHIRValueSetW;
+  function passesFilters(c : TCodeSystemProviderContext; offset : integer) : boolean;
+  var
+    j : integer;
+    ok : boolean;
+    t : TCodeSystemProviderContext;
+  begin
+    result := true;
+    for j := offset to filters.Count - 1 do
+    begin
+      f := filters[j];
+      if f is TSpecialProviderFilterContextNothing then
+        result := false
+      else if f is TSpecialProviderFilterContextConcepts then
+      begin
+        ok := false;
+        for t in (f as TSpecialProviderFilterContextConcepts).FList do
+          if cs.sameContext(t, c) then
+            ok := true;
+        result := result and ok;
+      end
+      else
+        result := result and cs.InFilter(f, c);
+    end;
+  end;
 begin
   imports := TFslList<TFHIRImportedValueSet>.create;
   try
     FFactory.checkNoModifiers(cset,'ValueSetExpander.processCodes', 'set');
-    for s in cset.valueSets do
-      imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
 
     if cset.systemUri = '' then
     begin
+      for s in cset.valueSets do
+        imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
       importValueSet(list, map, imports[0].valueSet, expansion, imports, 1);
     end
     else
     begin
-      cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+      filters := TFslList<TCodeSystemProviderFilterContext>.create;
       try
-        if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
-        begin
-          s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
-          if not cs.hasSupplement(s) then
-            raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
-        end;
-
-        if (not cset.hasConcepts) and (not cset.hasFilters) then
-        begin
-          if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion then
+        cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+        try
+          for s in cset.valueSets do
           begin
-            base := expandValueSet(cs.SpecialEnumeration, filter.filter, dependencies, notClosed);
+            f := nil;
+            // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
+            // this saves lots of overhead we don't need. But it does require simple cases (though they are common). So we have a look
+            // at the value set, and see whether we can short cut it. If we can, it's just another filter (though we can't iterate on it)
+            vs := FOnGetValueSet(self, s);
             try
-              expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-              importValueSet(list, map, base, expansion, imports, 0);
-            finally
-              base.Free;
-            end;
-            notClosed := true;
-          end
-          else if filter.Null then // special case - add all the code system
-          begin
-            if cs.isNotClosed(filter) then
-              if cs.SpecialEnumeration <> '' then
-                raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
-              else  if (cs.systemUri(nil) = ALL_CODE_CS) then
-                raise ETooCostly.create('Cannot filter across all code Systems known to the server')
+              if (vs <> nil) then
+                f := makeFilterForValueSet(cs, vs);
+              if (f <> nil) then
+                filters.add(f)
               else
-                raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
-
-            iter := cs.getIterator(nil);
-            try
-              if imports.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) then
-                raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
-              while iter.more do
-                processCodeAndDescendants(doDelete, list, map, limitCount, cs, cs.getNextContext(iter), expansion, imports)
+                imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
             finally
-              iter.Free;
-            end;
-          end
-          else
-          begin
-            if cs.isNotClosed(filter) then
-              notClosed := true;
-            prep := cs.getPrepContext;
-            try
-              ctxt := cs.searchFilter(filter, prep, false);
-              try
-                cs.prepare(prep);
-                while cs.FilterMore(ctxt) do
-                begin
-                  c := cs.FilterConcept(ctxt);
-                  cds := TCodeDisplays.Create;
-                  try
-                    listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                    processCode(doDelete, limitCount, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cds, cs.definition(c), expansion, imports);
-                  finally
-                    cds.free;
-                  end;
-                end;
-              finally
-                cs.Close(ctxt);
-              end;
-            finally
-              cs.Close(prep);
+              vs.Free;
             end;
           end;
-        end;
-
-        cds := TCodeDisplays.Create;
-        try
-          for cc in cset.concepts.forEnum do
+          if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
           begin
-            cds.Clear;
-            FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-            cctxt := cs.locate(cc.code);
+            s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+            if not cs.hasSupplement(s) then
+              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.systemUri(nil)+' that is not known');
+          end;
+
+          if (not cset.hasConcepts) and (not cset.hasFilters) then
+          begin
+            if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
+            begin
+              base := expandValueSet(cs.SpecialEnumeration, filter.filter, dependencies, notClosed);
+              try
+                expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                importValueSet(list, map, base, expansion, imports, 0);
+              finally
+                base.Free;
+              end;
+              notClosed := true;
+            end
+            else if filter.Null then // special case - add all the code system
+            begin
+              if cs.isNotClosed(filter) then
+                if cs.SpecialEnumeration <> '' then
+                  raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+                else  if (cs.systemUri(nil) = ALL_CODE_CS) then
+                  raise ETooCostly.create('Cannot filter across all code Systems known to the server')
+                else
+                  raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
+
+              iter := cs.getIterator(nil);
+              try
+                if imports.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) then
+                  raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
+                while iter.more do
+                begin
+                  c := cs.getNextContext(iter);
+                  if passesFilters(c, 0) then
+                    processCodeAndDescendants(doDelete, list, map, limitCount, cs, c, expansion, imports);
+                end;
+              finally
+                iter.Free;
+              end;
+            end
+            else
+            begin
+              if cs.isNotClosed(filter) then
+                notClosed := true;
+              prep := cs.getPrepContext;
+              try
+                ctxt := cs.searchFilter(filter, prep, false);
+                try
+                  cs.prepare(prep);
+                  while cs.FilterMore(ctxt) do
+                  begin
+                    c := cs.FilterConcept(ctxt);
+                    if passesFilters(c, 0) then
+                    begin
+                      cds := TCodeDisplays.Create;
+                      try
+                        listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
+                        processCode(doDelete, limitCount, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cds, cs.definition(c), expansion, imports);
+                      finally
+                        cds.free;
+                      end;
+                    end;
+                  end;
+                finally
+                  cs.Close(ctxt);
+                end;
+              finally
+                cs.Close(prep);
+              end;
+            end;
+          end;
+
+          cds := TCodeDisplays.Create;
+          try
+            for cc in cset.concepts.forEnum do
+            begin
+              cds.Clear;
+              FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
+              cctxt := cs.locate(cc.code);
+              try
+                if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(cctxt)) and passesFilters(cctxt, 0) then
+                begin
+                  listDisplays(cds, cs, cctxt);
+                  listDisplays(cds, cc);
+                  if filter.passes(cds) or filter.passes(cc.code) then
+                    processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cc.code, cds, cs.Definition(cctxt), expansion, imports);
+                end;
+              finally
+                cs.Close(cctxt);
+              end;
+            end;
+          finally
+            cds.free;
+          end;
+
+          if cset.hasFilters then
+          begin
+            fcl := cset.filters;
             try
-              if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(cctxt)) then
-              begin
-                listDisplays(cds, cs, cctxt);
-                listDisplays(cds, cc);
-                if filter.passes(cds) or filter.passes(cc.code) then
-                  processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cc.code, cds, cs.Definition(cctxt), expansion, imports);
+              prep := cs.getPrepContext;
+              try
+                try
+                  offset := 0;
+                  if not filter.null then
+                  begin
+                    filters.Insert(0, cs.searchFilter(filter, prep, true)); // this comes first, because it imposes order
+                    inc(offset);
+                  end;
+
+                  if cs.specialEnumeration <> '' then
+                  begin
+                    filters.Insert(offset, cs.specialFilter(prep, true));
+                    expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                    notClosed := true;
+                  end;
+                  for i := 0 to fcl.count - 1 do
+                  begin
+                    fc := fcl[i];
+                    ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
+                    f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                    if f = nil then
+                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.systemUri(nil));
+                    filters.Insert(offset, f);
+                    if cs.isNotClosed(filter, f) then
+                      notClosed := true;
+                  end;
+
+                  inner := not cs.prepare(prep);
+                  count := 0;
+                  While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
+                  begin
+                    c := cs.FilterConcept(filters[0]);
+                    try
+                      ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
+                      if ok then
+                      begin
+                        inc(count);
+                        if count > FOffset then
+                        begin
+                          cds := TCodeDisplays.Create;
+                          try
+                            if passesImports(imports, cs.systemUri(nil), cs.code(c), 0) then
+                            begin
+                              listDisplays(cds, cs, c);
+                              processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cs.code(c), cds, cs.definition(c), expansion, nil);
+                            end;
+                          finally
+                            cds.free;
+                          end;
+                        end;
+                      end;
+                    finally
+                      cs.close(c);
+                    end;
+                  end;
+                finally
+                  for f in filters do
+                    cs.Close(f.Link);
+                end;
+              finally
+                prep.free;
               end;
             finally
-              cs.Close(cctxt);
+              fcl.Free;
             end;
           end;
         finally
-          cds.free;
-        end;
-
-        if cset.hasFilters then
-        begin
-          fcl := cset.filters;
-          try
-            prep := cs.getPrepContext;
-            try
-              try
-                if filter.null then
-                begin
-                  SetLength(filters, fcl.count);
-                  offset := 0;
-                end
-                else
-                begin
-                  SetLength(filters, fcl.count+1);
-                  offset := 1;
-                  filters[0] := cs.searchFilter(filter, prep, true); // this comes first, because it imposes order
-                end;
-
-                if cs.specialEnumeration <> '' then
-                begin
-                  SetLength(filters, length(filters)+1);
-                  filters[offset] := cs.specialFilter(prep, true);
-                  offset := offset + 1;
-                  expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-                  notClosed := true;
-                end;
-                for i := 0 to fcl.count - 1 do
-                begin
-                  fc := fcl[i];
-                  ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  filters[i+offset] := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
-                  if filters[i+offset] = nil then
-                    raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.systemUri(nil));
-                  if cs.isNotClosed(filter, filters[i+offset]) then
-                    notClosed := true;
-                end;
-
-                inner := not cs.prepare(prep);
-                count := 0;
-                While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
-                begin
-                  c := cs.FilterConcept(filters[0]);
-                  try
-                    ok := not FParams.activeOnly or not cs.IsInactive(c);
-                    if inner then
-                      for i := 1 to length(filters) - 1 do
-                        ok := ok and cs.InFilter(filters[i], c);
-                    if ok then
-                    begin
-                      inc(count);
-                      if count > FOffset then
-                      begin
-                        cds := TCodeDisplays.Create;
-                        try
-                          if passesImports(imports, cs.systemUri(nil), cs.code(c), 0) then
-                          begin
-                            listDisplays(cds, cs, c);
-                            processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cs.code(c), cds, cs.definition(c), expansion, nil);
-                          end;
-                        finally
-                          cds.free;
-                        end;
-                      end;
-                    end;
-                  finally
-                    cs.close(c);
-                  end;
-                end;
-              finally
-                for i := 0 to length(filters) - 1 do
-                  if filters[i] <> nil then
-                    cs.Close(filters[i]);
-              end;
-            finally
-              prep.free;
-            end;
-          finally
-            fcl.Free;
-          end;
+          cs.free;
         end;
       finally
-        cs.free;
+        filters.Free;
       end;
     end;
   finally

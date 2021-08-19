@@ -284,6 +284,7 @@ Type
     function getDisplay(code : String; const lang : THTTPLanguages):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -474,6 +475,11 @@ end;
 procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TCodeDisplays);
 begin
   raise ETerminologyError.create('Not Created Yet');
+end;
+
+function TAllCodeSystemsProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;
+begin
+  result := false;
 end;
 
 function TAllCodeSystemsProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
