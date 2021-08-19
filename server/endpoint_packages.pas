@@ -209,6 +209,7 @@ begin
   raise Exception.Create('This is not applicable to this endpoint');
 end;
 
+
 { TPackageUpdaterThread }
 
 constructor TPackageUpdaterThread.Create(db: TFDBManager; endPoint : TPackageServerEndPoint);
@@ -386,6 +387,13 @@ var
   b : TFslStringBuilder;
   i : TJsonObject;
   ss : String;
+  function lockIcon(b : boolean) : String;
+  begin
+    if (b) then
+      result := '<img src="/sec_secure.png"/>'
+    else
+      result := '';
+  end;
 begin
   if inSearch then
     ss := '&sort='
@@ -404,6 +412,7 @@ begin
     b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsVersion, sort, rev)+'">version</a></td>'#13#10);
     b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsDate, sort, rev)+'">date</a></td>'#13#10);
     b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsFhirVersion, sort, rev)+'">FHIR Version</a></td>'#13#10);
+    b.Append('  <td class="pck-col">flags</td>'#13#10);
     if (inSearch) then
       b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsCanonical, sort, rev)+'">Canonical</a></td>'#13#10);
     b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsDownloads, sort, rev)+'"># Downloads</a></td>'#13#10);
@@ -419,6 +428,7 @@ begin
         b.Append('  <td class="pck-cell"><a href="'+i['url']+'" title="'+FormatTextToHTML(i['description'])+'">'+i['version']+'</a></td>'#13#10);
       b.Append('  <td class="pck-cell">'+i['date'].Substring(0, 10)+'</td>'#13#10);
       b.Append('  <td class="pck-cell">'+i['fhirVersion']+'</td>'#13#10);
+      b.Append('  <td class="pck-cell">'+lockIcon(i.bool['secure'])+'</td>'#13#10);
       if (inSearch) then
         b.Append('  <td class="pck-cell"><a href="'+i['canonical']+'">'+i['canonical']+'</a></td>'#13#10);
       b.Append('  <td class="pck-cell">'+i['count']+'</td>'#13#10);
@@ -658,7 +668,7 @@ begin
     if FHIRVersion <> '' then
       filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+getVersion(FHIRVersion)+'%'')';
 
-    conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, PackageVersions.Canonical, Packages.DownloadCount, Description from Packages, PackageVersions '+
+    conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, PackageVersions.Canonical, Packages.DownloadCount, Packages.ManualToken, Description from Packages, PackageVersions '+
       'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
     conn.prepare;
     conn.Execute;
@@ -679,6 +689,8 @@ begin
           v['canonical'] := conn.ColStringByName['Canonical'];
           if not conn.ColNullByName['Description'] then
             v['description'] := conn.ColBlobAsStringByName['Description'];
+          if conn.ColStringByName['ManualToken'] <> '' then
+            v.bool['secure'] := true;
           v['url'] := URLPath([AbsoluteUrl(false), conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
         end;
 
@@ -705,6 +717,7 @@ begin
           vars.add('r4selected', TFHIRObjectText.create(sel('R4', FHIRVersion)));
           vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonical='+canonical, list, readSort(sort), sort.startsWith('-'), true, false)));
           vars.add('status', TFHIRObjectText.create(status));
+          vars.add('downloads', TFHIRObjectText.create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
           returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
         finally
           vars.free;
