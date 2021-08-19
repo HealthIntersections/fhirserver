@@ -40,7 +40,7 @@ uses
   fsl_npm;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/ig-feeds.json';
 
 Type
   TPackageRestrictions = class (TFslObject)
