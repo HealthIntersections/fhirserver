@@ -213,6 +213,7 @@ Type
 
     procedure handleDefine(cs : TFhirCodeSystemW; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetCodeSystemW; defines : TFhirCodeSystemConceptListW; filter : TSearchFilterText; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>);
     procedure importValueSet(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+    procedure excludeValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
     procedure processCodes(doDelete : boolean; list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; cset : TFhirValueSetComposeIncludeW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
     procedure handleCompose(list : TFslList<TFhirValueSetExpansionContainsW>; map : TFslMap<TFhirValueSetExpansionContainsW>; limitCount : integer; source : TFhirValueSetW; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansionW; var notClosed : boolean);
 
@@ -1617,6 +1618,22 @@ begin
   end;
 end;
 
+procedure TFHIRValueSetExpander.excludeValueSet(list: TFslList<TFhirValueSetExpansionContainsW>; map: TFslMap<TFhirValueSetExpansionContainsW>; vs : TFHIRValueSetW; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; offset : integer);
+var
+  c : TFhirValueSetExpansionContainsW;
+  s : String;
+begin
+  for c in vs.expansion.contains.forEnum do
+  begin
+    s := key(c);
+    if passesImports(imports, c.systemUri, c.code, offset) and map.containsKey(s) then
+    begin
+      list.Remove(map[s]);
+      map.Remove(s);
+    end;
+  end;
+end;
+
 procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; limitCount : integer; filter : TSearchFilterText);
 var
   cs : TCodeSystemProvider;
@@ -1683,7 +1700,7 @@ var
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
   s, display : String;
-  imports : TFslList<TFHIRImportedValueSet>;
+  valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
   cctxt : TCodeSystemProviderContext;
@@ -1715,15 +1732,18 @@ var
     end;
   end;
 begin
-  imports := TFslList<TFHIRImportedValueSet>.create;
+  valueSets := TFslList<TFHIRImportedValueSet>.create;
   try
     FFactory.checkNoModifiers(cset,'ValueSetExpander.processCodes', 'set');
 
     if cset.systemUri = '' then
     begin
       for s in cset.valueSets do
-        imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
-      importValueSet(list, map, imports[0].valueSet, expansion, imports, 1);
+        valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
+      if doDelete then
+        excludeValueSet(list, map, valueSets[0].valueSet, expansion, valueSets, 1)
+      else
+        importValueSet(list, map, valueSets[0].valueSet, expansion, valueSets, 1);
     end
     else
     begin
@@ -1744,7 +1764,7 @@ begin
               if (f <> nil) then
                 filters.add(f)
               else
-                imports.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
+                valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, filter.filter, dependencies, notClosed)));
             finally
               vs.Free;
             end;
@@ -1763,7 +1783,10 @@ begin
               base := expandValueSet(cs.SpecialEnumeration, filter.filter, dependencies, notClosed);
               try
                 expansion.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-                importValueSet(list, map, base, expansion, imports, 0);
+                if doDelete then
+                  excludeValueSet(list, map, base, expansion, valueSets, 0)
+                else
+                  importValueSet(list, map, base, expansion, valueSets, 0);
               finally
                 base.Free;
               end;
@@ -1781,13 +1804,13 @@ begin
 
               iter := cs.getIterator(nil);
               try
-                if imports.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) then
+                if valueSets.Empty and (limitCount > 0) and (iter.count > limitCount) and not (FParams.limitedExpansion) and not doDelete then
                   raise ETooCostly.create('Too many codes to display (>'+inttostr(limitCount)+') (A text filter may reduce the number of codes in the expansion)');
                 while iter.more do
                 begin
                   c := cs.getNextContext(iter);
                   if passesFilters(c, 0) then
-                    processCodeAndDescendants(doDelete, list, map, limitCount, cs, c, expansion, imports);
+                    processCodeAndDescendants(doDelete, list, map, limitCount, cs, c, expansion, valueSets);
                 end;
               finally
                 iter.Free;
@@ -1810,7 +1833,7 @@ begin
                       cds := TCodeDisplays.Create;
                       try
                         listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                        processCode(doDelete, limitCount, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cds, cs.definition(c), expansion, imports);
+                        processCode(doDelete, limitCount, list, map, cs.systemUri(c), cs.version(c), cs.code(c), cds, cs.definition(c), expansion, valueSets);
                       finally
                         cds.free;
                       end;
@@ -1838,7 +1861,7 @@ begin
                   listDisplays(cds, cs, cctxt);
                   listDisplays(cds, cc);
                   if filter.passes(cds) or filter.passes(cc.code) then
-                    processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cc.code, cds, cs.Definition(cctxt), expansion, imports);
+                    processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cc.code, cds, cs.Definition(cctxt), expansion, valueSets);
                 end;
               finally
                 cs.Close(cctxt);
@@ -1894,7 +1917,7 @@ begin
                         begin
                           cds := TCodeDisplays.Create;
                           try
-                            if passesImports(imports, cs.systemUri(nil), cs.code(c), 0) then
+                            if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
                             begin
                               listDisplays(cds, cs, c);
                               processCode(doDelete, limitCount, list, map, cs.systemUri(nil), cs.version(nil), cs.code(c), cds, cs.definition(c), expansion, nil);
@@ -1927,7 +1950,7 @@ begin
       end;
     end;
   finally
-    imports.Free;
+    valueSets.Free;
   end;
 end;
 
