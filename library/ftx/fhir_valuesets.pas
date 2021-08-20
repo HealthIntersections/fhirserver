@@ -498,9 +498,12 @@ var
   ccf: TFhirValueSetComposeIncludeFilterW;
   cs: TCodeSystemProvider;
 begin
+  FNoValueSetExpansion := true; // initialize
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
   for s in cc.valueSets do
   begin
+    FNoValueSetExpansion := false; // the compose contains a value set (at least one),
+    // so we want the code to be fully validated against the value set expansion(s) and any filters
     if not FOthers.ExistsByKey(s) then
     begin
       other := findValueSet(s);
@@ -522,9 +525,10 @@ begin
   if not FOthers.ExistsByKey(cc.systemUri) then
     FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
-  FNoValueSetExpansion := cs = nil;
   if cs <> nil then
   begin
+    FNoValueSetExpansion := false; // the compose contains a known code system,
+    // so we want the code to be fully validated against any filters and value set expansion(s)
     for ccf in cc.filters.forEnum do
     begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
