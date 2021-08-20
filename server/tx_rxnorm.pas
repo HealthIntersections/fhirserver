@@ -401,7 +401,6 @@ begin
     end;
     callback(self, 100, true, 'Finished building Word Index (Step 5 of 5)');
     FConn.Terminate;
-    FConn.Release;
   finally
     for i := 0 to stems.Count - 1 do
       stems.Objects[i].free;

@@ -1,11 +1,11 @@
 object MainConsoleForm: TMainConsoleForm
-  Left = 514
+  Left = 263
   Height = 693
-  Top = -926
-  Width = 899
+  Top = -945
+  Width = 691
   Caption = 'FHIRServer Console'
   ClientHeight = 673
-  ClientWidth = 899
+  ClientWidth = 691
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -16,7 +16,7 @@ object MainConsoleForm: TMainConsoleForm
     Left = 0
     Height = 23
     Top = 650
-    Width = 899
+    Width = 691
     Panels = <    
       item
         Width = 150
@@ -46,22 +46,22 @@ object MainConsoleForm: TMainConsoleForm
     Left = 5
     Height = 650
     Top = 0
-    Width = 894
+    Width = 686
     Align = alClient
     Caption = 'Panel3'
     ClientHeight = 650
-    ClientWidth = 894
+    ClientWidth = 686
     ParentFont = False
     TabOrder = 2
     object pgMain: TPageControl
       Left = 1
       Height = 643
       Top = 1
-      Width = 892
-      ActivePage = tbManage
+      Width = 684
+      ActivePage = tbTerminologies
       Align = alClient
       ParentFont = False
-      TabIndex = 3
+      TabIndex = 4
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
@@ -322,11 +322,11 @@ object MainConsoleForm: TMainConsoleForm
             Height = 509
             Top = 40
             Width = 882
-            ActivePage = tbWebSettings
+            ActivePage = tbEndPoints
             Align = alClient
             Images = ImageList1
             ParentFont = False
-            TabIndex = 1
+            TabIndex = 4
             TabOrder = 1
             object tbGeneral: TTabSheet
               Caption = 'General Settings'
@@ -1552,7 +1552,7 @@ object MainConsoleForm: TMainConsoleForm
       object tbTerminologies: TTabSheet
         Caption = 'Terminology Imports'
         ClientHeight = 615
-        ClientWidth = 884
+        ClientWidth = 676
         OnContextPopup = tbTerminologiesContextPopup
         ParentFont = False
         object Panel2: TPanel
@@ -1698,6 +1698,7 @@ object MainConsoleForm: TMainConsoleForm
               Caption = 'LOINC Import'
               ParentColor = False
               ParentFont = False
+              OnClick = Image2Click
             end
           end
           object pnlCombineSnomed: TPanel
@@ -1913,6 +1914,7 @@ object MainConsoleForm: TMainConsoleForm
               Caption = 'Combine SNOMED'
               ParentColor = False
               ParentFont = False
+              OnClick = Image3Click
             end
           end
           object pnlSnomedImport: TPanel
@@ -2008,7 +2010,7 @@ object MainConsoleForm: TMainConsoleForm
               ParentFont = False
             end
           end
-          object pnlProcessUMLS: TPanel
+          object pnlProcessRXN: TPanel
             Left = 3
             Height = 86
             Top = 261
@@ -2016,37 +2018,235 @@ object MainConsoleForm: TMainConsoleForm
             Align = alTop
             BevelOuter = bvNone
             BorderWidth = 10
+            ClientHeight = 86
+            ClientWidth = 109
             Color = clWhite
             ParentBackground = False
             ParentColor = False
             ParentFont = False
             TabOrder = 3
             OnClick = Image5Click
+            object Image5: TImage
+              Left = 30
+              Height = 48
+              Top = 10
+              Width = 48
+              AutoSize = True
+              OnClick = Image5Click
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B47726170686963800A000089504E47
+                0D0A1A0A0000000D49484452000000300000003008060000005702F987000000
+                017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048
+                597300002E2200002E2201AAE2DD9200000A15494441546843D55A696C54D715
+                FE66F38C67C6CB608F37305EF002D82E25662B6637A25591AA405A500A2AA904
+                FC29918026B4A5AD102A95509504429536CDAF2EA14D52085092362448E99286
+                168C0D98CD0E36DE576C8F97D9B79EF316CF7BE3B1B1DDAA31DFE8F8DE7BEEF6
+                9D7BCFDD1E68C038FD06FF7D86643FC91212232B6620BC2455242749CE62C75E
+                6824F2AF24190C070E142CC47A7B26CC3A1DEB661C5CC1203EEEEDC42B0FEE62
+                C8EF3F41AA836CC03344FECCE5559B303F21492C39C3717F7810959F7CC8467C
+                5D4B691AF99227863C83B91E246F21EC6703CA37D83338F1446103B93A61091B
+                609AA93E3F1124CE465E03E1AAF59B513C49176AEF73C1ED0F4BA9C943AFD3C0
+                66D123C91C2769FE3BD4D13A58F2F1FBE1291BF0D377AA31E88F07A662036DD6
+                069D1609A638E4DACD28CDB6A020331E26C3F4677EDA06FCE8F4BF71ABC38B70
+                282869A6063D4D7DAE3D1915459958599C88AC59D33B726403780DFC5F11A0BD
+                FC41571FDEBA721F17AA7AD0D4E39672A687FF8101E41F9A494814BCFE002EDD
+                6CC4E5DA7EF40EF924EDD4316503B451CE9F9D6AC35C9B0979E40AE3492E89DD
+                42FE1E0E43A38DF87D3014C2E5DBCDB8DE308210E54D0572E929AF81E66E07BE
+                F766151DEB06E213C2FCAC34ECDD988BC24C8B54627C3CEC1CC0AB176FA1D1C1
+                B684242DB0BC600E76ADCDA6C130499A08C2E31856373284A5D3590339E9C938
+                BAED8B88839F3C636AD5F3326D38FEDC4A649883AABAF59DFD68EBA38D81C846
+                CBE330AD35509C9D8A1F6E2D8536EC8FE9DF13C11467C0F69579524AC4A0CB8D
+                96471E293531A28D9B96018CC5051978717331DCAE11493316CACE94529C3D0B
+                21C536CCFEDF3BAC5EC8B1EAB18C428A4EDB0046456936B62CB1C3473BCA849D
+                45C1ED0DA81633838D98A8AE324F10C982291B10DDD086C5B480B3AC52EEC490
+                EB7C5AD703ADE2FEC5875BA2494C2BDB568A0C4A49E41F6340AC46586281AF09
+                4AC4AAC7C2B8DB3A80F76E3B100A06843423D96C465A927EB48C0CAA35E627E8
+                15ED09DBE835DE46AD8982E271E81EF4C0E38F6C81529BE340EE12707A82A869
+                1EC4A5DA471876D2BEAF58037919E978617336B26C74C75220DA2019ACAF1F19
+                C697FE7149BC0B4DC600B9B1E3676F6038C07BFE84CCD5A0A26E7F107DC32EDA
+                719C2A6289162BD62E48C1B7E91C88462C03641D1BB0F2930F2503D6F141261A
+                10AB92123FFEFD35D4764EFF32A784C160A4C3CB8AA35B0B6036EA25AD88D8E4
+                A508A19E0EB28A7F7E241E64827751EE78162B251A9A299E033274712664261B
+                71E8AB39888FD3A9FA0885381409CB22EAE4FC901032C4D52765C4121994127E
+                1C532225C14A5BE26436338DB0756AF57134F271A82C4AC0B16FCCA7FA26EA27
+                365116262B1356C54918D20CA8215255FF04BD544989146B3CCCDAD0986B85C5
+                6442594E06EC560332120C989D64C0A2D9F1D8569E8257772CC4EECA02E14123
+                13E58B9D4C4E20A824ABCCE3501246C485943FA9915842D92AB003ED5A9B8F78
+                ADFA6EE4F4788445FBAD75A5787957394E3C578EC35BCBB065790E521279D4C5
+                F6DE6AA8C3AA8F2E22EFDDD3D8FEE773681BA42D368A2C2522C4291EA28BA0C0
+                8520F6C8051E23A38D465B40989B9684C34F2F8421EA82D7D13F8477AF36E156
+                8B17FEC0D8113E79E706CEF4F7E2E892153848F2778F13BBDF3F374A96894684
+                89CB3325C619E20C488DCA0D2BD3A28E43C1CE3133C0E03285B36DB497178EB9
+                E03DEC19C0F9AA36DC69F721189488D1ABEC2737AFA1C6EFC5F717962197B670
+                3DAF23AA57D3D3854E7A2E0A84992809D7635ED1C2900C10492889B2C80D440C
+                2102423535E4BCB2DC543CBF31079A109DB20A23EA3A7A71B1A61B571B8610A0
+                EDF7C5EA7FA1CBA0C781E21224C719F1B7DE6E9CBA578B90C3019DDF0FA34E4F
+                A483429B72A88CCB0631466740497494AC222EA7A934575141D073592AB3AC28
+                037B566791F57C4E8846C4D19639E271222755877DD73E85262101DF29980F8B
+                5E8F4B5D9D3876B30A036DADC08003CFCE2F25BD61B44F7110D5717E0C715F0C
+                C1009EAE58649571D92FC77321A59FAE299B836F2E4DA58C108C4633F2E8A5B5
+                6F63260EDDBD8A74BB1DBBF30B114717B83F75B4E167B7AA30D2D10EF40F607B
+                7E118EACDFA4EA9BAF1C1C8AA33EE10C884A35D9485C2639BE0B45DAE0A9FEF2
+                5373F1B5D20414DA75D8BF2E11EEFA63583627033B73F2C9BB3478BBB519276F
+                5D87BBA34320BF7B41198E557E051A6A2BDA554491751C8A71866800259432D1
+                EA67A3A211693812B23CBD221FCFAFB122F1B31F60E5BC45389C47EFEE7010BF
+                696EC4EBB5D5F07575096E7370F1321CAA5827F41D4D9AD3DCE69890F2199119
+                508A309AB1573FCD89505189B0545EC817EA8B6503CE36227F1899459BA1C958
+                0D4B6804291D7FC0DBB7AF21D0DD0DEDC0208EAC588DBD4F2D13CA8B04D56465
+                23C684240C710D481DCA8D2843B58E090AF55410664A9A56B9AC7FB001490D47
+                90BE601B34F6E5807F04C1A63F22E1EECF71A4FFB730D181757CF506D8353970
+                B844B78910548AD8E618A1720C95019C21C7953E1D195D5E17A2E54A8833201A
+                C86160E03652DB8E23AD641734B316033E07028DA7D17AE71D3474D16E34D48C
+                33EB96E2516F32FE52E7C69D1E3D863DB211D11210C380949642F50C48D3AE9C
+                FEC888AAE39B17A54117F2AA4E5C9E01B9C3405F0DD2BB5F434AC91EC0560278
+                1EC1FFE0D768B97B018DDD2EF40CEB91BEE6142EB5CC457567084EE7302E5435
+                A2BECF089757EC436C4B0A25C2FC49520E0301D12886B80624D2AC8C908E3684
+                C320E6652460CFAA743AAC22276EA44E10969653B02DD805241502AE4EF8EADF
+                40D3BD0F88BC07BD2E33E654FE121FB4A4E35E2FCD94D725D41F727B70FE7A13
+                1E0E59E1F649442592327159B82F1E6816C6A80BC9A4C5425C588C47875CA624
+                DB869D4B6D549146818C10177C107EB7031A4F2BC2BE21C0710F9EFBBFC0C3FA
+                BFD275C2837E5F32B22B7F05637211362DB4C11AA2B28A2F13FD232E5CA86E46
+                9B2B095E7AB2723FD16463413080B72491A43CDAE268C60AE572E5F9B3B0B5D4
+                0CB7C72DD50922AC8D47FBA00EBD352FE151D55134D45F21F25E38821998BDE1
+                75E82D73849135D303662FCDA2052ED55BA27B7004176FB4A3DB67234E92F231
+                189D816882E38AEC93145614DB519AE281CFE797F243F0CDDD87EA863EDCF8AC
+                130F3ADD18D6E462F6FAD7A033D9857EE411B5598DD85D618731E48186EE3EB2
+                B43B9C78AFB607CD23165A5B02C70921BC89CF172D469E517C19D18A5087DCA1
+                901443793A9553EBF605461F270CBFB303AEAE2A688D49B066ADA4513608FA58
+                E819F4A0C331F6B3A2965C333FDD0AAB51FD014C4693CF83675BEF8B8FFAB3F3
+                BE4006C4ABC8D19F71093394F1CF03B201EC421E27AF7879D54F62F57FDEE419
+                6EF13CF2B201555746E8A0511055929DA9B8EA1AE6A08A0D38F1BB816E34D294
+                3C2960AE6F3A7A387A82D700475EB26875DFDD999C8665E60498A2BE30CC1478
+                C86D78E499BC33147C99542F8847A968C416920324E52463FFAD676680DD44FE
+                EF36E7B0632FFE03DB4D79C9A3883ABC0000000049454E44AE426082
+              }
+            end
+            object Label27: TLabel
+              Left = 16
+              Height = 15
+              Top = 66
+              Width = 83
+              Caption = 'RxNorm Import'
+              ParentColor = False
+              ParentFont = False
+              OnClick = Image5Click
+            end
+          end
+          object pnlProcessNDC: TPanel
+            Left = 3
+            Height = 86
+            Top = 347
+            Width = 109
+            Align = alTop
+            BevelOuter = bvNone
+            BorderWidth = 10
+            ClientHeight = 86
+            ClientWidth = 109
+            Color = clWhite
+            ParentBackground = False
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 4
+            OnClick = pnlProcessNDCClick
+            object Image6: TImage
+              Left = 30
+              Height = 48
+              Top = 10
+              Width = 48
+              AutoSize = True
+              OnClick = pnlProcessNDCClick
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B477261706869638506000089504E47
+                0D0A1A0A0000000D494844520000003000000030080300000060DC09B5000000
+                017352474200AECE1CE90000000467414D410000B18F0BFC6105000002E2504C
+                5445FFFFFFFDFEFFDEF0F9A8D8F08FCBEB8CC9EA95CFECBBE1F3F1F9FDFEFEFF
+                BEE0F34BAEE01997D71896D7249CD974C0E7E5F2FAF2F9FD64BAE41996D71E99
+                D864B8E4A1D6EFCBE8F6D2EBF7BDE2F48DCBEB44A9DE269CD9AAD9F0EEF7FC48
+                ACDF57B3E2FCFDFEAFDBF12B9FDA1A97D79CD1ED46ACDF7BC3E8FBFDFEDFF0F9
+                36A5DD1B97D7BADFF347ACDF7CC4E8D9EDF8239BD931A1DB46ABDF94CEEC9AD1
+                ED7CC3E8F1F8FC279CD9FCFEFE5EB5E31D99D87DC4E885C7EA1695D7D1EBF790
+                CDECCAE7F6FCFEFF81C5E9D7EDF8FAFDFE4AADE06BBCE5FEFFFF54B0E1219BD9
+                ACD9F11E98D82A9FDAD3EBF7E7F4FA52B1E14FAFE0ABD9F11C98D82C9FDB7AC3
+                E8AFD9F0B2DBF1AED9F12B9EDAC2E2F440A9DEEDF7FCAAD9F1C6E5F5D0EAF71D
+                98D8C8E6F5289CD9B9DFF31B98D8B1DBF1C9E6F5219AD8BCE0F31F99D8B9E0F3
+                1F98D81F9AD8BBDFF3CAE6F5209AD8EBF5FBF0F8FC2A9EDACFEAF76FBFE635A2
+                DB2098D81597D732A1DB69BBE5C4E4F5F3F9FDBBE0F3F6FBFD76C0E71B97D859
+                B4E2E5F3FB68BBE553B0E134A2DC299EDA259CD9F9FCFE53B2E130A2DCEDF6FC
+                BAE0F31A96D773C0E748ADE06CBDE62099D898D1ED50AFE177C1E7AFDAF1BCDF
+                F3B5DDF22DA0DBC5E4F5E4F2FA239CD9F4FAFDF7FBFD1D97D7F8FCFE3CA6DDE4
+                F3FA8AC9EAB4DCF152B2E1E9F5FB1396D7B8DFF3F7FBFEECF6FC59B3E255B3E2
+                FAFCFE6EBEE6A5D6EFD2EAF737A5DC8DCCEB229BD9229AD844AADF33A2DCCCE8
+                F6ABD9F066BAE59FD4EE49ABDFADDAF179C1E73BA5DD54B1E1EAF5FB7DC3E86A
+                BCE5C8E5F542AADE7FC5E9E8F4FB52B0E188C9EAF5FAFD2C9FDA3BA6DD229AD9
+                CCE7F632A2DCC1E3F49ED3EE36A4DCD4EBF7A1D4EF38A3DCBDE0F35AB4E2EFF7
+                FCA6D7F0B7DDF2B6DFF3E3F2FA49ADE060B7E3A1D5EF1E9AD8E2F1FA2CA0DB4C
+                AEE0C3E4F438A5DD45AADF91CDECF5FBFD9FD5EF4EAEE0259BD91696D755B2E2
+                ADDBF163B8E45CB5E3C8E6F6F2F8FCDBEDF8CCE9F6DDEEF9EEF6FCC6E4F5ABD8
+                F0C7E5F5267203B4000000097048597300000EC300000EC301C76FA864000003
+                2C49444154484BED955758134114852F1634CA06715645C55521228A2582A082
+                58C12856825D916AA4088A5DC1AEB1A12836C4DE7BEFBD17ACD87BEFBDBF3BB3
+                7B432621E09B4FFE2F7BEED933337767E7DB85FFFC63EC0A152E52D4BE58712C
+                FF86AA44490781A1762C8556813895266299B2E59CCB57A828B85442B300A4CA
+                4295428AACEAEAA6A9A6C8FC91DC85EA1EA8016AD4F4AC85321FA4DA421D3BD4
+                8CBADA7A4E286D227959E601BC85FAA86C41FBF1B1CC836F032F15CABCD0E7AD
+                DE10752E8DFC245479A0FDF8E79DAD71401354D6D0BC753F8CA601CD505941FB
+                F1698E9AA745404B54960406915636E6075DEB3636F7D50382DBB66B8F054F07
+                B1A30E258FD4C91542F4A136467416BAA0E291DC89BE2B74D377CF33A287BE67
+                204A8E5EB50921626F0816DDAC4684A9B57D5072482C4F47D0AEC2439DD19489
+                8814A35072609E90E818DA15BF465FB5A11F4A8E5EEE9897BB0A8975CB5D234C
+                6D8843C9913B3F233E86DBAB089784FE8AE2B1C82B5D852B5D25AA93583FBE03
+                06F2EF41DE1F9E78DA95984C4784B918E27483060F193A4C3F7CC448D3191855
+                197366C26320987695E8E297923A7A0C9A9AB1E3E4BC6A3C211326A26922DA95
+                EED5A4C98614E314741853A7B101D3851969C69968E5C2F6AA6D529C6A16D68C
+                F4D9EC41747348865D603A7A66C4AE30771ECCC78AB16021CCB707C80C5F9405
+                8B97A0C9A18F0158BA0C0B4AD0728F150EC9BEB0525805B07A0DBA1CEC7DAD45
+                4D495BB77E83400457F0261B0136A9D13623B2FDDF8C0549D8A2DABA8D097FD8
+                4E7648E0E126DB1C3BE5F3B60BABDD7B747BB5B2DA07FB093970F0905C702429
+                E7E7B05C08478E1A8F6964498EC309813A4A61C6743E4FB24273CA78FA8C6C53
+                CEC2B9F3EC7A012750C89EAEE481BD05ED5EDDC54B8A4FB90C50875EA2175FE1
+                56114D798822E4EA35C849C21B845C37021CA54B081939E601861B18A79F1DAF
+                9BB752D3B8B96E33F78E27556633FBAE9C55C80CBC779FCB3FA82ABB0FF55833
+                1EA5C89E89C74FD0673C357DCD9E3D37CD22BCB8861EA27B198BB788A7632A9A
+                00AF5EBF79AB79A7897CFF813E9415CE1F77B09FA9F6D367CB8FDF97AFDFBE67
+                A1B6E2C7CF5FBF7E2BFF07803FB598D80A2173BC2B0000000049454E44AE4260
+                82
+              }
+            end
+            object Label49: TLabel
+              Left = 22
+              Height = 15
+              Top = 66
+              Width = 64
+              Caption = 'NDC Import'
+              ParentColor = False
+              ParentFont = False
+              OnClick = pnlProcessNDCClick
+            end
           end
         end
         object pgTerminologies: TPageControl
           Left = 115
           Height = 615
           Top = 0
-          Width = 769
-          ActivePage = tbSnomed
+          Width = 561
+          ActivePage = tbNDC
           Align = alClient
           ParentFont = False
           ShowTabs = False
           Style = tsButtons
-          TabIndex = 0
+          TabIndex = 4
           TabOrder = 1
           Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
             Caption = 'SNOMED Import'
             ClientHeight = 607
-            ClientWidth = 761
+            ClientWidth = 553
             ParentFont = False
             object Panel4: TPanel
               Left = 0
               Height = 41
               Top = 0
-              Width = 761
+              Width = 553
               Align = alTop
               Alignment = taLeftJustify
               BevelOuter = bvNone
@@ -2062,15 +2262,15 @@ object MainConsoleForm: TMainConsoleForm
               Left = 0
               Height = 41
               Top = 566
-              Width = 761
+              Width = 553
               Align = alBottom
               BevelOuter = bvNone
               ClientHeight = 41
-              ClientWidth = 761
+              ClientWidth = 553
               ParentFont = False
               TabOrder = 1
               object btnImportSnomed: TBitBtn
-                Left = 674
+                Left = 466
                 Height = 25
                 Top = 9
                 Width = 82
@@ -2152,17 +2352,17 @@ object MainConsoleForm: TMainConsoleForm
               Left = 0
               Height = 51
               Top = 515
-              Width = 761
+              Width = 553
               Align = alBottom
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
               ClientHeight = 51
-              ClientWidth = 761
+              ClientWidth = 553
               ParentFont = False
               TabOrder = 2
               object lblSCTAmount: TLabel
-                Left = 724
+                Left = 516
                 Height = 15
                 Top = 10
                 Width = 28
@@ -2183,7 +2383,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 10
                 Height = 17
                 Top = 10
-                Width = 708
+                Width = 500
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 Step = 1
@@ -2194,11 +2394,11 @@ object MainConsoleForm: TMainConsoleForm
               Left = 0
               Height = 414
               Top = 101
-              Width = 761
+              Width = 553
               Align = alClient
               BevelOuter = bvNone
               ClientHeight = 414
-              ClientWidth = 761
+              ClientWidth = 553
               ParentFont = False
               TabOrder = 3
               object Label2: TLabel
@@ -2238,7 +2438,7 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnSource: TSpeedButton
-                Left = 728
+                Left = 520
                 Height = 28
                 Top = 4
                 Width = 27
@@ -2275,7 +2475,7 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnDestination: TSpeedButton
-                Left = 729
+                Left = 521
                 Height = 28
                 Top = 128
                 Width = 27
@@ -2321,7 +2521,7 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnBase: TSpeedButton
-                Left = 728
+                Left = 520
                 Height = 28
                 Top = 66
                 Width = 27
@@ -2362,7 +2562,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 105
                 Height = 23
                 Top = 6
-                Width = 618
+                Width = 410
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 0
@@ -2371,7 +2571,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 105
                 Height = 23
                 Top = 38
-                Width = 646
+                Width = 438
                 Anchors = [akTop, akLeft, akRight]
                 ItemHeight = 15
                 Items.Strings = (
@@ -2396,7 +2596,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 105
                 Height = 23
                 Top = 100
-                Width = 647
+                Width = 439
                 CenturyFrom = 1941
                 MaxDate = 2958465
                 MinDate = -53780
@@ -2420,7 +2620,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 105
                 Height = 23
                 Top = 132
-                Width = 618
+                Width = 410
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 3
@@ -2429,7 +2629,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 104
                 Height = 23
                 Top = 67
-                Width = 618
+                Width = 410
                 Anchors = [akTop, akLeft, akRight]
                 Enabled = False
                 ParentFont = False
@@ -2440,13 +2640,13 @@ object MainConsoleForm: TMainConsoleForm
               Left = 0
               Height = 60
               Top = 41
-              Width = 761
+              Width = 553
               Align = alTop
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
               ClientHeight = 60
-              ClientWidth = 761
+              ClientWidth = 553
               ParentBackground = False
               ParentFont = False
               TabOrder = 4
@@ -2454,11 +2654,11 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 5
                 Height = 50
                 Top = 5
-                Width = 751
+                Width = 543
                 Align = alClient
                 BevelOuter = bvNone
                 ClientHeight = 50
-                ClientWidth = 751
+                ClientWidth = 543
                 Color = clWhite
                 ParentBackground = False
                 ParentColor = False
@@ -2468,7 +2668,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 4
                   Height = 45
                   Top = 4
-                  Width = 769
+                  Width = 561
                   Anchors = [akTop, akLeft, akRight]
                   AutoSize = False
                   Caption = 'This pane allows you to import SNOMED CT to a pre-processed file. Pick an a RF2 distribution, the Snapshot directory, and the content will be processed to a ready to use form. The output file is about 800MB, and the process takes about 60min. Once the process is complete, the file can be listed in the FHIRServer.ini file, [snomed] cache value'
@@ -2950,21 +3150,21 @@ object MainConsoleForm: TMainConsoleForm
           end
           object tbLoinc: TTabSheet
             Caption = 'LOINC Import'
-            ClientHeight = 608
-            ClientWidth = 757
+            ClientHeight = 607
+            ClientWidth = 761
             ImageIndex = 1
             ParentFont = False
             object Panel11: TPanel
               Left = 0
               Height = 104
               Top = 41
-              Width = 757
+              Width = 761
               Align = alTop
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
               ClientHeight = 104
-              ClientWidth = 757
+              ClientWidth = 761
               ParentBackground = False
               ParentFont = False
               TabOrder = 0
@@ -2972,12 +3172,12 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 5
                 Height = 94
                 Top = 5
-                Width = 747
+                Width = 751
                 Align = alClient
                 BevelOuter = bvNone
                 BorderWidth = 4
                 ClientHeight = 94
-                ClientWidth = 747
+                ClientWidth = 751
                 Color = clWhite
                 ParentBackground = False
                 ParentColor = False
@@ -2987,7 +3187,7 @@ object MainConsoleForm: TMainConsoleForm
                   Left = 4
                   Height = 86
                   Top = 4
-                  Width = 739
+                  Width = 743
                   Align = alClient
                   AutoSize = False
                   Caption = 'This pane allows you to import LOINC to a pre-processed file. Choose a folder containing the LOINC files as desribed at https://github.com/grahamegrieve/fhirserver/wiki/Importing-LOINC. The content will be processed to a ready to use form, about 200MB, and the process takes about 15min. Once the process is complete, the file can be put in the FHIRServer.ini file, [loinc] cache value'
@@ -3001,7 +3201,7 @@ object MainConsoleForm: TMainConsoleForm
               Left = 0
               Height = 41
               Top = 0
-              Width = 757
+              Width = 761
               Align = alTop
               Alignment = taLeftJustify
               BevelOuter = bvNone
@@ -3016,21 +3216,21 @@ object MainConsoleForm: TMainConsoleForm
             object Panel14: TPanel
               Left = 0
               Height = 51
-              Top = 516
-              Width = 757
+              Top = 515
+              Width = 761
               Align = alBottom
               BevelInner = bvLowered
               BevelOuter = bvNone
               BorderWidth = 4
               ClientHeight = 51
-              ClientWidth = 757
+              ClientWidth = 761
               ParentFont = False
               TabOrder = 2
               object lblLoincAmount: TLabel
-                Left = 711
-                Height = 17
+                Left = 724
+                Height = 15
                 Top = 10
-                Width = 37
+                Width = 28
                 Anchors = [akTop, akRight]
                 Caption = '100%'
                 ParentColor = False
@@ -3048,7 +3248,7 @@ object MainConsoleForm: TMainConsoleForm
                 Left = 10
                 Height = 17
                 Top = 10
-                Width = 704
+                Width = 708
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 Step = 1
@@ -3058,16 +3258,16 @@ object MainConsoleForm: TMainConsoleForm
             object Panel15: TPanel
               Left = 0
               Height = 41
-              Top = 567
-              Width = 757
+              Top = 566
+              Width = 761
               Align = alBottom
               BevelOuter = bvNone
               ClientHeight = 41
-              ClientWidth = 757
+              ClientWidth = 761
               ParentFont = False
               TabOrder = 3
               object btnImportLoinc: TBitBtn
-                Left = 666
+                Left = 670
                 Height = 25
                 Top = 9
                 Width = 82
@@ -3147,44 +3347,44 @@ object MainConsoleForm: TMainConsoleForm
             end
             object Panel16: TPanel
               Left = 0
-              Height = 371
+              Height = 370
               Top = 145
-              Width = 757
+              Width = 761
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 371
-              ClientWidth = 757
+              ClientHeight = 370
+              ClientWidth = 761
               ParentFont = False
               TabOrder = 4
               object Label10: TLabel
                 Left = 10
-                Height = 17
+                Height = 15
                 Top = 8
-                Width = 46
+                Width = 36
                 Caption = 'Source'
                 ParentColor = False
                 ParentFont = False
               end
               object Label12: TLabel
                 Left = 11
-                Height = 17
+                Height = 15
                 Top = 40
-                Width = 51
+                Width = 38
                 Caption = 'Version'
                 ParentColor = False
                 ParentFont = False
               end
               object Label13: TLabel
                 Left = 12
-                Height = 17
+                Height = 15
                 Top = 80
-                Width = 78
+                Width = 60
                 Caption = 'Destination'
                 ParentColor = False
                 ParentFont = False
               end
               object btnLoincSource: TSpeedButton
-                Left = 724
+                Left = 728
                 Height = 28
                 Top = 4
                 Width = 27
@@ -3221,7 +3421,7 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
               end
               object btnLoincDest: TSpeedButton
-                Left = 721
+                Left = 725
                 Height = 28
                 Top = 74
                 Width = 27
@@ -3259,36 +3459,36 @@ object MainConsoleForm: TMainConsoleForm
               end
               object Label22: TLabel
                 Left = 12
-                Height = 17
+                Height = 15
                 Top = 112
-                Width = 32
+                Width = 24
                 Caption = 'Date'
                 ParentColor = False
                 ParentFont = False
               end
               object edtLoincSource: TEdit
                 Left = 104
-                Height = 33
+                Height = 23
                 Top = 6
-                Width = 618
+                Width = 622
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 0
               end
               object edtLoincDest: TEdit
                 Left = 104
-                Height = 33
+                Height = 23
                 Top = 74
-                Width = 618
+                Width = 622
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 2
               end
               object edtLoincVersion: TEdit
                 Left = 104
-                Height = 33
+                Height = 23
                 Top = 40
-                Width = 647
+                Width = 651
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 1
@@ -3296,13 +3496,835 @@ object MainConsoleForm: TMainConsoleForm
               end
               object edtLoincDate: TEdit
                 Left = 104
-                Height = 33
+                Height = 23
                 Top = 108
-                Width = 647
+                Width = 651
                 Anchors = [akTop, akLeft, akRight]
                 ParentFont = False
                 TabOrder = 3
                 TextHint = '23/04/2020'
+              end
+            end
+          end
+          object tbRxNorm: TTabSheet
+            Caption = 'RxNorm'
+            ClientHeight = 607
+            ClientWidth = 553
+            object Panel19: TPanel
+              Left = 0
+              Height = 41
+              Top = 0
+              Width = 553
+              Align = alTop
+              Alignment = taLeftJustify
+              BevelOuter = bvNone
+              Caption = '  RxNorm Import'
+              Font.Color = clWindowText
+              Font.Height = -19
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+            end
+            object Panel26: TPanel
+              Left = 0
+              Height = 104
+              Top = 41
+              Width = 553
+              Align = alTop
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 104
+              ClientWidth = 553
+              ParentBackground = False
+              ParentFont = False
+              TabOrder = 1
+              object Panel27: TPanel
+                Left = 5
+                Height = 94
+                Top = 5
+                Width = 543
+                Align = alClient
+                BevelOuter = bvNone
+                BorderWidth = 4
+                ClientHeight = 94
+                ClientWidth = 543
+                Color = clWhite
+                ParentBackground = False
+                ParentColor = False
+                ParentFont = False
+                TabOrder = 0
+                object Label44: TLabel
+                  Left = 4
+                  Height = 86
+                  Top = 4
+                  Width = 535
+                  Align = alClient
+                  AutoSize = False
+                  Caption = 'This pane allows you to regenreate the text indexes for RxNrom after a new version of RxNorm has been imported into the database'
+                  ParentColor = False
+                  ParentFont = False
+                  WordWrap = True
+                end
+              end
+            end
+            object Panel28: TPanel
+              Left = 0
+              Height = 51
+              Top = 515
+              Width = 553
+              Align = alBottom
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 51
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 2
+              object lblRxNormAmount: TLabel
+                Left = 516
+                Height = 15
+                Top = 10
+                Width = 28
+                Anchors = [akTop, akRight]
+                Caption = '100%'
+                ParentColor = False
+                ParentFont = False
+              end
+              object lblRxNormAction: TLabel
+                Left = 10
+                Height = 1
+                Top = 32
+                Width = 1
+                ParentColor = False
+                ParentFont = False
+              end
+              object prgRxNormImport: TProgressBar
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 500
+                Anchors = [akTop, akLeft, akRight]
+                ParentFont = False
+                Step = 1
+                TabOrder = 0
+              end
+            end
+            object Panel31: TPanel
+              Left = 0
+              Height = 41
+              Top = 566
+              Width = 553
+              Align = alBottom
+              BevelOuter = bvNone
+              ClientHeight = 41
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 3
+              object btnReIndexRxNorm: TBitBtn
+                Left = 462
+                Height = 25
+                Top = 9
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Import'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F06386F06386F02D9F209
+                  8BF81DB6B743672E43672EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F2B8CFF18ADF700DDFF0388FF3AC69D6982412C351743672E0397
+                  F0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F267DE705C5E603A5FF06
+                  A3F25AA9582B321417150B3797700397F0FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F0993C900ACFF0C69DC2D805443672E2956732227221C7B780398
+                  F2FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C91D5DB65D8A544D
+                  732D22678C228FFF315767206B5D0195C6FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF43672E1F4E580B3B770A3F900939891F475543672EFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF3A748F06386F0F57CA12
+                  51AA1457B81353BA06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FF3B748F8390A6165CAD1B6BC42082F31E7EF71869E306386FFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C90993C95497AB2B7BC729
+                  91FA2A95FF268EFC2083FF06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90ACBFF0993C90993C93195D82D8AE22A8CF02688FB06386F4367
+                  2E43672EFF00FFFF00FFFF00FFFF00FFFF00FF0993C911CFFF00BBEF0DB1D309
+                  93C90993C90993C90993C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90DC6FE00CBFF00CFFA00EBFF00FEFF04E7EE0ABBD31CDCEB0993
+                  C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C900BFF200DCFF00
+                  EEFF00FFFF00CBD001C7D70993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF0993C90993C90993C90993C90993C90993C9FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+                  00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnReIndexRxNormClick
+                ParentFont = False
+                TabOrder = 0
+              end
+              object btnReindexRxNormStop: TBitBtn
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
+                Caption = 'Stop'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FF01079F0313A90418AE0419AE0313A90108A0FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF01049D041CB10730C00734C407
+                  35C50735C50734C30731C1041FB301069EFF00FFFF00FFFF00FFFF00FFFF00FF
+                  0109A1052BC30735C70733C20732C20732C20732C20732C20733C30735C4062D
+                  BE020CA4FF00FFFF00FFFF00FF01049B052BCA0636D80431CD0027C4032EC107
+                  32C20732C20430C10027BF042FC10735C4072EBE01069EFF00FFFF00FF031ABA
+                  0537E70331DD123DD86480E01840CB002CC1022DC00F38C46580D91B43C7052F
+                  C10735C5051FB3FF00FF01049E0430E40436F1002AE45070E9FFFFFFB7C4F10D
+                  36CA042DC3A2B2E8FFFFFF6984DA0026BE0733C30731C10108A0020FAF0336FA
+                  0335F80232EE0A35E88CA2F2FFFFFFB4C2F1A9B8EDFFFFFFA7B7E9133AC4052F
+                  C10732C20734C40313AA0619BC1747FE093AFC0435F80131F0002BE891A5F4FF
+                  FFFFFFFFFFABBAEF062FC5022DC00732C20732C20736C50419AE0B1DBE4168FE
+                  1C49FC0335FB0031F90531F2A4B5F7FFFFFFFFFFFFB9C6F20D36D0002CC60732
+                  C20732C20736C50418AD0613B45B7CFC486CFD0133FB113CFBA1B4FEFFFFFFA4
+                  B6F892A7F5FFFFFFB6C4F21A41D3042FC80732C40734C30212A90003A04A6AF3
+                  8FA6FF1F46FB4C6FFCFFFFFFA7B8FE0733F6002AED8CA2F6FFFFFF627FE70028
+                  D00734CC0730C300069FFF00FF1A2FCB99AFFF8BA2FE214DFB4D71FC0E3DFB00
+                  30FB0031F70636F14C6EF1103CE30432DB0636D7041CB5FF00FFFF00FF0004A0
+                  415EECB8C7FF9CAFFD3A5CFC0A3AFB0335FB0335FB0133F9052FF20635EB0537
+                  E9052CCD00049CFF00FFFF00FFFF00FF0309A54260ECA9BBFFBDCAFF8EA5FE64
+                  83FD5073FC4A6EFD3961FD1444F9042CD70109A2FF00FFFF00FFFF00FFFF00FF
+                  FF00FF0004A01E32CD5876F6859EFE8BA3FF7994FE5376FC234AF0051EC50104
+                  9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
+                  22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnLoincImportStopClick
+                ParentFont = False
+                TabOrder = 1
+                Visible = False
+              end
+            end
+            object Panel32: TPanel
+              Left = 0
+              Height = 71
+              Top = 145
+              Width = 553
+              Align = alTop
+              ClientHeight = 71
+              ClientWidth = 553
+              TabOrder = 4
+              object Label45: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 39
+                Caption = 'Source'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object edtRXNFolder: TEdit
+                Left = 76
+                Height = 23
+                Top = 34
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 0
+                Text = 'edtRXNFolder'
+              end
+              object Label48: TLabel
+                Left = 16
+                Height = 15
+                Top = 36
+                Width = 33
+                Caption = 'Folder'
+                ParentColor = False
+              end
+            end
+            object Panel34: TPanel
+              Left = 0
+              Height = 240
+              Top = 216
+              Width = 553
+              Align = alTop
+              ClientHeight = 240
+              ClientWidth = 553
+              TabOrder = 5
+              object cbxRXNDriver: TComboBox
+                Left = 80
+                Height = 23
+                Top = 64
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                ItemHeight = 15
+                TabOrder = 0
+              end
+              object edtRXNServer: TEdit
+                Left = 80
+                Height = 23
+                Top = 94
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 1
+                Text = 'edtRXNServer'
+              end
+              object edtRXNDBName: TEdit
+                Left = 80
+                Height = 23
+                Top = 122
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 2
+                Text = 'edtRXNDBName'
+              end
+              object edtRXNUsername: TEdit
+                Left = 80
+                Height = 23
+                Top = 150
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 3
+                Text = 'edtRXNUsername'
+              end
+              object edtRXNPassword: TEdit
+                Left = 80
+                Height = 23
+                Top = 178
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 4
+                Text = 'edtRXNPassword'
+              end
+              object Label21: TLabel
+                Left = 16
+                Height = 15
+                Top = 180
+                Width = 50
+                Caption = 'Password'
+                ParentColor = False
+              end
+              object Label20: TLabel
+                Left = 16
+                Height = 15
+                Top = 154
+                Width = 53
+                Caption = 'Username'
+                ParentColor = False
+              end
+              object Label16: TLabel
+                Left = 16
+                Height = 15
+                Top = 124
+                Width = 50
+                Caption = 'DB Name'
+                ParentColor = False
+              end
+              object Label11: TLabel
+                Left = 18
+                Height = 15
+                Top = 98
+                Width = 32
+                Caption = 'Server'
+                ParentColor = False
+              end
+              object Label9: TLabel
+                Left = 18
+                Height = 15
+                Top = 68
+                Width = 31
+                Caption = 'Driver'
+                ParentColor = False
+              end
+              object rbRXNMySQL: TRadioButton
+                Left = 219
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'MySQL'
+                TabOrder = 5
+              end
+              object rbRXNMSSQL: TRadioButton
+                Left = 80
+                Height = 19
+                Top = 38
+                Width = 130
+                AutoSize = False
+                Caption = 'Microsoft SQL Server'
+                TabOrder = 6
+              end
+              object Label46: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 64
+                Caption = 'Destination'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object Label47: TLabel
+                Left = 16
+                Height = 15
+                Top = 42
+                Width = 24
+                Caption = 'Type'
+                ParentColor = False
+              end
+              object btnTextRxNorm: TBitBtn
+                Left = 80
+                Height = 25
+                Top = 208
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Test'
+                Glyph.Data = {
+                  36040000424D3604000000000000360000002800000010000000100000000100
+                  2000000000000004000064000000640000000000000000000000000000000000
+                  000000000018060D064810230E69142D1375112710710913085B000000330000
+                  00046A605902897C712B83766D2883776E00887A6F008A7B6F0001030206132A
+                  115D408C37D74EBF4DFE56D957FF5CE75CFF58DF59FF50C750FF419D3BEE3149
+                  29AF967A67C0C3AA87F8C0A787F79F8872BA85786F2A8A7B6F000A190B29469D
+                  40D467E65BFF5ADB57FF54DB59FF54DF59FF53DC58FF55DC56FF61CF58FFAFA3
+                  78FFE1B788FFE1624FFFE26452FFDCB684FFA3886BDA85786F150D1E0D2E4194
+                  3ED549A743FF42953CFF40963DFF419A3FFF3F953CFF388C34FF709161FFEED0
+                  BEFFEEDEBCFFDE4C40FFDD4E42FFE4CB9DFFD0A573FF8D7D6F74091408263477
+                  30CA51B346FF52C950FF57DD58FF5CE85DFF58E25AFF4ACB4AFF8EA87FFFFFF8
+                  FBFFFDFCF2FFDF4B42FFDF5246FFEEDBB6FFE6C395FF958573A30B180B2B459B
+                  40D062DE57FF58D655FF54D858FF54DD5AFF53D958FF51D850FF7DB26FFFF8ED
+                  F3FFFFFFFFFFE76F6BFFE6736DFFFFF9E5FFDED3B6FF8A7C70700C1B0B2E4093
+                  3DD44AA944FF44973CFF42993EFF419C3FFF40973DFF3E9138FF408337FFACA7
+                  9EFFFFFFFFFFF5A09FFFF49593FFF8FBFCFFA79F97D48474681310250F223375
+                  2FC451B246FF51C74FFF55DA57FF5AE65BFF57DF59FF51CD52FF4CB443FF437B
+                  37F88A827CD1CFC9C5EFC9C2BDF39F948CB28271652688786C000C1D0D2A449B
+                  3FCE62DD57FF59D856FF55DB58FF56E05AFF55DD59FF57D957FF61DC57FF50C0
+                  49FD142211507E6B621D85756821837265008575690088786C000C1B0B2E4196
+                  3ED54CAE46FF469A3DFF429A3EFF419C40FF40983DFF41923AFF43993DFF49A9
+                  45FF081B0950261E1D008F7E70008E7D700087776A008A7A6E000F240E213374
+                  2FC249AD45FF57C24CFF65D654FF6AE158FF67DB55FF5CC84EFF49AD45FF387D
+                  32FB050D053C000000003E36310062574D0081716600807165000D1C0C284798
+                  3ECD5EDA56FF69D853FF70DF55FF71E458FF71E156FF6CDA53FF5ED855FF57BE
+                  4CFE0C190A5100000000000000000000000009080700080707000B180B30439C
+                  40D955CB4EFF5ACE4EFF5ADA56FF59E35AFF5ADD57FF5BD250FF55C94CFF50BD
+                  4CFF0F220E570000000000000000000000000000000000000000132E111E4191
+                  40BA7EED78FF75E86BFF69EC64FF65F265FF67EE64FF71E867FF80F079FF57B8
+                  55F3071306340000000000000000000000000000000000000000204A1D00224E
+                  201B4A7F447F72B168BE7DCA7AE580D481EF7FCE7CEA76B86ECD54894D972043
+                  1E39000000000000000000000000000000000000000000000000204A1D001F47
+                  1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
+                  1400010201000000000000000000000000000000000000000000
+                }
+                OnClick = btnTextRxNormClick
+                ParentFont = False
+                TabOrder = 7
+              end
+            end
+          end
+          object tbNDC: TTabSheet
+            Caption = 'tbNDC'
+            ClientHeight = 607
+            ClientWidth = 553
+            object Panel36: TPanel
+              Left = 0
+              Height = 41
+              Top = 0
+              Width = 553
+              Align = alTop
+              Alignment = taLeftJustify
+              BevelOuter = bvNone
+              Caption = '  NDC Import'
+              Font.Color = clWindowText
+              Font.Height = -19
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+            end
+            object Panel40: TPanel
+              Left = 0
+              Height = 104
+              Top = 41
+              Width = 553
+              Align = alTop
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 104
+              ClientWidth = 553
+              ParentBackground = False
+              ParentFont = False
+              TabOrder = 1
+              object Panel41: TPanel
+                Left = 5
+                Height = 94
+                Top = 5
+                Width = 543
+                Align = alClient
+                BevelOuter = bvNone
+                BorderWidth = 4
+                ClientHeight = 94
+                ClientWidth = 543
+                Color = clWhite
+                ParentBackground = False
+                ParentColor = False
+                ParentFont = False
+                TabOrder = 0
+                object Label50: TLabel
+                  Left = 4
+                  Height = 86
+                  Top = 4
+                  Width = 535
+                  Align = alClient
+                  AutoSize = False
+                  Caption = 'This pane allows you to import NDC'
+                  ParentColor = False
+                  ParentFont = False
+                  WordWrap = True
+                end
+              end
+            end
+            object Panel42: TPanel
+              Left = 0
+              Height = 51
+              Top = 515
+              Width = 553
+              Align = alBottom
+              BevelInner = bvLowered
+              BevelOuter = bvNone
+              BorderWidth = 4
+              ClientHeight = 51
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 2
+              object lblNDCAmount: TLabel
+                Left = 516
+                Height = 15
+                Top = 10
+                Width = 28
+                Anchors = [akTop, akRight]
+                Caption = '100%'
+                ParentColor = False
+                ParentFont = False
+              end
+              object lblNDCAction: TLabel
+                Left = 10
+                Height = 1
+                Top = 32
+                Width = 1
+                ParentColor = False
+                ParentFont = False
+              end
+              object prgNDCImport: TProgressBar
+                Left = 10
+                Height = 17
+                Top = 10
+                Width = 500
+                Anchors = [akTop, akLeft, akRight]
+                ParentFont = False
+                Step = 1
+                TabOrder = 0
+              end
+            end
+            object Panel43: TPanel
+              Left = 0
+              Height = 41
+              Top = 566
+              Width = 553
+              Align = alBottom
+              BevelOuter = bvNone
+              ClientHeight = 41
+              ClientWidth = 553
+              ParentFont = False
+              TabOrder = 3
+              object btnImportNDC: TBitBtn
+                Left = 462
+                Height = 25
+                Top = 9
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Import'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F06386F06386F02D9F209
+                  8BF81DB6B743672E43672EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F2B8CFF18ADF700DDFF0388FF3AC69D6982412C351743672E0397
+                  F0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF06386F267DE705C5E603A5FF06
+                  A3F25AA9582B321417150B3797700397F0FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF06386F0993C900ACFF0C69DC2D805443672E2956732227221C7B780398
+                  F2FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C91D5DB65D8A544D
+                  732D22678C228FFF315767206B5D0195C6FF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF43672E1F4E580B3B770A3F900939891F475543672EFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF3A748F06386F0F57CA12
+                  51AA1457B81353BA06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FF3B748F8390A6165CAD1B6BC42082F31E7EF71869E306386FFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C90993C95497AB2B7BC729
+                  91FA2A95FF268EFC2083FF06386FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90ACBFF0993C90993C93195D82D8AE22A8CF02688FB06386F4367
+                  2E43672EFF00FFFF00FFFF00FFFF00FFFF00FF0993C911CFFF00BBEF0DB1D309
+                  93C90993C90993C90993C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FF0993C90DC6FE00CBFF00CFFA00EBFF00FEFF04E7EE0ABBD31CDCEB0993
+                  C90993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0993C900BFF200DCFF00
+                  EEFF00FFFF00CBD001C7D70993C9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                  FF00FFFF00FFFF00FF0993C90993C90993C90993C90993C90993C9FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+                  00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnImportNDCClick
+                ParentFont = False
+                TabOrder = 0
+              end
+              object btnReindexRxNormStop1: TBitBtn
+                Left = 2
+                Height = 25
+                Top = 9
+                Width = 75
+                Caption = 'Stop'
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  FF00FFFF00FFFF00FF01079F0313A90418AE0419AE0313A90108A0FF00FFFF00
+                  FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF01049D041CB10730C00734C407
+                  35C50735C50734C30731C1041FB301069EFF00FFFF00FFFF00FFFF00FFFF00FF
+                  0109A1052BC30735C70733C20732C20732C20732C20732C20733C30735C4062D
+                  BE020CA4FF00FFFF00FFFF00FF01049B052BCA0636D80431CD0027C4032EC107
+                  32C20732C20430C10027BF042FC10735C4072EBE01069EFF00FFFF00FF031ABA
+                  0537E70331DD123DD86480E01840CB002CC1022DC00F38C46580D91B43C7052F
+                  C10735C5051FB3FF00FF01049E0430E40436F1002AE45070E9FFFFFFB7C4F10D
+                  36CA042DC3A2B2E8FFFFFF6984DA0026BE0733C30731C10108A0020FAF0336FA
+                  0335F80232EE0A35E88CA2F2FFFFFFB4C2F1A9B8EDFFFFFFA7B7E9133AC4052F
+                  C10732C20734C40313AA0619BC1747FE093AFC0435F80131F0002BE891A5F4FF
+                  FFFFFFFFFFABBAEF062FC5022DC00732C20732C20736C50419AE0B1DBE4168FE
+                  1C49FC0335FB0031F90531F2A4B5F7FFFFFFFFFFFFB9C6F20D36D0002CC60732
+                  C20732C20736C50418AD0613B45B7CFC486CFD0133FB113CFBA1B4FEFFFFFFA4
+                  B6F892A7F5FFFFFFB6C4F21A41D3042FC80732C40734C30212A90003A04A6AF3
+                  8FA6FF1F46FB4C6FFCFFFFFFA7B8FE0733F6002AED8CA2F6FFFFFF627FE70028
+                  D00734CC0730C300069FFF00FF1A2FCB99AFFF8BA2FE214DFB4D71FC0E3DFB00
+                  30FB0031F70636F14C6EF1103CE30432DB0636D7041CB5FF00FFFF00FF0004A0
+                  415EECB8C7FF9CAFFD3A5CFC0A3AFB0335FB0335FB0133F9052FF20635EB0537
+                  E9052CCD00049CFF00FFFF00FFFF00FF0309A54260ECA9BBFFBDCAFF8EA5FE64
+                  83FD5073FC4A6EFD3961FD1444F9042CD70109A2FF00FFFF00FFFF00FFFF00FF
+                  FF00FF0004A01E32CD5876F6859EFE8BA3FF7994FE5376FC234AF0051EC50104
+                  9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
+                  22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
+                }
+                OnClick = btnLoincImportStopClick
+                ParentFont = False
+                TabOrder = 1
+                Visible = False
+              end
+            end
+            object Panel44: TPanel
+              Left = 0
+              Height = 71
+              Top = 145
+              Width = 553
+              Align = alTop
+              ClientHeight = 71
+              ClientWidth = 553
+              TabOrder = 4
+              object Label51: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 39
+                Caption = 'Source'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object edtNDCFolder: TEdit
+                Left = 76
+                Height = 23
+                Top = 34
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 0
+                Text = 'edtRXNFolder'
+              end
+              object Label52: TLabel
+                Left = 16
+                Height = 15
+                Top = 36
+                Width = 33
+                Caption = 'Folder'
+                ParentColor = False
+              end
+            end
+            object Panel45: TPanel
+              Left = 0
+              Height = 240
+              Top = 216
+              Width = 553
+              Align = alTop
+              ClientHeight = 240
+              ClientWidth = 553
+              TabOrder = 5
+              object cbxNDCDriver: TComboBox
+                Left = 80
+                Height = 23
+                Top = 64
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                ItemHeight = 15
+                TabOrder = 0
+              end
+              object edtNDCServer: TEdit
+                Left = 80
+                Height = 23
+                Top = 94
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 1
+                Text = 'edtRXNServer'
+              end
+              object edtNDCDBName: TEdit
+                Left = 80
+                Height = 23
+                Top = 122
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 2
+                Text = 'edtRXNDBName'
+              end
+              object edtNDCUsername: TEdit
+                Left = 80
+                Height = 23
+                Top = 150
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 3
+                Text = 'edtRXNUsername'
+              end
+              object edtNDCPassword: TEdit
+                Left = 80
+                Height = 23
+                Top = 178
+                Width = 460
+                Anchors = [akTop, akLeft, akRight]
+                TabOrder = 4
+                Text = 'edtRXNPassword'
+              end
+              object Label53: TLabel
+                Left = 16
+                Height = 15
+                Top = 180
+                Width = 50
+                Caption = 'Password'
+                ParentColor = False
+              end
+              object Label54: TLabel
+                Left = 16
+                Height = 15
+                Top = 154
+                Width = 53
+                Caption = 'Username'
+                ParentColor = False
+              end
+              object Label55: TLabel
+                Left = 16
+                Height = 15
+                Top = 124
+                Width = 50
+                Caption = 'DB Name'
+                ParentColor = False
+              end
+              object Label56: TLabel
+                Left = 18
+                Height = 15
+                Top = 98
+                Width = 32
+                Caption = 'Server'
+                ParentColor = False
+              end
+              object Label57: TLabel
+                Left = 18
+                Height = 15
+                Top = 68
+                Width = 31
+                Caption = 'Driver'
+                ParentColor = False
+              end
+              object rbNDCMySQL: TRadioButton
+                Left = 219
+                Height = 19
+                Top = 38
+                Width = 58
+                AutoSize = False
+                Caption = 'MySQL'
+                TabOrder = 5
+              end
+              object rbNDCMSSQL: TRadioButton
+                Left = 80
+                Height = 19
+                Top = 38
+                Width = 130
+                AutoSize = False
+                Caption = 'Microsoft SQL Server'
+                TabOrder = 6
+              end
+              object Label58: TLabel
+                Left = 15
+                Height = 15
+                Top = 8
+                Width = 64
+                Caption = 'Destination'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+              end
+              object Label59: TLabel
+                Left = 16
+                Height = 15
+                Top = 42
+                Width = 24
+                Caption = 'Type'
+                ParentColor = False
+              end
+              object btnTestNDC: TBitBtn
+                Left = 80
+                Height = 25
+                Top = 208
+                Width = 82
+                Anchors = [akTop, akRight]
+                Caption = 'Test'
+                Glyph.Data = {
+                  36040000424D3604000000000000360000002800000010000000100000000100
+                  2000000000000004000064000000640000000000000000000000000000000000
+                  000000000018060D064810230E69142D1375112710710913085B000000330000
+                  00046A605902897C712B83766D2883776E00887A6F008A7B6F0001030206132A
+                  115D408C37D74EBF4DFE56D957FF5CE75CFF58DF59FF50C750FF419D3BEE3149
+                  29AF967A67C0C3AA87F8C0A787F79F8872BA85786F2A8A7B6F000A190B29469D
+                  40D467E65BFF5ADB57FF54DB59FF54DF59FF53DC58FF55DC56FF61CF58FFAFA3
+                  78FFE1B788FFE1624FFFE26452FFDCB684FFA3886BDA85786F150D1E0D2E4194
+                  3ED549A743FF42953CFF40963DFF419A3FFF3F953CFF388C34FF709161FFEED0
+                  BEFFEEDEBCFFDE4C40FFDD4E42FFE4CB9DFFD0A573FF8D7D6F74091408263477
+                  30CA51B346FF52C950FF57DD58FF5CE85DFF58E25AFF4ACB4AFF8EA87FFFFFF8
+                  FBFFFDFCF2FFDF4B42FFDF5246FFEEDBB6FFE6C395FF958573A30B180B2B459B
+                  40D062DE57FF58D655FF54D858FF54DD5AFF53D958FF51D850FF7DB26FFFF8ED
+                  F3FFFFFFFFFFE76F6BFFE6736DFFFFF9E5FFDED3B6FF8A7C70700C1B0B2E4093
+                  3DD44AA944FF44973CFF42993EFF419C3FFF40973DFF3E9138FF408337FFACA7
+                  9EFFFFFFFFFFF5A09FFFF49593FFF8FBFCFFA79F97D48474681310250F223375
+                  2FC451B246FF51C74FFF55DA57FF5AE65BFF57DF59FF51CD52FF4CB443FF437B
+                  37F88A827CD1CFC9C5EFC9C2BDF39F948CB28271652688786C000C1D0D2A449B
+                  3FCE62DD57FF59D856FF55DB58FF56E05AFF55DD59FF57D957FF61DC57FF50C0
+                  49FD142211507E6B621D85756821837265008575690088786C000C1B0B2E4196
+                  3ED54CAE46FF469A3DFF429A3EFF419C40FF40983DFF41923AFF43993DFF49A9
+                  45FF081B0950261E1D008F7E70008E7D700087776A008A7A6E000F240E213374
+                  2FC249AD45FF57C24CFF65D654FF6AE158FF67DB55FF5CC84EFF49AD45FF387D
+                  32FB050D053C000000003E36310062574D0081716600807165000D1C0C284798
+                  3ECD5EDA56FF69D853FF70DF55FF71E458FF71E156FF6CDA53FF5ED855FF57BE
+                  4CFE0C190A5100000000000000000000000009080700080707000B180B30439C
+                  40D955CB4EFF5ACE4EFF5ADA56FF59E35AFF5ADD57FF5BD250FF55C94CFF50BD
+                  4CFF0F220E570000000000000000000000000000000000000000132E111E4191
+                  40BA7EED78FF75E86BFF69EC64FF65F265FF67EE64FF71E867FF80F079FF57B8
+                  55F3071306340000000000000000000000000000000000000000204A1D00224E
+                  201B4A7F447F72B168BE7DCA7AE580D481EF7FCE7CEA76B86ECD54894D972043
+                  1E39000000000000000000000000000000000000000000000000204A1D001F47
+                  1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
+                  1400010201000000000000000000000000000000000000000000
+                }
+                OnClick = btnTestNDCClick
+                ParentFont = False
+                TabOrder = 7
               end
             end
           end
@@ -3314,7 +4336,7 @@ object MainConsoleForm: TMainConsoleForm
       Left = 1
       Height = 5
       Top = 644
-      Width = 892
+      Width = 684
       Align = alBottom
       ResizeAnchor = akBottom
     end
