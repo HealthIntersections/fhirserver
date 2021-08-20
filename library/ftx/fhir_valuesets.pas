@@ -174,7 +174,6 @@ Type
     FOthers : TFslStringObjectMatch; // checkers or code system providers
     FValueSet : TFHIRValueSetW;
     FId: String;
-    FNoValueSetExpansion : boolean;
 
     function determineSystem(code : String) : String;
     function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TCodeDisplays; var message : String; var cause : TFhirIssueType) : boolean; overload;
@@ -522,7 +521,6 @@ begin
   if not FOthers.ExistsByKey(cc.systemUri) then
     FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
   cs := TCodeSystemProvider(FOthers.matches[cc.systemUri]);
-  FNoValueSetExpansion := cs = nil;
   if cs <> nil then
   begin
     for ccf in cc.filters.forEnum do
@@ -633,7 +631,7 @@ begin
       cs.Free;
     end;
   end
-  else if FNoValueSetExpansion or (FParams.valueSetMode = vsvmNoMembership) then
+  else if (FParams.valueSetMode = vsvmNoMembership) then
   begin
     // anyhow, we ignore the value set (at least for now)
     cs := findCodeSystem(system, version, FParams, true);
