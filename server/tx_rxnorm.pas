@@ -592,7 +592,7 @@ begin
       try
         res.FCode := code;
         repeat
-          if qry.ColString[2] = 'SY' then
+          if (qry.ColString[2] = 'SY') or (res.FDisplay <> '') then
             res.FOthers.Add(qry.ColString[1].trim)
           else
             res.FDisplay := qry.ColString[1].trim;
@@ -649,6 +649,8 @@ var
   qry : TFDBConnection;
   b : boolean;
   p : TFHIRLookupOpRespPropertyW;
+  list: TCodeDisplays;
+  cd : TCodeDisplay;
 begin
   if hasProp(props, 'inactive', true) then
   begin
@@ -678,6 +680,17 @@ begin
     end
     else
       resp.addExtension('inactive', b);
+  end;
+  list := TCodeDisplays.create;
+  try
+    Displays(ctxt, list);
+    for cd in list do
+    begin
+      p := resp.addProp('other.display');
+      p.value := factory.makeString(cd.value);
+    end;
+  finally
+    list.free;
   end;
 end;
 
