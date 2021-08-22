@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "rework server - v2 finally coming soon"
+        as.returnvalue = "fix bug in translate routine"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -115,57 +115,53 @@ begin
       begin
         description = "Build The Server"
         id = {B04497CC-9752-463E-8B55-3B8543974103}
-        action.group
-        begin
-          description = "Prep Build Directories"
-          id = {D7D8191F-6D6F-4351-A074-B63B3529E85F}
-          action.directory.create
-          begin
-            fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p32
-            force = true
-            id = {189F22AF-F4F5-46D8-829D-EB6796FBFC98}
-          end
-          action.directory.create
-          begin
-            fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p64
-            force = false
-            id = {FC77AD06-E97D-497E-AE1E-9EAFD69D50AA}
-          end
-          action.directory.create
-          begin
-            fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d32
-            force = false
-            id = {7B1AF238-AD6E-4D91-96B5-840AA58F41D1}
-          end
-          action.directory.create
-          begin
-            fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
-            force = false
-            id = {54541897-B810-4290-B8F8-C7CB101CED29}
-          end
-          action.directory.create
-          begin
-            description = "Create Directory [ C:\\work\\com.healthintersections.fhir\\scratch\\units_dx64 ]"
-            fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
-            force = false
-            id = {D32B69A4-A025-47C7-9569-488E3E32EDC2}
-          end
-        end
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
           failifnofile = false
-          filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.exe
-          id = {5A08D7F1-55CA-4A06-964A-58237EE2EC9D}
+          filespec = C:\\work\\fhirserver\\exec\\64\\*.exe
+          id = {0D39F87A-FEAB-47F3-B183-DC8A28CB021F}
         end
         action.files.delete
         begin
-          deletehidden = false
-          deletereadonly = false
+          deletehidden = true
+          deletereadonly = true
           failifnofile = false
-          filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.debug.exe
-          id = {02F402E2-61F8-4C83-A2F9-3BBEDEC14758}
+          filespec = C:\\work\\fhirserver\\tmp\\units\\d64\\*.*
+          id = {DE45FA09-B2EA-4B73-960B-29136FA966E0}
+        end
+        action.files.delete
+        begin
+          deletehidden = true
+          deletereadonly = true
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\tmp\\units\\64\\*.*
+          id = {659FF20C-5807-4CA6-84C3-965EA8A50FE6}
+        end
+        action.doscmd.execute
+        begin
+          captureoutput = true
+          command = "lazbuild -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
+          description = "Compile FHIRConsole"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = true
+          id = {3DCF86EE-8A76-4787-A5FD-9B73EA611FCA}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "lazbuild -B c:\\work\\fhirserver\\server\\fhirconsole.lpi"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          terminateontimeout = false
+          timeoutlength = 0
+          useerrordialogmonitor = false
+          waitforcompletion = true
         end
         action.delphi.build
         begin
@@ -277,14 +273,14 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
             unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
-            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
+            unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\d64
             usedebugdcu = false
             usepackages = false
             varstringchecks = true
@@ -408,14 +404,14 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source
+            searchpath = C:\\work\\fhirserver\\dependencies\\Indy10\\System;C:\\work\\fhirserver\\dependencies\\Indy10\\Core;C:\\work\\fhirserver\\dependencies\\Indy10\\Protocols;C:\\work\\fhirserver\\dependencies\\jcl;C:\\work\\fhirserver\\Libraries;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL;C:\\work\\fhirserver\\dependencies\\Indy10\\OpenSSL\\dynamic;C:\\tools\\TestInsight\\Source;C:\\work\\fhirserver\\dependencies\\Indy10
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
             unitaliases = Controls\=Vcl.Controls;Forms\=Vcl.Forms
-            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p64
+            unitoutputdir = C:\\work\\fhirserver\\tmp\\units\\64
             usedebugdcu = false
             usepackages = false
             varstringchecks = true
