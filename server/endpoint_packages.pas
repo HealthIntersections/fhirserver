@@ -62,8 +62,10 @@ type
     procedure serveSearch(name, canonical, FHIRVersion, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
+    procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
     procedure processProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id, pword : String);
     procedure SetScanning(const Value: boolean);
+
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
   public
     destructor Destroy; override;
@@ -235,6 +237,15 @@ begin
         t := m.GetTable('Packages');
         if not t.hasColumn('Security') then
           c.ExecSQL('ALTER TABLE Packages ADD Security int NULL');
+      end;
+      if m.HasTable('PackageVersions') then
+      begin
+        t := m.GetTable('PackageVersions');
+        if not t.hasColumn('UploadCount') then
+        begin
+          c.ExecSQL('ALTER TABLE PackageVersions ADD UploadCount int NULL');
+          c.ExecSQL('Update PackageVersions set UploadCount = 1');
+        end;  
       end;
     finally
       m.Free;
@@ -718,7 +729,7 @@ try
         begin
           vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(false)));
           vars.add('ver', TFHIRObjectText.create('4.0.1'));
-          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(false)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false)));
+          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false)));
           vars.add('status', TFHIRObjectText.create(status));
           vars.add('count', TFHIRObjectText.create(conn.CountSQL('Select count(*) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
           vars.add('downloads', TFHIRObjectText.create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
@@ -900,6 +911,103 @@ begin
   end;
 end;
 
+procedure TFHIRPackageWebServer.serveUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure: boolean; id: String);
+  procedure check(test : boolean; code : integer; msg : String);
+  begin
+    if not test then
+      raise EWebServerException.Create(code, msg);
+  end;
+var
+  src : TBytes;
+  npm : TNpmPackage;
+  c : TFDBConnection;
+  mt, s : String;
+  vkey : integer;
+  new : boolean;
+begin
+  c := FDB.GetConnection('package.upload.current');
+  try
+    check(isValidPackageId(id), 404, 'Invalid Package ID "'+id+'"');
+    src := StreamToBytes(request.PostStream);
+    npm := TNpmPackage.fromPackage(src, 'Post Content', nil);
+    try
+      check(npm.name = id, 400, 'Package ID mismatch: "'+id+'" vs "'+npm.name+'"');
+      check(npm.version <> '', 400, 'Package has no version');
+      check(npm.date <> '', 400, 'Package has no Date');
+      check(npm.kind <> fpkNull, 400, 'Package has no Kind');
+      check(npm.canonical <> '', 400, 'Package has no Canonical');
+      check(npm.fhirVersionList <> '', 400, 'Package has no FHIR Versions');
+
+      mt := '';
+      c.SQL := 'Select * from Packages where Id = '''+SQLWrapString(id)+'''';
+      c.Prepare;
+      c.Execute;
+      new := not c.FetchNext;
+      if (not new) then 
+        mt := c.ColStringByName['ManualToken'];
+      c.Terminate;
+
+      if (mt = '') then
+        check((request.AuthUsername = 'system') and (request.AuthPassword = FSystemToken), 401, 'Valid System Password required')
+      else
+        check((request.AuthUsername = 'ig') and (request.AuthPassword = mt), 401, 'Valid IG Password required');
+
+      // does current exist?
+      vKey := c.CountSQL('Select PackageVersionKey from PackageVersions where Id = '''+SQLWrapString(id)+''' and version = ''current''');
+      if vKey = 0 then
+      begin
+        vkey := c.CountSQL('Select Max(PackageVersionKey) from PackageVersions') + 1; 
+        c.SQL := 'Insert into PackageVersions '+
+         '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Content) values ('+
+         inttostr(vkey)+', '''+SQLWrapString(NewGuidId)+''', :d, getDate(), '''+SQLWrapString(id)+''', ''current'', '''+
+           inttostr(ord(npm.kind))+''', 0, :u, :f, 1, :desc, null, :c)';
+      end
+      else
+      begin
+        c.ExecSQL('Delete from PackageFHIRVersions where PackageVersionKey = '+inttostr(vkey));
+        c.ExecSQL('Delete from PackageDependencies where PackageVersionKey = '+inttostr(vkey));
+        c.SQL := 'Update PackageVersions set PubDate = :d, Indexed = getDate(), Kind = '''+inttostr(ord(npm.kind))+''', Canonical = :u, '+
+                 'FhirVersions = :f, UploadCount = UploadCount + 1, Description = :desc, Content = :c where PackageVersionKey = '+inttostr(vkey);      
+      end;
+      c.prepare;
+      c.BindDateTimeEx('d', TFslDateTime.fromHL7(npm.date));
+      c.BindString('u', npm.canonical);
+      c.BindString('f', npm.fhirVersionList);
+      c.BindBlobFromString('desc', 'Content from IG publisher');
+      c.BindBlob('c', src);
+      c.Execute;
+      c.Terminate;
+      for s in npm.fhirVersionList.Split([',']) do
+        c.ExecSQL('Insert into PackageFHIRVersions (PackageVersionKey, Version) values ('+inttostr(vkey)+', '''+SQLWrapString(s)+''')');
+      for s in npm.dependencies do
+        c.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(s)+''')');
+
+      if new then
+        c.ExecSQL('Insert into Packages (PackageKey, Id, Canonical, CurrentVersion, DownloadCount, ManualToken, Security) values ('+
+          inttostr(c.CountSQL('Select Max(PackageKey) from Packages') + 1)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(npm.canonical)+''', '+inttostr(vkey)+', 0, null, 0)');
+      
+      response.ResponseNo := 200;
+      response.ContentText := 'Current Version Updated';
+    finally
+      npm.Free;
+    end;
+    c.Release;
+  except
+    on e : EWebServerException do
+    begin
+      c.Error(e);
+      response.ResponseNo := e.Code;
+      response.ContentText := e.Message;
+    end;
+    on e : Exception do
+    begin
+      c.Error(e);
+      response.ResponseNo := 500;
+      response.ContentText := e.Message;
+    end;
+  end;
+end;
+
 function TFHIRPackageWebServer.serveCreatePackage(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : String;
 var
   blob : TBytes;
@@ -1039,6 +1147,7 @@ function TFHIRPackageWebServer.doRequest(AContext: TIdContext; request: TIdHTTPR
 var
   pm : THTTPParameters;
   s : TArray<String>;
+  sId : string;
 begin
   pm := THTTPParameters.create(request.UnparsedParams);
   try
@@ -1096,6 +1205,11 @@ begin
       end
       else
         raise Exception.Create('The operation GET '+request.Document+' is not supported');
+    end
+    else if (request.CommandType = hcPUT) and request.Document.StartsWith('/packages/') and request.Document.endsWith('/current') then
+    begin
+      sId := request.Document.Substring(10, request.Document.Length - (8 + 10));
+      serveUpload(request, response, secure, sId);
     end
     else if (request.CommandType = hcPOST) and (request.Document = '/packages') then
     begin
