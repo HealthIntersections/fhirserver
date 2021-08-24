@@ -97,12 +97,12 @@ end;
 class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
 var
   fver, dep : String;
-  pkey, vkey, cvkey : integer;
+  pkey, vkey, cvkey, cc : integer;
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
-    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, Description, ManualToken, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, :desc, :mt, :c)';
+    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :c)';
   conn.prepare;
   conn.BindDateTimeEx('d', date);
   conn.BindString('u', canonical);
@@ -129,10 +129,11 @@ begin
   end
   else
   begin
-    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc, Version desc');
-    if (cvkey = vkey) then    // if we aded the most recent
+    cc := conn.CountSQL('Select count(PackageVersionKey) from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version <> ''current''');
+    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version <> ''current'' order by PubDate desc, Version');
+    if (cvkey = vkey) or (cc = 1) then    // if we aded the most recent
     begin
-      conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
+      conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(vkey)+' where PackageKey = '+inttostr(pkey);
       conn.prepare;
       conn.Execute;
       conn.Terminate;

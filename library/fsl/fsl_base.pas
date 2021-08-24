@@ -122,6 +122,14 @@ Type
     Constructor Create(place : String);
   End;
 
+  EWebServerException = Class(Exception)
+  Private
+    FCode : Integer;
+  Public
+    constructor Create(code : integer; message : String);
+    property Code : Integer read FCode;
+  End;
+
 Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
 
@@ -3272,6 +3280,14 @@ end;
 function TFslComparer<T>.link: TFslComparer<T>;
 begin
   result  := TFslComparer<T>(inherited link);
+end;
+
+{ EWebServerException }
+
+constructor EWebServerException.Create(code: integer; message: String);
+begin
+  inherited Create(message);
+  FCode := code;
 end;
 
 Initialization

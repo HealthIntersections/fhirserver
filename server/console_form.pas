@@ -1528,7 +1528,7 @@ begin
    begin
     start := now;
     FWantStop := false;
-    btnReindexRxNormStop.Visible := true;
+    btnImportNDCStop.Visible := true;
     cursor := crHourGlass;
     FRunning := true;
     edtNDCFolder.enabled := false;
@@ -1572,6 +1572,7 @@ begin
       edtNDCPassword.enabled := true;
       edtNDCUsername.enabled := true;
       ndcCallback(self, 0, false, '');
+      btnImportNDCStop.Visible := false;
     end;
     MessageDlg('Successfully Imported NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   end;
@@ -1647,6 +1648,7 @@ begin
       edtRXNPassword.enabled := true;
       edtRXNUsername.enabled := true;
       rxNormCallback(self, 0, false, '');
+      btnReindexRxNormStop.Visible := false;
     end;
     MessageDlg('Successfully Imported RxNorm in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   end;

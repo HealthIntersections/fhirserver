@@ -789,6 +789,8 @@ begin
           result.AddParamStr('message', 'The display "'+coding.display+'" is not a valid display for the code '+coding.code+' - should be one of ['+list.present+']');
         if list.Count > 0 then
           result.AddParamStr('display', list.preferred);
+        result.addParamStr('system', coding.systemUri);
+        result.addParamStr('code', coding.code);
         if cause <> itNull then
           result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end
@@ -831,7 +833,7 @@ function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk, implySy
 var
   list : TCodeDisplays;
   v : boolean;
-  ok : boolean;
+  ok, first : boolean;
   cc, codelist, message, mt: String;
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -874,6 +876,8 @@ begin
             msg('The display "'+c.display+'" is not a valid display for the code '+cc.substring(1)+' - should be one of ['+list.present+']');
           if list.Count > 0 then
             result.AddParamStr('display', list.chooseDisplay(FLanguages, FParams.displayLanguage));
+          result.addParamStr('system', c.systemUri);
+          result.addParamStr('code', c.code);
         end
         else
         begin
@@ -954,6 +958,8 @@ begin
         result.AddParamBool('result', true);
         if list.Count > 0 then
           result.AddParamStr('display', list.preferred);
+        result.addParamStr('system', system);
+        result.addParamStr('code', code);
         if cause <> itNull then
           result.AddParamStr('cause', CODES_TFhirIssueType[cause]);
       end
