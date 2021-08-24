@@ -104,7 +104,7 @@ type
     btnLangFile: TSpeedButton;
     btnImportNDC: TBitBtn;
     btnReindexRxNormStop: TBitBtn;
-    btnReindexRxNormStop1: TBitBtn;
+    btnImportNDCStop: TBitBtn;
     btnTextRxNorm: TBitBtn;
     btnTestNDC: TBitBtn;
     btnTxImport: TBitBtn;

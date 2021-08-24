@@ -4072,7 +4072,7 @@ object MainConsoleForm: TMainConsoleForm
                 ParentFont = False
                 TabOrder = 0
               end
-              object btnReindexRxNormStop1: TBitBtn
+              object btnImportNDCStop: TBitBtn
                 Left = 2
                 Height = 25
                 Top = 9
