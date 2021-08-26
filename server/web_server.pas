@@ -200,6 +200,7 @@ Type
     Procedure Start; // (active, threads: boolean);
     Procedure Stop;
 
+    Procedure clearCache;
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
@@ -224,6 +225,11 @@ begin
     result := 'https://'+common.host+SSLPort+'/'
   else
     result := 'http://'+common.host+HTTPPort+'/'
+end;
+
+procedure TFhirWebServer.clearCache;
+begin
+  Common.cache.Clear;
 end;
 
 Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);

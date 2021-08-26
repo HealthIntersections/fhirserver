@@ -85,6 +85,7 @@ Type
     Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
     procedure sweepSnomed;
+    procedure clearSnomed;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
 
     // load external terminology resources (snomed, Loinc, etc)
@@ -228,6 +229,7 @@ Type
     function NextValueSetMemberKey : integer;
 
     function cacheSize : UInt64; virtual;
+    procedure clearCache; virtual;
     procedure defineFeatures(features: TFslList<TFHIRFeature>); virtual;
   end;
 
@@ -733,7 +735,7 @@ end;
 
 function TTerminologyServerStore.cacheSize: UInt64;
 begin
-  result := 0;
++  result := 0;
 end;
 
 procedure TTerminologyServerStore.checkForDuplicates(codes : TStringList; list : TFhirCodeSystemConceptListW; url : String);
@@ -1399,6 +1401,11 @@ begin
   exit(version);
 end;
 
+procedure TTerminologyServerStore.clearCache;
+begin
+  FCommonTerminologies.clearSnomed;
+end;
+
 Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider;
 begin
   result := nil;
@@ -1760,6 +1767,15 @@ begin
     FProviderClasses.Add(p.systemUri(nil), p.link);
 end;
 
+procedure TCommonTerminologies.clearSnomed;
+var
+  ss : TSnomedServices;
+begin
+  for ss in FSnomed do
+    if ss <> FDefSnomed then
+      ss.unloadMe;
+end;
+
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
 var
   p : TCodeSystemProvider;
@@ -2074,7 +2090,7 @@ var
 begin
   for ss in FSnomed do
     if ss <> FDefSnomed then
-      ss.checkUnload;
+      ss.checkUnloadMe;
 end;
 
 procedure TCommonTerminologies.SetACIR(const Value: TACIRServices);

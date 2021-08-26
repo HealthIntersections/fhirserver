@@ -168,6 +168,8 @@ Type
 
     Function DescribeSize(b, min: Cardinal): String;
     function MemoryStatus : String;
+
+    function InternalMem : UInt64;
   end;
 
 var
@@ -538,7 +540,7 @@ begin
 {$ENDIF}
 end;
 
-function intMem : Uint64;
+function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
   st : TMemoryManagerUsageSummary;
@@ -559,9 +561,9 @@ var
 begin
   os := OSMem;
   if os <> 0 then
-    result := memToMB(intMem) + ' / '+memToMB(os)
+    result := memToMB(Logging.InternalMem) + ' / '+memToMB(os)
   else
-    result := memToMB(intMem);
+    result := memToMB(Logging.InternalMem);
 end;
 
 procedure TLogging.checkDay;

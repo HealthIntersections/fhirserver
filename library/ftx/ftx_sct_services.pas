@@ -595,7 +595,6 @@ operations
     function GetLoaded: Boolean;
     procedure LoadFromSource;
     procedure InitialLoad;
-    procedure Unload;
     function GetActiveRoots: UInt64Array;
     function GetDefaultLanguage: Cardinal;
     function GetInActiveRoots: UInt64Array;
@@ -610,7 +609,8 @@ operations
     class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String);
     procedure checkLoaded;
-    procedure checkUnload;
+    procedure checkUnloadMe;
+    procedure UnloadMe;
     property Building : boolean read FBuilding write FBuilding;
 
     // helper functions
@@ -4003,7 +4003,7 @@ begin
   result := FTotalCount;
 end;
 
-procedure TSnomedServices.Unload;
+procedure TSnomedServices.UnloadMe;
 begin
   FLock.Lock;
   try
@@ -4885,12 +4885,12 @@ begin
   end;
 end;
 
-procedure TSnomedServices.checkUnload;
+procedure TSnomedServices.checkUnloadMe;
 begin
   FLock.Lock;
   try
     if (FLoaded > 0) and (FLastUse < now - LOAD_PERIOD) then
-      Unload;
+      UnloadMe;
   finally
     FLock.Unlock;
   end;

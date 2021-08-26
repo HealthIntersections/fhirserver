@@ -122,7 +122,7 @@ Type
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
     function cacheSize : UInt64; override;
-    procedure clearCache;
+    procedure clearCache; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -654,6 +654,7 @@ end;
 
 procedure TTerminologyServer.clearCache;
 begin
+  inherited ClearCache;
   FLock.Lock;
   try
     FExpansions.Clear;

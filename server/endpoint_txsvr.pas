@@ -1270,6 +1270,7 @@ end;
 procedure TTerminologyServerEndPoint.clearCache;
 begin
   inherited;
+  ServerContext.ClientCacheManager.clearCache;
 end;
 
 constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
